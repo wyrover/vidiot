@@ -63,7 +63,7 @@ void WaitForPlayback::onPlaybackActive(gui::PlaybackActiveEvent& event)
 
 void Play(pixel from, int ms)
 {
-    PositionCursor(from);
+    TimelinePositionCursor(from);
     WaitForPlayback started(true);
     WaitForPlayback stopped(false);
     // NOTE: Don't use waitForIdle() when the video is playing!!!

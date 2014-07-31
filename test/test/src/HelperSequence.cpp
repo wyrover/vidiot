@@ -19,7 +19,7 @@
 
 namespace test {
 
-void extendSequenceWithRepeatedClips( model::SequencePtr sequence, model::IPaths files, int nRepeat )
+void ExtendSequenceWithRepeatedClips( model::SequencePtr sequence, model::IPaths files, int nRepeat )
 {
     RunInMainAndWait([sequence,files,nRepeat]()
     {
@@ -34,8 +34,6 @@ void extendSequenceWithRepeatedClips( model::SequencePtr sequence, model::IPaths
             for ( model::IPathPtr path : files )
             {
                 model::FilePtr file = boost::make_shared<model::File>(path->getPath());
-                ASSERT(file);
-                ASSERT(file->canBeOpened());
                 std::pair<model::IClipPtr,model::IClipPtr> videoClip_audioClip = command::ClipCreator::makeClips(file);
                 videoTrack->addClips(boost::assign::list_of(videoClip_audioClip.first));
                 audioTrack->addClips(boost::assign::list_of(videoClip_audioClip.second));
@@ -61,6 +59,22 @@ void extendSequenceWithStillImage( model::SequencePtr sequence )
         std::pair<model::IClipPtr,model::IClipPtr> videoClip_audioClip = command::ClipCreator::makeClips(file);
         videoTrack->addClips(boost::assign::list_of(videoClip_audioClip.first));
         audioTrack->addClips(boost::assign::list_of(videoClip_audioClip.second));
+    });
+}
+
+void makeSequenceEmpty( model::SequencePtr sequence )
+{
+    RunInMainAndWait([sequence]()
+    {
+        model::TrackPtr videoTrack = sequence->getVideoTrack(0);
+        model::TrackPtr audioTrack = sequence->getAudioTrack(0);
+        ASSERT(sequence);
+        ASSERT(videoTrack);
+        ASSERT(audioTrack);
+        videoTrack->removeClips(videoTrack->getClips());
+        audioTrack->removeClips(audioTrack->getClips());
+        ASSERT_ZERO(videoTrack->getClips().size());
+        ASSERT_ZERO(audioTrack->getClips().size());
     });
 }
 

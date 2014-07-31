@@ -84,7 +84,7 @@ void DragFromProjectViewToTimeline(model::NodePtr node, wxPoint to);
 
 /// Open the timeline for a sequence
 /// \param sequence sequence for which a timeline must be opened
-void openTimelineForSequence(model::SequencePtr sequence);
+void OpenTimelineForSequence(model::SequencePtr sequence);
 
 /// Delays execution of the module test until a given node has signaled (via an event)
 /// that it has the given number of children.

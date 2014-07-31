@@ -1,4 +1,4 @@
-// Copyright 2013,2014 Eric Raijmakers.
+// Copyright 2014 Eric Raijmakers.
 //
 // This file is part of Vidiot.
 //
@@ -15,17 +15,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef HELPER_SEQUENCE_H
-#define HELPER_SEQUENCE_H
+#ifndef TESTUI_H
+#define TESTUI_H
 
-namespace test {
+//#include <vld.h>
 
-void ExtendSequenceWithRepeatedClips( model::SequencePtr sequence, model::IPaths files, int nRepeat );
-
-void extendSequenceWithStillImage( model::SequencePtr sequence );
-
-void makeSequenceEmpty( model::SequencePtr sequence );
-
-} // namespace
+#include "Test.h"
 
 #endif

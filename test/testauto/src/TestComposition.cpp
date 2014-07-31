@@ -43,24 +43,20 @@ void TestComposition::testBlend()
     TriggerMenu(ID_ADDVIDEOTRACK);
     DragToTrack(1,VideoClip(0,3),model::IClipPtr());
     Drag(From(Center(VideoClip(1,1))).To(wxPoint(HCenter(VideoClip(0,4)),VCenter(VideoClip(1,1)))));
-    MouseClickTopLeft(DetailsClipView()->getScalingSlider()); // Give focus
-    KeyboardKeyPressN(3,WXK_PAGEUP);
-    waitForIdle();
-    MouseClickTopLeft(DetailsClipView()->getPositionXSlider()); // Give focus
-    KeyboardKeyPressN(4,WXK_PAGEDOWN);
-    MouseClickTopLeft(DetailsClipView()->getPositionYSlider()); // Give focus
-    KeyboardKeyPressN(15,WXK_PAGEDOWN);
-    MouseClickTopLeft(DetailsClipView()->getOpacitySlider()); // Give focus
-    KeyboardKeyPressN(6,WXK_PAGEUP);
+
+    SetValue(DetailsClipView()->getScalingSlider(),7000); // Same as pressing 3 * PageUp
+    SetValue(DetailsClipView()->getPositionXSlider(),232); // Same as pressing 4 * PageUp
+    SetValue(DetailsClipView()->getPositionYSlider(),108); // Same as pressing 15 * PageDown
+    SetValue(DetailsClipView()->getOpacitySlider(),195); // Same as pressing 6 * PageUp
+
     TimelineLeftClick(Center(VideoClip(0,4)));
-    MouseClickTopLeft(DetailsClipView()->getScalingSlider()); // Give focus
-    KeyboardKeyPressN(5,WXK_PAGEUP);
-    MouseClickTopLeft(DetailsClipView()->getPositionYSlider()); // Give focus
-    KeyboardKeyPressN(8,WXK_PAGEUP);
-    MouseClickTopLeft(DetailsClipView()->getOpacitySlider()); // Give focus
-    KeyboardKeyPressN(3,WXK_PAGEUP);
+    SetValue(DetailsClipView()->getScalingSlider(),5000); // Same as pressing 5 * PageUp
+    SetValue(DetailsClipView()->getPositionYSlider(),180); // Same as pressing 8 * PageUp
+    SetValue(DetailsClipView()->getOpacitySlider(),225); // Same as pressing 3 * PageUp
+
     Scrub(HCenter(VideoClip(0,4))-5,HCenter(VideoClip(0,4))+5);
     Play(HCenter(VideoClip(0,4)),100);
+
     Undo(6);
 }
 

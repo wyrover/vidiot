@@ -142,7 +142,7 @@ void TestRender::testRenderingCodecs()
         gui::DialogRenderSettings::get().getVideoCodecButton()->select(id);
         MouseClickTopLeft(gui::DialogRenderSettings::get().getOkButton());
         RenderAndPlaybackCurrentTimeline();
-        openTimelineForSequence(sequence);
+        OpenTimelineForSequence(sequence);
     }
 }
 

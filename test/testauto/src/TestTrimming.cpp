@@ -42,7 +42,7 @@ void TestTrimming::testSnapping()
     StartTestSuite();
     Zoom level(4);
     ConfigFixture.SnapToClips(true).SnapToCursor(true);
-    PositionCursor(HCenter(VideoClip(0,2)));
+    TimelinePositionCursor(HCenter(VideoClip(0,2)));
     {
         StartTest("No snapping when dragged beyond snap distance");
         Trim(LeftCenter(VideoClip(0,2)),Center(VideoClip(0,2)) + wxPoint(gui::Layout::SnapDistance + 1,0),false);
@@ -77,7 +77,7 @@ void TestTrimming::testKeyboardTrimming()
     auto TestBeginTrimSucceeds = [this](wxString title)
     {
         StartTest(title);
-        PositionCursor(HCenter(VideoClip(0,2)));
+        TimelinePositionCursor(HCenter(VideoClip(0,2)));
         pts newlength = VideoClip(0,2)->getRightPts() - getTimeline().getCursor().getLogicalPosition();
         TimelineKeyPress('b');
         ASSERT_EQUALS(VideoClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1));
@@ -90,7 +90,7 @@ void TestTrimming::testKeyboardTrimming()
     auto TestEndTrimSucceeds = [this](wxString title)
     {
         StartTest(title);
-        PositionCursor(HCenter(VideoClip(0,2)));
+        TimelinePositionCursor(HCenter(VideoClip(0,2)));
         pts newlength = getTimeline().getCursor().getLogicalPosition() - VideoClip(0,2)->getLeftPts();
         TimelineKeyPress('e');
         ASSERT_EQUALS(VideoClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1));
@@ -104,7 +104,7 @@ void TestTrimming::testKeyboardTrimming()
     {
         StartTest(title);
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::ExecuteDrop>();
-        PositionCursor(HCenter(VideoClip(0,2)));
+        TimelinePositionCursor(HCenter(VideoClip(0,2)));
         TimelineKeyPress('b');
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::ExecuteDrop>();
     };
@@ -113,7 +113,7 @@ void TestTrimming::testKeyboardTrimming()
     {
         StartTest(title);
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::ExecuteDrop>();
-        PositionCursor(HCenter(VideoClip(0,2)));
+        TimelinePositionCursor(HCenter(VideoClip(0,2)));
         TimelineKeyPress('e');
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::ExecuteDrop>();
     };
@@ -123,7 +123,7 @@ void TestTrimming::testKeyboardTrimming()
     {
         StartTest("No change when cursor is on cut");
         ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
-        PositionCursor(LeftPixel(VideoClip(0,2)));
+        TimelinePositionCursor(LeftPixel(VideoClip(0,2)));
         TimelineKeyPress('b');
         TimelineKeyPress('e');
         ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
@@ -160,7 +160,7 @@ void TestTrimming::testKeyboardTrimmingDuringPlayback()
 {
     StartTestSuite();
     StartTest("Start playback");
-    PositionCursor(HCenter(VideoClip(0,4)));
+    TimelinePositionCursor(HCenter(VideoClip(0,4)));
     WaitForPlaybackStarted started;
     TimelineKeyPress(' ');
     started.wait();

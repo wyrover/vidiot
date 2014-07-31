@@ -480,15 +480,16 @@ void DetailsClip::onOpacitySliderChanged(wxCommandEvent& event)
 
 void DetailsClip::onOpacitySpinChanged(wxSpinEvent& event)
 {
-    VAR_INFO(event.GetValue());
+    int value = mOpacitySpin->GetValue(); // NOT: event.GetValue() -- The event's value may be outside the range boundaries
+    VAR_INFO(value);
     makeTransformCommand();
-    mTransformCommand->setOpacity(event.GetValue());
+    mTransformCommand->setOpacity(value);
     event.Skip();
 }
 
 void DetailsClip::onScalingChoiceChanged(wxCommandEvent& event)
 {
-    LOG_INFO;
+    VAR_INFO(mSelectScaling->getValue());
     makeTransformCommand();
     mTransformCommand->setScaling(mSelectScaling->getValue(), boost::none);
     event.Skip();
@@ -505,10 +506,11 @@ void DetailsClip::onScalingSliderChanged(wxCommandEvent& event)
 
 void DetailsClip::onScalingSpinChanged(wxSpinDoubleEvent& event)
 {
-    VAR_INFO(event.GetValue());
-    int spinFactor = floor(event.GetValue() * model::Constants::sScalingPrecisionFactor);
+    double value = mScalingSpin->GetValue(); // NOT: event.GetValue() -- The event's value may be outside the range boundaries
+    VAR_INFO(value);
+    int spinFactor = floor(value * model::Constants::sScalingPrecisionFactor);
     makeTransformCommand();
-    boost::rational<int> r(floor(event.GetValue() * model::Constants::sScalingPrecisionFactor), model::Constants::sScalingPrecisionFactor);
+    boost::rational<int> r(spinFactor, model::Constants::sScalingPrecisionFactor);
     mTransformCommand->setScaling(model::VideoScalingCustom, boost::optional< boost::rational< int > >(r));
     event.Skip();
 }
@@ -524,17 +526,18 @@ void DetailsClip::onRotationSliderChanged(wxCommandEvent& event)
 
 void DetailsClip::onRotationSpinChanged(wxSpinDoubleEvent& event)
 {
-    VAR_INFO(event.GetValue());
-    int spinFactor = floor(event.GetValue() * model::Constants::sRotationPrecisionFactor);
+    double value = mRotationSpin->GetValue(); // NOT: event.GetValue() -- The event's value may be outside the range boundaries
+    VAR_INFO(value);
+    int spinFactor = floor(value * model::Constants::sRotationPrecisionFactor);
     makeTransformCommand();
-    boost::rational<int> r(floor(event.GetValue() * model::Constants::sRotationPrecisionFactor), model::Constants::sRotationPrecisionFactor);
+    boost::rational<int> r(spinFactor, model::Constants::sRotationPrecisionFactor);
     mTransformCommand->setRotation(r);
     event.Skip();
 }
 
 void DetailsClip::onAlignmentChoiceChanged(wxCommandEvent& event)
 {
-    LOG_INFO;
+    VAR_INFO(mSelectAlignment->getValue());
     makeTransformCommand();
     mTransformCommand->setAlignment(mSelectAlignment->getValue());
     event.Skip();
@@ -551,11 +554,11 @@ void DetailsClip::onPositionXSliderChanged(wxCommandEvent& event)
 
 void DetailsClip::onPositionXSpinChanged(wxSpinEvent& event)
 {
-
-    VAR_INFO(event.GetValue());
+    int value = mPositionXSpin->GetValue(); // NOT: event.GetValue() -- The event's value may be outside the range boundaries 
+    VAR_INFO(value);
     makeTransformCommand();
     updateAlignment(true);
-    mTransformCommand->setPosition(wxPoint(event.GetValue(), mPositionYSlider->GetValue()));
+    mTransformCommand->setPosition(wxPoint(value, mPositionYSlider->GetValue()));
     event.Skip();
 }
 
@@ -570,10 +573,11 @@ void DetailsClip::onPositionYSliderChanged(wxCommandEvent& event)
 
 void DetailsClip::onPositionYSpinChanged(wxSpinEvent& event)
 {
-    VAR_INFO(event.GetValue());
+    int value = mPositionYSpin->GetValue(); // NOT: event.GetValue() -- The event's value may be outside the range boundaries 
+    VAR_INFO(value);
     makeTransformCommand();
     updateAlignment(false);
-    mTransformCommand->setPosition(wxPoint(mPositionXSlider->GetValue(), event.GetValue()));
+    mTransformCommand->setPosition(wxPoint(mPositionXSlider->GetValue(), value));
     event.Skip();
 }
 
@@ -587,9 +591,10 @@ void DetailsClip::onVolumeSliderChanged(wxCommandEvent& event)
 
 void DetailsClip::onVolumeSpinChanged(wxSpinEvent& event)
 {
-    VAR_INFO(event.GetValue());
+    int value = mVolumeSpin->GetValue(); // NOT: event.GetValue() -- The event's value may be outside the range boundaries 
+    VAR_INFO(value);
     makeChangeVolumeCommand();
-    mVolumeCommand->setVolume(event.GetValue());
+    mVolumeCommand->setVolume(value);
     event.Skip();
 }
 

@@ -29,6 +29,14 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
+    /// Create two clips from the given file. Result.first is a video clip, result.second
+    /// is an audio clip. If file only contains video data, the audio clip is an empty clip.
+    /// If file only contains audio data, the video clip is an empty clip.
+    /// \pre file != 0
+    /// \pre file->canBeOpened()
+    /// \pre file->hasAudio() || file->hasVideo()
+    /// \post result.first != 0 && result.second != 0
+    /// \post result.first.getLength() == result.second.getLength()
     static std::pair<model::IClipPtr, model::IClipPtr> makeClips(model::FilePtr file);
 
 };

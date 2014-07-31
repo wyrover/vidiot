@@ -234,7 +234,7 @@ void TestDetailsClip::testChangeLengthAfterCreatingTransition()
     };
     {
         StartTest("InTransition");
-        OpenPopupMenuAt(Center(VideoClip(0,1)));
+        TimelineLeftClick(Center(VideoClip(0,1)));
         TimelineKeyPress('i');
         ASSERT_DETAILSCLIP(VideoClip(0,2));
         pressLengthButtons("InTransition", defaultTransitionLength / 2);
@@ -244,7 +244,7 @@ void TestDetailsClip::testChangeLengthAfterCreatingTransition()
     }
     {
         StartTest("OutTransition");
-        OpenPopupMenuAt(Center(VideoClip(0,2)));
+        TimelineLeftClick(Center(VideoClip(0,2)));
         TimelineKeyPress('o');
         ASSERT_DETAILSCLIP(VideoClip(0,2));
         pressLengthButtons("OutTransition", defaultTransitionLength / 2);
@@ -254,8 +254,8 @@ void TestDetailsClip::testChangeLengthAfterCreatingTransition()
     }
     {
         StartTest("InOutTransition");
-        OpenPopupMenuAt(Center(VideoClip(0,1)));
-        TimelineKeyPress('p');
+        TimelineLeftClick(LeftCenter(VideoClip(0,1)));
+        TimelineKeyPress('c');
         ASSERT_DETAILSCLIP(VideoClip(0,2));
         pressLengthButtons("InOutTransition", defaultTransitionLength / 2);
         Undo(); // Remove transition
@@ -264,8 +264,8 @@ void TestDetailsClip::testChangeLengthAfterCreatingTransition()
     }
     {
         StartTest("OutInTransition");
-        OpenPopupMenuAt(Center(VideoClip(0,2)));
-        TimelineKeyPress('n');
+        TimelineLeftClick(RightCenter(VideoClip(0,2)));
+        TimelineKeyPress('c');
         ASSERT_DETAILSCLIP(VideoClip(0,2));
         pressLengthButtons("OutInTransition", defaultTransitionLength / 2);
         Undo(); // Remove transition
@@ -274,10 +274,10 @@ void TestDetailsClip::testChangeLengthAfterCreatingTransition()
     }
     {
         StartTest("In+Out Transitions");
-        OpenPopupMenuAt(Center(VideoClip(0,1)));
-        TimelineKeyPress('o');
-        OpenPopupMenuAt(Center(VideoClip(0,1)));
-        TimelineKeyPress('i');
+        TimelineLeftClick(RightCenter(VideoClip(0,1)));
+        TimelineKeyPress('c');
+        TimelineLeftClick(LeftCenter(VideoClip(0,1)));
+        TimelineKeyPress('c');
         ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip)(Transition);
         ASSERT_DETAILSCLIP(VideoClip(0,2));
         pressLengthButtons("In+Out Transitions", defaultTransitionLength);
@@ -287,10 +287,10 @@ void TestDetailsClip::testChangeLengthAfterCreatingTransition()
     }
     {
         StartTest("InOut+OutIn Transitions");
-        OpenPopupMenuAt(Center(VideoClip(0,1)));
-        TimelineKeyPress('n');
-        OpenPopupMenuAt(Center(VideoClip(0,1)));
-        TimelineKeyPress('p');
+        TimelineLeftClick(RightCenter(VideoClip(0,1)));
+        TimelineKeyPress('c');
+        TimelineLeftClick(LeftCenter(VideoClip(0,1)));
+        TimelineKeyPress('c');
         ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip)(Transition);
         ASSERT_DETAILSCLIP(VideoClip(0,2));
         pressLengthButtons("InOut+OutIn Transitions", defaultTransitionLength);
@@ -479,7 +479,7 @@ void TestDetailsClip::testTransform()
     }
     {
         StartTest("Position cursor on center of clip, if the cursor was outside the clip's timeline region");
-        PositionCursor(HCenter(VideoClip(0,1)));
+        TimelinePositionCursor(HCenter(VideoClip(0,1)));
         TimelineLeftClick(Center(VideoClip(0,1)));
         ASSERT_DETAILSCLIP(VideoClip(0,1));
         TimelineLeftClick(Center(VideoClip(0,3)));
@@ -494,7 +494,7 @@ void TestDetailsClip::testTransform()
     {
         StartTest("Keep cursor position, if the cursor was inside the clip's timeline region");
         pixel pos = HCenter(VideoClip(0,3)) - 20;
-        PositionCursor(pos);
+        TimelinePositionCursor(pos);
         TimelineLeftClick(Center(VideoClip(0,1)));
         ASSERT_DETAILSCLIP(VideoClip(0,1));
         TimelineLeftClick(Center(VideoClip(0,3)));
@@ -504,36 +504,6 @@ void TestDetailsClip::testTransform()
         ASSERT_EQUALS(CursorPosition(),pos); // Now the cursor is not moved: same frame is previewed
         Undo();
         ASSERT_ORIGINAL_CLIPPROPERTIES();
-    }
-}
-
-void TestDetailsClip::testTransform_Boundaries() // todo make the transform tests also work without physical gui events
-{
-    StartTestSuite();
-
-    {
-        StartTest("Scaling: Minimum scaling factor.");
-        TimelineLeftClick(Center(VideoClip(0,5)));
-        ASSERT_DETAILSCLIP(VideoClip(0,5));
-        GiveKeyboardFocus(DetailsClipView()->getScalingSpin());
-        KeyboardKeyPressN(7,WXK_DELETE); // Remove all characters
-        KeyboardKeyPress('0'); // 0 will be replaced with 'min' value
-        KeyboardKeyPress(WXK_TAB);
-        ASSERT_CURRENT_COMMAND_TYPE<model::ChangeVideoClipTransform>(); // Verify that only one command object was added to the undo history
-        ASSERT_CLIPPROPERTIES(VideoClip(0,5),model::VideoScalingCustom,boost::rational<int>(model::Constants::sScalingMin,model::Constants::sScalingPrecisionFactor),model::VideoAlignmentCenter,wxPoint(360,288),0); // The scaling spin buttons increment with 0.01, not 0.0001
-        Undo();
-    }
-    {
-        StartTest("Scaling: Maximum scaling factor.");
-        TimelineLeftClick(Center(VideoClip(0,5)));
-        ASSERT_DETAILSCLIP(VideoClip(0,5));
-        GiveKeyboardFocus(DetailsClipView()->getScalingSpin());
-        KeyboardKeyPressN(7,WXK_DELETE); // Remove all characters
-        KeyboardKeyPressN(10,'9'); // 999999999 will be replaced with 'max' value
-        KeyboardKeyPress(WXK_TAB);
-        ASSERT_CURRENT_COMMAND_TYPE<model::ChangeVideoClipTransform>(); // Verify that only one command object was added to the undo history
-        ASSERT_CLIPPROPERTIES(VideoClip(0,5),model::VideoScalingCustom,boost::rational<int>(model::Constants::sScalingMax,model::Constants::sScalingPrecisionFactor),model::VideoAlignmentCenter,wxPoint(-6040,-3312),0); // The scaling spin buttons increment with 0.01, not 0.0001
-        Undo();
     }
 }
 
@@ -575,8 +545,7 @@ void TestDetailsClip::testChangeVolume()
 
     {
         StartTest("Volume: Down via slider");
-        GiveKeyboardFocus(DetailsClipView()->getVolumeSlider());
-        KeyboardKeyPress(WXK_PAGEUP);
+        SetValue(DetailsClipView()->getVolumeSlider(),90); // Same as pressing PageUp
         ASSERT_CURRENT_COMMAND_TYPE<model::ChangeAudioClipVolume>(); // Verify that only one command object was added to the undo history
         ASSERT_VOLUME(90);
         Undo();
@@ -585,8 +554,7 @@ void TestDetailsClip::testChangeVolume()
     }
     {
         StartTest("Volume: Down via spin");
-        GiveKeyboardFocus(DetailsClipView()->getVolumeSpin());
-        KeyboardKeyPressN(4,WXK_DOWN); // Note: the click above is on the up arrow already triggering an increment of 1
+        SetValue(DetailsClipView()->getVolumeSpin(),97);
         ASSERT_CURRENT_COMMAND_TYPE<model::ChangeAudioClipVolume>(); // Verify that only one command object was added to the undo history
         ASSERT_VOLUME(97);
         Undo();
@@ -595,8 +563,7 @@ void TestDetailsClip::testChangeVolume()
     }
     {
         StartTest("Volume: Up via slider");
-        GiveKeyboardFocus(DetailsClipView()->getVolumeSlider());
-        KeyboardKeyPress(WXK_PAGEDOWN);
+        SetValue(DetailsClipView()->getVolumeSlider(),110);
         ASSERT_CURRENT_COMMAND_TYPE<model::ChangeAudioClipVolume>(); // Verify that only one command object was added to the undo history
         ASSERT_VOLUME(110);
         Undo();
@@ -605,8 +572,7 @@ void TestDetailsClip::testChangeVolume()
     }
     {
         StartTest("Volume: Up via spin");
-        GiveKeyboardFocus(DetailsClipView()->getVolumeSpin());
-        KeyboardKeyPressN(4,WXK_UP); // Note: the click above is on the up arrow already triggering an increment of 1
+        SetValue(DetailsClipView()->getVolumeSpin(),105);
         ASSERT_CURRENT_COMMAND_TYPE<model::ChangeAudioClipVolume>(); // Verify that only one command object was added to the undo history
         ASSERT_VOLUME(105);
         Undo();

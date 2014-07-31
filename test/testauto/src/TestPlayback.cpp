@@ -40,7 +40,7 @@ void TestPlayback::tearDown()
 void TestPlayback::testPlaybackUntilEndOfSequence()
 {
     StartTestSuite();
-    PositionCursor(RightPixel(VideoTrack(0)) - 5);
+    TimelinePositionCursor(RightPixel(VideoTrack(0)) - 5);
     WaitForPlayback playbackstarted(true);
     WaitForPlayback playbackstopped(false);
     TimelineKeyPress(' '); // todo refactor into TimelineStartPlayback
@@ -74,7 +74,7 @@ void TestPlayback::testPlaybackComplexSequence()
     MouseLeftUp();
 
     StartTest("Playback");
-    PositionCursor(RightPixel(VideoClip(1,1)) - 10);
+    TimelinePositionCursor(RightPixel(VideoClip(1,1)) - 10);
     for (int i = 0; i < 8; ++i)
     {
         WaitForPlayback playbackstarted(true);

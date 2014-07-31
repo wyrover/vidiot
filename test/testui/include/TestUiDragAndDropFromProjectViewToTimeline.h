@@ -15,19 +15,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TEST_TRANSFORM_H
-#define TEST_TRANSFORM_H
+#ifndef TEST_UI_DRAGANDDROP_FROM_PROJECTVIEW_TO_TIMELINE_H
+#define TEST_UI_DRAGANDDROP_FROM_PROJECTVIEW_TO_TIMELINE_H
 
-#include "TestAuto.h"
+#include "TestUi.h"
 
-namespace test
-{
+namespace test {
 
-class TestDetailsClip : public CxxTest::TestSuite // Must be on same line as class definition. Otherwise 'No tests defined error
-    ,   public SuiteCreator<TestDetailsClip>
+class TestUiDragAndDropFromProjectViewToTimeline : public CxxTest::TestSuite // Must be on same line as class definition. Otherwise 'No tests defined error
+    ,   public SuiteCreator<TestUiDragAndDropFromProjectViewToTimeline>
 {
 public:
-
     //////////////////////////////////////////////////////////////////////////
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
@@ -39,28 +37,26 @@ public:
     // TEST CASES
     //////////////////////////////////////////////////////////////////////////
 
-    void testChangeLength();
-
-    void testChangeLengthOfTransition();
-
-    /// After selecting a clip, then creating a fade in to the clip, and then immediately pressing
-    /// one of the length buttons still available caused a crash when applying the trim. This was
-    /// caused by the fact that the clip (as seen in the DetailsClip class) was no longer part of
-    /// the track because of the create transition (particularly, because a trim was executed on
-    /// the clip to make room for the transition). In fact, the details view showed the wrong clip
-    /// at that point (it still showed info on the 'pre-create-transition' clip).
-    void testChangeLengthAfterCreatingTransition();
-
-    void testTransform();
-
-    void testChangeVolume();
+    void testDragAndDropIntoEmptySequence();
+    void testDragAndDropAtEndOfSequence();
 
 private:
 
+    //////////////////////////////////////////////////////////////////////////
+    // MEMBERS
+    //////////////////////////////////////////////////////////////////////////
+
     FixtureProject mProjectFixture;
+
+    //////////////////////////////////////////////////////////////////////////
+    // HELPER METHODS
+    //////////////////////////////////////////////////////////////////////////
+
+    void OpenFolderWithInputFiles();
 };
 
-}
+} // namespace
+
 using namespace test;
 
 #endif

@@ -53,7 +53,7 @@ void TestBugs::testDetailsNotShownAfterMovingTimelineCursor()
 {
     StartTestSuite();
     TimelineLeftClick(Center(VideoClip(0,3)));
-    PositionCursor(HCenter(VideoClip(0,3)));
+    TimelinePositionCursor(HCenter(VideoClip(0,3)));
     TimelineLeftClick(Center(VideoClip(0,3)));
     ASSERT_DETAILSCLIP(VideoClip(0,3));
 }
@@ -81,22 +81,20 @@ void TestBugs::testErrorInGetNextHandlingForEmptyClips()
     Drag(From(Center(VideoClip(2,1))).AlignLeft(LeftPixel(VideoClip(1,1))));
 
     TimelineLeftClick(Center(VideoClip(1,1)));
-    MouseClickTopLeft(DetailsClipView()->getScalingSlider()); // Give focus
-    KeyboardKeyPressN(6,WXK_PAGEUP);
-    MouseClickTopLeft(DetailsClipView()->getPositionXSlider()); // Give focus
-    KeyboardKeyPressN(4,WXK_PAGEDOWN);
-    MouseClickTopLeft(DetailsClipView()->getPositionYSlider()); // Give focus
-    KeyboardKeyPressN(4,WXK_PAGEDOWN);
+    ASSERT_DETAILSCLIP(VideoClip(1,1));
+
+    SetValue(DetailsClipView()->getScalingSlider(), 4000); // Same as pressing 6 * PageUp
+    SetValue(DetailsClipView()->getPositionXSlider(), 424); // Same as pressing 4 * PageDown
+    SetValue(DetailsClipView()->getPositionYSlider(), 256); // Same as pressing 4 * PageDown
 
     TimelineLeftClick(Center(VideoClip(2,1)));
-    MouseClickTopLeft(DetailsClipView()->getScalingSlider()); // Give focus
-    KeyboardKeyPressN(6,WXK_PAGEUP);
-    MouseClickTopLeft(DetailsClipView()->getPositionXSlider()); // Give focus
-    KeyboardKeyPressN(4,WXK_PAGEUP);
-    MouseClickTopLeft(DetailsClipView()->getPositionYSlider()); // Give focus
-    KeyboardKeyPressN(4,WXK_PAGEUP);
+    ASSERT_DETAILSCLIP(VideoClip(2,1));
 
-    PositionCursor(LeftPixel(VideoClip(2,1)) - 5);
+    SetValue(DetailsClipView()->getScalingSlider(), 4000); // Same as pressing 6 * PageUp
+    SetValue(DetailsClipView()->getPositionXSlider(), 304); // Same as pressing 4 * PageUp
+    SetValue(DetailsClipView()->getPositionYSlider(), 176); // Same as pressing 4 * PageUp
+
+    TimelinePositionCursor(LeftPixel(VideoClip(2,1)) - 5);
 
     Play(LeftPixel(VideoClip(2,1)) - 3,2500); // Start before the clip, in the empty area. Due to a bug in 'getNext' handling for empty clips the clips after the empty area were not shown, or too late.
 
@@ -123,9 +121,9 @@ void TestBugs::testBugsWithLongTimeline()
     Config::setShowDebugInfo(true);
     TriggerMenu(ID_CLOSESEQUENCE);
 
-    extendSequenceWithRepeatedClips(sequence, mProjectFixture.InputFiles, 30);
+    ExtendSequenceWithRepeatedClips(sequence, mProjectFixture.InputFiles, 30);
 
-    openTimelineForSequence(sequence);
+    OpenTimelineForSequence(sequence);
     Zoom level(4);
     TimelineKeyPress(WXK_END); // Move scrollbars to end
 
@@ -141,7 +139,7 @@ void TestBugs::testBugsWithLongTimeline()
     }
     {
         StartTest("Bug: Playback did not stop after pressing shift");
-        PositionCursor(HCenter(VideoClip(0,-2)));
+        TimelinePositionCursor(HCenter(VideoClip(0,-2)));
         // NOTE: Don't use waitForIdle() when the video is playing!!!
         //       When the video is playing, the system does not become Idle (playback events).
         TimelineKeyPress(' ');
@@ -151,9 +149,8 @@ void TestBugs::testBugsWithLongTimeline()
         pause(1000);
         TimelineKeyUp(wxMOD_SHIFT);
         pause(1000);
-        TimelineKeyPress(' ');
-        waitForIdle();
         SetWaitAfterEachInputAction(true);
+        TimelineKeyPress(' ');
         TimelineLeftClick(Center(VideoClip(0,-2)));
         TimelineKeyPress(WXK_DELETE);
         ASSERT(VideoClip(0,-2)->isA<model::EmptyClip>());
@@ -180,7 +177,7 @@ void TestBugs::testPlaybackEmptyClip()
 
     TimelineLeftClick(Center(VideoClip(0,3)));
     TimelineKeyPress(WXK_DELETE);
-    PositionCursor(HCenter(VideoClip(0,3)));
+    TimelinePositionCursor(HCenter(VideoClip(0,3)));
     model::VideoFramePtr frame = boost::dynamic_pointer_cast<model::EmptyClip>(VideoClip(0,3))->getNextVideo(model::VideoCompositionParameters().setBoundingBox(wxSize(100,100)));
     ASSERT_NONZERO(frame);
     model::AudioChunkPtr chunk = boost::dynamic_pointer_cast<model::EmptyClip>(AudioClip(0,3))->getNextAudio(model::AudioCompositionParameters());
@@ -195,7 +192,7 @@ void TestBugs::testTrimmingClipAdjacentToZeroLengthClipUsedForTransition()
     Zoom level(6);
     {
         StartTest("Clip to the right of the trim has length 0.");
-        OpenPopupMenuAt(Center(VideoClip(0,1)));
+        TimelineLeftClick(Center(VideoClip(0,1)));
         TimelineKeyPress('o'); // fade &out
         ShiftTrim(LeftCenter(VideoClip(0,1)), RightCenter(VideoClip(0,1))  + wxPoint(10,0)); // Create a clip with length 0
         ASSERT_ZERO(VideoClip(0,1)->getLength());
@@ -205,7 +202,7 @@ void TestBugs::testTrimmingClipAdjacentToZeroLengthClipUsedForTransition()
     }
     {
         StartTest("Clip to the left of the trim has length 0.");
-        OpenPopupMenuAt(Center(VideoClip(0,0)));
+        TimelineLeftClick(Center(VideoClip(0,0)));
         TimelineKeyPress('i'); // fade &in
         ShiftTrim(RightCenter(VideoClip(0,1)), LeftCenter(VideoClip(0,1)) + wxPoint(-10,0)); // Create a clip with length 0
         ASSERT_ZERO(VideoClip(0,1)->getLength());
@@ -221,8 +218,10 @@ void TestBugs::testDeleteClipInbetweenTransitionsCausesTimelineMessUp()
     Zoom level(6);
     MakeInOutTransitionAfterClip t1(1);
     MakeInOutTransitionAfterClip t2(0);
-    OpenPopupMenuAt(Center(VideoClip(0,2)));
-    TimelineKeyPress('t');
+    TimelineLeftClick(Center(VideoClip(0,2)));
+    TimelineKeyDown(wxMOD_SHIFT);
+    TimelineKeyPress(WXK_DELETE);
+    TimelineKeyUp(wxMOD_SHIFT);
     ASSERT_EQUALS(VideoClip(0,1)->getLeftPts(), AudioClip(0,1)->getLeftPts());
     ASSERT_EQUALS(VideoTrack(0)->getLength(),AudioTrack(0)->getLength());
     ASSERT_EQUALS(VideoClip(0,4)->getRightPts(), AudioClip(0,4)->getRightPts());
@@ -323,6 +322,7 @@ void TestBugs::testShiftTrimNotAllowedWithAdjacentClipInOtherTrack()
 void TestBugs::testAddNonexistentFileViaRedo()
 {
     StartTestSuite();
+    TriggerMenu(ID_CLOSESEQUENCE);
 
     // Create temp dir with temp file
     RandomTempDirPtr tempDir = boost::make_shared<RandomTempDir>();
@@ -354,12 +354,14 @@ void TestBugs::testAddNonexistentFileViaRedo()
 
     // Now make the sequence (is empty)
     model::SequencePtr sequence1 = createSequence( folder1 );
-
+    ASSERT_ZERO(VideoTrack(0)->getLength());
+    ASSERT_ZERO(AudioTrack(0)->getLength());
 }
 
 void TestBugs::testAddNonexistentFileViaUndo()
 {
     StartTestSuite();
+    TriggerMenu(ID_CLOSESEQUENCE);
 
     // Create temp dir with temp file
     RandomTempDirPtr tempDir = boost::make_shared<RandomTempDir>();
@@ -391,7 +393,8 @@ void TestBugs::testAddNonexistentFileViaUndo()
 
     // Now make the sequence (is empty)
     model::SequencePtr sequence1 = createSequence( folder1 );
-
+    ASSERT_ZERO(VideoTrack(0)->getLength());
+    ASSERT_ZERO(AudioTrack(0)->getLength());
 }
 
 void TestBugs::testPlaybackWithMultipleAudioTracks()

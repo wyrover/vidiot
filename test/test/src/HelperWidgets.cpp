@@ -56,6 +56,15 @@ void SetValue(wxSlider* widget, int value)
     waitForIdle();
 }
 
+void SetValue(wxSpinCtrl* widget, int value)
+{
+    widget->SetValue(value);
+    wxSpinEvent* event = new wxSpinEvent(wxEVT_SPINCTRL,0);
+    event->SetValue(value);
+    widget->GetEventHandler()->QueueEvent(event);
+    waitForIdle();
+}
+
 void SetValue(wxSpinCtrlDouble* widget, double value)
 {
     widget->SetValue(value);

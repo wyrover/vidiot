@@ -36,6 +36,12 @@ void SetValue(wxSlider* widget, int value);
 /// proper event signaling the update to the application.
 /// \param widget widget to be changed
 /// \param value new value of the slider
+void SetValue(wxSpinCtrl* widget, int value);
+
+/// Set the value of the control to the given value AND generate 
+/// proper event signaling the update to the application.
+/// \param widget widget to be changed
+/// \param value new value of the slider
 void SetValue(wxSpinCtrlDouble* widget, double value);
 
 /// Set the value of the control to the given value AND generate 

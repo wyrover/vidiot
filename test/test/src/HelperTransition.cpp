@@ -83,7 +83,7 @@ void MakeTransitionAfterClip::dontUndo()
 void MakeTransitionAfterClip::makeTransition()
 {
     storeVariablesBeforeMakingTransition();
-    PositionCursor(LeftPixel(GetClip(0,clipNumberAfterTransition)));
+    TimelinePositionCursor(LeftPixel(GetClip(0,clipNumberAfterTransition)));
     moveMouseAndCreateTransition(clipNumberAfterTransition);
     storeVariablesAfterMakingTransition();
 }

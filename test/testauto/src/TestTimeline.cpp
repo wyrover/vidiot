@@ -780,7 +780,7 @@ void TestTimeline::testShowDebugInfo()
     model::SequencePtr sequence = getSequence();
     Config::setShowDebugInfo(true);
     TriggerMenu(ID_CLOSESEQUENCE);
-    openTimelineForSequence(sequence);
+    OpenTimelineForSequence(sequence);
     Config::setShowDebugInfo(false);
 }
 
