@@ -15,16 +15,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TEST_DIALOG_H
-#define TEST_DIALOG_H
+#ifndef TEST_UI_DIALOG_H
+#define TEST_UI_DIALOG_H
 
-#include "TestAuto.h"
+#include "TestUi.h"
 
 namespace test
 {
 
-class TestDialog : public CxxTest::TestSuite // Must be on same line as class definition. Otherwise 'No tests defined error
-    ,   public SuiteCreator<TestDialog>
+class TestUiDialog : public CxxTest::TestSuite // Must be on same line as class definition. Otherwise 'No tests defined error
+    ,   public SuiteCreator<TestUiDialog>
 {
 public:
 

@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#include "TestDialog.h"
+#include "TestUiDialog.h"
 
 namespace test {
 
@@ -23,11 +23,11 @@ namespace test {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-void TestDialog::setUp()
+void TestUiDialog::setUp()
 {
 }
 
-void TestDialog::tearDown()
+void TestUiDialog::tearDown()
 {
 }
 
@@ -86,7 +86,7 @@ private:
     boost::scoped_ptr<boost::thread> mThread;
 };
 
-void TestDialog::testEscape()
+void TestUiDialog::testEscape()
 {
     StartTestSuite();
     {
