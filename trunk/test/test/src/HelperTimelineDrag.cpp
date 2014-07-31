@@ -78,7 +78,7 @@ DragParams DontReleaseMouse()         { return DragParams().DontReleaseMouse(); 
 DragParams AlignLeft(pixel position)  { return DragParams().AlignLeft(position); }
 DragParams AlignRight(pixel position) { return DragParams().AlignRight(position); }
 
-void Drag(const DragParams& params)
+void TimelineDrag(const DragParams& params)
 {
     VAR_DEBUG(params);
     ASSERT(!params.mHoldShiftWhileDragging || !params.mHoldCtrlBeforeDragStarts); // Can't handle both in one action (at least, never tested this)
@@ -154,7 +154,7 @@ void Drag(const DragParams& params)
     if (params.mHoldShiftWhileDragging) { TimelineKeyUp(wxMOD_SHIFT); }
 }
 
-void DragToTrack(int newtrackindex, model::IClipPtr videoclip, model::IClipPtr audioclip)
+void TimelineDragToTrack(int newtrackindex, model::IClipPtr videoclip, model::IClipPtr audioclip)
 {
     if (videoclip)
     {
@@ -163,7 +163,7 @@ void DragToTrack(int newtrackindex, model::IClipPtr videoclip, model::IClipPtr a
         {
             params.DontReleaseMouse();
         }
-        Drag(params);
+        TimelineDrag(params);
     }
     if (videoclip && audioclip)
     {
@@ -173,7 +173,7 @@ void DragToTrack(int newtrackindex, model::IClipPtr videoclip, model::IClipPtr a
     }
     if (audioclip)
     {
-        Drag(From(Center(audioclip)).To(wxPoint(HCenter(audioclip),VCenter(AudioTrack(newtrackindex)))));
+        TimelineDrag(From(Center(audioclip)).To(wxPoint(HCenter(audioclip),VCenter(AudioTrack(newtrackindex)))));
     }
 }
 

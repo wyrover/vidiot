@@ -82,14 +82,14 @@ DragParams AlignRight(pixel position);  ///< \see DragParams::AlignRight
 /// Do a drag and drop between the two points (press, move, release).
 /// \see DragParams class for usage
 /// \note If the mouse is not yet down, it is pressed before the drag is started, AFTER moving to the 'from' point.
-void Drag(const DragParams& params = DragParams());
+void TimelineDrag(const DragParams& params = DragParams());
 
 /// Drag videoclip to VideoTrack(newtrackindex) and
 /// Drag audioclip to AudioTrack(newtrackindex)
 /// \param videoclip video clip to be moved to the video track with index newtrackindex
 /// \param audioclip audio clip to be moved to the audio track with index newtrackindex
 /// \param newtrackindex new track of clip
-void DragToTrack(int newtrackindex, model::IClipPtr videoclip, model::IClipPtr audioclip);
+void TimelineDragToTrack(int newtrackindex, model::IClipPtr videoclip, model::IClipPtr audioclip);
 
 } // namespace
 

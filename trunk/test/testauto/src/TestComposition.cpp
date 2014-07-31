@@ -41,8 +41,8 @@ void TestComposition::testBlend()
 {
     StartTestSuite();
     TriggerMenu(ID_ADDVIDEOTRACK);
-    DragToTrack(1,VideoClip(0,3),model::IClipPtr());
-    Drag(From(Center(VideoClip(1,1))).To(wxPoint(HCenter(VideoClip(0,4)),VCenter(VideoClip(1,1)))));
+    TimelineDragToTrack(1,VideoClip(0,3),model::IClipPtr());
+    TimelineDrag(From(Center(VideoClip(1,1))).To(wxPoint(HCenter(VideoClip(0,4)),VCenter(VideoClip(1,1)))));
 
     SetValue(DetailsClipView()->getScalingSlider(),7000); // Same as pressing 3 * PageUp
     SetValue(DetailsClipView()->getPositionXSlider(),232); // Same as pressing 4 * PageUp
@@ -64,8 +64,8 @@ void TestComposition::testAudioComposition()
 {
     StartTestSuite();
     TriggerMenu(ID_ADDAUDIOTRACK);
-    DragToTrack(1,model::IClipPtr(),AudioClip(0,3));
-    Drag(From(Center(AudioClip(1,1))).To(wxPoint(HCenter(AudioClip(0,4)),VCenter(AudioClip(1,1)))));
+    TimelineDragToTrack(1,model::IClipPtr(),AudioClip(0,3));
+    TimelineDrag(From(Center(AudioClip(1,1))).To(wxPoint(HCenter(AudioClip(0,4)),VCenter(AudioClip(1,1)))));
     Play(HCenter(AudioClip(1,1)),1500);
 }
 

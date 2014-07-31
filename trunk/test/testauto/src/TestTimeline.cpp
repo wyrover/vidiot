@@ -341,7 +341,7 @@ void TestTimeline::testUndo()
     StartTestSuite();
     ConfigFixture.SnapToClips(true);
     pts length = VideoClip(0,3)->getLength();
-    Drag(From(Center(VideoClip(0,3))).To(wxPoint(2,Center(VideoClip(0,3)).y)));
+    TimelineDrag(From(Center(VideoClip(0,3))).To(wxPoint(2,Center(VideoClip(0,3)).y)));
     ASSERT_EQUALS(VideoClip(0,0)->getLength(),length);
     Undo();
     ASSERT_EQUALS(VideoClip(0,3)->getLength(),length);
@@ -352,7 +352,7 @@ void TestTimeline::testUndo()
 
     // Move clip 2: the transition must be removed
     DeselectAllClips();
-    Drag(From(Center(VideoClip(0,1))).To(Center(VideoClip(0,4))));
+    TimelineDrag(From(Center(VideoClip(0,1))).To(Center(VideoClip(0,4))));
     ASSERT(VideoClip(0,1)->isA<model::EmptyClip>());
     ASSERT(!VideoClip(0,2)->isA<model::Transition>());
     Undo();
@@ -362,7 +362,7 @@ void TestTimeline::testUndo()
     // Move clip 3: the transition must be removed and the fourth clip becomes the third one (clip+transition removed)
     model::IClipPtr afterclip = VideoClip(0,4);
     DeselectAllClips();
-    Drag(From(Center(VideoClip(0,3))).To(Center(VideoClip(0,5))));
+    TimelineDrag(From(Center(VideoClip(0,3))).To(Center(VideoClip(0,5))));
     ASSERT_EQUALS(afterclip,VideoClip(0,3));
     ASSERT(VideoClip(0,2)->isA<model::EmptyClip>());
     ASSERT(!VideoClip(0,2)->isA<model::Transition>());
@@ -387,7 +387,7 @@ void TestTimeline::testAbortDrag()
         ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
 
         DeselectAllClips();
-        Drag(From(Center(VideoClip(0,5))).To(Center(VideoClip(0,4))).DontReleaseMouse());
+        TimelineDrag(From(Center(VideoClip(0,5))).To(Center(VideoClip(0,4))).DontReleaseMouse());
         TimelineKeyDown(wxMOD_SHIFT);
         TimelineMove(Center(VideoClip(0,3)));
         TimelineKeyPress(WXK_ESCAPE); // Abort the drop
@@ -574,7 +574,7 @@ void TestTimeline::testTrimmingWithOtherTracks()
         TrimRight(VideoClip(0,3),-40,false);
         pts length = VideoClip(0,3)->getLength();
         ASSERT(VideoClip(0,3)->isA<model::VideoClip>());
-        Drag(From(Center(VideoClip(0,3))).AlignLeft(RightPixel(VideoClip(0,7))));
+        TimelineDrag(From(Center(VideoClip(0,3))).AlignLeft(RightPixel(VideoClip(0,7))));
         TrimRight(VideoClip(0,7),20,false);
         ASSERT_MORE_THAN(VideoClip(0,7)->getLength(), length);
         Undo(3);
@@ -614,7 +614,7 @@ void TestTimeline::testTrimmingWithOtherTracks()
     }
     {
         StartTest("Make a clip in another track (preparation).");
-        DragToTrack(1,VideoClip(0,3),AudioClip(0,3));
+        TimelineDragToTrack(1,VideoClip(0,3),AudioClip(0,3));
         ASSERT_VIDEOTRACK1(EmptyClip)                      (VideoClip);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(EmptyClip)(VideoClip)(VideoClip);
         ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(EmptyClip)(AudioClip)(AudioClip);
@@ -633,7 +633,7 @@ void TestTimeline::testTrimmingWithOtherTracks()
     {
         StartTest("Move the 'to be tested' clip's left point inbetween the clip in the other track (preparation).");
         ASSERT(!getTimeline().getKeyboard().getShiftDown());
-        Drag(From(Center(VideoClip(0,4))).AlignLeft(HCenter(VideoClip(0,3))));
+        TimelineDrag(From(Center(VideoClip(0,4))).AlignLeft(HCenter(VideoClip(0,3))));
         ASSERT_LESS_THAN(VideoTrack(1)->getLength(),VideoTrack(0)->getLength());
         ASSERT_LESS_THAN(AudioTrack(1)->getLength(),AudioTrack(0)->getLength());
         ASSERT(!getTimeline().getKeyboard().getShiftDown());
@@ -663,7 +663,7 @@ void TestTimeline::testTrimmingWithOtherTracks()
     {
         StartTest("Move the clip in the other track over the end of the tested clip (preparation).");
         ASSERT(!getTimeline().getKeyboard().getShiftDown());
-        Drag(From(Center(VideoClip(1,1))).To(wxPoint(RightPixel(VideoClip(0,4)),VCenter(VideoTrack(1)))));
+        TimelineDrag(From(Center(VideoClip(1,1))).To(wxPoint(RightPixel(VideoClip(0,4)),VCenter(VideoTrack(1)))));
         ASSERT(!getTimeline().getKeyboard().getShiftDown());
         ASSERT_VIDEOTRACK1(EmptyClip)(VideoClip);
         ASSERT_EQUALS(VideoTrack(1)->getClips().size(),2);
@@ -679,7 +679,7 @@ void TestTimeline::testTrimmingWithOtherTracks()
     {
         StartTest("Ensure that there's a clip in another track before AND after AND 'inbetween' the clip under test (preparation).");
         Undo(2);
-        DragToTrack(1,VideoClip(0,5),AudioClip(0,5));
+        TimelineDragToTrack(1,VideoClip(0,5),AudioClip(0,5));
         TrimRight(VideoClip(0,6),-40);
     }
     {
@@ -691,7 +691,7 @@ void TestTimeline::testTrimmingWithOtherTracks()
         ASSERT_AUDIOTRACK1(EmptyClip)                      (AudioClip)(EmptyClip)(AudioClip);
         ASSERT_EQUALS(VideoClip(1,3)->getRightPts(),VideoClip(0,6)->getLeftPts());
         ASSERT_EQUALS(AudioClip(1,3)->getRightPts(),AudioClip(0,6)->getLeftPts());
-        DragToTrack(1,VideoClip(0,6),AudioClip(0,6));
+        TimelineDragToTrack(1,VideoClip(0,6),AudioClip(0,6));
         ASSERT(!getTimeline().getKeyboard().getShiftDown());
         ASSERT_VIDEOTRACK1(EmptyClip)                      (VideoClip)(EmptyClip)(VideoClip)(VideoClip);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(EmptyClip)(VideoClip);
@@ -703,13 +703,13 @@ void TestTimeline::testTrimmingWithOtherTracks()
         ASSERT_EQUALS(AudioClip(1,1)->getLeftPts(),AudioClip(0,3)->getLeftPts());
         ASSERT_EQUALS(VideoClip(1,3)->getLeftPts(),VideoClip(0,4)->getRightPts());
         ASSERT_EQUALS(AudioClip(1,3)->getLeftPts(),AudioClip(0,4)->getRightPts());
-        Drag(From(Center(VideoClip(1,1))).To(Center(VideoClip(1,1))-wxPoint(8,0)));
+        TimelineDrag(From(Center(VideoClip(1,1))).To(Center(VideoClip(1,1))-wxPoint(8,0)));
         ASSERT(!getTimeline().getKeyboard().getShiftDown());
         ASSERT_VIDEOTRACK1(EmptyClip)(VideoClip)(EmptyClip)(VideoClip)(VideoClip);
-        Drag(From(Center(VideoClip(1,3))).To(Center(VideoClip(1,3))+wxPoint(8,0)));
+        TimelineDrag(From(Center(VideoClip(1,3))).To(Center(VideoClip(1,3))+wxPoint(8,0)));
         ASSERT(!getTimeline().getKeyboard().getShiftDown());
         ASSERT_VIDEOTRACK1(EmptyClip)(VideoClip)(EmptyClip)(VideoClip)(VideoClip);
-        Drag(From(Center(VideoClip(1,4))).AlignLeft(LeftPixel(VideoClip(0,4))+20));
+        TimelineDrag(From(Center(VideoClip(1,4))).AlignLeft(LeftPixel(VideoClip(0,4))+20));
         ASSERT_VIDEOTRACK1(EmptyClip)                   (VideoClip)(EmptyClip)(VideoClip)(EmptyClip)(VideoClip);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(EmptyClip)(       VideoClip      );
         ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(EmptyClip)(       AudioClip      );
@@ -758,7 +758,7 @@ void TestTimeline::testTrimmingWithOtherTracks()
         // NOTE: At this point the scrolling has been changed. Trimming and snapping with a scroll offset is thus also tested.
         ConfigFixture.SnapToClips(true).SnapToCursor(false);
         TrimLeft(VideoClip(0,4),40,false);
-        Drag(From(Center(VideoClip(0,6))).To(wxPoint(HCenter(VideoClip(0,4)),VCenter(getSequence()->getVideoTrack(1)))));
+        TimelineDrag(From(Center(VideoClip(0,6))).To(wxPoint(HCenter(VideoClip(0,4)),VCenter(getSequence()->getVideoTrack(1)))));
         ASSERT_EQUALS(VideoClip(0,5)->getLink(),AudioClip(0,5));
         ASSERT_EQUALS(VideoClip(1,1)->getLink(),AudioClip(0,4));
         TrimLeft(VideoClip(0,5),10,false,false);

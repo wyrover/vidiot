@@ -57,8 +57,8 @@ void TestPlayback::testPlaybackComplexSequence()
     MakeInOutTransitionAfterClip preparation(3);
 
     StartTest("Preparation: Make a video clip in another track to test that skipping compositions works.");
-    DragToTrack(1,VideoClip(0,6),model::IClipPtr()); //
-    Drag(From(Center(VideoClip(1,1))).AlignLeft(LeftPixel(VideoClip(0,2))));
+    TimelineDragToTrack(1,VideoClip(0,6),model::IClipPtr()); //
+    TimelineDrag(From(Center(VideoClip(1,1))).AlignLeft(LeftPixel(VideoClip(0,2))));
     TimelineLeftClick(Center(VideoClip(1,1)));
     MouseClickTopLeft(DetailsClipView()->getOpacitySlider()); // Give focus
     KeyboardKeyPressN(3,WXK_PAGEUP);
