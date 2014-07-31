@@ -42,7 +42,7 @@ void TestSplitting::testSplitting()
     StartTestSuite();
     MakeInOutTransitionAfterClip preparation(1);
     {
-        PositionCursor(HCenter(VideoClip(0,2)));
+        TimelinePositionCursor(HCenter(VideoClip(0,2)));
         TimelineKeyPress('s');
         ASSERT(!VideoClip(0,0)->isA<model::Transition>());
         ASSERT(!VideoClip(0,1)->isA<model::Transition>());
@@ -52,7 +52,7 @@ void TestSplitting::testSplitting()
         Undo();
     }
     {
-        PositionCursor(LeftPixel(VideoClip(0,2)));
+        TimelinePositionCursor(LeftPixel(VideoClip(0,2)));
         TimelineKeyPress('s');
         ASSERT(!VideoClip(0,0)->isA<model::Transition>());
         ASSERT(!VideoClip(0,1)->isA<model::Transition>());
@@ -62,7 +62,7 @@ void TestSplitting::testSplitting()
         Undo();
     }
     {
-        PositionCursor(RightPixel(VideoClip(0,2)));
+        TimelinePositionCursor(RightPixel(VideoClip(0,2)));
         TimelineKeyPress('s');
         ASSERT(!VideoClip(0,0)->isA<model::Transition>());
         ASSERT(!VideoClip(0,1)->isA<model::Transition>());
@@ -77,7 +77,7 @@ void TestSplitting::testSplittingDuringPlayback()
 {
     StartTestSuite();
     StartTest("Start playback");
-    PositionCursor(HCenter(VideoClip(0,4)));
+    TimelinePositionCursor(HCenter(VideoClip(0,4)));
     WaitForPlaybackStarted started;
     TimelineKeyPress(' ');
     started.wait();

@@ -38,12 +38,15 @@ std::pair<model::IClipPtr, model::IClipPtr> ClipCreator::makeClips(model::FilePt
 {
     ASSERT(file);
     ASSERT(file->canBeOpened())(file);
+    ASSERT(file->hasVideo() || file->hasAudio())(file);
 
     pts length = file->getLength();
+    ASSERT_MORE_THAN_ZERO(length);
 
     model::IClipPtr videoClip;
     model::IClipPtr audioClip;
 
+    // Create video and/or audio clips
     if (file->hasVideo())
     {
         if (length == 1)
@@ -55,23 +58,33 @@ std::pair<model::IClipPtr, model::IClipPtr> ClipCreator::makeClips(model::FilePt
             videoClip = boost::make_shared<model::VideoClip>(boost::make_shared<model::VideoFile>(file->getPath()));
         }
     }
-    else
-    {
-        videoClip = boost::make_shared<model::EmptyClip>(length);
-    }
     if (file->hasAudio())
     {
         audioClip = boost::make_shared<model::AudioClip>(boost::make_shared<model::AudioFile>(file->getPath()));
     }
-    else
-    {
-        audioClip = boost::make_shared<model::EmptyClip>(length);
-    }
-    if (file->hasVideo() && file->hasAudio())
+    
+    // Link the clips if both audio and video data is available
+    if (videoClip != nullptr && audioClip != nullptr)
     {
         videoClip->setLink(audioClip);
         audioClip->setLink(videoClip);
     }
+
+    // Create emptyclips for the 'nonexistent' data.
+    // Note: Use the length of the other clip. This is required to ensure that the alignment of clips is correct.
+    //       For instance, for images the file length == 1, but the clip length equals the default still image length (typically > 1).
+    if (videoClip == nullptr)
+    {
+        videoClip = boost::make_shared<model::EmptyClip>(audioClip->getLength());
+    }
+    if (audioClip == nullptr)
+    {
+        audioClip = boost::make_shared<model::EmptyClip>(videoClip->getLength());
+    }
+
+    ASSERT_NONZERO(videoClip);
+    ASSERT_NONZERO(audioClip);
+    ASSERT_EQUALS(videoClip->getLength(),audioClip->getLength());
     return std::make_pair(videoClip,audioClip);
 }
 

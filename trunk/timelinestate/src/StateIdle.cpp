@@ -20,7 +20,7 @@
 #include "AudioTransitionFactory.h"
 #include "Clip.h"
 #include "ClipView.h"
-#include "CreateTransition.h"
+#include "CreateTransitionHelper.h"
 #include "Cursor.h"
 #include "Drag.h"
 #include "EmptyClip.h"
@@ -124,7 +124,7 @@ boost::statechart::result Idle::react( const EvKeyDown& evt)
         break;
     case WXK_DELETE:
         evt.consumed();
-        getSelection().deleteClips();
+        getSelection().deleteClips(getKeyboard().getShiftDown());
         break;
     case WXK_F1:
         getTooltip().show(sTooltip);
@@ -334,7 +334,7 @@ void Idle::addTransition(model::TransitionType type)
 
         ASSERT(info.track);
         model::TransitionPtr transition = info.track->isA<model::VideoTrack>() ? model::video::VideoTransitionFactory::get().getDefault() : model::audio::AudioTransitionFactory::get().getDefault();
-        model::ProjectModification::submitIfPossible(new command::CreateTransition(getSequence(), info.clip, transition, type));
+        ::gui::timeline::command::createTransition(getSequence(), info.clip, type, transition);
     }
 }
 

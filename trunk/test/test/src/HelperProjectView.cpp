@@ -258,7 +258,7 @@ void DragFromProjectViewToTimeline( model::NodePtr node, wxPoint to )
     waitForIdle(); // Can be used again when the DND is done.
 }
 
-void openTimelineForSequence(model::SequencePtr sequence)
+void OpenTimelineForSequence(model::SequencePtr sequence)
 {
     RunInMainAndWait([sequence]
     {

@@ -90,17 +90,12 @@ void TestFileTypes::executeTest(wxString filetypesDir)
     // Wav files from: http://www-mmsp.ece.mcgill.ca/documents/AudioFormats/WAVE/Samples.html
     // Some files from http://samples.mplayerhq.hu/
 
-    // Create the project (must be done after ConfigOverrule* code)
-    model::FolderPtr mRoot = createProject();
-    ASSERT(mRoot);
+    // Create project (must be done after ConfigOverrule* code)
+    model::FolderPtr root = createProject();
+    ASSERT(root);
     wxString sSequence( "Sequence" );
-    model::SequencePtr mSequence = addSequence( sSequence, mRoot );
-
-    TimelineLeftClick(wxPoint(2,2)); // Click in the timeline to give it the focus.
-    Zoom level(4);
-
-    wxString sFolder1( "Folder1" );
-    model::FolderPtr folder1 = addFolder( sFolder1 );
+    model::SequencePtr sequence = addSequence( sSequence, root );
+    TriggerMenu(ID_CLOSESEQUENCE);
 
     // Find input files in dir (must be done after creating a project, due to dependencies on project properties for opening/closing files)
     wxFileName TestFilesPath = getTestPath();
@@ -112,51 +107,18 @@ void TestFileTypes::executeTest(wxString filetypesDir)
     for ( model::IPathPtr path : InputFiles )
     {
         StartTest(path->getPath().GetFullName());
-        model::Files files1 = addFiles( boost::assign::list_of(path->getPath().GetFullPath()), folder1 );
-
-        model::FilePtr file = files1.front();
-        if (file->hasVideo())
-        {
-            DragFromProjectViewToTimeline( file,  getTimeline().GetScreenPosition() - getTimeline().getScrolling().getOffset()  + wxPoint(0, VCenter(VideoTrack(0))) );
-        }
-        else
-        {
-            ASSERT(file->hasAudio());
-            DragFromProjectViewToTimeline( file,  getTimeline().GetScreenPosition() - getTimeline().getScrolling().getOffset()  + wxPoint(0, VCenter(AudioTrack(0))) );
-        }
-        if (file->hasVideo())
-        {
-            ASSERT_VIDEOTRACK0(VideoClip);
-            ASSERT_EQUALS(VideoTrack(0)->getLength(),VideoClip(0,0)->getLength());
-        }
-        else
-        {
-            ASSERT_ZERO(VideoTrack(0)->getLength());
-        }
-        if (file->hasAudio())
-        {
-            ASSERT_AUDIOTRACK0(AudioClip);
-            ASSERT_EQUALS(AudioTrack(0)->getLength(),AudioClip(0,0)->getLength());
-        }
-        else
-        {
-            ASSERT_ZERO(AudioTrack(0)->getLength());
-        }
-        if (file->hasVideo())
-        {
-            Play(LeftPixel(VideoClip(0,0)), 1000);
-            Play(HCenter(VideoClip(0,0)), 1000);
-        }
-        else
-        {
-            Play(HCenter(AudioClip(0,0)), 1000);
-        }
-        Undo(2);
+        model::FilePtr file = boost::make_shared<model::File>(path->getPath());
+        ExtendSequenceWithRepeatedClips( sequence, boost::assign::list_of(path), 1); // Note: Not via a command (thus, 'outside' the undo system)
+        OpenTimelineForSequence(sequence);
+        Zoom level(5);
+        ASSERT_EQUALS(NumberOfVideoClipsInTrack(0),1);
+        ASSERT_EQUALS(NumberOfAudioClipsInTrack(0),1);
+        ASSERT_EQUALS(VideoTrack(0)->getLength(),AudioTrack(0)->getLength());
+        Play(LeftPixel(VideoClip(0,0)), 1000);
+        Play(HCenter(VideoClip(0,0)), 1000);
+        TriggerMenu(ID_CLOSESEQUENCE);
+        makeSequenceEmpty(sequence); // Note: Not via a command (thus, 'outside' the undo system)
     }
-
-    InputFiles.clear();
-    mRoot.reset();
-    mSequence.reset();
 }
 
 } // namespace

@@ -53,8 +53,6 @@ public:
 
     void testTransform();
 
-    void testTransform_Boundaries();
-
     void testChangeVolume();
 
 private:

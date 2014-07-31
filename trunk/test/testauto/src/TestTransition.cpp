@@ -1366,8 +1366,8 @@ void TestTransition::testSplitNearZeroLengthEdgeOfTransition()
         pts length1 = VideoClip(0,1)->getLength();
         pts length2 = VideoClip(0,3)->getLength();
         
-        PositionCursor(10); // Was required to get the next position properly
-        PositionCursor(LeftPixel(VideoClip(0,2))); // Ensure that the split is done exactly at the left edge of the transition
+        TimelinePositionCursor(10); // Was required to get the next position properly
+        TimelinePositionCursor(LeftPixel(VideoClip(0,2))); // Ensure that the split is done exactly at the left edge of the transition
         TimelineKeyPress('s');
         
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip); // Transition removed
@@ -1386,8 +1386,8 @@ void TestTransition::testSplitNearZeroLengthEdgeOfTransition()
         pts length1 = VideoClip(0,1)->getLength();
         pts length2 = VideoClip(0,3)->getLength();
         
-        PositionCursor(10); // Was required to get the next position properly
-        PositionCursor(LeftPixel(VideoClip(0,3))); // Ensure that the split is done exactly at the right edge of the transition
+        TimelinePositionCursor(10); // Was required to get the next position properly
+        TimelinePositionCursor(LeftPixel(VideoClip(0,3))); // Ensure that the split is done exactly at the right edge of the transition
         TimelineKeyPress('s');
         
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip); // Transition removed

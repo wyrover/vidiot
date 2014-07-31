@@ -42,6 +42,7 @@ extern "C" {
 #include <atomic>
 #include <climits>
 #include <cmath>
+#include <cstddef>
 #include <cstdio>
 #include <ctime>
 #include <fstream>

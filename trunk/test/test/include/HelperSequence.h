@@ -20,9 +20,11 @@
 
 namespace test {
 
-void extendSequenceWithRepeatedClips( model::SequencePtr sequence, model::IPaths files, int nRepeat );
+void ExtendSequenceWithRepeatedClips( model::SequencePtr sequence, model::IPaths files, int nRepeat );
 
 void extendSequenceWithStillImage( model::SequencePtr sequence );
+
+void makeSequenceEmpty( model::SequencePtr sequence );
 
 } // namespace
 

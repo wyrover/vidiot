@@ -328,7 +328,7 @@ pixel CursorPosition()
     return getTimeline().getScrolling().ptsToPixel(getTimeline().getCursor().getLogicalPosition());
 }
 
-void PositionCursor(pixel position)
+void TimelinePositionCursor(pixel position)
 {
     VAR_DEBUG(position);
     TimelineLeftClick(wxPoint(position, gui::Layout::VideoPosition - 4));
@@ -383,7 +383,7 @@ void Scrub(pixel from, pixel to)
     VAR_DEBUG(from)(to);
     for (int i = from; i < to; ++i)
     {
-        PositionCursor(i);
+        TimelinePositionCursor(i);
     }
 }
 

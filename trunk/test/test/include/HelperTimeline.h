@@ -175,7 +175,7 @@ void TimelineTriggerWheel(int nSteps);
 
 pixel CursorPosition();                              ///< \return cursor position
 
-void PositionCursor(pixel position);                 ///< Move the mouse and then click the left button, in order to move the cursor line to the given position
+void TimelinePositionCursor(pixel position);                 ///< Move the mouse and then click the left button, in order to move the cursor line to the given position
 
 /// Zoom in the given amount of times by zooming in the given amount of times.
 /// When going out of scope, will reset to the default zoom level by zooming out an equal amount of times.
