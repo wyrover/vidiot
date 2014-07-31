@@ -168,27 +168,27 @@ void TestIntervals::testRemoveEmptyIntervalsWithOffset()
     {
         StartTest("Remove empty intervals when clips are partially overlapping with the empty area");
 
-        DragToTrack(1,VideoClip(0,3), model::IClipPtr());
+        TimelineDragToTrack(1,VideoClip(0,3), model::IClipPtr());
         ASSERT_VIDEOTRACK1(EmptyClip)                      (VideoClip);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(EmptyClip)(VideoClip           )(VideoClip);
         ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(AudioClip)(AudioClip           )(AudioClip);
 
-        Drag(From(Center(VideoClip(1,1))).AlignLeft(LeftPixel(VideoClip(0,4))));
+        TimelineDrag(From(Center(VideoClip(1,1))).AlignLeft(LeftPixel(VideoClip(0,4))));
         ASSERT_VIDEOTRACK1(EmptyClip)                                 (VideoClip);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(EmptyClip)(           VideoClip)(VideoClip);
         ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(EmptyClip)(AudioClip)(AudioClip)(AudioClip);
 
-        DragToTrack(1,VideoClip(0,4), model::IClipPtr());
+        TimelineDragToTrack(1,VideoClip(0,4), model::IClipPtr());
         ASSERT_VIDEOTRACK1(EmptyClip)                                 (           VideoClip);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(                      EmptyClip)(VideoClip);
         ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(EmptyClip)(AudioClip)(AudioClip)(AudioClip);
 
-        Drag(From(Center(VideoClip(1,1))).To(Center(VideoClip(1,1)) + wxPoint(-20,0)));
+        TimelineDrag(From(Center(VideoClip(1,1))).To(Center(VideoClip(1,1)) + wxPoint(-20,0)));
         ASSERT_VIDEOTRACK1(EmptyClip)                                 (           VideoClip);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(                      EmptyClip           )(VideoClip);
         ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(EmptyClip)(AudioClip)(AudioClip)(EmptyClip)(AudioClip);
 
-        Drag(From(Center(AudioClip(0,4))).To(RightCenter(AudioClip(0,2))));
+        TimelineDrag(From(Center(AudioClip(0,4))).To(RightCenter(AudioClip(0,2))));
         ASSERT_VIDEOTRACK1(EmptyClip)                                     (           VideoClip);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(                      EmptyClip           )(VideoClip);
         ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(AudioClip)(EmptyClip)(AudioClip)(EmptyClip)(AudioClip);

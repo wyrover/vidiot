@@ -115,11 +115,11 @@ void TestDetailsClip::testChangeLength()
         // Test reducing the length on the left side (can be triggered by overlapping the right side with a clip in another track)
         TriggerMenu(ID_ADDAUDIOTRACK);
         TriggerMenu(ID_ADDVIDEOTRACK);
-        DragToTrack(1,VideoClip(0,5),AudioClip(0,5));
+        TimelineDragToTrack(1,VideoClip(0,5),AudioClip(0,5));
 
         for ( wxToggleButton* button : DetailsClipView()->getLengthButtons() )
         {
-            Drag(From(Center(VideoClip(1,1))).AlignLeft(RightPixel(VideoClip(0,3)) - getTimeline().getZoom().ptsToPixels(getLength(button) -1)));
+            TimelineDrag(From(Center(VideoClip(1,1))).AlignLeft(RightPixel(VideoClip(0,3)) - getTimeline().getZoom().ptsToPixels(getLength(button) -1)));
             TimelineLeftClick(Center(VideoClip(0,3)));
             for ( wxToggleButton* otherButton : DetailsClipView()->getLengthButtons() )
             {

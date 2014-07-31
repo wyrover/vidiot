@@ -386,7 +386,7 @@ void TestTransition::testDragAndDropOfOtherClips()
     {
         // Shift drag without snapping enabled,
         // transition and its adjacent clips are shifted backwards
-        Drag(From(Center(VideoClip(0,6))).To(Center(VideoClip(0,3))).HoldShiftWhileDragging());
+        TimelineDrag(From(Center(VideoClip(0,6))).To(Center(VideoClip(0,3))).HoldShiftWhileDragging());
         ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
         ASSERT_EQUALS(VideoClip(0,3)->getLength(), preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
         ASSERT_EQUALS(VideoClip(0,5)->getLength(), preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
@@ -397,7 +397,7 @@ void TestTransition::testDragAndDropOfOtherClips()
         // transition) clip after transition is shifted backwards ->
         // transition is removed because the two 'transitioned clips
         // are separated'. (clip in front of transition remains intact)
-        Drag(From(Center(VideoClip(0,6))).To(Center(VideoClip(0,4))).HoldShiftWhileDragging());
+        TimelineDrag(From(Center(VideoClip(0,6))).To(Center(VideoClip(0,4))).HoldShiftWhileDragging());
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(EmptyClip)(VideoClip)(VideoClip)(VideoClip);
         ASSERT_NO_TRANSITIONS_IN_VIDEO_TRACK();
         ASSERT_EQUALS(VideoClip(0,1)->getLength(), preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
@@ -411,14 +411,14 @@ void TestTransition::testDragAndDropOfOtherClips()
         // cuts the snapping is done.
         pts lengthOfDraggedClip = VideoClip(0,6)->getLength();
         StartTest("Snap almost to right edge of 00.avi");
-        Drag(From(Center(VideoClip(0,6))).HoldShiftWhileDragging().AlignLeft(RightPixel(VideoClip(0,0))+26));
+        TimelineDrag(From(Center(VideoClip(0,6))).HoldShiftWhileDragging().AlignLeft(RightPixel(VideoClip(0,0))+26));
         ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(VideoClip)(Transition)(VideoClip);
         ASSERT_EQUALS(VideoClip(0,0)->getLength(),preparation.lengthOfFirstClip);
         ASSERT_EQUALS(VideoClip(0,2)->getLength(),lengthOfDraggedClip);
         ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
         Undo();
         StartTest("Snap to right edge of 00.avi");
-        Drag(From(Center(VideoClip(0,6))).HoldShiftWhileDragging().AlignLeft(RightPixel(VideoClip(0,0))+25)); // Mouse must be moved a bit further to snap to the left edge
+        TimelineDrag(From(Center(VideoClip(0,6))).HoldShiftWhileDragging().AlignLeft(RightPixel(VideoClip(0,0))+25)); // Mouse must be moved a bit further to snap to the left edge
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(Transition)(VideoClip);
         ASSERT_EQUALS(VideoClip(0,0)->getLength(),preparation.lengthOfFirstClip);
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),lengthOfDraggedClip);
@@ -431,7 +431,7 @@ void TestTransition::testDragAndDropOfOtherClips()
         // the transition. This causes the clip left of the transition
         // to be shifted back.
         pts lengthOfDraggedClip = VideoClip(0,5)->getLength();
-        Drag(From(Center(VideoClip(0,5))).HoldShiftWhileDragging().AlignLeft(preparation.leftPositionOfTransitionAfterTransitionApplied));
+        TimelineDrag(From(Center(VideoClip(0,5))).HoldShiftWhileDragging().AlignLeft(preparation.leftPositionOfTransitionAfterTransitionApplied));
         ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(VideoClip)(Transition)(VideoClip);
         ASSERT_EQUALS(VideoClip(0,0)->getLength(),preparation.lengthOfFirstClip);
         ASSERT_EQUALS(VideoClip(0,2)->getLength(),lengthOfDraggedClip);
@@ -445,7 +445,7 @@ void TestTransition::testDragAndDropOfOtherClips()
         // This causes the clip right of the transition to be shifted back, and the transition
         // to be removed.
         pts lengthOfDraggedClip = VideoClip(0,5)->getLength();
-        Drag(From(Center(VideoClip(0,5))).HoldShiftWhileDragging().AlignLeft(preparation.touchPositionOfTransition));
+        TimelineDrag(From(Center(VideoClip(0,5))).HoldShiftWhileDragging().AlignLeft(preparation.touchPositionOfTransition));
         ASSERT_EQUALS(VideoClip(0,0)->getLength(),preparation.lengthOfFirstClip);
         ASSERT_NO_TRANSITIONS_IN_VIDEO_TRACK();
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(EmptyClip)(VideoClip)(VideoClip);
@@ -460,7 +460,7 @@ void TestTransition::testDragAndDropOfOtherClips()
         // This causes the clip right of the transition to be shifted back, and the transition
         // to be removed.
         pts lengthOfDraggedClip = VideoClip(0,5)->getLength();
-        Drag(From(Center(VideoClip(0,5))).HoldShiftWhileDragging().AlignLeft(LeftPixel(VideoClip(0,3))));
+        TimelineDrag(From(Center(VideoClip(0,5))).HoldShiftWhileDragging().AlignLeft(LeftPixel(VideoClip(0,3))));
         ASSERT_EQUALS(VideoClip(0,0)->getLength(),preparation.lengthOfFirstClip);
         ASSERT_NO_TRANSITIONS_IN_VIDEO_TRACK();
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(EmptyClip)(VideoClip)(VideoClip);
@@ -477,7 +477,7 @@ void TestTransition::testDragAndDropOfOtherClips()
             // Drag a small clip on top of the clip left of the transition. This left clip is made shorter, but the transition remains.
             pixel right = RightPixel(VideoClip(0,1));
             right -= 20; // Ensure that 'a bit' of the clip left of the transition remains, causing the transition to remain also
-            Drag(From(Center(VideoClip(0,6))).AlignRight(right));
+            TimelineDrag(From(Center(VideoClip(0,6))).AlignRight(right));
             ASSERT_EQUALS(VideoClip(0,1)->getLength(),lengthOfDraggedClip);
             ASSERT_LESS_THAN(VideoClip(0,2)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
             ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(Transition)(VideoClip);
@@ -489,7 +489,7 @@ void TestTransition::testDragAndDropOfOtherClips()
             // Drag a small clip on top of the clip right of the transition. This right clip is made shorter, but the transition remains.
             pixel left = LeftPixel(VideoClip(0,3));
             left += 20; // Ensure that 'a bit' of the clip right of the transition remains, causing the transition to remain also
-            Drag(From(Center(VideoClip(0,6))).AlignLeft(left));
+            TimelineDrag(From(Center(VideoClip(0,6))).AlignLeft(left));
             ASSERT_EQUALS(VideoClip(0,4)->getLength(),lengthOfDraggedClip);
             ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
             ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
@@ -502,7 +502,7 @@ void TestTransition::testDragAndDropOfOtherClips()
     {
         // Move the leftmost of the two clips adjacent to the transition: the transition must be removed
         DeselectAllClips();
-        Drag(From(Center(VideoClip(0,1))).To(Center(VideoClip(0,4))));
+        TimelineDrag(From(Center(VideoClip(0,1))).To(Center(VideoClip(0,4))));
         ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(VideoClip);
         ASSERT_AUDIOTRACK0(AudioClip)(EmptyClip)(AudioClip)(AudioClip);
         ASSERT_EQUALS(VideoClip(0,0)->getLink(),AudioClip(0,0));
@@ -517,7 +517,7 @@ void TestTransition::testDragAndDropOfOtherClips()
         // clip was - or vice versa? - anyway: crashed....)
         DeselectAllClips();
         TimelineLeftClick(Center(VideoClip(0,1)));
-        Drag(From(LeftCenter(VideoClip(0,1)) + wxPoint(10,0)).To(Center(VideoClip(0,6))));
+        TimelineDrag(From(LeftCenter(VideoClip(0,1)) + wxPoint(10,0)).To(Center(VideoClip(0,6))));
         Undo();
     }
     {
@@ -527,8 +527,8 @@ void TestTransition::testDragAndDropOfOtherClips()
         // on availability of adjacent clips, which was invalid (clip has just been moved).
         wxPoint from = LeftCenter(VideoClip(0,1)) + wxPoint(10,0);
         wxPoint to = Center(VideoClip(0,6));
-        Drag(From(from).To(to).DontReleaseMouse());
-        Drag(From(to).To(from));
+        TimelineDrag(From(from).To(to).DontReleaseMouse());
+        TimelineDrag(From(to).To(from));
         Undo();
     }
 }
@@ -541,7 +541,7 @@ void TestTransition::testDragAndDropOfClipsUnderTransition()
         // Test - for an in-out-transition- that dragging when clicking on TransitionLeftClipInterior
         // starts a drag and drop operation, not with the transition but the clip left of the transition.
         MakeInOutTransitionAfterClip preparation(1);
-        Drag(From(TransitionLeftClipInterior(VideoClip(0,2))).HoldShiftWhileDragging().AlignLeft(LeftPixel(VideoClip(0,4))));
+        TimelineDrag(From(TransitionLeftClipInterior(VideoClip(0,2))).HoldShiftWhileDragging().AlignLeft(LeftPixel(VideoClip(0,4))));
         ASSERT_NO_TRANSITIONS_IN_VIDEO_TRACK();
         ASSERT(VideoClip(0,1)->isA<model::EmptyClip>());
         ASSERT_EQUALS(VideoClip(0,2)->getLength(),preparation.lengthOfClipAfterTransitionBeforeTransitionApplied);
@@ -555,7 +555,7 @@ void TestTransition::testDragAndDropOfClipsUnderTransition()
         // Test - for an in-out-transition - that dragging when clicking on TransitionRightClipInterior starts a
         // drag and drop operation, not with the transition but the clip right of the transition.
         MakeInOutTransitionAfterClip preparation(1);
-        Drag(From(TransitionRightClipInterior(VideoClip(0,2))).HoldShiftWhileDragging().AlignLeft(LeftPixel(VideoClip(0,4))));
+        TimelineDrag(From(TransitionRightClipInterior(VideoClip(0,2))).HoldShiftWhileDragging().AlignLeft(LeftPixel(VideoClip(0,4))));
         ASSERT_NO_TRANSITIONS_IN_VIDEO_TRACK();
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionBeforeTransitionApplied);
         ASSERT(VideoClip(0,2)->isA<model::EmptyClip>());
@@ -571,7 +571,7 @@ void TestTransition::testDragAndDropOfClipsUnderTransition()
         // The transition in this case is dragged along with the clip, since the only clip related to the
         // transition is the clip being dragged.
         MakeInTransitionAfterClip preparation(1);
-        Drag(From(TransitionRightClipInterior(VideoClip(0,2))).HoldShiftWhileDragging().AlignLeft(LeftPixel(VideoClip(0,4))));
+        TimelineDrag(From(TransitionRightClipInterior(VideoClip(0,2))).HoldShiftWhileDragging().AlignLeft(LeftPixel(VideoClip(0,4))));
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(EmptyClip)(Transition)(VideoClip)(VideoClip);
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionBeforeTransitionApplied);
         ASSERT_EQUALS(VideoClip(0,4)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
@@ -586,7 +586,7 @@ void TestTransition::testDragAndDropOfClipsUnderTransition()
         // transition is the clip being dragged.
         MakeOutTransitionAfterClip preparation(1);
         ASSERT_EQUALS(VideoClip(0,1)->getLength() + VideoClip(0,2)->getLength(),AudioClip(0,1)->getLength()); // Transition is unapplied which causes the audio and video to have the same lengths again
-        Drag(From(TransitionLeftClipInterior(VideoClip(0,2))).HoldShiftWhileDragging().AlignLeft(LeftPixel(VideoClip(0,4))));
+        TimelineDrag(From(TransitionLeftClipInterior(VideoClip(0,2))).HoldShiftWhileDragging().AlignLeft(LeftPixel(VideoClip(0,4))));
         ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(VideoClip)(Transition)(VideoClip);
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionBeforeTransitionApplied); // Clip and transition are replaced with emptyness
         ASSERT_EQUALS(VideoClip(0,2)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
@@ -620,7 +620,7 @@ void TestTransition::testAdjacentTransitions()
         TimelineKeyPress('i');
         ASSERT(VideoClip(0,4)->isA<model::Transition>());
         ASSERT(!VideoClip(0,5)->isA<model::EmptyClip>());
-        Drag(From(Center(VideoClip(0,5))).AlignLeft(RightPixel(VideoClip(0,2))));
+        TimelineDrag(From(Center(VideoClip(0,5))).AlignLeft(RightPixel(VideoClip(0,2))));
         ASSERT(VideoClip(0,2)->isA<model::Transition>());
         ASSERT(VideoClip(0,3)->isA<model::Transition>());
         Scrub(LeftPixel(VideoTransition(0,2)) - 5, RightPixel(VideoTransition(0,3)) + 5);
@@ -633,7 +633,7 @@ void TestTransition::testAdjacentTransitions()
         pts cliplength = VideoClip(0,1)->getLength();
         pts transitionlength = VideoClip(0,2)->getLength();
         pts length = VideoClip(0,8)->getLength();
-        Drag(From(Center(VideoClip(0,8))).AlignLeft(LeftPixel(VideoClip(0,3))));
+        TimelineDrag(From(Center(VideoClip(0,8))).AlignLeft(LeftPixel(VideoClip(0,3))));
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),cliplength);
         ASSERT_EQUALS(VideoClip(0,2)->getLength(),transitionlength);
@@ -647,7 +647,7 @@ void TestTransition::testAdjacentTransitions()
         pts cliplength = VideoClip(0,4)->getLength();
         pts transitionlength = VideoClip(0,3)->getLength();
         pts length = VideoClip(0,6)->getLength();
-        Drag(From(Center(VideoClip(0,6)) + wxPoint(5,0)).AlignRight(RightPixel(VideoClip(0,2))));
+        TimelineDrag(From(Center(VideoClip(0,6)) + wxPoint(5,0)).AlignRight(RightPixel(VideoClip(0,2))));
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(EmptyClip);
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),length);
         ASSERT_EQUALS(VideoClip(0,2)->getLength(),transitionlength);
@@ -673,7 +673,7 @@ void TestTransition::testPlaybackAndScrubbing()
         StartTest("Move clips around InOutTransition: the transition must be moved also.");
         DeselectAllClips();
         TimelineLeftClick(Center(VideoClip(0,1)));
-        Drag(From(Center(VideoClip(0,3))).To(Center(VideoClip(0,5))).HoldCtrlBeforeDragStarts());
+        TimelineDrag(From(Center(VideoClip(0,3))).To(Center(VideoClip(0,5))).HoldCtrlBeforeDragStarts());
         //CtrlDrag(Center(VideoClip(0,3)), Center(VideoClip(0,5)));
         ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(VideoClip)(VideoClip)(Transition);
         ASSERT(VideoTransition(0,5)->getRight());
@@ -699,7 +699,7 @@ void TestTransition::testPlaybackAndScrubbing()
         Undo();
         StartTest("Move clip related to InTransition: the transition must be moved also.");
         DeselectAllClips();
-        Drag(From(Center(VideoClip(0,3))).To(Center(VideoClip(0,5))));
+        TimelineDrag(From(Center(VideoClip(0,3))).To(Center(VideoClip(0,5))));
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(EmptyClip)(VideoClip)(VideoClip)(Transition);
         ASSERT(VideoTransition(0,5)->getRight());
         ASSERT_MORE_THAN_ZERO(*(VideoTransition(0,5)->getRight()));
@@ -723,7 +723,7 @@ void TestTransition::testPlaybackAndScrubbing()
         Undo();
         StartTest("Move clip related to OutTransition: the transition must be moved also.");
         DeselectAllClips();
-        Drag(From(Center(VideoClip(0,1))).To(Center(VideoClip(0,5))));
+        TimelineDrag(From(Center(VideoClip(0,1))).To(Center(VideoClip(0,5))));
         ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip)(Transition);
         ASSERT(!VideoTransition(0,6)->getRight());
         ASSERT(VideoTransition(0,6)->getLeft());
@@ -1440,7 +1440,7 @@ void TestTransition::testCreateTransitionAfterLastClip()
     TrimRight(VideoClip(0,2), 20);
     {
         StartTest("Create transition after last video clip in track (NOTE: clip is NOT followed by EmptyClip).");
-        Drag(From(Center(VideoClip(0,2))).To(wxPoint(RightPixel(VideoTrack(0)), VCenter(VideoTrack(0)))));
+        TimelineDrag(From(Center(VideoClip(0,2))).To(wxPoint(RightPixel(VideoTrack(0)), VCenter(VideoTrack(0)))));
         TimelineMove(wxPoint(RightPixel(VideoTrack(0)), VCenter(VideoTrack(0))));
         TimelineKeyPress('o');
         ASSERT(VideoClip(0,8)->isA<model::Transition>());
@@ -1448,7 +1448,7 @@ void TestTransition::testCreateTransitionAfterLastClip()
     }
     {
         StartTest("Create transition after last audio clip in track (NOTE: clip is NOT followed by EmptyClip).");
-        Drag(From(Center(AudioClip(0,2))).To(wxPoint(RightPixel(AudioTrack(0)), VCenter(AudioTrack(0)))));
+        TimelineDrag(From(Center(AudioClip(0,2))).To(wxPoint(RightPixel(AudioTrack(0)), VCenter(AudioTrack(0)))));
         TimelineMove(wxPoint(RightPixel(AudioTrack(0)), VCenter(AudioTrack(0))));
         TimelineKeyPress('o');
         ASSERT(AudioClip(0,8)->isA<model::Transition>());

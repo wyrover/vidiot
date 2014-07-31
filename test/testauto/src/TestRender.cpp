@@ -176,8 +176,8 @@ void TestRender::testRenderingTransformedClip()
     TriggerMenu(ID_ADDVIDEOTRACK);
     ConfigOverruleLong overrule(Config::sPathDebugMaxRenderLength, 3); // Only render 3s
     wxFileName path(wxFileName::GetTempDir(), "out", "avi");
-    DragToTrack(1, VideoClip(0,1), AudioClip(0,1));
-    Drag(From(Center(VideoClip(1,1))).To(LeftCenter(VideoClip(1,0)) + wxPoint(5,0)));
+    TimelineDragToTrack(1, VideoClip(0,1), AudioClip(0,1));
+    TimelineDrag(From(Center(VideoClip(1,1))).To(LeftCenter(VideoClip(1,0)) + wxPoint(5,0)));
     model::VideoClipPtr clip = boost::dynamic_pointer_cast<model::VideoClip>(VideoClip(1,0));
     ASSERT(clip);
     RunInMainAndWait([clip]{ clip->setOpacity(128); });

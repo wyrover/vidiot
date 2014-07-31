@@ -63,7 +63,7 @@ void TestBugs::testLinkingErrorWhenDroppingOverBeginOfLinkedClip()
     StartTestSuite();
     TriggerMenu(ID_ADDVIDEOTRACK);
     TrimLeft(VideoClip(0,4),40,false);
-    Drag(From(Center(VideoClip(0,6))).To(wxPoint(RightPixel(VideoClip(0,4)),VCenter(getSequence()->getVideoTrack(1)))));
+    TimelineDrag(From(Center(VideoClip(0,6))).To(wxPoint(RightPixel(VideoClip(0,4)),VCenter(getSequence()->getVideoTrack(1)))));
     ASSERT_EQUALS(VideoClip(0,5)->getLink(),AudioClip(0,6));
     TrimLeft(VideoClip(0,5),10,false); // This caused an assert, because there was a problem with this clip (video(0,5)) link.
 }
@@ -74,11 +74,11 @@ void TestBugs::testErrorInGetNextHandlingForEmptyClips()
     TriggerMenu(ID_ADDVIDEOTRACK);
     TriggerMenu(ID_ADDVIDEOTRACK);
 
-    DragToTrack(1,VideoClip(0,5),model::IClipPtr());
-    Drag(From(Center(VideoClip(1,1))).To(wxPoint(HCenter(VideoClip(0,4)),VCenter(VideoClip(1,1)))));
+    TimelineDragToTrack(1,VideoClip(0,5),model::IClipPtr());
+    TimelineDrag(From(Center(VideoClip(1,1))).To(wxPoint(HCenter(VideoClip(0,4)),VCenter(VideoClip(1,1)))));
 
-    DragToTrack(2,VideoClip(0,6),model::IClipPtr());
-    Drag(From(Center(VideoClip(2,1))).AlignLeft(LeftPixel(VideoClip(1,1))));
+    TimelineDragToTrack(2,VideoClip(0,6),model::IClipPtr());
+    TimelineDrag(From(Center(VideoClip(2,1))).AlignLeft(LeftPixel(VideoClip(1,1))));
 
     TimelineLeftClick(Center(VideoClip(1,1)));
     ASSERT_DETAILSCLIP(VideoClip(1,1));
@@ -236,7 +236,7 @@ void TestBugs::testCrashWhenDroppingPartiallyOverATransition()
         MakeInOutTransitionAfterClip preparation(1,true);
         {
             StartTest("AudioTransition: Drop a clip with its left edge exactly on the middle of a transition");
-            Drag(From(Center(AudioClip(0,4))).AlignLeft(HCenter(AudioClip(0,2))));
+            TimelineDrag(From(Center(AudioClip(0,4))).AlignLeft(HCenter(AudioClip(0,2))));
             ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(EmptyClip);
             ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(EmptyClip);
             ASSERT_EQUALS(VideoClip(0,2)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,3));
@@ -245,7 +245,7 @@ void TestBugs::testCrashWhenDroppingPartiallyOverATransition()
         }
         {
             StartTest("AudioTransition: Drop a clip with its left edge inside the right half of a transition");
-            Drag(From(Center(AudioClip(0,4))).AlignLeft(HCenter(AudioClip(0,2)) + 5));
+            TimelineDrag(From(Center(AudioClip(0,4))).AlignLeft(HCenter(AudioClip(0,2)) + 5));
             ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip)(EmptyClip);
             ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(AudioClip)(EmptyClip);
             ASSERT_EQUALS(VideoClip(0,3)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,3));
@@ -254,7 +254,7 @@ void TestBugs::testCrashWhenDroppingPartiallyOverATransition()
         }
         {
             StartTest("AudioTransition: Drop a clip with its right edge inside the left half of a transition");
-            Drag(From(Center(AudioClip(0,4))).AlignRight(HCenter(AudioClip(0,2)) - 5));
+            TimelineDrag(From(Center(AudioClip(0,4))).AlignRight(HCenter(AudioClip(0,2)) - 5));
             ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip)(EmptyClip);
             ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(AudioClip)(EmptyClip);
             ASSERT_EQUALS(VideoClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,3));
@@ -266,7 +266,7 @@ void TestBugs::testCrashWhenDroppingPartiallyOverATransition()
         MakeInOutTransitionAfterClip preparation(1);
         {
             StartTest("VideoTransition: Drop a clip with its left edge exactly on the middle of a transition");
-            Drag(From(Center(VideoClip(0,4))).AlignLeft(HCenter(VideoClip(0,2))));
+            TimelineDrag(From(Center(VideoClip(0,4))).AlignLeft(HCenter(VideoClip(0,2))));
             ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(EmptyClip);
             ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(EmptyClip);
             ASSERT_EQUALS(VideoClip(0,2)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,3));
@@ -275,7 +275,7 @@ void TestBugs::testCrashWhenDroppingPartiallyOverATransition()
         }
         {
             StartTest("VideoTransition: Drop a clip with its left edge inside the right half of a transition");
-            Drag(From(Center(VideoClip(0,4))).AlignLeft(HCenter(VideoClip(0,2)) + 5));
+            TimelineDrag(From(Center(VideoClip(0,4))).AlignLeft(HCenter(VideoClip(0,2)) + 5));
             ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip)(EmptyClip);
             ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(AudioClip)(EmptyClip);
             ASSERT_EQUALS(VideoClip(0,3)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,3));
@@ -284,7 +284,7 @@ void TestBugs::testCrashWhenDroppingPartiallyOverATransition()
         }
         {
             StartTest("VideoTransition: Drop a clip with its right edge inside the left half of a transition");
-            Drag(From(Center(VideoClip(0,4))).AlignRight(HCenter(VideoClip(0,2)) - 5));
+            TimelineDrag(From(Center(VideoClip(0,4))).AlignRight(HCenter(VideoClip(0,2)) - 5));
             ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip)(EmptyClip);
             ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(AudioClip)(EmptyClip);
             ASSERT_EQUALS(VideoClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,3));
@@ -300,7 +300,7 @@ void TestBugs::testShiftTrimNotAllowedWithAdjacentClipInOtherTrack()
     Zoom level(2);
     TriggerMenu(ID_ADDVIDEOTRACK);
     TriggerMenu(ID_ADDAUDIOTRACK);
-    DragToTrack(1,VideoClip(0,2),AudioClip(0,2));
+    TimelineDragToTrack(1,VideoClip(0,2),AudioClip(0,2));
     ASSERT_VIDEOTRACK1(     EmptyClip      )(VideoClip);
     ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(EmptyClip);
     ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(EmptyClip);
@@ -402,7 +402,7 @@ void TestBugs::testPlaybackWithMultipleAudioTracks()
     StartTestSuite();
 
     TriggerMenu(ID_ADDAUDIOTRACK);
-    DragToTrack(1,model::IClipPtr(),AudioClip(0,2));
+    TimelineDragToTrack(1,model::IClipPtr(),AudioClip(0,2));
     Play(HCenter(AudioClip(0,0)), 1000);
 }
 

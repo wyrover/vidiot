@@ -136,21 +136,21 @@ void TestTrimming::testKeyboardTrimming()
     TestBeginTrimSucceeds("With other track without clips: Begin trim");
     TestEndTrimSucceeds("With other track without clips: End trim");
     
-    DragToTrack(1,VideoClip(0,4),AudioClip(0,4));
+    TimelineDragToTrack(1,VideoClip(0,4),AudioClip(0,4));
     TestBeginTrimSucceeds("With other track with empty clip: Begin trim");
     TestEndTrimSucceeds("With other track with empty clip: End trim");
 
-    Drag(From(Center(VideoClip(1,1))).To(wxPoint(HCenter(VideoClip(0,2)), VCenter(VideoTrack(1)))));
+    TimelineDrag(From(Center(VideoClip(1,1))).To(wxPoint(HCenter(VideoClip(0,2)), VCenter(VideoTrack(1)))));
     TestBeginTrimImpossible("With other track with fully obscuring non-empty clip: Begin trim");
     TestEndTrimImpossible("With other track with fully obscuring non-empty clip: End trim");
     Undo();
 
-    Drag(From(Center(VideoClip(1,1))).AlignLeft(RightPixel(VideoClip(0,2)) - 20));
+    TimelineDrag(From(Center(VideoClip(1,1))).AlignLeft(RightPixel(VideoClip(0,2)) - 20));
     TestBeginTrimSucceeds("With other track with partially right obscuring non-empty clip: Begin trim");
     TestEndTrimImpossible("With other track with partially right obscuring non-empty clip: End trim (no change)");
     Undo();
     
-    Drag(From(RightCenter(VideoClip(1,1)) + wxPoint(-20,0)).AlignRight(LeftPixel(VideoClip(0,2)) + 20));
+    TimelineDrag(From(RightCenter(VideoClip(1,1)) + wxPoint(-20,0)).AlignRight(LeftPixel(VideoClip(0,2)) + 20));
     TestBeginTrimImpossible("With other track with partially left obscuring non-empty clip: Begin trim");
     TestEndTrimSucceeds("With other track with partially left obscuring non-empty clip: End trim (no change)");
     Undo();

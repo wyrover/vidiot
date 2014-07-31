@@ -150,13 +150,13 @@ void TestPopupMenu::testRemoveOneEmptyInterval()
     {
         StartTest("Remove empty intervals when clips are partially overlapping with the empty area");
 
-        DragToTrack(1, VideoClip(0,3), AudioClip(0,3));
+        TimelineDragToTrack(1, VideoClip(0,3), AudioClip(0,3));
         ASSERT_VIDEOTRACK1(EmptyClip)                      (VideoClip);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(EmptyClip)(VideoClip           )(VideoClip);
         ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(EmptyClip)(AudioClip           )(AudioClip);
         ASSERT_AUDIOTRACK1(EmptyClip)                      (AudioClip);
 
-        Drag(From(Center(VideoClip(1,1))).MoveRight(50));
+        TimelineDrag(From(Center(VideoClip(1,1))).MoveRight(50));
         ASSERT_VIDEOTRACK1(EmptyClip)                           (VideoClip);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(EmptyClip)(VideoClip           )(VideoClip);
         ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(EmptyClip)(AudioClip           )(AudioClip);
