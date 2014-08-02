@@ -21,8 +21,6 @@
 inline bool operator<(wxFileName l, const wxFileName& r) { return l.GetFullPath() < r.GetFullPath(); }
 
 namespace model {
-    //todo remove class EventOpenProject;
-    //class EventCloseProject;
     class EventAddNode;
     class EventAddNodes;
     class EventRemoveNode;
