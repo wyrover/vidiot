@@ -62,7 +62,7 @@ void extendSequenceWithStillImage( model::SequencePtr sequence )
     });
 }
 
-void makeSequenceEmpty( model::SequencePtr sequence )
+void MakeSequenceEmpty( model::SequencePtr sequence )
 {
     RunInMainAndWait([sequence]()
     {

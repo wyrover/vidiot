@@ -24,11 +24,11 @@ namespace test {
 
 /// Trigger the menu given. That menu should be in the main menu bar.
 /// \param id menu identifier
-void TriggerMenu(int id);
+void WindowTriggerMenu(int id);
 
 /// Trigger the menu given on the window given.
 /// \param id menu identifier
-void TriggerMenu(wxWindow& window, int id);
+void WindowTriggerMenu(wxWindow& window, int id);
 
 /// Check the menu given. That menu should be in the main menu bar.
 /// Note that the corresponding event will always be triggered, even
@@ -36,7 +36,7 @@ void TriggerMenu(wxWindow& window, int id);
 /// by 'checked'.
 /// \param id menu identifier
 /// \param checked if true, the menu is checked, unchecked otherwise
-void checkMenu(int id, bool checked = true);
+void WindowCheckMenu(int id, bool checked = true);
 
 /// Check the menu given on the window given.
 /// Note that the corresponding event will always be triggered, even
@@ -44,11 +44,11 @@ void checkMenu(int id, bool checked = true);
 /// by 'checked'.
 /// \param id menu identifier
 /// \param checked if true, the menu is checked, unchecked otherwise
-void checkMenu(wxFrame& window, int id, bool checked = true);
+void WindowCheckMenu(wxFrame& window, int id, bool checked = true);
 
 /// Create a new project in a blank application by triggering File->New
 /// \return root node of the project
-model::FolderPtr createProject();
+model::FolderPtr WindowCreateProject();
 
 /// Return the currently active sequence menu
 wxMenu* getSequenceMenu();
@@ -92,7 +92,7 @@ void ASSERT_CURRENT_COMMAND_TYPE()
 void BREAK();
 
 /// Log the command history
-void logHistory();
+void LogHistory();
 
 } // namespace
 

@@ -134,8 +134,8 @@ void TestDragAndDrop::testDndMultipleTracks()
 {
     StartTestSuite();
     Zoom level(2);
-    TriggerMenu(ID_ADDVIDEOTRACK);
-    TriggerMenu(ID_ADDAUDIOTRACK);
+    WindowTriggerMenu(ID_ADDVIDEOTRACK);
+    WindowTriggerMenu(ID_ADDAUDIOTRACK);
     {
         StartTest("Known bug at one point: Clip removed when using CTRL to change drag point.");
         TimelineDragToTrack(1,VideoClip(0,3),AudioClip(0,3));

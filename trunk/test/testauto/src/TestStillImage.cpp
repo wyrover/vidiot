@@ -42,13 +42,13 @@ void TestStillImage::testUndo()
     StartTestSuite();
 
     wxString sFolder1( "Folder1" );
-    model::FolderPtr folder1 = addFolder( sFolder1 );
+    model::FolderPtr folder1 = ProjectViewAddFolder( sFolder1 );
     wxFileName TestFilesPath = getTestPath();
     TestFilesPath.AppendDir("filetypes_image");
     ASSERT(TestFilesPath.IsDir());
     ASSERT(TestFilesPath.DirExists());
     TestFilesPath.SetFullName("Laney -6th best amp.jpg");
-    model::Files files1 = addFiles( boost::assign::list_of(TestFilesPath.GetFullPath()), folder1 );
+    model::Files files1 = ProjectViewAddFiles( boost::assign::list_of(TestFilesPath.GetFullPath()), folder1 );
     model::FilePtr imageFile = files1.front();
 
     DragFromProjectViewToTimeline( imageFile,  getTimeline().GetScreenPosition() - getTimeline().getScrolling().getOffset()  + wxPoint(HCenter(VideoClip(0,4)), VCenter(VideoTrack(0))) );

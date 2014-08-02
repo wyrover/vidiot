@@ -39,7 +39,7 @@ struct WaitHelper
         f();
         if (WaitHelper::Get().Value)
         {
-            waitForIdle();
+            WaitForIdle();
         }
     }
     bool Value;
@@ -102,7 +102,7 @@ void MouseClickTopLeft(wxWindow* window, wxPoint extraoffset)
     ASSERT(FixtureGui::UseRealUiEvents);
     MouseMoveOnScreen(window->GetScreenPosition() + extraoffset);
     wxUIActionSimulator().MouseClick();
-    waitForIdle();
+    WaitForIdle();
 }
 
 void MouseClickBottomLeft(wxWindow* window, wxPoint extraoffset)
@@ -113,7 +113,7 @@ void MouseClickBottomLeft(wxWindow* window, wxPoint extraoffset)
     p.y += r.height;
     MouseMoveOnScreen(p + extraoffset);
     wxUIActionSimulator().MouseClick();
-    waitForIdle();
+    WaitForIdle();
 
 }
 
@@ -121,7 +121,7 @@ void KeyboardKeyPress(int keycode, int modifiers)
 {
     ASSERT(FixtureGui::UseRealUiEvents);
     wxUIActionSimulator().Char(keycode,modifiers);
-    waitForIdle();
+    WaitForIdle();
 }
 
 void KeyboardKeyPressN(int count, int keycode, int modifiers)
@@ -316,7 +316,7 @@ void TimelineKeyUp(int key)
         default:
             WaitHelper::ExecuteAndWait([key] {wxUIActionSimulator().KeyUp(key);} );
         }
-        waitForIdle();
+        WaitForIdle();
     }
     else
     {

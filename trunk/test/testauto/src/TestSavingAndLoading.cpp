@@ -48,10 +48,10 @@ void TestSavingAndLoading::testSaveAndLoad()
     mProjectFixture.init();
 
     StartTest("Add non auto folder to project view");
-    model::FolderPtr folder1 = addFolder( sFolder );
+    model::FolderPtr folder1 = ProjectViewAddFolder( sFolder );
 
     StartTest("Add still image to project view");
-    addFiles( boost::assign::list_of(getStillImagePath()), folder1 );
+    ProjectViewAddFiles( boost::assign::list_of(getStillImagePath()), folder1 );
 
     StartTest("Add video clips to sequence");
     ExtendSequenceWithRepeatedClips(getSequence(), getListOfInputFiles(), 2);
@@ -179,8 +179,8 @@ void TestSavingAndLoading::testBackupBeforeSave()
             ASSERT(!model::Project::createBackupFileName(existingFile,j).Exists());
         }
     }
-    TriggerMenu(wxID_CLOSE);
-    waitForIdle();
+    WindowTriggerMenu(wxID_CLOSE);
+    WaitForIdle();
     mProjectFixture.destroy();
 }
 
@@ -197,7 +197,7 @@ void TestSavingAndLoading::checkDocument(wxString path)
     });
 
     // Checks on loaded document
-    waitForIdle();
+    WaitForIdle();
     {
         StartTest("Cursor position");
         ASSERT_EQUALS(getTimeline().getCursor().getLogicalPosition(), getSequence()->getLength() / 2);
@@ -241,14 +241,14 @@ void TestSavingAndLoading::checkDocument(wxString path)
     {
         StartTest("Open render settings"); // Known bug at some point: loading the project went ok, but when opening the render dialog a crash occurred.
         WaitForTimelineToLoseFocus w;
-        TriggerMenu(ID_RENDERSETTINGS);
+        WindowTriggerMenu(ID_RENDERSETTINGS);
         w.wait();
         TimelineKeyPress(WXK_ESCAPE);
     }
     {
         StartTest("Close");
         model::Project::get().Modify(false); // Avoid 'save?' dialog
-        TriggerMenu(wxID_CLOSE);
+        WindowTriggerMenu(wxID_CLOSE);
     }
 }
 

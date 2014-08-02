@@ -40,7 +40,7 @@ void TestComposition::tearDown()
 void TestComposition::testBlend()
 {
     StartTestSuite();
-    TriggerMenu(ID_ADDVIDEOTRACK);
+    WindowTriggerMenu(ID_ADDVIDEOTRACK);
     TimelineDragToTrack(1,VideoClip(0,3),model::IClipPtr());
     TimelineDrag(From(Center(VideoClip(1,1))).To(wxPoint(HCenter(VideoClip(0,4)),VCenter(VideoClip(1,1)))));
 
@@ -63,7 +63,7 @@ void TestComposition::testBlend()
 void TestComposition::testAudioComposition()
 {
     StartTestSuite();
-    TriggerMenu(ID_ADDAUDIOTRACK);
+    WindowTriggerMenu(ID_ADDAUDIOTRACK);
     TimelineDragToTrack(1,model::IClipPtr(),AudioClip(0,3));
     TimelineDrag(From(Center(AudioClip(1,1))).To(wxPoint(HCenter(AudioClip(0,4)),VCenter(AudioClip(1,1)))));
     Play(HCenter(AudioClip(1,1)),1500);

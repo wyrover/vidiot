@@ -27,16 +27,16 @@ void TestAutoFolder::testAddAutoFolder()
 {
     StartTestSuite();
 
-    model::FolderPtr root = createProject();
+    model::FolderPtr root = WindowCreateProject();
     ASSERT(root);
     model::IPaths InputFiles = getListOfInputFiles();
 
     {
         StartTest("Add empty autofolder to project view");
         RandomTempDir tempdir;
-        model::FolderPtr autofolder1 = addAutoFolder( tempdir.getFileName() );
+        model::FolderPtr autofolder1 = ProjectViewAddAutoFolder( tempdir.getFileName() );
         WaitForChildCount(root, 2);
-        remove( autofolder1 );
+        ProjectViewRemove( autofolder1 );
     }
     {
         StartTest("Add autofolder with one supported and one unsupported file to project view");
@@ -52,9 +52,9 @@ void TestAutoFolder::testAddAutoFolder()
         bool copyok = wxCopyFile( aviFileName, filepath2.GetLongPath(), false );
         ASSERT(copyok);
 
-        model::FolderPtr autofolder1 = addAutoFolder( tempdir.getFileName() );
+        model::FolderPtr autofolder1 = ProjectViewAddAutoFolder( tempdir.getFileName() );
         WaitForChildCount(root, 3);
-        remove( autofolder1 );
+        ProjectViewRemove( autofolder1 );
     }
 }
 

@@ -70,7 +70,7 @@ void TestDetailsClip::testChangeLength()
         std::ostringstream o;
         o << "LengthButton: " << (enlarge?"Enlarge":"Reduce") << " clip length (on " << (begin?"left":"right") << " side) to " << getLength(button);
         StartTest(o.str().c_str());
-        waitForIdle();
+        WaitForIdle();
         bool enabled = button->IsEnabled();
         RunInMainAndWait(boost::bind(&gui::timeline::DetailsClip::handleLengthButtonPressed,DetailsClipView(),button));
         ASSERT_SELECTION_SIZE(1); // Clip and link selected
@@ -113,8 +113,8 @@ void TestDetailsClip::testChangeLength()
 
     {
         // Test reducing the length on the left side (can be triggered by overlapping the right side with a clip in another track)
-        TriggerMenu(ID_ADDAUDIOTRACK);
-        TriggerMenu(ID_ADDVIDEOTRACK);
+        WindowTriggerMenu(ID_ADDAUDIOTRACK);
+        WindowTriggerMenu(ID_ADDVIDEOTRACK);
         TimelineDragToTrack(1,VideoClip(0,5),AudioClip(0,5));
 
         for ( wxToggleButton* button : DetailsClipView()->getLengthButtons() )

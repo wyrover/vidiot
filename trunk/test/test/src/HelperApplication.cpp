@@ -19,9 +19,9 @@
 
 namespace test {
 
-void waitForIdle()
+void WaitForIdle()
 {
-    static_cast<gui::Application*>(wxTheApp)->waitForIdle();
+    static_cast<gui::Application*>(wxTheApp)->WaitForIdle();
 }
 
 void pause(int ms)

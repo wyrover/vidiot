@@ -52,7 +52,7 @@ void TestMenu::testTogglingPanes()
         ASSERT(pane.IsOk() && !pane.IsShown());
     };
 
-    TriggerMenu(wxID_HELP); // hidden by default
+    WindowTriggerMenu(wxID_HELP); // hidden by default
     ASSERT_PANE_SHOWN(gui::Window::sPaneNameProject);
     ASSERT_PANE_SHOWN(gui::Window::sPaneNameDetails);
     ASSERT_PANE_SHOWN(gui::Window::sPaneNamePreview);
@@ -62,9 +62,9 @@ void TestMenu::testTogglingPanes()
     StartTest("Hiding and showing panes.");
     for (auto id_Name : gui::Window::sMapMenuIdToPaneName)
     {
-        TriggerMenu(id_Name.first);
+        WindowTriggerMenu(id_Name.first);
         ASSERT_PANE_HIDDEN(id_Name.second);
-        TriggerMenu(id_Name.first);
+        WindowTriggerMenu(id_Name.first);
         ASSERT_PANE_SHOWN(id_Name.second);
     }
 }

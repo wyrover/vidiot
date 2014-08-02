@@ -76,10 +76,15 @@ struct WaitForPlaybackStopped : public WaitForPlayback
     }
 };
 
-/// 1. Play from the given position (space)
-/// 2. Wait until ms has expired, press space.
+/// 1. Start playback from the given position
+/// 2. Wait until ms has expired, stop playback
 /// 3. wait until playback has stopped.
 void Play(pixel from, int ms);
+
+/// 1. Start playback from the current position
+/// 2. Wait until ms has expired, stop playback.
+/// 3. wait until playback has stopped.
+void Play(int ms);
 
 } // namespace
 

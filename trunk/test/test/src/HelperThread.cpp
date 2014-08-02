@@ -25,7 +25,7 @@ void RunInMainAndWait(const boost::function<void()>& method) // todo completely 
     {
         method();
     });
-    waitForIdle();
+    WaitForIdle();
 }
 
 } // namespace

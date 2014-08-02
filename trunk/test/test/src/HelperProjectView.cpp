@@ -19,24 +19,24 @@
 
 namespace test {
 
-gui::ProjectView& getProjectView()
+gui::ProjectView& GetProjectView()
 {
     return gui::ProjectView::get();
 }
 
 wxPoint ProjectViewPosition()
 {
-    return getProjectView().GetScreenPosition();
+    return GetProjectView().GetScreenPosition();
 }
 
-model::FolderPtr addAutoFolder( wxFileName path, model::FolderPtr parent )
+model::FolderPtr ProjectViewAddAutoFolder( wxFileName path, model::FolderPtr parent )
 {
     gui::Dialog::get().setDir( path.GetShortPath() ); // Add with short path to check that normalizing works
-    waitForIdle();
+    WaitForIdle();
     RunInMainAndWait([parent]
     {
-        getProjectView().select(boost::assign::list_of(parent));
-        getProjectView().onNewAutoFolder();
+        GetProjectView().select(boost::assign::list_of(parent));
+        GetProjectView().onNewAutoFolder();
     });
 
     model::NodePtrs nodes = util::thread::RunInMainReturning<model::NodePtrs>(boost::bind(&model::Node::find, getRoot(), util::path::toPath(path))); // Converted to full path without trailing slash
@@ -47,17 +47,17 @@ model::FolderPtr addAutoFolder( wxFileName path, model::FolderPtr parent )
     return folder;
 }
 
-model::FolderPtr addFolder( wxString name, model::FolderPtr parent )
+model::FolderPtr ProjectViewAddFolder( wxString name, model::FolderPtr parent )
 {
     gui::Dialog::get().setText( name );
-    waitForIdle();
+    WaitForIdle();
     RunInMainAndWait([parent]
     {
-        getProjectView().select(boost::assign::list_of(parent));
+        GetProjectView().select(boost::assign::list_of(parent));
     });
     RunInMainAndWait([]
     {
-        getProjectView().onNewFolder();
+        GetProjectView().onNewFolder();
     });
 
     model::NodePtrs nodes = util::thread::RunInMainReturning<model::NodePtrs>(boost::bind(&model::Node::find, getRoot(), name));
@@ -68,17 +68,17 @@ model::FolderPtr addFolder( wxString name, model::FolderPtr parent )
     return folder;
 }
 
-model::SequencePtr addSequence( wxString name, model::FolderPtr parent )
+model::SequencePtr ProjectViewAddSequence( wxString name, model::FolderPtr parent )
 {
     gui::Dialog::get().setText( name );
-    waitForIdle();
+    WaitForIdle();
     RunInMainAndWait([parent]
     {
-        getProjectView().select(boost::assign::list_of(parent));
+        GetProjectView().select(boost::assign::list_of(parent));
     });
     RunInMainAndWait([parent]
     {
-        getProjectView().onNewSequence();
+        GetProjectView().onNewSequence();
     });
 
     model::NodePtrs nodes = util::thread::RunInMainReturning<model::NodePtrs>(boost::bind(&model::Node::find, getRoot(), name));
@@ -89,16 +89,16 @@ model::SequencePtr addSequence( wxString name, model::FolderPtr parent )
     return sequence;
 }
 
-model::SequencePtr createSequence( model::FolderPtr folder )
+model::SequencePtr ProjectViewCreateSequence( model::FolderPtr folder )
 {
-    waitForIdle();
+    WaitForIdle();
     RunInMainAndWait([folder]
     {
-        getProjectView().select(boost::assign::list_of(folder));
+        GetProjectView().select(boost::assign::list_of(folder));
     });
     RunInMainAndWait([]
     {
-        getProjectView().onCreateSequence();
+        GetProjectView().onCreateSequence();
     });
 
     model::NodePtrs nodes;
@@ -127,12 +127,12 @@ model::SequencePtr createSequence( model::FolderPtr folder )
     return result;
 }
 
-model::Files addFiles( std::list<wxFileName> paths, model::FolderPtr parent )
+model::Files ProjectViewAddFiles( std::list<wxFileName> paths, model::FolderPtr parent )
 {
-    waitForIdle();
+    WaitForIdle();
     RunInMainAndWait([parent]
     {
-        getProjectView().select(boost::assign::list_of(parent));
+        GetProjectView().select(boost::assign::list_of(parent));
     });
     std::list<wxString> shortpaths;
     for ( wxFileName path : paths )
@@ -143,7 +143,7 @@ model::Files addFiles( std::list<wxFileName> paths, model::FolderPtr parent )
     gui::Dialog::get().setFiles( shortpaths );
     RunInMainAndWait([]
     {
-        getProjectView().onNewFile();
+        GetProjectView().onNewFile();
     });
 
     model::Files result;
@@ -158,20 +158,20 @@ model::Files addFiles( std::list<wxFileName> paths, model::FolderPtr parent )
     return result;
 }
 
-void remove( model::NodePtr node )
+void ProjectViewRemove( model::NodePtr node )
 {
-    waitForIdle();
+    WaitForIdle();
     RunInMainAndWait([node]
     {
-        getProjectView().select(boost::assign::list_of(node));
+        GetProjectView().select(boost::assign::list_of(node));
     });
     RunInMainAndWait([]
     {
-        getProjectView().onDelete();
+        GetProjectView().onDelete();
     });
 }
 
-model::IPaths getSupportedFiles( wxFileName directory )
+model::IPaths GetSupportedFiles( wxFileName directory )
 {
     ASSERT(directory.IsDir() && directory.IsAbsolute())(directory);
     model::IPaths result;
@@ -190,44 +190,44 @@ model::IPaths getSupportedFiles( wxFileName directory )
     return result;
 }
 
-int countProjectView()
+int ProjectViewCount()
 {
-    waitForIdle();
+    WaitForIdle();
     RunInMainAndWait([]
     {
-        getProjectView().selectAll();
+        GetProjectView().selectAll();
     });
-    model::NodePtrs selection = getProjectView().getSelection();
+    model::NodePtrs selection = GetProjectView().getSelection();
     int result = selection.size();
     VAR_DEBUG(result);
     return result;
 }
 
-wxPoint findNode( model::NodePtr node )
+wxPoint ProjectViewFindNode( model::NodePtr node )
 {
-    return getProjectView().find(node);
+    return GetProjectView().find(node);
 }
 
-void MoveProjectView(wxPoint position)
+void ProjectViewMove(wxPoint position)
 {
-    MouseMoveWithinWidget(position, getProjectView().GetScreenPosition());
+    MouseMoveWithinWidget(position, GetProjectView().GetScreenPosition());
 }
 
-wxPoint CenterInProjectView( model::NodePtr node )
+wxPoint ProjectViewCenteredPosition( model::NodePtr node )
 {
-    return ProjectViewPosition() + findNode( node );
+    return ProjectViewPosition() + ProjectViewFindNode( node );
 }
 
 void DragFromProjectViewToTimeline( model::NodePtr node, wxPoint to )
 {
     ASSERT(FixtureGui::UseRealUiEvents);
-    wxPoint position = CenterInProjectView(node);
+    wxPoint position = ProjectViewCenteredPosition(node);
     ASSERT(!wxGetMouseState().LeftIsDown());
     MouseMoveOnScreen(position);
     MouseLeftDown();
 
     // Note 1: Need at least three consecutive drag events before the ProjectView decides that we're actually dragging. See ProjectView::onMotion.
-    // Note 2: When DND is active (DoDragStart has been called) event handling is blocked. Therefore, waitForIdle does not work below, until the drop is done (or the drag is aborted).
+    // Note 2: When DND is active (DoDragStart has been called) event handling is blocked. Therefore, WaitForIdle does not work below, until the drop is done (or the drag is aborted).
     int count = 0;
     SetWaitAfterEachInputAction(false);
     while (!gui::ProjectViewDropSource::get().isDragActive() && count++ < 100)
@@ -252,13 +252,13 @@ void DragFromProjectViewToTimeline( model::NodePtr node, wxPoint to )
     wxUIActionSimulator().MouseUp();
     while (gui::ProjectViewDropSource::get().isDragActive())
     {
-        pause(50); // Can't use waitForIdle: event handling is blocked during DnD
+        pause(50); // Can't use WaitForIdle: event handling is blocked during DnD
     }
     SetWaitAfterEachInputAction(true);
-    waitForIdle(); // Can be used again when the DND is done.
+    WaitForIdle(); // Can be used again when the DND is done.
 }
 
-void OpenTimelineForSequence(model::SequencePtr sequence)
+void ProjectViewOpenTimelineForSequence(model::SequencePtr sequence)
 {
     RunInMainAndWait([sequence]
     {
@@ -266,7 +266,7 @@ void OpenTimelineForSequence(model::SequencePtr sequence)
     });
     RunInMainAndWait([]
     {
-        getProjectView().onOpen();
+        GetProjectView().onOpen();
     });
 }
 

@@ -111,19 +111,19 @@ void TestUiDialog::testEscape()
     }
     {
         Escape e;
-        TriggerMenu(wxID_PREFERENCES);
-        waitForIdle();
+        WindowTriggerMenu(wxID_PREFERENCES);
+        WaitForIdle();
     }
     {
         Escape e;
-        TriggerMenu(wxID_ABOUT);
-        waitForIdle();
+        WindowTriggerMenu(wxID_ABOUT);
+        WaitForIdle();
     }
     {
         Escape e;
-        model::FolderPtr root = createProject();
-        addSequence("sequence", root);
-        TriggerMenu(wxID_PROPERTIES);
+        model::FolderPtr root = WindowCreateProject();
+        ProjectViewAddSequence("sequence", root);
+        WindowTriggerMenu(wxID_PROPERTIES);
     }
 }
 } // namespace

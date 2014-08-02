@@ -26,7 +26,7 @@ namespace test {
 void TestExceptions::testRemovedFileInSequence()
 {
     StartTestSuite();
-    model::FolderPtr root = createProject();
+    model::FolderPtr root = WindowCreateProject();
     ASSERT(root);
     model::IPaths InputFiles = getListOfInputFiles();
 
@@ -37,27 +37,27 @@ void TestExceptions::testRemovedFileInSequence()
     ASSERT(copyok);
 
     ASSERT_WATCHED_PATHS_COUNT(0);
-    model::FolderPtr folder1 = addFolder( "TestFolder" );
+    model::FolderPtr folder1 = ProjectViewAddFolder( "TestFolder" );
     WaitForChildCount(root, 2);
-    model::Files files1 = addFiles( boost::assign::list_of(filepath1), folder1 );
+    model::Files files1 = ProjectViewAddFiles( boost::assign::list_of(filepath1), folder1 );
     WaitForChildCount(root, 3);
     ASSERT_WATCHED_PATHS_COUNT(1);
-    model::SequencePtr sequence = createSequence(folder1);
+    model::SequencePtr sequence = ProjectViewCreateSequence(folder1);
     WaitForChildCount(root, 4);
-    remove(folder1);
+    ProjectViewRemove(folder1);
     ASSERT_WATCHED_PATHS_COUNT(0);
-    TriggerMenu(ID_CLOSESEQUENCE);
+    WindowTriggerMenu(ID_CLOSESEQUENCE);
 
     tempDir.reset(); // Deletes the file (still used in the sequence) from disk
 
     // Open the sequence again (file missing from disk)
     RunInMainAndWait([folder1]
     {
-        getProjectView().select(boost::assign::list_of(folder1));
+        GetProjectView().select(boost::assign::list_of(folder1));
     });
     RunInMainAndWait([]
     {
-        getProjectView().onOpen();
+        GetProjectView().onOpen();
     });
 
     Play(10, 500);
@@ -66,7 +66,7 @@ void TestExceptions::testRemovedFileInSequence()
 void TestExceptions::testRemovedFileInSequenceBeforeOpening()
 {
     StartTestSuite();
-    model::FolderPtr root = createProject();
+    model::FolderPtr root = WindowCreateProject();
     ASSERT(root);
     model::IPaths InputFiles = getListOfInputFiles();
 
@@ -77,14 +77,14 @@ void TestExceptions::testRemovedFileInSequenceBeforeOpening()
     ASSERT(copyok);
 
     ASSERT_WATCHED_PATHS_COUNT(0);
-    model::FolderPtr folder1 = addFolder( "TestFolder" );
+    model::FolderPtr folder1 = ProjectViewAddFolder( "TestFolder" );
     WaitForChildCount(root, 2);
-    model::Files files1 = addFiles( boost::assign::list_of(filepath1), folder1 );
+    model::Files files1 = ProjectViewAddFiles( boost::assign::list_of(filepath1), folder1 );
     WaitForChildCount(root, 3);
     ASSERT_WATCHED_PATHS_COUNT(1);
-    model::SequencePtr sequence = createSequence(folder1);
+    model::SequencePtr sequence = ProjectViewCreateSequence(folder1);
     WaitForChildCount(root, 4);
-    remove(folder1);
+    ProjectViewRemove(folder1);
     ASSERT_WATCHED_PATHS_COUNT(0);
 
     std::pair<RandomTempDirPtr, wxFileName> tempDir_fileName = SaveProjectAndClose();
@@ -92,8 +92,8 @@ void TestExceptions::testRemovedFileInSequenceBeforeOpening()
     tempDir.reset(); // Deletes the file (still used in the sequence) from disk
 
     StartTest("Load document");
-    TriggerMenu(wxID_FILE1); // Load document 1 from the file history, this is the file that was saved before. This mechanism avoids the open dialog.
-    waitForIdle();
+    WindowTriggerMenu(wxID_FILE1); // Load document 1 from the file history, this is the file that was saved before. This mechanism avoids the open dialog.
+    WaitForIdle();
 
     Play(10, 500);
 }
@@ -102,7 +102,7 @@ void TestExceptions::testRemovedFileUsedForTransitionsBeforeOpening()
 {
     StartTestSuite();
 
-    model::FolderPtr root = createProject();
+    model::FolderPtr root = WindowCreateProject();
     ASSERT(root);
     ASSERT_WATCHED_PATHS_COUNT(0);
 
@@ -118,10 +118,10 @@ void TestExceptions::testRemovedFileUsedForTransitionsBeforeOpening()
 
         fileNames.push_back(filepath);
     }
-    model::FolderPtr folder = addAutoFolder( tempDir->getFileName() );
+    model::FolderPtr folder = ProjectViewAddAutoFolder( tempDir->getFileName() );
     WaitForChildCount(root, 2 + InputFiles.size());
     ASSERT_WATCHED_PATHS_COUNT(1);
-    model::SequencePtr sequence = createSequence(folder);
+    model::SequencePtr sequence = ProjectViewCreateSequence(folder);
     WaitForChildCount(root, 3 + InputFiles.size());
 
     Zoom level(6);
@@ -136,8 +136,8 @@ void TestExceptions::testRemovedFileUsedForTransitionsBeforeOpening()
     fileNames.erase(it);
 
     StartTest("Load document");
-    TriggerMenu(wxID_FILE1); // Load document 1 from the file history, this is the file that was saved before. This mechanism avoids the open dialog.
-    waitForIdle();
+    WindowTriggerMenu(wxID_FILE1); // Load document 1 from the file history, this is the file that was saved before. This mechanism avoids the open dialog.
+    WaitForIdle();
 
     Scrub(HCenter(VideoClip(0,1)),RightPixel(VideoClip(0,1)) + 5);
     Scrub(-5 + LeftPixel(VideoClip(0,3)),HCenter(VideoClip(0,3)));
@@ -148,7 +148,7 @@ void TestExceptions::testRemovedFileUsedForTransitionsBeforeOpening()
 void TestExceptions::testRemovedFileInProjectViewBeforeOpening()
 {
     StartTestSuite();
-    model::FolderPtr root = createProject();
+    model::FolderPtr root = WindowCreateProject();
     ASSERT(root);
     model::IPaths InputFiles = getListOfInputFiles();
 
@@ -159,9 +159,9 @@ void TestExceptions::testRemovedFileInProjectViewBeforeOpening()
     ASSERT(copyok);
 
     ASSERT_WATCHED_PATHS_COUNT(0);
-    model::FolderPtr folder1 = addFolder( "TestFolder" );
+    model::FolderPtr folder1 = ProjectViewAddFolder( "TestFolder" );
     WaitForChildCount(root, 2);
-    model::Files files1 = addFiles( boost::assign::list_of(filepath1), folder1 );
+    model::Files files1 = ProjectViewAddFiles( boost::assign::list_of(filepath1), folder1 );
     WaitForChildCount(root, 3);
     ASSERT_WATCHED_PATHS_COUNT(1);
 
@@ -171,20 +171,20 @@ void TestExceptions::testRemovedFileInProjectViewBeforeOpening()
 
     StartTest("Load document");
     gui::Dialog::get().setConfirmation(); // A confirmation for the dialog showing that the removed file is deleted from project
-    TriggerMenu(wxID_FILE1); // Load document 1 from the file history, this is the file that was saved before. This mechanism avoids the open dialog.
-    waitForIdle();
+    WindowTriggerMenu(wxID_FILE1); // Load document 1 from the file history, this is the file that was saved before. This mechanism avoids the open dialog.
+    WaitForIdle();
 }
 
 void TestExceptions::testRemovedFolderInProjectViewBeforeOpening()
 {
     StartTestSuite();
-    model::FolderPtr root = createProject();
+    model::FolderPtr root = WindowCreateProject();
     ASSERT(root);
 
     RandomTempDirPtr tempDir = RandomTempDir::generate();
     RandomTempDirPtr subDir = tempDir->generateSubDir();
     RandomTempDirPtr subSubDir = subDir->generateSubDir();
-    model::FolderPtr autofolder = addAutoFolder( tempDir->getFileName() ); // Also waits for work
+    model::FolderPtr autofolder = ProjectViewAddAutoFolder( tempDir->getFileName() ); // Also waits for work
     WaitForChildCount(root, 4);
 
     std::pair<RandomTempDirPtr, wxFileName> tempDir_fileName = SaveProjectAndClose();
@@ -193,8 +193,8 @@ void TestExceptions::testRemovedFolderInProjectViewBeforeOpening()
 
     StartTest("Load document");
     gui::Dialog::get().setConfirmation(); // A confirmation for the dialog showing that the removed file is deleted from project
-    TriggerMenu(wxID_FILE1); // Load document 1 from the file history, this is the file that was saved before. This mechanism avoids the open dialog.
-    waitForIdle();
+    WindowTriggerMenu(wxID_FILE1); // Load document 1 from the file history, this is the file that was saved before. This mechanism avoids the open dialog.
+    WaitForIdle();
 }
 
 } // namespace

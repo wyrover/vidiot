@@ -144,8 +144,8 @@ void TestPopupMenu::testRemoveOneEmptyInterval()
     StartTestSuite();
     Zoom level(2);
     ConfigFixture.SnapToClips(false);
-    TriggerMenu(ID_ADDVIDEOTRACK);
-    TriggerMenu(ID_ADDAUDIOTRACK);
+    WindowTriggerMenu(ID_ADDVIDEOTRACK);
+    WindowTriggerMenu(ID_ADDAUDIOTRACK);
 
     {
         StartTest("Remove empty intervals when clips are partially overlapping with the empty area");
@@ -182,9 +182,9 @@ void TestPopupMenu::testOpenPopupMenuTwice()
     StartTestSuite();
     Zoom level(2);
     ConfigFixture.SnapToClips(false);
-    TriggerMenu(ID_ADDVIDEOTRACK);
-    TriggerMenu(ID_ADDAUDIOTRACK);
-    // NOTE: Avoid the use of waitForIdle while the popup menu is being shown.
+    WindowTriggerMenu(ID_ADDVIDEOTRACK);
+    WindowTriggerMenu(ID_ADDAUDIOTRACK);
+    // NOTE: Avoid the use of WaitForIdle while the popup menu is being shown.
     //       Popup menu blocks the idle events causing long delays...
     {
         StartTest("Open popup menu twice");
