@@ -129,8 +129,8 @@ void TestTrimming::testKeyboardTrimming()
         ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
     }
     
-    TriggerMenu(ID_ADDVIDEOTRACK);
-    TriggerMenu(ID_ADDAUDIOTRACK);
+    WindowTriggerMenu(ID_ADDVIDEOTRACK);
+    WindowTriggerMenu(ID_ADDAUDIOTRACK);
     TrimRight(VideoClip(0,4), - 250); // Make smaller for easier positioning
     
     TestBeginTrimSucceeds("With other track without clips: Begin trim");
@@ -184,7 +184,7 @@ void TestTrimming::testKeyboardTrimmingDuringPlayback()
     pause(500);
 
     //ASSERT(getTimeline().getPlayer()->
-    waitForIdle();
+    WaitForIdle();
 }
 
 

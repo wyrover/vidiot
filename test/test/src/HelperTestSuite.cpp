@@ -125,7 +125,7 @@ bool HelperTestSuite::startTestSuite(const char* suite)
     if (currentTestRequiresWindow())
     {
         updateTitle();
-        waitForIdle();
+        WaitForIdle();
         RunInMainAndWait([this]
         {
            Config::WriteString( Config::sPathTestRunCurrent, currentCxxTest() ); // Set

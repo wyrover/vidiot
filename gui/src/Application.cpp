@@ -130,7 +130,7 @@ Application::~Application()
 // IDLE HANDLING
 //////////////////////////////////////////////////////////////////////////
 
-void Application::waitForIdle()
+void Application::WaitForIdle()
 {
     ASSERT(!wxThread::IsMain());
     // Original implementation:

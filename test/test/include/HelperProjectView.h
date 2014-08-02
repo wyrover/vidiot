@@ -30,52 +30,52 @@ class EventRemoveNodes;
 namespace test {
 
 /// \return the project view
-gui::ProjectView& getProjectView();
+gui::ProjectView& GetProjectView();
 
 /// \return the position of the project view on screen
 wxPoint ProjectViewPosition();
 
 /// Create a new autofolder to the given path in a given parent folder or in the root (default)
 /// \return new autofolder
-model::FolderPtr addAutoFolder( wxFileName path, model::FolderPtr parent = getRoot() );
+model::FolderPtr ProjectViewAddAutoFolder( wxFileName path, model::FolderPtr parent = getRoot() );
 
 /// Create a new named folder in a given parent folder or in the root (default)
 /// \return new folder
-model::FolderPtr addFolder( wxString name, model::FolderPtr parent = getRoot() );
+model::FolderPtr ProjectViewAddFolder( wxString name, model::FolderPtr parent = getRoot() );
 
 /// Create a new sequence in a given parent folder or in the root (default)
 /// \return new sequence
-model::SequencePtr addSequence( wxString name, model::FolderPtr parent = getRoot() );
+model::SequencePtr ProjectViewAddSequence( wxString name, model::FolderPtr parent = getRoot() );
 
 /// Create a new sequence from a given folder
 /// \return new sequence
-model::SequencePtr createSequence( model::FolderPtr folder );
+model::SequencePtr ProjectViewCreateSequence( model::FolderPtr folder );
 
 /// Create new files in a given parent folder or in the root (default)
 /// \return new files created in the model
-model::Files addFiles( std::list<wxFileName> name, model::FolderPtr parent = getRoot() );
+model::Files ProjectViewAddFiles( std::list<wxFileName> name, model::FolderPtr parent = getRoot() );
 
 /// Remove given node from the project view via selecting it and then triggering the delete menu option
 /// \node node to be removed
-void remove( model::NodePtr node );
+void ProjectViewRemove( model::NodePtr node );
 
 /// \return list of supported files in the given directory. Folders are returned also.
 /// \param path absolute path which is searched for files.
 /// Furthermore, note that files are opened with avcodec. If that returns an error, the file
 /// is not added to the returned list - see File::canBeOpened().
-model::IPaths getSupportedFiles( wxFileName path );
+model::IPaths GetSupportedFiles( wxFileName path );
 
 /// Count the number of nodes currently visible in the project view.
 /// This is implemented by selecting all nodes, and counting the selection size.
 /// Thus, as a side effect changes the selection of the project view.
-int countProjectView();
+int ProjectViewCount();
 
 /// \return the coordinates of the given node
 /// \param node node to be found
-wxPoint findNode( model::NodePtr node );
+wxPoint ProjectViewFindNode( model::NodePtr node );
 
 /// \return center position of given node, in screen coordinates
-wxPoint CenterInProjectView(model::NodePtr node);
+wxPoint ProjectViewCenteredPosition(model::NodePtr node);
 
 /// Perform a drag and drop operation from project view to the timeline
 /// \param from position within project view
@@ -84,7 +84,7 @@ void DragFromProjectViewToTimeline(model::NodePtr node, wxPoint to);
 
 /// Open the timeline for a sequence
 /// \param sequence sequence for which a timeline must be opened
-void OpenTimelineForSequence(model::SequencePtr sequence);
+void ProjectViewOpenTimelineForSequence(model::SequencePtr sequence);
 
 /// Delays execution of the module test until a given node has signaled (via an event)
 /// that it has the given number of children.

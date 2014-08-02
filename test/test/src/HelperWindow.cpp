@@ -19,37 +19,37 @@
 
 namespace test {
 
-void TriggerMenu(int id)
+void WindowTriggerMenu(int id)
 {
-    TriggerMenu(gui::Window::get(), id);
+    WindowTriggerMenu(gui::Window::get(), id);
 }
 
-void TriggerMenu(wxWindow& window, int id)
+void WindowTriggerMenu(wxWindow& window, int id)
 {
     window.GetEventHandler()->QueueEvent(new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED,id));
-    waitForIdle();
+    WaitForIdle();
 }
 
-void checkMenu(int id, bool checked)
+void WindowCheckMenu(int id, bool checked)
 {
-    checkMenu(gui::Window::get(), id, checked);
+    WindowCheckMenu(gui::Window::get(), id, checked);
 }
 
-void checkMenu(wxFrame& window, int id, bool checked)
+void WindowCheckMenu(wxFrame& window, int id, bool checked)
 {
      // Set with the 'other' value. Required to ensure that the
     // correct value is received when triggering the event,
     // since the event causes a 'toggle'.
     window.GetMenuBar()->Check(id,!checked);
     window.ProcessCommand(id);
-    waitForIdle();
+    WaitForIdle();
 }
 
-model::FolderPtr createProject()
+model::FolderPtr WindowCreateProject()
 {
-    waitForIdle();
-    TriggerMenu(wxID_NEW);
-    waitForIdle();
+    WaitForIdle();
+    WindowTriggerMenu(wxID_NEW);
+    WaitForIdle();
     return getRoot();
 }
 
@@ -63,8 +63,8 @@ void Undo(int steps)
     LOG_DEBUG;
     while (steps > 0)
     {
-        TriggerMenu(wxID_UNDO);
-        logHistory();
+        WindowTriggerMenu(wxID_UNDO);
+        LogHistory();
         steps--;
     }
 }
@@ -74,8 +74,8 @@ void Redo(int steps)
     LOG_DEBUG;
     while (steps > 0)
     {
-        TriggerMenu(wxID_REDO);
-        logHistory();
+        WindowTriggerMenu(wxID_REDO);
+        LogHistory();
         steps--;
     }
 }
@@ -95,7 +95,7 @@ void BREAK()
     gui::Window::get().Raise();
 }
 
-void logHistory()
+void LogHistory()
 {
     LOG_DEBUG;
     wxCommandProcessor* proc = gui::Window::get().GetDocumentManager()->GetCurrentDocument()->GetCommandProcessor();

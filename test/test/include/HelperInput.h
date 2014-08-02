@@ -26,7 +26,7 @@ namespace test {
 // WAIT HANDLING
 //////////////////////////////////////////////////////////////////////////
 
-/// Enable (true) or disable (false) the waitForIdle after each (simulated)
+/// Enable (true) or disable (false) the WaitForIdle after each (simulated)
 /// user action, in one of the TimelineLeft*, TimelineRight*, and TimelineKey* 
 /// methods below.
 void SetWaitAfterEachInputAction(bool wait = true);

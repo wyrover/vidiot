@@ -40,7 +40,7 @@ void ASSERT_CLIPPROPERTIES(
     wxPoint position,
     boost::rational<int> rotation)
 {
-    waitForIdle();
+    WaitForIdle();
 
     int widget_scalingdigits = 0;
     double widget_scalingspin = 0.0;

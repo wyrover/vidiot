@@ -567,8 +567,8 @@ void TestTimeline::testTrimmingWithOtherTracks()
 {
     StartTestSuite();
     Zoom level(2);
-    TriggerMenu(ID_ADDVIDEOTRACK);
-    TriggerMenu(ID_ADDAUDIOTRACK);
+    WindowTriggerMenu(ID_ADDVIDEOTRACK);
+    WindowTriggerMenu(ID_ADDAUDIOTRACK);
     {
         StartTest("Trim: EndTrim: Enlarge the last clip in a track (there is no empty clip after it anymore)");
         TrimRight(VideoClip(0,3),-40,false);
@@ -779,8 +779,8 @@ void TestTimeline::testShowDebugInfo()
     StartTestSuite();
     model::SequencePtr sequence = getSequence();
     Config::setShowDebugInfo(true);
-    TriggerMenu(ID_CLOSESEQUENCE);
-    OpenTimelineForSequence(sequence);
+    WindowTriggerMenu(ID_CLOSESEQUENCE);
+    ProjectViewOpenTimelineForSequence(sequence);
     Config::setShowDebugInfo(false);
 }
 

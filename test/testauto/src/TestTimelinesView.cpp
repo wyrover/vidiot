@@ -26,18 +26,18 @@ void TestTimelinesView::testSequenceMenu()
     wxString sSequence1( "Sequence1" );
     wxString sSequence2( "Sequence2" );
 
-    model::FolderPtr root = createProject();
+    model::FolderPtr root = WindowCreateProject();
 
-    model::SequencePtr sequence1 = addSequence( sSequence1 );
+    model::SequencePtr sequence1 = ProjectViewAddSequence( sSequence1 );
     ASSERT_EQUALS(getSequenceMenu(), getTimeline(sequence1).getMenuHandler().getMenu());
 
-    model::SequencePtr sequence2 = addSequence( sSequence2 );
+    model::SequencePtr sequence2 = ProjectViewAddSequence( sSequence2 );
     ASSERT_EQUALS(getSequenceMenu(),getTimeline(sequence2).getMenuHandler().getMenu());
 
-    TriggerMenu(ID_CLOSESEQUENCE);
+    WindowTriggerMenu(ID_CLOSESEQUENCE);
     ASSERT_EQUALS(getSequenceMenu(),getTimeline(sequence1).getMenuHandler().getMenu());
 
-    TriggerMenu(ID_CLOSESEQUENCE);
+    WindowTriggerMenu(ID_CLOSESEQUENCE);
     ASSERT_ZERO(getSequenceMenu()->GetMenuItemCount()); // When all sequences are closed, the default menu (member of Window) is shown, which is empty
 }
 } // namespace

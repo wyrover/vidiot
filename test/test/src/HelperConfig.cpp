@@ -29,13 +29,13 @@ ConfigOverruleBool::ConfigOverruleBool(wxString path, bool temporaryvalue)
     ,   mTemporaryValue(temporaryvalue)
 {
     Config::WriteBool(mPath,mTemporaryValue);
-    waitForIdle();
+    WaitForIdle();
 }
 
 ConfigOverruleBool::~ConfigOverruleBool()
 {
     Config::WriteBool(mPath,mOriginalValue);
-    waitForIdle();
+    WaitForIdle();
 }
 
 ConfigOverruleLong::ConfigOverruleLong(wxString path, long temporaryvalue)
@@ -44,13 +44,13 @@ ConfigOverruleLong::ConfigOverruleLong(wxString path, long temporaryvalue)
     ,   mTemporaryValue(temporaryvalue)
 {
     Config::WriteLong(mPath,mTemporaryValue);
-    waitForIdle();
+    WaitForIdle();
 }
 
 ConfigOverruleLong::~ConfigOverruleLong()
 {
     Config::WriteLong(mPath,mOriginalValue);
-    waitForIdle();
+    WaitForIdle();
 }
 
 ConfigOverruleString::ConfigOverruleString(wxString path, wxString temporaryvalue)
@@ -59,13 +59,13 @@ ConfigOverruleString::ConfigOverruleString(wxString path, wxString temporaryvalu
     ,   mTemporaryValue(temporaryvalue)
 {
     Config::WriteString(mPath,mTemporaryValue);
-    waitForIdle();
+    WaitForIdle();
 }
 
 ConfigOverruleString::~ConfigOverruleString()
 {
     Config::WriteString(mPath,mOriginalValue);
-    waitForIdle();
+    WaitForIdle();
 }
 
 } // namespace

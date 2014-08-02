@@ -26,7 +26,7 @@ namespace test {
 void TestWatch::setUp()
 {
     if (!HelperTestSuite::get().currentTestIsEnabled()) { return; } // Test was disabled
-    mRoot = createProject();
+    mRoot = WindowCreateProject();
     ASSERT(mRoot);
     mInputFiles = getListOfInputFiles();
 }
@@ -58,7 +58,7 @@ void TestWatch::testRemoveWatchedSubFolder()
     ASSERT_EQUALS(mRoot->find(util::path::toName(mSubDirName)).size(),0); // Subdir is not present anymore
     ASSERT_EQUALS(mRoot->find(util::path::toName(mSubSubDirName)).size(),0); // Subsubdir is not present anymore
 
-    remove( folder );
+    ProjectViewRemove( folder );
     ASSERT_WATCHED_PATHS_COUNT(0); // Nothing is being watched
 }
 
@@ -77,7 +77,7 @@ void TestWatch::testRemoveWatchedSubSubFolder()
     ASSERT_EQUALS(mRoot->find(util::path::toName(mSubDirName)).size(),1); // Subdir name is relative to parent
     ASSERT_EQUALS(mRoot->find(util::path::toName(mSubSubDirName)).size(),0); // Subsubdir is not present anymore
 
-    remove( folder );
+    ProjectViewRemove( folder );
     ASSERT_WATCHED_PATHS_COUNT(0); // Nothing is being watched
 }
 
@@ -107,7 +107,7 @@ void TestWatch::testAddAndRemoveFileToWatchedAutoFolder()
         ASSERT(removeok);
         WaitForChildCount(mRoot, 4);
 
-        remove( folder );
+        ProjectViewRemove( folder );
         ASSERT_WATCHED_PATHS_COUNT(0); // Nothing is being watched
     }
     {
@@ -126,7 +126,7 @@ void TestWatch::testAddAndRemoveFileToWatchedAutoFolder()
         ASSERT(copyok);
         WaitForChildCount(mRoot, 5); // Only one of the two files is added
 
-        remove( folder );
+        ProjectViewRemove( folder );
         ASSERT_WATCHED_PATHS_COUNT(0); // Nothing is being watched
     }
 }
@@ -153,7 +153,7 @@ void TestWatch::testRemovedWatchedFolder()
 void TestWatch::testAddAndRemoveFileToWatchedNonAutoFolder()
 {
     StartTestSuite();
-    model::FolderPtr folder1 = addFolder( "TestFolder" );
+    model::FolderPtr folder1 = ProjectViewAddFolder( "TestFolder" );
     WaitForChildCount(mRoot, 2);
 
     StartTest("Add two files to a non-auto folder");
@@ -167,7 +167,7 @@ void TestWatch::testAddAndRemoveFileToWatchedNonAutoFolder()
     copyok = wxCopyFile( filepath2_input.GetLongPath(), filepath2.GetLongPath(), false );
     ASSERT(copyok);
 
-    model::Files files1 = addFiles( boost::assign::list_of(filepath1)(filepath2), folder1 );
+    model::Files files1 = ProjectViewAddFiles( boost::assign::list_of(filepath1)(filepath2), folder1 );
     WaitForChildCount(mRoot, 4);
     ASSERT_WATCHED_PATHS_COUNT(1);
 
@@ -189,7 +189,7 @@ void TestWatch::testAddAndRemoveFileToWatchedNonAutoFolder()
 void TestWatch::testRemoveProjectViewFolderContainingFileOnDisk()
 {
     StartTestSuite();
-    model::FolderPtr folder1 = addFolder( "TestFolder2" );
+    model::FolderPtr folder1 = ProjectViewAddFolder( "TestFolder2" );
     WaitForChildCount(mRoot, 2);
 
     StartTest("Add file to a non-auto folder");
@@ -198,12 +198,12 @@ void TestWatch::testRemoveProjectViewFolderContainingFileOnDisk()
     bool copyok = wxCopyFile( mInputFiles.front()->getPath().GetLongPath(), filepath1.GetLongPath(), false );
     ASSERT(copyok);
 
-    model::Files files1 = addFiles( boost::assign::list_of(filepath1), folder1 );
+    model::Files files1 = ProjectViewAddFiles( boost::assign::list_of(filepath1), folder1 );
     WaitForChildCount(mRoot, 3);
     ASSERT_WATCHED_PATHS_COUNT(1);
 
     StartTest("Remove folder containing watched file");
-    remove(folder1);
+    ProjectViewRemove(folder1);
     ASSERT_EQUALS(gui::Watcher::get().getWatchedPathsCount(),0); // Watch for the file must be removed
 
     StartTest("Add folder again (undo remove)");
@@ -228,7 +228,7 @@ model::FolderPtr TestWatch::setup()
     mTempDirName = mTempDir->getFileName();
     mSubDirName = mSubDir->getFileName();
     mSubSubDirName = mSubSubDir->getFileName();
-    model::FolderPtr autofolder = addAutoFolder( mTempDir->getFileName() ); // Also waits for work
+    model::FolderPtr autofolder = ProjectViewAddAutoFolder( mTempDir->getFileName() ); // Also waits for work
     WaitForChildCount(mRoot, 4);
 
     ASSERT_EQUALS(mRoot->find(util::path::toPath(mTempDirName)).size(),1); // Full path for topmost autofolder

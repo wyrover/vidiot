@@ -43,7 +43,7 @@ void TestPlayback::testPlaybackUntilEndOfSequence()
     TimelinePositionCursor(RightPixel(VideoTrack(0)) - 5);
     WaitForPlayback playbackstarted(true);
     WaitForPlayback playbackstopped(false);
-    TimelineKeyPress(' '); // todo refactor into TimelineStartPlayback
+    TimelineKeyPress(' ');
     playbackstarted.wait();
     playbackstopped.wait();
 }
@@ -51,7 +51,7 @@ void TestPlayback::testPlaybackUntilEndOfSequence()
 void TestPlayback::testPlaybackComplexSequence()
 {
     StartTestSuite();
-    TriggerMenu(ID_ADDVIDEOTRACK);
+    WindowTriggerMenu(ID_ADDVIDEOTRACK);
 
     StartTest("Preparation: Add transition to test skipping frames for a transition.");
     MakeInOutTransitionAfterClip preparation(3);
@@ -60,30 +60,29 @@ void TestPlayback::testPlaybackComplexSequence()
     TimelineDragToTrack(1,VideoClip(0,6),model::IClipPtr()); //
     TimelineDrag(From(Center(VideoClip(1,1))).AlignLeft(LeftPixel(VideoClip(0,2))));
     TimelineLeftClick(Center(VideoClip(1,1)));
-    MouseClickTopLeft(DetailsClipView()->getOpacitySlider()); // Give focus
-    KeyboardKeyPressN(3,WXK_PAGEUP);
+    SetValue(DetailsClipView()->getOpacitySlider(), 225); // Same as pressing 3 * PageUp
 
     StartTest("Preparation: Enlarge preview as much as possible to make the decoded video size as large as possible.");
-    TriggerMenu(ID_SHOW_PROJECT);
-    TriggerMenu(ID_SHOW_DETAILS);
+    WindowTriggerMenu(ID_SHOW_PROJECT);
+    WindowTriggerMenu(ID_SHOW_DETAILS);
     wxRect r = getTimeline().getPlayer()->GetScreenRect();
     wxPoint p(r.GetLeft() + r.GetWidth() / 2, r.GetBottom() + 4);
-    MouseMoveOnScreen(p);
-    MouseLeftDown();
-    MouseMoveOnScreen(p + wxPoint(0,200));
-    MouseLeftUp();
+
+    // Make preview as large as possible. Trick taken from http://trac.wxwidgets.org/ticket/13180
+    // wxAUI hack: set minimum height to desired value, then call wxAuiPaneInfo::Fixed() to apply it
+    gui::Window::get().getUiManager().GetPane(gui::Window::sPaneNamePreview).MinSize(-1,510);
+    gui::Window::get().getUiManager().GetPane(gui::Window::sPaneNamePreview).Fixed();
+    gui::Window::get().getUiManager().Update();
+    //now make resizable again
+    gui::Window::get().getUiManager().GetPane(gui::Window::sPaneNameTimelines).Resizable();
+    gui::Window::get().getUiManager().Update();
+    WaitForIdle();
 
     StartTest("Playback");
     TimelinePositionCursor(RightPixel(VideoClip(1,1)) - 10);
     for (int i = 0; i < 8; ++i)
     {
-        WaitForPlayback playbackstarted(true);
-        WaitForPlayback playbackstopped(false);
-        TimelineKeyPress(' ');
-        playbackstarted.wait();
-        pause(500);
-        TimelineKeyPress(' ');
-        playbackstopped.wait();
+        Play(500);
     }
 
     Undo(3);

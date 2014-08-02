@@ -43,7 +43,7 @@ void TestRender::testChangeRenderSettings()
     {
         StartTest("If cancel is pressed, nothing is changed.");
         model::render::RenderPtr original = getCurrentRenderSettings();
-        TriggerMenu(ID_RENDERSETTINGS);
+        WindowTriggerMenu(ID_RENDERSETTINGS);
         gui::Dialog::get().setSaveFile("D:/out.avi");
         MouseClickTopLeft(gui::DialogRenderSettings::get().getFileButton());
         MouseClickBottomLeft(gui::DialogRenderSettings::get().getVideoParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
@@ -56,7 +56,7 @@ void TestRender::testChangeRenderSettings()
     }
     {
         StartTest("If apply is pressed, the sequence is changed (with a different video codec setting).");
-        TriggerMenu(ID_RENDERSETTINGS);
+        WindowTriggerMenu(ID_RENDERSETTINGS);
         gui::Dialog::get().setSaveFile("D:/out.avi");
         MouseClickTopLeft(gui::DialogRenderSettings::get().getFileButton());
         model::render::RenderPtr original = getCurrentRenderSettings();
@@ -70,7 +70,7 @@ void TestRender::testChangeRenderSettings()
     }
     {
         StartTest("If apply is pressed, the sequence is changed (with a different audio codec setting).");
-        TriggerMenu(ID_RENDERSETTINGS);
+        WindowTriggerMenu(ID_RENDERSETTINGS);
         gui::Dialog::get().setSaveFile("D:/out.avi");
         MouseClickTopLeft(gui::DialogRenderSettings::get().getFileButton());
         model::render::RenderPtr original = getCurrentRenderSettings();
@@ -85,7 +85,7 @@ void TestRender::testChangeRenderSettings()
     }
     {
         StartTest("If OK is pressed, the sequence is changed and the dialog is closed.");
-        TriggerMenu(ID_RENDERSETTINGS);
+        WindowTriggerMenu(ID_RENDERSETTINGS);
         gui::Dialog::get().setSaveFile("D:/out.avi");
         MouseClickTopLeft(gui::DialogRenderSettings::get().getFileButton());
         model::render::RenderPtr original = getCurrentRenderSettings();
@@ -113,7 +113,7 @@ void TestRender::testRenderingSplit()
         TimelineKeyPress(WXK_DELETE);
         RandomTempDir tempdir;
         model::render::RenderPtr original = getCurrentRenderSettings();
-        TriggerMenu(ID_RENDERSETTINGS);
+        WindowTriggerMenu(ID_RENDERSETTINGS);
         wxFileName fn(tempdir.getFileName().GetLongPath(), "out" ,"avi");
         gui::Dialog::get().setSaveFile(fn.GetLongPath());
         MouseClickTopLeft(gui::DialogRenderSettings::get().getFileButton());
@@ -138,11 +138,11 @@ void TestRender::testRenderingCodecs()
         std::ostringstream osCodec; osCodec << id;
         std::ostringstream os; os << "Render " << osCodec.str();// << " into " << path.GetLongPath();
         StartTest(os.str().c_str());
-        TriggerMenu(ID_RENDERSETTINGS);
+        WindowTriggerMenu(ID_RENDERSETTINGS);
         gui::DialogRenderSettings::get().getVideoCodecButton()->select(id);
         MouseClickTopLeft(gui::DialogRenderSettings::get().getOkButton());
         RenderAndPlaybackCurrentTimeline();
-        OpenTimelineForSequence(sequence);
+        ProjectViewOpenTimelineForSequence(sequence);
     }
 }
 
@@ -172,8 +172,8 @@ void TestRender::testRenderingTransformedClip()
     StartTestSuite();
 
     ConfigFixture.SnapToClips(true);
-    TriggerMenu(ID_ADDAUDIOTRACK);
-    TriggerMenu(ID_ADDVIDEOTRACK);
+    WindowTriggerMenu(ID_ADDAUDIOTRACK);
+    WindowTriggerMenu(ID_ADDVIDEOTRACK);
     ConfigOverruleLong overrule(Config::sPathDebugMaxRenderLength, 3); // Only render 3s
     wxFileName path(wxFileName::GetTempDir(), "out", "avi");
     TimelineDragToTrack(1, VideoClip(0,1), AudioClip(0,1));
@@ -194,10 +194,10 @@ void TestRender::testRenderingTransformedClip()
 void TestRender::RenderTimelineInto(const wxFileName& path, int lengthInS)
 {
     ConfigOverruleLong overrule(Config::sPathDebugMaxRenderLength, lengthInS);
-    TriggerMenu(ID_RENDERSETTINGS);
+    WindowTriggerMenu(ID_RENDERSETTINGS);
     gui::Dialog::get().setSaveFile(path.GetFullPath());
     MouseClickTopLeft(gui::DialogRenderSettings::get().getFileButton());
-    waitForIdle();
+    WaitForIdle();
     ExpectExecutedWork expectation(1);
     MouseClickTopLeft(gui::DialogRenderSettings::get().getRenderButton());
     expectation.wait();
@@ -206,13 +206,13 @@ void TestRender::RenderTimelineInto(const wxFileName& path, int lengthInS)
 
 void TestRender::PlaybackRenderedTimeline(const wxFileName& path, pixel start, milliseconds t)
 {
-    model::FolderPtr folder1 = addFolder( "PlaybackRenderedTimeline" );
-    model::Files files1 = addFiles( boost::assign::list_of(path), folder1 );
-    model::SequencePtr sequence1 = createSequence( folder1 );
+    model::FolderPtr folder1 = ProjectViewAddFolder( "PlaybackRenderedTimeline" );
+    model::Files files1 = ProjectViewAddFiles( boost::assign::list_of(path), folder1 );
+    model::SequencePtr sequence1 = ProjectViewCreateSequence( folder1 );
     Zoom level(4);
     Play(start, t);
-    remove(sequence1);
-    remove(folder1);
+    ProjectViewRemove(sequence1);
+    ProjectViewRemove(folder1);
 }
 
 void TestRender::RenderAndPlaybackCurrentTimeline(int renderedlengthInS, pixel playbackStart, milliseconds playbackLength)
@@ -220,7 +220,7 @@ void TestRender::RenderAndPlaybackCurrentTimeline(int renderedlengthInS, pixel p
     RandomTempDir tempdir;
     wxFileName path(tempdir.getFileName().GetFullPath(), "out", "avi");
     RenderTimelineInto(path, renderedlengthInS);
-    TriggerMenu(ID_CLOSESEQUENCE);
+    WindowTriggerMenu(ID_CLOSESEQUENCE);
     PlaybackRenderedTimeline(path, playbackStart, playbackLength);
 }
 

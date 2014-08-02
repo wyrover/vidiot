@@ -41,9 +41,9 @@ void TestUiDragAndDropFromProjectViewToTimeline::testDragAndDropIntoEmptySequenc
 {
     StartTestSuite();
     OpenFolderWithInputFiles();
-    TriggerMenu(ID_CLOSESEQUENCE);
+    WindowTriggerMenu(ID_CLOSESEQUENCE);
     wxString sSequence1( "Sequence1" );
-    model::SequencePtr sequence1 = addSequence( sSequence1, mProjectFixture.mRoot );
+    model::SequencePtr sequence1 = ProjectViewAddSequence( sSequence1, mProjectFixture.mRoot );
     model::NodePtrs fileNodes = mProjectFixture.mRoot->find("02.avi");
     DragFromProjectViewToTimeline(fileNodes.front(),  getTimeline().GetScreenPosition() - getTimeline().getScrolling().getOffset() + wxPoint(5, VCenter(VideoTrack(0))) );
     ASSERT_EQUALS(NumberOfVideoClipsInTrack(0),1);
@@ -96,7 +96,7 @@ void TestUiDragAndDropFromProjectViewToTimeline::OpenFolderWithInputFiles()
         }
     }
     ASSERT_NONZERO(folder);
-    MouseMoveOnScreen(CenterInProjectView(folder));
+    MouseMoveOnScreen(ProjectViewCenteredPosition(folder));
     MouseLeftDown();
     MouseLeftUp();
     KeyboardKeyPress(WXK_RIGHT);

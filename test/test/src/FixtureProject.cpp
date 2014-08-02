@@ -36,15 +36,15 @@ void FixtureProject::init()
 {
     if (!HelperTestSuite::get().currentTestIsEnabled()) { return; } // Test was disabled
 
-    mRoot = createProject();
+    mRoot = WindowCreateProject();
     ASSERT(mRoot);
     InputFiles = getListOfInputFiles();
 
-    mAutoFolder = addAutoFolder( getTestFilesPath() );
+    mAutoFolder = ProjectViewAddAutoFolder( getTestFilesPath() );
     WaitForChildCount(mRoot, InputFiles.size() + 2); // +2: Root + autofolder
     ASSERT_EQUALS(mAutoFolder->getParent(),mRoot);
     ASSERT_EQUALS(mAutoFolder->getChildren().size(), InputFiles.size());
-    mSequence = createSequence( mAutoFolder );
+    mSequence = ProjectViewCreateSequence( mAutoFolder );
 
     ASSERT_EQUALS(mSequence->getParent(),mRoot);
 
@@ -59,7 +59,7 @@ void FixtureProject::init()
         mOriginalPtsOfAudioClip.push_back(clip->getLeftPts());
     }
 
-    waitForIdle();
+    WaitForIdle();
     if (mFocusTimeline && FixtureGui::UseRealUiEvents)
     {
 

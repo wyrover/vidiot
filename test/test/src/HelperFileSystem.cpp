@@ -117,7 +117,7 @@ wxFileName getTestFilesPath()
 
 model::IPaths getListOfInputFiles()
 {
-    return getSupportedFiles(getTestFilesPath());
+    return GetSupportedFiles(getTestFilesPath());
 }
 
 wxFileName getStillImagePath()

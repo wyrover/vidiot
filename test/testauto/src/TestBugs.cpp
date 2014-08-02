@@ -61,7 +61,7 @@ void TestBugs::testDetailsNotShownAfterMovingTimelineCursor()
 void TestBugs::testLinkingErrorWhenDroppingOverBeginOfLinkedClip()
 {
     StartTestSuite();
-    TriggerMenu(ID_ADDVIDEOTRACK);
+    WindowTriggerMenu(ID_ADDVIDEOTRACK);
     TrimLeft(VideoClip(0,4),40,false);
     TimelineDrag(From(Center(VideoClip(0,6))).To(wxPoint(RightPixel(VideoClip(0,4)),VCenter(getSequence()->getVideoTrack(1)))));
     ASSERT_EQUALS(VideoClip(0,5)->getLink(),AudioClip(0,6));
@@ -71,8 +71,8 @@ void TestBugs::testLinkingErrorWhenDroppingOverBeginOfLinkedClip()
 void TestBugs::testErrorInGetNextHandlingForEmptyClips()
 {
     StartTestSuite();
-    TriggerMenu(ID_ADDVIDEOTRACK);
-    TriggerMenu(ID_ADDVIDEOTRACK);
+    WindowTriggerMenu(ID_ADDVIDEOTRACK);
+    WindowTriggerMenu(ID_ADDVIDEOTRACK);
 
     TimelineDragToTrack(1,VideoClip(0,5),model::IClipPtr());
     TimelineDrag(From(Center(VideoClip(1,1))).To(wxPoint(HCenter(VideoClip(0,4)),VCenter(VideoClip(1,1)))));
@@ -119,11 +119,11 @@ void TestBugs::testBugsWithLongTimeline()
     StartTestSuite();
     model::SequencePtr sequence = getSequence();
     Config::setShowDebugInfo(true);
-    TriggerMenu(ID_CLOSESEQUENCE);
+    WindowTriggerMenu(ID_CLOSESEQUENCE);
 
     ExtendSequenceWithRepeatedClips(sequence, mProjectFixture.InputFiles, 30);
 
-    OpenTimelineForSequence(sequence);
+    ProjectViewOpenTimelineForSequence(sequence);
     Zoom level(4);
     TimelineKeyPress(WXK_END); // Move scrollbars to end
 
@@ -140,10 +140,10 @@ void TestBugs::testBugsWithLongTimeline()
     {
         StartTest("Bug: Playback did not stop after pressing shift");
         TimelinePositionCursor(HCenter(VideoClip(0,-2)));
-        // NOTE: Don't use waitForIdle() when the video is playing!!!
+        // NOTE: Don't use WaitForIdle() when the video is playing!!!
         //       When the video is playing, the system does not become Idle (playback events).
         TimelineKeyPress(' ');
-        SetWaitAfterEachInputAction(false); // Avoid waitForIdle during playback
+        SetWaitAfterEachInputAction(false); // Avoid WaitForIdle during playback
         pause(1000);
         TimelineKeyDown(wxMOD_SHIFT);
         pause(1000);
@@ -167,7 +167,7 @@ void TestBugs::testBugsWithLongTimeline()
             gui::Window::get().GetDocumentManager()->CreateDocument(tempDir_fileName.second.GetFullPath(),wxDOC_SILENT);
         });
     }
-    TriggerMenu(wxID_CLOSE);
+    WindowTriggerMenu(wxID_CLOSE);
     Config::setShowDebugInfo(false);
 }
 
@@ -298,8 +298,8 @@ void TestBugs::testShiftTrimNotAllowedWithAdjacentClipInOtherTrack()
 {
     StartTestSuite();
     Zoom level(2);
-    TriggerMenu(ID_ADDVIDEOTRACK);
-    TriggerMenu(ID_ADDAUDIOTRACK);
+    WindowTriggerMenu(ID_ADDVIDEOTRACK);
+    WindowTriggerMenu(ID_ADDAUDIOTRACK);
     TimelineDragToTrack(1,VideoClip(0,2),AudioClip(0,2));
     ASSERT_VIDEOTRACK1(     EmptyClip      )(VideoClip);
     ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(EmptyClip);
@@ -322,7 +322,7 @@ void TestBugs::testShiftTrimNotAllowedWithAdjacentClipInOtherTrack()
 void TestBugs::testAddNonexistentFileViaRedo()
 {
     StartTestSuite();
-    TriggerMenu(ID_CLOSESEQUENCE);
+    WindowTriggerMenu(ID_CLOSESEQUENCE);
 
     // Create temp dir with temp file
     RandomTempDirPtr tempDir = boost::make_shared<RandomTempDir>();
@@ -334,10 +334,10 @@ void TestBugs::testAddNonexistentFileViaRedo()
 
     // Add folder to project view
     wxString sFolder1( "Folder1" );
-    model::FolderPtr folder1 = addFolder( sFolder1 );
+    model::FolderPtr folder1 = ProjectViewAddFolder( sFolder1 );
 
     // Add file to folder
-    model::Files files1 = addFiles( boost::assign::list_of(filepath), folder1 );
+    model::Files files1 = ProjectViewAddFiles( boost::assign::list_of(filepath), folder1 );
     ASSERT_WATCHED_PATHS_COUNT(2);
 
     // Remove the file via 'Undo'
@@ -353,7 +353,7 @@ void TestBugs::testAddNonexistentFileViaRedo()
     ASSERT_WATCHED_PATHS_COUNT(1);
 
     // Now make the sequence (is empty)
-    model::SequencePtr sequence1 = createSequence( folder1 );
+    model::SequencePtr sequence1 = ProjectViewCreateSequence( folder1 );
     ASSERT_ZERO(VideoTrack(0)->getLength());
     ASSERT_ZERO(AudioTrack(0)->getLength());
 }
@@ -361,7 +361,7 @@ void TestBugs::testAddNonexistentFileViaRedo()
 void TestBugs::testAddNonexistentFileViaUndo()
 {
     StartTestSuite();
-    TriggerMenu(ID_CLOSESEQUENCE);
+    WindowTriggerMenu(ID_CLOSESEQUENCE);
 
     // Create temp dir with temp file
     RandomTempDirPtr tempDir = boost::make_shared<RandomTempDir>();
@@ -373,14 +373,14 @@ void TestBugs::testAddNonexistentFileViaUndo()
 
     // Add folder to project view
     wxString sFolder1( "Folder1" );
-    model::FolderPtr folder1 = addFolder( sFolder1 );
+    model::FolderPtr folder1 = ProjectViewAddFolder( sFolder1 );
 
     // Add file to folder
-    model::Files files1 = addFiles( boost::assign::list_of(filepath), folder1 );
+    model::Files files1 = ProjectViewAddFiles( boost::assign::list_of(filepath), folder1 );
     ASSERT_WATCHED_PATHS_COUNT(2);
 
     // Remove the file via 'Delete'
-    remove(files1.front());
+    ProjectViewRemove(files1.front());
     ASSERT_WATCHED_PATHS_COUNT(1);
 
     // Remove the file from disk
@@ -392,7 +392,7 @@ void TestBugs::testAddNonexistentFileViaUndo()
     ASSERT_WATCHED_PATHS_COUNT(1);
 
     // Now make the sequence (is empty)
-    model::SequencePtr sequence1 = createSequence( folder1 );
+    model::SequencePtr sequence1 = ProjectViewCreateSequence( folder1 );
     ASSERT_ZERO(VideoTrack(0)->getLength());
     ASSERT_ZERO(AudioTrack(0)->getLength());
 }
@@ -401,7 +401,7 @@ void TestBugs::testPlaybackWithMultipleAudioTracks()
 {
     StartTestSuite();
 
-    TriggerMenu(ID_ADDAUDIOTRACK);
+    WindowTriggerMenu(ID_ADDAUDIOTRACK);
     TimelineDragToTrack(1,model::IClipPtr(),AudioClip(0,2));
     Play(HCenter(AudioClip(0,0)), 1000);
 }

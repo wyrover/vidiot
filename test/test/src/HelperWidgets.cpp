@@ -40,12 +40,12 @@ void GiveKeyboardFocus(wxWindow* widget)
     }
 #else
     RunInMainAndWait([widget] { widget->SetFocus(); });
-    waitForIdle();
+    WaitForIdle();
     if (dynamic_cast<wxSpinCtrlDouble*>(widget) != 0)
     {
         MouseClickTopLeft(widget, wxPoint(8,8));
     }
-    waitForIdle();
+    WaitForIdle();
 #endif
 }
 
@@ -53,7 +53,7 @@ void SetValue(wxSlider* widget, int value)
 {
     widget->SetValue(value);
     widget->GetEventHandler()->QueueEvent(new wxCommandEvent(wxEVT_SLIDER));
-    waitForIdle();
+    WaitForIdle();
 }
 
 void SetValue(wxSpinCtrl* widget, int value)
@@ -62,14 +62,14 @@ void SetValue(wxSpinCtrl* widget, int value)
     wxSpinEvent* event = new wxSpinEvent(wxEVT_SPINCTRL,0);
     event->SetValue(value);
     widget->GetEventHandler()->QueueEvent(event);
-    waitForIdle();
+    WaitForIdle();
 }
 
 void SetValue(wxSpinCtrlDouble* widget, double value)
 {
     widget->SetValue(value);
     widget->GetEventHandler()->QueueEvent(new wxSpinDoubleEvent(wxEVT_SPINCTRLDOUBLE,0,value));
-    waitForIdle();
+    WaitForIdle();
 }
 
 } // namespace

@@ -41,29 +41,29 @@ void TestProjectView::testAdditionAndRemoval()
 {
     StartTestSuite();
 
-    int nDefaultItems = countProjectView();
+    int nDefaultItems = ProjectViewCount();
 
     wxString sFolder1( "Folder1" );
     wxString sSequence1( "Sequence1" );
     wxString sFile( "05.avi" );
     wxFileName filepath(getTestFilesPath().GetFullPath(), sFile);
 
-    model::FolderPtr folder1 = addFolder( sFolder1 );
-    model::SequencePtr sequence1 = addSequence( sSequence1, folder1 );
-    model::Files files1 = addFiles( boost::assign::list_of(filepath), folder1 );
+    model::FolderPtr folder1 = ProjectViewAddFolder( sFolder1 );
+    model::SequencePtr sequence1 = ProjectViewAddSequence( sSequence1, folder1 );
+    model::Files files1 = ProjectViewAddFiles( boost::assign::list_of(filepath), folder1 );
 
     ASSERT_EQUALS(folder1->getParent(),mProjectFixture.mRoot);
     ASSERT_EQUALS(sequence1->getParent(),folder1);
-    ASSERT_EQUALS(countProjectView(), nDefaultItems + 3); // Added: Folder + Sequence + File
+    ASSERT_EQUALS(ProjectViewCount(), nDefaultItems + 3); // Added: Folder + Sequence + File
     ASSERT_EQUALS(files1.size(),1);
     ASSERT_EQUALS(files1.front()->getParent(),folder1);
     ASSERT_EQUALS(mProjectFixture.mRoot->find(sFile).size(),1);    // One file with a relative file name
     ASSERT_EQUALS(mProjectFixture.mRoot->find(filepath.GetLongPath()).size(),1); // And one file with an absolute file name
 
-    remove( files1.front() );
-    ASSERT_EQUALS(countProjectView(), nDefaultItems + 2); // Added: Folder + Sequence
-    remove( folder1 ); // Also removes sequence1 which is contained in folder1
-    ASSERT_EQUALS(countProjectView(), nDefaultItems); // Added: None
+    ProjectViewRemove( files1.front() );
+    ASSERT_EQUALS(ProjectViewCount(), nDefaultItems + 2); // Added: Folder + Sequence
+    ProjectViewRemove( folder1 ); // Also removes sequence1 which is contained in folder1
+    ASSERT_EQUALS(ProjectViewCount(), nDefaultItems); // Added: None
 }
 
 } // namespace

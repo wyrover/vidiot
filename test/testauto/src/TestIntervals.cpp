@@ -45,7 +45,7 @@ void TestIntervals::testRemoveSelectedIntervals()
 
     StartTest("Make an interval from left to right and click 'delete all marked intervals'");
     ToggleInterval(HCenter(VideoClip(0,1)), HCenter(VideoClip(0,2)));
-    TriggerMenu(ID_DELETEMARKED);
+    WindowTriggerMenu(ID_DELETEMARKED);
     ASSERT_EQUALS(VideoClip(0,0)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,0));
     ASSERT_LESS_THAN(VideoClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1));
     ASSERT_LESS_THAN(VideoClip(0,2)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,2));
@@ -56,7 +56,7 @@ void TestIntervals::testRemoveSelectedIntervals()
     Undo();
     StartTest("Make an interval from right to left and click 'delete all marked intervals'");
     ToggleInterval(HCenter(VideoClip(0,2)), HCenter(VideoClip(0,1)));
-    TriggerMenu(ID_DELETEMARKED);
+    WindowTriggerMenu(ID_DELETEMARKED);
     ASSERT_EQUALS(VideoClip(0,0)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,0));
     ASSERT_EQUALS(VideoClip(0,1)->getLength(), video1Adjustedlength); // Verify there's no difference between selecting right-to-left and left-to-right
     ASSERT_EQUALS(VideoClip(0,2)->getLength(), video2Adjustedlength); // Verify there's no difference between selecting right-to-left and left-to-right
@@ -65,7 +65,7 @@ void TestIntervals::testRemoveSelectedIntervals()
     Undo();
     StartTest("Make an interval that completely deletes a clip");
     ToggleInterval(LeftPixel(VideoClip(0,1)), RightPixel(VideoClip(0,1)));
-    TriggerMenu(ID_DELETEMARKED);
+    WindowTriggerMenu(ID_DELETEMARKED);
     ASSERT_EQUALS(VideoClip(0,0)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,0));
     ASSERT_EQUALS(VideoClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,2));
     ASSERT_EQUALS(VideoClip(0,2)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,3));
@@ -83,7 +83,7 @@ void TestIntervals::testRemoveUnselectedIntervals()
     StartTest("Make an interval from left to right and click 'delete all unmarked intervals'");
     ToggleInterval(10, HCenter(VideoClip(0,1))); // Can't use zero: the (test) code to trigger an interval first moves to the left a bit (and that would be < 0 in this case)
     ToggleInterval(HCenter(VideoClip(0,2)), RightPixel(VideoTrack(0)));
-    TriggerMenu(ID_DELETEUNMARKED);
+    WindowTriggerMenu(ID_DELETEUNMARKED);
     ASSERT_EQUALS(VideoClip(0,0)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,0));
     ASSERT_LESS_THAN(VideoClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1));
     ASSERT_LESS_THAN(VideoClip(0,2)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,2));
@@ -96,7 +96,7 @@ void TestIntervals::testRemoveUnselectedIntervals()
     StartTest("Make an interval from right to left and click 'delete all unmarked intervals'");
     ToggleInterval(RightPixel(VideoTrack(0)), HCenter(VideoClip(0,2)));
     ToggleInterval(HCenter(VideoClip(0,1)), 0);
-    TriggerMenu(ID_DELETEUNMARKED);
+    WindowTriggerMenu(ID_DELETEUNMARKED);
     ASSERT_EQUALS(VideoClip(0,0)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,0));
     ASSERT_EQUALS(VideoClip(0,1)->getLength(), video1Adjustedlength); // Verify there's no difference between selecting right-to-left and left-to-right
     ASSERT_EQUALS(VideoClip(0,2)->getLength(), video2Adjustedlength); // Verify there's no difference between selecting right-to-left and left-to-right
@@ -107,7 +107,7 @@ void TestIntervals::testRemoveUnselectedIntervals()
     StartTest("Make an interval that completely deletes all but two clips");
     ToggleInterval(LeftPixel(VideoClip(0,1)), RightPixel(VideoClip(0,1)));
     ToggleInterval(LeftPixel(VideoClip(0,3)), RightPixel(VideoClip(0,3)));
-    TriggerMenu(ID_DELETEUNMARKED);
+    WindowTriggerMenu(ID_DELETEUNMARKED);
     ASSERT_EQUALS(VideoClip(0,0)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1));
     ASSERT_EQUALS(VideoClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,3));
     ASSERT_EQUALS(VideoTrack(0)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1) + mProjectFixture.OriginalLengthOfVideoClip(0,3));
@@ -144,7 +144,7 @@ void TestIntervals::testRemoveEmptyIntervals()
         ASSERT_EQUALS(AudioClip(0,2)->getLength(), mProjectFixture.OriginalLengthOfAudioClip(0,2) + mProjectFixture.OriginalLengthOfAudioClip(0,3));
         ASSERT_EQUALS(AudioClip(0,3)->getLength(), mProjectFixture.OriginalLengthOfAudioClip(0,4));
         ASSERT_EQUALS(AudioClip(0,4)->getLength(), mProjectFixture.OriginalLengthOfAudioClip(0,5));
-        TriggerMenu(ID_DELETEEMPTY);
+        WindowTriggerMenu(ID_DELETEEMPTY);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip);
         ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip);
         ASSERT_EQUALS(VideoTrack(0)->getClips().size(), 3);
@@ -164,7 +164,7 @@ void TestIntervals::testRemoveEmptyIntervalsWithOffset()
     StartTestSuite();
     Zoom level(2);
     ConfigFixture.SnapToClips(true);
-    TriggerMenu(ID_ADDVIDEOTRACK);
+    WindowTriggerMenu(ID_ADDVIDEOTRACK);
     {
         StartTest("Remove empty intervals when clips are partially overlapping with the empty area");
 
@@ -197,7 +197,7 @@ void TestIntervals::testRemoveEmptyIntervalsWithOffset()
         pts gapRight = AudioClip(0,6)->getLength();
         pts expectedLength = VideoTrack(0)->getLength() - gapLeft - gapRight;
 
-        TriggerMenu(ID_DELETEEMPTY);
+        WindowTriggerMenu(ID_DELETEEMPTY);
 
         ASSERT_EQUALS(VideoTrack(0)->getLength(), expectedLength);
         ASSERT_EQUALS(AudioTrack(0)->getLength(), expectedLength);
