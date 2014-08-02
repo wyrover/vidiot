@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#include "TestPopupMenu.h"
+#include "TestUiTimelinePopupMenu.h"
 
 namespace test {
 
@@ -23,12 +23,12 @@ namespace test {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-void TestPopupMenu::setUp()
+void TestUiTimelinePopupMenu::setUp()
 {
     mProjectFixture.init();
 }
 
-void TestPopupMenu::tearDown()
+void TestUiTimelinePopupMenu::tearDown()
 {
     mProjectFixture.destroy();
 }
@@ -37,7 +37,7 @@ void TestPopupMenu::tearDown()
 // TEST CASES
 //////////////////////////////////////////////////////////////////////////
 
-void TestPopupMenu::testAddTransitions()
+void TestUiTimelinePopupMenu::testAddTransitions()
 {
     StartTestSuite();
     Zoom level(6);
@@ -45,7 +45,7 @@ void TestPopupMenu::testAddTransitions()
     pts defaultTransitionLength = Config::ReadLong(Config::sPathDefaultTransitionLength);
     {
         StartTest("Add fade in");
-        OpenPopupMenuAt(Center(VideoClip(0,1)));
+        TimelineOpenPopupMenuAt(Center(VideoClip(0,1)));
         TimelineKeyPress('i'); // Fade &in
         ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip)(VideoClip);
         ASSERT_AUDIOTRACK0(AudioClip)(       AudioClip     )(AudioClip);
@@ -55,7 +55,7 @@ void TestPopupMenu::testAddTransitions()
     }
     {
         StartTest("Add fade out");
-        OpenPopupMenuAt(Center(VideoClip(0,1)));
+        TimelineOpenPopupMenuAt(Center(VideoClip(0,1)));
         TimelineKeyPress('o'); // Fade &out
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
         ASSERT_AUDIOTRACK0(AudioClip)(      AudioClip      )(AudioClip);
@@ -65,7 +65,7 @@ void TestPopupMenu::testAddTransitions()
     }
     {
         StartTest("Add crossfade from previous clip");
-        OpenPopupMenuAt(Center(VideoClip(0,1)));
+        TimelineOpenPopupMenuAt(Center(VideoClip(0,1)));
         TimelineKeyPress('p'); // Cross-fade from &previous
         ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip)(VideoClip);
         ASSERT_AUDIOTRACK0(AudioClip      )(      AudioClip)(AudioClip);
@@ -80,7 +80,7 @@ void TestPopupMenu::testAddTransitions()
     }
     {
         StartTest("Add crossfade to next clip");
-        OpenPopupMenuAt(Center(VideoClip(0,0)));
+        TimelineOpenPopupMenuAt(Center(VideoClip(0,0)));
         TimelineKeyPress('n'); // Cross-fade to &next
         ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip);
         ASSERT_AUDIOTRACK0(AudioClip      )(      AudioClip);
@@ -95,14 +95,14 @@ void TestPopupMenu::testAddTransitions()
     }
     {
         StartTest("Add fade in adjacent to fade out");
-        OpenPopupMenuAt(Center(VideoClip(0,1)));
+        TimelineOpenPopupMenuAt(Center(VideoClip(0,1)));
         TimelineKeyPress('i'); // Fade &in
         ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip)(VideoClip);
         ASSERT_AUDIOTRACK0(AudioClip)(       AudioClip     )(AudioClip);
         ASSERT_EQUALS(VideoClip(0,1)->getLength(), defaultTransitionLength / 2);
         ASSERT_EQUALS(VideoClip(0,2)->getRightPts(), AudioClip(0,1)->getRightPts());
         TimelineMove(Center(VideoClip(0,0)));
-        OpenPopupMenuAt(Center(VideoClip(0,0)));
+        TimelineOpenPopupMenuAt(Center(VideoClip(0,0)));
         TimelineKeyPress('o'); // Fade &out
         ASSERT_VIDEOTRACK0(VideoClip)(Transition)(Transition)(VideoClip);
         ASSERT_AUDIOTRACK0(AudioClip            )(      AudioClip      );
@@ -115,12 +115,12 @@ void TestPopupMenu::testAddTransitions()
     }
 }
 
-void TestPopupMenu::testDelete()
+void TestUiTimelinePopupMenu::testDelete()
 {
     StartTestSuite();
     {
         StartTest("Delete without shift");
-        OpenPopupMenuAt(Center(VideoClip(0,2)));
+        TimelineOpenPopupMenuAt(Center(VideoClip(0,2)));
         TimelineKeyPress('d');
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(EmptyClip);
         ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(EmptyClip);
@@ -129,7 +129,7 @@ void TestPopupMenu::testDelete()
     }
     {
         StartTest("Delete with shift");
-        OpenPopupMenuAt(Center(VideoClip(0,2)));
+        TimelineOpenPopupMenuAt(Center(VideoClip(0,2)));
         TimelineKeyPress('t');
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip);
         ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip);
@@ -139,7 +139,7 @@ void TestPopupMenu::testDelete()
     }
 }
 
-void TestPopupMenu::testRemoveOneEmptyInterval()
+void TestUiTimelinePopupMenu::testRemoveOneEmptyInterval()
 {
     StartTestSuite();
     Zoom level(2);
@@ -166,7 +166,7 @@ void TestPopupMenu::testRemoveOneEmptyInterval()
         pts len1 = VideoTrack(1)->getLength();
         pts len0 = VideoTrack(0)->getLength();
 
-        OpenPopupMenuAt(Center(VideoClip(0,3)));
+        TimelineOpenPopupMenuAt(Center(VideoClip(0,3)));
         TimelineKeyPress('e'); // Remove &empty space
         ASSERT_EQUALS(VideoTrack(1)->getLength(), len1 - gap);
         ASSERT_EQUALS(VideoTrack(0)->getLength(), len0 - gap);
@@ -177,7 +177,7 @@ void TestPopupMenu::testRemoveOneEmptyInterval()
     }
 }
 
-void TestPopupMenu::testOpenPopupMenuTwice()
+void TestUiTimelinePopupMenu::testOpenPopupMenuTwice()
 {
     StartTestSuite();
     Zoom level(2);
@@ -188,25 +188,25 @@ void TestPopupMenu::testOpenPopupMenuTwice()
     //       Popup menu blocks the idle events causing long delays...
     {
         StartTest("Open popup menu twice");
-        OpenPopupMenuAt(Center(VideoClip(0,3)));
+        TimelineOpenPopupMenuAt(Center(VideoClip(0,3)));
         ASSERT(getTimeline().getMenuHandler().isPopupShown());
         wxUIActionSimulator().MouseMove(TimelinePosition() + Center(VideoClip(0,3)) - wxPoint(150,0));
         wxUIActionSimulator().MouseClick(wxMOUSE_BTN_RIGHT);
         pause(2000);
         ASSERT(getTimeline().getMenuHandler().isPopupShown());
-        ClosePopupMenu();
+        TimelineClosePopupMenu();
         ASSERT(!getTimeline().getMenuHandler().isPopupShown());
     }
 }
 
-void TestPopupMenu::testRightClickScrollingAfterOpeningPopupMenu()
+void TestUiTimelinePopupMenu::testRightClickScrollingAfterOpeningPopupMenu()
 {
     StartTestSuite();
     Zoom level(4);
     ASSERT_EQUALS(getTimeline().getZoom().getCurrent(), rational(1,1));
     StartTest("Open popup menu then start a scrolling via right mouse down");
     ASSERT_MORE_THAN(getTimeline().GetVirtualSize().x,getTimeline().GetClientSize().x);
-    OpenPopupMenuAt(Center(VideoClip(0,3)));
+    TimelineOpenPopupMenuAt(Center(VideoClip(0,3)));
     ASSERT(getTimeline().getMenuHandler().isPopupShown());
     ASSERT_EQUALS(getTimeline().getScrolling().getOffset(),wxPoint(0,0));
     TimelineMoveLeft(150);
@@ -220,7 +220,7 @@ void TestPopupMenu::testRightClickScrollingAfterOpeningPopupMenu()
     ASSERT(!getTimeline().getMenuHandler().isPopupShown());
 }
 
-void TestPopupMenu::testOpenPopupMenuWhenClickingOnTransition()
+void TestUiTimelinePopupMenu::testOpenPopupMenuWhenClickingOnTransition()
 {
     StartTestSuite();
     Zoom level(6);
@@ -237,7 +237,7 @@ void TestPopupMenu::testOpenPopupMenuWhenClickingOnTransition()
         TimelineMove(TransitionLeftClipInterior(VideoClip(0,2)));
         {
             StartTest("InOutTransition: TransitionLeftClipInterior: Fade in.");
-            OpenPopupMenuAt(TransitionLeftClipInterior(VideoClip(0,2)));
+            TimelineOpenPopupMenuAt(TransitionLeftClipInterior(VideoClip(0,2)));
             TimelineKeyPress('i'); // Fade &in
             ASSERT( wxEventLoopBase::GetActive()->IsMain());
             ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip)(Transition);
@@ -247,14 +247,14 @@ void TestPopupMenu::testOpenPopupMenuWhenClickingOnTransition()
         }
         {
             StartTest("InOutTransition: TransitionLeftClipInterior: Fade out (ignored).");
-            OpenPopupMenuAt(TransitionLeftClipInterior(VideoClip(0,2)));
+            TimelineOpenPopupMenuAt(TransitionLeftClipInterior(VideoClip(0,2)));
             TimelineKeyPress('o'); // Fade &out
             ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition);
             ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip);
         }
         {
             StartTest("InOutTransition: TransitionLeftClipInterior: Fade from previous.");
-            OpenPopupMenuAt(TransitionLeftClipInterior(VideoClip(0,2)));
+            TimelineOpenPopupMenuAt(TransitionLeftClipInterior(VideoClip(0,2)));
             TimelineKeyPress('p'); // Cross-fade from &previous
             ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip)(Transition);
             ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip);
@@ -263,14 +263,14 @@ void TestPopupMenu::testOpenPopupMenuWhenClickingOnTransition()
         }
         {
             StartTest("InOutTransition: TransitionLeftClipInterior: Fade to next (ignored).");
-            OpenPopupMenuAt(TransitionLeftClipInterior(VideoClip(0,2)));
+            TimelineOpenPopupMenuAt(TransitionLeftClipInterior(VideoClip(0,2)));
             TimelineKeyPress('n'); // Cross-fade to &next
             ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition);
             ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip);
         }
         {
             StartTest("InOutTransition: TransitionLeftClipEnd: Fade in.");
-            OpenPopupMenuAt(TransitionLeftClipEnd(VideoClip(0,2)));
+            TimelineOpenPopupMenuAt(TransitionLeftClipEnd(VideoClip(0,2)));
             TimelineKeyPress('i'); // Fade &in
             ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip)(Transition);
             ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip);
@@ -279,14 +279,14 @@ void TestPopupMenu::testOpenPopupMenuWhenClickingOnTransition()
         }
         {
             StartTest("InOutTransition: TransitionLeftClipEnd: Fade out (ignored).");
-            OpenPopupMenuAt(TransitionLeftClipEnd(VideoClip(0,2)));
+            TimelineOpenPopupMenuAt(TransitionLeftClipEnd(VideoClip(0,2)));
             TimelineKeyPress('o'); // Fade &out
             ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition);
             ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip);
         }
         {
             StartTest("InOutTransition: TransitionLeftClipEnd: Fade from previous.");
-            OpenPopupMenuAt(TransitionLeftClipEnd(VideoClip(0,2)));
+            TimelineOpenPopupMenuAt(TransitionLeftClipEnd(VideoClip(0,2)));
             TimelineKeyPress('p'); // Cross-fade from &previous
             ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip)(Transition);
             ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip);
@@ -295,20 +295,20 @@ void TestPopupMenu::testOpenPopupMenuWhenClickingOnTransition()
         }
         {
             StartTest("InOutTransition: TransitionLeftClipEnd: Fade to next (ignored).");
-            OpenPopupMenuAt(TransitionLeftClipEnd(VideoClip(0,2)));
+            TimelineOpenPopupMenuAt(TransitionLeftClipEnd(VideoClip(0,2)));
             TimelineKeyPress('n'); // Cross-fade to &next
             ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition);
             ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip);
         }
         {
             StartTest("InOutTransition: TransitionRightClipInterior: Fade in (ignored).");
-            OpenPopupMenuAt(TransitionRightClipInterior(VideoClip(0,2)));
+            TimelineOpenPopupMenuAt(TransitionRightClipInterior(VideoClip(0,2)));
             TimelineKeyPress('i'); // Fade &in
             ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
         }
         {
             StartTest("InOutTransition: TransitionRightClipInterior: Fade out.");
-            OpenPopupMenuAt(TransitionRightClipInterior(VideoClip(0,2)));
+            TimelineOpenPopupMenuAt(TransitionRightClipInterior(VideoClip(0,2)));
             TimelineKeyPress('o'); // Fade &out
             ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(Transition);
             ASSERT_EQUALS(VideoClip(0,4)->getLength(), lengthOfFade);
@@ -316,13 +316,13 @@ void TestPopupMenu::testOpenPopupMenuWhenClickingOnTransition()
         }
         {
             StartTest("InOutTransition: TransitionRightClipInterior: Fade from previous (ignored).");
-            OpenPopupMenuAt(TransitionRightClipInterior(VideoClip(0,2)));
+            TimelineOpenPopupMenuAt(TransitionRightClipInterior(VideoClip(0,2)));
             TimelineKeyPress('p'); // Cross-fade from &previous
             ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
         }
         {
             StartTest("InOutTransition: TransitionRightClipInterior: Fade to next.");
-            OpenPopupMenuAt(TransitionRightClipInterior(VideoClip(0,2)));
+            TimelineOpenPopupMenuAt(TransitionRightClipInterior(VideoClip(0,2)));
             TimelineKeyPress('n'); // Cross-fade to &next
             ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(Transition);
             ASSERT_EQUALS(VideoClip(0,4)->getLength(), lengthOfCrossFade);
@@ -330,13 +330,13 @@ void TestPopupMenu::testOpenPopupMenuWhenClickingOnTransition()
         }
         {
             StartTest("InOutTransition: TransitionRightClipBegin: Fade in (ignored).");
-            OpenPopupMenuAt(TransitionRightClipBegin(VideoClip(0,2)));
+            TimelineOpenPopupMenuAt(TransitionRightClipBegin(VideoClip(0,2)));
             TimelineKeyPress('i'); // Fade &in
             ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
         }
         {
             StartTest("InOutTransition: TransitionRightClipBegin: Fade out.");
-            OpenPopupMenuAt(TransitionRightClipBegin(VideoClip(0,2)));
+            TimelineOpenPopupMenuAt(TransitionRightClipBegin(VideoClip(0,2)));
             TimelineKeyPress('o'); // Fade &out
             ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(Transition);
             ASSERT_EQUALS(VideoClip(0,4)->getLength(), lengthOfFade);
@@ -344,13 +344,13 @@ void TestPopupMenu::testOpenPopupMenuWhenClickingOnTransition()
         }
         {
             StartTest("InOutTransition: TransitionRightClipBegin: Fade from previous (ignored).");
-            OpenPopupMenuAt(TransitionRightClipBegin(VideoClip(0,2)));
+            TimelineOpenPopupMenuAt(TransitionRightClipBegin(VideoClip(0,2)));
             TimelineKeyPress('p'); // Cross-fade from &previous
             ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
         }
         {
             StartTest("InOutTransition: TransitionRightClipBegin: Fade to next.");
-            OpenPopupMenuAt(TransitionRightClipBegin(VideoClip(0,2)));
+            TimelineOpenPopupMenuAt(TransitionRightClipBegin(VideoClip(0,2)));
             TimelineKeyPress('n'); // Cross-fade to &next
             ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(Transition);
             ASSERT_EQUALS(VideoClip(0,4)->getLength(), lengthOfCrossFade);
@@ -365,13 +365,13 @@ void TestPopupMenu::testOpenPopupMenuWhenClickingOnTransition()
 
         {
             StartTest("InTransition: TransitionRightClipInterior: Fade in (ignored).");
-            OpenPopupMenuAt(TransitionRightClipInterior(VideoClip(0,2)));
+            TimelineOpenPopupMenuAt(TransitionRightClipInterior(VideoClip(0,2)));
             TimelineKeyPress('i'); // Fade &in
             ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
         }
         {
             StartTest("InTransition: TransitionRightClipInterior: Fade out.");
-            OpenPopupMenuAt(TransitionRightClipInterior(VideoClip(0,2)));
+            TimelineOpenPopupMenuAt(TransitionRightClipInterior(VideoClip(0,2)));
             TimelineKeyPress('o'); // Fade &out
             ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(Transition);
             ASSERT_EQUALS(VideoClip(0,4)->getLength(), lengthOfFade);
@@ -379,13 +379,13 @@ void TestPopupMenu::testOpenPopupMenuWhenClickingOnTransition()
         }
         {
             StartTest("InTransition: TransitionRightClipInterior: Fade from previous (ignored).");
-            OpenPopupMenuAt(TransitionRightClipInterior(VideoClip(0,2)));
+            TimelineOpenPopupMenuAt(TransitionRightClipInterior(VideoClip(0,2)));
             TimelineKeyPress('p'); // Cross-fade from &previous
             ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
         }
         {
             StartTest("InTransition: TransitionRightClipInterior: Fade to next.");
-            OpenPopupMenuAt(TransitionRightClipInterior(VideoClip(0,2)));
+            TimelineOpenPopupMenuAt(TransitionRightClipInterior(VideoClip(0,2)));
             TimelineKeyPress('n'); // Cross-fade to &next
             ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(Transition);
             ASSERT_EQUALS(VideoClip(0,4)->getLength(), lengthOfCrossFade);
@@ -393,13 +393,13 @@ void TestPopupMenu::testOpenPopupMenuWhenClickingOnTransition()
         }
         {
             StartTest("InTransition: TransitionRightClipBegin: Fade in (ignored).");
-            OpenPopupMenuAt(TransitionRightClipBegin(VideoClip(0,2)));
+            TimelineOpenPopupMenuAt(TransitionRightClipBegin(VideoClip(0,2)));
             TimelineKeyPress('i'); // Fade &in
             ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
         }
         {
             StartTest("InTransition: TransitionRightClipBegin: Fade out.");
-            OpenPopupMenuAt(TransitionRightClipBegin(VideoClip(0,2)));
+            TimelineOpenPopupMenuAt(TransitionRightClipBegin(VideoClip(0,2)));
             TimelineKeyPress('o'); // Fade &out
             ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(Transition);
             ASSERT_EQUALS(VideoClip(0,4)->getLength(), lengthOfFade);
@@ -407,13 +407,13 @@ void TestPopupMenu::testOpenPopupMenuWhenClickingOnTransition()
         }
         {
             StartTest("InTransition: TransitionRightClipBegin: Fade from previous (ignored).");
-            OpenPopupMenuAt(TransitionRightClipBegin(VideoClip(0,2)));
+            TimelineOpenPopupMenuAt(TransitionRightClipBegin(VideoClip(0,2)));
             TimelineKeyPress('p'); // Cross-fade from &previous
             ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
         }
         {
             StartTest("InTransition: TransitionRightClipBegin: Fade to next.");
-            OpenPopupMenuAt(TransitionRightClipBegin(VideoClip(0,2)));
+            TimelineOpenPopupMenuAt(TransitionRightClipBegin(VideoClip(0,2)));
             TimelineKeyPress('n'); // Cross-fade to &next
             ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(Transition);
             ASSERT_EQUALS(VideoClip(0,4)->getLength(), lengthOfCrossFade);
@@ -428,7 +428,7 @@ void TestPopupMenu::testOpenPopupMenuWhenClickingOnTransition()
 
         {
             StartTest("OutTransition: TransitionLeftClipInterior: Fade in.");
-            OpenPopupMenuAt(TransitionLeftClipInterior(VideoClip(0,2)));
+            TimelineOpenPopupMenuAt(TransitionLeftClipInterior(VideoClip(0,2)));
             TimelineKeyPress('i'); // Fade &in
             ASSERT( wxEventLoopBase::GetActive()->IsMain());
             ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip)(Transition);
@@ -438,14 +438,14 @@ void TestPopupMenu::testOpenPopupMenuWhenClickingOnTransition()
         }
         {
             StartTest("OutTransition: TransitionLeftClipInterior: Fade out (ignored).");
-            OpenPopupMenuAt(TransitionLeftClipInterior(VideoClip(0,2)));
+            TimelineOpenPopupMenuAt(TransitionLeftClipInterior(VideoClip(0,2)));
             TimelineKeyPress('o'); // Fade &out
             ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition);
             ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip);
         }
         {
             StartTest("OutTransition: TransitionLeftClipInterior: Fade from previous.");
-            OpenPopupMenuAt(TransitionLeftClipInterior(VideoClip(0,2)));
+            TimelineOpenPopupMenuAt(TransitionLeftClipInterior(VideoClip(0,2)));
             TimelineKeyPress('p'); // Cross-fade from &previous
             ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip)(Transition);
             ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip);
@@ -454,14 +454,14 @@ void TestPopupMenu::testOpenPopupMenuWhenClickingOnTransition()
         }
         {
             StartTest("OutTransition: TransitionLeftClipInterior: Fade to next (ignored).");
-            OpenPopupMenuAt(TransitionLeftClipInterior(VideoClip(0,2)));
+            TimelineOpenPopupMenuAt(TransitionLeftClipInterior(VideoClip(0,2)));
             TimelineKeyPress('n'); // Cross-fade to &next
             ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition);
             ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip);
         }
         {
             StartTest("OutTransition: TransitionLeftClipEnd: Fade in.");
-            OpenPopupMenuAt(TransitionLeftClipEnd(VideoClip(0,2)));
+            TimelineOpenPopupMenuAt(TransitionLeftClipEnd(VideoClip(0,2)));
             TimelineKeyPress('i'); // Fade &in
             ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip)(Transition);
             ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip);
@@ -470,14 +470,14 @@ void TestPopupMenu::testOpenPopupMenuWhenClickingOnTransition()
         }
         {
             StartTest("OutTransition: TransitionLeftClipEnd: Fade out (ignored).");
-            OpenPopupMenuAt(TransitionLeftClipEnd(VideoClip(0,2)));
+            TimelineOpenPopupMenuAt(TransitionLeftClipEnd(VideoClip(0,2)));
             TimelineKeyPress('o'); // Fade &out
             ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition);
             ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip);
         }
         {
             StartTest("OutTransition: TransitionLeftClipEnd: Fade from previous.");
-            OpenPopupMenuAt(TransitionLeftClipEnd(VideoClip(0,2)));
+            TimelineOpenPopupMenuAt(TransitionLeftClipEnd(VideoClip(0,2)));
             TimelineKeyPress('p'); // Cross-fade from &previous
             ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip)(Transition);
             ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip);
@@ -486,7 +486,7 @@ void TestPopupMenu::testOpenPopupMenuWhenClickingOnTransition()
         }
         {
             StartTest("OutTransition: TransitionLeftClipEnd: Fade to next (ignored).");
-            OpenPopupMenuAt(TransitionLeftClipEnd(VideoClip(0,2)));
+            TimelineOpenPopupMenuAt(TransitionLeftClipEnd(VideoClip(0,2)));
             TimelineKeyPress('n'); // Cross-fade to &next
             ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition);
             ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip);
@@ -494,7 +494,7 @@ void TestPopupMenu::testOpenPopupMenuWhenClickingOnTransition()
     }
 }
 
-void TestPopupMenu::testUnlinkingAudioAndVideoClips()
+void TestUiTimelinePopupMenu::testUnlinkingAudioAndVideoClips()
 {
     StartTestSuite();
     Zoom level(6);
@@ -502,7 +502,7 @@ void TestPopupMenu::testUnlinkingAudioAndVideoClips()
         StartTest("Unlink video from audio");
         ASSERT_EQUALS(VideoClip(0,1)->getLink(), AudioClip(0,1));
         ASSERT_EQUALS(AudioClip(0,1)->getLink(), VideoClip(0,1));
-        OpenPopupMenuAt(Center(VideoClip(0,1)));
+        TimelineOpenPopupMenuAt(Center(VideoClip(0,1)));
         TimelineKeyPress('u'); // &unlink
         ASSERT_ZERO(VideoClip(0,1)->getLink());
         ASSERT_ZERO(AudioClip(0,1)->getLink());
@@ -514,7 +514,7 @@ void TestPopupMenu::testUnlinkingAudioAndVideoClips()
         StartTest("Unlink audio from video");
         ASSERT_EQUALS(VideoClip(0,1)->getLink(), AudioClip(0,1));
         ASSERT_EQUALS(AudioClip(0,1)->getLink(), VideoClip(0,1));
-        OpenPopupMenuAt(Center(AudioClip(0,1)));
+        TimelineOpenPopupMenuAt(Center(AudioClip(0,1)));
         TimelineKeyPress('u'); // &unlink
         ASSERT_ZERO(VideoClip(0,1)->getLink());
         ASSERT_ZERO(AudioClip(0,1)->getLink());

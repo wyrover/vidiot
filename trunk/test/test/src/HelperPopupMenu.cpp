@@ -19,7 +19,7 @@
 
 namespace test {
 
-void OpenPopupMenuAt(wxPoint position)
+void TimelineOpenPopupMenuAt(wxPoint position)
 {
     TimelineMove(position);
     WaitForTimelineToLoseFocus w;
@@ -29,7 +29,7 @@ void OpenPopupMenuAt(wxPoint position)
     SetWaitAfterEachInputAction(true);
 }
 
-void ClosePopupMenu()
+void TimelineClosePopupMenu()
 {
     TimelineKeyPress(WXK_ESCAPE);
 }

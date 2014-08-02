@@ -22,10 +22,10 @@ namespace test {
 
 /// Open the popup menu by right clicking on the given position
 /// \param position mouse is moved to this position before moving
-void OpenPopupMenuAt(wxPoint position);
+void TimelineOpenPopupMenuAt(wxPoint position);
 
 /// Close the opened popup menu.
-void ClosePopupMenu();
+void TimelineClosePopupMenu();
 
 } // namespace
 

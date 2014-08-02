@@ -124,63 +124,63 @@ void TestTransition::testSelectionAndDeletion()
         DeselectAllClips();
         MakeInOutTransitionAfterClip preparation(1);
         StartTest("InOutTransition: Right Clicking on TransitionLeftClipInterior selects the clip left of the transition.");
-        OpenPopupMenuAt(TransitionLeftClipInterior(VideoClip(0,2)));
+        TimelineOpenPopupMenuAt(TransitionLeftClipInterior(VideoClip(0,2)));
         ASSERT(VideoClip(0,1)->getSelected());
         ASSERT(!VideoClip(0,2)->getSelected());
         ASSERT(!VideoClip(0,3)->getSelected());
-        ClosePopupMenu();
+        TimelineClosePopupMenu();
         StartTest("InOutTransition: Right Clicking on TransitionRightClipInterior selects the clip right of the transition.");
-        OpenPopupMenuAt(TransitionRightClipInterior(VideoClip(0,2)));
+        TimelineOpenPopupMenuAt(TransitionRightClipInterior(VideoClip(0,2)));
         ASSERT(!VideoClip(0,1)->getSelected());
         ASSERT(!VideoClip(0,2)->getSelected());
         ASSERT(VideoClip(0,3)->getSelected());
-        ClosePopupMenu();
+        TimelineClosePopupMenu();
         StartTest("InOutTransition: Right Clicking on TransitionLeftClipEnd selects the clip left of the transition.");
-        OpenPopupMenuAt(TransitionLeftClipEnd(VideoClip(0,2)));
+        TimelineOpenPopupMenuAt(TransitionLeftClipEnd(VideoClip(0,2)));
         ASSERT(VideoClip(0,1)->getSelected());
         ASSERT(!VideoClip(0,2)->getSelected());
         ASSERT(!VideoClip(0,3)->getSelected());
-        ClosePopupMenu();
+        TimelineClosePopupMenu();
         StartTest("InOutTransition: Right Clicking on TransitionRightClipBegin selects the clip right of the transition.");
-        OpenPopupMenuAt(TransitionRightClipBegin(VideoClip(0,2)));
+        TimelineOpenPopupMenuAt(TransitionRightClipBegin(VideoClip(0,2)));
         ASSERT(!VideoClip(0,1)->getSelected());
         ASSERT(!VideoClip(0,2)->getSelected());
         ASSERT(VideoClip(0,3)->getSelected());
-        ClosePopupMenu();
+        TimelineClosePopupMenu();
     }
     {
         DeselectAllClips();
         MakeOutTransitionAfterClip preparation(1);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
         StartTest("OutTransition: Right Clicking on TransitionLeftClipInterior selects the clip left of the transition.");
-        OpenPopupMenuAt(TransitionLeftClipInterior(VideoClip(0,2)));
+        TimelineOpenPopupMenuAt(TransitionLeftClipInterior(VideoClip(0,2)));
         ASSERT(VideoClip(0,1)->getSelected());
         ASSERT(!VideoClip(0,2)->getSelected());
         ASSERT(!VideoClip(0,3)->getSelected());
-        ClosePopupMenu();
+        TimelineClosePopupMenu();
         StartTest("OutTransition: Right Clicking on TransitionLeftClipEnd selects the clip left of the transition.");
-        OpenPopupMenuAt(TransitionLeftClipEnd(VideoClip(0,2)));
+        TimelineOpenPopupMenuAt(TransitionLeftClipEnd(VideoClip(0,2)));
         ASSERT(VideoClip(0,1)->getSelected());
         ASSERT(!VideoClip(0,2)->getSelected());
         ASSERT(!VideoClip(0,3)->getSelected());
-        ClosePopupMenu();
+        TimelineClosePopupMenu();
     }
     {
         DeselectAllClips();
         MakeInTransitionAfterClip preparation(1);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
         StartTest("InTransition: Right Clicking on TransitionRightClipInterior selects the clip right of the transition.");
-        OpenPopupMenuAt(TransitionRightClipInterior(VideoClip(0,2)));
+        TimelineOpenPopupMenuAt(TransitionRightClipInterior(VideoClip(0,2)));
         ASSERT(!VideoClip(0,1)->getSelected());
         ASSERT(!VideoClip(0,2)->getSelected());
         ASSERT(VideoClip(0,3)->getSelected());
-        ClosePopupMenu();
+        TimelineClosePopupMenu();
         StartTest("InTransition: Right Clicking on TransitionRightClipBegin selects the clip right of the transition.");
-        OpenPopupMenuAt(TransitionRightClipBegin(VideoClip(0,2)));
+        TimelineOpenPopupMenuAt(TransitionRightClipBegin(VideoClip(0,2)));
         ASSERT(!VideoClip(0,1)->getSelected());
         ASSERT(!VideoClip(0,2)->getSelected());
         ASSERT(VideoClip(0,3)->getSelected());
-        ClosePopupMenu();
+        TimelineClosePopupMenu();
     }
 }
 
@@ -195,7 +195,7 @@ void TestTransition::testMakeRoomForCrossfade()
         ShiftTrim(RightCenter(VideoClip(0,0)),RightCenter(VideoClip(0,0)) - wxPoint(getTimeline().getZoom().ptsToPixels(defaultTransitionLength / 2),0)); // Make left clip 'extendable' on its right side, with length 12
         ASSERT_EQUALS(VideoClip(0,0)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,0) - defaultTransitionLength / 2);
         pts OriginalLengthOfLeftClip = VideoClip(0,0)->getLength();
-        OpenPopupMenuAt(Center(VideoClip(0,0)));
+        TimelineOpenPopupMenuAt(Center(VideoClip(0,0)));
         TimelineKeyPress('n'); // Cross-fade to &next
         ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip)(VideoClip);
         ASSERT_AUDIOTRACK0(      AudioClip      )(AudioClip)(AudioClip);
@@ -212,7 +212,7 @@ void TestTransition::testMakeRoomForCrossfade()
         StartTest("Left clip - large hidden extension, right clip - none: Crossfade is positioned entirely to the right of the cut.");
         ShiftTrim(RightCenter(VideoClip(0,0)),Center(VideoClip(0,0))); // Make left clip 'extendable' on its right side
         pts OriginalLengthOfLeftClip = VideoClip(0,0)->getLength();
-        OpenPopupMenuAt(Center(VideoClip(0,1)));
+        TimelineOpenPopupMenuAt(Center(VideoClip(0,1)));
         TimelineKeyPress('p'); // Cross-fade from &previous
         ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip)(VideoClip);
         ASSERT_AUDIOTRACK0(      AudioClip      )(AudioClip)(AudioClip);
@@ -230,7 +230,7 @@ void TestTransition::testMakeRoomForCrossfade()
         ShiftTrim(LeftCenter(VideoClip(0,1)), LeftCenter(VideoClip(0,1)) + wxPoint(getTimeline().getZoom().ptsToPixels(defaultTransitionLength / 2),0)); // Make right clip 'extendable' on its left side, with length 12
         ASSERT_EQUALS(VideoClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1) - defaultTransitionLength / 2);
         pts OriginalLengthOfRightClip = VideoClip(0,1)->getLength();
-        OpenPopupMenuAt(Center(VideoClip(0,1)));
+        TimelineOpenPopupMenuAt(Center(VideoClip(0,1)));
         TimelineKeyPress('p'); // Cross-fade from &previous
         ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip)(VideoClip);
         ASSERT_AUDIOTRACK0(AudioClip      )(      AudioClip)(AudioClip);
@@ -247,7 +247,7 @@ void TestTransition::testMakeRoomForCrossfade()
         StartTest("Right clip - large 'hidden extension', left clip: none: Crossfade is positioned entirely to the left of the cut.");
         ShiftTrim(LeftCenter(VideoClip(0,1)),Center(VideoClip(0,1))); // Make right clip 'extendable' on its left side
         pts OriginalLengthOfRightClip = VideoClip(0,1)->getLength();
-        OpenPopupMenuAt(Center(VideoClip(0,0)));
+        TimelineOpenPopupMenuAt(Center(VideoClip(0,0)));
         TimelineKeyPress('n'); // Cross-fade to &next
         ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip)(VideoClip);
         ASSERT_AUDIOTRACK0(AudioClip      )(      AudioClip)(AudioClip);
@@ -268,7 +268,7 @@ void TestTransition::testMakeRoomForCrossfade()
         ShiftTrim(LeftCenter(VideoClip(0,1)),Center(VideoClip(0,1))); // Make right clip 'extendable' (a lot) on its left side
         pts OriginalLengthOfLeftClip = VideoClip(0,0)->getLength();
         pts OriginalLengthOfRightClip = VideoClip(0,1)->getLength();
-        OpenPopupMenuAt(Center(VideoClip(0,0)));
+        TimelineOpenPopupMenuAt(Center(VideoClip(0,0)));
         TimelineKeyPress('n'); // Cross-fade to &next
         ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip)(VideoClip);
         ASSERT_AUDIOTRACK0(      AudioClip      )(AudioClip)(AudioClip);
@@ -288,7 +288,7 @@ void TestTransition::testMakeRoomForCrossfade()
         ASSERT_EQUALS(VideoClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1) - defaultTransitionLength / 4);
         pts OriginalLengthOfLeftClip = VideoClip(0,0)->getLength();
         pts OriginalLengthOfRightClip = VideoClip(0,1)->getLength();
-        OpenPopupMenuAt(Center(VideoClip(0,1)));
+        TimelineOpenPopupMenuAt(Center(VideoClip(0,1)));
         TimelineKeyPress('p'); // Cross-fade from &previous
         ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip)(VideoClip);
         ASSERT_AUDIOTRACK0(      AudioClip      )(AudioClip)(AudioClip);
@@ -303,62 +303,62 @@ void TestTransition::testMakeRoomForCrossfade()
     }
     {
         StartTest("Left clip is not extendible, right is: Add crossfade to next clip."); // bug once
-        OpenPopupMenuAt(Center(VideoClip(0,0)));
+        TimelineOpenPopupMenuAt(Center(VideoClip(0,0)));
         TimelineKeyPress('i'); // fade &in
         ASSERT_VIDEOTRACK0(Transition)(VideoClip)(VideoClip)(VideoClip);
         ASSERT_EQUALS(VideoClip(0,0)->getLength(), defaultTransitionLength / 2);
         ShiftTrim(RightCenter(VideoClip(0,1)), Center(VideoClip(0,0)));
         ASSERT_ZERO(VideoClip(0,1)->getLength());
-        OpenPopupMenuAt(Center(VideoClip(0,1)));
+        TimelineOpenPopupMenuAt(Center(VideoClip(0,1)));
         TimelineKeyPress('n');
         ASSERT_VIDEOTRACK0(Transition)(VideoClip)(VideoClip)(VideoClip); // No transition added
         Undo(2);
     }
     {
         StartTest("Left clip is not extendible, right is: Add crossfade from previous clip."); // bug once
-        OpenPopupMenuAt(Center(VideoClip(0,0)));
+        TimelineOpenPopupMenuAt(Center(VideoClip(0,0)));
         TimelineKeyPress('i'); // fade &in
         ASSERT_VIDEOTRACK0(Transition)(VideoClip)(VideoClip)(VideoClip);
         ASSERT_EQUALS(VideoClip(0,0)->getLength(), defaultTransitionLength / 2);
         ShiftTrim(RightCenter(VideoClip(0,1)), Center(VideoClip(0,0)));
         ASSERT_ZERO(VideoClip(0,1)->getLength());
-        OpenPopupMenuAt(Center(VideoClip(0,2)));
+        TimelineOpenPopupMenuAt(Center(VideoClip(0,2)));
         TimelineKeyPress('p');
         ASSERT_VIDEOTRACK0(Transition)(VideoClip)(VideoClip)(VideoClip); // No transition added
         Undo(2);
     }
     {
         StartTest("Right clip is not extendible, left is: Add crossfade to next clip."); // bug once
-        OpenPopupMenuAt(Center(VideoClip(0,1)));
+        TimelineOpenPopupMenuAt(Center(VideoClip(0,1)));
         TimelineKeyPress('o'); // fade &out
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
         ASSERT_EQUALS(VideoClip(0,2)->getLength(), defaultTransitionLength / 2);
         ShiftTrim(LeftCenter(VideoClip(0,1)), Center(VideoClip(0,2)));
         ASSERT_ZERO(VideoClip(0,1)->getLength());
-        OpenPopupMenuAt(Center(VideoClip(0,1)));
+        TimelineOpenPopupMenuAt(Center(VideoClip(0,1)));
         TimelineKeyPress('n');
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
         Undo(2);
     }
     {
         StartTest("Right clip is not extendible, left is: Add crossfade from previous clip."); // bug once
-        OpenPopupMenuAt(Center(VideoClip(0,1)));
+        TimelineOpenPopupMenuAt(Center(VideoClip(0,1)));
         TimelineKeyPress('o'); // fade &out
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
         ASSERT_EQUALS(VideoClip(0,2)->getLength(), defaultTransitionLength / 2);
         ShiftTrim(LeftCenter(VideoClip(0,1)), Center(VideoClip(0,2)));
         ASSERT_ZERO(VideoClip(0,1)->getLength());
-        OpenPopupMenuAt(Center(VideoClip(0,1)));
+        TimelineOpenPopupMenuAt(Center(VideoClip(0,1)));
         TimelineKeyPress('n');
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
         Undo(2);
     }
     {
         StartTest("Both clips not extendible: Add crossfade to next clip."); // bug once
-        OpenPopupMenuAt(Center(VideoClip(0,1)));
+        TimelineOpenPopupMenuAt(Center(VideoClip(0,1)));
         TimelineKeyPress('o'); // fade &out
         ShiftTrim(LeftCenter(VideoClip(0,1)), RightCenter(VideoClip(0,1)) + wxPoint(10,0));
-        OpenPopupMenuAt(Center(VideoClip(0,0)));
+        TimelineOpenPopupMenuAt(Center(VideoClip(0,0)));
         TimelineKeyPress('i'); // fade &in
         ShiftTrim(RightCenter(VideoClip(0,1)), LeftCenter(VideoClip(0,1)) - wxPoint(10,0));
         ASSERT_VIDEOTRACK0(Transition)(VideoClip)(VideoClip)(Transition);
@@ -366,11 +366,11 @@ void TestTransition::testMakeRoomForCrossfade()
         ASSERT_EQUALS(VideoClip(0,1)->getLength(), 0);
         ASSERT_EQUALS(VideoClip(0,2)->getLength(), 0);
         ASSERT_EQUALS(VideoClip(0,3)->getLength(), defaultTransitionLength / 2);
-        OpenPopupMenuAt(Center(VideoClip(0,1)));
+        TimelineOpenPopupMenuAt(Center(VideoClip(0,1)));
         TimelineKeyPress('n');
         ASSERT_VIDEOTRACK0(Transition)(VideoClip)(VideoClip)(Transition)(VideoClip); // No transition added
         StartTest("Both clips not extendible: Add crossfade from previous clip."); // bug once
-        OpenPopupMenuAt(Center(VideoClip(0,2)));
+        TimelineOpenPopupMenuAt(Center(VideoClip(0,2)));
         TimelineKeyPress('p');
         ASSERT_VIDEOTRACK0(Transition)(VideoClip)(VideoClip)(Transition)(VideoClip); // No transition added
     }

@@ -102,20 +102,4 @@ void TestUiDragAndDropFromProjectViewToTimeline::OpenFolderWithInputFiles()
     KeyboardKeyPress(WXK_RIGHT);
 }
 
-// todo test case for each possible key stroke in the timeline popup menu
-// example 't':
-//void TestBugs::testDeleteClipInbetweenTransitionsCausesTimelineMessUp()
-//{
-//    StartTestSuite();
-//    Zoom level(6);
-//    MakeInOutTransitionAfterClip t1(1);
-//    MakeInOutTransitionAfterClip t2(0);
-//    OpenPopupMenuAt(Center(VideoClip(0,2)));
-//    TimelineKeyPress('t');
-//    ASSERT_EQUALS(VideoClip(0,1)->getLeftPts(), AudioClip(0,1)->getLeftPts());
-//    ASSERT_EQUALS(VideoTrack(0)->getLength(),AudioTrack(0)->getLength());
-//    ASSERT_EQUALS(VideoClip(0,4)->getRightPts(), AudioClip(0,4)->getRightPts());
-//    Undo();
-//}
-
 } // namespace

@@ -15,15 +15,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TEST_POPUPMENU_H
-#define TEST_POPUPMENU_H
+#ifndef TEST_UI_TIMELINE_POPUPMENU_H
+#define TEST_UI_TIMELINE_POPUPMENU_H
 
-#include "TestAuto.h"
+#include "TestUi.h"
 
 namespace test
 {
-class TestPopupMenu : public CxxTest::TestSuite // Must be on same line as class definition. Otherwise 'No tests defined error
-    ,   public SuiteCreator<TestPopupMenu>
+class TestUiTimelinePopupMenu : public CxxTest::TestSuite // Must be on same line as class definition. Otherwise 'No tests defined error
+    ,   public SuiteCreator<TestUiTimelinePopupMenu>
 {
 public:
 
