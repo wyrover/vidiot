@@ -72,4 +72,17 @@ void SetValue(wxSpinCtrlDouble* widget, double value)
     WaitForIdle();
 }
 
+void SetValue(wxCheckBox* widget, bool value)
+{
+    widget->SetValue(value);
+    widget->GetEventHandler()->QueueEvent(new wxCommandEvent(wxEVT_COMMAND_CHECKBOX_CLICKED,0));
+    WaitForIdle();
+}
+
+void ButtonTriggerPressed(wxButton* button)
+{
+    // Using QueueEvent (without RunInMainAndWait) did not work.
+    RunInMainAndWait([button] {button->GetEventHandler()->ProcessEvent(wxCommandEvent(wxEVT_COMMAND_BUTTON_CLICKED));});
+}
+
 } // namespace

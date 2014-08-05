@@ -24,7 +24,7 @@ model::SequencePtr getSequence()
     return getTimeline().getSequence();
 }
 
-model::render::RenderPtr getCurrentRenderSettings()
+model::render::RenderPtr GetCurrentRenderSettings()
 {
     return make_cloned<model::render::Render>(getSequence()->getRender());
 }

@@ -28,7 +28,7 @@ namespace test {
 model::SequencePtr getSequence();
 
 /// \return Clone of Render associated with the currently opened sequence
-model::render::RenderPtr getCurrentRenderSettings();
+model::render::RenderPtr GetCurrentRenderSettings();
 
 /// Return the opened timeline for a sequence
 /// \param sequence if this equals 0 then the active timeline is returned

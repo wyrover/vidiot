@@ -38,6 +38,12 @@ wxString getHumanReadibleName(const VideoCodecParameterType& id)
     return (VideoCodecParameterTypeConverter::mapToHumanReadibleString.left.find(id))->second;
 }
 
+VideoCodecParameterType getVideoCodecIdFromHumanReadibleName(const wxString& name)
+{
+    ASSERT(VideoCodecParameterTypeConverter::mapToHumanReadibleString.right.find(name) != VideoCodecParameterTypeConverter::mapToHumanReadibleString.right.end())(name);
+    return (VideoCodecParameterTypeConverter::mapToHumanReadibleString.right.find(name))->second;
+}
+
 void VideoCodecParameterBitrate::set(AVCodecContext* codec)
 {
     codec->bit_rate = getValue();

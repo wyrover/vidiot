@@ -32,6 +32,12 @@ wxString getHumanReadibleName(const AudioCodecParameterType& id)
     return (AudioCodecParameterTypeConverter::mapToHumanReadibleString.left.find(id))->second;
 }
 
+AudioCodecParameterType getAudioCodecIdFromHumanReadibleName(const wxString& name)
+{
+    ASSERT(AudioCodecParameterTypeConverter::mapToHumanReadibleString.right.find(name) != AudioCodecParameterTypeConverter::mapToHumanReadibleString.right.end())(name);
+    return (AudioCodecParameterTypeConverter::mapToHumanReadibleString.right.find(name))->second;
+}
+
 void AudioCodecParameterBitrate::set(AVCodecContext* codec)
 {
     codec->bit_rate = getValue();

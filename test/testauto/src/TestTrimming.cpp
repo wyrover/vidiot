@@ -183,7 +183,6 @@ void TestTrimming::testKeyboardTrimmingDuringPlayback()
     stoppedAgain.wait();
     pause(500);
 
-    //ASSERT(getTimeline().getPlayer()->
     WaitForIdle();
 }
 

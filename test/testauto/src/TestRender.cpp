@@ -42,57 +42,40 @@ void TestRender::testChangeRenderSettings()
     StartTestSuite();
     {
         StartTest("If cancel is pressed, nothing is changed.");
-        model::render::RenderPtr original = getCurrentRenderSettings();
-        WindowTriggerMenu(ID_RENDERSETTINGS);
-        gui::Dialog::get().setSaveFile("D:/out.avi");
-        MouseClickTopLeft(gui::DialogRenderSettings::get().getFileButton());
-        MouseClickBottomLeft(gui::DialogRenderSettings::get().getVideoParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
-        MouseClickBottomLeft(gui::DialogRenderSettings::get().getVideoParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
-        MouseClickBottomLeft(gui::DialogRenderSettings::get().getVideoParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
-        MouseClickBottomLeft(gui::DialogRenderSettings::get().getVideoParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
-        MouseClickTopLeft(gui::DialogRenderSettings::get().getCancelButton());
-        model::render::RenderPtr current = getCurrentRenderSettings();
+        model::render::RenderPtr original = GetCurrentRenderSettings();
+        std::pair< RandomTempDirPtr, wxFileName > tempdir_and_filename = OpenDialogAndSetFilename();
+        SetValue(dynamic_cast<wxSpinCtrl*>(gui::DialogRenderSettings::get().getVideoParam(model::render::BitRate)), 3999996);
+        ButtonTriggerPressed(gui::DialogRenderSettings::get().getCancelButton());
+        model::render::RenderPtr current = GetCurrentRenderSettings();
         ASSERT_EQUALS(*original,*current);
     }
     {
         StartTest("If apply is pressed, the sequence is changed (with a different video codec setting).");
-        WindowTriggerMenu(ID_RENDERSETTINGS);
-        gui::Dialog::get().setSaveFile("D:/out.avi");
-        MouseClickTopLeft(gui::DialogRenderSettings::get().getFileButton());
-        model::render::RenderPtr original = getCurrentRenderSettings();
-        MouseClickBottomLeft(gui::DialogRenderSettings::get().getVideoParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
-        MouseClickBottomLeft(gui::DialogRenderSettings::get().getVideoParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
-        MouseClickBottomLeft(gui::DialogRenderSettings::get().getVideoParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
-        MouseClickTopLeft(gui::DialogRenderSettings::get().getApplyButton());
-        model::render::RenderPtr current = getCurrentRenderSettings();
+        model::render::RenderPtr original = GetCurrentRenderSettings();
+        std::pair< RandomTempDirPtr, wxFileName > tempdir_and_filename = OpenDialogAndSetFilename();
+        SetValue(dynamic_cast<wxSpinCtrl*>(gui::DialogRenderSettings::get().getVideoParam(model::render::BitRate)), 399999);
+        ButtonTriggerPressed(gui::DialogRenderSettings::get().getApplyButton());
+        model::render::RenderPtr current = GetCurrentRenderSettings();
         ASSERT_DIFFERS(*original,*current);
-        MouseClickTopLeft(gui::DialogRenderSettings::get().getCancelButton());
+        ButtonTriggerPressed(gui::DialogRenderSettings::get().getCancelButton());
     }
     {
         StartTest("If apply is pressed, the sequence is changed (with a different audio codec setting).");
-        WindowTriggerMenu(ID_RENDERSETTINGS);
-        gui::Dialog::get().setSaveFile("D:/out.avi");
-        MouseClickTopLeft(gui::DialogRenderSettings::get().getFileButton());
-        model::render::RenderPtr original = getCurrentRenderSettings();
-        MouseClickBottomLeft(gui::DialogRenderSettings::get().getAudioParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
-        MouseClickBottomLeft(gui::DialogRenderSettings::get().getAudioParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
-        MouseClickBottomLeft(gui::DialogRenderSettings::get().getAudioParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
-        MouseClickBottomLeft(gui::DialogRenderSettings::get().getAudioParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
-        MouseClickTopLeft(gui::DialogRenderSettings::get().getApplyButton());
-        model::render::RenderPtr current = getCurrentRenderSettings();
+        model::render::RenderPtr original = GetCurrentRenderSettings();
+        std::pair< RandomTempDirPtr, wxFileName > tempdir_and_filename = OpenDialogAndSetFilename();
+        SetValue(dynamic_cast<wxSpinCtrl*>(gui::DialogRenderSettings::get().getVideoParam(model::render::BitRate)), 300000);
+        ButtonTriggerPressed(gui::DialogRenderSettings::get().getApplyButton());
+        model::render::RenderPtr current = GetCurrentRenderSettings();
         ASSERT_DIFFERS(*original,*current);
-        MouseClickTopLeft(gui::DialogRenderSettings::get().getCancelButton());
+        ButtonTriggerPressed(gui::DialogRenderSettings::get().getCancelButton());
     }
     {
         StartTest("If OK is pressed, the sequence is changed and the dialog is closed.");
-        WindowTriggerMenu(ID_RENDERSETTINGS);
-        gui::Dialog::get().setSaveFile("D:/out.avi");
-        MouseClickTopLeft(gui::DialogRenderSettings::get().getFileButton());
-        model::render::RenderPtr original = getCurrentRenderSettings();
-        MouseClickBottomLeft(gui::DialogRenderSettings::get().getVideoParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
-        MouseClickBottomLeft(gui::DialogRenderSettings::get().getVideoParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
-        MouseClickTopLeft(gui::DialogRenderSettings::get().getOkButton());
-        model::render::RenderPtr current = getCurrentRenderSettings();
+        model::render::RenderPtr original = GetCurrentRenderSettings();
+        std::pair< RandomTempDirPtr, wxFileName > tempdir_and_filename = OpenDialogAndSetFilename();
+        SetValue(dynamic_cast<wxSpinCtrl*>(gui::DialogRenderSettings::get().getVideoParam(model::render::BitRate)), 200000);
+        ButtonTriggerPressed(gui::DialogRenderSettings::get().getOkButton());
+        model::render::RenderPtr current = GetCurrentRenderSettings();
         ASSERT_DIFFERS(*original,*current);
     }
 }
@@ -111,18 +94,14 @@ void TestRender::testRenderingSplit()
         TimelineLeftClick(Center(VideoClip(0,6)));
         TimelineKeyUp(wxMOD_CONTROL);
         TimelineKeyPress(WXK_DELETE);
-        RandomTempDir tempdir;
-        model::render::RenderPtr original = getCurrentRenderSettings();
-        WindowTriggerMenu(ID_RENDERSETTINGS);
-        wxFileName fn(tempdir.getFileName().GetLongPath(), "out" ,"avi");
-        gui::Dialog::get().setSaveFile(fn.GetLongPath());
-        MouseClickTopLeft(gui::DialogRenderSettings::get().getFileButton());
-        MouseClickTopLeft(gui::DialogRenderSettings::get().getRenderSeparationCheckBox(),wxPoint(4,4));
-        MouseClickTopLeft(gui::DialogRenderSettings::get().getRenderButton());
+        model::render::RenderPtr original = GetCurrentRenderSettings();
+        std::pair< RandomTempDirPtr, wxFileName > tempdir_and_filename = OpenDialogAndSetFilename();
+        SetValue(gui::DialogRenderSettings::get().getRenderSeparationCheckBox(),true);
+        ButtonTriggerPressed(gui::DialogRenderSettings::get().getRenderButton());
         expectation.wait();
         for (int i = 1; i <= 4; ++i)
         {
-            wxFileName f(tempdir.getFileName().GetLongPath(), wxString::Format("out_%d",i), "avi");
+            wxFileName f(tempdir_and_filename.first->getFileName().GetLongPath(), wxString::Format("out_%d",i), "avi");
             ASSERT_IMPLIES(i <= 3, f.Exists());
             ASSERT_IMPLIES(i == 4, !f.Exists());
         }
@@ -135,12 +114,11 @@ void TestRender::testRenderingCodecs()
     model::SequencePtr sequence(getSequence());
     for ( AVCodecID id : model::render::VideoCodecs::all() )
     {
-        std::ostringstream osCodec; osCodec << id;
-        std::ostringstream os; os << "Render " << osCodec.str();// << " into " << path.GetLongPath();
+        std::ostringstream os; os << "Render " << id;
         StartTest(os.str().c_str());
         WindowTriggerMenu(ID_RENDERSETTINGS);
         gui::DialogRenderSettings::get().getVideoCodecButton()->select(id);
-        MouseClickTopLeft(gui::DialogRenderSettings::get().getOkButton());
+        ButtonTriggerPressed(gui::DialogRenderSettings::get().getOkButton());
         RenderAndPlaybackCurrentTimeline();
         ProjectViewOpenTimelineForSequence(sequence);
     }
@@ -191,17 +169,26 @@ void TestRender::testRenderingTransformedClip()
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-void TestRender::RenderTimelineInto(const wxFileName& path, int lengthInS)
+std::pair< RandomTempDirPtr, wxFileName > TestRender::OpenDialogAndSetFilename()
+{
+    WindowTriggerMenu(ID_RENDERSETTINGS);
+    
+    RandomTempDirPtr tempdir = boost::make_shared<RandomTempDir>();
+    wxFileName path(tempdir->getFileName().GetFullPath(), "out", "avi");
+    gui::Dialog::get().setSaveFile(path.GetFullPath());
+    ButtonTriggerPressed(gui::DialogRenderSettings::get().getFileButton());
+    return std::make_pair(tempdir,path);
+}
+
+std::pair< RandomTempDirPtr, wxFileName > TestRender::RenderTimeline(int lengthInS)
 {
     ConfigOverruleLong overrule(Config::sPathDebugMaxRenderLength, lengthInS);
-    WindowTriggerMenu(ID_RENDERSETTINGS);
-    gui::Dialog::get().setSaveFile(path.GetFullPath());
-    MouseClickTopLeft(gui::DialogRenderSettings::get().getFileButton());
-    WaitForIdle();
+    std::pair< RandomTempDirPtr, wxFileName > tempdir_and_filename = OpenDialogAndSetFilename();
     ExpectExecutedWork expectation(1);
-    MouseClickTopLeft(gui::DialogRenderSettings::get().getRenderButton());
+    ButtonTriggerPressed(gui::DialogRenderSettings::get().getRenderButton());
     expectation.wait();
-    ASSERT(path.Exists());
+    ASSERT(tempdir_and_filename.second.Exists());
+    return tempdir_and_filename;
 }
 
 void TestRender::PlaybackRenderedTimeline(const wxFileName& path, pixel start, milliseconds t)
@@ -218,10 +205,9 @@ void TestRender::PlaybackRenderedTimeline(const wxFileName& path, pixel start, m
 void TestRender::RenderAndPlaybackCurrentTimeline(int renderedlengthInS, pixel playbackStart, milliseconds playbackLength)
 {
     RandomTempDir tempdir;
-    wxFileName path(tempdir.getFileName().GetFullPath(), "out", "avi");
-    RenderTimelineInto(path, renderedlengthInS);
+    std::pair< RandomTempDirPtr, wxFileName > tempdir_and_filename =  RenderTimeline(renderedlengthInS);
     WindowTriggerMenu(ID_CLOSESEQUENCE);
-    PlaybackRenderedTimeline(path, playbackStart, playbackLength);
+    PlaybackRenderedTimeline(tempdir_and_filename.second, playbackStart, playbackLength);
 }
 
 } // namespace

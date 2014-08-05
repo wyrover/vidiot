@@ -57,7 +57,7 @@ void TestSavingAndLoading::testSaveAndLoad()
     ExtendSequenceWithRepeatedClips(getSequence(), getListOfInputFiles(), 2);
 
     StartTest("Add still image to sequence");
-    extendSequenceWithStillImage(getSequence()); // Ensure that there is a still image in the timeline
+    ExtendSequenceWithStillImage(getSequence()); // Ensure that there is a still image in the timeline
 
     // Ensure each transition type is saved once
     int number = 3;

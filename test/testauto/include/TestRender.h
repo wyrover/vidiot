@@ -70,7 +70,8 @@ private:
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    void RenderTimelineInto(const wxFileName& path, int lengthInS = 1);
+    std::pair< RandomTempDirPtr, wxFileName > OpenDialogAndSetFilename();
+    std::pair< RandomTempDirPtr, wxFileName > RenderTimeline(int lengthInS = 1);
     void PlaybackRenderedTimeline(const wxFileName& path, pixel start = 2, milliseconds t = 600);
     void RenderAndPlaybackCurrentTimeline(int renderedlengthInS = 2, pixel playbackStart = 2, milliseconds playbackLength = 600);
 

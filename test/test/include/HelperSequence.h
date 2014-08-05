@@ -22,7 +22,7 @@ namespace test {
 
 void ExtendSequenceWithRepeatedClips( model::SequencePtr sequence, model::IPaths files, int nRepeat );
 
-void extendSequenceWithStillImage( model::SequencePtr sequence );
+void ExtendSequenceWithStillImage( model::SequencePtr sequence );
 
 void MakeSequenceEmpty( model::SequencePtr sequence );
 

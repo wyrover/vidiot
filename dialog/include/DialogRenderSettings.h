@@ -18,10 +18,12 @@
 #ifndef DIALOG_RENDER_SETTINGS_H
 #define DIALOG_RENDER_SETTINGS_H
 
+#include "AudioCodecParameter.h"
 #include "ICodecParameter.h"
 #include "UtilEnumSelector.h"
 #include "UtilInt.h"
 #include "UtilSingleInstance.h"
+#include "VideoCodecParameter.h"
 
 namespace gui {
 
@@ -70,8 +72,8 @@ public:
     wxButton* getOkButton() const;
     wxButton* getCancelButton() const;
     wxButton* getApplyButton() const;
-    wxWindow* getAudioParam(int index) const;
-    wxWindow* getVideoParam(int index) const;
+    wxWindow* getAudioParam(model::render::AudioCodecParameterType id) const;
+    wxWindow* getVideoParam(model::render::VideoCodecParameterType id) const;
 
 private:
 
@@ -102,8 +104,8 @@ private:
 
     pts mLength;
 
-    std::vector<wxWindow*> mAudioParameterWidgets;
-    std::vector<wxWindow*> mVideoParameterWidgets;
+    std::map<model::render::AudioCodecParameterType, wxWindow*> mAudioParameterWidgets;
+    std::map<model::render::VideoCodecParameterType, wxWindow*> mVideoParameterWidgets;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS

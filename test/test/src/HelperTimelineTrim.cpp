@@ -27,7 +27,7 @@ void TrimLeft(model::IClipPtr clip, pixel length, bool shift, bool endtrim)
     Trim(from,to,shift,endtrim);
 }
 
-void TrimRight(model::IClipPtr clip, pixel length, bool shift, bool endtrim)
+void TrimRight(model::IClipPtr clip, pixel length, bool shift, bool endtrim) // todo rename to timelinetrimright
 {
     wxPoint from = RightCenter(clip);
     wxPoint to = from;
