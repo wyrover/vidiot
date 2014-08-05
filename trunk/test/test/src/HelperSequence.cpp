@@ -42,7 +42,7 @@ void ExtendSequenceWithRepeatedClips( model::SequencePtr sequence, model::IPaths
     });
 }
 
-void extendSequenceWithStillImage( model::SequencePtr sequence )
+void ExtendSequenceWithStillImage( model::SequencePtr sequence )
 {
     RunInMainAndWait([sequence]()
     {

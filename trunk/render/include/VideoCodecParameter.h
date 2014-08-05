@@ -32,6 +32,7 @@ DECLAREENUM(VideoCodecParameterType,
     MacroBlockDecision);
 
 wxString getHumanReadibleName(const VideoCodecParameterType& id);
+VideoCodecParameterType getVideoCodecIdFromHumanReadibleName(const wxString& name);
 
 // NOTE: If a parameter seems to be 'filled in' on the wrong AVCodecContext struct member, check for typos in the first parameter to the template instantiations below.
 

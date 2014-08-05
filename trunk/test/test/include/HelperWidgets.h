@@ -56,6 +56,15 @@ void SetValue(EnumSelector<ITEMTYPE>* widget, ITEMTYPE value)
     WaitForIdle();
 }
 
+/// Simulate the setting of a check box to the given value.
+/// \param checkbox box to be changed
+/// \param state new state
+void SetValue(wxCheckBox* widget, bool value);
+
+/// Simulate the pressing of the given button.
+/// \param button button for which command event 'pressed' is generated
+void ButtonTriggerPressed(wxButton* button);
+
 } // namespace
 
 #endif
