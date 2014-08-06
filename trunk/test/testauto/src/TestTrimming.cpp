@@ -45,25 +45,25 @@ void TestTrimming::testSnapping()
     TimelinePositionCursor(HCenter(VideoClip(0,2)));
     {
         StartTest("No snapping when dragged beyond snap distance");
-        Trim(LeftCenter(VideoClip(0,2)),Center(VideoClip(0,2)) + wxPoint(gui::Layout::SnapDistance + 1,0),false);
+        TimelineTrim(LeftCenter(VideoClip(0,2)),Center(VideoClip(0,2)) + wxPoint(gui::Layout::SnapDistance + 1,0),false);
         ASSERT_MORE_THAN(VideoClip(0,2)->getRightPts(), getTimeline().getCursor().getLogicalPosition());
         Undo();
     }
     {
         StartTest("Snap to cursor when inside snap distance");
-        Trim(LeftCenter(VideoClip(0,2)),Center(VideoClip(0,2)) + wxPoint(gui::Layout::SnapDistance - 1,0),false);
+        TimelineTrim(LeftCenter(VideoClip(0,2)),Center(VideoClip(0,2)) + wxPoint(gui::Layout::SnapDistance - 1,0),false);
         ASSERT_EQUALS(VideoClip(0,2)->getRightPts(), getTimeline().getCursor().getLogicalPosition()); // due to snapping
         Undo();
     }
     {
         StartTest("Temporarily disable snapping");
-        Trim(LeftCenter(VideoClip(0,2)),Center(VideoClip(0,2)) + wxPoint(gui::Layout::SnapDistance - 1,0),false,false);
+        TimelineTrim(LeftCenter(VideoClip(0,2)),Center(VideoClip(0,2)) + wxPoint(gui::Layout::SnapDistance - 1,0),false,false);
         ASSERT_EQUALS(VideoClip(0,2)->getRightPts(), getTimeline().getCursor().getLogicalPosition()); // due to snapping
         TimelineKeyPress('d'); // disable snapping
         ASSERT_MORE_THAN(VideoClip(0,2)->getRightPts(), getTimeline().getCursor().getLogicalPosition());
         TimelineKeyPress('d'); // enable snapping
         ASSERT_EQUALS(VideoClip(0,2)->getRightPts(), getTimeline().getCursor().getLogicalPosition()); // due to snapping
-        EndTrim(false);
+        TimelineEndTrim(false);
         Undo();
     }
 
@@ -131,7 +131,7 @@ void TestTrimming::testKeyboardTrimming()
     
     WindowTriggerMenu(ID_ADDVIDEOTRACK);
     WindowTriggerMenu(ID_ADDAUDIOTRACK);
-    TrimRight(VideoClip(0,4), - 250); // Make smaller for easier positioning
+    TimelineTrimRight(VideoClip(0,4), - 250); // Make smaller for easier positioning
     
     TestBeginTrimSucceeds("With other track without clips: Begin trim");
     TestEndTrimSucceeds("With other track without clips: End trim");

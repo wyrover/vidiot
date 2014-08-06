@@ -19,7 +19,7 @@
 
 namespace test {
 
-void RunInMainAndWait(const boost::function<void()>& method) // todo completely obsolete? only adds the waitforidle?
+void RunInMainAndWait(const boost::function<void()>& method)
 {
     util::thread::RunInMainAndWait([method]
     {

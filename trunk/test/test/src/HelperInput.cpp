@@ -166,7 +166,6 @@ void TimelineMove(wxPoint position)
     }
     else
     {
-        // todo
     }
 }
 
@@ -180,7 +179,6 @@ void TimelineMoveRight(pixel length)
     }
     else
     {
-        // todo
     }
 }
 
@@ -193,7 +191,6 @@ void TimelineMoveLeft(pixel length)
     }
     else
     {
-        // todo
     }
 }
 

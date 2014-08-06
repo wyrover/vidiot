@@ -489,7 +489,6 @@ void Window::QueueModelEvent( wxEvent* event )
 void Window::onOpenProject(model::EventOpenProject &event )
 {
     ASSERT_ZERO(mWatcher);
-    // todo make watcher a member of project (see also todo in watcher about moving watcher to modelproject), and make the Project handle the lifetime
     // Needs an event loop (under wxGTK)
     // Therefore, creation is delayed until this moment.
     mWatcher = new Watcher(); 

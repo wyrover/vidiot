@@ -196,7 +196,7 @@ void AutoFolder::check(bool immediately)
     {
         // Update parent also. Required for scenarios in which entire folder structures are removed. By updating
         // 'from the top' nothing is missed.
-        boost::dynamic_pointer_cast<AutoFolder>(getParent())->check(immediately); // todo inefficient, if parent is checked, then the child is checked, then the parent again
+        boost::dynamic_pointer_cast<AutoFolder>(getParent())->check(immediately);
     }
     if (immediately)
     {

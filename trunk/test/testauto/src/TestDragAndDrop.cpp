@@ -264,7 +264,7 @@ void TestDragAndDrop::testDropAdjacentToTransition()
     {
         StartTest("InOutTransition with 0-length clips: Drop adjacent to left edge");
         MakeInOutTransitionAfterClip prepare(2);
-        TrimLeft(VideoClip(0,2), 300);
+        TimelineTrimLeft(VideoClip(0,2), 300);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(Transition)(VideoClip);
         TimelinePositionCursor(10); 
         TimelineDrag(From(Center(VideoClip(0,7))).AlignRight(LeftPixel(VideoClip(0,3))));
@@ -275,7 +275,7 @@ void TestDragAndDrop::testDropAdjacentToTransition()
     {
         StartTest("InOutTransition with 0-length clips: Drop adjacent to right edge");
         MakeInOutTransitionAfterClip prepare(2);
-        TrimRight(VideoClip(0,4), -200); 
+        TimelineTrimRight(VideoClip(0,4), -200); 
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(Transition)(VideoClip);
         TimelinePositionCursor(10); 
         TimelineDrag(From(Center(VideoClip(0,7))).AlignLeft(RightPixel(VideoClip(0,3))));
@@ -298,7 +298,7 @@ void TestDragAndDrop::testDropAdjacentToZeroLengthSideOfInOutTransition()
 
         // Reduce left part of transition to 0
         wxPoint from = VTopQuarterLeft(VideoClip(0,3));
-        Trim(from,from + wxPoint(100,0));
+        TimelineTrim(from,from + wxPoint(100,0));
         
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(Transition)(VideoClip);
         TimelinePositionCursor(10);
@@ -312,7 +312,7 @@ void TestDragAndDrop::testDropAdjacentToZeroLengthSideOfInOutTransition()
 
         // Reduce right part of transition to 0
         wxPoint from = VTopQuarterRight(VideoClip(0,3));
-        Trim(from,from + wxPoint(-100,0)); // todo rename all trim* test statements to TimelineTrim statements
+        TimelineTrim(from,from + wxPoint(-100,0));
 
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(Transition)(VideoClip);
         TimelinePositionCursor(10);

@@ -114,7 +114,7 @@ AVStream* AudioCodec::addStream(AVFormatContext* context) const
     {
         parameter->set(audio_codec);
     }
-    audio_codec->sample_rate = Properties::get().getAudioFrameRate();
+    audio_codec->sample_rate = Properties::get().getAudioSampleRate();
     AVCodec* codec = avcodec_find_encoder(audio_codec->codec_id);
     if (codec->sample_fmts != 0)
     {

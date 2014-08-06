@@ -17,8 +17,6 @@
 
 #include "Application.h"
 
-// todo use wxDISABLE_DEBUG_SUPPORT()
-
 #ifdef _MSC_VER
 #include "Dialog.h"
 #include "UtilLog.h"
@@ -27,7 +25,7 @@
 //#include <vld.h>
 
 #include <windows.h>
-// todo investigate zthread lib
+// todo GCC investigate zthread lib
 
 /// Only show first exception. When the exception occurs in a separate thread,
 /// the delay in showing the dialog (via the main thread, not directly in the

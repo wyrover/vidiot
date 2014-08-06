@@ -19,23 +19,23 @@
 
 namespace test {
 
-void TrimLeft(model::IClipPtr clip, pixel length, bool shift, bool endtrim)
+void TimelineTrimLeft(model::IClipPtr clip, pixel length, bool shift, bool endtrim)
 {
     wxPoint from = LeftCenter(clip);
     wxPoint to = from;
     to.x += length;
-    Trim(from,to,shift,endtrim);
+    TimelineTrim(from,to,shift,endtrim);
 }
 
-void TrimRight(model::IClipPtr clip, pixel length, bool shift, bool endtrim) // todo rename to timelinetrimright
+void TimelineTrimRight(model::IClipPtr clip, pixel length, bool shift, bool endtrim)
 {
     wxPoint from = RightCenter(clip);
     wxPoint to = from;
     to.x += length;
-    Trim(from,to,shift,endtrim);
+    TimelineTrim(from,to,shift,endtrim);
 }
 
-void BeginTrim(wxPoint from, bool shift)
+void TimelineBeginTrim(wxPoint from, bool shift)
 {
     TimelineMove(from);
     WaitForIdle();
@@ -48,7 +48,7 @@ void BeginTrim(wxPoint from, bool shift)
     WaitForIdle();
 }
 
-void EndTrim(bool shift)
+void TimelineEndTrim(bool shift)
 {
     TimelineLeftUp();
     WaitForIdle();
@@ -59,20 +59,20 @@ void EndTrim(bool shift)
     }
 }
 
-void Trim(wxPoint from, wxPoint to, bool shift, bool endtrim)
+void TimelineTrim(wxPoint from, wxPoint to, bool shift, bool endtrim)
 {
-    BeginTrim(from,shift);
+    TimelineBeginTrim(from,shift);
     TimelineMove(to);
     WaitForIdle();
     if (endtrim)
     {
-        EndTrim(shift);
+        TimelineEndTrim(shift);
     }
 }
 
-void ShiftTrim(wxPoint from, wxPoint to)
+void TimelineShiftTrim(wxPoint from, wxPoint to)
 {
-    Trim(from,to,true,true);
+    TimelineTrim(from,to,true,true);
 }
 
 } // namespace

@@ -181,7 +181,6 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
     // 'Resample' the frame timebase
     // Determine which pts value is required. This is required to first determine
     // if the previously returned frame should be returned again
-    // \todo instead of duplicating frames, nicely take the two input frames 'around' the required output pts time and 'interpolate' given these two frames time offsets with the required pts
     boost::tuple<pts,pts,pts> requiredInputFrames = timeToNearestInputFramesPts(projectPositionToTimeInS(mPosition));
     pts requiredInputPts = requiredInputFrames.get<1>();
 

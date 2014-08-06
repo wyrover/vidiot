@@ -196,8 +196,6 @@ AudioChunkPtr EmptyClip::getNextAudio(const AudioCompositionParameters& paramete
         mSampleProgress = parameters.ptsToSamples(mProgress);
     }
 
-    // todo why does Vidiot generate so much page faults?
-
     samplecount totalSamples = parameters.ptsToSamples(mLength);
     samplecount returnedSamples = std::min(totalSamples - mSampleProgress, parameters.ptsToSamples(1));
 

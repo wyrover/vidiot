@@ -36,10 +36,10 @@ void TestBugs::tearDown()
 void TestBugs::testVideoDecodingError()
 {
     StartTestSuite();
-    TrimRight(VideoClip(0,3),4);
-    TrimRight(VideoClip(0,3),10);
-    TrimRight(VideoClip(0,3),15);
-    TrimRight(VideoClip(0,3),20);
+    TimelineTrimRight(VideoClip(0,3),4);
+    TimelineTrimRight(VideoClip(0,3),10);
+    TimelineTrimRight(VideoClip(0,3),15);
+    TimelineTrimRight(VideoClip(0,3),20);
 }
 
 void TestBugs::testHangupAfterResettingDetailsView()
@@ -62,10 +62,10 @@ void TestBugs::testLinkingErrorWhenDroppingOverBeginOfLinkedClip()
 {
     StartTestSuite();
     WindowTriggerMenu(ID_ADDVIDEOTRACK);
-    TrimLeft(VideoClip(0,4),40,false);
+    TimelineTrimLeft(VideoClip(0,4),40,false);
     TimelineDrag(From(Center(VideoClip(0,6))).To(wxPoint(RightPixel(VideoClip(0,4)),VCenter(getSequence()->getVideoTrack(1)))));
     ASSERT_EQUALS(VideoClip(0,5)->getLink(),AudioClip(0,6));
-    TrimLeft(VideoClip(0,5),10,false); // This caused an assert, because there was a problem with this clip (video(0,5)) link.
+    TimelineTrimLeft(VideoClip(0,5),10,false); // This caused an assert, because there was a problem with this clip (video(0,5)) link.
 }
 
 void TestBugs::testErrorInGetNextHandlingForEmptyClips()
@@ -194,20 +194,20 @@ void TestBugs::testTrimmingClipAdjacentToZeroLengthClipUsedForTransition()
         StartTest("Clip to the right of the trim has length 0.");
         TimelineLeftClick(Center(VideoClip(0,1)));
         TimelineKeyPress('o'); // fade &out
-        ShiftTrim(LeftCenter(VideoClip(0,1)), RightCenter(VideoClip(0,1))  + wxPoint(10,0)); // Create a clip with length 0
+        TimelineShiftTrim(LeftCenter(VideoClip(0,1)), RightCenter(VideoClip(0,1))  + wxPoint(10,0)); // Create a clip with length 0
         ASSERT_ZERO(VideoClip(0,1)->getLength());
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition);
-        ShiftTrim(RightCenter(VideoClip(0,0)), Center(VideoClip(0,0))); // Caused crash in trim handling due to 'adjacent clip' having length 0
+        TimelineShiftTrim(RightCenter(VideoClip(0,0)), Center(VideoClip(0,0))); // Caused crash in trim handling due to 'adjacent clip' having length 0
         Undo(3);
     }
     {
         StartTest("Clip to the left of the trim has length 0.");
         TimelineLeftClick(Center(VideoClip(0,0)));
         TimelineKeyPress('i'); // fade &in
-        ShiftTrim(RightCenter(VideoClip(0,1)), LeftCenter(VideoClip(0,1)) + wxPoint(-10,0)); // Create a clip with length 0
+        TimelineShiftTrim(RightCenter(VideoClip(0,1)), LeftCenter(VideoClip(0,1)) + wxPoint(-10,0)); // Create a clip with length 0
         ASSERT_ZERO(VideoClip(0,1)->getLength());
         ASSERT_VIDEOTRACK0(Transition)(VideoClip)(VideoClip);
-        ShiftTrim(LeftCenter(VideoClip(0,2)), Center(VideoClip(0,2))); // Caused crash in trim handling due to 'adjacent clip' having length 0
+        TimelineShiftTrim(LeftCenter(VideoClip(0,2)), Center(VideoClip(0,2))); // Caused crash in trim handling due to 'adjacent clip' having length 0
         Undo(3);
     }
 }
@@ -306,14 +306,14 @@ void TestBugs::testShiftTrimNotAllowedWithAdjacentClipInOtherTrack()
     ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(EmptyClip);
     ASSERT_AUDIOTRACK1(     EmptyClip      )(AudioClip);
     {
-        StartTest("EndTrim allowed even with adjacent touching clip in other track");
-        TrimRight(VideoClip(0,1), -20);
+        StartTest("TimelineEndTrim allowed even with adjacent touching clip in other track");
+        TimelineTrimRight(VideoClip(0,1), -20);
         ASSERT_LESS_THAN(VideoClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1));
         Undo();
     }
     {
-        StartTest("EndTrim allowed even with adjacent touching clip in other track");
-        TrimLeft(VideoClip(0,1), 20);
+        StartTest("TimelineEndTrim allowed even with adjacent touching clip in other track");
+        TimelineTrimLeft(VideoClip(0,1), 20);
         ASSERT_LESS_THAN(VideoClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1));
         Undo();
     }

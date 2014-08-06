@@ -136,9 +136,9 @@ MakeInOutTransitionAfterClip::MakeInOutTransitionAfterClip(int afterclip, bool a
     ConfigOverruleBool overruleSnapToClips(Config::sPathSnapCursor,false);
 
     // Reduce size of clips to be able to create transition
-    TrimLeft(GetClip(0,clipNumberAfterTransition),30,true);
+    TimelineTrimLeft(GetClip(0,clipNumberAfterTransition),30,true);
     ASSERT_LESS_THAN_ZERO(GetClip(0,clipNumberAfterTransition)->getMinAdjustBegin())(GetClip(0,clipNumberAfterTransition));
-    TrimRight(GetClip(0,clipNumberBeforeTransition),-30,true);
+    TimelineTrimRight(GetClip(0,clipNumberBeforeTransition),-30,true);
     ASSERT_MORE_THAN_ZERO(GetClip(0,clipNumberBeforeTransition)->getMaxAdjustEnd())(GetClip(0,clipNumberBeforeTransition));
 
     makeTransition();
@@ -156,9 +156,9 @@ MakeInOutTransitionAfterClip::~MakeInOutTransitionAfterClip()
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>();
         Undo(); // Undo create transition
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::TrimClip>();
-        Undo(); // Undo TrimRight
+        Undo(); // Undo TimelineTrimRight
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::TrimClip>();
-        Undo(); // Undo TrimLeft
+        Undo(); // Undo TimelineTrimLeft
     }
 }
 
@@ -175,7 +175,7 @@ MakeInTransitionAfterClip::MakeInTransitionAfterClip(int afterclip, bool audio)
     ConfigOverruleBool overruleSnapToClips(Config::sPathSnapCursor,false);
 
     // Reduce size of clips to be able to create transition
-    TrimRight(GetClip(0,clipNumberBeforeTransition),-30,true);
+    TimelineTrimRight(GetClip(0,clipNumberBeforeTransition),-30,true);
     ASSERT_MORE_THAN_ZERO(GetClip(0,clipNumberBeforeTransition)->getMaxAdjustEnd())(GetClip(0,clipNumberBeforeTransition));
     ASSERT_ZERO(GetClip(0,clipNumberAfterTransition)->getMinAdjustBegin())(GetClip(0,clipNumberAfterTransition));
 
@@ -194,7 +194,7 @@ MakeInTransitionAfterClip::~MakeInTransitionAfterClip()
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>();
         Undo(); // Undo create transition
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::TrimClip>();
-        Undo(); // Undo TrimRight
+        Undo(); // Undo TimelineTrimRight
     }
 }
 
@@ -211,7 +211,7 @@ MakeOutTransitionAfterClip::MakeOutTransitionAfterClip(int afterclip, bool audio
     ConfigOverruleBool overruleSnapToClips(Config::sPathSnapCursor,false);
 
     // Reduce size of clips to be able to create transition
-    TrimLeft(GetClip(0,clipNumberAfterTransition),30,true);
+    TimelineTrimLeft(GetClip(0,clipNumberAfterTransition),30,true);
     ASSERT_ZERO(GetClip(0,clipNumberBeforeTransition)->getMaxAdjustEnd())(GetClip(0,clipNumberBeforeTransition));
     ASSERT_LESS_THAN_ZERO(GetClip(0,clipNumberAfterTransition)->getMinAdjustBegin())(GetClip(0,clipNumberAfterTransition));
 
@@ -230,7 +230,7 @@ MakeOutTransitionAfterClip::~MakeOutTransitionAfterClip()
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>();
         Undo(); // Undo create transition
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::TrimClip>();
-        Undo(); // Undo TrimLeft
+        Undo(); // Undo TimelineTrimLeft
     }
 }
 

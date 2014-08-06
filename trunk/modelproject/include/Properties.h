@@ -55,10 +55,10 @@ public:
     
     void setAudioNumberOfChannels(int channels);
 
-    /// \return frame rate used for audio
-    int getAudioFrameRate() const; 
+    /// \return sample rate used for audio
+    int getAudioSampleRate() const; 
     
-    void setAudioFrameRate(int audioFrameRate); // todo rename to audiosamplerate
+    void setAudioSampleRate(int audioFrameRate);
 
     /// \return clone of the currently set default render
     render::RenderPtr getDefaultRender() const;
@@ -72,7 +72,7 @@ private:
     long mVideoWidth;
     long mVideoHeight;
     int mAudioChannels;
-    int mAudioFrameRate;
+    int mAudioSampleRate;
     render::RenderPtr mDefaultRender;
 
     //////////////////////////////////////////////////////////////////////////
@@ -90,7 +90,7 @@ private:
 //#include  <boost/preprocessor/slot/counter.hpp>
 //#include BOOST____PP_UPDATE_COUNTER()
 //#line BOOST_____PP_COUNTER
-BOOST_CLASS_VERSION(model::Properties, 2)
+BOOST_CLASS_VERSION(model::Properties, 3)
 BOOST_CLASS_EXPORT_KEY(model::Properties)
 
 #endif

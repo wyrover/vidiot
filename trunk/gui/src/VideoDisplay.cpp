@@ -81,8 +81,8 @@ VideoDisplay::VideoDisplay(wxWindow *parent, model::SequencePtr sequence)
 ,   mStartTime(0)
 ,   mStartPts(0)
 ,   mNumberOfAudioChannels(model::Properties::get().getAudioNumberOfChannels())
-,   mAudioSampleRate(model::Properties::get().getAudioFrameRate())
-,   mSkipFrames(0) // todo use std::atomic for all thread sync booleans/ints
+,   mAudioSampleRate(model::Properties::get().getAudioSampleRate())
+,   mSkipFrames(0)
 {
     VAR_DEBUG(this);
 
@@ -155,7 +155,7 @@ void VideoDisplay::play()
 
         mCurrentAudioChunk.reset();
 
-        PaError err = Pa_OpenDefaultStream( &mAudioOutputStream, 0, mNumberOfAudioChannels, paInt16, model::Properties::get().getAudioFrameRate(), paFramesPerBufferUnspecified, portaudio_callback, this );
+        PaError err = Pa_OpenDefaultStream( &mAudioOutputStream, 0, mNumberOfAudioChannels, paInt16, model::Properties::get().getAudioSampleRate(), paFramesPerBufferUnspecified, portaudio_callback, this );
         ASSERT_EQUALS(err,paNoError)(Pa_GetErrorText(err));
 
         err = Pa_StartStream( mAudioOutputStream );
@@ -181,7 +181,7 @@ void VideoDisplay::stop()
     mAbortThreads = true; // Stop getting new video/audio data
 
 #ifdef __GNUC__
-    //todo get hangup if I do abortstream and closestream immediately after timer.stop....
+    //todo GCC get hangup if I do abortstream and closestream immediately after timer.stop....
     boost::this_thread::sleep(boost::posix_time::milliseconds(250));
 #endif
 
@@ -294,7 +294,7 @@ void VideoDisplay::audioBufferThread()
         model::AudioChunkPtr chunk = mSequence->getNextAudio(model::AudioCompositionParameters().setSampleRate(mAudioSampleRate).setNrChannels(mNumberOfAudioChannels));
 
 #ifdef __GNUC__
-        // todo make SoundTouch work under linux (probably caused by wrong sample format, which I fixed to 2 bytes i.s.o. default float)
+        // todo GCC make SoundTouch work under linux (probably caused by wrong sample format, which I fixed to 2 bytes i.s.o. default float)
         mAudioChunks.push(chunk);
 #else
         if (chunk)
@@ -316,7 +316,7 @@ void VideoDisplay::audioBufferThread()
                 model::AudioChunkPtr audioChunk = boost::make_shared<model::AudioChunk>(mNumberOfAudioChannels, nFramesAvailable * mNumberOfAudioChannels, true, false);
                 int nFrames = mSoundTouch.receiveSamples(reinterpret_cast<soundtouch::SAMPLETYPE *>(audioChunk->getBuffer()), nFramesAvailable);
                 ASSERT_EQUALS(nFrames,nFramesAvailable);
-                mAudioChunks.push(audioChunk); // todo bypass soundtouch if not required
+                mAudioChunks.push(audioChunk);
             }
         }
         else

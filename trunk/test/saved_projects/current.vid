@@ -3,7 +3,7 @@
 <boost_serialization signature="serialization::archive" version="10">
 <project class_id="0" tracking_level="1" version="1" object_id="_0">
 	<mProperties class_id="1" tracking_level="0" version="1">
-		<px class_id="2" tracking_level="1" version="2" object_id="_1">
+		<px class_id="2" tracking_level="1" version="3" object_id="_1">
 			<mFrameRate class_id="3" tracking_level="0" version="1">
 				<rational64 class_id="4" tracking_level="0" version="0">
 					<numerator>24000</numerator>
@@ -13,7 +13,7 @@
 			<mVideoWidth>1280</mVideoWidth>
 			<mVideoHeight>720</mVideoHeight>
 			<mAudioChannels>2</mAudioChannels>
-			<mAudioFrameRate>44100</mAudioFrameRate>
+			<mAudioSampleRate>44100</mAudioSampleRate>
 			<mDefaultRender class_id="5" tracking_level="0" version="1">
 				<px class_id="6" tracking_level="1" version="1" object_id="_2">
 					<mFileName class_id="7" tracking_level="0" version="0">

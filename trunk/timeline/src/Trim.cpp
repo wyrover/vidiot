@@ -491,7 +491,7 @@ void Trim::preview()
         wxBitmapPtr trimmedBmp = videoFrame->getBitmap();
         if (trimmedBmp)
         {
-            // todo first edit operation, the editdisplay does not show bitmap until first 'idle' moment?
+            // todo GCC first edit operation, the editdisplay does not show bitmap until first 'idle' moment?
             wxMemoryDC dcBmp(*trimmedBmp);
             mDc.Blit(wxPoint(x, (h - trimmedBmp->GetHeight()) / 2), trimmedBmp->GetSize(), &dcBmp, wxPoint(0,0));
         }

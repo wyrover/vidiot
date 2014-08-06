@@ -128,7 +128,7 @@ void TestRender::testRenderingTransition()
 {
     StartTestSuite();
 
-    TrimLeft(VideoClip(0),60);
+    TimelineTrimLeft(VideoClip(0),60);
     MakeInOutTransitionAfterClip preparation(0);
     preparation.dontUndo();
 
