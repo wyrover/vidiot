@@ -19,18 +19,69 @@
 
 namespace gui { namespace timeline { namespace state {
 
-MouseState::MouseState(const wxMouseState& wx)
+EvMouse::EvMouse(const wxMouseState& wx)
     : Position(wx.GetPosition())
     , LeftIsDown(wx.LeftIsDown())
     , RightIsDown(wx.RightIsDown())
 {
 }
 
-std::ostream& operator<<(std::ostream& os, const MouseState& obj)
+std::ostream& operator<<(std::ostream& os, const EvMouse& obj)
 {
-    os << obj.Position << '|' << obj.LeftIsDown << '|' << obj.RightIsDown;
+    // This typeid is required to distinguish the various 'react' methods
+    os  << typeid(obj).name() << '|'
+        << obj.Position << '|' 
+        << obj.LeftIsDown << '|' 
+        << obj.RightIsDown;
     return os;
 }
 
+EvMotion::EvMotion(const wxMouseState& wx) 
+    : EvMouse(wx) 
+{}
+
+EvLeftDown::EvLeftDown(const wxMouseState& wx) 
+    : EvMouse(wx) 
+{}
+
+EvLeftUp::EvLeftUp(const wxMouseState& wx) 
+    : EvMouse(wx) 
+{}
+
+EvLeftDouble::EvLeftDouble(const wxMouseState& wx) 
+    : EvMouse(wx) 
+{}
+
+EvMiddleDown::EvMiddleDown(const wxMouseState& wx) 
+    : EvMouse(wx) 
+{}
+
+EvMiddleUp::EvMiddleUp(const wxMouseState& wx) 
+    : EvMouse(wx) 
+{}
+
+EvMiddleDouble::EvMiddleDouble(const wxMouseState& wx) 
+    : EvMouse(wx) 
+{}
+
+EvRightDown::EvRightDown(const wxMouseState& wx) 
+    : EvMouse(wx) 
+{}
+
+EvRightUp::EvRightUp(const wxMouseState& wx) 
+    : EvMouse(wx) 
+{}
+
+EvRightDouble::EvRightDouble(const wxMouseState& wx) 
+    : EvMouse(wx) 
+{}
+
+EvEnter::EvEnter(const wxMouseState& wx) 
+    : EvMouse(wx) 
+{}
+
+EvLeave::EvLeave(const wxMouseState& wx) 
+    : EvMouse(wx) 
+{}
 
 }}} // namespace

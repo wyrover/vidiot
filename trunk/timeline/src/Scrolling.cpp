@@ -53,7 +53,7 @@ void Scrolling::rightDown()
     mRightScrollOrigin = getMouse().getPhysicalPosition();
 }
 
-void Scrolling::update(state::MouseState& state)
+void Scrolling::update(state::EvMouse& state)
 {
     wxPoint current = state.Position;
 

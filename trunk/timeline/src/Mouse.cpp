@@ -109,7 +109,7 @@ Mouse::~Mouse()
 // GUI EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void Mouse::update(state::MouseState& state)
+void Mouse::update(state::EvMouse& state)
 {
     mPhysicalPosition = state.Position;
     mVirtualPosition =  getScrolling().getVirtualPosition(mPhysicalPosition);
