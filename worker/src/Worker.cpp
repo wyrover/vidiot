@@ -92,7 +92,7 @@ void Worker::schedule(const WorkPtr& work)
 {
     {
         boost::mutex::scoped_lock lock(mMutex);
-        if (!mEnabled) // todo convert to atomicint
+        if (!mEnabled)
         {
             return;
         }
@@ -112,7 +112,7 @@ void Worker::schedule(const WorkPtr& work)
 
 void Worker::setExpectedWork(int expected)
 {
-    mExecutedLimit = mExecuted + expected;// todo atomic int
+    mExecutedLimit = mExecuted + expected;
 }
 
 void Worker::waitForExecutionCount()
