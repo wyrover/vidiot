@@ -53,7 +53,7 @@ public:
     // GUI EVENTS
     //////////////////////////////////////////////////////////////////////////
 
-    void update(state::MouseState& state);
+    void update(state::EvMouse& state);
     
     void dragMove(const wxPoint& position);
 
