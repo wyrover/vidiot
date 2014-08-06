@@ -40,6 +40,8 @@ public:
     void testDragAndDropIntoEmptySequence();
     void testDragAndDropAtEndOfSequence();
 
+    void testDragAndDropStillImageAndUndo();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////
