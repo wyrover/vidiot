@@ -461,7 +461,7 @@ void RenderWork::generate()
     }
 
     VideoCompositionParameters videoparameters = VideoCompositionParameters().setBoundingBox(wxSize(videoCodec->width,videoCodec->height)).setDrawBoundingBox(false).setOptimizeForQuality();
-    AudioCompositionParameters audioparameters = AudioCompositionParameters().setSampleRate(audioCodec->sample_rate).setNrChannels(audioCodec->channels); // todo pass required pixel format also?
+    AudioCompositionParameters audioparameters = AudioCompositionParameters().setSampleRate(audioCodec->sample_rate).setNrChannels(audioCodec->channels);
 
     if (ok)
     {

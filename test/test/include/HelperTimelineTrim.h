@@ -21,14 +21,14 @@
 namespace test {
 
 /// Trim the given clip on the left side
-void TrimLeft(model::IClipPtr clip, pixel length, bool shift = true, bool endtrim = true);
+void TimelineTrimLeft(model::IClipPtr clip, pixel length, bool shift = true, bool endtrim = true);
 
 /// Trim the given clip on the right side
-void TrimRight(model::IClipPtr clip, pixel length, bool shift = true, bool endtrim = true);
+void TimelineTrimRight(model::IClipPtr clip, pixel length, bool shift = true, bool endtrim = true);
 
-void BeginTrim(wxPoint from, bool shift);
+void TimelineBeginTrim(wxPoint from, bool shift);
 
-void EndTrim(bool shift = true);
+void TimelineEndTrim(bool shift = true);
 
 /// Do a trim between the two points (press, move, release). This basically does the same as 'Drag' but faster. The Drag
 /// method does the move in several (10) steps. This method simply moves to the begin point, presses the mouse, moves
@@ -36,11 +36,11 @@ void EndTrim(bool shift = true);
 /// \param from starting position to move to initially
 /// \param to final position to drag to
 /// \param shift hold down shift after pressing the mouse button
-void Trim(wxPoint from, wxPoint to, bool shift = false, bool endtrim = true);
+void TimelineTrim(wxPoint from, wxPoint to, bool shift = false, bool endtrim = true);
 
-/// \see Trim
+/// \see TimelineTrim
 /// Do a shift trim
-void ShiftTrim(wxPoint from, wxPoint to);
+void TimelineShiftTrim(wxPoint from, wxPoint to);
 
 } // namespace
 

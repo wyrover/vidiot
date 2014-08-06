@@ -35,14 +35,12 @@ namespace gui {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-    // todo move watcher class to modelproject and remove use of window class here (do that first)
 Watcher::Watcher()
     :   mWatcher(0)
     ,   mWatches()
 {
     VAR_DEBUG(this);
 
-    // todo move watcher class to modelproject and remove use of window class here (do that first)
     gui::Window::get().Bind(model::EVENT_ADD_NODE,     &Watcher::onProjectAssetAdded,    this);
     gui::Window::get().Bind(model::EVENT_ADD_NODES,    &Watcher::onProjectAssetsAdded,   this);
     gui::Window::get().Bind(model::EVENT_REMOVE_NODE,  &Watcher::onProjectAssetRemoved,  this);
@@ -62,8 +60,6 @@ Watcher::~Watcher()
 
     mWatches.clear();
     stop();
-
-    //todo remove stop();
 }
 
 //////////////////////////////////////////////////////////////////////////

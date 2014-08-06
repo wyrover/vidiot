@@ -40,7 +40,7 @@ DEFINE_EVENT(EVENT_IDLE_TRIGGER,  EventIdleTrigger, bool);
 
 struct wxLogImpl : public wxLog
 {
-// todo this only used for MSDEV?
+#if WXWIN_COMPATIBILITY_2_8
     virtual void DoLog(wxLogLevel level, const wxChar *msg, time_t timestamp)
     {
         wxString wxMsg(msg);
@@ -59,6 +59,7 @@ struct wxLogImpl : public wxLog
 
         Log().get("WX      ") << wxLvl << ' ' << wxMsg;
     }
+#endif // WXWIN_COMPATIBILITY_2_8
 
     virtual void DoLogRecord(wxLogLevel level, const wxString &msg, const wxLogRecordInfo &info) override
     {

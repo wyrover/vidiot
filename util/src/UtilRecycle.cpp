@@ -62,7 +62,7 @@ bool recycle(const wxString& file)
 
 bool recycle(const wxString& file)
 {
-    // todo implement (move to /tmp???_
+    // todo GCC implement (move to /tmp???_
 }
 
 #endif

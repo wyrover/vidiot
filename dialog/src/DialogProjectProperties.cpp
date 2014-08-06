@@ -76,7 +76,7 @@ DialogProjectProperties::DialogProjectProperties(wxWindow* win)
     wxIntegerValidator<int> sampleRateValidator;
     sampleRateValidator.SetMin(1000);
     sampleRateValidator.SetMax(1000);
-    initial = model::Properties::get().getAudioFrameRate();
+    initial = model::Properties::get().getAudioSampleRate();
     mAudioSampleRate = new wxComboBox(this, wxID_ANY, wxString::Format("%d", initial),  wxDefaultPosition, wxDefaultSize, sampleRateChoices, 0, sampleRateValidator);
     mAudioSampleRate->Enable(!hasSequences);
     addoption(_("Audio sample rate"), mAudioSampleRate);
@@ -127,7 +127,7 @@ DialogProjectProperties::~DialogProjectProperties()
 
         model::Properties::get().setFrameRate(FrameRate::getSupported()[mVideoFrameRate->GetSelection()]);
         model::Properties::get().setVideoSize(wxSize(mVideoWidth->GetValue(),mVideoHeight->GetValue()));
-        model::Properties::get().setAudioFrameRate(toLong(mAudioSampleRate->GetValue()));
+        model::Properties::get().setAudioSampleRate(toLong(mAudioSampleRate->GetValue()));
         model::Properties::get().setAudioNumberOfChannels(toLong(mAudioNumberOfChannels->GetValue()));
         model::ProjectModification::trigger();
     }

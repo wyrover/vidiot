@@ -32,7 +32,7 @@ void PortAudio::init()
 {
 #ifdef _MSC_VER
     PaUtil_SetDebugPrintFunction(log);
-    // todo for GCC also
+    // todo GCC enable logging for PA also
 #endif
     PaError err = Pa_Initialize();
     ASSERT_EQUALS(err,paNoError)(Pa_GetErrorText(err));

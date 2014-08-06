@@ -143,7 +143,7 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
 
             AVFrame frame = { { 0 } };
             int got_frame = 0;
-            int usedSourceBytes = avcodec_decode_audio4(codec, &frame, &got_frame, &packet); // todo use request_sample_fmt to get correct sample fmt immediately
+            int usedSourceBytes = avcodec_decode_audio4(codec, &frame, &got_frame, &packet);
             ASSERT_MORE_THAN_EQUALS_ZERO(usedSourceBytes);
 
             if (!got_frame)

@@ -223,7 +223,7 @@ void TestSavingAndLoading::checkDocument(wxString path)
     }
     {
         StartTest("Trim clip"); // Known bug at some point: a crash due to improper initialization of File class members upon loading (mNumberOfFrames not initialized)
-        TrimLeft(VideoClip(0,1),20);
+        TimelineTrimLeft(VideoClip(0,1),20);
         Undo();
     }
     {

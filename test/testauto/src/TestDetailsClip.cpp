@@ -129,7 +129,7 @@ void TestDetailsClip::testChangeLength()
              pressLengthButton(button,false,true);
             Undo(2); // Undo: adjust length, dragndrop
         }
-        TrimLeft(VideoClip(0,3),getTimeline().getZoom().ptsToPixels(VideoClip(0,3)->getLength() - 2)); // Smaller length than the 'smallest' button
+        TimelineTrimLeft(VideoClip(0,3),getTimeline().getZoom().ptsToPixels(VideoClip(0,3)->getLength() - 2)); // Smaller length than the 'smallest' button
         TimelineLeftClick(Center(VideoClip(0,3))); // Exclusively select clip 4, since the shift trim above selects multiple clips
         for ( wxToggleButton* button : DetailsClipView()->getLengthButtons() )
         {
@@ -137,7 +137,7 @@ void TestDetailsClip::testChangeLength()
             pressLengthButton(button,true,true);
             Undo(); // Undo: adjust length. Note: Undoing here also revealed a bug here, when the 'TrimClip::doExtraAfter -> change selection' caused 'no selection changed update'
         }
-        Undo(4); // Undo TrimLeft, ExecuteDrop, Add video track, Add audio track
+        Undo(4); // Undo TimelineTrimLeft, ExecuteDrop, Add video track, Add audio track
         ASSERT_EQUALS(VideoClip(0,3)->getLength(), originalLength);
         ASSERT_EQUALS(AudioClip(0,3)->getLength(), originalLength);
         ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
@@ -168,8 +168,8 @@ void TestDetailsClip::testChangeLengthOfTransition()
 
     {
         StartTest("InOutTransition: Change length via details view.");
-        TrimRight(VideoClip(0,1),-100); // Make all lengths available
-        TrimLeft(VideoClip(0,2),100); // Make all lengths available
+        TimelineTrimRight(VideoClip(0,1),-100); // Make all lengths available
+        TimelineTrimLeft(VideoClip(0,2),100); // Make all lengths available
         {
             MakeInOutTransitionAfterClip preparation(1);
             TimelineLeftClick(VTopQuarterHCenter(VideoClip(0,2))); // Select transition

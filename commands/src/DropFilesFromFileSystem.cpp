@@ -137,7 +137,7 @@ void DropFilesFromFileSystem(std::list<wxString> filenames)
         if (framerates.size() == 1 && samplerates.size() == 1)
         {
             model::Properties::get().setFrameRate(*(framerates.begin()));
-            model::Properties::get().setAudioFrameRate(*(samplerates.begin()));
+            model::Properties::get().setAudioSampleRate(*(samplerates.begin()));
 
             if (oneFolderDropped)
             {

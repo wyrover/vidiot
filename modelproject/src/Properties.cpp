@@ -30,7 +30,7 @@ Properties::Properties()
 ,   mVideoWidth(Config::ReadLong(Config::sPathDefaultVideoWidth))
 ,   mVideoHeight(Config::ReadLong(Config::sPathDefaultVideoHeight))
 ,   mAudioChannels(Config::ReadLong(Config::sPathDefaultAudioChannels))
-,   mAudioFrameRate(Config::ReadLong(Config::sPathDefaultAudioSampleRate))
+,   mAudioSampleRate(Config::ReadLong(Config::sPathDefaultAudioSampleRate))
 ,   mDefaultRender(boost::make_shared<model::render::Render>())
 {
     VAR_DEBUG(this);
@@ -41,7 +41,7 @@ Properties::Properties(const FrameRate& fr)
 ,   mVideoWidth(100)
 ,   mVideoHeight(100)
 ,   mAudioChannels(1)
-,   mAudioFrameRate(44100)
+,   mAudioSampleRate(44100)
 ,   mDefaultRender()
 {
     VAR_DEBUG(this);
@@ -87,14 +87,14 @@ void Properties::setAudioNumberOfChannels(int channels)
     mAudioChannels = channels;
 }
 
-int Properties::getAudioFrameRate() const
+int Properties::getAudioSampleRate() const
 {
-    return mAudioFrameRate;
+    return mAudioSampleRate;
 }
 
-void Properties::setAudioFrameRate(int audioFrameRate)
+void Properties::setAudioSampleRate(int audioFrameRate)
 {
-    mAudioFrameRate = audioFrameRate;
+    mAudioSampleRate = audioFrameRate;
 }
 
 render::RenderPtr Properties::getDefaultRender() const
@@ -149,7 +149,16 @@ void Properties::serialize(Archive & ar, const unsigned int version)
         ar & BOOST_SERIALIZATION_NVP(mVideoWidth);
         ar & BOOST_SERIALIZATION_NVP(mVideoHeight);
         ar & BOOST_SERIALIZATION_NVP(mAudioChannels);
-        ar & BOOST_SERIALIZATION_NVP(mAudioFrameRate);
+        if (version < 3 && Archive::is_loading::value)
+        {
+            int mAudioFrameRate = 0;
+            ar & BOOST_SERIALIZATION_NVP(mAudioFrameRate);
+            mAudioSampleRate = mAudioFrameRate;
+        }
+        else
+        {
+            ar & BOOST_SERIALIZATION_NVP(mAudioSampleRate);
+        }
         ar & BOOST_SERIALIZATION_NVP(mDefaultRender);
     }
     catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
