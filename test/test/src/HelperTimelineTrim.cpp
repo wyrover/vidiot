@@ -41,7 +41,7 @@ void TimelineBeginTrim(wxPoint from, bool shift)
     WaitForIdle();
     if (shift)
     {
-        TimelineKeyDown(wxMOD_SHIFT);
+        TimelineKeyDown(WXK_SHIFT);
         WaitForIdle();
     }
     TimelineLeftDown();
@@ -54,7 +54,7 @@ void TimelineEndTrim(bool shift)
     WaitForIdle();
     if (shift)
     {
-        TimelineKeyUp(wxMOD_SHIFT);
+        TimelineKeyUp(WXK_SHIFT);
         WaitForIdle();
     }
 }

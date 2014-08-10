@@ -41,7 +41,7 @@ void TestIntervals::testRemoveSelectedIntervals()
 {
     StartTestSuite();
     ConfigFixture.SnapToClips(true);
-    Zoom Level(2);
+    TimelineZoomIn(2);
 
     StartTest("Make an interval from left to right and click 'delete all marked intervals'");
     ToggleInterval(HCenter(VideoClip(0,1)), HCenter(VideoClip(0,2)));
@@ -78,7 +78,7 @@ void TestIntervals::testRemoveUnselectedIntervals()
 {
     StartTestSuite();
     ConfigFixture.SnapToClips(true);
-    Zoom Level(2);
+    TimelineZoomIn(2);
 
     StartTest("Make an interval from left to right and click 'delete all unmarked intervals'");
     ToggleInterval(10, HCenter(VideoClip(0,1))); // Can't use zero: the (test) code to trigger an interval first moves to the left a bit (and that would be < 0 in this case)
@@ -124,11 +124,11 @@ void TestIntervals::testRemoveEmptyIntervals()
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip);
         ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(AudioClip)(AudioClip)(AudioClip)(AudioClip);
         TimelineLeftClick(Center(VideoClip(0,0)));
-        TimelineKeyDown(wxMOD_CONTROL);
+        TimelineKeyDown(WXK_CONTROL);
         TimelineLeftClick(Center(VideoClip(0,2)));
         TimelineLeftClick(Center(VideoClip(0,3)));
         TimelineLeftClick(Center(VideoClip(0,6)));
-        TimelineKeyUp(wxMOD_CONTROL);
+        TimelineKeyUp(WXK_CONTROL);
         TimelineKeyPress(WXK_DELETE);
         ASSERT_EQUALS(VideoTrack(0)->getClips().size(), 5);
         ASSERT_EQUALS(AudioTrack(0)->getClips().size(), 5);
@@ -162,7 +162,7 @@ void TestIntervals::testRemoveEmptyIntervals()
 void TestIntervals::testRemoveEmptyIntervalsWithOffset()
 {
     StartTestSuite();
-    Zoom level(2);
+    TimelineZoomIn(2);
     ConfigFixture.SnapToClips(true);
     WindowTriggerMenu(ID_ADDVIDEOTRACK);
     {

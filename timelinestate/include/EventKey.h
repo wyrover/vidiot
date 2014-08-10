@@ -24,7 +24,7 @@ struct EvKey
 {
     explicit EvKey(wxKeyEvent& event);
 
-    explicit EvKey(wxMouseState& state);
+    explicit EvKey(wxMouseState& state, int key);
     
 
     /// Indicates that the event has been handled by the state machine and
@@ -48,6 +48,7 @@ struct EvKeyDown
     , public boost::statechart::event< EvKeyDown >
 {
     explicit EvKeyDown(wxKeyEvent& event);
+    explicit EvKeyDown(wxMouseState& state, int key);
 };
 
 struct EvKeyUp
@@ -55,6 +56,7 @@ struct EvKeyUp
     , public boost::statechart::event< EvKeyUp >
 {
     explicit EvKeyUp(wxKeyEvent& event);
+    explicit EvKeyUp(wxMouseState& state, int key);
 };
 
 }}} // namespace

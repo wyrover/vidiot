@@ -45,30 +45,30 @@ void TestTimeline::testSelection()
         StartTest("Start application, make sequence, shift click clip five. Only clip five selected!");
         DeselectAllClips();
         ASSERT_SELECTION_SIZE(0);
-        TimelineKeyDown(wxMOD_SHIFT);
+        TimelineKeyDown(WXK_SHIFT);
         TimelineLeftClick(Center(VideoClip(0,4)));
-        TimelineKeyUp(wxMOD_SHIFT);
+        TimelineKeyUp(WXK_SHIFT);
         ASSERT_SELECTION_SIZE(1);
     }
     {
         StartTest("CTRL clicking all clips one by one");
         DeselectAllClips();
-        TimelineKeyDown(wxMOD_CONTROL);
+        TimelineKeyDown(WXK_CONTROL);
         for (model::IClipPtr clip : clips)
         {
             TimelineLeftClick(Center(clip));
         }
-        TimelineKeyUp(wxMOD_CONTROL);
+        TimelineKeyUp(WXK_CONTROL);
         ASSERT_SELECTION_SIZE(mProjectFixture.InputFiles.size());
     }
     {
         StartTest("SHIFT clicking the entire list");
         DeselectAllClips();
         ASSERT_SELECTION_SIZE(0);
-        TimelineKeyDown(wxMOD_SHIFT);
+        TimelineKeyDown(WXK_SHIFT);
         TimelineLeftClick(Center(clips.front()));
         TimelineLeftClick(Center(clips.back()));
-        TimelineKeyUp(wxMOD_SHIFT);
+        TimelineKeyUp(WXK_SHIFT);
         ASSERT_SELECTION_SIZE(mProjectFixture.InputFiles.size());
     }
     {
@@ -76,20 +76,20 @@ void TestTimeline::testSelection()
         DeselectAllClips();
         ASSERT_SELECTION_SIZE(0);
         TimelineLeftClick(Center(VideoClip(0,2)));
-        TimelineKeyDown(wxMOD_SHIFT);
+        TimelineKeyDown(WXK_SHIFT);
         TimelineLeftClick(Center(VideoClip(0,4)));
-        TimelineKeyUp(wxMOD_SHIFT);
+        TimelineKeyUp(WXK_SHIFT);
         ASSERT_SELECTION_SIZE(3);
     }
     {
         StartTest("(de)selecting one clip with CTRL click");
-        TimelineKeyDown(wxMOD_CONTROL);
+        TimelineKeyDown(WXK_CONTROL);
         TimelineLeftClick(Center(VideoClip(0,3)));
-        TimelineKeyUp(wxMOD_CONTROL);
+        TimelineKeyUp(WXK_CONTROL);
         ASSERT_SELECTION_SIZE(2);
-        TimelineKeyDown(wxMOD_CONTROL);
+        TimelineKeyDown(WXK_CONTROL);
         TimelineLeftClick(Center(VideoClip(0,3)));
-        TimelineKeyUp(wxMOD_CONTROL);
+        TimelineKeyUp(WXK_CONTROL);
         ASSERT_SELECTION_SIZE(3);
     }
     {
@@ -98,9 +98,9 @@ void TestTimeline::testSelection()
         MakeInOutTransitionAfterClip preparation(1);
         ASSERT(VideoClip(0,2)->isA<model::Transition>());
         TimelineLeftClick(Center(VideoClip(0,1)));
-        TimelineKeyDown(wxMOD_SHIFT);
+        TimelineKeyDown(WXK_SHIFT);
         TimelineLeftClick(Center(VideoClip(0,3)));
-        TimelineKeyUp(wxMOD_SHIFT);
+        TimelineKeyUp(WXK_SHIFT);
         ASSERT(VideoClip(0,2)->isA<model::Transition>() && VideoClip(0,2)->getSelected());
     }
     {
@@ -174,10 +174,10 @@ void TestTimeline::testDeletion()
         int num = NumberOfVideoClipsInTrack(0);
         DeselectAllClips();
         TimelineLeftClick(Center(VideoClip(0,1)));
-        TimelineKeyDown(wxMOD_CONTROL);
+        TimelineKeyDown(WXK_CONTROL);
         TimelineLeftClick(Center(VideoClip(0,3)));
         ASSERT_SELECTION_SIZE(2);
-        TimelineKeyUp(wxMOD_CONTROL);
+        TimelineKeyUp(WXK_CONTROL);
         TimelineKeyPress(WXK_DELETE);
         ASSERT_SELECTION_SIZE(0);
         ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(EmptyClip)(VideoClip)(VideoClip);
@@ -203,13 +203,13 @@ void TestTimeline::testDeletion()
         int num = NumberOfVideoClipsInTrack(0);
         DeselectAllClips();
         TimelineLeftClick(Center(VideoClip(0,1)));
-        TimelineKeyDown(wxMOD_CONTROL);
+        TimelineKeyDown(WXK_CONTROL);
         TimelineLeftClick(Center(VideoClip(0,3)));
-        TimelineKeyUp(wxMOD_CONTROL);
-        TimelineKeyDown(wxMOD_SHIFT);
+        TimelineKeyUp(WXK_CONTROL);
+        TimelineKeyDown(WXK_SHIFT);
         ASSERT_SELECTION_SIZE(2);
         TimelineKeyPress(WXK_DELETE);
-        TimelineKeyUp(wxMOD_SHIFT);
+        TimelineKeyUp(WXK_SHIFT);
         ASSERT_SELECTION_SIZE(0);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip);
         ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(AudioClip);
@@ -217,9 +217,9 @@ void TestTimeline::testDeletion()
         ASSERT_EQUALS(NumberOfVideoClipsInTrack(0),num-2);
         TimelineLeftClick(Center(VideoClip(0,2)));
         ASSERT_SELECTION_SIZE(1);
-        TimelineKeyDown(wxMOD_SHIFT);
+        TimelineKeyDown(WXK_SHIFT);
         TimelineKeyPress(WXK_DELETE);
-        TimelineKeyUp(wxMOD_SHIFT);
+        TimelineKeyUp(WXK_SHIFT);
         ASSERT_SELECTION_SIZE(0);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip);
         ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip);
@@ -264,9 +264,9 @@ void TestTimeline::testDeletionWithUnlinkedClips()
         TimelineKeyPress(WXK_DELETE);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(EmptyClip)(VideoClip);
         TimelineLeftClick(Center(AudioClip(0,2)));
-        TimelineKeyDown(wxMOD_SHIFT);
+        TimelineKeyDown(WXK_SHIFT);
         TimelineKeyPress(WXK_DELETE);
-        TimelineKeyUp(wxMOD_SHIFT);
+        TimelineKeyUp(WXK_SHIFT);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip);
         ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(AudioClip);
         ASSERT_EQUALS(VideoClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1));
@@ -283,9 +283,9 @@ void TestTimeline::testDeletionWithUnlinkedClips()
         TimelineKeyPress(WXK_DELETE);
         ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(EmptyClip)(AudioClip);
         TimelineLeftClick(Center(VideoClip(0,2)));
-        TimelineKeyDown(wxMOD_SHIFT);
+        TimelineKeyDown(WXK_SHIFT);
         TimelineKeyPress(WXK_DELETE);
-        TimelineKeyUp(wxMOD_SHIFT);
+        TimelineKeyUp(WXK_SHIFT);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip);
         ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(AudioClip);
         ASSERT_EQUALS(VideoClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1));
@@ -302,9 +302,9 @@ void TestTimeline::testDeletionWithUnlinkedClips()
         TimelineTrimLeft(VideoClip(0,2), 20, false);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(EmptyClip)(VideoClip)(VideoClip);
         TimelineLeftClick(Center(AudioClip(0,2)));
-        TimelineKeyDown(wxMOD_SHIFT);
+        TimelineKeyDown(WXK_SHIFT);
         TimelineKeyPress(WXK_DELETE);
-        TimelineKeyUp(wxMOD_SHIFT);
+        TimelineKeyUp(WXK_SHIFT);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(EmptyClip)(VideoClip)(VideoClip);
         ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(EmptyClip)(AudioClip)(AudioClip);
         ASSERT_EQUALS(VideoClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1));
@@ -322,9 +322,9 @@ void TestTimeline::testDeletionWithUnlinkedClips()
         TimelineTrimLeft(AudioClip(0,2), 20, false);
         ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(EmptyClip)(AudioClip)(AudioClip);
         TimelineLeftClick(Center(VideoClip(0,2)));
-        TimelineKeyDown(wxMOD_SHIFT);
+        TimelineKeyDown(WXK_SHIFT);
         TimelineKeyPress(WXK_DELETE);
-        TimelineKeyUp(wxMOD_SHIFT);
+        TimelineKeyUp(WXK_SHIFT);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(EmptyClip)(VideoClip)(VideoClip);
         ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(EmptyClip)(AudioClip)(AudioClip);
         ASSERT_EQUALS(VideoClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1));
@@ -388,11 +388,11 @@ void TestTimeline::testAbortDrag()
 
         DeselectAllClips();
         TimelineDrag(From(Center(VideoClip(0,5))).To(Center(VideoClip(0,4))).DontReleaseMouse());
-        TimelineKeyDown(wxMOD_SHIFT);
+        TimelineKeyDown(WXK_SHIFT);
         TimelineMove(Center(VideoClip(0,3)));
         TimelineKeyPress(WXK_ESCAPE); // Abort the drop
         TimelineLeftUp();
-        TimelineKeyUp(wxMOD_SHIFT);
+        TimelineKeyUp(WXK_SHIFT);
 
         ASSERT_MORE_THAN_EQUALS(getTimeline().getZoom().pixelsToPts(LeftCenter(VideoClip(0,1)).x),VideoClip(0,1)->getLeftPts());
 
@@ -461,7 +461,7 @@ void TestTimeline::testDividers()
 void TestTimeline::testTrimming()
 {
     StartTestSuite();
-    Zoom Level(2);
+    TimelineZoomIn(2);
     DeleteClip(VideoClip(0,3));
     DeleteClip(VideoClip(0,1));
     ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(EmptyClip)(VideoClip);
@@ -566,7 +566,7 @@ void TestTimeline::testTrimming()
 void TestTimeline::testTrimmingWithOtherTracks()
 {
     StartTestSuite();
-    Zoom level(2);
+    TimelineZoomIn(2);
     WindowTriggerMenu(ID_ADDVIDEOTRACK);
     WindowTriggerMenu(ID_ADDAUDIOTRACK);
     {

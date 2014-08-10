@@ -88,11 +88,11 @@ void TestRender::testRenderingSplit()
         StartTest("Render each part of the sequence separately.");
         ExpectExecutedWork expectation(3);
         TimelineLeftClick(Center(VideoClip(0,2)));
-        TimelineKeyDown(wxMOD_CONTROL);
+        TimelineKeyDown(WXK_CONTROL);
         TimelineLeftClick(Center(VideoClip(0,4))); // Exclude clip 3 deliberately: include empty clips in the list of intervals
         TimelineLeftClick(Center(VideoClip(0,5)));
         TimelineLeftClick(Center(VideoClip(0,6)));
-        TimelineKeyUp(wxMOD_CONTROL);
+        TimelineKeyUp(WXK_CONTROL);
         TimelineKeyPress(WXK_DELETE);
         model::render::RenderPtr original = GetCurrentRenderSettings();
         std::pair< RandomTempDirPtr, wxFileName > tempdir_and_filename = OpenDialogAndSetFilename();
@@ -196,7 +196,7 @@ void TestRender::PlaybackRenderedTimeline(const wxFileName& path, pixel start, m
     model::FolderPtr folder1 = ProjectViewAddFolder( "PlaybackRenderedTimeline" );
     model::Files files1 = ProjectViewAddFiles( boost::assign::list_of(path), folder1 );
     model::SequencePtr sequence1 = ProjectViewCreateSequence( folder1 );
-    Zoom level(4);
+    TimelineZoomIn(4);
     Play(start, t);
     ProjectViewRemove(sequence1);
     ProjectViewRemove(folder1);

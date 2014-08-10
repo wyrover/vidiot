@@ -31,7 +31,7 @@ DirAndFile SaveProject(boost::optional<RandomTempDirPtr> tempDir = boost::none);
 
 wxFileName generateSaveFileName(wxFileName dir);
 
-void CloseDocumentAndAvoidSaveDialog();
+void CloseProjectAndAvoidSaveDialog();
 
 } // namespace
 

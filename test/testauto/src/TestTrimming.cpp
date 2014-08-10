@@ -40,7 +40,7 @@ void TestTrimming::tearDown()
 void TestTrimming::testSnapping()
 {
     StartTestSuite();
-    Zoom level(4);
+    TimelineZoomIn(4);
     ConfigFixture.SnapToClips(true).SnapToCursor(true);
     TimelinePositionCursor(HCenter(VideoClip(0,2)));
     {
@@ -72,7 +72,7 @@ void TestTrimming::testSnapping()
 void TestTrimming::testKeyboardTrimming()
 {
     StartTestSuite();
-    Zoom level(3);
+    TimelineZoomIn(3);
     
     auto TestBeginTrimSucceeds = [this](wxString title)
     {

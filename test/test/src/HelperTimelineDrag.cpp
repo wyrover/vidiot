@@ -92,10 +92,10 @@ void TimelineDrag(const DragParams& params)
 
     // Press down mouse button. Is done when the mouse is not yet pressed.
     wxPoint from = *params.mFrom;
-    if (params.mHoldCtrlBeforeDragStarts) { TimelineKeyDown(wxMOD_CONTROL); }
+    if (params.mHoldCtrlBeforeDragStarts) { TimelineKeyDown(WXK_CONTROL); }
     TimelineMove(from);
     if (!getTimeline().getMouse().getLeftDown()) { TimelineLeftDown(); }
-    if (params.mHoldCtrlBeforeDragStarts) { TimelineKeyUp(wxMOD_CONTROL); }
+    if (params.mHoldCtrlBeforeDragStarts) { TimelineKeyUp(WXK_CONTROL); }
 
     wxPoint between(from);
     if (!getTimeline().getDrag().isActive())
@@ -142,7 +142,7 @@ void TimelineDrag(const DragParams& params)
     }
 
     // Press shift while moving
-    if (params.mHoldShiftWhileDragging) { TimelineKeyDown(wxMOD_SHIFT); }
+    if (params.mHoldShiftWhileDragging) { TimelineKeyDown(WXK_SHIFT); }
 
     // Drop onto target point
     TimelineMove(to);
@@ -151,7 +151,7 @@ void TimelineDrag(const DragParams& params)
         TimelineLeftUp();
         ASSERT(!getTimeline().getDrag().isActive());
     }
-    if (params.mHoldShiftWhileDragging) { TimelineKeyUp(wxMOD_SHIFT); }
+    if (params.mHoldShiftWhileDragging) { TimelineKeyUp(WXK_SHIFT); }
 }
 
 void TimelineDragToTrack(int newtrackindex, model::IClipPtr videoclip, model::IClipPtr audioclip)
@@ -167,9 +167,9 @@ void TimelineDragToTrack(int newtrackindex, model::IClipPtr videoclip, model::IC
     }
     if (videoclip && audioclip)
     {
-        TimelineKeyDown(wxMOD_CONTROL);
+        TimelineKeyDown(WXK_CONTROL);
         TimelineMove(Center(audioclip));
-        TimelineKeyUp(wxMOD_CONTROL);
+        TimelineKeyUp(WXK_CONTROL);
     }
     if (audioclip)
     {

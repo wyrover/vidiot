@@ -89,8 +89,6 @@ public:
 
     bool processWheelEvent(int nSteps);
 
-private:
-
     void onMotion           (wxMouseEvent& event);
     void handleMotion       (EvMotion& event);
 

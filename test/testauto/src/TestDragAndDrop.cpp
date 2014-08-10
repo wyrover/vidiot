@@ -49,9 +49,10 @@ void TestDragAndDrop::testDnd()
     {
         StartTest("Dragging: Move one clip around.");
         ConfigFixture.SnapToCursor(true);
+        TimelinePositionCursor(0);
         pts length = VideoClip(0,3)->getLength();
         TimelineDrag(From(Center(VideoClip(0,3))).AlignLeft(1)); // Move to a bit after the beginning of timeline, snaps to the cursor
-        ASSERT_EQUALS(VideoClip(0,1)->getLength(),length);
+        ASSERT_EQUALS(VideoClip(0,0)->getLength(),length);
         Undo();
         ASSERT_EQUALS(VideoClip(0,3)->getLength(),length );
         ASSERT_EQUALS(VideoClip(0,0)->getLink(),AudioClip(0,0));
@@ -133,7 +134,7 @@ void TestDragAndDrop::testDnd()
 void TestDragAndDrop::testDndMultipleTracks()
 {
     StartTestSuite();
-    Zoom level(2);
+    TimelineZoomIn(2);
     WindowTriggerMenu(ID_ADDVIDEOTRACK);
     WindowTriggerMenu(ID_ADDAUDIOTRACK);
     {
@@ -145,10 +146,10 @@ void TestDragAndDrop::testDndMultipleTracks()
         ASSERT_AUDIOTRACK1(EmptyClip)                      (AudioClip);
         wxPoint inbetween(HCenter(VideoClip(0,4)),VCenter(VideoTrack(1)));
         TimelineDrag(From(Center(VideoClip(1,1))).To(inbetween).DontReleaseMouse());
-        TimelineKeyDown(wxMOD_CONTROL);
+        TimelineKeyDown(WXK_CONTROL);
         TimelineDrag(From(Center(VideoClip(0,4))).To(Center(VideoClip(0,5))).DontReleaseMouse());
         ASSERT(getTimeline().getDrag().isActive());
-        TimelineKeyUp(wxMOD_CONTROL);
+        TimelineKeyUp(WXK_CONTROL);
         TimelineDrag(From(Center(VideoClip(0,5))).To(inbetween));
         ASSERT_VIDEOTRACK1(EmptyClip)                      (VideoClip); // Bug occurred here: VideoClip was moved to track2 (which did not exist)
         ASSERT_AUDIOTRACK1(EmptyClip)                      (AudioClip);
@@ -163,9 +164,9 @@ void TestDragAndDrop::testDndMultipleTracks()
         ASSERT_AUDIOTRACK1(EmptyClip)                      (AudioClip);
         wxPoint inbetween(HCenter(AudioClip(0,4)),VCenter(AudioTrack(1)));
         TimelineDrag(From(Center(AudioClip(1,1))).To(inbetween).DontReleaseMouse());
-        TimelineKeyDown(wxMOD_CONTROL);
+        TimelineKeyDown(WXK_CONTROL);
         TimelineDrag(From(Center(AudioClip(0,4))).To(Center(AudioClip(0,5))).DontReleaseMouse());
-        TimelineKeyUp(wxMOD_CONTROL);
+        TimelineKeyUp(WXK_CONTROL);
         TimelineDrag(From(Center(AudioClip(0,5))).To(inbetween));
         ASSERT_VIDEOTRACK1(EmptyClip)                      (VideoClip);
         ASSERT_AUDIOTRACK1(EmptyClip)                      (AudioClip); // Bug occurred here: AudioClip was moved to track2 (which did not exist)
@@ -176,7 +177,7 @@ void TestDragAndDrop::testDndMultipleTracks()
 void TestDragAndDrop::testSnapping()
 {
     StartTestSuite();
-    Zoom level(4);
+    TimelineZoomIn(4);
     TimelinePositionCursor(LeftPixel(VideoClip(0,2)) + 10); // Just a bit to the right of the leftmost point of this clip
     ConfigFixture.SnapToClips(false).SnapToCursor(true);
     {
@@ -220,7 +221,7 @@ void TestDragAndDrop::testDropAdjacentToTransition()
     ConfigOverruleBool overruleSnapToCursor(Config::sPathSnapClips,false);
     ConfigOverruleBool overruleSnapToClips(Config::sPathSnapCursor,true);
 
-    Zoom level(2);
+    TimelineZoomIn(2);
     {
         StartTest("InOutTransition: Drop adjacent to left edge");
         MakeInOutTransitionAfterClip prepare(2);
@@ -290,7 +291,7 @@ void TestDragAndDrop::testDropAdjacentToZeroLengthSideOfInOutTransition()
     StartTestSuite();
     ConfigOverruleBool overruleSnapToCursor(Config::sPathSnapClips,false);
     ConfigOverruleBool overruleSnapToClips(Config::sPathSnapCursor,true);
-    Zoom level(2);
+    TimelineZoomIn(2);
     MakeInOutTransitionAfterClip preparation(2);
     {
         StartTest("Left size is 0, drag left clip");

@@ -40,7 +40,7 @@ void TestScrolling::tearDown()
 void TestScrolling::testScrollbarRepositioningAfterChangingZoom()
 {
     StartTestSuite();
-    Zoom Level(4);
+    TimelineZoomIn(4);
     ASSERT_EQUALS(getTimeline().getZoom().getCurrent(), rational(1,1));
 
     StartTest("Scroll using right down scrolling.");
@@ -66,15 +66,15 @@ void TestScrolling::testScrollbarRepositioningAfterChangingZoom()
     ASSERT_EQUALS(getTimeline().getZoom().getCurrent(), rational(1,1));
 
     StartTest("Center pts position is kept aligned when zooming in via the wheel.");
-    TimelineKeyDown(wxMOD_CONTROL);
+    TimelineKeyDown(WXK_CONTROL);
     TimelineTriggerWheel(-1);
-    TimelineKeyUp(wxMOD_CONTROL);
+    TimelineKeyUp(WXK_CONTROL);
     ASSERT_CURSOR_CENTERED(rational(1,2));
 
     StartTest("Center pts position is kept aligned when zooming out via the wheel.");
-    TimelineKeyDown(wxMOD_CONTROL);
+    TimelineKeyDown(WXK_CONTROL);
     TimelineTriggerWheel(1);
-    TimelineKeyUp(wxMOD_CONTROL);
+    TimelineKeyUp(WXK_CONTROL);
     ASSERT_CURSOR_CENTERED(rational(1,1));
 }
 
@@ -104,7 +104,7 @@ void TestScrolling::testUpdateScrollingIfCursorIsMovedOutsideVisibleRegion()
         }
     };
     StartTestSuite();
-    Zoom level(4);
+    TimelineZoomIn(4);
     StartTest("Move cursor to end of timeline.");
     TimelineKeyPress(WXK_END);
     ASSERT_SCROLLING_POSITION(- gui::timeline::Cursor::EDGE_OFFSET, getSequence()->getLength());
@@ -112,40 +112,40 @@ void TestScrolling::testUpdateScrollingIfCursorIsMovedOutsideVisibleRegion()
     StartTest("Cursor not moved when not holding CTRL.");
     TimelineKeyPress(WXK_LEFT);
     StartTest("Move cursor to previous cut.");
-    TimelineKeyDown(wxMOD_CONTROL);
+    TimelineKeyDown(WXK_CONTROL);
     TimelineKeyPress(WXK_LEFT);
-    TimelineKeyUp(wxMOD_CONTROL);
+    TimelineKeyUp(WXK_CONTROL);
     ASSERT_EQUALS(getTimeline().getCursor().getLogicalPosition(), VideoClip(0,6)->getLeftPts());
     ASSERT_SCROLLING_POSITION(- gui::timeline::Cursor::EDGE_OFFSET, getSequence()->getLength()); // Not changed
-    TimelineKeyDown(wxMOD_CONTROL);
+    TimelineKeyDown(WXK_CONTROL);
     TimelineKeyPress(WXK_LEFT);
-    TimelineKeyUp(wxMOD_CONTROL);
+    TimelineKeyUp(WXK_CONTROL);
     ASSERT_EQUALS(getTimeline().getCursor().getLogicalPosition(), VideoClip(0,5)->getLeftPts());
     ASSERT_SCROLLING_POSITION(- gui::timeline::Cursor::EDGE_OFFSET, getSequence()->getLength()); // Not changed
     StartTest("Move cursor to previous cut and beyond the timeline visible area begin.");
-    TimelineKeyDown(wxMOD_CONTROL);
+    TimelineKeyDown(WXK_CONTROL);
     TimelineKeyPress(WXK_LEFT);
-    TimelineKeyUp(wxMOD_CONTROL);
+    TimelineKeyUp(WXK_CONTROL);
     ASSERT_EQUALS(getTimeline().getCursor().getLogicalPosition(), VideoClip(0,4)->getLeftPts());
     ASSERT_SCROLLING_POSITION(gui::timeline::Cursor::EDGE_OFFSET, VideoClip(0,4)->getLeftPts());
     StartTest("Cursor not moved when not holding CTRL.");
     TimelineKeyPress(WXK_RIGHT);
     StartTest("Move cursor to next cut.");
-    TimelineKeyDown(wxMOD_CONTROL);
+    TimelineKeyDown(WXK_CONTROL);
     TimelineKeyPress(WXK_RIGHT);
-    TimelineKeyUp(wxMOD_CONTROL);
+    TimelineKeyUp(WXK_CONTROL);
     ASSERT_EQUALS(getTimeline().getCursor().getLogicalPosition(), VideoClip(0,5)->getLeftPts());
     ASSERT_SCROLLING_POSITION(gui::timeline::Cursor::EDGE_OFFSET, VideoClip(0,4)->getLeftPts()); // Not changed
     StartTest("Move cursor to next cut and beyond the timeline visible area end.");
-    TimelineKeyDown(wxMOD_CONTROL);
+    TimelineKeyDown(WXK_CONTROL);
     TimelineKeyPress(WXK_RIGHT);
-    TimelineKeyUp(wxMOD_CONTROL);
+    TimelineKeyUp(WXK_CONTROL);
     ASSERT_EQUALS(getTimeline().getCursor().getLogicalPosition(), VideoClip(0,6)->getLeftPts());
     ASSERT_SCROLLING_POSITION(- gui::timeline::Cursor::EDGE_OFFSET, VideoClip(0,6)->getLeftPts());
     StartTest("Move cursor to begin of timeline.");
-    TimelineKeyDown(wxMOD_CONTROL);
+    TimelineKeyDown(WXK_CONTROL);
     TimelineKeyPress(WXK_HOME);
-    TimelineKeyUp(wxMOD_CONTROL);
+    TimelineKeyUp(WXK_CONTROL);
     ASSERT_EQUALS(getTimeline().getCursor().getLogicalPosition(), 0);
     ASSERT_SCROLLING_POSITION(0, 0);
 }

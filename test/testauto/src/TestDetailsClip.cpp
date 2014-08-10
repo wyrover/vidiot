@@ -43,7 +43,7 @@ void TestDetailsClip::tearDown()
 void TestDetailsClip::testChangeLength()
 {
     StartTestSuite();
-    Zoom level(2);
+    TimelineZoomIn(2);
 
     auto ASSERT_ORIGINAL_CLIPPROPERTIES = []
     {
@@ -147,7 +147,7 @@ void TestDetailsClip::testChangeLength()
 void TestDetailsClip::testChangeLengthOfTransition()
 {
     StartTestSuite();
-    Zoom level(6);
+    TimelineZoomIn(6);
     auto getLength = [](wxToggleButton* button) -> pts { return model::Convert::timeToPts(button->GetId()); };
     auto pressLengthButtons = [this,getLength] ()
     {
@@ -203,7 +203,7 @@ void TestDetailsClip::testChangeLengthOfTransition()
 void TestDetailsClip::testChangeLengthAfterCreatingTransition()
 {
     StartTestSuite();
-    Zoom level(2);
+    TimelineZoomIn(2);
     pts defaultTransitionLength = Config::ReadLong(Config::sPathDefaultTransitionLength);
     auto getLength = [](wxToggleButton* button) -> pts { return model::Convert::timeToPts(button->GetId()); };
     auto pressLengthButtons = [this,getLength] (std::string name, pts minimumsize)

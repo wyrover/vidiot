@@ -124,7 +124,7 @@ void TestExceptions::testRemovedFileUsedForTransitionsBeforeOpening()
     model::SequencePtr sequence = ProjectViewCreateSequence(folder);
     WaitForChildCount(root, 3 + InputFiles.size());
 
-    Zoom level(6);
+    TimelineZoomIn(6);
     MakeInOutTransitionAfterClip t2(1); t2.dontUndo();
     MakeInOutTransitionAfterClip t1(0); t1.dontUndo();
 
@@ -142,7 +142,7 @@ void TestExceptions::testRemovedFileUsedForTransitionsBeforeOpening()
     Scrub(HCenter(VideoClip(0,1)),RightPixel(VideoClip(0,1)) + 5);
     Scrub(-5 + LeftPixel(VideoClip(0,3)),HCenter(VideoClip(0,3)));
 
-    CloseDocumentAndAvoidSaveDialog(); // Avoid files being in use when deleted
+    CloseProjectAndAvoidSaveDialog(); // Avoid files being in use when deleted
 }
 
 void TestExceptions::testRemovedFileInProjectViewBeforeOpening()
