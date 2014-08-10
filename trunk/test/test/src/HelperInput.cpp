@@ -134,9 +134,6 @@ void KeyboardKeyPressN(int count, int keycode, int modifiers)
 // TIMELINE EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-// Todo step 2 : create simulated mousestate (including modifier keys etc.) and generate events.
-//               or: redesign such that these 'other' fields of wxevents are never used! (cached within Keyboard class)
-
 struct CurrentTimelineInputState
 {
     CurrentTimelineInputState()
