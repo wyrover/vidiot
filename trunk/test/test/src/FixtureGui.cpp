@@ -162,15 +162,14 @@ void FixtureGui::mainThread()
     wxApp::SetInstance(new gui::Application(this));
 
     FixtureGui::UseRealUiEvents = 
-        wxStandardPaths::Get().GetExecutablePath().Contains("testui") ||
-        wxStandardPaths::Get().GetExecutablePath().Contains("testauto"); // todo remove this one!!!
+        wxStandardPaths::Get().GetExecutablePath().Contains("testui");
 
     int argc = 1;
 #ifdef _MSC_VER
     char* argv = _strdup(gui::Application::sTestApplicationName);
-    if (GetSystemMetrics( SM_REMOTESESSION ) != 0)
+    if (FixtureGui::UseRealUiEvents && (GetSystemMetrics( SM_REMOTESESSION ) != 0))
     {
-    //    FATAL("Do not run in a remote desktop session (causes the generation of unwanted additional mouse events). Use VNC.");
+        FATAL("Do not run in a remote desktop session (causes the generation of unwanted additional mouse events). Use VNC.");
     }
 #else
     char* argv = strdup(gui::Application::sTestApplicationName);

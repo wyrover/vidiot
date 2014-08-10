@@ -106,11 +106,11 @@ void TestBugs::testDraggingWithoutSelection()
     StartTestSuite();
 
     TimelineLeftClick(Center(VideoClip(0,1))); // Select the clip
-    TimelineKeyDown(wxMOD_CONTROL);
+    TimelineKeyDown(WXK_CONTROL);
     TimelineLeftDown(); // Deselects the clip already
     TimelineMove(Center(VideoClip(0,3))); // Starts the drag without anything being selected: ASSERT at the time of the bug. Now the drag should be simply omitted.
     ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
-    TimelineKeyUp(wxMOD_CONTROL);
+    TimelineKeyUp(WXK_CONTROL);
     TimelineLeftUp();
 }
 
@@ -124,7 +124,8 @@ void TestBugs::testBugsWithLongTimeline()
     ExtendSequenceWithRepeatedClips(sequence, mProjectFixture.InputFiles, 30);
 
     ProjectViewOpenTimelineForSequence(sequence);
-    Zoom level(4);
+
+    TimelineZoomIn(4);
     TimelineKeyPress(WXK_END); // Move scrollbars to end
 
     RunInMainAndWait([]
@@ -142,15 +143,17 @@ void TestBugs::testBugsWithLongTimeline()
         TimelinePositionCursor(HCenter(VideoClip(0,-2)));
         // NOTE: Don't use WaitForIdle() when the video is playing!!!
         //       When the video is playing, the system does not become Idle (playback events).
+        WaitForPlayback started(true);
+        WaitForPlayback stopped(false);
         TimelineKeyPress(' ');
-        SetWaitAfterEachInputAction(false); // Avoid WaitForIdle during playback
+        started.wait();
         pause(1000);
-        TimelineKeyDown(wxMOD_SHIFT);
+        TimelineKeyDown(WXK_SHIFT);
         pause(1000);
-        TimelineKeyUp(wxMOD_SHIFT);
+        TimelineKeyUp(WXK_SHIFT);
         pause(1000);
-        SetWaitAfterEachInputAction(true);
         TimelineKeyPress(' ');
+        stopped.wait();
         TimelineLeftClick(Center(VideoClip(0,-2)));
         TimelineKeyPress(WXK_DELETE);
         ASSERT(VideoClip(0,-2)->isA<model::EmptyClip>());
@@ -167,7 +170,8 @@ void TestBugs::testBugsWithLongTimeline()
             gui::Window::get().GetDocumentManager()->CreateDocument(tempDir_fileName.second.GetFullPath(),wxDOC_SILENT);
         });
     }
-    WindowTriggerMenu(wxID_CLOSE);
+
+    CloseProjectAndAvoidSaveDialog();
     Config::setShowDebugInfo(false);
 }
 
@@ -189,7 +193,7 @@ void TestBugs::testPlaybackEmptyClip()
 void TestBugs::testTrimmingClipAdjacentToZeroLengthClipUsedForTransition()
 {
     StartTestSuite();
-    Zoom level(6);
+    TimelineZoomIn(6);
     {
         StartTest("Clip to the right of the trim has length 0.");
         TimelineLeftClick(Center(VideoClip(0,1)));
@@ -215,13 +219,13 @@ void TestBugs::testTrimmingClipAdjacentToZeroLengthClipUsedForTransition()
 void TestBugs::testDeleteClipInbetweenTransitionsCausesTimelineMessUp()
 {
     StartTestSuite();
-    Zoom level(6);
+    TimelineZoomIn(6);
     MakeInOutTransitionAfterClip t1(1);
     MakeInOutTransitionAfterClip t2(0);
     TimelineLeftClick(Center(VideoClip(0,2)));
-    TimelineKeyDown(wxMOD_SHIFT);
+    TimelineKeyDown(WXK_SHIFT);
     TimelineKeyPress(WXK_DELETE);
-    TimelineKeyUp(wxMOD_SHIFT);
+    TimelineKeyUp(WXK_SHIFT);
     ASSERT_EQUALS(VideoClip(0,1)->getLeftPts(), AudioClip(0,1)->getLeftPts());
     ASSERT_EQUALS(VideoTrack(0)->getLength(),AudioTrack(0)->getLength());
     ASSERT_EQUALS(VideoClip(0,4)->getRightPts(), AudioClip(0,4)->getRightPts());
@@ -231,7 +235,7 @@ void TestBugs::testDeleteClipInbetweenTransitionsCausesTimelineMessUp()
 void TestBugs::testCrashWhenDroppingPartiallyOverATransition()
 {
     StartTestSuite();
-    Zoom level(4);
+    TimelineZoomIn(4);
     {
         MakeInOutTransitionAfterClip preparation(1,true);
         {
@@ -297,7 +301,7 @@ void TestBugs::testCrashWhenDroppingPartiallyOverATransition()
 void TestBugs::testShiftTrimNotAllowedWithAdjacentClipInOtherTrack()
 {
     StartTestSuite();
-    Zoom level(2);
+    TimelineZoomIn(2);
     WindowTriggerMenu(ID_ADDVIDEOTRACK);
     WindowTriggerMenu(ID_ADDAUDIOTRACK);
     TimelineDragToTrack(1,VideoClip(0,2),AudioClip(0,2));

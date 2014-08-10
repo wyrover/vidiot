@@ -334,18 +334,17 @@ void TimelinePositionCursor(pixel position)
     TimelineLeftClick(wxPoint(position, gui::Layout::VideoPosition - 4));
 }
 
-Zoom::Zoom(int level)
-    : mLevel(level)
+void TimelineZoomIn(int level)
 {
-    for (int i = 0; i < mLevel; ++i)
+    for (int i = 0; i < level; ++i)
     {
         TimelineKeyPress('=');
     }
 }
 
-Zoom::~Zoom()
+void TimelineZoomOut(int level)
 {
-    for (int i = 0; i < mLevel; ++i)
+    for (int i = 0; i < level; ++i)
     {
         TimelineKeyPress('-');
     }
@@ -372,10 +371,10 @@ void ToggleInterval(pixel from, pixel to)
     TimelineMove(fromPoint);
     TimelineLeftDown();
     TimelineMove(betweenPoint);
-    TimelineKeyDown(wxMOD_SHIFT);
+    TimelineKeyDown(WXK_SHIFT);
     TimelineMove(toPoint);
     TimelineLeftUp();
-    TimelineKeyUp(wxMOD_SHIFT);
+    TimelineKeyUp(WXK_SHIFT);
 }
 
 void Scrub(pixel from, pixel to)
@@ -438,6 +437,7 @@ void DumpSequenceAndWait()
 WaitForTimelineToLoseFocus::WaitForTimelineToLoseFocus()
     :   mFound(false)
 {
+    ASSERT( FixtureGui::UseRealUiEvents); // Otherwise timeline never has the focus anyway
 #ifdef _MSC_VER
     getTimeline().Bind(wxEVT_LEAVE_WINDOW, &WaitForTimelineToLoseFocus::onLeave, this);
 #else

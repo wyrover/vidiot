@@ -110,7 +110,7 @@ void TestFileTypes::executeTest(wxString filetypesDir)
         model::FilePtr file = boost::make_shared<model::File>(path->getPath());
         ExtendSequenceWithRepeatedClips( sequence, boost::assign::list_of(path), 1); // Note: Not via a command (thus, 'outside' the undo system)
         ProjectViewOpenTimelineForSequence(sequence);
-        Zoom level(5);
+        TimelineZoomIn(5);
         ASSERT_EQUALS(NumberOfVideoClipsInTrack(0),1);
         ASSERT_EQUALS(NumberOfAudioClipsInTrack(0),1);
         ASSERT_EQUALS(VideoTrack(0)->getLength(),AudioTrack(0)->getLength());

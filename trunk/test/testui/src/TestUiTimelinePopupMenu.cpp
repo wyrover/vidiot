@@ -40,7 +40,7 @@ void TestUiTimelinePopupMenu::tearDown()
 void TestUiTimelinePopupMenu::testAddTransitions()
 {
     StartTestSuite();
-    Zoom level(6);
+    TimelineZoomIn(6);
     ConfigFixture.SnapToClips(false);
     pts defaultTransitionLength = Config::ReadLong(Config::sPathDefaultTransitionLength);
     {
@@ -142,7 +142,7 @@ void TestUiTimelinePopupMenu::testDelete()
 void TestUiTimelinePopupMenu::testRemoveOneEmptyInterval()
 {
     StartTestSuite();
-    Zoom level(2);
+    TimelineZoomIn(2);
     ConfigFixture.SnapToClips(false);
     WindowTriggerMenu(ID_ADDVIDEOTRACK);
     WindowTriggerMenu(ID_ADDAUDIOTRACK);
@@ -180,7 +180,7 @@ void TestUiTimelinePopupMenu::testRemoveOneEmptyInterval()
 void TestUiTimelinePopupMenu::testOpenPopupMenuTwice()
 {
     StartTestSuite();
-    Zoom level(2);
+    TimelineZoomIn(2);
     ConfigFixture.SnapToClips(false);
     WindowTriggerMenu(ID_ADDVIDEOTRACK);
     WindowTriggerMenu(ID_ADDAUDIOTRACK);
@@ -202,7 +202,7 @@ void TestUiTimelinePopupMenu::testOpenPopupMenuTwice()
 void TestUiTimelinePopupMenu::testRightClickScrollingAfterOpeningPopupMenu()
 {
     StartTestSuite();
-    Zoom level(4);
+    TimelineZoomIn(4);
     ASSERT_EQUALS(getTimeline().getZoom().getCurrent(), rational(1,1));
     StartTest("Open popup menu then start a scrolling via right mouse down");
     ASSERT_MORE_THAN(getTimeline().GetVirtualSize().x,getTimeline().GetClientSize().x);
@@ -223,7 +223,7 @@ void TestUiTimelinePopupMenu::testRightClickScrollingAfterOpeningPopupMenu()
 void TestUiTimelinePopupMenu::testOpenPopupMenuWhenClickingOnTransition()
 {
     StartTestSuite();
-    Zoom level(6);
+    TimelineZoomIn(6);
 
     pts lengthOfCrossFade =  Config::ReadLong(Config::sPathDefaultTransitionLength);
     pts lengthOfFade = lengthOfCrossFade / 2;
@@ -497,7 +497,7 @@ void TestUiTimelinePopupMenu::testOpenPopupMenuWhenClickingOnTransition()
 void TestUiTimelinePopupMenu::testUnlinkingAudioAndVideoClips()
 {
     StartTestSuite();
-    Zoom level(6);
+    TimelineZoomIn(6);
     {
         StartTest("Unlink video from audio");
         ASSERT_EQUALS(VideoClip(0,1)->getLink(), AudioClip(0,1));

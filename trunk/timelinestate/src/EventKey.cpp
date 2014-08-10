@@ -31,12 +31,12 @@ EvKey::EvKey(wxKeyEvent& wxEvent)
 {
 };
 
-EvKey::EvKey(wxMouseState& state)
+EvKey::EvKey(wxMouseState& state, int key)
     : mEvent(boost::none)
     , CtrlDown(state.ControlDown())
     , ShiftDown(state.ShiftDown())
     , AltDown(state.AltDown())
-    , KeyCode(-1)
+    , KeyCode(key)
 {
 }
 
@@ -64,8 +64,18 @@ EvKeyDown::EvKeyDown(wxKeyEvent& event)
 {
 }
 
+EvKeyDown::EvKeyDown(wxMouseState& state, int key)
+    : EvKey(state,key)
+{
+}
+
 EvKeyUp::EvKeyUp(wxKeyEvent& event)
     : EvKey(event)
+{
+}
+
+EvKeyUp::EvKeyUp(wxMouseState& state, int key)
+    : EvKey(state, key)
 {
 }
 

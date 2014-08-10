@@ -177,15 +177,13 @@ pixel CursorPosition();                              ///< \return cursor positio
 
 void TimelinePositionCursor(pixel position);                 ///< Move the mouse and then click the left button, in order to move the cursor line to the given position
 
-/// Zoom in the given amount of times by zooming in the given amount of times.
-/// When going out of scope, will reset to the default zoom level by zooming out an equal amount of times.
-struct Zoom
-{
-    explicit Zoom(int level);
-    virtual ~Zoom();
-private:
-    int mLevel;
-};
+/// Zoom in 
+/// \param level number of steps to zoom in
+void TimelineZoomIn(int level); 
+
+/// Zoom out
+/// \param level number of steps to zoom in
+void TimelineZoomOut(int level); 
 
 void ToggleInterval(pixel from, pixel to);
 

@@ -54,7 +54,7 @@ wxFileName generateSaveFileName(wxFileName dir)
     return result;
 }
 
-void CloseDocumentAndAvoidSaveDialog()
+void CloseProjectAndAvoidSaveDialog()
 {
     wxDocument* doc = gui::Window::get().GetDocumentManager()->GetCurrentDocument();
     if (doc)

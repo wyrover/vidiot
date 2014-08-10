@@ -240,16 +240,10 @@ void TestSavingAndLoading::checkDocument(wxString path)
     }
     {
         StartTest("Open render settings"); // Known bug at some point: loading the project went ok, but when opening the render dialog a crash occurred.
-        WaitForTimelineToLoseFocus w;
         WindowTriggerMenu(ID_RENDERSETTINGS);
-        w.wait();
-        TimelineKeyPress(WXK_ESCAPE);
+        ButtonTriggerPressed(gui::DialogRenderSettings::get().getCancelButton());
     }
-    {
-        StartTest("Close");
-        model::Project::get().Modify(false); // Avoid 'save?' dialog
-        WindowTriggerMenu(wxID_CLOSE);
-    }
+    CloseProjectAndAvoidSaveDialog();
 }
 
 } // namespace
