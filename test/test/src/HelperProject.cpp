@@ -37,7 +37,7 @@ DirAndFile SaveProject(boost::optional<RandomTempDirPtr> tempDir)
 {
     RandomTempDirPtr tempDirProject = tempDir ? *tempDir : RandomTempDir::generate();
     wxFileName filename = generateSaveFileName(tempDirProject->getFileName());
-    RunInMainAndWait([filename]()
+    util::thread::RunInMainAndWait([filename]()
     {
         gui::Window::get().GetDocumentManager()->GetCurrentDocument()->SetFilename(filename.GetFullPath());
         gui::Window::get().GetDocumentManager()->GetCurrentDocument()->OnSaveDocument(filename.GetFullPath());

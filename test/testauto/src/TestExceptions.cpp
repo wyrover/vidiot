@@ -51,12 +51,9 @@ void TestExceptions::testRemovedFileInSequence()
     tempDir.reset(); // Deletes the file (still used in the sequence) from disk
 
     // Open the sequence again (file missing from disk)
-    RunInMainAndWait([folder1]
+    util::thread::RunInMainAndWait([folder1]
     {
         GetProjectView().select(boost::assign::list_of(folder1));
-    });
-    RunInMainAndWait([]
-    {
         GetProjectView().onOpen();
     });
 

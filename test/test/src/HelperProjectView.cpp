@@ -33,7 +33,7 @@ model::FolderPtr ProjectViewAddAutoFolder( wxFileName path, model::FolderPtr par
 {
     gui::Dialog::get().setDir( path.GetShortPath() ); // Add with short path to check that normalizing works
     WaitForIdle();
-    RunInMainAndWait([parent]
+    util::thread::RunInMainAndWait([parent]
     {
         GetProjectView().select(boost::assign::list_of(parent));
         GetProjectView().onNewAutoFolder();
@@ -51,12 +51,9 @@ model::FolderPtr ProjectViewAddFolder( wxString name, model::FolderPtr parent )
 {
     gui::Dialog::get().setText( name );
     WaitForIdle();
-    RunInMainAndWait([parent]
+    util::thread::RunInMainAndWait([parent]
     {
         GetProjectView().select(boost::assign::list_of(parent));
-    });
-    RunInMainAndWait([]
-    {
         GetProjectView().onNewFolder();
     });
 
@@ -72,12 +69,9 @@ model::SequencePtr ProjectViewAddSequence( wxString name, model::FolderPtr paren
 {
     gui::Dialog::get().setText( name );
     WaitForIdle();
-    RunInMainAndWait([parent]
+    util::thread::RunInMainAndWait([parent]
     {
         GetProjectView().select(boost::assign::list_of(parent));
-    });
-    RunInMainAndWait([parent]
-    {
         GetProjectView().onNewSequence();
     });
 
@@ -92,12 +86,9 @@ model::SequencePtr ProjectViewAddSequence( wxString name, model::FolderPtr paren
 model::SequencePtr ProjectViewCreateSequence( model::FolderPtr folder )
 {
     WaitForIdle();
-    RunInMainAndWait([folder]
+    util::thread::RunInMainAndWait([folder]
     {
         GetProjectView().select(boost::assign::list_of(folder));
-    });
-    RunInMainAndWait([]
-    {
         GetProjectView().onCreateSequence();
     });
 
@@ -130,7 +121,7 @@ model::SequencePtr ProjectViewCreateSequence( model::FolderPtr folder )
 model::Files ProjectViewAddFiles( std::list<wxFileName> paths, model::FolderPtr parent )
 {
     WaitForIdle();
-    RunInMainAndWait([parent]
+    util::thread::RunInMainAndWait([parent]
     {
         GetProjectView().select(boost::assign::list_of(parent));
     });
@@ -141,7 +132,7 @@ model::Files ProjectViewAddFiles( std::list<wxFileName> paths, model::FolderPtr 
         shortpaths.push_back( path.GetShortPath() ); // Add with short path
     }
     gui::Dialog::get().setFiles( shortpaths );
-    RunInMainAndWait([]
+    util::thread::RunInMainAndWait([]
     {
         GetProjectView().onNewFile();
     });
@@ -160,13 +151,9 @@ model::Files ProjectViewAddFiles( std::list<wxFileName> paths, model::FolderPtr 
 
 void ProjectViewRemove( model::NodePtr node )
 {
-    WaitForIdle();
-    RunInMainAndWait([node]
+    util::thread::RunInMainAndWait([node]
     {
         GetProjectView().select(boost::assign::list_of(node));
-    });
-    RunInMainAndWait([]
-    {
         GetProjectView().onDelete();
     });
 }
@@ -193,7 +180,7 @@ model::IPaths GetSupportedFiles( wxFileName directory )
 int ProjectViewCount()
 {
     WaitForIdle();
-    RunInMainAndWait([]
+    util::thread::RunInMainAndWait([]
     {
         GetProjectView().selectAll();
     });
@@ -260,12 +247,9 @@ void DragFromProjectViewToTimeline( model::NodePtr node, wxPoint to )
 
 void ProjectViewOpenTimelineForSequence(model::SequencePtr sequence)
 {
-    RunInMainAndWait([sequence]
+    util::thread::RunInMainAndWait([sequence]
     {
         gui::ProjectView::get().select(boost::assign::list_of(boost::dynamic_pointer_cast<model::Node>(sequence)));
-    });
-    RunInMainAndWait([]
-    {
         GetProjectView().onOpen();
     });
 }
@@ -275,7 +259,7 @@ WaitForChildCount::WaitForChildCount(model::NodePtr node, int count)
     ,   mCount(count)
     ,   mCountSeen(false)
 {
-    RunInMainAndWait([this]
+    util::thread::RunInMainAndWait([this]
     {
         gui::Window::get().Bind(model::EVENT_ADD_NODE,     &WaitForChildCount::onNodeAdded,     this);
         gui::Window::get().Bind(model::EVENT_ADD_NODES,    &WaitForChildCount::onNodesAdded,    this);
@@ -298,7 +282,7 @@ WaitForChildCount::WaitForChildCount(model::NodePtr node, int count)
 
 WaitForChildCount::~WaitForChildCount()
 {
-    RunInMainAndWait([this]
+    util::thread::RunInMainAndWait([this]
     {
         gui::Window::get().Unbind(model::EVENT_ADD_NODE,       &WaitForChildCount::onNodeAdded,      this);
         gui::Window::get().Unbind(model::EVENT_ADD_NODES,      &WaitForChildCount::onNodesAdded,     this);

@@ -21,7 +21,7 @@ namespace test {
 
 void ExtendSequenceWithRepeatedClips( model::SequencePtr sequence, model::IPaths files, int nRepeat )
 {
-    RunInMainAndWait([sequence,files,nRepeat]()
+    util::thread::RunInMainAndWait([sequence,files,nRepeat]()
     {
         model::TrackPtr videoTrack = sequence->getVideoTrack(0);
         model::TrackPtr audioTrack = sequence->getAudioTrack(0);
@@ -44,7 +44,7 @@ void ExtendSequenceWithRepeatedClips( model::SequencePtr sequence, model::IPaths
 
 void ExtendSequenceWithStillImage( model::SequencePtr sequence )
 {
-    RunInMainAndWait([sequence]()
+    util::thread::RunInMainAndWait([sequence]()
     {
         model::TrackPtr videoTrack = sequence->getVideoTrack(0);
         model::TrackPtr audioTrack = sequence->getAudioTrack(0);
@@ -64,7 +64,7 @@ void ExtendSequenceWithStillImage( model::SequencePtr sequence )
 
 void MakeSequenceEmpty( model::SequencePtr sequence )
 {
-    RunInMainAndWait([sequence]()
+    util::thread::RunInMainAndWait([sequence]()
     {
         model::TrackPtr videoTrack = sequence->getVideoTrack(0);
         model::TrackPtr audioTrack = sequence->getAudioTrack(0);

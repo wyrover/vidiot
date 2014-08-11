@@ -50,7 +50,7 @@ void ASSERT_CLIPPROPERTIES(
     int widget_yspin = 0;
     int widget_rotationdigits = 0;
 
-    RunInMainAndWait([&]
+    util::thread::RunInMainAndWait([&]
     {
         ASSERT_DETAILSCLIP(clip);
         widget_scalingdigits = DetailsClipView()->getScalingSlider()->GetValue();

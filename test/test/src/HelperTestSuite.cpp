@@ -125,8 +125,7 @@ bool HelperTestSuite::startTestSuite(const char* suite)
     if (currentTestRequiresWindow())
     {
         updateTitle();
-        WaitForIdle();
-        RunInMainAndWait([this]
+        util::thread::RunInMainAndWait([this]
         {
            Config::WriteString( Config::sPathTestRunCurrent, currentCxxTest() ); // Set
         });
@@ -138,7 +137,7 @@ void HelperTestSuite::testSuiteDone()
 {
     if (mSuiteCount == CxxTest::TestTracker::tracker( ).world().numTotalTests())
     {
-        RunInMainAndWait([this]
+        util::thread::RunInMainAndWait([this]
         {
             Config::WriteString( Config::sPathTestRunCurrent, "" ); // Reset
         });

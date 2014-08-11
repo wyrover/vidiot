@@ -64,7 +64,10 @@ void TestSavingAndLoading::testSaveAndLoad()
     for ( model::TransitionDescription t : model::video::VideoTransitionFactory::get().getAllPossibleTransitions() )
     {
         StartTest("Add transition (" + t.first + "," + t.second + ") to sequence");
-        RunInMainAndWait([t,number]() { gui::timeline::command::createTransition(getSequence(), VideoClip(0,number),model::TransitionTypeIn, model::video::VideoTransitionFactory::get().getTransition(t)); });
+        util::thread::RunInMainAndWait([t,number]() 
+        { 
+            gui::timeline::command::createTransition(getSequence(), VideoClip(0,number),model::TransitionTypeIn, model::video::VideoTransitionFactory::get().getTransition(t)); 
+        });
         number += 2; // +2 because the transition was added inbetween
     }
 
@@ -80,7 +83,7 @@ void TestSavingAndLoading::testSaveAndLoad()
     TimelineKeyPressN(4,'='); // Zoom in until factor is 1:1
 
     StartTest("Scroll");
-    RunInMainAndWait([]()
+    util::thread::RunInMainAndWait([]()
     {
         getTimeline().getScrolling().align(getSequence()->getLength() / 2, getTimeline().GetSize().x / 2);
     });
@@ -105,7 +108,7 @@ void TestSavingAndLoading::testSaveAndLoad()
             wxFileName newCurrentFileName(referenceDirName);
             newCurrentFileName.SetFullName(tempDir_fileName.second.GetName() + "_new.vid");
             bool ok = wxCopyFile(tempDir_fileName.second.GetFullPath(), newCurrentFileName.GetFullPath());
-            RunInMainAndWait([referenceDirName]()
+            util::thread::RunInMainAndWait([referenceDirName]()
             {
                 wxString cmd;
                 cmd << "explorer " << referenceDirName.GetFullPath();
@@ -191,7 +194,7 @@ void TestSavingAndLoading::testBackupBeforeSave()
 void TestSavingAndLoading::checkDocument(wxString path)
 {
     StartTest("Load document");
-    RunInMainAndWait([path]()
+    util::thread::RunInMainAndWait([path]()
     {
         gui::Window::get().GetDocumentManager()->CreateDocument(path,wxDOC_SILENT);
     });
@@ -208,7 +211,7 @@ void TestSavingAndLoading::checkDocument(wxString path)
     }
 
     // Actions on loaded document
-    RunInMainAndWait([]()
+    util::thread::RunInMainAndWait([]()
     {
         // First move to the left so that all the move actions succeed
         getTimeline().getScrolling().align(0,0);

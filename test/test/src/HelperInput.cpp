@@ -181,7 +181,7 @@ void TimelineMove(wxPoint position)
 
         CurrentTimelineInputState::Get().Position = position  - getTimeline().getScrolling().getOffset();
         gui::timeline::state::EvMotion event(CurrentTimelineInputState::Get().getWxMouseState());
-        util::thread::RunInMainAndWait([&event] { getTimeline().getStateMachine().handleMotion(event); }); // todo more direct use of util:thread iso the thread helper that adds waitforsilence???
+        util::thread::RunInMainAndWait([&event] { getTimeline().getStateMachine().handleMotion(event); });
     }
 }
 
