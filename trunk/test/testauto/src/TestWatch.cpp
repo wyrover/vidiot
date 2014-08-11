@@ -134,7 +134,7 @@ void TestWatch::testAddAndRemoveFileToWatchedAutoFolder()
 void TestWatch::testRemovedWatchedFolder()
 {
     StartTestSuite();
-    ASSERT_EQUALS(gui::Watcher::get().getWatchedPathsCount(),0); // Nothing is being watched
+    ASSERT_WATCHED_PATHS_COUNT(0); // Nothing is being watched
     model::FolderPtr folder = setup();
 
     StartTest("Remove autofolder root dir");
@@ -204,7 +204,7 @@ void TestWatch::testRemoveProjectViewFolderContainingFileOnDisk()
 
     StartTest("Remove folder containing watched file");
     ProjectViewRemove(folder1);
-    ASSERT_EQUALS(gui::Watcher::get().getWatchedPathsCount(),0); // Watch for the file must be removed
+    ASSERT_WATCHED_PATHS_COUNT(0); // Watch for the file must be removed
 
     StartTest("Add folder again (undo remove)");
     Undo();
@@ -221,7 +221,7 @@ void TestWatch::testRemoveProjectViewFolderContainingFileOnDisk()
 
 model::FolderPtr TestWatch::setup()
 {
-    ASSERT_ZERO(gui::Watcher::get().getWatchedPathsCount()); // Nothing is being watched
+    ASSERT_WATCHED_PATHS_COUNT(0); // Nothing is being watched
     mTempDir = RandomTempDir::generate();
     mSubDir = mTempDir->generateSubDir();
     mSubSubDir = mSubDir->generateSubDir();

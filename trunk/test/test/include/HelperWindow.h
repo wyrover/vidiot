@@ -71,7 +71,7 @@ template <class COMMAND>
 void ASSERT_CURRENT_COMMAND_TYPE()
 {
     wxCommand* cmd = 0;
-    RunInMainAndWait([&]
+    util::thread::RunInMainAndWait([&]
     {
         cmd = getCurrentCommand(); // Split to make debugging easier (inspect cmd to see what the current command is in case of failure)
     });

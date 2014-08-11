@@ -317,7 +317,7 @@ wxPoint RightCenter(DraggedClips drag)
 
 void TimelineTriggerWheel(int nSteps)
 {
-    RunInMainAndWait([nSteps]
+    util::thread::RunInMainAndWait([nSteps]
     {
         getTimeline().getStateMachine().processWheelEvent(nSteps);
     });
@@ -406,7 +406,7 @@ gui::timeline::MouseOnClipPosition LogicalPosition(wxPoint position)
 void DeselectAllClips()
 {
     LOG_DEBUG;
-    RunInMainAndWait([]
+    util::thread::RunInMainAndWait([]
     {
         getTimeline().getSelection().unselectAll();
     });

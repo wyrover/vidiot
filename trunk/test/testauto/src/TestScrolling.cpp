@@ -48,7 +48,10 @@ void TestScrolling::testScrollbarRepositioningAfterChangingZoom()
     ASSERT_ZERO(getTimeline().getScrolling().getOffset().y);
     ASSERT_MORE_THAN(getTimeline().getScrolling().getOffset().x, 200);
     pts center = getTimeline().getScrolling().getCenterPts();
-    RunInMainAndWait([center] { getTimeline().getCursor().setLogicalPosition(center); });
+    util::thread::RunInMainAndWait([center] 
+    { 
+        getTimeline().getCursor().setLogicalPosition(center); 
+    });
 
     auto ASSERT_CURSOR_CENTERED = [this,center](boost::rational<int> zoom)
     {

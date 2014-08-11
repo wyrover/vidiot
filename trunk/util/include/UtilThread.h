@@ -21,7 +21,7 @@
 namespace util { namespace thread {
 
 void RunInMainAndWait(const boost::function<void()> &method);
-void RunInMainAndDontWait(const boost::function<void()>& method);
+void RunInMain(const boost::function<void()>& method);
 
 template <class RETURNTYPE>
 class RunInMainThreadWithResult

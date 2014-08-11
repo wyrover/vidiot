@@ -39,7 +39,7 @@ void GiveKeyboardFocus(wxWindow* widget)
         NIY("Unknown");
     }
 #else
-    RunInMainAndWait([widget] { widget->SetFocus(); });
+    util::thread::RunInMainAndWait([widget] { widget->SetFocus(); });
     WaitForIdle();
     if (dynamic_cast<wxSpinCtrlDouble*>(widget) != 0)
     {
@@ -82,7 +82,7 @@ void SetValue(wxCheckBox* widget, bool value)
 void ButtonTriggerPressed(wxButton* button)
 {
     // Using QueueEvent (without RunInMainAndWait) did not work.
-    RunInMainAndWait([button] {button->GetEventHandler()->ProcessEvent(wxCommandEvent(wxEVT_COMMAND_BUTTON_CLICKED));});
+    util::thread::RunInMainAndWait([button] {button->GetEventHandler()->ProcessEvent(wxCommandEvent(wxEVT_COMMAND_BUTTON_CLICKED));});
 }
 
 } // namespace

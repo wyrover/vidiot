@@ -98,7 +98,7 @@ void RunInMainAndWait(const boost::function<void()>& method)
     obj->run();
 }
 
-void RunInMainAndDontWait(const boost::function<void()>& method)
+void RunInMain(const boost::function<void()>& method)
 {
     RunInMainThreadPtr obj = boost::make_shared<RunInMainThread>(method, false);
     obj->run();

@@ -72,7 +72,7 @@ void TestDetailsClip::testChangeLength()
         StartTest(o.str().c_str());
         WaitForIdle();
         bool enabled = button->IsEnabled();
-        RunInMainAndWait(boost::bind(&gui::timeline::DetailsClip::handleLengthButtonPressed,DetailsClipView(),button));
+        util::thread::RunInMainAndWait(boost::bind(&gui::timeline::DetailsClip::handleLengthButtonPressed,DetailsClipView(),button));
         ASSERT_SELECTION_SIZE(1); // Clip and link selected
         if (enabled)
         {
@@ -157,7 +157,7 @@ void TestDetailsClip::testChangeLengthOfTransition()
             std::ostringstream o;
             o << "LengthButton: Change transition length to " << getLength(button);
             StartTest(o.str().c_str());
-            RunInMainAndWait(boost::bind(&gui::timeline::DetailsClip::handleLengthButtonPressed,DetailsClipView(),button));
+            util::thread::RunInMainAndWait(boost::bind(&gui::timeline::DetailsClip::handleLengthButtonPressed,DetailsClipView(),button));
             ASSERT_EQUALS(getSelectedClipsCount(),1); // Transition
             ASSERT_CURRENT_COMMAND_TYPE<::command::Combiner>();
             ASSERT_EQUALS(VideoClip(0,2)->getLength(),getLength(button));
@@ -217,7 +217,7 @@ void TestDetailsClip::testChangeLengthAfterCreatingTransition()
             o << name << ": length = " << buttonLength;
             StartTest(o.str().c_str());
             ASSERT_EQUALS(buttonEnabled, buttonLength >= minimumsize);
-            RunInMainAndWait(boost::bind(&gui::timeline::DetailsClip::handleLengthButtonPressed,DetailsClipView(),button));
+            util::thread::RunInMainAndWait(boost::bind(&gui::timeline::DetailsClip::handleLengthButtonPressed,DetailsClipView(),button));
             ASSERT_EQUALS(getSelectedClipsCount(),2);
             ASSERT(VideoClip(0,2)->getSelected());
             if (buttonEnabled)

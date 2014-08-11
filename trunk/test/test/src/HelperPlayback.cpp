@@ -75,10 +75,10 @@ void Play(int ms)
     //       When the video is playing, the system does not become Idle (playback events).
     // NOTE: Starting and stopping the playback is not done via space key presses.
     //       Space does a 'toggle', which sometimes causes irratic behavior.
-    RunInMainAndWait([] { getTimeline().getPlayer()->play(); });
+    util::thread::RunInMain([] { getTimeline().getPlayer()->play(); });
     started.wait();
     pause(ms);
-    RunInMainAndWait([] { getTimeline().getPlayer()->stop(); });
+    util::thread::RunInMain([] { getTimeline().getPlayer()->stop(); });
     stopped.wait();
 }
 

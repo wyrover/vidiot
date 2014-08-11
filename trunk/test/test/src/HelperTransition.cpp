@@ -91,10 +91,10 @@ void MakeTransitionAfterClip::makeTransition()
 model::IClipPtr MakeTransitionAfterClip::GetClip(int track, int clip) const
 {
     model::IClipPtr result;
-    RunInMainAndWait([&result, this, track, clip]
-                     {
-                        result = mAudio ? AudioClip(track,clip) : VideoClip(track,clip);
-                     });
+    util::thread::RunInMainAndWait([&result, this, track, clip]
+    {
+        result = mAudio ? AudioClip(track,clip) : VideoClip(track,clip);
+    });
     ASSERT(result != nullptr)(track)(clip);
     return result;
 }

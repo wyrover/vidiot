@@ -46,7 +46,7 @@ void Work::execute()
     if (!mAbort)
     {
         mCallable();
-        util::thread::RunInMainAndDontWait([]
+        util::thread::RunInMain([]
         {
             // Note that - in the code of mCallable - showProgressText can be called.
             // That method schedules an event that causes the progress bar update.
@@ -81,7 +81,7 @@ void Work::showProgressText(const wxString& text)
 {
     if (!mAbort)
     {
-        util::thread::RunInMainAndDontWait([text]
+        util::thread::RunInMain([text]
         {
             gui::StatusBar::get().setProcessingText(text);
         });
@@ -92,7 +92,7 @@ void Work::showProgressBar(int max)
 {
     if (!mAbort)
     {
-        util::thread::RunInMainAndDontWait([max]
+        util::thread::RunInMain([max]
         {
             gui::StatusBar::get().showProgressBar(max);
         });
@@ -104,7 +104,7 @@ void Work::showProgress(int value)
 {
     if (!mAbort)
     {
-        util::thread::RunInMainAndDontWait([value]
+        util::thread::RunInMain([value]
         {
             gui::StatusBar::get().showProgress(value);
         });

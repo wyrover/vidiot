@@ -98,7 +98,7 @@ bool FixtureGui::setUp()
 bool FixtureGui::tearDown()
 {
     if (!HelperTestSuite::get().currentTestRequiresWindow()) { return true; } // Test was disabled or does not require window
-    RunInMainAndWait([]
+    util::thread::RunInMainAndWait([]
     {
         wxDocument* doc = gui::Window::get().GetDocumentManager()->GetCurrentDocument();
         if (doc) { doc->Modify(false); } // Avoid "Save yes/no/Cancel" dialog

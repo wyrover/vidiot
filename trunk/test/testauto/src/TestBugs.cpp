@@ -128,7 +128,7 @@ void TestBugs::testBugsWithLongTimeline()
     TimelineZoomIn(4);
     TimelineKeyPress(WXK_END); // Move scrollbars to end
 
-    RunInMainAndWait([]
+    util::thread::RunInMainAndWait([]
     {
         // Workaround for Windows 7 bug: http://trac.wxwidgets.org/ticket/14329 / http://trac.wxwidgets.org/ticket/14313
         gui::Window::get().SetSize(gui::Window::get().GetSize());
@@ -165,7 +165,7 @@ void TestBugs::testBugsWithLongTimeline()
     }
     {
         StartTest("Bug: StackOverflow when loading");
-        RunInMainAndWait([tempDir_fileName]()
+        util::thread::RunInMainAndWait([tempDir_fileName]()
         {
             gui::Window::get().GetDocumentManager()->CreateDocument(tempDir_fileName.second.GetFullPath(),wxDOC_SILENT);
         });

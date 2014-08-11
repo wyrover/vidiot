@@ -136,7 +136,6 @@
 #include "HelperProjectView.h"
 #include "HelperSequence.h"
 #include "HelperTestSuite.h"
-#include "HelperThread.h"
 #include "HelperTimeline.h"
 #include "HelperTimelineAssert.h"
 #include "HelperTimelineDrag.h"
