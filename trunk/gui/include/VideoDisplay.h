@@ -88,7 +88,7 @@ private:
     /// Holds the time at which the first audio buffer will be played.
     /// Effectively, that's the start time of the playback. Time is in
     /// milliseconds.
-    int mStartTime;
+    double mStartTime;
 
     /// Holds the pts at which the playback was started (thus, the 0-point timewise)
     int mStartPts;
