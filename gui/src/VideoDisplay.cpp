@@ -36,11 +36,6 @@ const int VideoDisplay::sMaximumSpeed = 200;
 const int VideoDisplay::sDefaultSpeed = 100;
 const int VideoDisplay::sVideoFrameRate = 25;
 
-int convertPortAudioTime(double patime)
-{
-    return static_cast<int>(floor(patime * 1000.0));
-}
-
 static int portaudio_callback( const void *inputBuffer, void *outputBuffer,
                           unsigned long framesPerBuffer,
                           const PaStreamCallbackTimeInfo* timeInfo,
@@ -83,6 +78,7 @@ VideoDisplay::VideoDisplay(wxWindow *parent, model::SequencePtr sequence)
 ,   mNumberOfAudioChannels(model::Properties::get().getAudioNumberOfChannels())
 ,   mAudioSampleRate(model::Properties::get().getAudioSampleRate())
 ,   mSkipFrames(0)
+,   mSpeed(sDefaultSpeed)
 {
     VAR_DEBUG(this);
 
@@ -161,7 +157,7 @@ void VideoDisplay::play()
         err = Pa_StartStream( mAudioOutputStream );
         ASSERT_EQUALS(err,paNoError)(Pa_GetErrorText(err));
 
-        mStartTime = convertPortAudioTime(Pa_GetStreamTime(mAudioOutputStream));
+        mStartTime = Pa_GetStreamTime(mAudioOutputStream);
         mStartPts = (mCurrentVideoFrame ? mCurrentVideoFrame->getPts() : 0); // Used for determining inter frame sleep time
 
         showNextFrame();
@@ -412,20 +408,28 @@ void VideoDisplay::showNextFrame()
     // SCHEDULE NEXT REFRESH
     //////////////////////////////////////////////////////////////////////////
 
-    int paTime = convertPortAudioTime(Pa_GetStreamTime(mAudioOutputStream));
-    int currentTime = paTime - mStartTime;
-    int nextFrameTime = model::Convert::ptsToTime(videoFrame->getPts() - mStartPts);
-    int nextFrameTimeAdaptedForPlaybackSpeed = (static_cast<float>(sDefaultSpeed) / static_cast<float>(mSpeed)) * static_cast<float>(nextFrameTime);
-    int sleepTime = nextFrameTimeAdaptedForPlaybackSpeed - currentTime;
+    // Determine elapsed time since playback started
+    double elapsed = Pa_GetStreamTime(mAudioOutputStream) - mStartTime;
+
+    double speedfactor = static_cast<double>(sDefaultSpeed) / static_cast<double>(mSpeed);
+
+    // Determine the time at which the frame must be shown
+    double next = speedfactor * static_cast<double>(model::Convert::ptsToTime(videoFrame->getPts() - mStartPts)) / 1000.0; // /1000.0: convert ms to s
+
+    int sleep = static_cast<int>(floor((next - elapsed) * 1000.0));
+
+    //LOG_ERROR << "Current time: " << std::fixed << elapsed;
+    //LOG_ERROR << "Time to show next frame: " << std::fixed << next;
+    //LOG_ERROR << "Sleep time:" << std::fixed << sleep;
 
     //////////////////////////////////////////////////////////////////////////
     // DISPLAY NEW FRAME
     //////////////////////////////////////////////////////////////////////////
 
-    if (sleepTime < 0)
+    if (sleep < 0)
     {
         // Too late, skip the picture
-        VAR_WARNING(mVideoFrames.getSize())(paTime)(mStartTime)(currentTime)(sleepTime)(nextFrameTime)(nextFrameTimeAdaptedForPlaybackSpeed)(mStartPts)(videoFrame->getPts());
+        VAR_WARNING(mVideoFrames.getSize())(mStartTime)(elapsed)(next)(sleep)(mStartPts)(videoFrame->getPts());
 
         int skip = mSkipFrames.load();
         if (skip == 0)
@@ -437,7 +441,7 @@ void VideoDisplay::showNextFrame()
             mSkipFrames.store(skip * 2);
         }
 
-        sleepTime = model::Convert::ptsToTime(1);
+        sleep = model::Convert::ptsToTime(1);
     }
     else
     {
@@ -462,7 +466,7 @@ void VideoDisplay::showNextFrame()
 
         Refresh(false);
     }
-    mVideoTimer.StartOnce(sleepTime);
+    mVideoTimer.StartOnce(sleep);
 }
 
 //////////////////////////////////////////////////////////////////////////
