@@ -32,6 +32,7 @@ public:
     explicit DialogAbout();
     virtual ~DialogAbout();
 
+    void onLink(wxHtmlLinkEvent& event);
     void onBack(wxCommandEvent &event);
 
     wxHtmlWindow* mHtml;
