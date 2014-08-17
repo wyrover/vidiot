@@ -674,7 +674,7 @@ void File::bufferPacketsThread()
             mPackets.push(PacketPtr());
             break;
         }
-        ASSERT_MORE_THAN_ZERO(packet->size);
+        ASSERT_MORE_THAN_EQUALS_ZERO(packet->size);
 
         if(packet->stream_index == mStreamIndex)
         {
