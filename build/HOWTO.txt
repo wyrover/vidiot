@@ -132,3 +132,13 @@ Optional: C/C++ -> Code Generation -> Floating point model = fast
 * Upload
   - Installer
   - VersionHistory.txt
+
+
+================== "SHELVE" =======================
+1. SVN Update
+2. Select Branch/tag in tortoise:
+   a. Change To path: to /branches/<nameofbranch>
+   b. Select 'switch working copy to new branch/tag'
+   c. OK
+3. Select Switch in tortoise
+   a. Switch to /trunk again
