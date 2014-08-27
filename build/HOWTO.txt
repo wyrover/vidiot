@@ -140,5 +140,16 @@ Optional: C/C++ -> Code Generation -> Floating point model = fast
    a. Change To path: to /branches/<nameofbranch>
    b. Select 'switch working copy to new branch/tag'
    c. OK
-3. Select Switch in tortoise
+3. Commit ***
+4. Select Switch in tortoise
    a. Switch to /trunk again
+
+UNSHELVE
+1. Select 'Merge'
+   a. URL: https://svn.code.sf.net/p/vidiot/code/branches/<nameofbranch>
+   b. Specific revision: revison *** (made under 3. Commit)
+   c. Click Merge
+2. Remove branch (repo-browser)
+
+
+   
