@@ -34,8 +34,9 @@ const std::vector<FrameRateEntry> sPossibleFrameRates = boost::assign::tuple_lis
 
 FrameRate::FrameRate(const int64_t& num, const int64_t& den)
     :   rational64(num,den)
-    {
+{
 }
+
 FrameRate::FrameRate(const AVRational& avr)
     :   rational64(avr.num,avr.den)
 {
@@ -53,6 +54,12 @@ FrameRate::FrameRate(const wxString& framerate)
         }
     };
 };
+
+FrameRate::FrameRate(const rational64& r)
+    : rational64(r.numerator(),r.denominator())
+{
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 //
