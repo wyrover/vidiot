@@ -35,8 +35,9 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     explicit FrameRate(const int64_t& num, const int64_t& den);
-    FrameRate(const AVRational& avr);
-    FrameRate(const wxString& framerate);
+    explicit FrameRate(const AVRational& avr);
+    explicit FrameRate(const wxString& framerate);
+    explicit FrameRate(const rational64& r);
 
     //////////////////////////////////////////////////////////////////////////
     //
