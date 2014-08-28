@@ -51,6 +51,12 @@ public:
     /// Uses current project's frame rate for the conversion
     static milliseconds ptsToTime(pts position);
 
+    /// \return time duration in milliseconds
+    /// \param pts time duration in pts stamps defined by the given frame rate
+    /// \param framerate framerate to be used for converting pts to time
+    /// Uses current project's frame rate for the conversion
+    static milliseconds ptsToTime(pts position, const FrameRate& framerate);
+
     /// \return time duration in microseconds.
     /// Uses current project's frame rate for the conversion
     static microseconds ptsToMicroseconds(pts position);
