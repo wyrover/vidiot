@@ -53,7 +53,13 @@ pts Convert::rationaltimeToPts(rational64 time, const FrameRate& framerate )
 // static
 milliseconds Convert::ptsToTime(pts position)
 {
-    return floor64(rational64(position) * rational64(Constants::sSecond) / Properties::get().getFrameRate());
+    return ptsToTime(position, Properties::get().getFrameRate());
+}
+
+// static
+milliseconds Convert::ptsToTime(pts position, const FrameRate& framerate)
+{
+    return floor64(rational64(position) * rational64(Constants::sSecond) / framerate);
 }
 
 // static
