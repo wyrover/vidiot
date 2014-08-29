@@ -32,7 +32,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     explicit VideoSkipFrame(const VideoCompositionParameters& parameters);
-    VideoSkipFrame(const VideoSkipFrame& other);
+    explicit VideoSkipFrame(const VideoSkipFrame& other);
     virtual VideoSkipFrame* clone() const;
     virtual void onCloned();
 
