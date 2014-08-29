@@ -95,7 +95,7 @@ VideoFramePtr ImageFile::getNextVideo(const VideoCompositionParameters& paramete
 {
     if (!mInputFrame)
     {
-        mInputFrame = VideoFile::getNextVideo(VideoCompositionParameters().setBoundingBox(getSize()));
+        mInputFrame = VideoFile::getNextVideo(VideoCompositionParameters().setBoundingBox(getSize()).setPts(0));
         ASSERT(mInputFrame);
     }
 
