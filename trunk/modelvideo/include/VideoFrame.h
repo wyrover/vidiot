@@ -105,7 +105,7 @@ protected:
 
     VideoFrameLayers mLayers;
     boost::scoped_ptr<VideoCompositionParameters> mParameters;
-    pts mPts;
+    boost::optional<pts> mPts;
     bool mForceKeyFrame;
 
 private:

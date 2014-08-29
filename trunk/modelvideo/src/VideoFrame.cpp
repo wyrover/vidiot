@@ -33,7 +33,7 @@ namespace model {
 VideoFrame::VideoFrame(const VideoCompositionParameters& parameters)
     : mLayers()
     , mParameters(new VideoCompositionParameters(parameters))
-    , mPts(0)
+    , mPts(boost::none)
     , mForceKeyFrame(false)
     , mCachedBitmap(boost::none)
 {
@@ -42,7 +42,7 @@ VideoFrame::VideoFrame(const VideoCompositionParameters& parameters)
 VideoFrame::VideoFrame(const VideoCompositionParameters& parameters, const VideoFrameLayerPtr& layer)
     : mLayers()
     , mParameters(new VideoCompositionParameters(parameters))
-    , mPts(0)
+    , mPts(boost::none)
     , mForceKeyFrame(false)
     , mCachedBitmap(boost::none)
 {
@@ -52,7 +52,7 @@ VideoFrame::VideoFrame(const VideoCompositionParameters& parameters, const Video
 VideoFrame::VideoFrame(const VideoCompositionParameters& parameters, const VideoFrameLayers& layers)
     : mLayers(layers)
     , mParameters(new VideoCompositionParameters(parameters))
-    , mPts(0)
+    , mPts(boost::none)
     , mForceKeyFrame(false)
     , mCachedBitmap(boost::none)
 {
@@ -86,12 +86,13 @@ VideoFrame::~VideoFrame()
 
 pts VideoFrame::getPts() const
 {
-    return mPts;
+    ASSERT(mPts);
+    return *mPts;
 }
 
 void VideoFrame::setPts(pts position)
 {
-    mPts = position;
+    mPts.reset(position);
 }
 
 void VideoFrame::setForceKeyFrame(bool force)
