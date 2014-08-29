@@ -145,7 +145,8 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
             int got_frame = 0;
             int usedSourceBytes = avcodec_decode_audio4(codec, &frame, &got_frame, &packet);
             ASSERT_MORE_THAN_EQUALS_ZERO(usedSourceBytes);
-
+// todo crash here with audiovideosync .mpg file AFTER moving the cursor somewhere inside the clip
+            // Since mp2 data (which seems to be in this files) contains header packets inbetween, seeking 'somewhere' may lead to a position that is not directly in front of a packet. Data must be skipped then? or 'null' data returned, may be better for av sync
             if (!got_frame)
             {
                 LOG_AUDIO;
