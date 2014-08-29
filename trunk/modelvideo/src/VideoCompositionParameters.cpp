@@ -31,6 +31,7 @@ VideoCompositionParameters::VideoCompositionParameters()
     ,   mDrawBoundingBox(Config::ReadBool(Config::sPathShowBoundingBox))
     ,   mOptimizeForQuality(false)
     ,   mSkip(false)
+    ,   mPts(boost::none)
 {
 }
 
@@ -39,6 +40,7 @@ VideoCompositionParameters::VideoCompositionParameters(const VideoCompositionPar
     ,   mDrawBoundingBox(other.mDrawBoundingBox)
     ,   mOptimizeForQuality(other.mOptimizeForQuality)
     ,   mSkip(other.mSkip)
+    ,   mPts(other.mPts)
 {
 }
 
@@ -52,7 +54,8 @@ bool VideoCompositionParameters::operator==( const VideoCompositionParameters& o
         (mBoundingBox == other.mBoundingBox) &&
         (mDrawBoundingBox == other.mDrawBoundingBox) &&
         (mOptimizeForQuality == other.mOptimizeForQuality) &&
-        (mSkip == other.mSkip);
+        (mSkip == other.mSkip) &&
+        (mPts == other.mPts);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -115,13 +118,35 @@ wxRect VideoCompositionParameters::getRequiredRectangle() const
     return wxRect(requiredOutputOffset, requiredOutputSize);
 }
 
+VideoCompositionParameters& VideoCompositionParameters::setPts(pts position)
+{
+    mPts.reset(position);
+    return *this;
+}
+
+bool VideoCompositionParameters::hasPts() const
+{
+    return mPts;
+}
+
+pts VideoCompositionParameters::getPts() const
+{
+    ASSERT(mPts);
+    return *mPts;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
 std::ostream& operator<<(std::ostream& os, const VideoCompositionParameters& obj)
 {
-    os << &obj << '|' << obj.mBoundingBox << '|' << obj.mDrawBoundingBox << '|' << obj.mOptimizeForQuality;
+    os  << &obj << '|' 
+        << obj.mBoundingBox << '|' 
+        << obj.mDrawBoundingBox << '|' 
+        << obj.mOptimizeForQuality << '|' 
+        << obj.mSkip << '|' 
+        << obj.mPts;
     return os;
 }
 

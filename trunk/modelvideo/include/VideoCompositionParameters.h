@@ -55,6 +55,10 @@ public:
     VideoCompositionParameters& setSkip(bool skip);
     bool getSkip() const;
 
+    VideoCompositionParameters& setPts(pts position);
+    bool hasPts() const;
+    pts getPts() const;
+
     wxRect getRequiredRectangle() const;
 
 private:
@@ -67,6 +71,7 @@ private:
     bool mDrawBoundingBox;
     bool mOptimizeForQuality;
     bool mSkip;
+    boost::optional<pts> mPts;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING
