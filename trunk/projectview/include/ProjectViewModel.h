@@ -96,6 +96,7 @@ private:
     wxIcon mIconAutoFolderOpen;
     wxIcon mIconFolder;
     wxIcon mIconFolderOpen;
+    wxIcon mIconSequence;
     wxIcon mIconVideo;
 
 };
