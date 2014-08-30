@@ -69,7 +69,9 @@ VideoFramePtr VideoTrack::getNextVideo(const VideoCompositionParameters& paramet
 
     while (!videoFrame && !iterate_atEnd())
     {
-        videoFrame = boost::dynamic_pointer_cast<IVideo>(iterate_get())->getNextVideo(parameters);
+        model::IVideoPtr video = boost::dynamic_pointer_cast<IVideo>(iterate_get());
+        model::IClipPtr clip = boost::dynamic_pointer_cast<IClip>(iterate_get());
+        videoFrame = video->getNextVideo(VideoCompositionParameters(parameters).adjustPts(-clip->getLeftPts()));
         if (!videoFrame)
         {
             iterate_next();

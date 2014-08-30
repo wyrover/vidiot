@@ -101,7 +101,7 @@ VideoFramePtr VideoTransition::getNextVideo(const VideoCompositionParameters& pa
     {
         // Use adjusted Pts value for clips 'in' transition. Otherwise, VideoFile::getNextVideo will return
         // the wrong frame (typically after incorrectly skipping lots of frames causing a performance drop).
-        videoFrame = getVideo(mProgress, mLeftClip, mRightClip, VideoCompositionParameters(parameters).setPts(mProgress));
+        videoFrame = getVideo(mProgress, mLeftClip, mRightClip, parameters);
         mProgress++;
     }
     VAR_VIDEO(videoFrame);

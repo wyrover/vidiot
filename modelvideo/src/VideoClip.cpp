@@ -140,21 +140,6 @@ VideoFramePtr VideoClip::getNextVideo(const VideoCompositionParameters& paramete
 
     if (mProgress < length)
     {
-        VideoCompositionParameters parametersWithClipLocalPts(parameters);
-
-        if (parameters.hasPts())
-        {
-            // During playback, getNextVideo passes through Sequence and Track, and
-            // pts values are filled in.
-            ASSERT_MORE_THAN_EQUALS(parameters.getPts(), getLeftPts());
-            parametersWithClipLocalPts.setPts(parameters.getPts() - getLeftPts());
-        }
-        else
-        {
-            // During all non-playback getNextVideo calls (thumbnails, previews of trims, etc.)
-            // no pts is filled in.
-            parametersWithClipLocalPts.setPts(mProgress);
-        }
 
         VideoFilePtr generator = getDataGenerator<VideoFile>();
         // Scale the clip's size and region of interest to the bounding box
@@ -179,7 +164,7 @@ VideoFramePtr VideoClip::getNextVideo(const VideoCompositionParameters& paramete
             // IMPORTANT: When getting video frames 'while' playing the timeline, AND resizing the player in parallel, the returned
             //            video frame can have a different size than requested!!! This can happen because the previous frame is returned 'again'.
             //            For this reason, when the videoplayer is resized, playback is stopped.
-            VideoFramePtr fileFrame = generator->getNextVideo(VideoCompositionParameters(parametersWithClipLocalPts).setBoundingBox(requiredVideoSize));
+            VideoFramePtr fileFrame = generator->getNextVideo(VideoCompositionParameters(parameters).setBoundingBox(requiredVideoSize).adjustPts(+getOffset()));
             if (fileFrame)
             {
                 if (parameters.getSkip())
