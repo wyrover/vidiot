@@ -160,13 +160,12 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
     ASSERT_ZERO(codec->refcounted_frames); // for new version of avcodec, see avcodec_decode_video2 docs
 
     wxSize codecSize(codec->width,getCodec()->height);
-    wxSize size(Convert::sizeInBoundingBox(wxSize(codec->width,getCodec()->height),parameters.getBoundingBox()));
+    wxSize size(Convert::sizeInBoundingBox(wxSize(codec->width,codec->height),parameters.getBoundingBox()));
     static const int sMinimumFrameSize = 10;        // I had issues when generating smaller bitmaps. To avoid these, always
     size.x = std::max(size.x,sMinimumFrameSize);    // use a minimum framesize. The region of interest in videoclips will ensure
     size.y = std::max(size.y,sMinimumFrameSize);    // that any excess data is cut off.
 
     // Pts/time based variables
-    milliseconds requiredTime = Convert::ptsToTime(parameters.getPts());
     AVStream* stream = getStream();
     FrameRate inputFrameRate = FrameRate(av_stream_get_r_frame_rate(stream)); // 24000/1001
     FrameRate inputTimeBase = FrameRate(stream->time_base); // 1/240000
@@ -176,19 +175,28 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
     // 'Resample' the frame timebase
     // Determine which pts value is required. This is required to first determine
     // if the previously returned frame should be returned again
-    auto frameTimeOk = [this, requiredTime, parameters, stream, inputTimeBase, ticksPerFrame](pts inputPosition) -> bool
+    auto frameTimeOk = [this, parameters, stream, inputTimeBase, ticksPerFrame](pts inputPosition) -> bool
     {
-        if (stream->start_time != AV_NOPTS_VALUE)
+        bool result = true;
+        if (parameters.hasPts())
         {
-            // Some streams don't start counting at 0
-            // NOTE: alternative might be stream->first_dts
-            inputPosition -= stream->start_time;
+            milliseconds requiredTime = Convert::ptsToTime(parameters.getPts());
+            if (stream->start_time != AV_NOPTS_VALUE)
+            {
+                // Some streams don't start counting at 0
+                // NOTE: alternative might be stream->first_dts
+                inputPosition -= stream->start_time;
+            }
+            rational64 currentTime = rational64(inputPosition) * inputTimeBase * 1000;
+            rational64 nextTime = rational64(inputPosition + ticksPerFrame) * inputTimeBase * 1000;
+            milliseconds diffCurrent = abs(requiredTime - boost::rational_cast<milliseconds>(currentTime));
+            milliseconds diffNext = abs(boost::rational_cast<milliseconds>(nextTime) - requiredTime);
+            result =  diffCurrent < diffNext;
         }
-        rational64 currentTime = rational64(inputPosition) * inputTimeBase * 1000;
-        rational64 nextTime = rational64(inputPosition + ticksPerFrame) * inputTimeBase * 1000;
-        milliseconds diffCurrent = abs(requiredTime - boost::rational_cast<milliseconds>(currentTime));
-        milliseconds diffNext = abs(boost::rational_cast<milliseconds>(nextTime) - requiredTime);
-        return diffCurrent < diffNext;
+        // else: Just deliver the first found frame. 
+        //       Typical case: directly after 'moveTo' during thumbnail generation,
+        //       timeline cursor move, trim, etc. (basically, anything except playback)
+        return result;
     };
 
     // NOTE: Sometimes the gotten input frame covers two output frames.
@@ -238,7 +246,7 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
 
             if (frameFinished)
             {
-                // DEBUG: saveDecodedFrame(codec,frame,size,frameFinished);
+                // DEBUG: saveDecodedFrame(codec,pDecodedFrame,size,frameFinished);
 
                 if (nextToBeDecodedPacket->dts != AV_NOPTS_VALUE)
                 {
@@ -301,9 +309,9 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
             int bufferSize = avpicture_get_size(AV_PIX_FMT_RGB24, size.GetWidth(), size.GetHeight());
             boost::uint8_t * buffer = static_cast<boost::uint8_t*>(av_malloc(bufferSize * sizeof(uint8_t)));
             avpicture_fill(reinterpret_cast<AVPicture*>(pScaledFrame), buffer, AV_PIX_FMT_RGB24, size.GetWidth(), size.GetHeight());
-            mSwsContext = sws_getCachedContext(mSwsContext,getCodec()->width,
-                getCodec()->height,
-                getCodec()->pix_fmt,
+            mSwsContext = sws_getCachedContext(mSwsContext,codec->width,
+                codec->height,
+                codec->pix_fmt,
                 size.GetWidth(),
                 size.GetHeight(),
                 AV_PIX_FMT_RGB24,

@@ -124,6 +124,15 @@ VideoCompositionParameters& VideoCompositionParameters::setPts(pts position)
     return *this;
 }
 
+VideoCompositionParameters& VideoCompositionParameters::adjustPts(pts adjustment)
+{
+    if (mPts)
+    {
+        *mPts += adjustment;
+    }
+    return *this;
+}
+
 bool VideoCompositionParameters::hasPts() const
 {
     return mPts;

@@ -56,6 +56,7 @@ public:
     bool getSkip() const;
 
     VideoCompositionParameters& setPts(pts position);
+    VideoCompositionParameters& adjustPts(pts adjustment); ///< \note Does nothing if there is no pts stored
     bool hasPts() const;
     pts getPts() const;
 
