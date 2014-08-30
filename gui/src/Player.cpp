@@ -17,17 +17,23 @@
 
 #include "Player.h"
 
+#ifdef __GNUC__
+#pragma GCC diagnostic ignored "-Wwrite-strings"
+#endif
+#include "preview-end.xpm"
+#include "preview-home.xpm"
+#include "preview-next.xpm"
+#include "preview-pauseplay.xpm"
+#include "preview-previous.xpm"
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
 #include "Config.h"
 #include "Constants.h"
 #include "Convert.h"
 #include "Cursor.h"
 #include "EditDisplay.h"
 #include "ids.h"
-#include "preview-end.xpm"
-#include "preview-home.xpm"
-#include "preview-next.xpm"
-#include "preview-pauseplay.xpm"
-#include "preview-previous.xpm"
 #include "Sequence.h"
 #include "Timeline.h"
 #include "TimeLinesView.h"

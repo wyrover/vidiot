@@ -1,6 +1,3 @@
-#ifdef __GNUC__
-#pragma GCC diagnostic ignored "-Wwrite-strings"
-#endif
 /* XPM */
 static char * preview_pauseplay_xpm[] = {
 "16 16 50 1",
@@ -70,6 +67,3 @@ static char * preview_pauseplay_xpm[] = {
 "jkj jkj j       ",
 "                ",
 "                "};
-#ifdef __GNUC__
-#pragma GCC diagnostic pop
-#endif

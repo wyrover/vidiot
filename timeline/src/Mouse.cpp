@@ -17,20 +17,27 @@
 
 #include "Mouse.h"
 
-#include <wx/cursor.h>
-#include "AudioView.h"
-#include "Clip.h"
-#include "ClipView.h"
-#include "Config.h"
+#ifdef __GNUC__
+#pragma GCC diagnostic ignored "-Wwrite-strings"
+#endif
 #include "cursor_move_cut.xpm"
 #include "cursor_normal.xpm"
 #include "cursor_track_resize.xpm"
 #include "cursor_trim_begin.xpm"
 #include "cursor_trim_end.xpm"
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
+
+#include "AudioView.h"
+#include "Clip.h"
+#include "ClipView.h"
+#include "Config.h"
 #include "PositionInfo.h"
 #include "Scrolling.h"
 #include "Sequence.h"
 #include "SequenceView.h"
+#include "StatusBar.h"
 #include "Timeline.h"
 #include "Track.h"
 #include "TrackView.h"
@@ -38,8 +45,8 @@
 #include "UtilLogWxwidgets.h"
 #include "VideoView.h"
 #include "ViewMap.h"
-#include "StatusBar.h"
 #include "Zoom.h"
+#include <wx/cursor.h>
 
 namespace gui { namespace timeline {
 

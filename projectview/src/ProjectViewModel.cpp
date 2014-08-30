@@ -17,14 +17,22 @@
 
 #include "ProjectView.h"
 
-#include "AutoFolder.h"
-#include "File.h"
+#ifdef __GNUC__
+#pragma GCC diagnostic ignored "-Wwrite-strings"
+#endif
 #include "film.xpm"
-#include "Folder.h"
 #include "folder-horizontal.xpm"
 #include "folder-horizontal-open.xpm"
 #include "folder-horizontal-plus.xpm"
 #include "folder-horizontal-plus-open.xpm"
+#include "picture.xpm"
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
+
+#include "AutoFolder.h"
+#include "File.h"
+#include "Folder.h"
 #include "INode.h"
 #include "NodeEvent.h"
 #include "Project.h"
@@ -52,7 +60,9 @@ ProjectViewModel::ProjectViewModel(wxDataViewCtrl& view)
 ,   mIconAutoFolderOpen(folder_horizontal_plus_open_xpm)
 ,   mIconFolder(folder_horizontal_xpm)
 ,   mIconFolderOpen(folder_horizontal_open_xpm)
-,	mIconVideo(film_xpm)
+,   mIconSequence(film_xpm)
+,	mIconVideo(picture_xpm)
+
 {
     gui::Window::get().Bind(model::EVENT_OPEN_PROJECT,     &ProjectViewModel::onOpenProject,           this);
     gui::Window::get().Bind(model::EVENT_CLOSE_PROJECT,    &ProjectViewModel::onCloseProject,          this);
@@ -373,6 +383,10 @@ wxIcon ProjectViewModel::getIcon(const model::NodePtr& node) const
         {
             icon = open ? mIconFolderOpen : mIconFolder;
         }
+    }
+    else if (isSequence(node))
+    {
+        icon = mIconSequence;
     }
     else
     {
