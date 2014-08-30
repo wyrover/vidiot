@@ -118,6 +118,12 @@ Optional: C/C++ -> Code Generation -> Floating point model = fast
 
 =================== MAKE RELEASE ===================
 * Run both Debug and Release tests
+* Test drag and drop project creation:
+  - One folder with files
+  - Empty folder
+  - Folder with 'wrong' file (non-video)
+  - One file
+  - Multiple files
 * Update version number
   - In main/install/CMakeLists.txt update version number
     (commit, remember revision number)
