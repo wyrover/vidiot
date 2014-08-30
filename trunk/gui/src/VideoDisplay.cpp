@@ -74,6 +74,7 @@ VideoDisplay::VideoDisplay(wxWindow *parent, model::SequencePtr sequence)
 ,   mCurrentAudioChunk()
 ,   mCurrentBitmap()
 ,   mStartTime(0)
+,   mAudioLatency(0)
 ,   mStartPts(0)
 ,   mNumberOfAudioChannels(model::Properties::get().getAudioNumberOfChannels())
 ,   mAudioSampleRate(model::Properties::get().getAudioSampleRate())
@@ -156,6 +157,9 @@ void VideoDisplay::play()
 
         err = Pa_StartStream( mAudioOutputStream );
         ASSERT_EQUALS(err,paNoError)(Pa_GetErrorText(err));
+
+        const PaStreamInfo* info = Pa_GetStreamInfo(mAudioOutputStream);
+        mAudioLatency = info->outputLatency;
 
         mStartTime = Pa_GetStreamTime(mAudioOutputStream);
         mStartPts = (mCurrentVideoFrame ? mCurrentVideoFrame->getPts() : 0); // Used for determining inter frame sleep time
@@ -256,6 +260,10 @@ void VideoDisplay::setSpeed(int speed)
     ASSERT(wxThread::IsMain());
     bool wasPlaying = mPlaying;
     mSpeed = speed;
+#ifdef __GNUC__
+        // todo GCC make SoundTouch work under linux (probably caused by wrong sample format, which I fixed to 2 bytes i.s.o. default float)
+        mSpeed = sDefaultSpeed;
+#endif
     moveTo(mCurrentVideoFrame ? mCurrentVideoFrame->getPts() : 0);
     if (wasPlaying)
     {
@@ -289,37 +297,39 @@ void VideoDisplay::audioBufferThread()
     {
         model::AudioChunkPtr chunk = mSequence->getNextAudio(model::AudioCompositionParameters().setSampleRate(mAudioSampleRate).setNrChannels(mNumberOfAudioChannels));
 
-#ifdef __GNUC__
-        // todo GCC make SoundTouch work under linux (probably caused by wrong sample format, which I fixed to 2 bytes i.s.o. default float)
-        mAudioChunks.push(chunk);
-#else
         if (chunk)
         {
-            // In SoundTouch context a sample is the data for both speakers.
-            // In AudioChunk it's the data for one speaker.
-            // Soundtouch needs at least 4 * 2 bytes, see RateTransposerInteger::transposeStereo (uses src[3] - which is the fourth sample).
-            //
-            // To avoid access violations, too small chunks are skipped (given their size that should pose no problems for previewing only).
-            static const samplecount sMinimumChunkSizeInSamples = 4;
-            if (chunk->getUnreadSampleCount() < sMinimumChunkSizeInSamples) { continue; } // Skip this chunk
-
-            //if (chunk->getUnreadSampleCount() < 3) continue;
-            mSoundTouch.putSamples(reinterpret_cast<const soundtouch::SAMPLETYPE *>(chunk->getUnreadSamples()), chunk->getUnreadSampleCount() / mNumberOfAudioChannels) ;
-            while (!mSoundTouch.isEmpty())
+            if (mSpeed != sDefaultSpeed)
             {
-                int nFramesAvailable = mSoundTouch.numSamples();
-                sample* p = 0;
-                model::AudioChunkPtr audioChunk = boost::make_shared<model::AudioChunk>(mNumberOfAudioChannels, nFramesAvailable * mNumberOfAudioChannels, true, false);
-                int nFrames = mSoundTouch.receiveSamples(reinterpret_cast<soundtouch::SAMPLETYPE *>(audioChunk->getBuffer()), nFramesAvailable);
-                ASSERT_EQUALS(nFrames,nFramesAvailable);
-                mAudioChunks.push(audioChunk);
+                // In SoundTouch context a sample is the data for both speakers.
+                // In AudioChunk it's the data for one speaker.
+                // Soundtouch needs at least 4 * 2 bytes, see RateTransposerInteger::transposeStereo (uses src[3] - which is the fourth sample).
+                //
+                // To avoid access violations, too small chunks are skipped (given their size that should pose no problems for previewing only).
+                static const samplecount sMinimumChunkSizeInSamples = 4;
+                if (chunk->getUnreadSampleCount() < sMinimumChunkSizeInSamples) { continue; } // Skip this chunk
+
+                //if (chunk->getUnreadSampleCount() < 3) continue;
+                mSoundTouch.putSamples(reinterpret_cast<const soundtouch::SAMPLETYPE *>(chunk->getUnreadSamples()), chunk->getUnreadSampleCount() / mNumberOfAudioChannels) ;
+                while (!mSoundTouch.isEmpty())
+                {
+                    int nFramesAvailable = mSoundTouch.numSamples();
+                    sample* p = 0;
+                    model::AudioChunkPtr audioChunk = boost::make_shared<model::AudioChunk>(mNumberOfAudioChannels, nFramesAvailable * mNumberOfAudioChannels, true, false);
+                    int nFrames = mSoundTouch.receiveSamples(reinterpret_cast<soundtouch::SAMPLETYPE *>(audioChunk->getBuffer()), nFramesAvailable);
+                    ASSERT_EQUALS(nFrames,nFramesAvailable);
+                    mAudioChunks.push(audioChunk);
+                }
+            }
+            else
+            {
+                mAudioChunks.push(chunk); // No speed change. Just insert chunk.
             }
         }
         else
         {
             mAudioChunks.push(chunk); // Signal end
         }
-#endif
     }
 }
 
@@ -380,7 +390,7 @@ void VideoDisplay::videoBufferThread()
         model::VideoFramePtr videoFrame = mSequence->getNextVideo(model::VideoCompositionParameters().setBoundingBox(wxSize(mWidth,mHeight)).setSkip(skip));
         if (!skip)
         {
-            videoFrame->getBitmap(); // put in cache
+            videoFrame->getBitmap(); // put in cache (avoid having to draw in GUI thread)
             mVideoFrames.push(videoFrame);
         }
         else
@@ -397,36 +407,32 @@ void VideoDisplay::showNextFrame()
         return;
     }
 
-    model::VideoFramePtr videoFrame = mVideoFrames.pop();
-    if (!videoFrame)
-    {
-        // End of video reached
-        return;
-    }
+        model::VideoFramePtr videoFrame = mVideoFrames.pop();
+        if (!videoFrame)
+        {
+            // End of video reached
+            return;
+        }
+
+        double elapsed = Pa_GetStreamTime(mAudioOutputStream) - mStartTime - mAudioLatency; // Elapsed time since playback started
+        double speedfactor = static_cast<double>(sDefaultSpeed) / static_cast<double>(mSpeed);
+        double next = speedfactor * static_cast<double>(model::Convert::ptsToTime(videoFrame->getPts() - mStartPts)) / 1000.0; // time at which the frame must be shown; /1000.0: convert ms to s
+        int sleep = static_cast<int>(floor((next - elapsed) * 1000.0));
+
+        //LOG_ERROR << "Current time: " << std::fixed << elapsed;
+        //LOG_ERROR << "Time to show next frame: " << std::fixed << next;
+        //LOG_ERROR << "Sleep time:" << std::fixed << sleep;
 
     //////////////////////////////////////////////////////////////////////////
     // SCHEDULE NEXT REFRESH
     //////////////////////////////////////////////////////////////////////////
 
-    // Determine elapsed time since playback started
-    double elapsed = Pa_GetStreamTime(mAudioOutputStream) - mStartTime;
-
-    double speedfactor = static_cast<double>(sDefaultSpeed) / static_cast<double>(mSpeed);
-
-    // Determine the time at which the frame must be shown
-    double next = speedfactor * static_cast<double>(model::Convert::ptsToTime(videoFrame->getPts() - mStartPts)) / 1000.0; // /1000.0: convert ms to s
-
-    int sleep = static_cast<int>(floor((next - elapsed) * 1000.0));
-
-    //LOG_ERROR << "Current time: " << std::fixed << elapsed;
-    //LOG_ERROR << "Time to show next frame: " << std::fixed << next;
-    //LOG_ERROR << "Sleep time:" << std::fixed << sleep;
-
     //////////////////////////////////////////////////////////////////////////
     // DISPLAY NEW FRAME
     //////////////////////////////////////////////////////////////////////////
 
-    if (sleep < 0)
+    static const int sMinimumSleepTime = 0;
+    if (sleep < sMinimumSleepTime)
     {
         // Too late, skip the picture
         VAR_WARNING(mVideoFrames.getSize())(mStartTime)(elapsed)(next)(sleep)(mStartPts)(videoFrame->getPts());
@@ -442,16 +448,17 @@ void VideoDisplay::showNextFrame()
         }
 
         sleep = model::Convert::ptsToTime(1);
+//        // Too late, skip pictures
+//        VAR_WARNING(mVideoFrames.getSize())(mStartTime)(sleep)(mStartPts)(videoFrame->getPts());
+//        mSkipFrames = std::max(mSkipFrames * 2,5);
+//        sleep = model::Convert::ptsToTime(mSkipFrames);
     }
     else
     {
         mSkipFrames.store(0);
 
-        pts position = videoFrame->getPts();
-        wxBitmapPtr videoBitmap = videoFrame->getBitmap();
-        ASSERT_DIFFERS(mCurrentVideoFrame->getPts(), position); // Otherwise, all the computations on 'playback time' can behave irratic.
         mCurrentVideoFrame = videoFrame;
-        mCurrentBitmap = videoBitmap;
+        mCurrentBitmap = videoFrame->getBitmap();
 
         // Note:
         // If there is no displayed video frame, do not change the timeline's cursor
@@ -462,7 +469,7 @@ void VideoDisplay::showNextFrame()
         // move in the timeline (home/end/prevclip/nextclip) will cause such an event.
         // In turn, that might cause a change of the scrolling in Cursor::onPlaybackPosition
         // which is not desired for 'user initiated moves'.
-        GetEventHandler()->QueueEvent(new PlaybackPositionEvent(position));
+        GetEventHandler()->QueueEvent(new PlaybackPositionEvent(videoFrame->getPts()));
 
         Refresh(false);
     }
