@@ -90,6 +90,10 @@ private:
     /// milliseconds.
     double mStartTime;
 
+    /// Output latency of PortAudio (diff between what is sent to PortAudio and
+    /// what has already been output by PortAudio).
+    double mAudioLatency;
+
     /// Holds the pts at which the playback was started (thus, the 0-point timewise)
     int mStartPts;
 
