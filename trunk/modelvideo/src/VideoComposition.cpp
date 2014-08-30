@@ -57,29 +57,37 @@ void VideoComposition::add(const VideoFramePtr& frame)
         // Skip empty frames.
         return;
     }
-    ASSERT_EQUALS(frame->getParameters().getBoundingBox(), mParameters.getBoundingBox());
     mFrames.push_back(frame);
 }
 
 VideoFramePtr VideoComposition::generate()
 {
+    model::VideoFramePtr result;
+    bool keyFrame = false;
+
     if (mFrames.empty())
     {
-        return boost::make_shared<EmptyFrame>(mParameters);
+        result = boost::make_shared<EmptyFrame>(mParameters);
     }
-
-    VideoFramePtr result = boost::make_shared<VideoFrame>(mParameters);
-    bool keyFrame = false;
-    VideoFrameLayers layers;
-    for ( auto frame : mFrames )
+    else
     {
-        keyFrame = keyFrame || frame->getForceKeyFrame();
-        for ( auto layer : frame->getLayers() )
+        result = boost::make_shared<VideoFrame>(mParameters);
+        VideoFrameLayers layers;
+        for ( auto frame : mFrames )
         {
-            result->addLayer(layer);
+            keyFrame = keyFrame || frame->getForceKeyFrame();
+            for ( auto layer : frame->getLayers() )
+            {
+                result->addLayer(layer);
+            }
         }
     }
     result->setForceKeyFrame(keyFrame);
+    if (mParameters.hasPts())
+    {
+        result->setPts(mParameters.getPts());
+    }
+
     return result;
 }
 

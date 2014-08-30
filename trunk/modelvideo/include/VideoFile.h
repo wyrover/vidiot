@@ -62,6 +62,8 @@ public:
 
     FrameRate getFrameRate();
 
+    uint64_t getVideoPacketPts();
+
 protected:
 
     //////////////////////////////////////////////////////////////////////////
@@ -80,10 +82,9 @@ private:
 
     bool mDecodingVideo;
     pts mPosition;                  ///< Current position of this clip (set via 'moveTo' or changed via 'getNext')
-    VideoFramePtr mDeliveredFrame;  ///< The most recently returned frame in getNext.
-    pts mDeliveredFrameInputPts;    ///< The input pts (in the input stream) of the most recently delivered frame.
-    boost::shared_ptr<VideoCompositionParameters> mDeliveredFrameParameters; ///< The parameters with which the delivered frame was made
+    VideoFramePtr mDeliveredFrame;  ///< The most recently returned frame in getNext. The pts value stored in this frame is the pts in the input time base (thus, the timebase of the file, and not the timebase of the project).
     SwsContext* mSwsContext;        ///< Software scaling context
+    pts mVideoPacketPts;            ///< (input) pts value for most recent packet fed into the decoder.
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
@@ -104,6 +105,8 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     friend std::ostream& operator<<(std::ostream& os, const VideoFile& obj);
+    void saveDecodedFrame(AVCodecContext* codec, AVFrame* frame, const wxSize& size, int frameFinished);
+    void saveScaledFrame(AVCodecContext* codec, const wxSize& size, VideoFramePtr frame);
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

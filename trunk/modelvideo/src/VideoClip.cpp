@@ -128,50 +128,66 @@ VideoFramePtr VideoClip::getNextVideo(const VideoCompositionParameters& paramete
     bool enforceKeyFrame = false;
     if (getNewStartPosition())
     {
+        // todo remove mProgress: obsolete due to adding pts value to parameters
         mProgress = *getNewStartPosition(); // Reinitialize mProgress to the last value set in ::moveTo
         invalidateNewStartPosition();
         enforceKeyFrame = true; // Every first frame of a clip is forced to be a key frame
     }
 
-    int length = getLength();
+    pts length = getLength();
 
     VideoFramePtr videoFrame;
 
     if (mProgress < length)
     {
-        VideoFilePtr generator = getDataGenerator<VideoFile>();
+        VideoCompositionParameters parametersWithClipLocalPts(parameters);
 
-        if (parameters.getSkip())
+        if (parameters.hasPts())
         {
-            generator->getNextVideo(VideoCompositionParameters(parameters)); // Move the generator also. Discard the resulting frame.
-            videoFrame = boost::make_shared<VideoSkipFrame>(parameters);
+            // During playback, getNextVideo passes through Sequence and Track, and
+            // pts values are filled in.
+            ASSERT_MORE_THAN_EQUALS(parameters.getPts(), getLeftPts());
+            parametersWithClipLocalPts.setPts(parameters.getPts() - getLeftPts());
         }
         else
         {
-            // Scale the clip's size and region of interest to the bounding box
-            // Determine scaling for 'fitting' a clip with size 'projectSize' in a bounding box of size 'size'
-            wxSize outputsize = Properties::get().getVideoSize();
+            // During all non-playback getNextVideo calls (thumbnails, previews of trims, etc.)
+            // no pts is filled in.
+            parametersWithClipLocalPts.setPts(mProgress);
+        }
 
-            boost::rational<int> scaleToBoundingBox(0);
-            wxSize requiredOutputSize = Convert::sizeInBoundingBox(outputsize, parameters.getBoundingBox(), scaleToBoundingBox);
-            ASSERT_NONZERO(scaleToBoundingBox);
-            boost::rational<int> videoscaling = getScalingFactor() * scaleToBoundingBox;
-            wxSize inputsize = generator->getSize();
-            wxSize requiredVideoSize = Convert::scale(inputsize, videoscaling);
+        VideoFilePtr generator = getDataGenerator<VideoFile>();
+        // Scale the clip's size and region of interest to the bounding box
+        // Determine scaling for 'fitting' a clip with size 'projectSize' in a bounding box of size 'size'
+        wxSize outputsize = Properties::get().getVideoSize();
 
-            bool isEmpty = (requiredVideoSize.GetWidth() == 0) || (requiredVideoSize.GetHeight() == 0);
+        boost::rational<int> scaleToBoundingBox(0);
+        wxSize requiredOutputSize = Convert::sizeInBoundingBox(outputsize, parameters.getBoundingBox(), scaleToBoundingBox);
+        ASSERT_NONZERO(scaleToBoundingBox);
+        boost::rational<int> videoscaling = getScalingFactor() * scaleToBoundingBox;
+        wxSize inputsize = generator->getSize();
+        wxSize requiredVideoSize = Convert::scale(inputsize, videoscaling);
 
-            if (isEmpty)
+        bool isEmpty = (requiredVideoSize.GetWidth() == 0) || (requiredVideoSize.GetHeight() == 0);
+
+        if (isEmpty)
+        {
+            videoFrame = boost::make_shared<EmptyFrame>(parameters);
+        }
+        else
+        {
+            // IMPORTANT: When getting video frames 'while' playing the timeline, AND resizing the player in parallel, the returned
+            //            video frame can have a different size than requested!!! This can happen because the previous frame is returned 'again'.
+            //            For this reason, when the videoplayer is resized, playback is stopped.
+            VideoFramePtr fileFrame = generator->getNextVideo(VideoCompositionParameters(parametersWithClipLocalPts).setBoundingBox(requiredVideoSize));
+            if (fileFrame)
             {
-                videoFrame = boost::make_shared<EmptyFrame>(parameters);
-            }
-            else
-            {
-                // IMPORTANT: When getting video frames 'while' playing the timeline, AND resizing the player in parallel, the returned
-                //            video frame can have a different size than requested!!! This can happen because the previous frame is returned 'again'.
-                //            For this reason, when the videoplayer is resized, playback is stopped.
-                VideoFramePtr fileFrame = generator->getNextVideo(VideoCompositionParameters(parameters).setBoundingBox(requiredVideoSize));
-                if (fileFrame)
+                if (parameters.getSkip())
+                {
+                    // No need to apply any transformation, since the returned frame is a skip frame anyway.
+                    videoFrame = fileFrame;
+                }
+                else
                 {
                     ASSERT_EQUALS(fileFrame->getLayers().size(),1);
                     videoFrame = boost::make_shared<VideoFrame>(parameters, fileFrame->getLayers().front());
@@ -179,22 +195,19 @@ VideoFramePtr VideoClip::getNextVideo(const VideoCompositionParameters& paramete
                     videoFrame->getLayers().front()->setOpacity(mOpacity);
                     videoFrame->getLayers().front()->setRotation(mRotation);
                 }
-                else
-                {
-                    // See AudioClip::getNextAudio
-                    // The clip has not provided enough video data yet (for the pts length of the clip)
-                    // but there is no more video data. This can typically happen by using a avi file
-                    // for which the audio data is longer than the video data. Instead of clipping the
-                    // extra audio part, empty video is added here (the user can make the clip shorter if
-                    // required - thus removing the extra audio, but that's a user decision to be made).
-                    LOG_WARNING << *this << ": (" << getDescription() << ") Adding extra video frame to make video length equal to audio length";
-
-                    videoFrame = boost::static_pointer_cast<VideoFrame>(boost::make_shared<EmptyFrame>(parameters));
-                }
+            }
+            else
+            {
+                // See AudioClip::getNextAudio
+                // The clip has not provided enough video data yet (for the pts length of the clip)
+                // but there is no more video data. This can typically happen by using a avi file
+                // for which the audio data is longer than the video data. Instead of clipping the
+                // extra audio part, empty video is added here (the user can make the clip shorter if
+                // required - thus removing the extra audio, but that's a user decision to be made).
+                LOG_WARNING << *this << ": (" << getDescription() << ") Adding extra video frame to make video length equal to audio length";
+                videoFrame = boost::static_pointer_cast<VideoFrame>(boost::make_shared<EmptyFrame>(parameters));
             }
         }
-
-        mProgress++;
     }
 
     if (videoFrame)
@@ -202,8 +215,9 @@ VideoFramePtr VideoClip::getNextVideo(const VideoCompositionParameters& paramete
         // Note: for some clips, due to framerate resampling, the first and second frames might be the exact same frame. However, only for the first one the keyframe flag is desired
         videoFrame->setForceKeyFrame(enforceKeyFrame);
     }
+    mProgress++;
     VAR_VIDEO(videoFrame);
-    setGenerationProgress(mProgress);
+    setGenerationProgress(mProgress); // todo remove this
     return videoFrame;
 }
 

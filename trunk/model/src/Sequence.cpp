@@ -176,13 +176,9 @@ void Sequence::clean()
 
 VideoFramePtr Sequence::getNextVideo(const VideoCompositionParameters& parameters)
 {
-    VideoCompositionPtr composition = getVideoComposition(parameters);
+    VideoCompositionPtr composition = getVideoComposition(VideoCompositionParameters(parameters).setPts(mVideoPosition));
     VideoFramePtr videoFrame = composition->generate();
-    if (videoFrame)
-    {
-        videoFrame->setPts(mVideoPosition);
-        mVideoPosition++;
-    }
+    mVideoPosition++;
     VAR_VIDEO(videoFrame);
     return videoFrame;
 }
