@@ -59,7 +59,7 @@ void DropFilesFromFileSystem(std::list<wxString> filenames)
         files.front().GetDirCount() > 0 &&  // Not a drive root
         !::util::path::hasSubDirectories(files.front()));
     bool onlyFilesDropped =
-        (nFolders == 0 && nFiles > 1);
+        (nFolders == 0 && nFiles >= 1);
 
     // Create project if required.
     if (autocreate)
@@ -148,7 +148,7 @@ void DropFilesFromFileSystem(std::list<wxString> filenames)
             else if (onlyFilesDropped && nodes.size() > 0) // Check for nodes is done to ensure that there are files that can be opened.
             {
                 // Create sequence of all given files
-                wxString sequenceName = _("Sequence");
+                wxString sequenceName = nodes.size() > 1 ? _("Movie") : nodes.front()->getName();
                 model::ProjectModification::submit(new command::ProjectViewCreateSequence(root, sequenceName, nodes));
             }
         }
