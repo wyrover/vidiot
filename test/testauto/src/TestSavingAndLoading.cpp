@@ -198,6 +198,7 @@ void TestSavingAndLoading::checkDocument(wxString path)
     {
         gui::Window::get().GetDocumentManager()->CreateDocument(path,wxDOC_SILENT);
     });
+    // todo store paths in reference files relative not absolute to run test from second trunk copy
 
     // Checks on loaded document
     WaitForIdle();
