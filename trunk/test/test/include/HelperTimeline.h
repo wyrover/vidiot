@@ -197,7 +197,12 @@ void DeselectAllClips();
 
 /// Delete the given clip from the timeline
 /// \param clip clip to be deleted from the timeline
-void DeleteClip(model::IClipPtr clip);
+/// \param shift if true then shift-delete is pressed (shift the other clips into the moved area).
+void DeleteClip(model::IClipPtr clip, bool shift = false);
+
+/// Delete the given clip from the timeline via shift-delete
+/// \param clip clip to be deleted from the timeline
+void ShiftDeleteClip(model::IClipPtr clip);
 
 /// Dump the current sequence.
 void DumpSequence();

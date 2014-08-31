@@ -412,10 +412,24 @@ void DeselectAllClips()
     });
 };
 
-void DeleteClip(model::IClipPtr clip)
+void DeleteClip(model::IClipPtr clip, bool shift)
 {
     TimelineLeftClick(Center(clip));
-    TimelineKeyPress(WXK_DELETE);
+    if (shift)
+    {
+        TimelineKeyDown(WXK_SHIFT);
+        TimelineKeyPress(WXK_DELETE);
+        TimelineKeyUp(WXK_SHIFT);
+    }
+    else
+    {
+        TimelineKeyPress(WXK_DELETE);
+    }
+}
+
+void ShiftDeleteClip(model::IClipPtr clip)
+{
+    DeleteClip(clip,true);
 }
 
 void DumpSequence()
