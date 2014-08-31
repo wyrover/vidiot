@@ -410,5 +410,45 @@ void TestBugs::testPlaybackWithMultipleAudioTracks()
     Play(HCenter(AudioClip(0,0)), 1000);
 }
 
+void TestBugs::testCrashOnShiftDeleteWithMultipleTracks()
+{
+    StartTestSuite();
+    {
+        StartTest("Second video track empty");
+        WindowTriggerMenu(ID_ADDVIDEOTRACK);
+        ASSERT_MORE_THAN(VideoClip(0,5)->getLeftPts(), VideoTrack(1)->getLength());
+        ShiftDeleteClip(VideoClip(0,5));
+        ASSERT_EQUALS(VideoClip(0,5)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,6));
+        Undo();
+    }
+    {
+        StartTest("Second video track nonempty but shorter than track 1");
+        TimelineDragToTrack(1,VideoClip(0,2),model::IClipPtr());
+        ASSERT_VIDEOTRACK1(     EmptyClip      )(VideoClip);
+        ASSERT_MORE_THAN(VideoClip(0,5)->getLeftPts(), VideoTrack(1)->getLength());
+        ShiftDeleteClip(VideoClip(0,5));
+        ASSERT_EQUALS(VideoClip(0,5)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,6));
+        Undo();
+    }
+    Undo(); // Add video track
+    {
+        StartTest("Second audio track empty");
+        WindowTriggerMenu(ID_ADDAUDIOTRACK);
+        ASSERT_MORE_THAN(AudioClip(0,5)->getLeftPts(), AudioTrack(1)->getLength());
+        ShiftDeleteClip(AudioClip(0,5));
+        ASSERT_EQUALS(AudioClip(0,5)->getLength(), mProjectFixture.OriginalLengthOfAudioClip(0,6));
+        Undo();
+    }
+    {
+        StartTest("Second audio track nonempty but shorter than track 1");
+        TimelineDragToTrack(1,model::IClipPtr(),AudioClip(0,2));
+        ASSERT_AUDIOTRACK1(     EmptyClip      )(AudioClip);
+        ASSERT_MORE_THAN(AudioClip(0,5)->getLeftPts(), AudioTrack(1)->getLength());
+        ShiftDeleteClip(AudioClip(0,5));
+        ASSERT_EQUALS(AudioClip(0,5)->getLength(), mProjectFixture.OriginalLengthOfAudioClip(0,6));
+        Undo();
+    }
+    Undo(); // Add audio track
+}
 
 } // namespace

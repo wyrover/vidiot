@@ -131,6 +131,11 @@ public:
     /// Had a crash in the soundtouch handling of small chunk sizes (< 4 samples).
     void testPlaybackWithMultipleAudioTracks();
 
+    /// See [#132]. A crash occurred when pressing shift-delete in case there were multiple
+    /// (video, in this case) tracks, and the deleted clips' position was larger than the 
+    /// length of one of the other tracks.
+    void testCrashOnShiftDeleteWithMultipleTracks();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////

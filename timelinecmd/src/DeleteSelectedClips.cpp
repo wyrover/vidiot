@@ -128,18 +128,22 @@ void DeleteSelectedClips::initialize()
                 for ( PtsInterval interval : remainingRegionInTrack )
                 {
                    model::IClipPtr clip = track->getClip(interval.lower());
-                   if (clip->isA<model::EmptyClip>() &&
-                       clip->getLeftPts() <= interval.lower() &&
-                       clip->getRightPts() >= interval.upper())
+                   if (clip)
                    {
-                       ASSERT_MAP_CONTAINS_NOT(emptyClipsToBeSplit, clip);
-                       emptyClipsToBeSplit[clip] = interval;
+                       if (clip->isA<model::EmptyClip>() &&
+                           clip->getLeftPts() <= interval.lower() &&
+                           clip->getRightPts() >= interval.upper())
+                       {
+                           ASSERT_MAP_CONTAINS_NOT(emptyClipsToBeSplit, clip);
+                           emptyClipsToBeSplit[clip] = interval;
+                       }
+                       else
+                       {
+                           doShift = false;
+                           break;
+                       }
                    }
-                   else
-                   {
-                       doShift = false;
-                       break;
-                   }
+                   // else: No clips in other track. Ok.
                 }
             }
         }
