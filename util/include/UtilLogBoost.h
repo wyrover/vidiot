@@ -18,8 +18,10 @@
 #ifndef UTIL_LOG_BOOST_H
 #define UTIL_LOG_BOOST_H
 
+namespace boost {
+
 template <class K, class L, class M>
-std::ostream& operator<<(std::ostream& os, const boost::tuple<K,L,M>& obj)
+std::ostream& operator<<(std::ostream& os, const tuple<K,L,M>& obj)
 {
     os  << "{"
         << obj.template get<0>()
@@ -29,6 +31,22 @@ std::ostream& operator<<(std::ostream& os, const boost::tuple<K,L,M>& obj)
         << obj.template get<2>()
         << "}";
     return os;
+}
+
+template <class K>
+std::ostream& operator<<(std::ostream& os, const optional<K>& obj)
+{
+    if (obj)
+    {
+        os  << *obj;
+    }
+    else
+    {
+        os << '_';
+    }
+    return os;
+}
+
 }
 
 #endif
