@@ -136,6 +136,16 @@ public:
     /// length of one of the other tracks.
     void testCrashOnShiftDeleteWithMultipleTracks();
 
+    /// See [#133]. Crash occurred when doing the following:
+    /// Make transition between two clips such that the transition is completely to the right of
+    /// the cut between the two clips. When starting a trim (via the mouse) on the left edge 
+    /// of the transition, the crash occurred.
+    void testCrashWhenTrimmingWithTransitionOnOneSideOfCut();
+
+    /// See [#133]. After fixing the crash, trimming does not work when starting the trim on
+    /// the 'other' side of the transiton.
+    void testTrimmingWithTransitionOnOneSideOfCut();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////

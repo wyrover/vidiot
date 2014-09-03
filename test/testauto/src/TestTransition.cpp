@@ -1104,42 +1104,62 @@ void TestTransition::testSplitNearZeroLengthEdgeOfTransition()
     {
         StartTest("Left size is 0");
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
-
         // Reduce left part of transition to 0
         wxPoint from = VTopQuarterLeft(VideoClip(0,2));
         TimelineTrim(from,from + wxPoint(100,0));
-        
         pts length1 = VideoClip(0,1)->getLength();
-        pts length2 = VideoClip(0,3)->getLength();
-        
-        TimelinePositionCursor(10); // Was required to get the next position properly
-        TimelinePositionCursor(LeftPixel(VideoClip(0,2))); // Ensure that the split is done exactly at the left edge of the transition
-        TimelineKeyPress('s');
-        
-        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip); // Transition removed
-        ASSERT_EQUALS(VideoClip(0,1)->getLength(), length1);
-        ASSERT_EQUALS(VideoClip(0,2)->getLength(), length2 + defaultTransitionLength / 2); // The clip part under the transition is 'added to the adjacent clip'
-        Undo(2);
+        pts length2 = VideoClip(0,2)->getLength();
+        pts length3 = VideoClip(0,3)->getLength();
+        {
+            StartTest("Left size is 0, position the split near, but not ON the cut");
+            TimelinePositionCursor(RightPixel(VideoClip(0,1))); // Ensure that the split is done near at the left edge of the transition, but ON the adjacent clip
+            TimelineKeyPress('s');
+            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(Transition)(VideoClip); // Transition NOT removed, there is still part of the clip available
+            ASSERT_EQUALS(VideoClip(0,1)->getLength() + VideoClip(0,2)->getLength(), length1);
+            ASSERT_EQUALS(VideoClip(0,3)->getLength(), length2);
+            ASSERT_EQUALS(VideoClip(0,4)->getLength(), length3);
+            Undo();
+        }
+        {
+            StartTest("Left size is 0, position the split ON the cut");
+            TimelinePositionCursor(LeftPixel(VideoClip(0,2))); // Ensure that the split is done exactly at the left edge of the transition
+            TimelineKeyPress('s');
+            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip); // Transition removed
+            ASSERT_EQUALS(VideoClip(0,1)->getLength(), length1);
+            ASSERT_EQUALS(VideoClip(0,2)->getLength(), length2 + length3); // The clip part under the transition is 'added to the adjacent clip'
+            Undo();
+        }
+        Undo();
     }
     {
         StartTest("Right size is 0");
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
-        
         // Reduce right part of transition to 0
         wxPoint from = VTopQuarterRight(VideoClip(0,2));
         TimelineTrim(from,from + wxPoint(-100,0));
-
         pts length1 = VideoClip(0,1)->getLength();
-        pts length2 = VideoClip(0,3)->getLength();
-        
-        TimelinePositionCursor(10); // Was required to get the next position properly
-        TimelinePositionCursor(LeftPixel(VideoClip(0,3))); // Ensure that the split is done exactly at the right edge of the transition
-        TimelineKeyPress('s');
-        
-        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip); // Transition removed
-        ASSERT_EQUALS(VideoClip(0,1)->getLength(), length1 + defaultTransitionLength / 2); // The clip part under the transition is 'added to the adjacent clip'
-        ASSERT_EQUALS(VideoClip(0,2)->getLength(), length2);
-        Undo(2);
+        pts length2 = VideoClip(0,2)->getLength();
+        pts length3 = VideoClip(0,3)->getLength();
+        {
+            StartTest("Right size is 0, position the split near, but not ON the cut");
+            TimelinePositionCursor(LeftPixel(VideoClip(0,3))); // Ensure that the split is done near the right edge of the transition, but ON the adjacent clip
+            TimelineKeyPress('s');
+            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip); // Transition NOT removed, there is still part of the clip available
+            ASSERT_EQUALS(VideoClip(0,1)->getLength(), length1);
+            ASSERT_EQUALS(VideoClip(0,2)->getLength(), length2);
+            ASSERT_EQUALS(VideoClip(0,3)->getLength() + VideoClip(0,4)->getLength(), length3);
+            Undo();
+        }
+        {
+            StartTest("Right size is 0, position the split ON the cut");
+            TimelinePositionCursor(RightPixel(VideoClip(0,2))); // Ensure that the split is done exactly at the right edge of the transition
+            TimelineKeyPress('s');
+            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip); // Transition removed
+            ASSERT_EQUALS(VideoClip(0,1)->getLength(), length1 + length2); // The clip part under the transition is 'added to the adjacent clip'
+            ASSERT_EQUALS(VideoClip(0,2)->getLength(), length3);
+            Undo();
+        }
+        Undo();
     }
 }
 

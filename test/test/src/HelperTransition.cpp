@@ -19,6 +19,32 @@
 
 namespace test {
 
+void MakeVideoTransitionLeftPart0(int trackNumber, int clipNumber)
+{
+    model::TransitionPtr transitionBefore = VideoTransition(trackNumber,clipNumber);
+    ASSERT(transitionBefore);
+    ASSERT_MORE_THAN_ZERO(*(transitionBefore->getLeft()));
+    ASSERT_MORE_THAN_ZERO(*(transitionBefore->getRight()));
+    wxPoint from = VTopQuarterLeft(VideoClip(trackNumber,clipNumber));
+    TimelineTrim(from,from + wxPoint(100,0));
+    model::TransitionPtr transitionAfter = VideoTransition(trackNumber,clipNumber);
+    ASSERT_ZERO(*(transitionAfter->getLeft()));
+    ASSERT_MORE_THAN_ZERO(*(transitionAfter->getRight()));
+}
+
+void MakeVideoTransitionRightPart0(int trackNumber, int clipNumber)
+{
+    model::TransitionPtr transitionBefore = VideoTransition(trackNumber,clipNumber);
+    ASSERT(transitionBefore);
+    ASSERT_MORE_THAN_ZERO(*(transitionBefore->getLeft()));
+    ASSERT_MORE_THAN_ZERO(*(transitionBefore->getRight()));
+    wxPoint from = VTopQuarterRight(VideoClip(trackNumber,clipNumber));
+    TimelineTrim(from,from + wxPoint(-100,0));
+    model::TransitionPtr transitionAfter = VideoTransition(trackNumber,clipNumber);
+    ASSERT_ZERO(*(transitionAfter->getRight()));
+    ASSERT_MORE_THAN_ZERO(*(transitionAfter->getLeft()));
+}
+
 void ASSERT_LOGICALCLIPPOSITION(wxPoint position, gui::timeline::MouseOnClipPosition expected)
 {
     // This assert is done to detect some 'clicking' problems as soon as possible. With some zoom

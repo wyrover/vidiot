@@ -336,12 +336,14 @@ void TrimClip::removeTransition()
         // Do not use mTrim here. That is initialized AFTER this method!
         if (!mShift && 
             transition && 
-            transition->getLeft()  && *(transition->getLeft()) > 0 && 
-            transition->getRight() && *(transition->getRight()) > 0)
+            transition->getLeft() && 
+            transition->getRight())
         {
+            ASSERT_MORE_THAN_EQUALS_ZERO(*(transition->getLeft()));
+            ASSERT_MORE_THAN_EQUALS_ZERO(*(transition->getRight()));
             // Only in case
             // - No shift trim is applied
-            // - the clip is part of a transition (and that side of the transition is trimmed)
+            // - the clip is part of a transition
             // - the transition is an InOut transition
             // it must be unapplied.
             model::IClips replacements = unapplyTransition(transition);

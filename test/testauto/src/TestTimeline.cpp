@@ -40,6 +40,7 @@ void TestTimeline::tearDown()
 void TestTimeline::testSelection()
 {
     StartTestSuite();
+    TimelineZoomIn(4);
     const model::IClips& clips = getSequence()->getVideoTrack(0)->getClips();
     {
         StartTest("Start application, make sequence, shift click clip five. Only clip five selected!");
@@ -339,6 +340,7 @@ void TestTimeline::testDeletionWithUnlinkedClips()
 void TestTimeline::testUndo()
 {
     StartTestSuite();
+    TimelineZoomIn(2);
     ConfigFixture.SnapToClips(true);
     pts length = VideoClip(0,3)->getLength();
     TimelineDrag(From(Center(VideoClip(0,3))).To(wxPoint(2,Center(VideoClip(0,3)).y)));
