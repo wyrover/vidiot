@@ -221,7 +221,7 @@ void TestDragAndDrop::testDropAdjacentToTransition()
     ConfigOverruleBool overruleSnapToCursor(Config::sPathSnapClips,false);
     ConfigOverruleBool overruleSnapToClips(Config::sPathSnapCursor,true);
 
-    TimelineZoomIn(2);
+    TimelineZoomIn(4);
     {
         StartTest("InOutTransition: Drop adjacent to left edge");
         MakeInOutTransitionAfterClip prepare(2);
@@ -286,39 +286,76 @@ void TestDragAndDrop::testDropAdjacentToTransition()
     }
 }
 
-void TestDragAndDrop::testDropAdjacentToZeroLengthSideOfInOutTransition()
+void TestDragAndDrop::testDragZeroLengthSideOfTransition()
 {
     StartTestSuite();
     ConfigOverruleBool overruleSnapToCursor(Config::sPathSnapClips,false);
-    ConfigOverruleBool overruleSnapToClips(Config::sPathSnapCursor,true);
-    TimelineZoomIn(2);
+    ConfigOverruleBool overruleSnapToClips(Config::sPathSnapCursor,false);
+    TimelineZoomIn(4);
+    TimelinePositionCursor(10);
     MakeInOutTransitionAfterClip preparation(2);
     {
         StartTest("Left size is 0, drag left clip");
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(Transition);
-
-        // Reduce left part of transition to 0
-        wxPoint from = VTopQuarterLeft(VideoClip(0,3));
-        TimelineTrim(from,from + wxPoint(100,0));
-        
+        MakeVideoTransitionLeftPart0(0,3);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(Transition)(VideoClip);
-        TimelinePositionCursor(10);
         TimelineDrag(From(Center(VideoClip(0,2))).AlignLeft(LeftPixel(VideoClip(0,5))));
-        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(EmptyClip)(VideoClip)(VideoClip);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(EmptyClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip);
         Undo(2);
     }
     {
         StartTest("Right size is 0, drag right clip");
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(Transition);
-
-        // Reduce right part of transition to 0
-        wxPoint from = VTopQuarterRight(VideoClip(0,3));
-        TimelineTrim(from,from + wxPoint(-100,0));
-
+        MakeVideoTransitionRightPart0(0,3);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(Transition)(VideoClip);
-        TimelinePositionCursor(10);
         TimelineDrag(From(Center(VideoClip(0,4))).AlignRight(RightPixel(VideoClip(0,5))));
-        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(EmptyClip)(VideoClip);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(EmptyClip)(VideoClip)(VideoClip)(VideoClip);
+        Undo(2);
+    }
+}
+
+void TestDragAndDrop::testDropZeroLengthSideOfTransition()
+{
+    StartTestSuite();
+    ConfigOverruleBool overruleSnapToCursor(Config::sPathSnapClips,false);
+    ConfigOverruleBool overruleSnapToClips(Config::sPathSnapCursor,false);
+    TimelineZoomIn(4);
+    TimelinePositionCursor(10);
+    MakeInOutTransitionAfterClip preparation(2);
+    {
+        StartTest("Left size is 0, drop on cut");
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(Transition);
+        MakeVideoTransitionLeftPart0(0,3);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(Transition)(VideoClip);
+        TimelineDrag(From(Center(VideoClip(0,7))).AlignRight(LeftPixel(VideoClip(0,3))));
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip);
+        Undo(2);
+    }
+    {
+        StartTest("Left size is 0, drop besides cut (a bit to the left)");
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(Transition);
+        MakeVideoTransitionLeftPart0(0,3);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(Transition)(VideoClip);
+        TimelineDrag(From(Center(VideoClip(0,7))).AlignRight(LeftPixel(VideoClip(0,3)) - 4));
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip)(Transition)(VideoClip);
+        Undo(2);
+    }
+    {
+        StartTest("Right size is 0, drop on cut");
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(Transition);
+        MakeVideoTransitionRightPart0(0,3);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(Transition)(VideoClip);
+        TimelineDrag(From(Center(VideoClip(0,7))).AlignLeft(RightPixel(VideoClip(0,3))));
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip);
+        Undo(2);
+    }
+    {
+        StartTest("Right size is 0, drop besides cut (a bit to the right)");
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(Transition);
+        MakeVideoTransitionRightPart0(0,3);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(Transition)(VideoClip);
+        TimelineDrag(From(Center(VideoClip(0,7))).AlignLeft(RightPixel(VideoClip(0,3)) + 4));
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(Transition)(VideoClip);
         Undo(2);
     }
 }

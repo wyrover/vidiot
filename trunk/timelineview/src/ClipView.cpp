@@ -308,13 +308,26 @@ void ClipView::getPositionInfo(const wxPoint& position, PointerPositionInfo& inf
     {
         model::IClipPtr next = mClip->getNext();
         model::IClipPtr prev = mClip->getPrev();
-        if ((dist_begin < Layout::CursorClipEditDistance) && (!prev || !prev->isA<model::Transition>()))
+        model::TransitionPtr prevTransition = boost::dynamic_pointer_cast<model::Transition>(prev);
+        model::TransitionPtr nextTransition = boost::dynamic_pointer_cast<model::Transition>(next);
+
+        if ((dist_begin < Layout::CursorClipEditDistance) && (!prev || !prevTransition))
         {
             info.logicalclipposition = ClipBegin;
         }
-        else if ((dist_end < Layout::CursorClipEditDistance) && (!next || !next->isA<model::Transition>()))
+        else if ((dist_begin < Layout::CursorClipEditDistance) && prevTransition && prevTransition->getRight())
+        {
+            info.logicalclipposition = TransitionRightClipBegin;
+            info.clip = prevTransition;
+        }
+        else if ((dist_end < Layout::CursorClipEditDistance) && (!next || !nextTransition))
         {
             info.logicalclipposition = ClipEnd;
+        }
+        else if ((dist_end < Layout::CursorClipEditDistance) && nextTransition && nextTransition->getLeft())
+        {
+            info.logicalclipposition = TransitionLeftClipEnd;
+            info.clip = nextTransition;
         }
         else
         {

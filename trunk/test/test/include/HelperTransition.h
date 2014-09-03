@@ -22,6 +22,14 @@
 
 namespace test {
 
+/// Make the left part (the part to the left of the cut between the two clips
+/// in the transition) 0 length.
+void MakeVideoTransitionLeftPart0(int trackNumber, int clipNumber);
+
+/// Make the right part (the part to the right of the cut between the two clips
+/// in the transition) 0 length.
+void MakeVideoTransitionRightPart0(int trackNumber, int clipNumber);
+
 wxPoint TransitionLeftClipInterior(model::IClipPtr clip);
 wxPoint TransitionLeftClipEnd(model::IClipPtr clip);
 wxPoint TransitionRightClipInterior(model::IClipPtr clip);

@@ -451,4 +451,102 @@ void TestBugs::testCrashOnShiftDeleteWithMultipleTracks()
     Undo(); // Add audio track
 }
 
+void TestBugs::testCrashWhenTrimmingWithTransitionOnOneSideOfCut()
+{
+    StartTestSuite();
+    TimelineZoomIn(3);
+    {
+        StartTest("Left edge");
+        TimelineTrimRight(VideoClip(0,3), -20);
+        TimelineMove(RightCenter(VideoClip(0,3)));
+        TimelineKeyPress('c'); // Create the transition
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip)(Transition)(VideoClip);
+        wxPoint position(LeftPixel(VideoClip(0,4)), VCenter(VideoClip(0,5)));
+        StartTest("Left edge: Click");
+        TimelineLeftClick(position); // Caused crash: click under the left edge of the transition
+        StartTest("Left edge: Trim");
+        TimelineTrim(position,position + wxPoint(20,0),false,true);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip)(EmptyClip)(VideoClip);
+        Undo();
+        StartTest("Left edge: Shift trim");
+        TimelineTrim(position,position + wxPoint(20,0),true,true);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip)(Transition)(VideoClip);
+        Undo(2);
+    }
+    {
+        StartTest("Right edge");
+        TimelineTrimLeft(VideoClip(0,3), 20);
+        TimelineMove(LeftCenter(VideoClip(0,3)));
+        TimelineKeyPress('c'); // Create the transition
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
+        wxPoint position(RightPixel(VideoClip(0,3)), VCenter(VideoClip(0,2)));
+        StartTest("Right edge: Click");
+        TimelineLeftClick(position); // Caused crash: click under the right edge of the transition
+        StartTest("Right edge: Trim");
+        TimelineTrim(position,position - wxPoint(20,0),false,true);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(EmptyClip)(VideoClip)(VideoClip);
+        Undo();
+        StartTest("Right edge: Shift trim");
+        TimelineTrim(position,position - wxPoint(20,0),true,true);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
+        Undo(2);
+    }
+}
+
+void TestBugs::testTrimmingWithTransitionOnOneSideOfCut()
+{
+    StartTestSuite();
+    TimelineZoomIn(3);
+    {
+        StartTest("Left edge");
+        TimelineTrimRight(VideoClip(0,1), -20);
+        TimelineMove(RightCenter(VideoClip(0,1)));
+        TimelineKeyPress('c'); // Create the transition
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
+        // Due to the 'rounding errors correction' in test::RightPixel(), RightPixel moves 
+        // left until the requested clip is returned. However, for this specific scenario 
+        // we want to get a pixel position that is beyond the given clip's 'rightmost' 
+        // position as returned by RightPixel. Hence, the +1.
+        pixel right = RightPixel(VideoClip(0,1)) + 1;
+        wxPoint position(right, VCenter(VideoClip(0,1)));
+        ASSERT_EQUALS(getTimeline().getMouse().getInfo(position).logicalclipposition, ::gui::timeline::TransitionLeftClipEnd);
+        pts length = VideoClip(0,1)->getLength();
+        StartTest("Right edge: Trim");
+        TimelineTrim(position,position - wxPoint(20,0),false,true);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(EmptyClip)(VideoClip);
+        ASSERT_LESS_THAN(VideoClip(0,1)->getLength(),length);
+        Undo();
+        StartTest("Right edge: Shift trim");
+        TimelineTrim(position,position - wxPoint(20,0),true,true);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
+        ASSERT_LESS_THAN(VideoClip(0,1)->getLength(),length);
+        Undo(2);
+    }
+    {
+        StartTest("Right edge");
+        TimelineTrimLeft(VideoClip(0,1), 20);
+        TimelineMove(LeftCenter(VideoClip(0,1)));
+        TimelineKeyPress('c'); // Create the transition
+        ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip)(VideoClip);
+        // Due to the 'rounding errors correction' in test::LeftPixel(), LeftPixel moves
+        // right until the requested clip is returned. However, for this specific scenario 
+        // we want to get a pixel position that is beyond the given clip's 'leftmost'
+        // position as returned by LeftPixel. Hence, the -1.
+        pixel left = LeftPixel(VideoClip(0,2)) - 1;
+        wxPoint position(left, VCenter(VideoClip(0,1)));
+        pts length = VideoClip(0,2)->getLength();
+        StartTest("Left edge: Trim");
+        TimelineTrim(position,position + wxPoint(20,0),false,true);
+        ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(VideoClip);
+        ASSERT_LESS_THAN(VideoClip(0,2)->getLength(),length);
+        Undo();
+        StartTest("Left edge: Shift trim");
+        TimelineTrim(position,position + wxPoint(20,0),true,true);
+        ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip)(VideoClip);
+        ASSERT_LESS_THAN(VideoClip(0,2)->getLength(),length);
+        Undo(2);
+    }
+}
+
+
 } // namespace

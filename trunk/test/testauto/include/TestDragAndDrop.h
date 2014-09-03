@@ -55,7 +55,11 @@ public:
 
     /// A crossfade for which one of the sides has length 0 requires extra 
     /// handling when doing actions exactly along the 0 length side.
-    void testDropAdjacentToZeroLengthSideOfInOutTransition();
+    void testDragZeroLengthSideOfTransition();
+
+    /// A crossfade for which one of the sides has length 0 requires extra 
+    /// handling when doing actions exactly along the 0 length side.
+    void testDropZeroLengthSideOfTransition();
 
 private:
 
