@@ -21,6 +21,7 @@
 #include "Track.h"
 #include "UtilClone.h"
 #include "UtilLog.h"
+#include "UtilLogBoost.h"
 #include "UtilSerializeBoost.h"
 
 namespace model {
