@@ -146,6 +146,10 @@ public:
     /// the 'other' side of the transiton.
     void testTrimmingWithTransitionOnOneSideOfCut();
 
+    /// See [#126]. Snap to cursor caused the dragged clip's left position to be moved to a 
+    /// position < 0, resulting in assert.
+    void testSnapClipBeforeBeginOfTimeline();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////

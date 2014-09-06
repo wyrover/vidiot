@@ -719,6 +719,9 @@ void Drag::determineSnapOffset()
         pts minDiff = Layout::SnapDistance + 1; // To ensure that the first found point will change this value
         std::list<pts>::const_iterator itTimeline = mSnapPoints.begin();
         std::list<pts>::const_iterator itDrag = mDragPoints.begin();
+        ASSERT(itDrag != mDragPoints.end());
+        pts leftMostDragPoint = *itDrag;
+
         while ( itTimeline != mSnapPoints.end() && itDrag != mDragPoints.end() )
         {
             pts pts_timeline = *itTimeline;
@@ -727,15 +730,22 @@ void Drag::determineSnapOffset()
             pts diff = abs(pts_drag - pts_timeline);
             if (diff <= Layout::SnapDistance)
             {
-                // This snap point is closer than the currently stored snap point, or it is equally
-                // close, but is closer to the mouse pointer.
-                if ((diff < minDiff) ||
-                    ((diff == minDiff) && (abs(pts_drag - ptsmouse) < abs(snapPoint - ptsmouse))))
+                pts offset = pts_timeline - pts_drag;
+                pts leftMostPointAfterDropping = leftMostDragPoint + offset + getDraggedPtsDistance();
+                if (leftMostPointAfterDropping >= 0) // Avoid dropping 'before' position '0'.
                 {
-                    minDiff = diff;
-                    snapPoint = pts_timeline;
-                    snapOffset = pts_timeline - pts_drag;
+                    // The snapping may not cause the leftmost drag position to be moved before 0
+                    if (((diff < minDiff) ||
+                        ((diff == minDiff) && (abs(pts_drag - ptsmouse) < abs(snapPoint - ptsmouse)))))
+                    {
+                        // This snap point is closer than the currently stored snap point, or it is equally
+                        // close, but is closer to the mouse pointer.
+                        minDiff = diff;
+                        snapPoint = pts_timeline;
+                        snapOffset = offset;
+                    }
                 }
+
             }
             if (pts_timeline <= pts_drag)
             {

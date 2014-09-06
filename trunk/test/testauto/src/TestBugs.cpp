@@ -548,5 +548,20 @@ void TestBugs::testTrimmingWithTransitionOnOneSideOfCut()
     }
 }
 
+void TestBugs::testSnapClipBeforeBeginOfTimeline()
+{
+    StartTestSuite();
+    ConfigOverruleBool overruleSnapToCursor(Config::sPathSnapClips,false);
+    ConfigOverruleBool overruleSnapToClips(Config::sPathSnapCursor,true);
+    TimelineZoomIn(5);
+    StartTest("Snap to cursor");
+    ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip);
+    TimelinePositionCursor(RightPixel(VideoClip(0,0)) - 1);
+    TimelineDrag(From(Center(VideoClip(0,0))).To(Center(VideoClip(0,3))).DontReleaseMouse());
+    TimelineDrag(To(Center(VideoClip(0,0))));
+    ASSERT_EQUALS(VideoClip(0,0)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,0));
+    ASSERT_EQUALS(VideoClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1));
+    ASSERT_EQUALS(VideoClip(0,2)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,2));
+}
 
 } // namespace
