@@ -579,6 +579,7 @@ void Timeline::modelChanged()
     // - reset model::Track iterators
     // - start at the last played position (and not start at the "buffered" position)
     getPlayer()->moveTo(getTimeline().getCursor().getLogicalPosition());
+    getPlayer()->updateLength();
 }
 
 //////////////////////////////////////////////////////////////////////////
