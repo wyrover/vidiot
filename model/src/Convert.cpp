@@ -75,7 +75,7 @@ pts Convert::microsecondsToPts(microseconds us)
 }
 
 // static
-wxString Convert::msToHumanReadibleString(milliseconds ms)
+wxString Convert::msToHumanReadibleString(milliseconds ms, bool minutesAlways, bool hoursAlways)
 {
     std::ostringstream o;
 
@@ -83,11 +83,11 @@ wxString Convert::msToHumanReadibleString(milliseconds ms)
     lldiv_t divminutes = lldiv(divhours.rem,    Constants::sMinute);
     lldiv_t divseconds = lldiv(divminutes.rem,  Constants::sSecond);
 
-    if (divhours.quot > 0)
+    if (divhours.quot > 0 || hoursAlways)
     {
         o << std::setw(2) << std::setfill('0') << divhours.quot << ':';
     }
-    if (divminutes.quot > 0)
+    if (divminutes.quot > 0 || minutesAlways)
     {
         o << std::setw(2) << std::setfill('0') << divminutes.quot << ':';
     }
@@ -96,9 +96,9 @@ wxString Convert::msToHumanReadibleString(milliseconds ms)
 }
 
 // static
-wxString Convert::ptsToHumanReadibleString(pts duration)
+wxString Convert::ptsToHumanReadibleString(pts duration, bool minutesAlways, bool hoursAlways)
 {
-    return msToHumanReadibleString(ptsToTime(duration));
+    return msToHumanReadibleString(ptsToTime(duration), minutesAlways, hoursAlways);
 }
 
 // static

@@ -124,6 +124,7 @@ void Config::init(const wxString& applicationName, const wxString& vendorName, b
     checkBool(Config::sPathShowBoundingBox);
     checkLong(Config::sPathDebugMaxRenderLength, 0, 1000000);
     checkBool(Config::sPathDebugShowCrashMenu);
+    checkBool(Config::sPathDebugShowFrameNumbers);
     checkBool(Config::sPathDebugIncludeScreenShot);
     checkBool(Config::sPathDebugLogSequenceOnEdit);
 
@@ -135,6 +136,7 @@ void Config::init(const wxString& applicationName, const wxString& vendorName, b
     setDefault(Config::sPathDebugLogSequenceOnEdit, false);
     setDefault(Config::sPathDebugMaxRenderLength, 0); // Per default, render all
     setDefault(Config::sPathDebugShowCrashMenu, false);
+    setDefault(Config::sPathDebugShowFrameNumbers, false);
     setDefault(Config::sPathDefaultAudioChannels, 2);
     setDefault(Config::sPathDefaultAudioSampleRate, 44100);
     setDefault(Config::sPathDefaultExtension, "avi");
@@ -411,6 +413,7 @@ const wxString Config::sPathDebugIncludeScreenShot      ("/Debug/Screenshot");
 const wxString Config::sPathDebugLogSequenceOnEdit      ("/Debug/LogSequenceOnEdit");
 const wxString Config::sPathDebugMaxRenderLength        ("/Debug/MaxRenderLength");
 const wxString Config::sPathDebugShowCrashMenu          ("/Debug/ShowCrashMenu");
+const wxString Config::sPathDebugShowFrameNumbers       ("/Debug/ShowFrameNumbers");
 const wxString Config::sPathDefaultAudioChannels        ("/Audio/DefaultNumberOfChannels");
 const wxString Config::sPathDefaultAudioSampleRate      ("/Audio/DefaultSampleRate");
 const wxString Config::sPathDefaultExtension            ("/File/DefaultExtension");

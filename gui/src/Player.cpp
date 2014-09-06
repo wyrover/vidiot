@@ -52,6 +52,7 @@ namespace gui {
 Player::Player(wxWindow *parent, model::SequencePtr sequence, wxWindow* focus)
 :   wxPanel(parent, wxID_ANY)
 ,   mFocus(focus)
+,   mLength(0)
 ,   mPosition(0)
 ,   mHomeButton(0)
 ,   mPreviousButton(0)
@@ -141,6 +142,8 @@ Player::Player(wxWindow *parent, model::SequencePtr sequence, wxWindow* focus)
     sizer->Add(mButtonsPanel,   wxSizerFlags(0).Expand().Bottom().Center());
     sizer->Hide(mEdit);
     SetSizerAndFit(sizer);
+
+    updateLength();
 }
 
 Player::~Player()
@@ -224,6 +227,12 @@ wxSize Player::getVideoSize() const
     return mDisplay->GetClientSize();
 }
 
+void Player::updateLength()
+{
+    mLength = mDisplay->getSequence()->getLength();
+    updateStatus();
+}
+
 //////////////////////////////////////////////////////////////////////////
 // GUI EVENTS
 //////////////////////////////////////////////////////////////////////////
@@ -236,11 +245,8 @@ void Player::onPlaybackActive(PlaybackActiveEvent& event)
 
 void Player::onPlaybackPosition(PlaybackPositionEvent& event) // make playbackstart/stop event for letting the timeline know
 {
-    mPosition = event.getValue();//getPts();
-    int time = model::Convert::ptsToTime(mPosition);
-    wxDateTime t(time / model::Constants::sHour, (time % model::Constants::sHour) / model::Constants::sMinute, (time % model::Constants::sMinute) / model::Constants::sSecond, time % model::Constants::sSecond);
-    wxString s = t.Format("%H:%M:%S.%l") + wxString::Format(" [%10" PRId64 "]", mPosition);
-    mStatus->ChangeValue(s);
+    mPosition = event.getValue();
+    updateStatus();
 
     // NOT: event.Skip(); - Only the player handles this event. Forwards it if necessary. This event is only needed to detach from the video display thread.
     GetEventHandler()->QueueEvent(new PlaybackPositionEvent(event)); // Event must be sent by the player. Other components don't see the videodisplay.
@@ -391,6 +397,19 @@ void Player::endEdit()
     GetSizer()->Show(mDisplay);
     GetSizer()->Layout();
     mEdit->show(boost::shared_ptr<wxBitmap>());
+}
+
+void Player::updateStatus()
+{
+    milliseconds time = model::Convert::ptsToTime(mPosition);
+    bool showHours =  time >= model::Constants::sHour;
+    wxDateTime t(time / model::Constants::sHour, (time % model::Constants::sHour) / model::Constants::sMinute, (time % model::Constants::sMinute) / model::Constants::sSecond, time % model::Constants::sSecond);
+    wxString s = model::Convert::ptsToHumanReadibleString(mPosition, true, showHours) + " / " + model::Convert::ptsToHumanReadibleString(mLength, true, showHours);
+    if (Config::ReadBool(Config::sPathDebugShowFrameNumbers))
+    {
+        s += wxString::Format(" [%10" PRId64 "]", mPosition);
+    }
+    mStatus->ChangeValue(s);
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -114,6 +114,7 @@ public:
     static const wxString sPathDebugLogSequenceOnEdit;
     static const wxString sPathDebugMaxRenderLength;
     static const wxString sPathDebugShowCrashMenu;
+    static const wxString sPathDebugShowFrameNumbers;
     static const wxString sPathDefaultAudioChannels;
     static const wxString sPathDefaultAudioSampleRate;
     static const wxString sPathDefaultExtension;

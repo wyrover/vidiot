@@ -69,12 +69,16 @@ public:
     /// If the time is less than an hour (or less then a minute) then no hours (or minutes)
     /// indicators are shown.
     /// \param ms time interval in milliseconds
-    static wxString msToHumanReadibleString(milliseconds ms);
+    /// \param minutesAlways if true, then minutes are shown even if the total time is less than one minute
+    /// \param hoursAlways if true, then hours are shown even if the total time is less than one hour
+    static wxString msToHumanReadibleString(milliseconds ms, bool minutesAlways = false, bool hoursAlways = false);
 
     /// Convert a pts value to a human readible string in the form HH:MM:SS.ms
     /// If the time is less than an hour (or less then a minute) then no hours (or minutes)
     /// indicators are shown.
-    static wxString ptsToHumanReadibleString(pts duration);
+    /// \param minutesAlways if true, then minutes are shown even if the total time is less than one minute
+    /// \param hoursAlways if true, then hours are shown even if the total time is less than one hour
+    static wxString ptsToHumanReadibleString(pts duration, bool minutesAlways = false, bool hoursAlways = false);
 
     /// Convert a pts value to a number of audio samples. One audio sample is one
     /// element for one speaker.
