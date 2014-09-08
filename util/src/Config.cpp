@@ -106,6 +106,7 @@ void Config::init(const wxString& applicationName, const wxString& vendorName, b
     checkBool(Config::sPathAutoLoadEnabled);
     checkBool(Config::sPathBackupBeforeSaveEnabled);
     checkLong(Config::sPathBackupBeforeSaveMaximum, 0, 10000);
+    checkBool(Config::sPathSavePathsRelativeToProject);
     checkLong(Config::sPathDefaultStillImageLength, 1, 10000);
     checkLong(Config::sPathDefaultTransitionLength, 4, 10000);
     checkLong(Config::sPathDefaultVideoWidth, 10, 10000);
@@ -132,6 +133,7 @@ void Config::init(const wxString& applicationName, const wxString& vendorName, b
     setDefault(Config::sPathAutoLoadEnabled, false);
     setDefault(Config::sPathBackupBeforeSaveEnabled, true);
     setDefault(Config::sPathBackupBeforeSaveMaximum, 10);
+    setDefault(Config::sPathSavePathsRelativeToProject, true);
     setDefault(Config::sPathDebugIncludeScreenShot, true);
     setDefault(Config::sPathDebugLogSequenceOnEdit, false);
     setDefault(Config::sPathDebugMaxRenderLength, 0); // Per default, render all
@@ -409,6 +411,7 @@ void Config::releaseWriteToDisk()
 const wxString Config::sPathAutoLoadEnabled             ("/Project/AutoLoadEnabled");
 const wxString Config::sPathBackupBeforeSaveEnabled     ("/Project/BackupBeforeSaveEnabled");
 const wxString Config::sPathBackupBeforeSaveMaximum     ("/Project/BackupBeforeSaveMaximumFileCount");
+const wxString Config::sPathSavePathsRelativeToProject  ("/Project/SavePathsRelativeToProject");
 const wxString Config::sPathDebugIncludeScreenShot      ("/Debug/Screenshot");
 const wxString Config::sPathDebugLogSequenceOnEdit      ("/Debug/LogSequenceOnEdit");
 const wxString Config::sPathDebugMaxRenderLength        ("/Debug/MaxRenderLength");

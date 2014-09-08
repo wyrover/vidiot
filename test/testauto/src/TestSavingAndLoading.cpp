@@ -93,28 +93,27 @@ void TestSavingAndLoading::testSaveAndLoad()
 
     //////////////////////////////////////////////////////////////////////////
 
-    std::pair<RandomTempDirPtr, wxFileName> tempDir_fileName = SaveProjectAndClose();
+    // This project files is saved IN the source tree. This is required for saving
+    // with relative path names. This avoids problems when running this test from a 
+    // repository in a different path. 
+    wxFileName referenceDirName(getTestPath());
+    referenceDirName.AppendDir("saved_projects");
+    std::pair<RandomTempDirPtr, wxFileName> tempDir_fileName = SaveProjectAndClose(boost::make_shared<RandomTempDir>(referenceDirName), "_new");
 
     //////////////////////////////////////////////////////////////////////////
 
     {
         StartTest("Compare generated document with reference document");
-        wxFileName referenceDirName(getTestPath());
-        referenceDirName.AppendDir("saved_projects");
         wxFileName referenceFileName(referenceDirName);
         referenceFileName.SetFullName(sCurrent);
         if (!getSavedFileContents(tempDir_fileName.second).IsSameAs(getSavedFileContents(referenceFileName)))
         {
-            wxFileName newCurrentFileName(referenceDirName);
-            newCurrentFileName.SetFullName(tempDir_fileName.second.GetName() + "_new.vid");
-            bool ok = wxCopyFile(tempDir_fileName.second.GetFullPath(), newCurrentFileName.GetFullPath());
             util::thread::RunInMainAndWait([referenceDirName]()
             {
                 wxString cmd;
                 cmd << "explorer " << referenceDirName.GetFullPath();
                 ::wxExecute( cmd, wxEXEC_ASYNC, NULL);
             });
-            ASSERT(ok);
             FATAL("File contents are not equal");
         }
     }
@@ -122,6 +121,9 @@ void TestSavingAndLoading::testSaveAndLoad()
     //////////////////////////////////////////////////////////////////////////
 
     checkDocument(tempDir_fileName.second.GetFullPath());
+
+    bool ok = wxRemoveFile(tempDir_fileName.second.GetFullPath());
+    ASSERT(ok)(tempDir_fileName.second.GetFullPath());
 
     mProjectFixture.destroy();
 }
@@ -198,7 +200,6 @@ void TestSavingAndLoading::checkDocument(wxString path)
     {
         gui::Window::get().GetDocumentManager()->CreateDocument(path,wxDOC_SILENT);
     });
-    // todo store paths in reference files relative not absolute to run test from second trunk copy
 
     // Checks on loaded document
     WaitForIdle();

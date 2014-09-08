@@ -59,6 +59,11 @@ DialogOptions::DialogOptions(wxWindow* win)
         long maximum = Config::ReadLong(Config::sPathBackupBeforeSaveMaximum);
         mBackupBeforeSaveMaximum = new wxSpinCtrl(mPanel, wxID_ANY, wxString::Format("%d", maximum), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, 0, 10000, maximum);
         addoption(_("Maximum number of generated save files (0 - infinite)"), mBackupBeforeSaveMaximum);
+
+        mSaveAbsolute = new wxCheckBox(mPanel, wxID_ANY, _T(""), wxDefaultPosition, wxDefaultSize);
+        mSaveAbsolute->SetValue(Config::ReadBool(Config::sPathSavePathsRelativeToProject));
+        addoption(_("Use absolute path to media files when saving projects"), mSaveAbsolute);
+        addnote(_("By using absolute paths, the project file can be moved without moving any media files in the project. Otherwise, project and media files must be moved together."));
     }
     {
         addtab(_("Project view"));
@@ -234,6 +239,7 @@ DialogOptions::~DialogOptions()
         Config::WriteBool(      Config::sPathAutoLoadEnabled,             mLoadLast->IsChecked());
         Config::WriteBool(      Config::sPathBackupBeforeSaveEnabled,     mBackupBeforeSave->IsChecked());
         Config::WriteLong(      Config::sPathBackupBeforeSaveMaximum,     mBackupBeforeSaveMaximum->GetValue());
+        Config::WriteBool(      Config::sPathSavePathsRelativeToProject,  mSaveAbsolute->IsChecked());
         Config::WriteLong(      Config::sPathMakeSequenceEmptyClipLength, mMakeSequenceEmptyLength->GetValue());
         Config::WriteLong(      Config::sPathMakeSequencePrefixLength,    mMakeSequencePrefixLength->GetValue());
         Config::WriteString(    Config::sPathLogLevel,                    LogLevel_toString(mSelectLogLevel->getValue()).c_str());
@@ -287,6 +293,17 @@ void DialogOptions::addoption(const wxString& name, wxWindow* widget)
     hSizer->Add(new wxStaticText(mPanel, wxID_ANY, name), 0, wxALL|wxALIGN_TOP, 5);
     hSizer->Add(5, 5, 1, wxALL, 0);
     hSizer->Add(widget, 0, wxRIGHT|wxALIGN_TOP, 5);
+}
+
+void DialogOptions::addnote(const wxString& text)
+{
+    wxStaticText* note = new wxStaticText(mPanel, wxID_ANY, text, wxDefaultPosition,wxDefaultSize, wxST_NO_AUTORESIZE);
+    note->SetFont(note->GetFont().MakeItalic());
+    note->Wrap(440);
+
+    wxBoxSizer* hSizer = new wxBoxSizer( wxHORIZONTAL );
+    mBoxSizer->Add(hSizer, 0, wxGROW|wxLEFT|wxALIGN_TOP|wxALL, 5);
+    hSizer->Add(note, 1, wxALL|wxALIGN_TOP, 5);
 }
 
 } // namespace

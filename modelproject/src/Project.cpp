@@ -40,6 +40,7 @@ Project::Project()
 // For new documents initializing is done via OnNewDocument
 ,   mRoot(Folder::makeRoot()) // Exception: Initialized here since it is used on OnChangeFilename which is called before any other method when creating a new project.
 ,   mProperties()
+,   mSaveFolder("")
 {
     VAR_DEBUG(this);
     ASSERT(!IsModified());
@@ -195,6 +196,9 @@ wxFileName Project::createBackupFileName(wxFileName input, int count)
 bool Project::DoSaveDocument(const wxString& file)
 {
     wxFileName saveFileName(file);
+    wxFileName saveFolder(file);
+    saveFolder.SetFullName(""); // Remove name and ext
+    mSaveFolder = util::path::normalize(saveFolder).GetLongPath();
     gui::StatusBar::get().pushInfoText(_("Saving ") + saveFileName.GetFullName() + _(" ..."));
     if (saveFileName.Exists() &&
         Config::ReadBool(Config::sPathBackupBeforeSaveEnabled))
@@ -269,6 +273,9 @@ bool Project::DoSaveDocument(const wxString& file)
 
 bool Project::DoOpenDocument(const wxString& file)
 {
+    wxFileName saveFolder(file);
+    saveFolder.SetFullName(""); // Remove name and ext
+    mSaveFolder = util::path::normalize(saveFolder).GetLongPath();
     std::ifstream store(file.mb_str(), wxSTD ios::binary);
     if ( !store )
     {
@@ -309,6 +316,28 @@ wxString Project::getName() const
 {
     return GetUserReadableName();
 }
+
+wxFileName Project::convertPathForSaving(const wxFileName& path) const
+{
+    ASSERT(path.IsAbsolute());
+    wxFileName result(path);
+    if (Config::ReadLong(Config::sPathSavePathsRelativeToProject))
+    {
+        result.MakeRelativeTo(mSaveFolder);
+    }
+    return result;
+}
+
+wxFileName Project::convertPathAfterLoading(const wxFileName& path) const
+{
+    wxFileName result(path);
+    if (result.IsRelative())
+    {
+        result.MakeAbsolute(mSaveFolder);
+    }
+    return result;
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 // SERIALIZATION

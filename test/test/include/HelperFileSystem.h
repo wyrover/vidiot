@@ -28,7 +28,8 @@ class RandomTempDir : boost::noncopyable
 public:
 
     explicit RandomTempDir(bool cleanup = true);
-    RandomTempDir(wxFileName parentDir, bool cleanup); ///< Make subdir
+    explicit RandomTempDir(wxFileName path); ///< Used to reuse this object, but with a fixed path. \note path is not removed.
+    explicit RandomTempDir(wxFileName parentDir, bool cleanup); ///< Make subdir
     virtual ~RandomTempDir();
 
     static RandomTempDirPtr generate(bool cleanup = true);
@@ -46,6 +47,10 @@ private:
 
     static int sDirCount;
 };
+
+/// Get the path to the sources
+/// \return path to the root of the source tree
+wxFileName getSourceRoot();
 
 /// Get the path to the topmost test folder
 /// \return path to vidiot/trunk dir

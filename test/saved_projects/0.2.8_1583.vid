@@ -126,7 +126,7 @@
 													</Node>
 													<mPath>
 														<filename>
-															<string>..\input\00.avi</string>
+															<string>C:\Vidiot\vidiot_trunk\test\input\00.avi</string>
 														</filename>
 													</mPath>
 													<mLastModified>1343549286</mLastModified>
@@ -147,7 +147,7 @@
 													</Node>
 													<mPath>
 														<filename>
-															<string>..\input\01.avi</string>
+															<string>C:\Vidiot\vidiot_trunk\test\input\01.avi</string>
 														</filename>
 													</mPath>
 													<mLastModified>1342257518</mLastModified>
@@ -168,7 +168,7 @@
 													</Node>
 													<mPath>
 														<filename>
-															<string>..\input\02.avi</string>
+															<string>C:\Vidiot\vidiot_trunk\test\input\02.avi</string>
 														</filename>
 													</mPath>
 													<mLastModified>1342275946</mLastModified>
@@ -189,7 +189,7 @@
 													</Node>
 													<mPath>
 														<filename>
-															<string>..\input\03.avi</string>
+															<string>C:\Vidiot\vidiot_trunk\test\input\03.avi</string>
 														</filename>
 													</mPath>
 													<mLastModified>1371231235</mLastModified>
@@ -210,7 +210,7 @@
 													</Node>
 													<mPath>
 														<filename>
-															<string>..\input\04.avi</string>
+															<string>C:\Vidiot\vidiot_trunk\test\input\04.avi</string>
 														</filename>
 													</mPath>
 													<mLastModified>1350476962</mLastModified>
@@ -231,7 +231,7 @@
 													</Node>
 													<mPath>
 														<filename>
-															<string>..\input\05.avi</string>
+															<string>C:\Vidiot\vidiot_trunk\test\input\05.avi</string>
 														</filename>
 													</mPath>
 													<mLastModified>1342275916</mLastModified>
@@ -252,7 +252,7 @@
 													</Node>
 													<mPath>
 														<filename>
-															<string>..\input\06.avi</string>
+															<string>C:\Vidiot\vidiot_trunk\test\input\06.avi</string>
 														</filename>
 													</mPath>
 													<mLastModified>1350477274</mLastModified>
@@ -267,7 +267,7 @@
 								</Folder>
 								<mPath>
 									<filename>
-										<string>..\input\</string>
+										<string>C:\Vidiot\vidiot_trunk\test\input\</string>
 									</filename>
 								</mPath>
 								<mLastModified>1396730832</mLastModified>
@@ -330,7 +330,7 @@
 																								</Node>
 																								<mPath>
 																									<filename>
-																										<string>..\input\00.avi</string>
+																										<string>C:\Vidiot\vidiot_trunk\test\input\00.avi</string>
 																									</filename>
 																								</mPath>
 																								<mLastModified>1343549286</mLastModified>
@@ -363,7 +363,7 @@
 																			</Node>
 																			<mPath>
 																				<filename>
-																					<string>..\input\00.avi</string>
+																					<string>C:\Vidiot\vidiot_trunk\test\input\00.avi</string>
 																				</filename>
 																			</mPath>
 																			<mLastModified>1343549286</mLastModified>
@@ -437,7 +437,7 @@
 																								</Node>
 																								<mPath>
 																									<filename>
-																										<string>..\input\02.avi</string>
+																										<string>C:\Vidiot\vidiot_trunk\test\input\02.avi</string>
 																									</filename>
 																								</mPath>
 																								<mLastModified>1342275946</mLastModified>
@@ -470,7 +470,7 @@
 																			</Node>
 																			<mPath>
 																				<filename>
-																					<string>..\input\02.avi</string>
+																					<string>C:\Vidiot\vidiot_trunk\test\input\02.avi</string>
 																				</filename>
 																			</mPath>
 																			<mLastModified>1342275946</mLastModified>
@@ -554,7 +554,7 @@
 																								</Node>
 																								<mPath>
 																									<filename>
-																										<string>..\input\03.avi</string>
+																										<string>C:\Vidiot\vidiot_trunk\test\input\03.avi</string>
 																									</filename>
 																								</mPath>
 																								<mLastModified>1371231235</mLastModified>
@@ -587,7 +587,7 @@
 																			</Node>
 																			<mPath>
 																				<filename>
-																					<string>..\input\03.avi</string>
+																					<string>C:\Vidiot\vidiot_trunk\test\input\03.avi</string>
 																				</filename>
 																			</mPath>
 																			<mLastModified>1371231235</mLastModified>
@@ -671,7 +671,7 @@
 																								</Node>
 																								<mPath>
 																									<filename>
-																										<string>..\input\04.avi</string>
+																										<string>C:\Vidiot\vidiot_trunk\test\input\04.avi</string>
 																									</filename>
 																								</mPath>
 																								<mLastModified>1350476962</mLastModified>
@@ -704,7 +704,7 @@
 																			</Node>
 																			<mPath>
 																				<filename>
-																					<string>..\input\04.avi</string>
+																					<string>C:\Vidiot\vidiot_trunk\test\input\04.avi</string>
 																				</filename>
 																			</mPath>
 																			<mLastModified>1350476962</mLastModified>
@@ -764,7 +764,7 @@
 																								</Node>
 																								<mPath>
 																									<filename>
-																										<string>..\input\05.avi</string>
+																										<string>C:\Vidiot\vidiot_trunk\test\input\05.avi</string>
 																									</filename>
 																								</mPath>
 																								<mLastModified>1342275916</mLastModified>
@@ -797,7 +797,7 @@
 																			</Node>
 																			<mPath>
 																				<filename>
-																					<string>..\input\05.avi</string>
+																					<string>C:\Vidiot\vidiot_trunk\test\input\05.avi</string>
 																				</filename>
 																			</mPath>
 																			<mLastModified>1342275916</mLastModified>
@@ -857,7 +857,7 @@
 																								</Node>
 																								<mPath>
 																									<filename>
-																										<string>..\input\06.avi</string>
+																										<string>C:\Vidiot\vidiot_trunk\test\input\06.avi</string>
 																									</filename>
 																								</mPath>
 																								<mLastModified>1350477274</mLastModified>
@@ -890,7 +890,7 @@
 																			</Node>
 																			<mPath>
 																				<filename>
-																					<string>..\input\06.avi</string>
+																					<string>C:\Vidiot\vidiot_trunk\test\input\06.avi</string>
 																				</filename>
 																			</mPath>
 																			<mLastModified>1350477274</mLastModified>
@@ -950,7 +950,7 @@
 																								</Node>
 																								<mPath>
 																									<filename>
-																										<string>..\input\00.avi</string>
+																										<string>C:\Vidiot\vidiot_trunk\test\input\00.avi</string>
 																									</filename>
 																								</mPath>
 																								<mLastModified>1343549286</mLastModified>
@@ -983,7 +983,7 @@
 																			</Node>
 																			<mPath>
 																				<filename>
-																					<string>..\input\00.avi</string>
+																					<string>C:\Vidiot\vidiot_trunk\test\input\00.avi</string>
 																				</filename>
 																			</mPath>
 																			<mLastModified>1343549286</mLastModified>
@@ -1043,7 +1043,7 @@
 																								</Node>
 																								<mPath>
 																									<filename>
-																										<string>..\input\01.avi</string>
+																										<string>C:\Vidiot\vidiot_trunk\test\input\01.avi</string>
 																									</filename>
 																								</mPath>
 																								<mLastModified>1342257518</mLastModified>
@@ -1076,7 +1076,7 @@
 																			</Node>
 																			<mPath>
 																				<filename>
-																					<string>..\input\01.avi</string>
+																					<string>C:\Vidiot\vidiot_trunk\test\input\01.avi</string>
 																				</filename>
 																			</mPath>
 																			<mLastModified>1342257518</mLastModified>
@@ -1136,7 +1136,7 @@
 																								</Node>
 																								<mPath>
 																									<filename>
-																										<string>..\input\02.avi</string>
+																										<string>C:\Vidiot\vidiot_trunk\test\input\02.avi</string>
 																									</filename>
 																								</mPath>
 																								<mLastModified>1342275946</mLastModified>
@@ -1169,7 +1169,7 @@
 																			</Node>
 																			<mPath>
 																				<filename>
-																					<string>..\input\02.avi</string>
+																					<string>C:\Vidiot\vidiot_trunk\test\input\02.avi</string>
 																				</filename>
 																			</mPath>
 																			<mLastModified>1342275946</mLastModified>
@@ -1229,7 +1229,7 @@
 																								</Node>
 																								<mPath>
 																									<filename>
-																										<string>..\input\03.avi</string>
+																										<string>C:\Vidiot\vidiot_trunk\test\input\03.avi</string>
 																									</filename>
 																								</mPath>
 																								<mLastModified>1371231235</mLastModified>
@@ -1262,7 +1262,7 @@
 																			</Node>
 																			<mPath>
 																				<filename>
-																					<string>..\input\03.avi</string>
+																					<string>C:\Vidiot\vidiot_trunk\test\input\03.avi</string>
 																				</filename>
 																			</mPath>
 																			<mLastModified>1371231235</mLastModified>
@@ -1322,7 +1322,7 @@
 																								</Node>
 																								<mPath>
 																									<filename>
-																										<string>..\input\04.avi</string>
+																										<string>C:\Vidiot\vidiot_trunk\test\input\04.avi</string>
 																									</filename>
 																								</mPath>
 																								<mLastModified>1350476962</mLastModified>
@@ -1355,7 +1355,7 @@
 																			</Node>
 																			<mPath>
 																				<filename>
-																					<string>..\input\04.avi</string>
+																					<string>C:\Vidiot\vidiot_trunk\test\input\04.avi</string>
 																				</filename>
 																			</mPath>
 																			<mLastModified>1350476962</mLastModified>
@@ -1415,7 +1415,7 @@
 																								</Node>
 																								<mPath>
 																									<filename>
-																										<string>..\input\05.avi</string>
+																										<string>C:\Vidiot\vidiot_trunk\test\input\05.avi</string>
 																									</filename>
 																								</mPath>
 																								<mLastModified>1342275916</mLastModified>
@@ -1448,7 +1448,7 @@
 																			</Node>
 																			<mPath>
 																				<filename>
-																					<string>..\input\05.avi</string>
+																					<string>C:\Vidiot\vidiot_trunk\test\input\05.avi</string>
 																				</filename>
 																			</mPath>
 																			<mLastModified>1342275916</mLastModified>
@@ -1508,7 +1508,7 @@
 																								</Node>
 																								<mPath>
 																									<filename>
-																										<string>..\input\06.avi</string>
+																										<string>C:\Vidiot\vidiot_trunk\test\input\06.avi</string>
 																									</filename>
 																								</mPath>
 																								<mLastModified>1350477274</mLastModified>
@@ -1541,7 +1541,7 @@
 																			</Node>
 																			<mPath>
 																				<filename>
-																					<string>..\input\06.avi</string>
+																					<string>C:\Vidiot\vidiot_trunk\test\input\06.avi</string>
 																				</filename>
 																			</mPath>
 																			<mLastModified>1350477274</mLastModified>
@@ -1601,7 +1601,7 @@
 																								</Node>
 																								<mPath>
 																									<filename>
-																										<string>..\input\00.avi</string>
+																										<string>C:\Vidiot\vidiot_trunk\test\input\00.avi</string>
 																									</filename>
 																								</mPath>
 																								<mLastModified>1343549286</mLastModified>
@@ -1634,7 +1634,7 @@
 																			</Node>
 																			<mPath>
 																				<filename>
-																					<string>..\input\00.avi</string>
+																					<string>C:\Vidiot\vidiot_trunk\test\input\00.avi</string>
 																				</filename>
 																			</mPath>
 																			<mLastModified>1343549286</mLastModified>
@@ -1694,7 +1694,7 @@
 																								</Node>
 																								<mPath>
 																									<filename>
-																										<string>..\input\01.avi</string>
+																										<string>C:\Vidiot\vidiot_trunk\test\input\01.avi</string>
 																									</filename>
 																								</mPath>
 																								<mLastModified>1342257518</mLastModified>
@@ -1727,7 +1727,7 @@
 																			</Node>
 																			<mPath>
 																				<filename>
-																					<string>..\input\01.avi</string>
+																					<string>C:\Vidiot\vidiot_trunk\test\input\01.avi</string>
 																				</filename>
 																			</mPath>
 																			<mLastModified>1342257518</mLastModified>
@@ -1787,7 +1787,7 @@
 																								</Node>
 																								<mPath>
 																									<filename>
-																										<string>..\input\02.avi</string>
+																										<string>C:\Vidiot\vidiot_trunk\test\input\02.avi</string>
 																									</filename>
 																								</mPath>
 																								<mLastModified>1342275946</mLastModified>
@@ -1820,7 +1820,7 @@
 																			</Node>
 																			<mPath>
 																				<filename>
-																					<string>..\input\02.avi</string>
+																					<string>C:\Vidiot\vidiot_trunk\test\input\02.avi</string>
 																				</filename>
 																			</mPath>
 																			<mLastModified>1342275946</mLastModified>
@@ -1880,7 +1880,7 @@
 																								</Node>
 																								<mPath>
 																									<filename>
-																										<string>..\input\03.avi</string>
+																										<string>C:\Vidiot\vidiot_trunk\test\input\03.avi</string>
 																									</filename>
 																								</mPath>
 																								<mLastModified>1371231235</mLastModified>
@@ -1913,7 +1913,7 @@
 																			</Node>
 																			<mPath>
 																				<filename>
-																					<string>..\input\03.avi</string>
+																					<string>C:\Vidiot\vidiot_trunk\test\input\03.avi</string>
 																				</filename>
 																			</mPath>
 																			<mLastModified>1371231235</mLastModified>
@@ -1973,7 +1973,7 @@
 																								</Node>
 																								<mPath>
 																									<filename>
-																										<string>..\input\04.avi</string>
+																										<string>C:\Vidiot\vidiot_trunk\test\input\04.avi</string>
 																									</filename>
 																								</mPath>
 																								<mLastModified>1350476962</mLastModified>
@@ -2006,7 +2006,7 @@
 																			</Node>
 																			<mPath>
 																				<filename>
-																					<string>..\input\04.avi</string>
+																					<string>C:\Vidiot\vidiot_trunk\test\input\04.avi</string>
 																				</filename>
 																			</mPath>
 																			<mLastModified>1350476962</mLastModified>
@@ -2066,7 +2066,7 @@
 																								</Node>
 																								<mPath>
 																									<filename>
-																										<string>..\input\05.avi</string>
+																										<string>C:\Vidiot\vidiot_trunk\test\input\05.avi</string>
 																									</filename>
 																								</mPath>
 																								<mLastModified>1342275916</mLastModified>
@@ -2099,7 +2099,7 @@
 																			</Node>
 																			<mPath>
 																				<filename>
-																					<string>..\input\05.avi</string>
+																					<string>C:\Vidiot\vidiot_trunk\test\input\05.avi</string>
 																				</filename>
 																			</mPath>
 																			<mLastModified>1342275916</mLastModified>
@@ -2159,7 +2159,7 @@
 																								</Node>
 																								<mPath>
 																									<filename>
-																										<string>..\input\06.avi</string>
+																										<string>C:\Vidiot\vidiot_trunk\test\input\06.avi</string>
 																									</filename>
 																								</mPath>
 																								<mLastModified>1350477274</mLastModified>
@@ -2192,7 +2192,7 @@
 																			</Node>
 																			<mPath>
 																				<filename>
-																					<string>..\input\06.avi</string>
+																					<string>C:\Vidiot\vidiot_trunk\test\input\06.avi</string>
 																				</filename>
 																			</mPath>
 																			<mLastModified>1350477274</mLastModified>
@@ -2249,7 +2249,7 @@
 																					</Node>
 																					<mPath>
 																						<filename>
-																							<string>..\filetypes_image\Laney -6th best amp.jpg</string>
+																							<string>C:\Vidiot\vidiot_trunk\test\filetypes_image\Laney -6th best amp.jpg</string>
 																						</filename>
 																					</mPath>
 																					<mLastModified>1373480991</mLastModified>
@@ -2408,7 +2408,7 @@
 												</Node>
 												<mPath>
 													<filename>
-														<string>..\filetypes_image\Laney -6th best amp.jpg</string>
+														<string>C:\Vidiot\vidiot_trunk\test\filetypes_image\Laney -6th best amp.jpg</string>
 													</filename>
 												</mPath>
 												<mLastModified>1373480991</mLastModified>

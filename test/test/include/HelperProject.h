@@ -25,9 +25,9 @@ model::FolderPtr getRoot();
 
 typedef std::pair<RandomTempDirPtr, wxFileName> DirAndFile;
 
-DirAndFile SaveProjectAndClose(boost::optional<RandomTempDirPtr> tempDir = boost::none);
+DirAndFile SaveProjectAndClose(boost::optional<RandomTempDirPtr> tempDir = boost::none, wxString filesuffix = "");
 
-DirAndFile SaveProject(boost::optional<RandomTempDirPtr> tempDir = boost::none);
+DirAndFile SaveProject(boost::optional<RandomTempDirPtr> tempDir = boost::none, wxString filesuffix = "");
 
 wxFileName generateSaveFileName(wxFileName dir);
 
