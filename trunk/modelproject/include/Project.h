@@ -81,10 +81,14 @@ public:
 
     wxString getName() const;
 
+    wxFileName convertPathForSaving(const wxFileName& path) const;
+    wxFileName convertPathAfterLoading(const wxFileName& path) const;
+
 private:
 
     FolderPtr mRoot;
     PropertiesPtr mProperties;
+    wxString mSaveFolder;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS

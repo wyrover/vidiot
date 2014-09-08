@@ -61,8 +61,8 @@ void save(Archive & ar, const wxFileName& filename, const unsigned int version)
 {
     try
     {
-        wxString path = filename.GetLongPath();
-        ar & boost::serialization::make_nvp(sFileName.c_str(),path);
+        wxString longpath = filename.GetLongPath();
+        ar & boost::serialization::make_nvp(sFileName.c_str(),longpath);
     }
     catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }

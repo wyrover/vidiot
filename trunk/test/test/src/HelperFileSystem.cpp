@@ -58,6 +58,14 @@ RandomTempDir::RandomTempDir(bool cleanup)
     makeDir();
 }
 
+RandomTempDir::RandomTempDir(wxFileName path)
+    : mFileName(path)
+    , mCleanup(false)
+{
+    ASSERT(mFileName.Exists());
+    ASSERT(mFileName.IsDir());
+}
+
 RandomTempDir::RandomTempDir(wxFileName parentDir, bool cleanup)
     : mFileName(parentDir)
     , mCleanup(cleanup)
@@ -95,12 +103,17 @@ wxFileName RandomTempDir::getFileName() const
 #define stringify(x) dostringify(x)
 #define dostringify(x) #x
 
-wxFileName getTestPath()
+wxFileName getSourceRoot()
 {
 #ifndef SOURCE_ROOT
 #error "SOURCE_ROOT is not defined!"
 #endif
-    wxFileName result = wxFileName(stringify(SOURCE_ROOT),"");
+    return wxFileName(stringify(SOURCE_ROOT),"");
+}
+
+wxFileName getTestPath()
+{
+    wxFileName result(getSourceRoot());
     result.AppendDir("test");
     ASSERT(result.IsDir())(result.GetFullPath());
     return result;

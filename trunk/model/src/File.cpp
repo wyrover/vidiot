@@ -22,6 +22,7 @@
 #include "Convert.h"
 #include "Dialog.h"
 #include "FilePacket.h"
+#include "Project.h"
 #include "UtilInitAvcodec.h"
 #include "UtilLog.h"
 #include "UtilLogAvcodec.h"
@@ -739,7 +740,17 @@ void File::serialize(Archive & ar, const unsigned int version)
             static_cast<IFile*>(0)
             );
         ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Node);
-        ar & BOOST_SERIALIZATION_NVP(mPath);
+
+        if (Archive::is_loading::value)
+        {
+            wxFileName path;
+            ar & boost::serialization::make_nvp( "mPath", path );
+            mPath = model::Project::get().convertPathAfterLoading(path);
+        }
+        else
+        {
+            ar & boost::serialization::make_nvp( "mPath", model::Project::get().convertPathForSaving(mPath) );
+        }
         ar & BOOST_SERIALIZATION_NVP(mLastModified);
         ar & BOOST_SERIALIZATION_NVP(mMaxBufferSize);
     }

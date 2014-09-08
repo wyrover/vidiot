@@ -25,18 +25,19 @@ model::FolderPtr getRoot()
     return boost::static_pointer_cast<model::Folder>(root);
 }
 
-DirAndFile SaveProjectAndClose(boost::optional<RandomTempDirPtr> tempDir)
+DirAndFile SaveProjectAndClose(boost::optional<RandomTempDirPtr> tempDir, wxString filesuffix)
 {
-    DirAndFile tempDir_fileName = SaveProject(tempDir);
+    DirAndFile tempDir_fileName = SaveProject(tempDir,filesuffix);
     WindowTriggerMenu(wxID_CLOSE);
     WaitForIdle();
     return tempDir_fileName;
 }
 
-DirAndFile SaveProject(boost::optional<RandomTempDirPtr> tempDir)
+DirAndFile SaveProject(boost::optional<RandomTempDirPtr> tempDir, wxString filesuffix)
 {
     RandomTempDirPtr tempDirProject = tempDir ? *tempDir : RandomTempDir::generate();
     wxFileName filename = generateSaveFileName(tempDirProject->getFileName());
+    filename.SetName(filename.GetName() + filesuffix);
     util::thread::RunInMainAndWait([filename]()
     {
         gui::Window::get().GetDocumentManager()->GetCurrentDocument()->SetFilename(filename.GetFullPath());

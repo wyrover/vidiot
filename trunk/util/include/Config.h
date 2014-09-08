@@ -110,6 +110,7 @@ public:
     static const wxString sPathAutoLoadEnabled;
     static const wxString sPathBackupBeforeSaveEnabled;
     static const wxString sPathBackupBeforeSaveMaximum;
+    static const wxString sPathSavePathsRelativeToProject;
     static const wxString sPathDebugIncludeScreenShot;
     static const wxString sPathDebugLogSequenceOnEdit;
     static const wxString sPathDebugMaxRenderLength;

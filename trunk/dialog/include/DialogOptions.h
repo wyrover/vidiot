@@ -44,6 +44,7 @@ private:
     wxCheckBox*             mLoadLast;
     wxCheckBox*             mBackupBeforeSave;
     wxSpinCtrl*             mBackupBeforeSaveMaximum;
+    wxCheckBox*             mSaveAbsolute;
 
     wxSpinCtrl*             mMakeSequenceEmptyLength;
     wxSpinCtrl*             mMakeSequencePrefixLength;
@@ -80,6 +81,7 @@ private:
     void addtab(const wxString& name);
     void addbox(const wxString& name);
     void addoption(const wxString& name, wxWindow* widget);
+    void addnote(const wxString& text);
 };
 
 } // namespace
