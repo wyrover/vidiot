@@ -201,8 +201,6 @@ VideoFramePtr VideoClip::getNextVideo(const VideoCompositionParameters& paramete
         videoFrame->setForceKeyFrame(enforceKeyFrame);
     }
     mProgress++;
-    VAR_VIDEO(videoFrame);
-    setGenerationProgress(mProgress); // todo remove this
     return videoFrame;
 }
 

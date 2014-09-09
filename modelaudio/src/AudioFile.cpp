@@ -149,7 +149,6 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
             // Since mp2 data (which seems to be in this files) contains header packets inbetween, seeking 'somewhere' may lead to a position that is not directly in front of a packet. Data must be skipped then? or 'null' data returned, may be better for av sync
             if (!got_frame)
             {
-                LOG_AUDIO;
                 sourceSize = 0;
                 break;
             }
@@ -203,7 +202,6 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
             // No samples, end of data
             static const std::string status("End of file");
             VAR_DEBUG(status);
-            VAR_VIDEO(this)(status);
             return AudioChunkPtr();
         }
 
@@ -265,7 +263,6 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
         audioChunk->setAdjustedLength(nOutputSamples);
     }
 
-    VAR_AUDIO(this)(audioChunk);
     return audioChunk;
 }
 

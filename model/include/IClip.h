@@ -148,12 +148,6 @@ public:
     virtual bool getDragged() const = 0;           ///< /return true if this clip is being dragged
     virtual void setDragged(bool dragged) = 0;     ///< Set dragged value for clip
 
-    /// \return pts value of most recently returned audio/video in getNext*.
-    virtual pts getGenerationProgress() const = 0;
-
-    /// \param delivered value of most recently returned audio/video in getNext*.
-    virtual void setGenerationProgress(pts progress) = 0;
-
     /// \return list of all cuts for the clip
     /// \param exclude list of clips for which the cuts should not be added
     virtual std::set<pts> getCuts(const std::set<IClipPtr>& exclude = std::set<IClipPtr>()) const = 0;

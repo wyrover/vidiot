@@ -213,7 +213,6 @@ AudioChunkPtr EmptyClip::getNextAudio(const AudioCompositionParameters& paramete
     mProgress += 1;
     mSampleProgress += returnedSamples;
 
-    VAR_AUDIO(audioChunk)(mProgress)(mSampleProgress);
     return audioChunk;
 }
 
@@ -229,9 +228,7 @@ VideoFramePtr EmptyClip::getNextVideo(const VideoCompositionParameters& paramete
     }
 
     VideoFramePtr videoFrame = boost::static_pointer_cast<VideoFrame>(boost::make_shared<EmptyFrame>(parameters));
-    setGenerationProgress(mProgress); // todo remove this
     mProgress++;
-    VAR_VIDEO(videoFrame);
     return videoFrame;
 }
 

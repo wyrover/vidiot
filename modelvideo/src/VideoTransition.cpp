@@ -104,8 +104,6 @@ VideoFramePtr VideoTransition::getNextVideo(const VideoCompositionParameters& pa
         videoFrame = getVideo(mProgress, mLeftClip, mRightClip, parameters);
         mProgress++;
     }
-    VAR_VIDEO(videoFrame);
-    setGenerationProgress(mProgress);
     return videoFrame;
 }
 

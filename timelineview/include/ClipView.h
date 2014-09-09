@@ -84,7 +84,6 @@ public:
 
     void onClipDragged(model::EventDragClip& event);
     void onClipSelected(model::EventSelectClip& event);
-    void onGenerationProgress( model::DebugEventRenderProgress& event);
 
 private:
 

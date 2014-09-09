@@ -25,7 +25,6 @@ namespace model {
 
 DECLARE_EVENT(EVENT_DRAG_CLIP,              EventDragClip,              bool);
 DECLARE_EVENT(EVENT_SELECT_CLIP,            EventSelectClip,            bool);
-DECLARE_EVENT(DEBUG_EVENT_RENDER_PROGRESS,  DebugEventRenderProgress,   pts);
 
 } // namespace
 

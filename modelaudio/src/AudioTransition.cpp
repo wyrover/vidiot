@@ -106,8 +106,7 @@ void AudioTransition::clean()
         chunk = getAudio(mProgress, mLeftClip, mRightClip, parameters);
         mProgress += chunk->getUnreadSampleCount();
     }
-    VAR_AUDIO(chunk);
-    setGenerationProgress(mProgress);
+
     return chunk;
 }
 

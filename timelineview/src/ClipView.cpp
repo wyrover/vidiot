@@ -59,7 +59,6 @@ ClipView::ClipView(const model::IClipPtr& clip, View* parent)
     }
     mClip->Bind(model::EVENT_DRAG_CLIP,             &ClipView::onClipDragged,           this);
     mClip->Bind(model::EVENT_SELECT_CLIP,           &ClipView::onClipSelected,          this);
-    mClip->Bind(model::DEBUG_EVENT_RENDER_PROGRESS, &ClipView::onGenerationProgress,    this);
 
     // IMPORTANT: No drawing/lengthy code here. Due to the nature of adding removing clips as
     //            part of edit operations, that will severely impact performance.
@@ -71,7 +70,6 @@ ClipView::~ClipView()
 
     mClip->Unbind(model::EVENT_DRAG_CLIP,             &ClipView::onClipDragged,         this);
     mClip->Unbind(model::EVENT_SELECT_CLIP,           &ClipView::onClipSelected,        this);
-    mClip->Unbind(model::DEBUG_EVENT_RENDER_PROGRESS, &ClipView::onGenerationProgress,  this);
 
     if (mClip->isA<model::VideoClip>())
     {
@@ -418,10 +416,6 @@ void ClipView::draw(wxBitmap& bitmap, bool drawDraggedClips, bool drawNotDragged
             sPts << '[' << mClip->getLeftPts() << ',' << mClip->getRightPts() << ')';
             dc.DrawText(sPts, wxPoint(5,25));
         }
-        pts progress = mClip->getGenerationProgress();
-        pixel pos = getZoom().ptsToPixels(progress);
-        dc.SetPen(Layout::get().DebugPen);
-        dc.DrawLine(wxPoint(pos,0), wxPoint(pos,bitmap.GetHeight()));
     }
 }
 
@@ -459,13 +453,4 @@ void ClipView::onClipSelected(model::EventSelectClip& event )
     event.Skip();
 }
 
-void ClipView::onGenerationProgress( model::DebugEventRenderProgress& event )
-{
-    if (Config::getShowDebugInfo())
-    {
-        mBitmap.reset();
-        repaint();
-    }
-    event.Skip();
-}
 }} // namespace

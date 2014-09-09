@@ -72,9 +72,6 @@ public:
     bool getDragged() const override;
     void setDragged(bool dragged) override;
 
-    pts getGenerationProgress() const override;
-    void setGenerationProgress(pts progress) override;
-
     void invalidateNewStartPosition() override;
     boost::optional<pts> getNewStartPosition() const override;
     void setNewStartPosition(pts position);

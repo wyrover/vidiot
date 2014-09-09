@@ -456,7 +456,6 @@ PacketPtr File::getNextPacket()
         mPackets.resize(mMaxBufferSize);
     }
     PacketPtr packet = mPackets.pop();
-    VAR_DETAIL(packet)(mPackets.getSize());
     return packet;
 }
 
@@ -681,7 +680,6 @@ void File::bufferPacketsThread()
         {
             PacketPtr p = boost::make_shared<Packet>(packet);
             mPackets.push(p);
-            VAR_DETAIL(this)(p);
         }
         av_free_packet(packet);
     }

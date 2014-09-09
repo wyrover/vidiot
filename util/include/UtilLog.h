@@ -82,9 +82,6 @@ DECLAREENUM(LogLevel, \
             LogWarning, \
             LogInfo, \
             LogDebug, \
-            LogVideo, \
-            LogAudio, \
-            LogDetail, \
             LogAssert);
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -94,17 +91,11 @@ DECLAREENUM(LogLevel, \
 #define LOG_X(level) if (level <= Log::sReportingLevel) Log().get(level,  __FILE__, __LINE__, __FUNCTION__)
 #define VAR_X(level) if (level <= Log::sReportingLevel) LogVar(level,  __FILE__, __LINE__, __FUNCTION__).LOGVAR_A
 
-#define LOG_DETAIL  LOG_X(LogDetail)
-#define LOG_AUDIO   LOG_X(LogAudio)
-#define LOG_VIDEO   LOG_X(LogVideo)
 #define LOG_DEBUG   LOG_X(LogDebug)
 #define LOG_INFO    LOG_X(LogInfo)
 #define LOG_WARNING LOG_X(LogWarning)
 #define LOG_ERROR   LOG_X(LogError)
 
-#define VAR_DETAIL  VAR_X(LogDetail)
-#define VAR_AUDIO   VAR_X(LogAudio)
-#define VAR_VIDEO   VAR_X(LogVideo)
 #define VAR_DEBUG   VAR_X(LogDebug)
 #define VAR_INFO    VAR_X(LogInfo)
 #define VAR_WARNING VAR_X(LogWarning)
