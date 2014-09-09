@@ -179,7 +179,6 @@ VideoFramePtr Sequence::getNextVideo(const VideoCompositionParameters& parameter
     VideoCompositionPtr composition = getVideoComposition(VideoCompositionParameters(parameters).setPts(mVideoPosition));
     VideoFramePtr videoFrame = composition->generate();
     mVideoPosition++;
-    VAR_VIDEO(videoFrame);
     return videoFrame;
 }
 
@@ -200,7 +199,6 @@ AudioChunkPtr Sequence::getNextAudio(const AudioCompositionParameters& parameter
         // Therefore, ensure that a 'getNextAudio' call is done.
         mCache.cachedAudio.clear();
     }
-    VAR_VIDEO(audioChunk);
     return audioChunk;
 }
 

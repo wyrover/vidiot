@@ -283,7 +283,6 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
                     mDeliveredFrame.reset();
                     static const std::string status("End of file");
                     VAR_DEBUG(status);
-                    VAR_VIDEO(this)(status)(mPosition); // todo remove video and audio logging. never used.
                     return mDeliveredFrame;
                 }
             }

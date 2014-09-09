@@ -83,7 +83,6 @@ void ClipInterval::moveTo(pts position)
     ASSERT_LESS_THAN(position,mLength);
     ASSERT_MORE_THAN_EQUALS_ZERO(position);
     setNewStartPosition(position);
-    setGenerationProgress(0);
     mRender->moveTo(mOffset + position);
 }
 
@@ -112,7 +111,6 @@ void ClipInterval::clean()
 {
     VAR_DEBUG(this);
     invalidateNewStartPosition();
-    setGenerationProgress(0);
     mRender->clean();
     Clip::clean();
 }

@@ -43,10 +43,7 @@ boost::bimap<LogLevel, wxString> LogLevelConverter::mapToHumanReadibleString = b
     (LogError,     _("Errors"))
     (LogWarning,   _("Errors & Warnings"))
     (LogInfo,      _("Info (UI actions)"))
-    (LogDebug,     _("Debugging"))
-    (LogVideo,     _("Video details"))
-    (LogAudio,     _("Audio details"))
-    (LogDetail,    _("All"));
+    (LogDebug,     _("Debugging"));
 
 static std::string sFilename("");
 static const unsigned int sMaximumBufferedLoglines = 10000;
@@ -236,9 +233,6 @@ std::ostringstream& Log::get(const LogLevel& level, const char* p_szFileName, co
         "WARNING ",
         "INFO    ",
         "DEBUG   ",
-        "VIDEO   ",
-        "AUDIO   ",
-        "DETAIL  ",
         "ASSERT  "
     };
 #ifdef _DEBUG

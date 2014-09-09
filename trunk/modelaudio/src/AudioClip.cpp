@@ -155,8 +155,6 @@ AudioChunkPtr AudioClip::getNextAudio(const AudioCompositionParameters& paramete
         }
     }
 
-    VAR_AUDIO(audioChunk);
-    setGenerationProgress(parameters.samplesToPts(mProgress));
     return audioChunk;
 }
 

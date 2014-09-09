@@ -81,7 +81,6 @@ VideoFramePtr VideoTrack::getNextVideo(const VideoCompositionParameters& paramet
             }
         }
     }
-    VAR_VIDEO(videoFrame);
     return videoFrame;
 }
 
