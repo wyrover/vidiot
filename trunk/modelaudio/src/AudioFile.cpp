@@ -130,61 +130,79 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
 
     if (audioPacket)
     {
-        uint8_t* sourceData = audioPacket->getPacket()->data;
-        int sourceSize = audioPacket->getPacket()->size;
-        ASSERT_MORE_THAN_ZERO(sourceSize);
+        bool done = false;
 
-        while (sourceSize > 0)
+        while (!done && audioPacket)
         {
-            AVPacket packet;
-            memset(&packet, 0, sizeof(packet));
-            packet.data = sourceData;
-            packet.size = sourceSize;
+            uint8_t* sourceData = audioPacket->getPacket()->data;
+            int sourceSize = audioPacket->getPacket()->size;
+            ASSERT_MORE_THAN_ZERO(sourceSize);
 
-            AVFrame frame = { { 0 } };
-            int got_frame = 0;
-            int usedSourceBytes = avcodec_decode_audio4(codec, &frame, &got_frame, &packet);
-            ASSERT_MORE_THAN_EQUALS_ZERO(usedSourceBytes);
-// todo crash here with audiovideosync .mpg file AFTER moving the cursor somewhere inside the clip
-            // Since mp2 data (which seems to be in this files) contains header packets inbetween, seeking 'somewhere' may lead to a position that is not directly in front of a packet. Data must be skipped then? or 'null' data returned, may be better for av sync
-            if (!got_frame)
+            while (sourceSize > 0)
             {
-                sourceSize = 0;
-                break;
-            }
+                AVPacket packet;
+                memset(&packet, 0, sizeof(packet));
+                packet.data = sourceData;
+                packet.size = sourceSize;
 
-            int decodedLineSize(0); // Will contain the number of bytes per plane
-            // decodeBuferInBytes contains the entire required buffer size:
-            // - Contains ALL channel data
-            // - Contains 32 bit alignment for all used data fields (one for packet, multiple for planar)
-            int decodeBufferInBytes = av_samples_get_buffer_size(&decodedLineSize, codec->channels, frame.nb_samples, codec->sample_fmt, 1);
-            for (int i = 0; i < mNrPlanes; ++i)
-            {
-                memcpy(audioDecodeBuffer[i] + targetSizeInBytes, frame.extended_data[i], decodedLineSize);
-            }
+                AVFrame* pFrame = av_frame_alloc();
+                ASSERT_NONZERO(pFrame);
 
-            sourceData += usedSourceBytes;
-            sourceSize -= usedSourceBytes;
+                int got_frame = 0;
+                int usedSourceBytes = avcodec_decode_audio4(codec, pFrame, &got_frame, &packet);
+                
+                if (usedSourceBytes < 0)
+                {
+                    audioPacket = getNextPacket();
+                    break; // This frame failed. Can happen after moveTo(); due to seeking the first packets do not contain (enough) header information.
+                }
+                else
+                {
+                    // Some data was decoded.
+                    done = true;
+                }
 
-            targetSizeInBytes += decodedLineSize;
-            nDecodedSamplesPerChannel += frame.nb_samples;
+                if (!got_frame)
+                {
+                    sourceSize = 0;
+                    break;
+                }
 
-            // Only after the first packet has been decoded, all of the information
-            // required for initializing resampling is available.
-            if (mNeedsResampling && mSoftwareResampleContext == 0)
-            {
-                // Code taken from ffplay.c
-                int64_t dec_channel_layout =
-                    (frame.channel_layout && av_frame_get_channels(&frame) == av_get_channel_layout_nb_channels(frame.channel_layout)) ?
-                    frame.channel_layout : av_get_default_channel_layout(av_frame_get_channels(&frame));
+                int decodedLineSize(0); // Will contain the number of bytes per plane
+                // decodeBuferInBytes contains the entire required buffer size:
+                // - Contains ALL channel data
+                // - Contains 32 bit alignment for all used data fields (one for packet, multiple for planar)
+                int decodeBufferInBytes = av_samples_get_buffer_size(&decodedLineSize, codec->channels, pFrame->nb_samples, codec->sample_fmt, 1);
+                for (int i = 0; i < mNrPlanes; ++i)
+                {
+                    memcpy(audioDecodeBuffer[i] + targetSizeInBytes, pFrame->extended_data[i], decodedLineSize);
+                }
 
-                mSoftwareResampleContext = swr_alloc_set_opts(0,
-                    av_get_default_channel_layout(parameters.getNrChannels()), AV_SAMPLE_FMT_S16, parameters.getSampleRate(),
-                    dec_channel_layout, codec->sample_fmt, frame.sample_rate, 0, 0);
-                ASSERT_NONZERO(mSoftwareResampleContext);
+                sourceData += usedSourceBytes;
+                sourceSize -= usedSourceBytes;
 
-                int result = swr_init(mSoftwareResampleContext);
-                ASSERT_ZERO(result)(avcodecErrorString(result));
+                targetSizeInBytes += decodedLineSize;
+                nDecodedSamplesPerChannel += pFrame->nb_samples;
+
+                // Only after the first packet has been decoded, all of the information
+                // required for initializing resampling is available.
+                if (mNeedsResampling && mSoftwareResampleContext == 0)
+                {
+                    // Code taken from ffplay.c
+                    int64_t dec_channel_layout =
+                        (pFrame->channel_layout && av_frame_get_channels(pFrame) == av_get_channel_layout_nb_channels(pFrame->channel_layout)) ?
+                        pFrame->channel_layout : av_get_default_channel_layout(av_frame_get_channels(pFrame));
+
+                    mSoftwareResampleContext = swr_alloc_set_opts(0,
+                        av_get_default_channel_layout(parameters.getNrChannels()), AV_SAMPLE_FMT_S16, parameters.getSampleRate(),
+                        dec_channel_layout, codec->sample_fmt, pFrame->sample_rate, 0, 0);
+                    ASSERT_NONZERO(mSoftwareResampleContext);
+
+                    int result = swr_init(mSoftwareResampleContext);
+                    ASSERT_ZERO(result)(avcodecErrorString(result));
+                }
+
+                av_frame_free(&pFrame);
             }
         }
     }
