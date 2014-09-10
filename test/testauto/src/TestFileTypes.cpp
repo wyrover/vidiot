@@ -90,35 +90,12 @@ void TestFileTypes::executeTest(wxString filetypesDir)
     // Wav files from: http://www-mmsp.ece.mcgill.ca/documents/AudioFormats/WAVE/Samples.html
     // Some files from http://samples.mplayerhq.hu/
 
-    // Create project (must be done after ConfigOverrule* code)
-    model::FolderPtr root = WindowCreateProject();
-    ASSERT(root);
-    wxString sSequence( "Sequence" );
-    model::SequencePtr sequence = ProjectViewAddSequence( sSequence, root );
-    WindowTriggerMenu(ID_CLOSESEQUENCE);
-
-    // Find input files in dir (must be done after creating a project, due to dependencies on project properties for opening/closing files)
-    wxFileName TestFilesPath = getTestPath();
-    TestFilesPath.AppendDir(filetypesDir);
-    ASSERT(TestFilesPath.IsDir());
-    ASSERT(TestFilesPath.DirExists());
-    model::IPaths InputFiles = GetSupportedFiles(TestFilesPath);
-
-    for ( model::IPathPtr path : InputFiles )
+    ExecuteOnAllFiles(filetypesDir, [] 
     {
-        StartTest(path->getPath().GetFullName());
-        model::FilePtr file = boost::make_shared<model::File>(path->getPath());
-        ExtendSequenceWithRepeatedClips( sequence, boost::assign::list_of(path), 1); // Note: Not via a command (thus, 'outside' the undo system)
-        ProjectViewOpenTimelineForSequence(sequence);
-        TimelineZoomIn(5);
-        ASSERT_EQUALS(NumberOfVideoClipsInTrack(0),1);
-        ASSERT_EQUALS(NumberOfAudioClipsInTrack(0),1);
-        ASSERT_EQUALS(VideoTrack(0)->getLength(),AudioTrack(0)->getLength());
         Play(LeftPixel(VideoClip(0,0)), 1000);
         Play(HCenter(VideoClip(0,0)), 1000);
-        WindowTriggerMenu(ID_CLOSESEQUENCE);
-        MakeSequenceEmpty(sequence); // Note: Not via a command (thus, 'outside' the undo system)
-    }
+
+    });
 }
 
 } // namespace

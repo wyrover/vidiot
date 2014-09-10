@@ -128,7 +128,6 @@ VideoFramePtr VideoClip::getNextVideo(const VideoCompositionParameters& paramete
     bool enforceKeyFrame = false;
     if (getNewStartPosition())
     {
-        // todo remove mProgress: obsolete due to adding pts value to parameters
         mProgress = *getNewStartPosition(); // Reinitialize mProgress to the last value set in ::moveTo
         invalidateNewStartPosition();
         enforceKeyFrame = true; // Every first frame of a clip is forced to be a key frame

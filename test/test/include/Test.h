@@ -148,6 +148,7 @@
 #include "HelperWatcher.h"
 #include "HelperWidgets.h"
 #include "HelperWorker.h"
+#include "HelperFiles.h" // Uses a lot of the other header files
 #include "SuiteCreator.h"
 
 #endif
