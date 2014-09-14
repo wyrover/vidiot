@@ -35,6 +35,8 @@ namespace gui {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
+wxString Dialog::sMediaFileTypes = _("Movie clips (*.avi;*.mov;*.mp4)|*.avi;*.mov;*.mp4|Images (*.gif;*.jpg)|*.gif;*.jpg|Sound files (*.wav;*.mp3)|*.wav;*.mp3|All files (%s)|%s");
+
 Dialog::Dialog()
     :   mDir(boost::none)
     ,   mFiles(boost::none)

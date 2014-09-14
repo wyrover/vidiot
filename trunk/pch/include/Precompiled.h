@@ -151,6 +151,7 @@ extern "C" {
 #include <wx/pen.h>
 #include <wx/propdlg.h>
 #include <wx/radiobox.h>
+#include <wx/radiobut.h>
 #include <wx/regex.h>
 #include <wx/region.h>
 #include <wx/scrolwin.h>
@@ -158,6 +159,7 @@ extern "C" {
 #include <wx/slider.h>
 #include <wx/spinctrl.h>
 #include <wx/statbox.h>
+#include <wx/statline.h>
 #include <wx/stattext.h>
 #include <wx/statusbr.h>
 #include <wx/stdpaths.h>
@@ -170,6 +172,7 @@ extern "C" {
 #include <wx/utils.h>
 #include <wx/valnum.h>
 #include <wx/window.h>
+#include <wx/wizard.h>
 
 #ifdef _MSC_VER
 #include "inttypes.h"
