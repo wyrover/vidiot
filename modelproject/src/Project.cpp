@@ -23,6 +23,7 @@
 #include "File.h"
 #include "Folder.h"
 #include "IView.h"
+#include "DialogNewProject.h"
 #include "ProjectEvent.h"
 #include "Properties.h"
 #include "StatusBar.h"
@@ -77,6 +78,8 @@ bool Project::OnCloseDocument()
 bool Project::OnNewDocument()
 {
     bool opened = wxDocument::OnNewDocument();
+    //gui::DialogNewProject* dialog = new gui::DialogNewProject(this);
+    //dialog->ShowModal();
     if (opened)
     {
         mProperties = boost::make_shared<Properties>();

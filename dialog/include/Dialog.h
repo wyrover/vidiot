@@ -39,6 +39,9 @@ class Dialog
 {
 public:
 
+    static wxString sMediaFileTypes;
+
+
     //////////////////////////////////////////////////////////////////////////
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
@@ -80,7 +83,7 @@ public:
     /// setFiles() are returned and that list is reset.
     /// In case the dialog is aborted or no file is selected for another reason, an empty list is returned.
     /// \post !sFiles
-    wxStrings getFiles(const wxString& message, const wxString& filetypes, wxWindow* parent = 0 );
+    wxStrings getFiles(const wxString& message, const wxString& filetypes = Dialog::sMediaFileTypes, wxWindow* parent = 0 );
 
     //////////////////////////////////////////////////////////////////////////
 

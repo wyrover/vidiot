@@ -385,8 +385,7 @@ void ProjectView::onNewSequence()
 
 void ProjectView::onNewFile()
 {
-    wxString filetypes = _("Movie clips (*.avi;*.mov;*.mp4)|*.avi;*.mov;*.mp4|Images (*.gif;*.jpg)|*.gif;*.jpg|Sound files (*.wav;*.mp3)|*.wav;*.mp3|All files (%s)|%s");
-    wxStrings files = gui::Dialog::get().getFiles( _("Select file(s) to add"), filetypes );
+    wxStrings files = gui::Dialog::get().getFiles( _("Select file(s) to add") );
     std::vector<wxFileName> list;
     for ( wxString path : files )
     {
