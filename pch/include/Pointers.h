@@ -28,6 +28,8 @@
 
 typedef boost::shared_ptr<wxBitmap> wxBitmapPtr;
 typedef boost::shared_ptr<wxImage> wxImagePtr;
+typedef std::list<wxString> wxStrings;
+typedef std::list<wxFileName> wxFileNames;
 
 namespace model {
 

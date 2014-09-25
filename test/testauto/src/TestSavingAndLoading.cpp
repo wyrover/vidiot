@@ -40,11 +40,11 @@ void TestSavingAndLoading::tearDown()
 
 void TestSavingAndLoading::testSaveAndLoad()
 {
+    StartTestSuite();
+
     ConfigOverruleString overruleFrameRate(Config::sPathDefaultFrameRate, FrameRate::s24p.toString());
     ConfigOverruleLong overruleChannels(Config::sPathDefaultAudioChannels, 2);
     ConfigOverruleLong overruleSampleRate(Config::sPathDefaultAudioSampleRate, 44100);
-
-    StartTestSuite();
 
     StartTest("Create saved document");
 

@@ -1,4 +1,4 @@
-// Copyright 2013,2014 Eric Raijmakers.
+// Copyright 2014 Eric Raijmakers.
 //
 // This file is part of Vidiot.
 //
@@ -17,113 +17,188 @@
 
 #include "DialogNewProject.h"
 
+#include "AutoFolder.h"
+#include "EditProjectProperties.h"
+#include "FileAnalyzer.h"
 #include "Project.h"
+#include "ProjectModification.h"
+#include "ProjectViewCreateSequence.h"
+#include "Properties.h"
+#include "UtilAudioRate.h"
+#include "UtilEnum.h"
 #include "Window.h"
 
 namespace gui {
+
+// static 
+boost::optional<wxStrings> DialogNewProject::sDroppedFiles = boost::none;
+
+wxString sNoFiles(_("Found no usable media files."));
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-DialogNewProject::DialogNewProject(model::Project* project)
-    :   wxWizard(&Window::get())
-    ,   mProject(project)
+DialogNewProject::DialogNewProject()
+    : wxWizard(&Window::get(), wxID_ANY, _("Create new project"), wxNullBitmap, wxDefaultPosition, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+    , mDefaultType(Config::ReadEnum<model::DefaultNewProjectWizardStart>(Config::sPathDefaultNewProjectType))
+    , mFolderPath("")
 {
     SetTitle(_("Create new project"));
-    
+
+    wxSize minPageSize(0,0);
+
     {
-        mStart = new wxWizardPageSimple(this);
+        // Page: Choice of type of creation
+        mPageStart = new wxWizardPageSimple(this);
 
         wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
 
         wxBoxSizer* sizerFolder = new wxBoxSizer(wxHORIZONTAL);
-        mButtonFolder = new wxRadioButton(mStart, wxID_ANY,  _(""), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
-        mTextFolder = new wxStaticText(mStart, wxID_ANY, _("Start a new project starting from a folder of files.\nAll files in this folder are added into a new movie."));
+        mButtonFolder = new wxRadioButton(mPageStart, wxID_ANY,  _(""), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
+        mTextFolder = new wxStaticText(mPageStart, wxID_ANY, _("Start a new project starting from a folder of files.\nAll files in this folder are added into a new movie."));
         sizerFolder->Add(mButtonFolder, wxSizerFlags(0).Expand().Border(wxRIGHT,5));
         sizerFolder->Add(mTextFolder, wxSizerFlags(1).Center());
         mButtonFolder->Bind(wxEVT_RADIOBUTTON, &DialogNewProject::onChangeType, this);
         mTextFolder->Bind(wxEVT_LEFT_DOWN, &DialogNewProject::onActivateFolderText,this);
 
         wxBoxSizer* sizerFiles = new wxBoxSizer(wxHORIZONTAL);
-        mButtonFiles = new wxRadioButton(mStart, wxID_ANY, "");
-        mTextFiles = new wxStaticText(mStart, wxID_ANY, _("Start a new project by selecting a list of files\nto be added to a new movie."), wxDefaultPosition, wxDefaultSize, wxST_NO_AUTORESIZE);
+        mButtonFiles = new wxRadioButton(mPageStart, wxID_ANY, "");
+        mTextFiles = new wxStaticText(mPageStart, wxID_ANY, _("Start a new project by selecting a list of files\nto be added to a new movie."), wxDefaultPosition, wxDefaultSize, wxST_NO_AUTORESIZE);
         sizerFiles->Add(mButtonFiles, wxSizerFlags(0).Expand().Border(wxRIGHT,5));
         sizerFiles->Add(mTextFiles, wxSizerFlags(1).Center());
-        sizerFiles->Fit(mStart);
+        sizerFiles->Fit(mPageStart);
         mButtonFiles->Bind(wxEVT_RADIOBUTTON, &DialogNewProject::onChangeType, this);
         mTextFiles->Bind(wxEVT_LEFT_DOWN, &DialogNewProject::onActivateFilesText,this);
 
         wxBoxSizer* sizerBlank = new wxBoxSizer(wxHORIZONTAL);
-        mButtonBlank = new wxRadioButton(mStart, wxID_ANY, "");
-        mTextBlank = new wxStaticText(mStart, wxID_ANY, _("Start a new empty project."));
+        mButtonBlank = new wxRadioButton(mPageStart, wxID_ANY, "");
+        mTextBlank = new wxStaticText(mPageStart, wxID_ANY, _("Start a new empty project."));
         sizerBlank->Add(mButtonBlank, wxSizerFlags(0).Expand().Border(wxRIGHT,5));
         sizerBlank->Add(mTextBlank, wxSizerFlags(1).Center());
         mButtonBlank->Bind(wxEVT_RADIOBUTTON, &DialogNewProject::onChangeType, this);
         mTextBlank->Bind(wxEVT_LEFT_DOWN, &DialogNewProject::onActivateBlankText,this);
 
         sizer->Add(sizerFolder, wxSizerFlags(1));
-        sizer->Add(new wxStaticLine(mStart), wxSizerFlags(0).Expand());
+        sizer->Add(new wxStaticLine(mPageStart), wxSizerFlags(0).Expand());
         sizer->Add(sizerFiles, wxSizerFlags(1).Expand());
-        sizer->Add(new wxStaticLine(mStart), wxSizerFlags(0).Expand());
+        sizer->Add(new wxStaticLine(mPageStart), wxSizerFlags(0).Expand());
         sizer->Add(sizerBlank, wxSizerFlags(1).Expand());
 
+        mPageStart->SetSizer(sizer);
 
-        mStart->SetSizer(sizer);
-    }
-    {
-        mBlank = new wxWizardPageSimple(this);
+        minPageSize.IncTo(sizer->CalcMin());
 
     }
+    static const int sBorderSize(10);
     {
-        mFolder = new wxWizardPageSimple(this);
+        // Page: From folder
+        mPageFolder = new wxWizardPageSimple(this);
 
         wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
 
-        wxStaticText* textBrowse = new wxStaticText(mFolder, wxID_ANY, _("Select a folder with media files\nfor creating a new movie."));
-        sizer->Add(textBrowse,wxSizerFlags(0).Expand());
+        wxStaticText* textBrowse = new wxStaticText(mPageFolder, wxID_ANY, _("Select a folder with media files\nfor creating a new movie."));
+        sizer->Add(textBrowse,wxSizerFlags(0).Expand().Border(wxBOTTOM, sBorderSize));
 
-        wxBoxSizer* sizerFolder = new wxBoxSizer(wxHORIZONTAL);
-        mButtonBrowseFolder = new wxButton(mFolder, wxID_ANY, _("Browse folder"));
-        wxStaticText* textFolder = new wxStaticText(mFolder, wxID_ANY, "");
-        sizerFolder->Add(mButtonBrowseFolder, wxSizerFlags(0).Border(wxRIGHT,5));
-        sizerFolder->Add(textFolder, wxSizerFlags(1).Center());
-        mButtonBrowseFolder->Bind(wxEVT_BUTTON, &DialogNewProject::onBrowseFolder, this);
+        mButtonBrowseFolder = new wxButton(mPageFolder, wxID_ANY, _("Select folder"));
+        mContentsFolder = new wxStaticText(mPageFolder, wxID_ANY, "");
+        mContentsFolder->SetFont(mContentsFolder->GetFont().MakeItalic());
 
-        sizer->Add(sizerFolder,wxSizerFlags(1).Expand());
+        sizer->Add(mButtonBrowseFolder,wxSizerFlags(0).Border(wxBOTTOM, sBorderSize));
+        sizer->Add(mContentsFolder,wxSizerFlags(1).Expand());
 
-        // todo disable next until valid folder selected
+        mPageFolder->SetSizer(sizer);
+        minPageSize.IncTo(sizer->CalcMin());
 
-        mFolder->SetSizer(sizer);
+        showFoundFilesInFolder();
     }
     {
-        mFiles = new wxWizardPageSimple(this);
+        // Page: From files
+        mPageFiles = new wxWizardPageSimple(this);
 
         wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
 
-        wxStaticText* textBrowse = new wxStaticText(mFiles, wxID_ANY, _("Select media files to be added to the movie."));
-        sizer->Add(textBrowse,wxSizerFlags(0).Expand());
+        wxStaticText* textBrowse = new wxStaticText(mPageFiles, wxID_ANY, _("Select media files to be added to the movie."));
+        sizer->Add(textBrowse,wxSizerFlags(0).Expand().Border(wxBOTTOM, sBorderSize));
 
-        wxBoxSizer* sizerFiles = new wxBoxSizer(wxHORIZONTAL);
-        mButtonBrowseFiles = new wxButton(mFiles, wxID_ANY, _("Browse files"));
-        wxStaticText* textFiles = new wxStaticText(mFiles, wxID_ANY, "");
-        sizerFiles->Add(mButtonBrowseFiles, wxSizerFlags(0).Border(wxRIGHT,5));
-        sizerFiles->Add(textFiles, wxSizerFlags(1).Center());
-        mButtonBrowseFiles->Bind(wxEVT_BUTTON, &DialogNewProject::onBrowseFiles, this);
+        mButtonBrowseFiles = new wxButton(mPageFiles, wxID_ANY, _("Select files"));
+        mContentsFiles = new wxStaticText(mPageFiles, wxID_ANY, "");
+        mContentsFiles->SetFont(mContentsFiles->GetFont().MakeItalic());
 
-        sizer->Add(sizerFiles,wxSizerFlags(1).Expand());
+        sizer->Add(mButtonBrowseFiles,wxSizerFlags(0).Border(wxBOTTOM, sBorderSize));
+        sizer->Add(mContentsFiles,wxSizerFlags(1).Expand());
 
-        // todo disable next until valid files selected
+        mPageFiles->SetSizer(sizer);
+        minPageSize.IncTo(sizer->CalcMin());
 
-        mFiles->SetSizer(sizer);
-
+        showSelectedFiles();
     }
     {
-        mProperties = new wxWizardPageSimple(this);
+        // Page: Properties
+        mPageProperties = new wxWizardPageSimple(this);
+
+        wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
+
+        mEditProperties = new EditProjectProperties(mPageProperties);
+
+        sizer->Add(mEditProperties,wxSizerFlags(1).Expand());
+
+        mPageProperties->SetSizer(sizer);
+        minPageSize.IncTo(sizer->CalcMin());
+    }
+
+    Bind(wxEVT_WIZARD_PAGE_CHANGED, &DialogNewProject::onPageChanged, this);
+    Bind(wxEVT_WIZARD_CANCEL, &DialogNewProject::onCancel, this);
+    Bind(wxEVT_WIZARD_FINISHED, &DialogNewProject::onFinish, this);
+
+    mButtonFolder->Bind(wxEVT_RADIOBUTTON, &DialogNewProject::onTypeChanged, this);
+    mButtonFiles->Bind(wxEVT_RADIOBUTTON, &DialogNewProject::onTypeChanged, this);
+    mButtonBlank->Bind(wxEVT_RADIOBUTTON, &DialogNewProject::onTypeChanged, this);
+
+    mButtonBrowseFolder->Bind(wxEVT_BUTTON, &DialogNewProject::onBrowseFolder, this);
+    mButtonBrowseFiles->Bind(wxEVT_BUTTON, &DialogNewProject::onBrowseFiles, this);
+
+    if (sDroppedFiles)
+    {
+        // Files were dropped from the file system.
+        mFileAnalyzer = boost::make_shared<model::FileAnalyzer>(*sDroppedFiles, this);
+
+        if (sDroppedFiles->size() == 1 && 
+            mFileAnalyzer->getNumberOfFolders() == 1)
+        {
+            mDefaultType = model::DefaultNewProjectWizardStartFolder;
+            handleFolder(sDroppedFiles->front());
+        }
+        else if (mFileAnalyzer->getNumberOfFolders() + mFileAnalyzer->getNumberOfMediaFiles() >= 1)
+        {
+            mDefaultType = model::DefaultNewProjectWizardStartFiles;
+            handleFiles(*sDroppedFiles);
+        }
+        else
+        {
+            mDefaultType = model::DefaultNewProjectWizardStartBlank;
+        }
+
+        sDroppedFiles.reset();
+    }
+
+    switch (mDefaultType)
+    {
+    case model::DefaultNewProjectWizardStartNone:
+        break;
+    case model::DefaultNewProjectWizardStartFolder:
+        mButtonFolder->SetValue(true);
+        break;
+    case model::DefaultNewProjectWizardStartFiles:
+        mButtonFiles->SetValue(true);
+        break;
+    case model::DefaultNewProjectWizardStartBlank:
+        mButtonBlank->SetValue(true);
+        break;
     }
 
     setLinks();
-    RunWizard(mStart);
+    SetPageSize(minPageSize);
 }
 
 DialogNewProject::~DialogNewProject()
@@ -131,13 +206,116 @@ DialogNewProject::~DialogNewProject()
     mTextFolder->Unbind(wxEVT_LEFT_DOWN, &DialogNewProject::onActivateFolderText,this);
     mTextFiles->Unbind(wxEVT_LEFT_DOWN, &DialogNewProject::onActivateFilesText,this);
     mTextBlank->Unbind(wxEVT_LEFT_DOWN, &DialogNewProject::onActivateBlankText,this);
+    mButtonFolder->Unbind(wxEVT_RADIOBUTTON, &DialogNewProject::onTypeChanged, this);
+    mButtonFiles->Unbind(wxEVT_RADIOBUTTON, &DialogNewProject::onTypeChanged, this);
+    mButtonBlank->Unbind(wxEVT_RADIOBUTTON, &DialogNewProject::onTypeChanged, this);
     mButtonBrowseFolder->Unbind(wxEVT_BUTTON, &DialogNewProject::onBrowseFolder, this);
     mButtonBrowseFiles->Unbind(wxEVT_BUTTON, &DialogNewProject::onBrowseFiles, this);
+    Unbind(wxEVT_WIZARD_PAGE_CHANGED, &DialogNewProject::onPageChanged, this);
+    Unbind(wxEVT_WIZARD_CANCEL, &DialogNewProject::onCancel, this);
+    Unbind(wxEVT_WIZARD_FINISHED, &DialogNewProject::onFinish, this);
+}
+
+bool DialogNewProject::runWizard()
+{
+    if (mDefaultType == model::DefaultNewProjectWizardStartNone)
+    {
+        return true;
+    }
+
+    return RunWizard(mPageStart);
+}
+
+// static 
+void DialogNewProject::setDroppedFiles(wxStrings files)
+{
+    sDroppedFiles.reset(files);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // GUI EVENTS
 //////////////////////////////////////////////////////////////////////////
+
+void DialogNewProject::onTypeChanged(wxCommandEvent& event)
+{
+    setLinks();
+    event.Skip();
+}
+
+void DialogNewProject::onPageChanged(wxWizardEvent& event)
+{
+    setLinks();
+    if (event.GetPage() == mPageProperties)
+    {
+        if (mFileAnalyzer)
+        {
+            wxSize size = mFileAnalyzer->getMostFrequentVideoSize();
+            model::Properties::get().setVideoSize(size);
+
+            FrameRate fr = mFileAnalyzer->getMostFrequentFrameRate();
+            std::vector<FrameRate> supported = FrameRate::getSupported();
+            if (std::find(supported.begin(), supported.end(), mFileAnalyzer->getMostFrequentFrameRate()) != supported.end())
+            {
+                // Only use supported framerates
+                model::Properties::get().setFrameRate(fr);
+            }
+            // else: Fall back to default frame rate
+
+            std::pair<int,int> sampleRate_channels = mFileAnalyzer->getMostFrequentAudioRate();
+            if (sampleRate_channels.second >= getMinimumNumberOfAudioChannels() && sampleRate_channels.second <= getMaximumNumberOfAudioChannels())
+            {
+                // Number of channels ok
+                if (sampleRate_channels.first >= getMinimumAudioSampleRate() && sampleRate_channels.first <= getMaximumAudioSampleRate())
+                {
+                    // Sample rate also ok
+                    model::Properties::get().setAudioSampleRate(sampleRate_channels.first);
+                    model::Properties::get().setAudioNumberOfChannels(sampleRate_channels.second);
+                }
+            }
+        }
+        mEditProperties->read();
+    }
+    event.Skip();
+}
+
+void DialogNewProject::onCancel(wxWizardEvent& event)
+{
+    event.Skip();
+}
+
+void DialogNewProject::onFinish(wxWizardEvent& event)
+{
+    mEditProperties->write();
+    model::DefaultNewProjectWizardStart defaultType = 
+        mButtonFolder->GetValue() ? model::DefaultNewProjectWizardStartFolder :
+        mButtonFiles->GetValue() ? model::DefaultNewProjectWizardStartFiles :
+        model::DefaultNewProjectWizardStartBlank;
+    Config::WriteString(Config::sPathDefaultNewProjectType, model::DefaultNewProjectWizardStart_toString(defaultType));
+
+    if (mFileAnalyzer)
+    {
+        model::NodePtrs nodes = mFileAnalyzer->getNodes();
+        model::FolderPtr root = ::model::Project::get().getRoot();
+
+        mFileAnalyzer->addNodesToProjectView();
+
+        if (mFileAnalyzer->getNumberOfFolders() == 1 && mFileAnalyzer->getNumberOfFiles() == 0)
+        {
+            // Create sequence of this folder
+            ::model::AutoFolderPtr folder = boost::dynamic_pointer_cast<::model::AutoFolder>(nodes.front());
+            ASSERT(folder);
+            model::ProjectModification::submit(new command::ProjectViewCreateSequence(folder));
+        }
+        else if (mFileAnalyzer->getNumberOfFolders() == 0 && mFileAnalyzer->getNumberOfMediaFiles() > 0)
+        {
+            // Create sequence of all given files
+            wxString sequenceName = nodes.size() > 1 ? _("Movie") : nodes.front()->getName();
+            model::ProjectModification::submit(new command::ProjectViewCreateSequence(root, sequenceName, nodes));
+        }
+    }
+
+    event.Skip();
+}
 
 void DialogNewProject::onActivateFolderText(wxMouseEvent& event)
 {
@@ -168,15 +346,128 @@ void DialogNewProject::onChangeType(wxCommandEvent& event)
 
 void DialogNewProject::onBrowseFolder(wxCommandEvent& event)
 {
-    wxString s = gui::Dialog::get().getDir( _("Select folder with media files"),wxStandardPaths::Get().GetDocumentsDir() );
+    wxString selection = gui::Dialog::get().getDir( _("Select folder with media files"),wxStandardPaths::Get().GetDocumentsDir());
+    if (!selection.IsEmpty())
+    {
+        mFileAnalyzer.reset();
+        handleFolder(selection);
+    }
     event.Skip();
+}
+
+void DialogNewProject::handleFolder(wxString folder)
+{
+    mFolderPath = folder;
+    showFoundFilesInFolder();
+    setLinks();
 }
 
 
 void DialogNewProject::onBrowseFiles(wxCommandEvent& event)
 {
-    wxStrings s = gui::Dialog::get().getFiles( _("Select media files") );
+    wxStrings selection = gui::Dialog::get().getFiles( _("Select media files") );
+    if (!selection.empty())
+    {
+        mFileAnalyzer.reset();
+        handleFiles(selection);
+    }
     event.Skip();
+}
+
+void DialogNewProject::handleFiles(wxStrings files)
+{
+    mFilePaths = files;
+    showSelectedFiles();
+    setLinks();
+}
+
+//////////////////////////////////////////////////////////////////////////
+// TEST
+//////////////////////////////////////////////////////////////////////////
+
+wxWizardPage* DialogNewProject::getPageStart()
+{
+    return mPageStart;
+}
+
+wxWizardPage* DialogNewProject::getPageFolder()
+{
+    return mPageFolder;
+}
+
+wxWizardPage* DialogNewProject::getPageFiles()
+{
+    return mPageFiles;
+}
+
+wxWizardPage* DialogNewProject::getPageProperties()
+{
+    return mPageProperties;
+}
+
+bool DialogNewProject::isNextEnabled() const
+{
+    wxButton* nextButton = dynamic_cast<wxButton*>(FindWindowById(wxID_FORWARD));
+    return nextButton->IsEnabled();
+}
+
+void DialogNewProject::pressNext()
+{
+    wxButton* nextButton = dynamic_cast<wxButton*>(FindWindowById(wxID_FORWARD));
+    wxCommandEvent* event = new wxCommandEvent(wxEVT_BUTTON, wxID_FORWARD);
+    event->SetEventObject(nextButton);
+    nextButton->GetEventHandler()->QueueEvent(event);
+}
+
+void DialogNewProject::pressCancel()
+{
+    wxButton* cancelButton = dynamic_cast<wxButton*>(FindWindowById(wxID_CANCEL));
+    wxCommandEvent* event = new wxCommandEvent(wxEVT_BUTTON, wxID_CANCEL);
+    event->SetEventObject(cancelButton);
+    cancelButton->GetEventHandler()->QueueEvent(event);
+}
+
+void DialogNewProject::pressFinish()
+{
+    wxButton* finishButton = dynamic_cast<wxButton*>(FindWindowById(wxID_FORWARD));
+    ASSERT_EQUALS(finishButton->GetLabel(),"&Finish");
+    pressNext();
+}
+
+void DialogNewProject::pressButtonFolder()
+{
+    mButtonFolder->SetValue(true);
+    wxCommandEvent* event = new wxCommandEvent(wxEVT_RADIOBUTTON);
+    event->SetEventObject(mButtonFolder);
+    mButtonFolder->GetEventHandler()->QueueEvent(event);
+}
+
+void DialogNewProject::pressButtonFiles()
+{
+    mButtonFiles->SetValue(true);
+    wxCommandEvent* event = new wxCommandEvent(wxEVT_RADIOBUTTON);
+    event->SetEventObject(mButtonFiles);
+    mButtonFiles->GetEventHandler()->QueueEvent(event);
+}
+
+void DialogNewProject::pressButtonBlank()
+{
+    mButtonBlank->SetValue(true);
+    wxCommandEvent* event = new wxCommandEvent(wxEVT_RADIOBUTTON);
+    event->SetEventObject(mButtonBlank);
+    mButtonBlank->GetEventHandler()->QueueEvent(event);
+}
+
+void DialogNewProject::pressBrowseFolder()
+{
+    wxCommandEvent* event = new wxCommandEvent(wxEVT_BUTTON);
+    mButtonBrowseFolder->GetEventHandler()->QueueEvent(event);
+}
+
+void DialogNewProject::pressBrowseFiles()
+{
+    wxCommandEvent* event = new wxCommandEvent(wxEVT_BUTTON);
+    mButtonBrowseFiles->GetEventHandler()->QueueEvent(event);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -185,26 +476,106 @@ void DialogNewProject::onBrowseFiles(wxCommandEvent& event)
 
 void DialogNewProject::setLinks()
 {
-    mStart->SetPrev(nullptr);
-    mStart->SetNext(
-        mButtonBlank->GetValue() ? mBlank :
-        mButtonFiles->GetValue() ? mFiles :
-        mButtonFolder->GetValue() ? mFolder : nullptr);
+    mPageStart->SetPrev(nullptr);
+    mPageStart->SetNext(
+        mButtonBlank->GetValue() ? mPageProperties :
+        mButtonFiles->GetValue() ? mPageFiles :
+        mButtonFolder->GetValue() ? mPageFolder : nullptr);
 
-    mFolder->SetPrev(mStart);
-    mFolder->SetNext(mProperties);
+    mPageFolder->SetPrev(mPageStart);
+    mPageFolder->SetNext(mPageProperties);
 
-    mFiles->SetPrev(mStart);
-    mFiles->SetNext(mProperties);
+    mPageFiles->SetPrev(mPageStart);
+    mPageFiles->SetNext(mPageProperties);
 
-    mBlank->SetPrev(mStart);
-    mBlank->SetNext(mProperties);
+    wxWindow* nextButton = FindWindowById(wxID_FORWARD);
+    nextButton->Enable();
+    if (GetCurrentPage() == mPageFolder && mFolderPath.IsEmpty())
+    {
+        nextButton->Disable();
+    }
+    if (GetCurrentPage() == mPageFiles && mFilePaths.empty())
+    {
+        nextButton->Disable();
+    }
 
-    mProperties->SetPrev(
-        mButtonBlank->GetValue() ? mBlank :
-        mButtonFiles->GetValue() ? mFiles :
-        mButtonFolder->GetValue() ? mFolder : nullptr);
-    mProperties->SetNext(nullptr);
+    mPageProperties->SetPrev(
+        mButtonBlank->GetValue() ? mPageStart :
+        mButtonFiles->GetValue() ? mPageFiles :
+        mButtonFolder->GetValue() ? mPageFolder : nullptr);
+    mPageProperties->SetNext(nullptr);
+}
+
+void DialogNewProject::showFoundFilesInFolder()
+{
+    wxString overview;
+    if (mFolderPath.IsEmpty())
+    {
+        overview << _("Select folder to continue.");
+    }
+    else
+    {
+        if (!mFileAnalyzer)
+        {
+            wxStrings paths = boost::assign::list_of(mFolderPath);
+            mFileAnalyzer = boost::make_shared<model::FileAnalyzer>(paths,this);
+        }
+        // else: Dialog canceled or FileAnalyzer already initialized by drag and drop
+
+        overview = getOverviewMessage(mFileAnalyzer);
+        if (overview.IsSameAs(sNoFiles))
+        {
+            mFolderPath = "";
+        }
+    }
+    mContentsFolder->SetLabel(overview);
+    mContentsFolder->Wrap(GetClientSize().GetWidth());
+}
+
+void DialogNewProject::showSelectedFiles()
+{
+    wxString overview;
+    if (mFilePaths.empty())
+    {
+        overview << _("Select one or more media files to continue.");
+    }
+    else
+    {
+        if (!mFileAnalyzer)
+        {
+            mFileAnalyzer = boost::make_shared<model::FileAnalyzer>(mFilePaths,this);
+        }
+        // else: Dialog canceled or FileAnalyzer already initialized by drag and drop
+        overview = getOverviewMessage(mFileAnalyzer);
+        if (overview.IsSameAs(sNoFiles))
+        {
+            mFilePaths.clear();
+        }
+    }
+    mContentsFiles->SetLabel(overview);
+    mContentsFiles->Wrap(GetClientSize().GetWidth());
+}
+
+wxString DialogNewProject::getOverviewMessage(boost::shared_ptr<model::FileAnalyzer> analyzer) const
+{
+    wxString result;
+    if (analyzer->getNumberOfMediaFiles() == 0)
+    {
+        result << sNoFiles;
+    }
+    else if (mFileAnalyzer->getNumberOfFolders() == 0)
+    {
+        result << _("Found ") << mFileAnalyzer->getNumberOfMediaFiles() << _(" media files.");
+    }
+    else if (mFileAnalyzer->getNumberOfFolders() == 1)
+    {
+        result << _("Found ") << mFileAnalyzer->getNumberOfMediaFiles() << _(" media files in ") << mFileAnalyzer->getFirstFolderName() << '.';
+    }
+    else // (mFileAnalyzer->getNumberOfFolders() > 1 && mFileAnalyzer->getNumberOfMediaFiles() >= 1)
+    {
+        result << _("Found ") << mFileAnalyzer->getNumberOfMediaFiles() << _(" media files in ") << mFileAnalyzer->getNumberOfFolders() << " folders.";
+    }
+    return result;
 }
 
 }

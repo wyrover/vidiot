@@ -44,6 +44,12 @@ DECLAREENUM(TransitionType, \
             TransitionTypeInOut, \
             TransitionTypeOutIn);
 
+DECLAREENUM(DefaultNewProjectWizardStart, \
+            DefaultNewProjectWizardStartNone, \
+            DefaultNewProjectWizardStartFolder, \
+            DefaultNewProjectWizardStartFiles, \
+            DefaultNewProjectWizardStartBlank);
+
 }
 
 #endif

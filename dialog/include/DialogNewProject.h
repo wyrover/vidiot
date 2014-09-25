@@ -1,4 +1,4 @@
-// Copyright 2013,2014 Eric Raijmakers.
+// Copyright 2014 Eric Raijmakers.
 //
 // This file is part of Vidiot.
 //
@@ -18,18 +18,22 @@
 #ifndef DIALOG_NEW_PROJECT_H
 #define DIALOG_NEW_PROJECT_H
 
-#include "Project.h"
+#include "Enums.h"
+#include "UtilSingleInstance.h"
 
 namespace model {
+    class FileAnalyzer;
     class Project;
 }
 
 namespace gui {
 
-class Pages;
+class EditProjectProperties;
 
 class DialogNewProject
-    :   public wxWizard
+    : public wxWizard
+    , public SingleInstance<DialogNewProject>
+
 {
 public:
 
@@ -38,19 +42,50 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    DialogNewProject(model::Project* project);
+    DialogNewProject();
     virtual ~DialogNewProject();
+
+    bool runWizard();
+
+    static void setDroppedFiles(wxStrings files);
 
     //////////////////////////////////////////////////////////////////////////
     // GUI EVENTS
     //////////////////////////////////////////////////////////////////////////
 
+    void onTypeChanged(wxCommandEvent& event);
+    void onPageChanged(wxWizardEvent& event);
+    void onCancel(wxWizardEvent& event);
+    void onFinish(wxWizardEvent& event);
     void onActivateFolderText(wxMouseEvent& event);
     void onActivateFilesText(wxMouseEvent& event);
     void onActivateBlankText(wxMouseEvent& event);
     void onChangeType(wxCommandEvent& event);
     void onBrowseFolder(wxCommandEvent& event);
+    void handleFolder(wxString folder);
     void onBrowseFiles(wxCommandEvent& event);
+    void handleFiles(wxStrings files);
+
+    //////////////////////////////////////////////////////////////////////////
+    // TEST
+    //////////////////////////////////////////////////////////////////////////
+
+    wxWizardPage* getPageStart();
+    wxWizardPage* getPageFolder();
+    wxWizardPage* getPageFiles();
+    wxWizardPage* getPageProperties();
+
+    bool isNextEnabled() const;
+    void pressNext();
+    void pressCancel();
+    void pressFinish();
+
+    void pressButtonFolder();
+    void pressButtonFiles();
+    void pressButtonBlank();
+
+    void pressBrowseFolder();
+    void pressBrowseFiles();
 
 private:
 
@@ -58,10 +93,10 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    model::Project* mProject;
+    wxWizardPageSimple* mPageStart;
+    model::DefaultNewProjectWizardStart mDefaultType;
 
-    wxWizardPageSimple* mStart;
-
+    // Page: Choice of type of creation
     wxRadioButton* mButtonFolder;
     wxStaticText* mTextFolder;
     wxRadioButton* mButtonFiles;
@@ -69,14 +104,25 @@ private:
     wxRadioButton* mButtonBlank; 
     wxStaticText* mTextBlank;
 
-    wxWizardPageSimple* mFolder;
+    // Page: From folder
+    wxWizardPageSimple* mPageFolder;
     wxButton* mButtonBrowseFolder;
+    wxStaticText* mContentsFolder;
+    wxString mFolderPath;
 
-    wxWizardPageSimple* mFiles;
+    // Page: From files
+    wxWizardPageSimple* mPageFiles;
     wxButton* mButtonBrowseFiles;
+    wxStaticText* mContentsFiles;
+    wxStrings mFilePaths;
 
-    wxWizardPageSimple* mBlank;
-    wxWizardPageSimple* mProperties;
+    // Page: Properties
+    wxWizardPageSimple* mPageProperties;
+    EditProjectProperties* mEditProperties;
+
+    static boost::optional<wxStrings> sDroppedFiles;
+
+    boost::shared_ptr<model::FileAnalyzer> mFileAnalyzer;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER CLASS
@@ -89,6 +135,11 @@ private:
     /// Set the proper page order.
     void setLinks(); 
 
+    void showFoundFilesInFolder();
+
+    void showSelectedFiles();
+
+    wxString getOverviewMessage(boost::shared_ptr<model::FileAnalyzer> analyzer) const;
 };
 
 } // namespace

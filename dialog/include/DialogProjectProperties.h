@@ -29,7 +29,7 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    DialogProjectProperties(wxWindow* parent);
+    explicit DialogProjectProperties(wxWindow* parent);
     virtual ~DialogProjectProperties();
 
 private:

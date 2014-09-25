@@ -81,8 +81,6 @@ private:
     // PROJECT EVENTS
     //////////////////////////////////////////////////////////////////////////
 
-    //void onOpenProject(model::EventOpenProject &event);
-    //void onCloseProject(model::EventCloseProject &event);
     void onProjectAssetAdded(model::EventAddNode &event);
     void onProjectAssetsAdded(model::EventAddNodes &event);
     void onProjectAssetRemoved(model::EventRemoveNode &event);

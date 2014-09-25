@@ -82,6 +82,9 @@ public:
     /// \pre sequence must be opened (thus, timeline must exist)
     timeline::Timeline& getTimeline(const model::SequencePtr& sequence = model::SequencePtr());
 
+    /// \return true if a timeline is open
+    bool hasTimeline() const;
+
 private:
 
     wxNotebook mNotebook;

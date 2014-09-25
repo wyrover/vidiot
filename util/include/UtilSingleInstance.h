@@ -38,6 +38,7 @@ public:
     }
     static INSTANCETYPE& get()
     {
+        ASSERT_NONZERO(sInstance);
         return *(static_cast<INSTANCETYPE*>(sInstance));
     }
 private:

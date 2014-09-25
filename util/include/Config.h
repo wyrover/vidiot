@@ -126,6 +126,7 @@ public:
     static const wxString sPathDefaultVideoHeight;
     static const wxString sPathDefaultVideoScaling;
     static const wxString sPathDefaultVideoWidth;
+    static const wxString sPathDefaultNewProjectType;
     static const wxString sPathLastOpened;
     static const wxString sPathLogLevel;
     static const wxString sPathLogLevelAvcodec;

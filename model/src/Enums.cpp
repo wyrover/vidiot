@@ -27,6 +27,8 @@ IMPLEMENTENUM(VideoAlignment);
 
 IMPLEMENTENUM(TransitionType);
 
+IMPLEMENTENUM(DefaultNewProjectWizardStart);
+
 boost::bimap<VideoScaling, wxString> VideoScalingConverter::mapToHumanReadibleString = boost::assign::list_of<boost::bimap<VideoScaling, wxString>::relation >
     (VideoScalingFitAll,    _("Fit all"))
     (VideoScalingFitToFill, _("Fit to fill"))

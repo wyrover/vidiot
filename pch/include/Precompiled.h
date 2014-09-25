@@ -149,6 +149,7 @@ extern "C" {
 #include <wx/notebook.h>
 #include <wx/panel.h>
 #include <wx/pen.h>
+#include <wx/progdlg.h>
 #include <wx/propdlg.h>
 #include <wx/radiobox.h>
 #include <wx/radiobut.h>
