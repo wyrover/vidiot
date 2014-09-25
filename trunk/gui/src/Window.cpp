@@ -22,9 +22,10 @@
 #include "Config.h"
 #include "Dialog.h"
 #include "DialogAbout.h"
+#include "DialogNewProject.h"
 #include "DialogOptions.h"
 #include "DialogProjectProperties.h"
-#include "DropFilesFromFileSystem.h"
+#include "FileAnalyzer.h"
 #include "Help.h"
 #include "ids.h"
 #include "Layout.h"
@@ -116,7 +117,6 @@ Window::Window()
     ,   mTestCrash(0)
     ,   mAudioTransitionFactory(new model::audio::AudioTransitionFactory())
     ,   mVideoTransitionFactory(new model::video::VideoTransitionFactory())
-    ,   mOpenPropertiesUponProjectCreation(!Config::ReadBool(Config::sPathTest)) // Do not open dialog automatically during tests
 {
     Create(mDocManager, 0, wxID_ANY, sTitle, wxDefaultPosition, wxSize(1000,700));
 
@@ -501,14 +501,6 @@ void Window::onOpenProject(model::EventOpenProject &event )
     updateTitle();
     mVisibleWorker->start();
     mInvisibleWorker->start();
-
-    if (event.getValue() &&                  // Project is 'new'
-        mOpenPropertiesUponProjectCreation)  // Show dialog is enabled
-    {
-        wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED,wxID_PROPERTIES);
-        GetEventHandler()->ProcessEvent(event); // Open properties dialog immediately after creation.
-    }
-
     event.Skip();
 }
 
@@ -519,7 +511,7 @@ void Window::onCloseProject(model::EventCloseProject &event )
     mMenuFile->Enable(wxID_PROPERTIES,false);
     updateTitle();
     mVisibleWorker->abort();
-    mInvisibleWorker->start();
+    mInvisibleWorker->abort();
     event.Skip();
 }
 
@@ -800,7 +792,15 @@ void Window::onDropFiles(wxDropFilesEvent& event)
     {
         filenames.push_back(event.GetFiles()[i]);
     }
-    command::DropFilesFromFileSystem(filenames);
+    if (isProjectOpened())
+    {
+        boost::make_shared<model::FileAnalyzer>(filenames, this)->addNodesToProjectView();
+    }
+    else
+    {
+        DialogNewProject::setDroppedFiles(filenames);
+        GetEventHandler()->QueueEvent(new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED,wxID_NEW));
+    }
     // NOT: event.Skip() -- only handled here.
 }
 
@@ -867,11 +867,6 @@ void Window::setAdditionalTitle(const wxString& title)
 bool Window::isProjectOpened() const
 {
     return GetDocumentManager()->GetCurrentDocument() != 0;
-}
-
-void Window::openPropertiesUponProjectCreation(bool open)
-{
-    mOpenPropertiesUponProjectCreation = open;
 }
 
 //////////////////////////////////////////////////////////////////////////

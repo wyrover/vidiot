@@ -56,13 +56,14 @@ wxFileName getSourceRoot();
 /// \return path to vidiot/trunk dir
 wxFileName getTestPath();
 
-/// Get the path to the folder containing the test input files
+/// Get the path to the folder containing test input files
+/// \param subdir the path to this subdir (under test) is returned
 /// \return path to input files
-wxFileName getTestFilesPath();
+wxFileName getTestFilesPath(wxString subdir = "input");
 
 /// Get the input files in the test input folder
 /// \return list of paths to input files
-model::IPaths getListOfInputFiles();
+model::IPaths getListOfInputFiles(wxFileName path = getTestFilesPath());
 
 /// \return path to a still image
 wxFileName getStillImagePath();

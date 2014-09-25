@@ -116,6 +116,7 @@ void Config::init(const wxString& applicationName, const wxString& vendorName, b
     checkLong(Config::sPathDefaultAudioSampleRate, 100, 100000);
     checkLong(Config::sPathDefaultAudioChannels, 1, 2);
     checkEnum(Config::sPathLogLevel, LogLevel);
+    checkEnum(Config::sPathDefaultNewProjectType, model::DefaultNewProjectWizardStart);
     checkEnumFromMap(Config::sPathLogLevelAvcodec, Avcodec::mapAvcodecLevels);
     checkLong(Config::sPathMarkerBeginAddition, 0, 10000);
     checkLong(Config::sPathMarkerEndAddition, 0, 10000);
@@ -150,6 +151,7 @@ void Config::init(const wxString& applicationName, const wxString& vendorName, b
     setDefault(Config::sPathDefaultVideoWidth, 1280);
     setDefault(Config::sPathLastOpened, "");
     setDefault(Config::sPathLogLevel, LogLevel_toString(LogWarning).c_str());
+    setDefault(Config::sPathDefaultNewProjectType, model::DefaultNewProjectWizardStart_toString(model::DefaultNewProjectWizardStartFolder).c_str());
     setDefault(Config::sPathLogLevelAvcodec, Avcodec::getDefaultLogLevel());
     setDefault(Config::sPathMakeSequenceEmptyClipLength, 0);
     setDefault(Config::sPathMakeSequencePrefixLength, 14);
@@ -169,6 +171,11 @@ void Config::init(const wxString& applicationName, const wxString& vendorName, b
     setDefault(Config::sPathWindowX, -1);
     setDefault(Config::sPathWindowY, -1);
     setDefault(Config::sPathWorkspacePerspectiveCurrent,"");
+
+    if (inCxxTestMode)
+    {
+        WriteString(Config::sPathDefaultNewProjectType, model::DefaultNewProjectWizardStart_toString(model::DefaultNewProjectWizardStartNone).c_str());
+    }
 
     // Special cases checking and default handling
     wxString frameRate = wxConfigBase::Get()->Read(Config::sPathDefaultFrameRate, "");
@@ -427,6 +434,7 @@ const wxString Config::sPathDefaultVideoAlignment       ("/Video/DefaultVideoAli
 const wxString Config::sPathDefaultVideoHeight          ("/Video/DefaultHeight");
 const wxString Config::sPathDefaultVideoScaling         ("/Video/DefaultVideoScaling");
 const wxString Config::sPathDefaultVideoWidth           ("/Video/DefaultWidth");
+const wxString Config::sPathDefaultNewProjectType       ("/Project/DefaultNewProjectType");
 const wxString Config::sPathLastOpened                  ("/Project/LastOpened");
 const wxString Config::sPathLogLevel                    ("/Debug/LogLevel");
 const wxString Config::sPathLogLevelAvcodec             ("/Debug/LogLevelAvcodec");

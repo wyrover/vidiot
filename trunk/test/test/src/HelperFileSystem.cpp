@@ -119,18 +119,18 @@ wxFileName getTestPath()
     return result;
 }
 
-wxFileName getTestFilesPath()
+wxFileName getTestFilesPath(wxString subdir)
 {
     wxFileName result(getTestPath());
-    result.AppendDir("input");
+    result.AppendDir(subdir);
     ASSERT(result.IsDir())(result.GetFullPath());
     ASSERT(result.DirExists())(result.GetFullPath());
     return result;
 }
 
-model::IPaths getListOfInputFiles()
+model::IPaths getListOfInputFiles(wxFileName path)
 {
-    return GetSupportedFiles(getTestFilesPath());
+    return GetSupportedFiles(path);
 }
 
 wxFileName getStillImagePath()

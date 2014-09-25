@@ -151,6 +151,11 @@ timeline::Timeline& TimelinesView::getTimeline(const model::SequencePtr& sequenc
     return static_cast<timeline::Timeline&>(*mNotebook.GetPage(0));
 }
 
+bool TimelinesView::hasTimeline() const
+{
+    return mNotebook.GetPageCount() != 0;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////

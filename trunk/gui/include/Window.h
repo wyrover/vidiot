@@ -198,8 +198,6 @@ public:
 
     bool isProjectOpened() const;
 
-    void openPropertiesUponProjectCreation(bool open);
-
 private:
 
     //////////////////////////////////////////////////////////////////////////
@@ -237,10 +235,6 @@ private:
     model::video::VideoTransitionFactory* mVideoTransitionFactory;
 
     wxString            mDefaultPerspective;
-
-    /// true iff the properties dialog must be opened directly after a new
-    /// project is created.
-    bool mOpenPropertiesUponProjectCreation; 
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS

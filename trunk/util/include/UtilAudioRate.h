@@ -15,13 +15,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef DROP_FILES_FROM_FILESYSTEM_H
-#define DROP_FILES_FROM_FILESYSTEM_H
+#ifndef AUDIORATE_H
+#define AUDIORATE_H
 
-namespace command {
-
-void DropFilesFromFileSystem(std::list<wxString> filenames);
-
-} // namespace
+int getMinimumAudioSampleRate();
+int getMaximumAudioSampleRate();
+int getMinimumNumberOfAudioChannels();
+int getMaximumNumberOfAudioChannels();
 
 #endif

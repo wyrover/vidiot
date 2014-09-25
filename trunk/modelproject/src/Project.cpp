@@ -78,11 +78,16 @@ bool Project::OnCloseDocument()
 bool Project::OnNewDocument()
 {
     bool opened = wxDocument::OnNewDocument();
-    //gui::DialogNewProject* dialog = new gui::DialogNewProject(this);
-    //dialog->ShowModal();
     if (opened)
     {
         mProperties = boost::make_shared<Properties>();
+
+        if (!gui::DialogNewProject().runWizard())
+        {
+            // New project wizard was canceled
+            return false;
+        }
+
         EventOpenProject event(true);
         IView::getView().ProcessModelEvent(event);
     }

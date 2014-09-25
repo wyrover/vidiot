@@ -63,6 +63,14 @@ public:
 
 };
 
+inline bool operator<(FrameRate l, const FrameRate& r) 
+{ 
+    return 
+        l.numerator() < r.numerator() || 
+        (l.numerator() == r.numerator() && l.denominator() < r.denominator()); 
+}
+
+
 //#include  <boost/preprocessor/slot/counter.hpp>
 //#include BOOST____PP_UPDATE_COUNTER()
 //#line BOOST_____PP_COUNTER

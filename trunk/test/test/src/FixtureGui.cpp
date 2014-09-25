@@ -112,7 +112,7 @@ bool FixtureGui::tearDown()
     // Must be done via an Event, since all wxWindows derived classes must be
     // destroyed in the same thread as in which they were created, which is
     // the main wxWidgets event thread.
-    gui::Window::get().GetEventHandler()->QueueEvent(new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED,wxID_EXIT));
+    WindowTriggerMenu(wxID_EXIT);
 
     // The exit causes the event loop to be activated again, resulting in one
     // extra call to onEventLoopEnter. That must be unblocked.
