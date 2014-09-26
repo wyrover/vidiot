@@ -22,6 +22,7 @@
 #include "FileAnalyzer.h"
 #include "Project.h"
 #include "ProjectModification.h"
+#include "ProjectView.h"
 #include "ProjectViewCreateSequence.h"
 #include "Properties.h"
 #include "UtilAudioRate.h"
@@ -296,6 +297,9 @@ void DialogNewProject::onFinish(wxWizardEvent& event)
     {
         model::NodePtrs nodes = mFileAnalyzer->getNodes();
         model::FolderPtr root = ::model::Project::get().getRoot();
+
+        // Expand root immediately after opening the project
+        ProjectView::get().setOpenFolders(boost::assign::list_of(root));
 
         mFileAnalyzer->addNodesToProjectView();
 

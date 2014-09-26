@@ -79,6 +79,10 @@ public:
 
     void expand(const model::NodePtr& node);
 
+    /// Set the folders that must be opened (expanded) after opening a new
+    /// project.
+    void setOpenFolders(std::list<model::FolderPtr> folders);
+
     void scrollToRight();
 
     bool findConflictingName(const model::FolderPtr& parent, const wxString& name, const NodeType& type);
