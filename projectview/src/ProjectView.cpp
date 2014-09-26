@@ -159,7 +159,7 @@ void ProjectView::onAutoOpenFolder(EventAutoFolderOpen& event)
 {
     if (UtilList<model::FolderPtr>(mOpenFolders).hasElement(event.getValue()))
     {
-        mCtrl.Expand(wxDataViewItem(event.getValue()->id()));
+        expand(event.getValue());
     }
 }
 
@@ -245,7 +245,12 @@ wxPoint ProjectView::find(const model::NodePtr& node )
 
 void ProjectView::expand(const model::NodePtr& node)
 {
-    mCtrl.Expand(wxDataViewItem( node->id() ));
+    mCtrl.Expand(wxDataViewItem(node->id() ));
+}
+
+void ProjectView::setOpenFolders(std::list<model::FolderPtr> folders)
+{
+    mOpenFolders = folders;
 }
 
 void ProjectView::scrollToRight()
