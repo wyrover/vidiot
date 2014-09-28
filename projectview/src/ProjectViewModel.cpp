@@ -50,8 +50,7 @@
 namespace gui {
 
 const int sNameColumn = 0;
-const int sModifiedColumn = 1;
-const int sNumberOfColumns = 2;
+const int sNumberOfColumns = 1;
 
 ProjectViewModel::ProjectViewModel(wxDataViewCtrl& view)
 :   wxDataViewModel()
@@ -157,7 +156,6 @@ wxString ProjectViewModel::GetColumnType(unsigned int col) const
     switch (col)
     {
     case sNameColumn: return wxT("icontext");
-    case sModifiedColumn: return wxT("string");
     }
     return wxT("string");
 }
@@ -176,20 +174,6 @@ void ProjectViewModel::GetValue( wxVariant &variant, const wxDataViewItem &wxIte
             icontext.SetIcon(getIcon(node));
             variant << icontext;
             return;
-        }
-    case sModifiedColumn:
-        {
-            model::FilePtr file = boost::dynamic_pointer_cast<model::File>(node);
-            if (file)
-            {
-                variant = wxDateTime(file->getLastModified()).Format();
-                return;
-            }
-            else
-            {
-                variant = wxEmptyString;
-                return;
-            }
         }
     }
 }
@@ -261,35 +245,6 @@ int ProjectViewModel::Compare(const wxDataViewItem& item1, const wxDataViewItem&
                 wxString str1 = icontext1.GetText();
                 wxString str2 = icontext2.GetText();
                 result = str1.CmpNoCase(str2);
-                break;
-            }
-        case sModifiedColumn:
-            {
-                wxString v1 = value1.GetString();
-                wxString v2 = value2.GetString();
-                bool v1empty = v1.IsSameAs(wxEmptyString);
-                bool v2empty = v2.IsSameAs(wxEmptyString);
-                if      (v1empty && v2empty) { result =  0; }
-                else if (v1empty)            { result =  1; }
-                else if (v2empty)            { result = -1; }
-                else
-                {
-                    wxDateTime dt1;
-                    wxDateTime dt2;
-                    bool ok1 = dt1.ParseFormat(v1,wxDefaultDateTimeFormat);
-                    bool ok2 = dt2.ParseFormat(v2,wxDefaultDateTimeFormat);
-                    if      (!ok1 && !ok2)   { result =  0; }
-                    else if (!ok1)           { result =  1; }
-                    else if (!ok2)           { result = -1; }
-                    else
-                    {
-                        // Both contain date
-                        if      (dt1.IsEarlierThan(dt2)){ result = -1; }
-                        else if (dt1.IsLaterThan(dt2))  { result =  1; }
-                        else                            { result =  0; }
-                    }
-                }
-
                 break;
             }
         default:

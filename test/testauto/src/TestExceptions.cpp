@@ -179,10 +179,8 @@ void TestExceptions::testRemovedFolderInProjectViewBeforeOpening()
     ASSERT(root);
 
     RandomTempDirPtr tempDir = RandomTempDir::generate();
-    RandomTempDirPtr subDir = tempDir->generateSubDir();
-    RandomTempDirPtr subSubDir = subDir->generateSubDir();
     model::FolderPtr autofolder = ProjectViewAddAutoFolder( tempDir->getFileName() ); // Also waits for work
-    WaitForChildCount(root, 4);
+    WaitForChildCount(root, 2);
 
     std::pair<RandomTempDirPtr, wxFileName> tempDir_fileName = SaveProjectAndClose();
 

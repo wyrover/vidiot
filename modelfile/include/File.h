@@ -83,8 +83,6 @@ public:
     /// the filename only if the parent node is an AutoFolder.
     wxString getName() const override;
 
-    time_t getLastModified() const;
-
     /// Initialize the meta data of the file object
     void readMetaData();
 
@@ -159,7 +157,6 @@ private:
     wxFileName mPath;
     wxString mName;
     pts mNumberOfFrames;
-    time_t mLastModified;
     bool mHasVideo;
     bool mHasAudio;
 
@@ -223,7 +220,7 @@ private:
 //#include  <boost/preprocessor/slot/counter.hpp>
 //#include BOOST____PP_UPDATE_COUNTER()
 //#line BOOST_____PP_COUNTER
-BOOST_CLASS_VERSION(model::File, 1)
+BOOST_CLASS_VERSION(model::File, 2)
 BOOST_CLASS_EXPORT_KEY(model::File)
 
 #endif

@@ -61,13 +61,15 @@ Install ActivePerl via installer
 * Checkout http://svn.wxwidgets.org/svn/wx/wxWidgets/trunk into <VIDIOT_DIR>\wxwidgets_trunk
 * Copy include/wx/msw/setup0.h to setup.h
 * Clean <VIDIOT_DIR>\wxwidgets_trunk\lib\vc_lib (particularly, remove all setup.h files)
-* Apply dcbufcmn.cpp.patch patch to wxBufferedPaintDC
+* Apply dcbufcmn.cpp.patch to src\common\dcbufcmn.cpp
+  (fix for wxBufferedPaintDC)
   http://trac.wxwidgets.org/ticket/15497
   (without this patch, the 'shift' handling in Timeline::onPaint becomes awkward - use shift begin trim 'to the right' to see the effect of omitting it.)
 * Apply patch to wxFSWatcher
+  todo remove
   (see <VIDIOT_SRC>/build/patches)
   http://trac.wxwidgets.org/ticket/13294
-* Apply patch to src/msw/main.cpp : main.cpp.patch
+* Apply main.cpp.patch to src/msw/main.cpp
 * (MSVC) build solution Release & Debug
 
 =================== FFMPEG ===================

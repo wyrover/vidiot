@@ -74,8 +74,6 @@ public:
     /// the relatve path only if the parent node is an AutoFolder.
     wxString getName() const override;
 
-    time_t getLastModified() const;
-
     wxString getSequenceName() const override;
 
 private:
@@ -85,7 +83,6 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     wxFileName mPath;
-    time_t mLastModified;
     boost::shared_ptr<IndexAutoFolderWork> mCurrentUpdate;
     bool mUpdateAgain; ///< True if an update event was received while an update was already scheduled. To avoid a new file being found twice, no two updates are scheduled simultaneously.
 
@@ -105,7 +102,7 @@ private:
 #include  <boost/preprocessor/slot/counter.hpp>
 #include BOOST_PP_UPDATE_COUNTER()
 #line BOOST_PP_COUNTER
-BOOST_CLASS_VERSION(model::AutoFolder, 1)
+BOOST_CLASS_VERSION(model::AutoFolder, 2)
 BOOST_CLASS_EXPORT_KEY(model::AutoFolder)
 
 #endif

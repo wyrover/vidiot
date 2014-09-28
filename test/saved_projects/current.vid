@@ -102,7 +102,7 @@
 						<count>3</count>
 						<item_version>1</item_version>
 						<item>
-							<px class_id="28" class_name="model::AutoFolder" tracking_level="1" version="1" object_id="_11">
+							<px class_id="28" class_name="model::AutoFolder" tracking_level="1" version="2" object_id="_11">
 								<Folder object_id="_12">
 									<Node>
 										<INode></INode>
@@ -113,7 +113,7 @@
 											<count>7</count>
 											<item_version>1</item_version>
 											<item>
-												<px class_id="29" class_name="model::File" tracking_level="1" version="1" object_id="_13">
+												<px class_id="29" class_name="model::File" tracking_level="1" version="2" object_id="_13">
 													<Node>
 														<INode></INode>
 														<parent>
@@ -129,7 +129,6 @@
 															<string>..\input\00.avi</string>
 														</filename>
 													</mPath>
-													<mLastModified>1343549286</mLastModified>
 													<mMaxBufferSize>1</mMaxBufferSize>
 												</px>
 											</item>
@@ -150,7 +149,6 @@
 															<string>..\input\01.avi</string>
 														</filename>
 													</mPath>
-													<mLastModified>1342257518</mLastModified>
 													<mMaxBufferSize>1</mMaxBufferSize>
 												</px>
 											</item>
@@ -171,7 +169,6 @@
 															<string>..\input\02.avi</string>
 														</filename>
 													</mPath>
-													<mLastModified>1342275946</mLastModified>
 													<mMaxBufferSize>1</mMaxBufferSize>
 												</px>
 											</item>
@@ -192,7 +189,6 @@
 															<string>..\input\03.avi</string>
 														</filename>
 													</mPath>
-													<mLastModified>1371231235</mLastModified>
 													<mMaxBufferSize>1</mMaxBufferSize>
 												</px>
 											</item>
@@ -213,7 +209,6 @@
 															<string>..\input\04.avi</string>
 														</filename>
 													</mPath>
-													<mLastModified>1350476962</mLastModified>
 													<mMaxBufferSize>1</mMaxBufferSize>
 												</px>
 											</item>
@@ -234,7 +229,6 @@
 															<string>..\input\05.avi</string>
 														</filename>
 													</mPath>
-													<mLastModified>1342275916</mLastModified>
 													<mMaxBufferSize>1</mMaxBufferSize>
 												</px>
 											</item>
@@ -255,7 +249,6 @@
 															<string>..\input\06.avi</string>
 														</filename>
 													</mPath>
-													<mLastModified>1350477274</mLastModified>
 													<mMaxBufferSize>1</mMaxBufferSize>
 												</px>
 											</item>
@@ -270,7 +263,6 @@
 										<string>..\input\</string>
 									</filename>
 								</mPath>
-								<mLastModified>1396730832</mLastModified>
 							</px>
 						</item>
 						<item>
@@ -333,7 +325,6 @@
 																										<string>..\input\00.avi</string>
 																									</filename>
 																								</mPath>
-																								<mLastModified>1343549286</mLastModified>
 																								<mMaxBufferSize>100</mMaxBufferSize>
 																							</File>
 																							<IAudio></IAudio>
@@ -366,7 +357,6 @@
 																					<string>..\input\00.avi</string>
 																				</filename>
 																			</mPath>
-																			<mLastModified>1343549286</mLastModified>
 																			<mMaxBufferSize>10</mMaxBufferSize>
 																		</File>
 																		<IVideo class_id="46" tracking_level="0" version="1"></IVideo>
@@ -440,7 +430,6 @@
 																										<string>..\input\02.avi</string>
 																									</filename>
 																								</mPath>
-																								<mLastModified>1342275946</mLastModified>
 																								<mMaxBufferSize>100</mMaxBufferSize>
 																							</File>
 																							<IAudio></IAudio>
@@ -473,7 +462,6 @@
 																					<string>..\input\02.avi</string>
 																				</filename>
 																			</mPath>
-																			<mLastModified>1342275946</mLastModified>
 																			<mMaxBufferSize>10</mMaxBufferSize>
 																		</File>
 																		<IVideo></IVideo>
@@ -557,7 +545,6 @@
 																										<string>..\input\03.avi</string>
 																									</filename>
 																								</mPath>
-																								<mLastModified>1371231235</mLastModified>
 																								<mMaxBufferSize>100</mMaxBufferSize>
 																							</File>
 																							<IAudio></IAudio>
@@ -590,7 +577,6 @@
 																					<string>..\input\03.avi</string>
 																				</filename>
 																			</mPath>
-																			<mLastModified>1371231235</mLastModified>
 																			<mMaxBufferSize>10</mMaxBufferSize>
 																		</File>
 																		<IVideo></IVideo>
@@ -674,7 +660,6 @@
 																										<string>..\input\04.avi</string>
 																									</filename>
 																								</mPath>
-																								<mLastModified>1350476962</mLastModified>
 																								<mMaxBufferSize>100</mMaxBufferSize>
 																							</File>
 																							<IAudio></IAudio>
@@ -707,7 +692,6 @@
 																					<string>..\input\04.avi</string>
 																				</filename>
 																			</mPath>
-																			<mLastModified>1350476962</mLastModified>
 																			<mMaxBufferSize>10</mMaxBufferSize>
 																		</File>
 																		<IVideo></IVideo>
@@ -767,7 +751,6 @@
 																										<string>..\input\05.avi</string>
 																									</filename>
 																								</mPath>
-																								<mLastModified>1342275916</mLastModified>
 																								<mMaxBufferSize>100</mMaxBufferSize>
 																							</File>
 																							<IAudio></IAudio>
@@ -800,7 +783,6 @@
 																					<string>..\input\05.avi</string>
 																				</filename>
 																			</mPath>
-																			<mLastModified>1342275916</mLastModified>
 																			<mMaxBufferSize>10</mMaxBufferSize>
 																		</File>
 																		<IVideo></IVideo>
@@ -860,7 +842,6 @@
 																										<string>..\input\06.avi</string>
 																									</filename>
 																								</mPath>
-																								<mLastModified>1350477274</mLastModified>
 																								<mMaxBufferSize>100</mMaxBufferSize>
 																							</File>
 																							<IAudio></IAudio>
@@ -893,7 +874,6 @@
 																					<string>..\input\06.avi</string>
 																				</filename>
 																			</mPath>
-																			<mLastModified>1350477274</mLastModified>
 																			<mMaxBufferSize>10</mMaxBufferSize>
 																		</File>
 																		<IVideo></IVideo>
@@ -953,7 +933,6 @@
 																										<string>..\input\00.avi</string>
 																									</filename>
 																								</mPath>
-																								<mLastModified>1343549286</mLastModified>
 																								<mMaxBufferSize>100</mMaxBufferSize>
 																							</File>
 																							<IAudio></IAudio>
@@ -986,7 +965,6 @@
 																					<string>..\input\00.avi</string>
 																				</filename>
 																			</mPath>
-																			<mLastModified>1343549286</mLastModified>
 																			<mMaxBufferSize>10</mMaxBufferSize>
 																		</File>
 																		<IVideo></IVideo>
@@ -1046,7 +1024,6 @@
 																										<string>..\input\01.avi</string>
 																									</filename>
 																								</mPath>
-																								<mLastModified>1342257518</mLastModified>
 																								<mMaxBufferSize>100</mMaxBufferSize>
 																							</File>
 																							<IAudio></IAudio>
@@ -1079,7 +1056,6 @@
 																					<string>..\input\01.avi</string>
 																				</filename>
 																			</mPath>
-																			<mLastModified>1342257518</mLastModified>
 																			<mMaxBufferSize>10</mMaxBufferSize>
 																		</File>
 																		<IVideo></IVideo>
@@ -1139,7 +1115,6 @@
 																										<string>..\input\02.avi</string>
 																									</filename>
 																								</mPath>
-																								<mLastModified>1342275946</mLastModified>
 																								<mMaxBufferSize>100</mMaxBufferSize>
 																							</File>
 																							<IAudio></IAudio>
@@ -1172,7 +1147,6 @@
 																					<string>..\input\02.avi</string>
 																				</filename>
 																			</mPath>
-																			<mLastModified>1342275946</mLastModified>
 																			<mMaxBufferSize>10</mMaxBufferSize>
 																		</File>
 																		<IVideo></IVideo>
@@ -1232,7 +1206,6 @@
 																										<string>..\input\03.avi</string>
 																									</filename>
 																								</mPath>
-																								<mLastModified>1371231235</mLastModified>
 																								<mMaxBufferSize>100</mMaxBufferSize>
 																							</File>
 																							<IAudio></IAudio>
@@ -1265,7 +1238,6 @@
 																					<string>..\input\03.avi</string>
 																				</filename>
 																			</mPath>
-																			<mLastModified>1371231235</mLastModified>
 																			<mMaxBufferSize>10</mMaxBufferSize>
 																		</File>
 																		<IVideo></IVideo>
@@ -1325,7 +1297,6 @@
 																										<string>..\input\04.avi</string>
 																									</filename>
 																								</mPath>
-																								<mLastModified>1350476962</mLastModified>
 																								<mMaxBufferSize>100</mMaxBufferSize>
 																							</File>
 																							<IAudio></IAudio>
@@ -1358,7 +1329,6 @@
 																					<string>..\input\04.avi</string>
 																				</filename>
 																			</mPath>
-																			<mLastModified>1350476962</mLastModified>
 																			<mMaxBufferSize>10</mMaxBufferSize>
 																		</File>
 																		<IVideo></IVideo>
@@ -1418,7 +1388,6 @@
 																										<string>..\input\05.avi</string>
 																									</filename>
 																								</mPath>
-																								<mLastModified>1342275916</mLastModified>
 																								<mMaxBufferSize>100</mMaxBufferSize>
 																							</File>
 																							<IAudio></IAudio>
@@ -1451,7 +1420,6 @@
 																					<string>..\input\05.avi</string>
 																				</filename>
 																			</mPath>
-																			<mLastModified>1342275916</mLastModified>
 																			<mMaxBufferSize>10</mMaxBufferSize>
 																		</File>
 																		<IVideo></IVideo>
@@ -1511,7 +1479,6 @@
 																										<string>..\input\06.avi</string>
 																									</filename>
 																								</mPath>
-																								<mLastModified>1350477274</mLastModified>
 																								<mMaxBufferSize>100</mMaxBufferSize>
 																							</File>
 																							<IAudio></IAudio>
@@ -1544,7 +1511,6 @@
 																					<string>..\input\06.avi</string>
 																				</filename>
 																			</mPath>
-																			<mLastModified>1350477274</mLastModified>
 																			<mMaxBufferSize>10</mMaxBufferSize>
 																		</File>
 																		<IVideo></IVideo>
@@ -1604,7 +1570,6 @@
 																										<string>..\input\00.avi</string>
 																									</filename>
 																								</mPath>
-																								<mLastModified>1343549286</mLastModified>
 																								<mMaxBufferSize>100</mMaxBufferSize>
 																							</File>
 																							<IAudio></IAudio>
@@ -1637,7 +1602,6 @@
 																					<string>..\input\00.avi</string>
 																				</filename>
 																			</mPath>
-																			<mLastModified>1343549286</mLastModified>
 																			<mMaxBufferSize>10</mMaxBufferSize>
 																		</File>
 																		<IVideo></IVideo>
@@ -1697,7 +1661,6 @@
 																										<string>..\input\01.avi</string>
 																									</filename>
 																								</mPath>
-																								<mLastModified>1342257518</mLastModified>
 																								<mMaxBufferSize>100</mMaxBufferSize>
 																							</File>
 																							<IAudio></IAudio>
@@ -1730,7 +1693,6 @@
 																					<string>..\input\01.avi</string>
 																				</filename>
 																			</mPath>
-																			<mLastModified>1342257518</mLastModified>
 																			<mMaxBufferSize>10</mMaxBufferSize>
 																		</File>
 																		<IVideo></IVideo>
@@ -1790,7 +1752,6 @@
 																										<string>..\input\02.avi</string>
 																									</filename>
 																								</mPath>
-																								<mLastModified>1342275946</mLastModified>
 																								<mMaxBufferSize>100</mMaxBufferSize>
 																							</File>
 																							<IAudio></IAudio>
@@ -1823,7 +1784,6 @@
 																					<string>..\input\02.avi</string>
 																				</filename>
 																			</mPath>
-																			<mLastModified>1342275946</mLastModified>
 																			<mMaxBufferSize>10</mMaxBufferSize>
 																		</File>
 																		<IVideo></IVideo>
@@ -1883,7 +1843,6 @@
 																										<string>..\input\03.avi</string>
 																									</filename>
 																								</mPath>
-																								<mLastModified>1371231235</mLastModified>
 																								<mMaxBufferSize>100</mMaxBufferSize>
 																							</File>
 																							<IAudio></IAudio>
@@ -1916,7 +1875,6 @@
 																					<string>..\input\03.avi</string>
 																				</filename>
 																			</mPath>
-																			<mLastModified>1371231235</mLastModified>
 																			<mMaxBufferSize>10</mMaxBufferSize>
 																		</File>
 																		<IVideo></IVideo>
@@ -1976,7 +1934,6 @@
 																										<string>..\input\04.avi</string>
 																									</filename>
 																								</mPath>
-																								<mLastModified>1350476962</mLastModified>
 																								<mMaxBufferSize>100</mMaxBufferSize>
 																							</File>
 																							<IAudio></IAudio>
@@ -2009,7 +1966,6 @@
 																					<string>..\input\04.avi</string>
 																				</filename>
 																			</mPath>
-																			<mLastModified>1350476962</mLastModified>
 																			<mMaxBufferSize>10</mMaxBufferSize>
 																		</File>
 																		<IVideo></IVideo>
@@ -2069,7 +2025,6 @@
 																										<string>..\input\05.avi</string>
 																									</filename>
 																								</mPath>
-																								<mLastModified>1342275916</mLastModified>
 																								<mMaxBufferSize>100</mMaxBufferSize>
 																							</File>
 																							<IAudio></IAudio>
@@ -2102,7 +2057,6 @@
 																					<string>..\input\05.avi</string>
 																				</filename>
 																			</mPath>
-																			<mLastModified>1342275916</mLastModified>
 																			<mMaxBufferSize>10</mMaxBufferSize>
 																		</File>
 																		<IVideo></IVideo>
@@ -2162,7 +2116,6 @@
 																										<string>..\input\06.avi</string>
 																									</filename>
 																								</mPath>
-																								<mLastModified>1350477274</mLastModified>
 																								<mMaxBufferSize>100</mMaxBufferSize>
 																							</File>
 																							<IAudio></IAudio>
@@ -2195,7 +2148,6 @@
 																					<string>..\input\06.avi</string>
 																				</filename>
 																			</mPath>
-																			<mLastModified>1350477274</mLastModified>
 																			<mMaxBufferSize>10</mMaxBufferSize>
 																		</File>
 																		<IVideo></IVideo>
@@ -2252,7 +2204,6 @@
 																							<string>..\filetypes_image\Laney -6th best amp.jpg</string>
 																						</filename>
 																					</mPath>
-																					<mLastModified>1373480991</mLastModified>
 																					<mMaxBufferSize>10</mMaxBufferSize>
 																				</File>
 																				<IVideo></IVideo>
@@ -2411,7 +2362,6 @@
 														<string>..\filetypes_image\Laney -6th best amp.jpg</string>
 													</filename>
 												</mPath>
-												<mLastModified>1373480991</mLastModified>
 												<mMaxBufferSize>1</mMaxBufferSize>
 											</px>
 										</item>

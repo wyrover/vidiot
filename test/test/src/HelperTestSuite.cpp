@@ -24,7 +24,8 @@ namespace test {
 std::list<std::string> SuitesWithoutGui = boost::assign::list_of
     ("TestConvert::testTimeConversions")
     ("TestConvert::testIntegerConversions")
-    ("TestUtilPath::testEquals");
+    ("TestUtilPath::testEquals")
+    ("TestWithoutGui");
 
 //////////////////////////////////////////////////////////////////////////
 // LOCAL HELPER METHODS
@@ -111,9 +112,21 @@ bool HelperTestSuite::currentTestIsEnabled()
 
 bool HelperTestSuite::currentTestRequiresWindow()
 {
-    return
-        currentTestIsEnabled() &&
-        !UtilList<std::string>(SuitesWithoutGui).hasElement(currentCxxTest());
+    if (!currentTestIsEnabled())
+    {
+        // If test is disabled then gui not required either
+        return false;
+    }
+
+    for (auto sWithout : SuitesWithoutGui)
+    {
+        if (currentCxxTest().find(sWithout) !=  std::string::npos)
+        {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 bool HelperTestSuite::startTestSuite(const char* suite)
