@@ -141,9 +141,16 @@ Window::Window()
     mMenuFile->Append(wxID_SAVE);
     mMenuFile->Append(wxID_SAVEAS);
     mMenuFile->AppendSeparator();
+    mMenuFile->Append(ID_NEW_FILES, _("Add &files"), _("Add media files from disk."));
+    mMenuFile->Append(ID_NEW_AUTOFOLDER, _("Add &folder"), _("Add folder with media files from disk."));
+    mMenuFile->Append(ID_NEW_SEQUENCE, _("Add &sequence"), _("Add new (blank) movie sequence."));
+    mMenuFile->AppendSeparator();
     mMenuFile->Append(wxID_PROPERTIES);
     mMenuFile->AppendSeparator();
     mMenuFile->Append(wxID_EXIT, _("E&xit"), _("Select exit to end the application."));
+    mMenuFile->Enable(ID_NEW_FILES,false);
+    mMenuFile->Enable(ID_NEW_AUTOFOLDER,false);
+    mMenuFile->Enable(ID_NEW_SEQUENCE,false);
     mMenuFile->Enable(wxID_PROPERTIES,false);
 
     mMenuEdit = new wxMenu();
@@ -319,6 +326,9 @@ Window::Window()
     Bind(wxEVT_CLOSE_WINDOW,            &Window::onClose,               this);
 
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onProperties,          this, wxID_PROPERTIES);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onNewFiles,            this, ID_NEW_FILES);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onNewAutoFolder,       this, ID_NEW_AUTOFOLDER);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onNewSequence,         this, ID_NEW_SEQUENCE);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onExit,                this, wxID_EXIT);
 
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnUndo,          GetDocumentManager(), wxID_UNDO);
@@ -420,6 +430,9 @@ Window::~Window()
     Unbind(wxEVT_MAXIMIZE,                &Window::onMaximize,            this);
     Unbind(wxEVT_CLOSE_WINDOW,            &Window::onClose,               this);
 
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onNewFiles,            this, ID_NEW_FILES);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onNewAutoFolder,       this, ID_NEW_AUTOFOLDER);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onNewSequence,         this, ID_NEW_SEQUENCE);
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onExit,                this, wxID_EXIT);
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onProperties,          this, wxID_PROPERTIES);
 
@@ -492,6 +505,9 @@ void Window::onOpenProject(model::EventOpenProject &event )
     // Needs an event loop (under wxGTK)
     // Therefore, creation is delayed until this moment.
     mWatcher = new Watcher(); 
+    mMenuFile->Enable(ID_NEW_FILES,true);
+    mMenuFile->Enable(ID_NEW_AUTOFOLDER,true);
+    mMenuFile->Enable(ID_NEW_SEQUENCE,true);
     mMenuFile->Enable(wxID_PROPERTIES,true);
     GetDocumentManager()->GetCurrentDocument()->GetCommandProcessor()->SetEditMenu(mMenuEdit); // Set menu for do/undo
     GetDocumentManager()->GetCurrentDocument()->GetCommandProcessor()->Initialize();
@@ -508,6 +524,9 @@ void Window::onCloseProject(model::EventCloseProject &event )
 {
     delete mWatcher;
     mWatcher = 0;
+    mMenuFile->Enable(ID_NEW_FILES,false);
+    mMenuFile->Enable(ID_NEW_AUTOFOLDER,false);
+    mMenuFile->Enable(ID_NEW_SEQUENCE,false);
     mMenuFile->Enable(wxID_PROPERTIES,false);
     updateTitle();
     mVisibleWorker->abort();
@@ -577,6 +596,21 @@ void Window::onProperties(wxCommandEvent &event)
     DialogProjectProperties w(this);
     w.ShowModal();
     // NOT: event.Skip() -- see MenuHandler::onRenderSettings for rationale
+}
+
+void Window::onNewFiles(wxCommandEvent& event)
+{
+    mProjectView->onNewFileInRoot();
+}
+
+void Window::onNewAutoFolder(wxCommandEvent& event)
+{
+    mProjectView->onNewAutoFolderInRoot();
+}
+
+void Window::onNewSequence(wxCommandEvent& event)
+{
+    mProjectView->onNewSequenceInRoot();
 }
 
 void Window::onExit(wxCommandEvent &event)

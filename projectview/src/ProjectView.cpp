@@ -25,6 +25,7 @@
 #include "ids.h"
 #include "Layout.h"
 #include "Node.h"
+#include "Project.h"
 #include "ProjectEvent.h"
 #include "ProjectModification.h"
 #include "ProjectViewAddAsset.h"
@@ -47,17 +48,6 @@
 #include "Window.h"
 
 namespace gui {
-
-enum
-{
-    ID_NEW_FOLDER = wxID_HIGHEST + 1,
-    ID_NEW_AUTOFOLDER,
-    ID_NEW_SEQUENCE,
-    ID_NEW_FILE,
-    ID_CREATE_SEQUENCE,
-    ID_DELETE_UNUSED,
-};
-
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
@@ -355,45 +345,55 @@ void ProjectView::onDeleteUnused()
     command::ProjectViewDeleteUnusedFiles(folder).recycleFiles();
 }
 
-void ProjectView::onNewFolder()
+void ProjectView::onNewFolder(const model::FolderPtr& parent)
 {
     wxString s = gui::Dialog::get().getText(_("Create new folder"), _("Enter folder name"), _("New Folder default value") );
     if ((s.CompareTo(_T("")) != 0) &&
-        (!findConflictingName(getSelectedContainer(), s, NODETYPE_FOLDER)))
+        (!findConflictingName(parent, s, NODETYPE_FOLDER)))
     {
-        model::ProjectModification::submit(new command::ProjectViewCreateFolder(getSelectedContainer(), s));
+        model::ProjectModification::submit(new command::ProjectViewCreateFolder(parent, s));
     }
 }
 
-void ProjectView::onNewAutoFolder()
+void ProjectView::onNewAutoFolder(const model::FolderPtr& parent)
 {
     wxString s = gui::Dialog::get().getDir( _("Add folder from disk"),wxStandardPaths::Get().GetDocumentsDir() );
     if ((s.CompareTo(_T("")) != 0) &&
-        (!findConflictingName(getSelectedContainer(), s, NODETYPE_FOLDER)))
+        (!findConflictingName(parent, s, NODETYPE_FOLDER)))
     {
         wxFileName path(s,"");
         path.Normalize();
-        model::ProjectModification::submit(new command::ProjectViewCreateAutoFolder(getSelectedContainer(), path));
+        model::ProjectModification::submit(new command::ProjectViewCreateAutoFolder(parent, path));
     }
 }
 
-void ProjectView::onNewSequence()
+void ProjectView::onNewAutoFolderInRoot()
+{
+    onNewAutoFolder(model::Project::get().getRoot());
+}
+
+void ProjectView::onNewSequence(const model::FolderPtr& parent)
 {
     wxString s = gui::Dialog::get().getText(_("Create new sequence"), _("Enter sequence name"), _("New sequence default value") );
     if ((s.CompareTo(_T("")) != 0) &&
-        (!findConflictingName(getSelectedContainer(), s, NODETYPE_SEQUENCE)))
+        (!findConflictingName(parent, s, NODETYPE_SEQUENCE)))
     {
-        model::ProjectModification::submit(new command::ProjectViewCreateSequence(getSelectedContainer(), s));
+        model::ProjectModification::submit(new command::ProjectViewCreateSequence(parent, s));
     }
 }
 
-void ProjectView::onNewFile()
+void ProjectView::onNewSequenceInRoot()
+{
+    onNewSequence(model::Project::get().getRoot());
+}
+
+void ProjectView::onNewFile(const model::FolderPtr& parent)
 {
     wxStrings files = gui::Dialog::get().getFiles( _("Select file(s) to add") );
     std::vector<wxFileName> list;
     for ( wxString path : files )
     {
-        if (findConflictingName(getSelectedContainer(),path, NODETYPE_FILE))
+        if (findConflictingName(parent,path, NODETYPE_FILE))
         {
             return;
         }
@@ -407,8 +407,13 @@ void ProjectView::onNewFile()
     }
     if (list.size() > 0 )
     {
-        model::ProjectModification::submit(new command::ProjectViewCreateFile(getSelectedContainer(), list));
+        model::ProjectModification::submit(new command::ProjectViewCreateFile(parent, list));
     }
+}
+
+void ProjectView::onNewFileInRoot()
+{
+    onNewFile(model::Project::get().getRoot());
 }
 
 void ProjectView::onCreateSequence()
@@ -548,32 +553,32 @@ void ProjectView::onContextMenu(wxDataViewEvent &event)
 
 		wxMenu* addMenu = new wxMenu();
 		addMenu->Append( ID_NEW_AUTOFOLDER, _("&Folder from disk"), _("Add disk folder and its contents to the project and then monitor for changes.") );
-		addMenu->Append( ID_NEW_FILE,       _("Fi&le(s) from disk"), _("Select a file on disk to be added to the project.") );
+		addMenu->Append( ID_NEW_FILES,      _("Fi&le(s) from disk"), _("Select file(s) on disk to be added to the project.") );
 		menu.AppendSubMenu(addMenu,_("&Add"));
 
 		menu.AppendSeparator();
 
 		wxMenu* createMenu = new wxMenu();
 		createMenu->Append( ID_NEW_FOLDER,     _("&Folder"), _("Add a new folder in the project") );
-		createMenu->Append( ID_NEW_SEQUENCE,   _("&Sequence"), _("Create a new (empty) sequence") );
+		createMenu->Append( ID_NEW_SEQUENCE,   _("&Sequence"), _("Create a new (empty) movie sequence") );
 		menu.AppendSubMenu(createMenu,_("&New"));
     }
 
     int result = GetPopupMenuSelectionFromUser(menu);
     switch (result)
     {
-    case wxID_NONE:                                     break;
-    case wxID_CUT:              onCut();                break;
-    case wxID_COPY:             onCopy();               break;
-    case wxID_PASTE:            onPaste();              break;
-    case wxID_DELETE:           onDelete();             break;
-    case ID_DELETE_UNUSED:      onDeleteUnused();       break;
-    case ID_NEW_FOLDER:         onNewFolder();          break;
-    case ID_NEW_AUTOFOLDER:     onNewAutoFolder();      break;
-    case ID_NEW_SEQUENCE:       onNewSequence();        break;
-    case ID_NEW_FILE:           onNewFile();            break;
-    case ID_CREATE_SEQUENCE:    onCreateSequence();     break;
-    case wxID_OPEN:             onOpen();               break;
+    case wxID_NONE:                                                      break;
+    case wxID_CUT:              onCut();                                 break;
+    case wxID_COPY:             onCopy();                                break;
+    case wxID_PASTE:            onPaste();                               break;
+    case wxID_DELETE:           onDelete();                              break;
+    case ID_DELETE_UNUSED:      onDeleteUnused();                        break;
+    case ID_NEW_FOLDER:         onNewFolder(getSelectedContainer());     break;
+    case ID_NEW_AUTOFOLDER:     onNewAutoFolder(getSelectedContainer()); break;
+    case ID_NEW_SEQUENCE:       onNewSequence(getSelectedContainer());   break;
+    case ID_NEW_FILES:          onNewFile(getSelectedContainer());       break;
+    case ID_CREATE_SEQUENCE:    onCreateSequence();                      break;
+    case wxID_OPEN:             onOpen();                                break;
     }
 }
 

@@ -36,7 +36,7 @@ model::FolderPtr ProjectViewAddAutoFolder( wxFileName path, model::FolderPtr par
     util::thread::RunInMainAndWait([parent]
     {
         GetProjectView().select(boost::assign::list_of(parent));
-        GetProjectView().onNewAutoFolder();
+        GetProjectView().onNewAutoFolder(parent);
     });
 
     model::NodePtrs nodes = util::thread::RunInMainReturning<model::NodePtrs>(boost::bind(&model::Node::find, getRoot(), util::path::toPath(path))); // Converted to full path without trailing slash
@@ -54,7 +54,7 @@ model::FolderPtr ProjectViewAddFolder( wxString name, model::FolderPtr parent )
     util::thread::RunInMainAndWait([parent]
     {
         GetProjectView().select(boost::assign::list_of(parent));
-        GetProjectView().onNewFolder();
+        GetProjectView().onNewFolder(parent);
     });
 
     model::NodePtrs nodes = util::thread::RunInMainReturning<model::NodePtrs>(boost::bind(&model::Node::find, getRoot(), name));
@@ -72,7 +72,7 @@ model::SequencePtr ProjectViewAddSequence( wxString name, model::FolderPtr paren
     util::thread::RunInMainAndWait([parent]
     {
         GetProjectView().select(boost::assign::list_of(parent));
-        GetProjectView().onNewSequence();
+        GetProjectView().onNewSequence(parent);
     });
 
     model::NodePtrs nodes = util::thread::RunInMainReturning<model::NodePtrs>(boost::bind(&model::Node::find, getRoot(), name));
@@ -132,9 +132,9 @@ model::Files ProjectViewAddFiles( std::list<wxFileName> paths, model::FolderPtr 
         shortpaths.push_back( path.GetShortPath() ); // Add with short path
     }
     gui::Dialog::get().setFiles( shortpaths );
-    util::thread::RunInMainAndWait([]
+    util::thread::RunInMainAndWait([parent]
     {
-        GetProjectView().onNewFile();
+        GetProjectView().onNewFile(parent);
     });
 
     model::Files result;

@@ -113,6 +113,9 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     void onProperties(wxCommandEvent& event);
+    void onNewFiles(wxCommandEvent& event);
+    void onNewAutoFolder(wxCommandEvent& event);
+    void onNewSequence(wxCommandEvent& event);
     void onExit(wxCommandEvent& event);
 
     //////////////////////////////////////////////////////////////////////////
