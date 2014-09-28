@@ -54,7 +54,6 @@ File::File()
     ,   mPath()
     ,   mName()
     ,   mNumberOfFrames(LENGTH_UNDEFINED)
-    ,   mLastModified(0)
     ,   mHasVideo(false)
     ,   mHasAudio(false)
     // Status of opening
@@ -82,7 +81,6 @@ File::File(const wxFileName& path, int buffersize)
     ,   mPath(path)
     ,   mName()
     ,   mNumberOfFrames(LENGTH_UNDEFINED)
-    ,   mLastModified(0)
     ,   mHasVideo(false)
     ,   mHasAudio(false)
     // Status of opening
@@ -111,7 +109,6 @@ File::File(const File& other)
     ,   mPath(other.mPath)
     ,   mName(other.mName)
     ,   mNumberOfFrames(other.mNumberOfFrames)
-    ,   mLastModified(other.mLastModified)
     ,   mHasVideo(other.mHasVideo)
     ,   mHasAudio(other.mHasAudio)
     // Status of opening
@@ -272,11 +269,6 @@ wxFileName File::getPath() const
 //////////////////////////////////////////////////////////////////////////
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
-
-time_t File::getLastModified() const
-{
-    return mLastModified;
-}
 
 wxString File::getName() const
 {
@@ -473,18 +465,6 @@ void File::openFile()
     if (mFileOpened) return;
     mFileOpened = true;
     VAR_DEBUG(this);
-
-    if (!mMetaDataKnown)
-    {
-        if (mPath.Exists())
-        {
-            wxDateTime dt = mPath.GetModificationTime();
-            if (dt.IsValid())
-            {
-                mLastModified = dt.GetTicks();
-            }
-        }
-    }
 
     mMetaDataKnown = true;
     mFileOpenedOk = false; // Is reset after the open succeeds
@@ -711,7 +691,6 @@ std::ostream& operator<<(std::ostream& os, const File& obj)
         << obj.mPath << '|'
         << obj.mName << '|'
         << obj.mNumberOfFrames << '|'
-        << obj.mLastModified << '|'
         << obj.mHasVideo << '|'
         << obj.mHasAudio << '|'
         << obj.mFileOpened << '|'
@@ -749,7 +728,11 @@ void File::serialize(Archive & ar, const unsigned int version)
         {
             ar & boost::serialization::make_nvp( "mPath", model::Project::get().convertPathForSaving(mPath) );
         }
-        ar & BOOST_SERIALIZATION_NVP(mLastModified);
+        if (version == 1)
+        {
+            time_t mLastModified;
+            ar & BOOST_SERIALIZATION_NVP(mLastModified);
+        }
         ar & BOOST_SERIALIZATION_NVP(mMaxBufferSize);
     }
     catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }

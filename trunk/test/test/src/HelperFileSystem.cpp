@@ -157,9 +157,9 @@ wxString getSavedFileContents(wxFileName path)
 {
 	wxString contents(getFileContents(path));
 	int i = contents.length();
-	wxRegEx reRemoveModifiedDates("<mLastModified>[[:digit:]]+</mLastModified>");
-	int removed = reRemoveModifiedDates.ReplaceAll(&contents,"<mLastModified>0000000000</mLastModified>");
-	ASSERT_MORE_THAN_ZERO(removed);
+	//wxRegEx reRemoveModifiedDates("<mLastModified>[[:digit:]]+</mLastModified>");
+	//int removed = reRemoveModifiedDates.ReplaceAll(&contents,"<mLastModified>0000000000</mLastModified>");
+	//ASSERT_MORE_THAN_ZERO(removed);
 	int j = contents.length();
 	return contents;
 }

@@ -73,28 +73,9 @@ struct IndexAutoFolderWork
             wxString nodename;
 
             wxArrayString allfiles;
-            size_t count = wxDir::GetAllFiles(mPath.GetLongPath(), &allfiles, wxEmptyString, wxDIR_FILES | wxDIR_DIRS);
+            size_t count = wxDir::GetAllFiles(mPath.GetLongPath(), &allfiles, wxEmptyString, wxDIR_FILES);
             showProgressBar(count);
             int progress = 0;
-
-            // Find all subfolders
-            for (bool cont = dir.GetFirst(&nodename,wxEmptyString,wxDIR_DIRS); cont; cont = dir.GetNext(&nodename))
-            {
-                if (isAborted()) { return; }
-                if (UtilList<wxString>(mRemove).hasElement(nodename)) // Existing element. Do not remove
-                {
-                    UtilList<wxString>(mRemove).removeElements(boost::assign::list_of(nodename));
-                }
-                else // New element. Add
-                {
-                    wxFileName filename(mPath.GetLongPath(), "");
-                    filename.AppendDir(nodename);
-                    ASSERT(filename.IsDir());
-                    AutoFolderPtr folder = boost::make_shared<AutoFolder>(filename);
-                    mAdd.push_back(folder);
-                }
-                showProgress(++progress);
-            }
 
             // Find all files
             for (bool cont = dir.GetFirst(&nodename,wxEmptyString,wxDIR_FILES); cont; cont = dir.GetNext(&nodename))
@@ -141,7 +122,6 @@ struct IndexAutoFolderWork
 AutoFolder::AutoFolder()
     :   Folder()
     ,   mPath()
-    ,   mLastModified(0)
     ,   mCurrentUpdate()
     ,   mUpdateAgain(false)
 {
@@ -151,7 +131,6 @@ AutoFolder::AutoFolder()
 AutoFolder::AutoFolder(const wxFileName& path)
     :   Folder(util::path::toName(path))
     ,   mPath(util::path::normalize(path))
-    ,   mLastModified(mPath.GetModificationTime().GetTicks())
     ,   mCurrentUpdate()
     ,   mUpdateAgain(false)
 {
@@ -191,13 +170,7 @@ bool AutoFolder::mustBeWatched(const wxString& path)
 void AutoFolder::check(bool immediately)
 {
     ASSERT(wxThread::IsMain());
-
-    if (getParent() && getParent()->isA<AutoFolder>())
-    {
-        // Update parent also. Required for scenarios in which entire folder structures are removed. By updating
-        // 'from the top' nothing is missed.
-        boost::dynamic_pointer_cast<AutoFolder>(getParent())->check(immediately);
-    }
+    ASSERT_IMPLIES(getParent(), !getParent()->isA<model::AutoFolder>());
     if (immediately)
     {
         boost::shared_ptr<IndexAutoFolderWork>  work = boost::make_shared<IndexAutoFolderWork>(boost::dynamic_pointer_cast<AutoFolder>(self()));
@@ -313,11 +286,6 @@ wxString AutoFolder::getName() const
 
 }
 
-time_t AutoFolder::getLastModified() const
-{
-    return mLastModified;
-}
-
 wxString AutoFolder::getSequenceName() const
 {
     return util::path::toName(mPath);
@@ -343,7 +311,11 @@ void AutoFolder::serialize(Archive & ar, const unsigned int version)
         {
             ar & boost::serialization::make_nvp( "mPath", model::Project::get().convertPathForSaving(mPath) );
         }
-        ar & BOOST_SERIALIZATION_NVP(mLastModified);
+        if (version == 1)
+        {
+            time_t mLastModified;
+            ar & BOOST_SERIALIZATION_NVP(mLastModified);
+        }
     }
     catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }

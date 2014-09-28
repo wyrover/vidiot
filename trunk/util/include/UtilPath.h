@@ -41,6 +41,10 @@ wxString toPath(const wxFileName& filename );
 /// \return wxFileName representing this file/folder
 wxFileName toFileName(const wxString& path);
 
+/// \return modification time of the given file
+/// \param filename given file
+time_t lastModifiedTime(const wxFileName& filename);
+
 bool equals(const wxFileName& f1, const wxFileName& f2 ); ///< \return true if the two paths indicate the same file/folder on disk
 bool equals(const wxString& f1,   const wxFileName& f2 ); ///< \return true if the two paths indicate the same file/folder on disk
 bool equals(const wxFileName& f1, const wxString& f2 );   ///< \return true if the two paths indicate the same file/folder on disk

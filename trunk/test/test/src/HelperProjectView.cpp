@@ -275,7 +275,7 @@ WaitForChildCount::WaitForChildCount(model::NodePtr node, int count)
         boost::system_time timeout = boost::get_system_time() + boost::posix_time::milliseconds(5000);
         if (!mCondition.timed_wait(lock,timeout))
         {
-            FATAL("Timeout");
+            FATAL(wxString::Format("Timeout: %d %d", mCount, mNode->count()));
         }
     }
 }

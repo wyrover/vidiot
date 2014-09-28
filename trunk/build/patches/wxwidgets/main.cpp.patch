@@ -1,8 +1,8 @@
 Index: main.cpp
 ===================================================================
---- main.cpp	(revision 74976)
+--- main.cpp	(revision 77899)
 +++ main.cpp	(working copy)
-@@ -306,7 +306,14 @@
+@@ -210,7 +210,14 @@
  struct wxMSWCommandLineArguments
  {
      wxMSWCommandLineArguments() { argc = 0; argv = NULL; }
@@ -18,18 +18,3 @@ Index: main.cpp
      void Init(const wxArrayString& args)
      {
          argc = args.size();
-@@ -354,7 +361,6 @@
-         return false;
- #endif // NEED_UNICODE_CHECK
- 
--
-     // remember the parameters Windows gave us
-     wxSetInstance(hInstance);
- #ifdef __WXMSW__
-@@ -435,4 +441,4 @@
-     wxhInstance = hInst;
- }
- 
--#endif // wxUSE_BASE
-+#endif // wxUSE_BASE
-\ No newline at end of file

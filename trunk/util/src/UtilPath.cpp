@@ -72,6 +72,31 @@ wxFileName toFileName(const wxString& path)
     }
 }
 
+time_t lastModifiedTime(const wxFileName& filename)
+{
+    // !dirname.empty() && dirname.Last() != wxT('\\'),
+    time_t result = 0;
+    if (filename.Exists())
+    {
+#ifdef _MSC_VER
+        if (filename.IsDir() && filename.HasVolume() || filename.GetDirCount() == 0)
+        {
+            // Calling wxFileModificationTime or filename.GetModificationTime() with "C:\\" results in crash, use "C:" instead.
+            result = wxFileModificationTime(filename.GetVolume() + ":");
+            return result;
+        }
+#endif
+        wxDateTime dt = filename.GetModificationTime();
+        if (dt.IsValid())
+        {
+            result = dt.GetTicks();
+        }
+    }
+
+    return result;
+}
+
+
 bool equals(const wxFileName& f1, const wxFileName& f2)
 {
     return toPath( f1 ).IsSameAs( toPath( f2 ) );

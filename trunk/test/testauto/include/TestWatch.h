@@ -38,8 +38,6 @@ public:
     // TEST CASES
     //////////////////////////////////////////////////////////////////////////
 
-    void testRemoveWatchedSubSubFolder();
-    void testRemoveWatchedSubFolder();
     void testRemovedWatchedFolder();
     void testAddAndRemoveFileToWatchedAutoFolder();
     void testAddAndRemoveFileToWatchedNonAutoFolder();
@@ -53,11 +51,7 @@ private:
 
     model::FolderPtr mRoot;
     RandomTempDirPtr mTempDir;
-    RandomTempDirPtr mSubDir;
-    RandomTempDirPtr mSubSubDir;
     wxFileName mTempDirName;
-    wxFileName mSubDirName;
-    wxFileName mSubSubDirName;
     model::IPaths mInputFiles;
 
     //////////////////////////////////////////////////////////////////////////
