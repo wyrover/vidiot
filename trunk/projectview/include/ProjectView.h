@@ -96,10 +96,14 @@ public:
     void onPaste();
     void onDelete();
     void onDeleteUnused();
-    void onNewFolder();
-    void onNewAutoFolder();
-    void onNewSequence();
-    void onNewFile();
+    void onNewFolder(const model::FolderPtr& parent);
+    void onNewAutoFolder(const model::FolderPtr& parent);
+    void onNewAutoFolderInRoot();
+    void onNewSequence(const model::FolderPtr& parent);
+    void onNewSequenceInRoot();
+    void onNewFile(const model::FolderPtr& parent);
+    void onNewFileInRoot();
+    void onNewFileFromWindow();
     void onCreateSequence();
     void onAddToEndOfSequence();
     void onOpen();

@@ -57,7 +57,7 @@ DialogNewProject::DialogNewProject()
 
         wxBoxSizer* sizerFolder = new wxBoxSizer(wxHORIZONTAL);
         mButtonFolder = new wxRadioButton(mPageStart, wxID_ANY,  _(""), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
-        mTextFolder = new wxStaticText(mPageStart, wxID_ANY, _("Start a new project starting from a folder of files.\nAll files in this folder are added into a new movie."));
+        mTextFolder = new wxStaticText(mPageStart, wxID_ANY, _("Start a new project starting from a folder of files.\nAll files in this folder are added into a new movie sequence."));
         sizerFolder->Add(mButtonFolder, wxSizerFlags(0).Expand().Border(wxRIGHT,5));
         sizerFolder->Add(mTextFolder, wxSizerFlags(1).Center());
         mButtonFolder->Bind(wxEVT_RADIOBUTTON, &DialogNewProject::onChangeType, this);
@@ -65,7 +65,7 @@ DialogNewProject::DialogNewProject()
 
         wxBoxSizer* sizerFiles = new wxBoxSizer(wxHORIZONTAL);
         mButtonFiles = new wxRadioButton(mPageStart, wxID_ANY, "");
-        mTextFiles = new wxStaticText(mPageStart, wxID_ANY, _("Start a new project by selecting a list of files\nto be added to a new movie."), wxDefaultPosition, wxDefaultSize, wxST_NO_AUTORESIZE);
+        mTextFiles = new wxStaticText(mPageStart, wxID_ANY, _("Start a new project by selecting a list of files\nto be added to a new movie sequence."), wxDefaultPosition, wxDefaultSize, wxST_NO_AUTORESIZE);
         sizerFiles->Add(mButtonFiles, wxSizerFlags(0).Expand().Border(wxRIGHT,5));
         sizerFiles->Add(mTextFiles, wxSizerFlags(1).Center());
         sizerFiles->Fit(mPageStart);
@@ -98,7 +98,7 @@ DialogNewProject::DialogNewProject()
 
         wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
 
-        wxStaticText* textBrowse = new wxStaticText(mPageFolder, wxID_ANY, _("Select a folder with media files\nfor creating a new movie."));
+        wxStaticText* textBrowse = new wxStaticText(mPageFolder, wxID_ANY, _("Select a folder with media files\nfor creating a new movie sequence."));
         sizer->Add(textBrowse,wxSizerFlags(0).Expand().Border(wxBOTTOM, sBorderSize));
 
         mButtonBrowseFolder = new wxButton(mPageFolder, wxID_ANY, _("Select folder"));
@@ -119,7 +119,7 @@ DialogNewProject::DialogNewProject()
 
         wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
 
-        wxStaticText* textBrowse = new wxStaticText(mPageFiles, wxID_ANY, _("Select media files to be added to the movie."));
+        wxStaticText* textBrowse = new wxStaticText(mPageFiles, wxID_ANY, _("Select media files to be added to the movie sequence."));
         sizer->Add(textBrowse,wxSizerFlags(0).Expand().Border(wxBOTTOM, sBorderSize));
 
         mButtonBrowseFiles = new wxButton(mPageFiles, wxID_ANY, _("Select files"));
@@ -313,7 +313,7 @@ void DialogNewProject::onFinish(wxWizardEvent& event)
         else if (mFileAnalyzer->getNumberOfFolders() == 0 && mFileAnalyzer->getNumberOfMediaFiles() > 0)
         {
             // Create sequence of all given files
-            wxString sequenceName = nodes.size() > 1 ? _("Movie") : nodes.front()->getName();
+            wxString sequenceName = nodes.size() > 1 ? _("Movie sequence") : nodes.front()->getName();
             model::ProjectModification::submit(new command::ProjectViewCreateSequence(root, sequenceName, nodes));
         }
     }

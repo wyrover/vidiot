@@ -22,6 +22,11 @@
 enum
 {
     ID_FIRST = wxID_HIGHEST + 1,
+    // Project menu
+    ID_NEW_FILES,
+    ID_NEW_AUTOFOLDER,
+    ID_NEW_SEQUENCE,
+    ID_NEW_FOLDER,
     // View menu
     ID_SNAP_CLIPS,
     ID_SNAP_CURSOR,
@@ -54,6 +59,9 @@ enum
     // Help menu
     ID_OPENLOGFILE,
     ID_OPENCONFIGFILE,
+    // Project view popup menu specific
+    ID_CREATE_SEQUENCE,
+    ID_DELETE_UNUSED,
     // Should always be the last value!!!
     meID_LAST
 };
