@@ -26,6 +26,10 @@ void TimelineTrimLeft(model::IClipPtr clip, pixel length, bool shift = true, boo
 /// Trim the given clip on the right side
 void TimelineTrimRight(model::IClipPtr clip, pixel length, bool shift = true, bool endtrim = true);
 
+void TimelineTrimTransitionLeftClipEnd(model::IClipPtr transition, pixel length, bool shift = true, bool endtrim = true);
+
+void TimelineTrimTransitionRightClipBegin(model::IClipPtr transition, pixel length, bool shift = true, bool endtrim = true);
+
 void TimelineBeginTrim(wxPoint from, bool shift);
 
 void TimelineEndTrim(bool shift = true);

@@ -122,13 +122,19 @@ pixel LeftPixel(model::IClipPtr clip)
 {
     wxPoint p( getTimeline().getViewMap().getView(clip)->getLeftPixel(), VCenter(clip) );
     gui::timeline::PointerPositionInfo info =  getTimeline().getMouse().getInfo(p);
-    while (info.clip != clip)
+    while (info.clip != clip || info.logicalclipposition == gui::timeline::TransitionLeftClipEnd)
     {
         // This special handling is required to adjust for rounding errors in case of zooming.
         // The leftmost pts value may not be corresponding with an exact pixel value.
         // Thus sometimes, we need to look more to the right to find the leftmost pixel of
         // this clip - to ensure that lookups at the returned pixel value correspond with the
         // given clip and not its left neighbour.
+        //
+        // The check for TransitionLeftClipEnd is added to ensure that - in case of a
+        // cross transition - not accidentally the rightmost point of the left adjacent clip
+        // (adjacent to the transition) is returned; because in that case info.clip would 
+        // equal the transition, see ClipView::getPositionInfo where info.clip is adjusted
+        // to become 'nextTransition'.
         p.x++;
         info = getTimeline().getMouse().getInfo(p);
     }
@@ -140,13 +146,20 @@ pixel RightPixel(model::IClipPtr clip)
 {
     wxPoint p( getTimeline().getViewMap().getView(clip)->getRightPixel(), VCenter(clip) );
     gui::timeline::PointerPositionInfo info =  getTimeline().getMouse().getInfo(p);
-    while (info.clip != clip)
+    while (info.clip != clip || info.logicalclipposition == gui::timeline::TransitionRightClipBegin)
     {
         // This special handling is required to adjust for rounding errors in case of zooming.
         // The rightmost pts value may not be corresponding with an exact pixel value.
         // Thus sometimes, we need to look more to the left to find the rightmost pixel of
         // this clip - to ensure that lookups at the returned pixel value correspond with the
         // given clip and not its right neighbour.
+        //
+        // The check for TransitionRightClipBegin is added to ensure that - in case of a
+        // cross transition - not accidentally the leftmost point of the right adjacent clip
+        // (adjacent to the transition) is returned; because in that case info.clip would 
+        // equal the transition, see ClipView::getPositionInfo where info.clip is adjusted
+        // to become 'prevTransition'.
+
         p.x--;
         info = getTimeline().getMouse().getInfo(p);
     }
@@ -161,7 +174,7 @@ pixel TopPixel(model::IClipPtr clip)
 
 pixel BottomPixel(model::IClipPtr clip)
 {
-    return TopPixel(clip) + clip->getTrack()->getHeight() - 1;
+    return TopPixel(clip) + getTimeline().getViewMap().getView(clip)->getH() - 1;
 }
 
 pixel VCenter(model::IClipPtr clip)

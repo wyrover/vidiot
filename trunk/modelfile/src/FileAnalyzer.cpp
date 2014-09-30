@@ -77,6 +77,12 @@ FileAnalyzer::FileAnalyzer(wxStrings fileNames, wxWindow* parent)
         }
     }
 
+    if (mMostFrequentFrameRate == FrameRate(250000,10427))
+    {
+        // Some codecs use this framerate iso s24p.
+        mMostFrequentFrameRate = FrameRate::s24p;
+    }
+
     mDialog.reset();
 }
 

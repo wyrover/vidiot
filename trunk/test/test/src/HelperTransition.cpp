@@ -88,6 +88,11 @@ wxPoint TransitionRightClipBegin(model::IClipPtr clip)
     return position;
 }
 
+pixel TransitionCut(model::IClipPtr clip)
+{
+    return TransitionRightClipBegin(clip).x;
+}
+
 MakeTransitionAfterClip::MakeTransitionAfterClip(int afterclip, bool audio)
     : clipNumberBeforeTransition(afterclip)
     , clipNumberAfterTransition(afterclip+1)
