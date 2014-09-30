@@ -35,6 +35,8 @@ wxPoint TransitionLeftClipEnd(model::IClipPtr clip);
 wxPoint TransitionRightClipInterior(model::IClipPtr clip);
 wxPoint TransitionRightClipBegin(model::IClipPtr clip);
 
+pixel TransitionCut(model::IClipPtr clip);
+
 /// Base class for reusing several variables
 /// and the creation of the trimmed clips before creating
 /// the transition.

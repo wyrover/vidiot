@@ -560,17 +560,13 @@ void TestTransition::testTrimmingClipsInTransition()
         ASSERT(VideoClip(0,2)->isA<model::Transition>());
         ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
         StartTest("OutTransition: Without shift: ClipEnd: reduce clip size (verify that transition keeps being positioned alongside the clip.)");
-        TimelineTrimRight(VideoClip(0,2),-20,false);
+        TimelineTrimTransitionLeftClipEnd(VideoClip(0,2),-20,false);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(EmptyClip)(VideoClip);
         ASSERT_MORE_THAN_ZERO(VideoClip(0,3)->getLength());
         ASSERT_EQUALS(VideoClip(0,1)->getLength() + VideoClip(0,3)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
         ASSERT_EQUALS(VideoClip(0,2)->getLength(), preparation.lengthOfTransition);
         StartTest("OutTransition: Without shift: ClipEnd: enlarge clip size (verify that transition keeps being positioned alongside the clip.)");
-        TimelineTrimRight(VideoClip(0,2),20,false);
-        if (!VideoClip(0,3)->isA<model::VideoClip>())
-        {
-            DumpSequenceAndWait();
-        }
+        TimelineTrimTransitionLeftClipEnd(VideoClip(0,2),20,false);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
         ASSERT_EQUALS(VideoClip(0,2)->getLength(), preparation.lengthOfTransition);
@@ -678,13 +674,13 @@ void TestTransition::testTrimmingClipsInTransition()
         ASSERT(VideoClip(0,2)->isA<model::Transition>());
         ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
         StartTest("InTransition: Without shift: ClipEnd: reduce clip size (verify that transition keeps being positioned alongside the clip.)");
-        TimelineTrimLeft(VideoClip(0,2),20,false);
+        TimelineTrimTransitionRightClipBegin(VideoClip(0,2),20,false);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(EmptyClip)(Transition)(VideoClip);
         ASSERT_MORE_THAN_ZERO(VideoClip(0,2)->getLength());
         ASSERT_EQUALS(VideoClip(0,2)->getLength() + VideoClip(0,4)->getLength(), preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
         ASSERT_EQUALS(VideoClip(0,3)->getLength(), preparation.lengthOfTransition);
         StartTest("InTransition: Without shift: ClipEnd: enlarge clip size (verify that transition keeps being positioned alongside the clip.)");
-        TimelineTrimLeft(VideoClip(0,3),-20,false);
+        TimelineTrimTransitionRightClipBegin(VideoClip(0,3),-20,false);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
         ASSERT_EQUALS(VideoClip(0,3)->getLength(), preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
         ASSERT_EQUALS(VideoClip(0,2)->getLength(), preparation.lengthOfTransition);
@@ -1010,8 +1006,8 @@ void TestTransition::testTrimmingTransition()
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
         DeleteClip(VideoClip(0,1));
         ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(Transition)(VideoClip);
-        TimelineTrimLeft(VideoClip(0,2),20);
-        TimelineTrim(VTopQuarterLeft(VideoClip(0,2)),Center(VideoClip(0,1)));
+        TimelineTrimTransitionRightClipBegin(VideoClip(0,2),20);
+        TimelineTrim(VTopQuarterLeft(VideoClip(0,2)),Center(VideoClip(0,1))); // todo this vtopquarterleft no longer required?
         Undo(2);
     }
     {
@@ -1021,9 +1017,9 @@ void TestTransition::testTrimmingTransition()
         DeleteClip(VideoClip(0,3));
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::DeleteSelectedClips>();
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(EmptyClip);
-        TimelineTrimRight(VideoClip(0,2),-20);
+        TimelineTrimTransitionLeftClipEnd(VideoClip(0,2),-20);
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::TrimClip>();
-        TimelineTrim(VTopQuarterRight(VideoClip(0,2)),Center(VideoClip(0,4)));
+        TimelineTrim(VTopQuarterRight(VideoClip(0,2)),Center(VideoClip(0,4))); // todo remove vtopq
         Undo();
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::DeleteSelectedClips>();
         Undo();
@@ -1034,7 +1030,7 @@ void TestTransition::testTrimmingTransition()
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
         DeleteClip(VideoClip(0,1));
         ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(Transition)(VideoClip);
-        TimelineTrimLeft(VideoClip(0,2),20);
+        TimelineTrimTransitionRightClipBegin(VideoClip(0,2),20);
         TimelineTrim(VTopQuarterLeft(VideoClip(0,2)),Center(VideoClip(0,1)));
         Undo(2);
     }
@@ -1044,7 +1040,7 @@ void TestTransition::testTrimmingTransition()
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
         DeleteClip(VideoClip(0,3));
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(EmptyClip);
-        TimelineTrimRight(VideoClip(0,2),-20);
+        TimelineTrimTransitionLeftClipEnd(VideoClip(0,2),-20);
         TimelineTrim(VTopQuarterRight(VideoClip(0,2)),Center(VideoClip(0,4)));
         Undo(2);
     }
@@ -1152,7 +1148,7 @@ void TestTransition::testSplitNearZeroLengthEdgeOfTransition()
         }
         {
             StartTest("Right size is 0, position the split ON the cut");
-            TimelinePositionCursor(RightPixel(VideoClip(0,2))); // Ensure that the split is done exactly at the right edge of the transition
+            TimelinePositionCursor(TransitionCut(VideoClip(0,2))); // Ensure that the split is done exactly at the right edge of the transition
             TimelineKeyPress('s');
             ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip); // Transition removed
             ASSERT_EQUALS(VideoClip(0,1)->getLength(), length1 + length2); // The clip part under the transition is 'added to the adjacent clip'
