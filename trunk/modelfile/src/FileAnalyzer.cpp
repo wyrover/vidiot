@@ -24,6 +24,7 @@
 #include "ProjectModification.h"
 #include "ProjectViewAddAsset.h"
 #include "ProjectView.h"
+#include "UtilWindow.h"
 #include "VideoFile.h"
 
 namespace model {
