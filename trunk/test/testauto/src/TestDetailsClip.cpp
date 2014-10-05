@@ -63,8 +63,7 @@ void TestDetailsClip::testChangeLength()
     ASSERT_SELECTION_SIZE(1); // Clip and link selected
     pts originalLength = VideoClip(0,3)->getLength();
 
-    auto getLength = [](wxToggleButton* button) -> pts { return model::Convert::timeToPts(button->GetId()); };
-    auto pressLengthButton = [this,getLength] (wxToggleButton* button, bool enlarge, bool begin) -> int
+    auto pressLengthButton = [this] (wxToggleButton* button, bool enlarge, bool begin) -> int
     {
         pts oldLength = VideoClip(0,3)->getLength();
         std::ostringstream o;
@@ -126,7 +125,7 @@ void TestDetailsClip::testChangeLength()
                 ASSERT_IMPLIES(getLength(otherButton) >= getLength(button), otherButton->IsEnabled())(getLength(otherButton))(getLength(button));
                 ASSERT_IMPLIES(getLength(otherButton) <  getLength(button),!otherButton->IsEnabled())(getLength(otherButton))(getLength(button));
             }
-             pressLengthButton(button,false,true);
+            pressLengthButton(button,false,true);
             Undo(2); // Undo: adjust length, dragndrop
         }
         TimelineTrimLeft(VideoClip(0,3),getTimeline().getZoom().ptsToPixels(VideoClip(0,3)->getLength() - 2)); // Smaller length than the 'smallest' button
@@ -144,12 +143,39 @@ void TestDetailsClip::testChangeLength()
     }
 }
 
+void TestDetailsClip::testChangeLengthTooMuch()
+{
+    StartTestSuite();
+    TimelineZoomIn(5);
+
+    MakeInOutTransitionAfterClip outTransition(1,true);
+    ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip);
+    ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(Transition)(AudioClip);
+    MakeInOutTransitionAfterClip inTransition(0,true);
+    ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip);
+    ASSERT_AUDIOTRACK0(AudioClip)(Transition)(AudioClip)(Transition)(AudioClip);
+    TimelineLeftClick(Center(AudioClip(0,2))); // Selects both the video and the audio clip
+
+    pts minLength = *(AudioClip(0,2)->getInTransition()->getRight()) + *(AudioClip(0,2)->getOutTransition()->getLeft());
+    for ( wxToggleButton* button : DetailsClipView()->getLengthButtons() )
+    {
+        pts buttonlength = getLength(button);
+        ASSERT_EQUALS(buttonlength >= minLength, button->IsEnabled());
+        if (buttonlength >= minLength)
+        {
+            util::thread::RunInMainAndWait(boost::bind(&gui::timeline::DetailsClip::handleLengthButtonPressed,DetailsClipView(),button));
+            ASSERT_CURRENT_COMMAND_TYPE<::command::Combiner>();
+            ASSERT_EQUALS(VideoClip(0,1)->getLength(), buttonlength); // Note: video clip has the same length, audio clip is smaller
+            Undo();
+        }
+    }
+}
+
 void TestDetailsClip::testChangeLengthOfTransition()
 {
     StartTestSuite();
     TimelineZoomIn(6);
-    auto getLength = [](wxToggleButton* button) -> pts { return model::Convert::timeToPts(button->GetId()); };
-    auto pressLengthButtons = [this,getLength] ()
+    auto pressLengthButtons = [this] ()
     {
         for ( wxToggleButton* button : DetailsClipView()->getLengthButtons() )
         {
@@ -205,8 +231,7 @@ void TestDetailsClip::testChangeLengthAfterCreatingTransition()
     StartTestSuite();
     TimelineZoomIn(2);
     pts defaultTransitionLength = Config::ReadLong(Config::sPathDefaultTransitionLength);
-    auto getLength = [](wxToggleButton* button) -> pts { return model::Convert::timeToPts(button->GetId()); };
-    auto pressLengthButtons = [this,getLength] (std::string name, pts minimumsize)
+    auto pressLengthButtons = [this] (std::string name, pts minimumsize)
     {
         for ( wxToggleButton* button : DetailsClipView()->getLengthButtons() )
         {
@@ -603,5 +628,14 @@ void TestDetailsClip::testChangeVolume()
         ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
     }
 }
+
+//////////////////////////////////////////////////////////////////////////
+// HELPER METHODS
+//////////////////////////////////////////////////////////////////////////
+
+pts TestDetailsClip::getLength(wxToggleButton* button)
+{ 
+    return model::Convert::timeToPts(button->GetId()); 
+};
 
 } // namespace
