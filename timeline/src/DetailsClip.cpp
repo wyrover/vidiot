@@ -339,6 +339,7 @@ void DetailsClip::setClip(const model::IClipPtr& clip)
     mClip = clip;
 
     mTransformCommand = 0; // Ensures that a new command is generated for future edits
+    mVolumeCommand = 0; // Ensures that a new command is generated for future edits
 
     if (mClip)
     {

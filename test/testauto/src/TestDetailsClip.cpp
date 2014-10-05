@@ -511,22 +511,19 @@ void TestDetailsClip::testChangeVolume()
 {
     StartTestSuite();
 
-    model::AudioCompositionParameters p = model::AudioCompositionParameters().setNrChannels(2).setSampleRate(44100);
-
-    Unlink(AudioClip(0,3)); // Ensure that the audio controls are visible
-    ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::UnlinkClips>();
+    model::AudioCompositionParameters parameters = model::AudioCompositionParameters().setNrChannels(2).setSampleRate(44100);
 
     model::AudioClipPtr audioclip = getAudioClip(AudioClip(0,3));
     ASSERT_EQUALS(audioclip->getVolume(),100);
     audioclip->moveTo(10);
-    model::AudioChunkPtr referenceChunk = audioclip->getNextAudio(p);
+    model::AudioChunkPtr referenceChunk = audioclip->getNextAudio(parameters);
     ASSERT_EQUALS(audioclip->getVolume(),100);
 
-    auto ASSERT_VOLUME = [referenceChunk,p,audioclip](int volume)
+    auto ASSERT_VOLUME = [parameters](model::AudioClipPtr audioclip, int volume, model::AudioChunkPtr referenceChunk)
     {
         ASSERT_EQUALS(audioclip->getVolume(),volume);
         audioclip->moveTo(10);
-        model::AudioChunkPtr audiochunk = audioclip->getNextAudio(p);
+        model::AudioChunkPtr audiochunk = audioclip->getNextAudio(parameters);
 
         sample* cur = audiochunk->getUnreadSamples();
         sample* ref = referenceChunk->getUnreadSamples();
@@ -547,37 +544,63 @@ void TestDetailsClip::testChangeVolume()
         StartTest("Volume: Down via slider");
         SetValue(DetailsClipView()->getVolumeSlider(),90); // Same as pressing PageUp
         ASSERT_CURRENT_COMMAND_TYPE<model::ChangeAudioClipVolume>(); // Verify that only one command object was added to the undo history
-        ASSERT_VOLUME(90);
+        ASSERT_VOLUME(getAudioClip(AudioClip(0,3)),90,referenceChunk);
         Undo();
         ASSERT_EQUALS(audioclip->getVolume(), model::Constants::sDefaultVolume);
-        ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::UnlinkClips>();
+        ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
     }
     {
         StartTest("Volume: Down via spin");
         SetValue(DetailsClipView()->getVolumeSpin(),97);
         ASSERT_CURRENT_COMMAND_TYPE<model::ChangeAudioClipVolume>(); // Verify that only one command object was added to the undo history
-        ASSERT_VOLUME(97);
+        ASSERT_VOLUME(getAudioClip(AudioClip(0,3)),97,referenceChunk);
         Undo();
         ASSERT_EQUALS(audioclip->getVolume(), model::Constants::sDefaultVolume);
-        ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::UnlinkClips>();
+        ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
     }
     {
         StartTest("Volume: Up via slider");
         SetValue(DetailsClipView()->getVolumeSlider(),110);
         ASSERT_CURRENT_COMMAND_TYPE<model::ChangeAudioClipVolume>(); // Verify that only one command object was added to the undo history
-        ASSERT_VOLUME(110);
+        ASSERT_VOLUME(getAudioClip(AudioClip(0,3)),110,referenceChunk);
         Undo();
         ASSERT_EQUALS(audioclip->getVolume(), model::Constants::sDefaultVolume);
-        ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::UnlinkClips>();
+        ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
     }
     {
         StartTest("Volume: Up via spin");
         SetValue(DetailsClipView()->getVolumeSpin(),105);
         ASSERT_CURRENT_COMMAND_TYPE<model::ChangeAudioClipVolume>(); // Verify that only one command object was added to the undo history
-        ASSERT_VOLUME(105);
+        ASSERT_VOLUME(getAudioClip(AudioClip(0,3)),105,referenceChunk);
         Undo();
         ASSERT_EQUALS(audioclip->getVolume(), model::Constants::sDefaultVolume);
-        ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::UnlinkClips>();
+        ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
+    }
+    {
+        StartTest("Volume: Change another clip"); // Bug: second edit caused first clip's volume to be changed
+
+        // Edit first clip, don't undo (ensure that this edit action is the most recent executed command)
+        SetValue(DetailsClipView()->getVolumeSpin(),85);
+        ASSERT_CURRENT_COMMAND_TYPE<model::ChangeAudioClipVolume>(); // Verify that only one command object was added to the undo history
+        ASSERT_VOLUME(getAudioClip(AudioClip(0,3)),85,referenceChunk);
+        // Not: Undo(); -- Keep the current volume command in DetailsClip
+
+        // Get reference data for second edit
+        audioclip = getAudioClip(AudioClip(0,4));
+        ASSERT_EQUALS(audioclip->getVolume(),100);
+        audioclip->moveTo(10);
+        referenceChunk = audioclip->getNextAudio(parameters);
+        ASSERT_VOLUME(audioclip,100,referenceChunk);
+
+        TimelineLeftClick(Center(AudioClip(0,4)));
+        SetValue(DetailsClipView()->getVolumeSlider(),70);
+        ASSERT_CURRENT_COMMAND_TYPE<model::ChangeAudioClipVolume>(); // Verify that only one command object was added to the undo history
+        ASSERT_VOLUME(audioclip,70,referenceChunk);
+        Undo();
+        ASSERT_VOLUME(audioclip,model::Constants::sDefaultVolume,referenceChunk);
+        ASSERT_CURRENT_COMMAND_TYPE<model::ChangeAudioClipVolume>(); // Previous change audio volume
+        Undo();
+        ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
     }
 }
 
