@@ -41,6 +41,15 @@ public:
 
     void testChangeLength();
 
+    // Due to the use of trim operations on both sides of the clip for changing the
+    // clip's size, some buttons can be enabled although changing the clip's length
+    // to that size is not allowed. However, this is only detected after the first 
+    // trim has been executed.
+    // Was bug once, resulting in crash: the 2.0s button was enabled because 
+    // DetailsClip used only the selected clip (and not its link) for determining
+    // the size bounds.
+    void testChangeLengthTooMuch();
+
     void testChangeLengthOfTransition();
 
     /// After selecting a clip, then creating a fade in to the clip, and then immediately pressing
@@ -58,6 +67,13 @@ public:
 private:
 
     FixtureProject mProjectFixture;
+
+    //////////////////////////////////////////////////////////////////////////
+    // HELPER METHODS
+    //////////////////////////////////////////////////////////////////////////
+
+    pts getLength(wxToggleButton* button);
+
 };
 
 }

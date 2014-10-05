@@ -634,7 +634,8 @@ void DetailsClip::handleLengthButtonPressed(wxToggleButton* button)
             // That may cause certain trim operations to cause unwanted results. Instead of applying one trim and then determining the final trim result, or trying
             // another 'trick', before doing the second trim here, an additional boundaries check is done here.
             //
-            // The differences between the original computation and the result here are particularly related to shifting clips in other tracks.
+            // The differences between the original computation and the result here are particularly related to shifting clips in other tracks and 
+            // related to having multiple transitions besides the clip.
             command::TrimClip::TrimLimit limitsBeginTrim;
             if (mTransition)
             {
@@ -642,7 +643,7 @@ void DetailsClip::handleLengthButtonPressed(wxToggleButton* button)
             }
             else
             {
-                limitsBeginTrim = command::TrimClip::determineBoundaries(getSequence(), mClip, mClip->getLink(), ClipBegin, true);
+                limitsBeginTrim = command::TrimClip::determineBoundaries(getSequence(), clip, clip->getLink(), ClipBegin, true);
             }
             error = (begintrim < limitsBeginTrim.Min || begintrim > limitsBeginTrim.Max);
         }
@@ -996,6 +997,10 @@ void DetailsClip::determineClipSizeBounds()
     //
     // the '-' here results in the 'area required for adjacent transitions'.
     mMinimumLengthWhenBothTrimming = std::max(mMinimumLengthWhenBothTrimming, mClip->getPerceivedLength() - mClip->getLength());
+    if (mClip->getLink())
+    {
+        mMinimumLengthWhenBothTrimming = std::max(mMinimumLengthWhenBothTrimming, mClip->getLink()->getPerceivedLength() - mClip->getLink()->getLength());
+    }
 
     ASSERT_MORE_THAN_EQUALS(mMaximumLengthWhenBothTrimming, mMaximumLengthWhenEndTrimming);
     ASSERT_MORE_THAN_EQUALS(mMaximumLengthWhenBothTrimming, mMaximumLengthWhenBeginTrimming);
