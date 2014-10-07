@@ -52,10 +52,24 @@ CreateTransition::CreateTransition(const model::SequencePtr& sequence, const mod
 
     switch (type)
     {
-    case model::TransitionTypeIn:                               mRight = clip;              break;
-    case model::TransitionTypeOut:   mLeft = clip;                                          break;
-    case model::TransitionTypeInOut: mLeft = clip->getPrev();   mRight = clip;              break;
-    case model::TransitionTypeOutIn: mLeft = clip;              mRight = clip->getNext();   break;
+    case model::TransitionTypeIn:                               
+        ASSERT_ZERO(clip->getInTransition())(clip);
+        mRight = clip;              
+        break;
+    case model::TransitionTypeOut:   
+        ASSERT_ZERO(clip->getOutTransition())(clip);
+        mLeft = clip;                                          
+        break;
+    case model::TransitionTypeInOut: 
+        ASSERT_ZERO(clip->getInTransition())(clip);
+        mLeft = clip->getPrev();   
+        mRight = clip;              
+        break;
+    case model::TransitionTypeOutIn: 
+        ASSERT_ZERO(clip->getOutTransition())(clip);
+        mLeft = clip;              
+        mRight = clip->getNext();   
+        break;
     default:
         FATAL("Unexpected transition type.");
     }

@@ -150,6 +150,15 @@ public:
     /// position < 0, resulting in assert.
     void testSnapClipBeforeBeginOfTimeline();
 
+    /// See [#141] and [#142]
+    /// Some of the asserts in determineClipBounds caused a crash. Reason was not taking into 
+    /// account scenarios with both transitions AND linked clips with different sizes.
+    void testCrashWhenDeterminingClipSizeBoundsForLinkedClipsWithDifferentLengthAndOutTransition();
+
+    /// It was possible to trigger the creation of an in- (or out-) crossfade for a clip twice.
+    /// The second creation of the transition resulted in the crash.
+    void testCrashWhenCreatingCrossfadeViaKeyboardTwice();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////

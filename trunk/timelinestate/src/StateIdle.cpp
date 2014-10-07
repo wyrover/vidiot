@@ -322,14 +322,42 @@ boost::statechart::result Idle::rightDown()
 
 void Idle::addTransition(model::TransitionType type)
 {
-    PointerPositionInfo info = getTimeline().getMouse().getInfo(getMouse().getVirtualPosition());
+    PointerPositionInfo info = getMouse().getInfo(getMouse().getVirtualPosition());
     if (info.clip)
     {
-        if (type == model::TransitionTypeInOut && info.logicalclipposition == ClipEnd)
+        pts left = getViewMap().getView(info.clip)->getLeftPixel();
+        pts right = getViewMap().getView(info.clip)->getRightPixel();
+
+        if (type == model::TransitionTypeInOut &&
+            std::abs(left - getMouse().getVirtualPosition().x) > std::abs(right - getMouse().getVirtualPosition().x))
         {
             // The parameter value TransitionTypeInOut indicates 'a crossfade'. Use the correct crossfade
-            // (which begin and end clips to use) based on the logical clip position.
+            // (which begin and end clips to use) based on the position of the mouse within the clip.
             type = model::TransitionTypeOutIn;
+        }
+
+        // Only if the mouse pointer is on a 'regular' clip, creating the transition is allowed.
+        switch (info.logicalclipposition)
+        {
+        case ClipBegin:
+        case ClipInterior:
+        case ClipEnd:
+            break;
+        default:
+            return;
+        }
+
+        // Check if there is already a transition at the given position
+        switch (type)
+        {
+        case model::TransitionTypeIn:                               
+        case model::TransitionTypeInOut: 
+            if (info.clip->getInTransition() != nullptr) { return; }
+            break;
+        case model::TransitionTypeOut: 
+        case model::TransitionTypeOutIn: 
+            if (info.clip->getOutTransition() != nullptr) { return; }
+            break;
         }
 
         ASSERT(info.track);
