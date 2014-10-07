@@ -967,6 +967,8 @@ void DetailsClip::determineClipSizeBounds()
 {
     ASSERT(mClip);
 
+    model::IClipPtr link = mClip->getLink();
+
     command::TrimClip::TrimLimit limitsBeginTrim;
     command::TrimClip::TrimLimit limitsEndTrim;
     if (mTransition)
@@ -976,18 +978,18 @@ void DetailsClip::determineClipSizeBounds()
     }
     else
     {
-        limitsBeginTrim = command::TrimClip::determineBoundaries(getSequence(), mClip, mClip->getLink(), ClipBegin, true);
-        limitsEndTrim = command::TrimClip::determineBoundaries(getSequence(), mClip, mClip->getLink(), ClipEnd, true);
+        limitsBeginTrim = command::TrimClip::determineBoundaries(getSequence(), mClip, link, ClipBegin, true);
+        limitsEndTrim = command::TrimClip::determineBoundaries(getSequence(), mClip, link, ClipEnd, true);
     }
 
-    pts currentLength = mClip->getPerceivedLength();
+    pts clipPerceivedLength = mClip->getPerceivedLength();
 
-    mMinimumLengthWhenBeginTrimming = currentLength + -1 * limitsBeginTrim.Max;
-    mMaximumLengthWhenBeginTrimming = currentLength  + -1 * limitsBeginTrim.Min;
-    mMinimumLengthWhenEndTrimming   = currentLength  + limitsEndTrim.Min;
-    mMaximumLengthWhenEndTrimming   = currentLength  + limitsEndTrim.Max;
-    mMinimumLengthWhenBothTrimming  = currentLength  + -1 * limitsBeginTrim.Max + limitsEndTrim.Min;
-    mMaximumLengthWhenBothTrimming  = currentLength  + -1 * limitsBeginTrim.Min + limitsEndTrim.Max;
+    mMinimumLengthWhenBeginTrimming = clipPerceivedLength + -1 * limitsBeginTrim.Max;
+    mMaximumLengthWhenBeginTrimming = clipPerceivedLength  + -1 * limitsBeginTrim.Min;
+    mMinimumLengthWhenEndTrimming   = clipPerceivedLength  + limitsEndTrim.Min;
+    mMaximumLengthWhenEndTrimming   = clipPerceivedLength  + limitsEndTrim.Max;
+    mMinimumLengthWhenBothTrimming  = clipPerceivedLength  + -1 * limitsBeginTrim.Max + limitsEndTrim.Min;
+    mMaximumLengthWhenBothTrimming  = clipPerceivedLength  + -1 * limitsBeginTrim.Min + limitsEndTrim.Max;
 
     // The 'both trimming' values are not 100% correct (the determined boundaries don't take
     // 'trimming on both sides simultaneously' into acount, only separate single trimming.
@@ -997,9 +999,21 @@ void DetailsClip::determineClipSizeBounds()
     //
     // the '-' here results in the 'area required for adjacent transitions'.
     mMinimumLengthWhenBothTrimming = std::max(mMinimumLengthWhenBothTrimming, mClip->getPerceivedLength() - mClip->getLength());
-    if (mClip->getLink())
+    if (link)
     {
-        mMinimumLengthWhenBothTrimming = std::max(mMinimumLengthWhenBothTrimming, mClip->getLink()->getPerceivedLength() - mClip->getLink()->getLength());
+        pts linkPerceivedLength = link->getPerceivedLength();
+        mMinimumLengthWhenBothTrimming = std::max(mMinimumLengthWhenBothTrimming, linkPerceivedLength - link->getLength());
+        if (linkPerceivedLength != clipPerceivedLength)
+        {
+            // In case the two linked clips have different lengths, disable all buttons,
+            // except optionallly the button for the current length.
+            mMinimumLengthWhenBeginTrimming = clipPerceivedLength;
+            mMaximumLengthWhenBeginTrimming = clipPerceivedLength;
+            mMinimumLengthWhenEndTrimming   = clipPerceivedLength;
+            mMaximumLengthWhenEndTrimming   = clipPerceivedLength;
+            mMinimumLengthWhenBothTrimming  = clipPerceivedLength;
+            mMaximumLengthWhenBothTrimming  = clipPerceivedLength;
+        }
     }
 
     ASSERT_MORE_THAN_EQUALS(mMaximumLengthWhenBothTrimming, mMaximumLengthWhenEndTrimming);
@@ -1015,31 +1029,31 @@ void DetailsClip::determineClipSizeBounds()
         pts length = model::Convert::timeToPts(button->GetId());
         mTrimAtEnd[length] = 0; // Default: no trim
         mTrimAtBegin[length] = 0; // Default: no trim
-        if (length != currentLength)
+        if (length != clipPerceivedLength)
         {
             if (length >= mMinimumLengthWhenEndTrimming && length <= mMaximumLengthWhenEndTrimming)
             {
                 // Trim at end only - default
-                mTrimAtEnd[length] = length - currentLength;
+                mTrimAtEnd[length] = length - clipPerceivedLength;
             }
             else if (length >= mMinimumLengthWhenBeginTrimming && length <= mMaximumLengthWhenBeginTrimming)
             {
                 // Trim at begin only
-                mTrimAtBegin[length] = currentLength - length;
+                mTrimAtBegin[length] = clipPerceivedLength - length;
             }
             else if (length >= mMinimumLengthWhenBothTrimming && length <= mMaximumLengthWhenBothTrimming)
             {
-                if (length < currentLength)
+                if (length < clipPerceivedLength)
                 {
                     // Size reduction
                     mTrimAtEnd[length] = limitsEndTrim.Min;
-                    mTrimAtBegin[length] = (currentLength - length) + limitsEndTrim.Min;
+                    mTrimAtBegin[length] = (clipPerceivedLength - length) + limitsEndTrim.Min;
                 }
                 else
                 {
                     // Size enlargement
                     mTrimAtEnd[length] = limitsEndTrim.Max;
-                    mTrimAtBegin[length] = (currentLength - length) - limitsEndTrim.Max;
+                    mTrimAtBegin[length] = (clipPerceivedLength - length) - limitsEndTrim.Max;
                 }
             }
         }
