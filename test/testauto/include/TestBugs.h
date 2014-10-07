@@ -153,6 +153,8 @@ public:
     /// See [#141] and [#142]
     /// Some of the asserts in determineClipBounds caused a crash. Reason was not taking into 
     /// account scenarios with both transitions AND linked clips with different sizes.
+    /// Note that the crash only occurred when the faulty clip was selected, causing its 
+    /// details to be shown.
     void testCrashWhenDeterminingClipSizeBoundsForLinkedClipsWithDifferentLengthAndOutTransition();
 
     /// It was possible to trigger the creation of an in- (or out-) crossfade for a clip twice.

@@ -567,19 +567,35 @@ void TestBugs::testSnapClipBeforeBeginOfTimeline()
 
 void TestBugs::testCrashWhenDeterminingClipSizeBoundsForLinkedClipsWithDifferentLengthAndOutTransition()
 {
+    StartTestSuite();
+    TimelineZoomIn(3);
+    StartTest("Preparation");
     // Create 
     // (VideoClip)(VideoClip)
-    // (    AudioClip   )      
-    // First clips linked, second VideoClip unlinked
-    // First crash [#141]: Right click on AudioClip and create crossfade to next
-    //
+    // (        AudioClip       )      
+    Unlink(VideoClip(0,2));
+    TimelineDrag(From(Center(VideoClip(0,2))).AlignLeft(HCenter(VideoClip(0,1))));
+    TimelineTrimRight(VideoClip(0,2), -100, false); // Audio clip had to be longer that the two video clips
+    StartTest("Creation of transition caused the crash.");
+    // Audio clip must be selected, because the crash was caused by showing the clip details
+    // directly after the transition was created.
+    TimelineLeftClick(Center(AudioClip(0,1))); 
+    TimelineMove(RightCenter(AudioClip(0,1)));
+    TimelineKeyPress('c');
+    StartTest("Trimming caused the crash.");
+    // Same problem, different scenario.
     // (VideoClip)(VideoClip)
-    // (    AudioClip   )(Transition)
-    // Second crash [#142]: Shift trimming on the left side of VideoClip(0) or AudioClip
+    // (    AudioClip   )(Transition) - Transition by clicking on next audio clip and creating a 'fade from previous'
+    // Trimming on the left side of one of the first clips caused the crash.
+    TimelineTrimLeft(VideoClip(0,1), 20, false);
+    Undo();
+    TimelineTrimLeft(AudioClip(0,1), 20, false);
+    Undo(5);
 }
 
 void TestBugs::testCrashWhenCreatingCrossfadeViaKeyboardTwice()
 {
+    StartTestSuite();
     TimelineZoomIn(5);
     StartTest("Prepare");
     ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
