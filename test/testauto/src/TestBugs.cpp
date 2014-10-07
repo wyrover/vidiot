@@ -564,4 +564,41 @@ void TestBugs::testSnapClipBeforeBeginOfTimeline()
     ASSERT_EQUALS(VideoClip(0,2)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,2));
 }
 
+
+void TestBugs::testCrashWhenDeterminingClipSizeBoundsForLinkedClipsWithDifferentLengthAndOutTransition()
+{
+    // Create 
+    // (VideoClip)(VideoClip)
+    // (    AudioClip   )      
+    // First clips linked, second VideoClip unlinked
+    // First crash [#141]: Right click on AudioClip and create crossfade to next
+    //
+    // (VideoClip)(VideoClip)
+    // (    AudioClip   )(Transition)
+    // Second crash [#142]: Shift trimming on the left side of VideoClip(0) or AudioClip
+}
+
+void TestBugs::testCrashWhenCreatingCrossfadeViaKeyboardTwice()
+{
+    TimelineZoomIn(5);
+    StartTest("Prepare");
+    ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
+    TimelineMove(LeftCenter(VideoClip(0,1)));
+    TimelineKeyPress('c'); // Create the transition
+    ASSERT_CURRENT_COMMAND_TYPE<command::Combiner>();
+    ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip);
+    TimelineMove(RightCenter(VideoClip(0,1)) + wxPoint(3,0));
+    StartTest("InTransition");
+    TimelineKeyPress('c'); // Create transition again: not possible
+    TimelineKeyPress('i'); // Create transition again: not possible
+    TimelineMove(LeftCenter(VideoClip(0,1)) - wxPoint(3,0));
+    StartTest("OutTransition");
+    TimelineKeyPress('c'); // Create transition again: not possible
+    TimelineKeyPress('o'); // Create transition again: not possible
+    ASSERT_CURRENT_COMMAND_TYPE<command::Combiner>();
+    Undo();
+    // Verify that only one transition was created:
+    ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>(); 
+}
+
 } // namespace
