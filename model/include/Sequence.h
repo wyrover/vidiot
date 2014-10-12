@@ -22,7 +22,6 @@
 #include "IControl.h"
 #include "IVideo.h"
 #include "Node.h"
-#include "UtilSerializeSharedFromThis.h"
 
 namespace model {
 
@@ -202,6 +201,5 @@ private:
 //#line BOOST_____PP_COUNTER
 BOOST_CLASS_VERSION(model::Sequence, 1)
 BOOST_CLASS_EXPORT_KEY(model::Sequence)
-ENABLE_SHARED_FROM_THIS_DURING_DESERIALIZATION(model::Sequence)
 
 #endif

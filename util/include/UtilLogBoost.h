@@ -47,6 +47,20 @@ std::ostream& operator<<(std::ostream& os, const optional<K>& obj)
     return os;
 }
 
+template <class K>
+std::ostream& operator<<(std::ostream& os, const scoped_ptr<K>& obj)
+{
+    if (obj)
+    {
+        os << *obj;
+    }
+    else
+    {
+        os << "       0";
+    }
+    return os;
+}
+
 }
 
 #endif

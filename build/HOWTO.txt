@@ -7,7 +7,7 @@ NOTE: <VIDIOT_DIR> is the dir in which all 'vidiot' work is done.
 * set VIDIOT_COMPILE_SINGLETHREADED to 1 to disable parallel compilation
 
 ================ VISUAL STUDIO ================
-* Install MSVS2012
+* Install MSVS2013
 * Set Tabs to 4 spaces, via Tools
 * NOTE: Ensure to install with the runtimes (for packaging)
 * NOTE: Install and set environment variables (vcvars) for cmake
@@ -32,11 +32,12 @@ NOTE: <VIDIOT_DIR> is the dir in which all 'vidiot' work is done.
 *  http://www.codeproject.com/tools/visualleakdetector.asp
 
 =================== CMAKE ===================
-Install cmake into c:\Program Files
+* Install cmake from http://www.cmake.org/download/ into c:\Program Files
+* Enable changing the path variable
 
 =================== CxxTest ===================
-Install CxxTest into <VIDIOT_DIR>\CxxTest (cxxtest, docs and sample are subdirs of CxxTest)
-Install ActivePerl via installer
+* CxxTest is part of sources
+* Install ActivePerl via installer
 
 ================== VERSION CONTROL  ================
 * Install SVN (tortoise) from http://tortoisesvn.net/downloads.html
@@ -48,14 +49,14 @@ Install ActivePerl via installer
   (Repo: https://svn.code.sf.net/p/vidiot/code/trunk)
 
 =================== BOOST ===================
-* Download Boost into <VIDIOT_DIR>\boost_1_xx_y
+* Download Boost from http://sourceforge.net/projects/boost/files/boost-binaries into <VIDIOT_DIR>\boost_1_xx_y
 * Direct boost install:
   - Select proper binaries (correct msvc version)
   - Update paths in CMakeLists
 * Compiled boost:
   - cd <VIDIOT_DIR>\boost_1_xx_y
   - bootstrap
-  - (MSVC) .\bjam --toolset=msvc --build-type=complete stage
+  - (MSVC) .\bjam --toolset=msvc-12.0 --build-type=complete stage
 
 =================== WXWIDGETS ===================
 * Checkout http://svn.wxwidgets.org/svn/wx/wxWidgets/trunk into <VIDIOT_DIR>\wxwidgets_trunk
@@ -99,10 +100,9 @@ Optional: C/C++ -> Code Generation -> Floating point model = fast
 * Checkout http://svn.code.sf.net/p/soundtouch/code/trunk into that dir
 * edit include/STTypes.h -> #define SOUNDTOUCH_INTEGER_SAMPLES     1    //< 16bit integer samples
 * (MSVC)
-  - Open SoundTouchDll solution (convert if needed).
+  - Open SoundTouch solution (convert if needed).
   - For all configurations change /MT[d] to /MD[d]
-  - Exclude SoundTouchDll.rc from project (doesn't build)
-  - Build
+  - Build Debug & Release
 
 =================== SAXON ==================
 * Saxon is used for creating a revision history from the svn xml output

@@ -17,8 +17,9 @@
 
 #include "ChangeAudioClipVolume.h"
 
-#include "UtilLog.h"
 #include "AudioClip.h"
+#include "UtilLog.h"
+#include "UtilLogBoost.h"
 
 namespace model {
 

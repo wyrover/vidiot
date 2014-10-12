@@ -125,8 +125,10 @@ if EXIST "%ProgramFiles(x86)%\Microsoft Visual Studio 10.0" set OUTTYPE="Visual 
 if EXIST "%ProgramFiles%\Microsoft Visual Studio 10.0" set OUTTYPE="Visual Studio 10"
 if EXIST "%ProgramFiles(x86)%\Microsoft Visual Studio 11.0" set OUTTYPE="Visual Studio 11"
 if EXIST "%ProgramFiles%\Microsoft Visual Studio 11.0" set OUTTYPE="Visual Studio 11"
+if EXIST "%ProgramFiles(x86)%\Microsoft Visual Studio 12.0" set OUTTYPE="Visual Studio 12"
+if EXIST "%ProgramFiles%\Microsoft Visual Studio 12.0" set OUTTYPE="Visual Studio 12"
 cmake -G %OUTTYPE% -Wdev --debug-output %SOURCE%
-cmake -LAH  %SOURCE% > CMakeVariables.txt
+REM cmake -LAH  %SOURCE% > CMakeVariables.txt
 
 REM cd %VIDIOT_BUILD%\GCCD
 REM cmake -G "CodeBlocks - MinGW Makefiles" -DCMAKE_BUILD_TYPE:STRING="DEBUG" -Wdev --debug-output %SOURCE%

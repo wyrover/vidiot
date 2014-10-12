@@ -17,6 +17,7 @@
 
 #include "EventKey.h"
 
+#include "UtilLogBoost.h"
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
 

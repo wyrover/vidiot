@@ -65,6 +65,11 @@ void Track::onCloned()
     updateClips();
 }
 
+void Track::onLoad()
+{
+    updateClips();
+}
+
 Track::~Track()
 {
     VAR_DEBUG(this);
@@ -413,11 +418,7 @@ void Track::serialize(Archive & ar, const unsigned int version)
     catch (...)                                  { LOG_ERROR;                                   throw; }
     if (Archive::is_loading::value)
     {
-        if (version > 1)
-        {
-            updateClips();
-        }
-        else
+        if (version == 1)
         {
             mItClips = mClips.begin(); // Set afterwards, since updateclips resets that
         }

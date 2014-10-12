@@ -17,6 +17,7 @@
 
 #include "VideoCompositionParameters.h"
 
+#include "UtilLogBoost.h"
 #include "UtilLogWxwidgets.h"
 #include "Config.h"
 
@@ -135,7 +136,7 @@ VideoCompositionParameters& VideoCompositionParameters::adjustPts(pts adjustment
 
 bool VideoCompositionParameters::hasPts() const
 {
-    return mPts;
+    return static_cast<bool>(mPts);
 }
 
 pts VideoCompositionParameters::getPts() const

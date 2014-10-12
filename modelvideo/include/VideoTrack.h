@@ -20,7 +20,6 @@
 
 #include "Track.h"
 #include "IVideo.h"
-#include "UtilSerializeSharedFromThis.h"
 
 namespace model {
 
@@ -81,6 +80,5 @@ private:
 //#line BOOST_____PP_COUNTER
 BOOST_CLASS_VERSION(model::VideoTrack, 1)
 BOOST_CLASS_EXPORT_KEY(model::VideoTrack)
-ENABLE_SHARED_FROM_THIS_DURING_DESERIALIZATION(model::VideoTrack)
 
 #endif

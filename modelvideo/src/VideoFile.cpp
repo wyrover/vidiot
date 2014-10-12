@@ -292,7 +292,7 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
         {
             NIY(_("Input video frame repeating is not supported yet"));
         }
-        // todo make test for sync
+
         if (parameters.getSkip())
         {
             // Output frame is not required, only advancement of position in file.

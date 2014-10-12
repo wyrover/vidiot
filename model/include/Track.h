@@ -55,6 +55,9 @@ public:
 
     virtual void onCloned();
 
+    /// Called after deserialization is complete.
+    virtual void onLoad();
+
     virtual ~Track();
 
     //////////////////////////////////////////////////////////////////////////
