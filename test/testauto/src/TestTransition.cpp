@@ -1007,7 +1007,7 @@ void TestTransition::testTrimmingTransition()
         DeleteClip(VideoClip(0,1));
         ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(Transition)(VideoClip);
         TimelineTrimTransitionRightClipBegin(VideoClip(0,2),20);
-        TimelineTrim(VTopQuarterLeft(VideoClip(0,2)),Center(VideoClip(0,1))); // todo this vtopquarterleft no longer required?
+        TimelineTrim(VTopQuarterLeft(VideoClip(0,2)),Center(VideoClip(0,1)));
         Undo(2);
     }
     {
@@ -1019,7 +1019,7 @@ void TestTransition::testTrimmingTransition()
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(EmptyClip);
         TimelineTrimTransitionLeftClipEnd(VideoClip(0,2),-20);
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::TrimClip>();
-        TimelineTrim(VTopQuarterRight(VideoClip(0,2)),Center(VideoClip(0,4))); // todo remove vtopq
+        TimelineTrim(VTopQuarterRight(VideoClip(0,2)),Center(VideoClip(0,4)));
         Undo();
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::DeleteSelectedClips>();
         Undo();
