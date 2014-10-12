@@ -128,7 +128,6 @@ if (MSVC)
   set (SOUNDTOUCH_INCLUDE_DIR ${VIDIOT_DIR}/soundtouch_trunk/include)
   set (SOUNDTOUCH_LIBRARY_DIR ${VIDIOT_DIR}/soundtouch_trunk/lib)
   set (SOUNDTOUCH_LIBRARIES debug SoundTouchD.lib optimized SoundTouch.lib)
-  file(GLOB SOUNDTOUCH_INSTALL ${SOUNDTOUCH_LIBRARY_DIR}/SoundTouch.dll) # todo remove
 else ()
   set (SOUNDTOUCH_INCLUDE_DIR /usr/include/soundtouch)
   set (SOUNDTOUCH_LIBRARY_DIR /usr/lib/i386-linux-gnu)
