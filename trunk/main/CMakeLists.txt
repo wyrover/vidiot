@@ -18,7 +18,7 @@
 FILE(GLOB installfiles ${PROJECT_SOURCE_DIR}/install/*.txt)
 SOURCE_GROUP("install" REGULAR_EXPRESSION ${PROJECT_SOURCE_DIR}/install/*.*)
 
-SOURCE_GROUP("exe" REGULAR_EXPRESSION ${PROJECT_SOURCE_DIR}/main/src/.* FILES CMakeLists.txt ../icons/icons.rc)
+SOURCE_GROUP("exe" REGULAR_EXPRESSION ${PROJECT_SOURCE_DIR}/main/src/.* FILES CMakeLists.txt ../images/images.rc)
 
 LINK_DIRECTORIES(
     ${FFMPEG_LIBRARY_DIR}
@@ -28,8 +28,8 @@ LINK_DIRECTORIES(
     ${VLD_LIBRARIES_DIR}
 )
 
-# icons.rc is required to embed the icon file in the executable
-ADD_EXECUTABLE(main WIN32 src/Main.cpp ${installfiles} ../icons/icons.rc)
+# images.rc is required to embed the icon file in the executable
+ADD_EXECUTABLE(main WIN32 src/Main.cpp ${installfiles} ../images/images.rc)
 SET_TARGET_PROPERTIES(main PROPERTIES OUTPUT_NAME Vidiot)
 TARGET_LINK_LIBRARIES(main vidiot ${Boost_LIBRARIES} ${wxWidgets_LIBRARIES} ${FFMPEG_LIBRARIES} ${PORTAUDIO_LIBRARIES} ${SOUNDTOUCH_LIBRARIES})
 
@@ -41,6 +41,6 @@ INSTALL(TARGETS main COMPONENT Vidiot DESTINATION .)
 
 add_custom_command(TARGET main DEPENDS vidiot PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/html ${CMAKE_CURRENT_BINARY_DIR}/Debug/html)
 
-# Copy icons to output folder
-add_custom_command(TARGET main POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/icons ${CMAKE_CURRENT_BINARY_DIR}/Debug/icons)
-add_custom_command(TARGET main POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/icons ${CMAKE_CURRENT_BINARY_DIR}/Release/icons)
+# Copy images to output folder
+add_custom_command(TARGET main POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/images ${CMAKE_CURRENT_BINARY_DIR}/Debug/images)
+add_custom_command(TARGET main POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/images ${CMAKE_CURRENT_BINARY_DIR}/Release/images)

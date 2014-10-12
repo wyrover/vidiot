@@ -159,7 +159,6 @@ foreach (FOLDER ${VIDIOTPROJECTGROUPS})
 endforeach ()
 
 # Below, ??*.* instead of *.* is used to avoid adding .svn files
-file (GLOB Cursors           ${PROJECT_SOURCE_DIR}/cursors/*?.???)
 file (GLOB BuildFiles        ${PROJECT_SOURCE_DIR}/build/??*.*)
 file (GLOB CmakeFiles        ${PROJECT_SOURCE_DIR}/build/cmake/??*.*) # Ensure that these files end up in visual studio solution
 list (REMOVE_ITEM BuildFiles "${PROJECT_SOURCE_DIR}/build/cxxtest-3.10.1") # Remove cxxtest from the visual studio solution
@@ -192,8 +191,6 @@ include_directories (AFTER
   ${wxWidgets_INCLUDE_DIRS}
   ${PORTAUDIO_INCLUDE_DIR}
   ${SOUNDTOUCH_INCLUDE_DIR}
-  icons
-  cursors
 )
 
 link_directories (
@@ -216,12 +213,11 @@ if (MSVC)
   foreach( FOLDER  ${VIDIOTPROJECTGROUPS} )
     groupFiles(${FOLDER})
   endforeach(FOLDER)
-  source_group ("cursors"  REGULAR_EXPRESSION ${PROJECT_SOURCE_DIR}/cursors/*.*)
   source_group ("build" FILES ${BuildFiles} ${CmakeFiles} ${CmakeModulesFiles})
   set_source_files_properties (${BuildFiles} ${CmakeFiles} ${CmakeModulesFiles} PROPERTIES HEADER_FILE_ONLY TRUE)
 endif ()
 
-add_library (vidiot ${UNITY_CPP_FILES} ${SOURCES_LIST} ${HEADERS_LIST} ${Icons} ${Cursors} ${BuildFiles} ${CmakeFiles} ${CmakeModulesFiles})
+add_library (vidiot ${UNITY_CPP_FILES} ${SOURCES_LIST} ${HEADERS_LIST} ${BuildFiles} ${CmakeFiles} ${CmakeModulesFiles})
 
 create_precompiled_header ("vidiot" "pch" "Precompiled")
 
@@ -236,4 +232,4 @@ add_subdirectory (main)
 add_subdirectory (test)
 add_subdirectory (install)
 add_subdirectory (html) # Must be after the other dirs, since it uses the other targets
-add_subdirectory (icons) # Must be after the other dirs, since it uses the other targets
+add_subdirectory (images) # Must be after the other dirs, since it uses the other targets

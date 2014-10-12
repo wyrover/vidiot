@@ -143,7 +143,7 @@ REM ============================== DELIVER ==============================
 if NOT "%1%"=="DELIVER" goto END
 
 cd %VIDIOT_BUILD%\MSVC
-"C:\Program Files (x86)\Microsoft Visual Studio 11.0\Common7\IDE\devenv" Vidiot.sln /Build RelWithDebInfo /project PACKAGE 
+"C:\Program Files (x86)\Microsoft Visual Studio 12.0\Common7\IDE\devenv" Vidiot.sln /Build RelWithDebInfo /project PACKAGE 
 for %%i in (Vidiot*.exe) do start "" /b "%%i"
 
 :END

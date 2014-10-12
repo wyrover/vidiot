@@ -17,18 +17,6 @@
 
 #include "Mouse.h"
 
-#ifdef __GNUC__
-#pragma GCC diagnostic ignored "-Wwrite-strings"
-#endif
-#include "cursor_move_cut.xpm"
-#include "cursor_normal.xpm"
-#include "cursor_track_resize.xpm"
-#include "cursor_trim_begin.xpm"
-#include "cursor_trim_end.xpm"
-#ifdef __GNUC__
-#pragma GCC diagnostic pop
-#endif
-
 #include "AudioView.h"
 #include "Clip.h"
 #include "ClipView.h"
@@ -43,6 +31,7 @@
 #include "TrackView.h"
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
+#include "UtilWindow.h"
 #include "VideoView.h"
 #include "ViewMap.h"
 #include "Zoom.h"
@@ -69,37 +58,37 @@ Mouse::Mouse(Timeline* timeline)
 
     wxImage image;
 
-    image = wxBitmap(cursor_normal_xpm).ConvertToImage();
+    image = util::window::getImage("cursor_normal.xpm");
     image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_X, 0);
     image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_Y, 0);
     mCursorNormal = wxCursor(image);
 
-    image = wxBitmap(cursor_move_cut_xpm).ConvertToImage();
+    image = util::window::getImage("cursor_move_cut.xpm");
     image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_X, 16);
     image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_Y, 16);
     mCursorMoveCut = wxCursor(image);
 
-    image = wxBitmap(cursor_trim_begin_xpm).ConvertToImage();
+    image = util::window::getImage("cursor_trim_begin.xpm");
     image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_X, 16);
     image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_Y, 16);
     mCursorTrimBegin = wxCursor(image);
 
-    image = wxBitmap(cursor_trim_begin_xpm).ConvertToImage();
+    image = util::window::getImage("cursor_trim_begin.xpm");
     image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_X, 16);
     image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_Y, 16);
     mCursorTrimShiftBegin = wxCursor(image);
 
-    image = wxBitmap(cursor_trim_end_xpm).ConvertToImage();
+    image = util::window::getImage("cursor_trim_end.xpm");
     image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_X, 16);
     image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_Y, 16);
     mCursorTrimEnd = wxCursor(image);
 
-    image = wxBitmap(cursor_trim_end_xpm).ConvertToImage();
+    image = util::window::getImage("cursor_trim_end.xpm");
     image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_X, 16);
     image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_Y, 16);
     mCursorTrimShiftEnd = wxCursor(image);
 
-    image = wxBitmap(cursor_track_resize_xpm).ConvertToImage();
+    image = util::window::getImage("cursor_track_resize.xpm");
     image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_X, 8);
     image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_Y, 8);
     mCursorTrackResize = wxCursor(image);

@@ -17,17 +17,6 @@
 
 #include "Player.h"
 
-#ifdef __GNUC__
-#pragma GCC diagnostic ignored "-Wwrite-strings"
-#endif
-#include "preview-end.xpm"
-#include "preview-home.xpm"
-#include "preview-next.xpm"
-#include "preview-pauseplay.xpm"
-#include "preview-previous.xpm"
-#ifdef __GNUC__
-#pragma GCC diagnostic pop
-#endif
 #include "Config.h"
 #include "Constants.h"
 #include "Convert.h"
@@ -50,24 +39,23 @@ namespace gui {
 //////////////////////////////////////////////////////////////////////////
 
 Player::Player(wxWindow *parent, model::SequencePtr sequence, wxWindow* focus)
-:   wxPanel(parent, wxID_ANY)
-,   mFocus(focus)
-,   mLength(0)
-,   mPosition(0)
-,   mHomeButton(0)
-,   mPreviousButton(0)
-,   mPlayButton(0)
-,   mNextButton(0)
-,   mEndButton(0)
-,   mSpeedButton(0)
-,   mSpeedSliderFrame(0)
-,   mSpeedSlider(0)
-,   mBmpHome(preview_home_xpm)
-,   mBmpEnd(preview_end_xpm)
-,   mBmpNext(preview_next_xpm)
-,   mBmpPrevious(preview_previous_xpm)
-,   mBmpPausePlay(preview_pauseplay_xpm)
-
+: wxPanel(parent, wxID_ANY)
+, mFocus(focus)
+, mLength(0)
+, mPosition(0)
+, mHomeButton(0)
+, mPreviousButton(0)
+, mPlayButton(0)
+, mNextButton(0)
+, mEndButton(0)
+, mSpeedButton(0)
+, mSpeedSliderFrame(0)
+, mSpeedSlider(0)
+, mBmpHome(util::window::getIcon("preview-home.xpm"))
+, mBmpEnd(util::window::getIcon("preview-end.xpm"))
+, mBmpNext(util::window::getIcon("preview-next.xpm"))
+, mBmpPrevious(util::window::getIcon("preview-previous.xpm"))
+, mBmpPausePlay(util::window::getIcon("preview-pauseplay.xpm"))
 {
     VAR_DEBUG(this);
 

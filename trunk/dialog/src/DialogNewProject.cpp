@@ -47,9 +47,7 @@ DialogNewProject::DialogNewProject()
 {
     SetTitle(_("Create new project"));
 
-    wxBitmap b(util::path::toFileInInstallationDirectory("icons", "movie128.png"), wxBITMAP_TYPE_PNG);
-
-    Create(&Window::get(), wxID_ANY, _("Create new project"), b, wxDefaultPosition, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+    Create(&Window::get(), wxID_ANY, _("Create new project"), util::window::getBitmap("movie128.png"), wxDefaultPosition, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     util::window::setIcons(this);
 
     wxSize minPageSize(0,0);
