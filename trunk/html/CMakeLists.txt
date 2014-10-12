@@ -21,11 +21,8 @@ source_group ("html\\about" REGULAR_EXPRESSION ${PROJECT_SOURCE_DIR}/html/about/
 source_group ("html\\help" REGULAR_EXPRESSION ${PROJECT_SOURCE_DIR}/html/help/.*)
 
 macro (copy_html_files_to_target target)
-  get_target_property (TargetLocation ${target} LOCATION)
-  get_filename_component (TargetDir ${TargetLocation} PATH)
-  add_custom_command (TARGET html DEPENDS ${HtmlFiles} PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/html ${TargetDir}/html)
+  add_custom_command (TARGET html DEPENDS ${HtmlFiles} PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/html  $<TARGET_FILE_DIR:${target}>/html)
   add_custom_command (TARGET html PRE_BUILD COMMAND echo "Html files copied to '${target}'")
-  add_dependencies (${target} html)
 endmacro ()
 
 copy_html_files_to_target (main)

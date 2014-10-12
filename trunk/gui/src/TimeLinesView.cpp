@@ -17,6 +17,7 @@
 
 #include "TimelinesView.h"
 
+#include "Logging.h"
 #include "Node.h"
 #include "NodeEvent.h"
 #include "ProjectEvent.h"
@@ -236,12 +237,14 @@ void TimelinesView::load(Archive & ar, const unsigned int version)
         ar & boost::serialization::make_nvp(sTimeline.c_str(),*timeline);
         timeline->endTransaction(); // Only AFTER deserialization, screen updates may be done. Otherwise, for instance, the wrong zoom may be used.
         mNotebook.AddPage(timeline,sequence->getName(),false);
+        LOG_INFO << dump(boost::dynamic_pointer_cast<model::Sequence>(sequence));
     }
     if (selectedPage != wxNOT_FOUND)
     {
         ASSERT_LESS_THAN(selectedPage,mNotebook.GetPageCount());
         mNotebook.SetSelection(selectedPage);
     }
+
 }
 template void TimelinesView::save<boost::archive::xml_oarchive>(boost::archive::xml_oarchive& ar, const unsigned int archiveVersion) const;
 template void TimelinesView::load<boost::archive::xml_iarchive>(boost::archive::xml_iarchive& ar, const unsigned int archiveVersion);

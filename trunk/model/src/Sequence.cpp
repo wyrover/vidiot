@@ -23,7 +23,6 @@
 #include "AudioTrack.h"
 #include "EmptyFrame.h"
 #include "IClip.h"
-#include "Logging.h"
 #include "ModelEvent.h"
 #include "NodeEvent.h"
 #include "ProjectModification.h"
@@ -567,15 +566,15 @@ void Sequence::serialize(Archive & ar, const unsigned int version)
             for ( TrackPtr track : mVideoTracks )
             {
                 track->Bind(model::EVENT_LENGTH_CHANGED, &Sequence::onTrackLengthChanged, this);
+                track->onLoad();
             }
             for ( TrackPtr track : mAudioTracks )
             {
                 track->Bind(model::EVENT_LENGTH_CHANGED, &Sequence::onTrackLengthChanged, this);
+                track->onLoad();
             }
             updateTracks();
             updateLength();
-
-            LOG_INFO << dump(boost::dynamic_pointer_cast<Sequence>(shared_from_this()));
         }
         ar & BOOST_SERIALIZATION_NVP(mRender);
     }

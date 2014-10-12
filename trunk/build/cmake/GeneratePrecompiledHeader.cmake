@@ -1,3 +1,20 @@
+# Copyright 2013,2014 Eric Raijmakers.
+#
+# This file is part of Vidiot.
+#
+# Vidiot is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Vidiot is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Vidiot. If not, see <http:#www.gnu.org/licenses/>.
+
 # Usage:
 # 1. Create <curdir>/<path>/include/<name>.h
 #           <curdir>/<path>/src/<name>.cpp (contents: #include <name>.h)
@@ -11,9 +28,6 @@ macro (create_precompiled_header project path name)
   include_directories (BEFORE ${path}/include)
   if (MSVC)
     set_target_properties(${project} PROPERTIES COMPILE_FLAGS "/Yu${name}.h -Zm300 /FI${name}.h")
-    # todo remaor eset (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /FI${name}.h")
-    #     set_target_properties(${project} PROPERTIES COMPILE_FLAGS "/Yu${name}.h -Zm140")
-    #set_target_properties(${project} PROPERTIES COMPILE_FLAGS "/Yu${name}.h -Zm140")
     set_source_files_properties(${path}/src/${name}.cpp PROPERTIES COMPILE_FLAGS "/Yc${name}.h")
   else ()
     set_target_properties (${project} PROPERTIES COMPILE_FLAGS "-include ${name}.h")
@@ -51,9 +65,6 @@ macro (create_precompiled_header project path name)
 
     set (PCH_OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${name}.h.gch")
     set (PCH_SOURCE "${CMAKE_CURRENT_SOURCE_DIR}/${path}/include/${name}.h")
-#    if ("${name}" STREQUAL "PrecompiledTest")
-#    message( FATAL_ERROR ${PCH_SOURCE})
-#    endif()
     add_custom_target (${name}_gch DEPENDS ${PCH_OUTPUT})
     add_custom_command (OUTPUT ${PCH_OUTPUT}
                           COMMAND ${CMAKE_CXX_COMPILER} ${compiler_flags} ${PCH_SOURCE} -o ${PCH_OUTPUT}
@@ -61,7 +72,6 @@ macro (create_precompiled_header project path name)
                           #MAIN_DEPENDENCY ${PCH_SOURCE}
                           WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
                           VERBATIM)
-                          #todo add include path for Precompiled_gch tafget
 
       add_dependencies (${project} ${name}_gch)
       set_target_properties (${name}_gch PROPERTIES COMPILE_FLAGS "-include ${name}.h -Winvalid-pch")
@@ -75,11 +85,7 @@ macro (reuse_precompiled_header project path name)
   message ("Reusing precompiled header for ${project} using ${PCH_FILE}")
   if (MSVC)
     set_target_properties(${project} PROPERTIES COMPILE_FLAGS "/FI${name}.h")
-    #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /FI${PCH_FILE} ") # todo whats the diff between this method and the gcc PROPERTIES COMPILE_FLAGS  method? choose one
   else ()
     set_target_properties(${project} PROPERTIES COMPILE_FLAGS "-include ${PCH_FILE}")
   endif ()
 endmacro ()
-
-
-# todo set include directories to ${path} BEFORE (avoid having to add ../pch/include in test cmakelists)

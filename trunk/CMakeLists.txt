@@ -56,7 +56,6 @@ if (MSVC)
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHa /D \"__STDC_CONSTANT_MACROS\" /D \"__STDC_FORMAT_MACROS\"")
 else()
   set (FFMPEG_LIBRARIES ${FFMPEG_LIBRARIES} opus mp3lame fdk-aac vpx x264 theora theoraenc theoradec vorbis vorbisenc vorbisfile va)
-# todo ffmpeg_install? No is statically linked?
    # todo use pkg_check_modules iso listing all libraries? -- in the .pc files these libs have already been listed!!!
 endif ()
 add_debugging_path ($ENV{FFMPEGDIR}/bin)
@@ -78,7 +77,6 @@ include (build/cmake/FindwxWidgets.cmake)
 find_package (wxWidgets REQUIRED core base aui adv xml html qa)
 
 #### BOOST ####
-# todo remove set (Boost_ADDITIONAL_VERSIONS ENV{FOUND_BOOST_VERSION})
 if (MSVC)
   set (Boost_DEBUG TRUE)
   set (Boost_USE_STATIC_LIBS OFF)
@@ -88,10 +86,10 @@ if (MSVC)
     set (BOOST_LIBRARYDIR $ENV{BOOST_ROOT}/stage/lib) # Locally compiled boost
   else ()
     set (BOOST_INCLUDEDIR $ENV{BOOST_ROOT}/boost) # Prebuilt boost
-    set (BOOST_LIBRARYDIR $ENV{BOOST_ROOT}/lib32-msvc-11.0)
+    set (BOOST_LIBRARYDIR $ENV{BOOST_ROOT}/lib32-msvc-12.0)
   endif ()
 endif ()
-find_package (Boost 1.55 REQUIRED COMPONENTS date_time thread serialization system)
+find_package (Boost 1.56 REQUIRED COMPONENTS date_time thread serialization system)
 if (MSVC)
   # Find all dlls matching 'release' (== not gd) and 'threading-multi' (== mt)
   # Note: For some boost libraries, there is no dependency for building (above), but these dlls
@@ -117,27 +115,24 @@ endif ()
 if (MSVC)
     set (PORTAUDIO_INCLUDE_DIR ${VIDIOT_DIR}/portaudio_trunk/include ${VIDIOT_DIR}/portaudio_trunk/src/common)
     set (PORTAUDIO_LIBRARY_DIR ${VIDIOT_DIR}/portaudio_build/Release)
-    set (PORTAUDIO_LIBRARIES   portaudio_x86.dll) #todo obsolete
+    set (PORTAUDIO_LIBRARIES   portaudio_x86.dll)
     set (PORTAUDIO_INSTALL ${PORTAUDIO_LIBRARY_DIR}/portaudio_x86.dll)
     add_debugging_path (${PORTAUDIO_LIBRARY_DIR})
 else ()
     set (PORTAUDIO_INCLUDE_DIR /usr/include)
     set (PORTAUDIO_LIBRARIES   portaudio asound pthread)
-    # todo PORTAUDIO_INSTALL ? not required
 endif ()
 
 #### SOUNDTOUCH ####
 if (MSVC)
   set (SOUNDTOUCH_INCLUDE_DIR ${VIDIOT_DIR}/soundtouch_trunk/include)
   set (SOUNDTOUCH_LIBRARY_DIR ${VIDIOT_DIR}/soundtouch_trunk/lib)
-  set (SOUNDTOUCH_LIBRARIES debug SoundTouchDllD.dll debug SoundTouchD.lib optimized SoundTouchDll.dll optimized SoundTouch.lib)
-  file(GLOB SOUNDTOUCH_INSTALL ${SOUNDTOUCH_LIBRARY_DIR}/SoundTouch.dll)
+  set (SOUNDTOUCH_LIBRARIES debug SoundTouchD.lib optimized SoundTouch.lib)
+  file(GLOB SOUNDTOUCH_INSTALL ${SOUNDTOUCH_LIBRARY_DIR}/SoundTouch.dll) # todo remove
 else ()
   set (SOUNDTOUCH_INCLUDE_DIR /usr/include/soundtouch)
   set (SOUNDTOUCH_LIBRARY_DIR /usr/lib/i386-linux-gnu)
   set (SOUNDTOUCH_LIBRARIES   libSoundTouch.so)
-  #todo soundtouchinstall??? not required?
-#  SET( SOUNDTOUCH_LIBRARIES  libSoundTouch.a )
 endif ()
 
 #### FIND ALL LOCAL FILES ####
@@ -167,7 +162,7 @@ endforeach ()
 # Below, ??*.* instead of *.* is used to avoid adding .svn files
 file (GLOB Cursors           ${PROJECT_SOURCE_DIR}/cursors/*?.???)
 file (GLOB BuildFiles        ${PROJECT_SOURCE_DIR}/build/??*.*)
-file (GLOB CmakeFiles        ${PROJECT_SOURCE_DIR}/build/cmake/??*.*) #todo ensure that these file endup in visual studio solution
+file (GLOB CmakeFiles        ${PROJECT_SOURCE_DIR}/build/cmake/??*.*) # Ensure that these files end up in visual studio solution
 list (REMOVE_ITEM BuildFiles "${PROJECT_SOURCE_DIR}/build/cxxtest-3.10.1") # Remove cxxtest from the visual studio solution
 
 #### COMPILE, INCLUDE, AND LINK SETTINGS ####
@@ -179,15 +174,12 @@ if (MSVC)
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /WX ") # Treat warnings as errors
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHa")
     set (CMAKE_EXE_LINKER_FLAGS "/SAFESEH:NO") # Required for avcodec
-    # Force including Precompiled.h for all cpp files
-    #todo obsoleteset (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /FIPrecompiled.h ")
     string (REPLACE "/ZI" "/Zi" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}") # This ensures that in log lines not the full path is shown
     add_definitions (/D _CRT_SECURE_NO_WARNINGS)
     add_definitions (/D SOURCE_ROOT="${CMAKE_CURRENT_SOURCE_DIR}") # Used to fix the path to the test input files (part of sources) in the code, via the preprocessor.
   include_directories (AFTER ctypes)
 else ()
     list (APPEND CMAKE_CXX_FLAGS "-std=c++0x") # Add -H For checking that pch is used
-    # todo use -H option to verify if 'enough' is in pch
     add_definitions (-DSOURCE_ROOT=${CMAKE_CURRENT_SOURCE_DIR}) # Used to fix the path to the test input files (part of sources) in the code, via the preprocessor.
 endif ()
 
@@ -213,7 +205,7 @@ link_directories (
   ${VLD_LIBRARIES_DIR}
 )
 
-include (${wxWidgets_USE_FILE}) #todo swhy this line???
+include (${wxWidgets_USE_FILE})
 
 #### MAKE GROUPING FOR VISUAL STUDIO ####
 if (MSVC)
@@ -240,8 +232,7 @@ add_custom_command (TARGET svnrevision COMMAND ${CMAKE_COMMAND} -DSOURCE_DIR=${C
 #set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/SubversionRevision.h PROPERTIES GENERATED TRUE HEADER_FILE_ONLY TRUE)
 add_dependencies (vidiot svnrevision)
 
-#todo test add_custom_target(build ${CMakeFiles})
-
+cmake_policy(SET CMP0043 OLD) # Avoid COMPILE_DEFINITIONS_* Warning
 add_subdirectory (main)
 add_subdirectory (test)
 add_subdirectory (install)
