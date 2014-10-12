@@ -50,9 +50,9 @@ IF(WIN32 AND NOT UNIX)
   SET(CPACK_NSIS_URL_INFO_ABOUT "http:\\\\\\\\sourceforge.net\\\\projects\\\\vidiot")
   SET(CPACK_NSIS_CONTACT "epra@users.sourceforge.net")
   SET(CPACK_NSIS_MODIFY_PATH OFF)
-  set(CPACK_PACKAGE_ICON "${CMAKE_SOURCE_DIR}\\\\icons\\\\movie150x57.bmp") # Icon in the header of the installer: Use 150x57 pixels, 32 bit A8R8G8B8, Do not write color space info (GIMP)
-  set(CPACK_NSIS_MUI_ICON "${CMAKE_SOURCE_DIR}\\\\icons\\\\movie_all.ico") #  Required for icon on installer AND uninstaller
-  set(CPACK_NSIS_MUI_UNIICON "${CMAKE_SOURCE_DIR}\\\\icons\\\\movie_all.ico")  #  Required for icon on installer AND uninstaller
+  set(CPACK_PACKAGE_ICON "${CMAKE_SOURCE_DIR}\\\\images\\\\movie150x57.bmp") # Icon in the header of the installer: Use 150x57 pixels, 32 bit A8R8G8B8, Do not write color space info (GIMP)
+  set(CPACK_NSIS_MUI_ICON "${CMAKE_SOURCE_DIR}\\\\images\\\\movie_all.ico") #  Required for icon on installer AND uninstaller
+  set(CPACK_NSIS_MUI_UNIICON "${CMAKE_SOURCE_DIR}\\\\images\\\\movie_all.ico")  #  Required for icon on installer AND uninstaller
 
    set (CPACK_NSIS_EXTRA_INSTALL_COMMANDS "!include FileAssoc.nsh
       !insertmacro APP_ASSOCIATE 'vid' 'vidiot.projectfile' 'Vidiot project file' '$INSTDIR\\\\Vidiot.exe,0' 'Open with Vidiot' '$INSTDIR\\\\Vidiot.exe /e \\\"%1\\\"'
@@ -75,7 +75,7 @@ IF(WIN32 AND NOT UNIX)
   install(FILES ${BOOST_INSTALL} COMPONENT ${APPNAME} DESTINATION .  CONFIGURATIONS Release MinSizeRel RelWithDebInfo)
   install(FILES ${BOOST_INSTALL_DEBUG} COMPONENT ${APPNAME} DESTINATION .  CONFIGURATIONS Debug)
   install(DIRECTORY ${PROJECT_SOURCE_DIR}/html/ COMPONENT ${APPNAME} DESTINATION html)
-  install(DIRECTORY ${PROJECT_SOURCE_DIR}/icons/ COMPONENT ${APPNAME} DESTINATION icons)
+  install(DIRECTORY ${PROJECT_SOURCE_DIR}/images/ COMPONENT ${APPNAME} DESTINATION images)
 
   IF (CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS)
         INSTALL(FILES ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS} COMPONENT ${APPNAME} DESTINATION . PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ)

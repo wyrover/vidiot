@@ -17,19 +17,6 @@
 
 #include "ProjectView.h"
 
-#ifdef __GNUC__
-#pragma GCC diagnostic ignored "-Wwrite-strings"
-#endif
-#include "film.xpm"
-#include "folder-horizontal.xpm"
-#include "folder-horizontal-open.xpm"
-#include "folder-horizontal-plus.xpm"
-#include "folder-horizontal-plus-open.xpm"
-#include "picture.xpm"
-#ifdef __GNUC__
-#pragma GCC diagnostic pop
-#endif
-
 #include "AutoFolder.h"
 #include "File.h"
 #include "Folder.h"
@@ -45,6 +32,8 @@
 #include "Sequence.h"
 #include "UtilLog.h"
 #include "UtilLogStl.h"
+#include "UtilPath.h"
+#include "UtilWindow.h"
 #include "Window.h"
 
 namespace gui {
@@ -53,15 +42,14 @@ const int sNameColumn = 0;
 const int sNumberOfColumns = 1;
 
 ProjectViewModel::ProjectViewModel(wxDataViewCtrl& view)
-:   wxDataViewModel()
-,   mView(view)
-,   mIconAutoFolder(folder_horizontal_plus_xpm)
-,   mIconAutoFolderOpen(folder_horizontal_plus_open_xpm)
-,   mIconFolder(folder_horizontal_xpm)
-,   mIconFolderOpen(folder_horizontal_open_xpm)
-,   mIconSequence(film_xpm)
-,	mIconVideo(picture_xpm)
-
+: wxDataViewModel()
+, mView(view)
+, mIconAutoFolder(util::window::getIcon("folder-horizontal-plus.xpm"))
+, mIconAutoFolderOpen(util::window::getIcon("folder-horizontal-plus-open.xpm"))
+, mIconFolder(util::window::getIcon("folder-horizontal.xpm"))
+, mIconFolderOpen(util::window::getIcon("folder-horizontal-open.xpm"))
+, mIconSequence(util::window::getIcon("film.xpm"))
+, mIconVideo(util::window::getIcon("picture.xpm"))
 {
     gui::Window::get().Bind(model::EVENT_OPEN_PROJECT,     &ProjectViewModel::onOpenProject,           this);
     gui::Window::get().Bind(model::EVENT_CLOSE_PROJECT,    &ProjectViewModel::onCloseProject,          this);

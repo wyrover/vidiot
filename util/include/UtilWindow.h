@@ -23,6 +23,12 @@ namespace util { namespace window {
 /// Set the icons for a window
 void setIcons(wxTopLevelWindow* window);
 
+wxIcon getIcon(wxString name);
+
+wxBitmap getBitmap(wxString name);
+
+wxImage getImage(wxString name);
+
 }}
 
 #endif
