@@ -24,9 +24,7 @@ namespace util { namespace window {
 void setIcons(wxTopLevelWindow* window)
 {
     wxIconBundle icons;
-    wxFileName iconfile(Config::getExeDir(),"movie_all.ico");
-    iconfile.AppendDir("icons");
-    icons.AddIcon(iconfile.GetFullPath()); // Icon in title bar of window
+    icons.AddIcon(util::path::toFileInInstallationDirectory("icons","movie_all.ico")); // Icon in title bar of window
     window->SetIcons(icons);
 }
 
