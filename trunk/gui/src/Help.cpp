@@ -24,6 +24,7 @@
 #include "Details.h"
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
+#include "UtilPath.h"
 #include "Window.h"
 
 namespace gui {
@@ -162,8 +163,7 @@ void Help::onTimer(wxTimerEvent& event)
 
 void Help::home()
 {
-    wxString dir = wxFileName(Config::getExeDir() + "\\html\\help\\","").GetFullPath();
-    mHtml->LoadPage(wxFileName(dir, "index.html").GetFullPath());
+    mHtml->LoadPage(util::path::toFileInInstallationDirectory("html\\help", "index.html"));
 }
 
 void Help::updateButtons()

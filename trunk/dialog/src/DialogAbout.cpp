@@ -21,6 +21,7 @@
 #include "Config.h"
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
+#include "UtilPath.h"
 #include "UtilWindow.h"
 #include "Window.h"
 
@@ -46,12 +47,10 @@ DialogAbout::DialogAbout()
 
     SetSizer(new wxBoxSizer(wxVERTICAL));
 
-    wxString dir = wxFileName(Config::getExeDir() + "\\html\\about\\","").GetFullPath();
-
     ////////  ////////
 
     mHtml = new wxHtmlWindow(this);
-    mHtml->LoadPage(wxFileName(dir, "main.html").GetFullPath());
+    mHtml->LoadPage(util::path::toFileInInstallationDirectory("html\\about", "main.html"));
 
     ////////  ////////
 

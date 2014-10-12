@@ -47,9 +47,7 @@ DialogNewProject::DialogNewProject()
 {
     SetTitle(_("Create new project"));
 
-    wxFileName iconfile(Config::getExeDir(),"movie128.png"); // todo make helper method for this dirmangling
-    iconfile.AppendDir("icons");
-    wxBitmap b(iconfile.GetFullPath(), wxBITMAP_TYPE_PNG );
+    wxBitmap b(util::path::toFileInInstallationDirectory("icons", "movie128.png"), wxBITMAP_TYPE_PNG);
 
     Create(&Window::get(), wxID_ANY, _("Create new project"), b, wxDefaultPosition, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     util::window::setIcons(this);

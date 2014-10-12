@@ -17,6 +17,7 @@
 
 #include "UtilPath.h"
 
+#include "Config.h"
 #include "UtilLogWxwidgets.h"
 
 namespace util { namespace path {
@@ -146,5 +147,17 @@ bool hasSubDirectories(wxFileName directory)
     wxArrayString allfiles;
     return wxDir::GetAllFiles(directory.GetLongPath(), &allfiles, wxEmptyString, wxDIR_DIRS) > 0;
 }
+
+wxString toFileInInstallationDirectory(wxString subdir, wxString filename)
+{
+    if (!subdir.IsEmpty())
+    {
+        ASSERT(subdir.GetChar(0) != '\\')(subdir);
+        ASSERT(subdir.Last() != '\\')(subdir);
+        subdir = '\\' + subdir + '\\';
+    }
+    return wxFileName(Config::getExeDir() + subdir, filename).GetFullPath();
+}
+
 
 }} // namespace
