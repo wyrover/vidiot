@@ -528,7 +528,7 @@ void Window::onCloseProject(model::EventCloseProject &event )
     mMenuFile->Enable(ID_NEW_AUTOFOLDER,false);
     mMenuFile->Enable(ID_NEW_SEQUENCE,false);
     mMenuFile->Enable(wxID_PROPERTIES,false);
-    updateTitle();
+    SetTitle(sTitle); // Remove the title
     mVisibleWorker->abort();
     mInvisibleWorker->abort();
     event.Skip();
