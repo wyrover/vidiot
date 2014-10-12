@@ -76,7 +76,7 @@ DialogRenderSettings::DialogRenderSettings(model::SequencePtr sequence)
 {
     VAR_DEBUG(this);
 
-    util::window::setIcons(this); // todo http://docs.wxwidgets.org/trunk/overview_bitmap.html (for the xpms)
+    util::window::setIcons(this);
     mLength = mSequence->getLength();
     SetSizer(new wxBoxSizer(wxVERTICAL));
 

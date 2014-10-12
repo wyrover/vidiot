@@ -37,7 +37,6 @@ void TimelineTrimRight(model::IClipPtr clip, pixel length, bool shift, bool endt
 
 void TimelineTrimTransitionLeftClipEnd(model::IClipPtr transition, pixel length, bool shift, bool endtrim)
 {
-    // todo use this everywhere a transitionleftclipend is trimmed
     wxPoint p(TransitionLeftClipEnd(transition));
     TimelineTrim(p, p + wxPoint(length,0), shift, endtrim);
 }
