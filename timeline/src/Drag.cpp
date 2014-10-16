@@ -213,6 +213,18 @@ void Drag::start(const wxPoint& hotspot, bool isInsideDrag)
         // Views for a clip.
         UtilSet<model::IClipPtr>(drags).addElements(mVideo.getTempTrack()->getClips());
         UtilSet<model::IClipPtr>(drags).addElements(mAudio.getTempTrack()->getClips());
+        // EmptyClip areas must not be dragged along.
+        for (auto it = drags.begin(); it != drags.end();) 
+        {
+            if ((*it)->isA<model::EmptyClip>())
+            {
+                it = drags.erase(it);
+            }
+            else
+            {
+                ++it;
+            }
+        }
     }
     else
     {
