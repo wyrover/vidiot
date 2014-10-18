@@ -26,6 +26,8 @@
 #include "VideoClip.h"
 #include "VideoFile.h"
 #include "VideoTrack.h"
+#include "WximageClip.h"
+#include "WximageFile.h"
 
 namespace command {
 
@@ -51,7 +53,14 @@ std::pair<model::IClipPtr, model::IClipPtr> ClipCreator::makeClips(model::FilePt
     {
         if (length == 1)
         {
-            videoClip = boost::make_shared<model::ImageClip>(boost::make_shared<model::ImageFile>(file->getPath()));
+            if (file->isWxImage())
+            {
+                videoClip = boost::make_shared<model::WximageClip>(boost::make_shared<model::WximageFile>(file->getPath()));
+            }
+            else
+            {
+                videoClip = boost::make_shared<model::ImageClip>(boost::make_shared<model::ImageFile>(file->getPath()));
+            }
         }
         else
         {

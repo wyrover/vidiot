@@ -58,7 +58,7 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    wxSize getSize();
+    virtual wxSize getSize();
 
     FrameRate getFrameRate();
 

@@ -35,7 +35,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
     
     template <typename Derived>
-    bool isA()
+    bool isA() 
     {
         Derived* derived = dynamic_cast<Derived*>(this);
         return (derived != 0);

@@ -64,18 +64,43 @@ void ExtendSequenceWithStillImage( model::SequencePtr sequence )
 
 void MakeSequenceEmpty( model::SequencePtr sequence )
 {
+    ASSERT(sequence);
     util::thread::RunInMainAndWait([sequence]()
     {
-        model::TrackPtr videoTrack = sequence->getVideoTrack(0);
-        model::TrackPtr audioTrack = sequence->getAudioTrack(0);
-        ASSERT(sequence);
-        ASSERT(videoTrack);
-        ASSERT(audioTrack);
-        videoTrack->removeClips(videoTrack->getClips());
-        audioTrack->removeClips(audioTrack->getClips());
-        ASSERT_ZERO(videoTrack->getClips().size());
-        ASSERT_ZERO(audioTrack->getClips().size());
+        MakeTrackEmpty(sequence->getVideoTrack(0));
+        MakeTrackEmpty(sequence->getAudioTrack(0));
     });
+}
+
+
+void ExtendTrack(model::TrackPtr track, model::IPaths files, int nRepeat)
+{
+    for (int i = 0; i < nRepeat; ++i)
+    {
+        for (model::IPathPtr path : files)
+        {
+            model::FilePtr file = boost::make_shared<model::File>(path->getPath());
+            std::pair<model::IClipPtr, model::IClipPtr> videoClip_audioClip = command::ClipCreator::makeClips(file);
+            if (track->isA<model::VideoTrack>())
+            {
+                track->addClips(boost::assign::list_of(videoClip_audioClip.first));
+            }
+            else
+            {
+                track->addClips(boost::assign::list_of(videoClip_audioClip.second));
+            }
+        }
+    }
+}
+
+void MakeTrackEmpty(model::TrackPtr track)
+{
+    ASSERT(track);
+    util::thread::RunInMainAndWait([track]()
+    {
+        track->removeClips(track->getClips());
+    });
+    ASSERT_ZERO(track->getClips().size());
 }
 
 } // namespace

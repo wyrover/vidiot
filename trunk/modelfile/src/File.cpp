@@ -31,6 +31,7 @@
 #include "UtilSerializeBoost.h"
 #include "UtilSerializeWxwidgets.h"
 #include "UtilThread.h"
+#include "WximageFile.h"
 
 namespace model {
 
@@ -56,6 +57,7 @@ File::File()
     ,   mNumberOfFrames(LENGTH_UNDEFINED)
     ,   mHasVideo(false)
     ,   mHasAudio(false)
+    ,   mIsWxImage(false)
     // Status of opening
     ,   mMetaDataKnown(false)
     ,   mFileOpened(false)
@@ -83,6 +85,7 @@ File::File(const wxFileName& path, int buffersize)
     ,   mNumberOfFrames(LENGTH_UNDEFINED)
     ,   mHasVideo(false)
     ,   mHasAudio(false)
+    ,   mIsWxImage(false)
     // Status of opening
     ,   mMetaDataKnown(false)
     ,   mFileOpened(false)
@@ -111,6 +114,7 @@ File::File(const File& other)
     ,   mNumberOfFrames(other.mNumberOfFrames)
     ,   mHasVideo(other.mHasVideo)
     ,   mHasAudio(other.mHasAudio)
+    ,   mIsWxImage(false)
     // Status of opening
     ,   mMetaDataKnown(other.mMetaDataKnown)
     ,   mFileOpened(false)
@@ -304,6 +308,12 @@ bool File::hasAudio()
     return mHasAudio;
 }
 
+bool File::isWxImage()
+{
+    ASSERT(mMetaDataKnown)(this);
+    return mIsWxImage;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // STREAMS INTERFACE TO SUBCLASSES
 //////////////////////////////////////////////////////////////////////////
@@ -329,6 +339,7 @@ AVStream* File::getStream()
 
 void File::startReadingPackets()
 {
+    ASSERT(!mIsWxImage);
     // If the end of file is reached, a subsequent getNext* should not
     // trigger a new (useless) sequence of startReadingPackets,
     // bufferPacketsThread, "bufferPacketsThread: End of file."
@@ -417,6 +428,7 @@ AVCodecContext* File::getCodec()
 
 PacketPtr File::getNextPacket()
 {
+    ASSERT(!mIsWxImage);
     if (mEOF)
     {
         // After EOF is reached, first a 'moveTo' must be done.
@@ -471,6 +483,17 @@ void File::openFile()
 
     int result = 0;
     wxString path = mPath.GetLongPath();
+
+    if (WximageFile::canRead(mPath))
+    {
+        // Use wxImage to read from this file
+        mNumberOfFrames = 1;
+        mHasVideo = true;
+        mHasAudio = false;
+        mFileOpenedOk = true;
+        mIsWxImage = true;
+        return;
+    }
 
     {
         boost::mutex::scoped_lock lock(Avcodec::sMutex);

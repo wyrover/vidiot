@@ -103,6 +103,7 @@
 #include "UtilList.h"
 #include "UtilLog.h"
 #include "UtilLogAvcodec.h" // For logging codec ids. Still compiles without this include but then the title bar shows ints, not text for the codec name.
+#include "UtilLogBoost.h"
 #include "UtilLogWxwidgets.h"
 #include "UtilPath.h"
 #include "UtilThread.h"
@@ -110,6 +111,7 @@
 #include "VideoCodecs.h"
 #include "VideoCompositionParameters.h"
 #include "VideoDisplayEvent.h"
+#include "VideoFrame.h"
 #include "VideoTrack.h"
 #include "VideoTransition.h"
 #include "VideoTransitionFactory.h"
