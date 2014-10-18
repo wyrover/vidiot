@@ -17,5 +17,16 @@ To change the current name of a project select the 'File' menu and then select
 'Save As' to save the project with a different name.
 The project is saved as &lt;name&gt;.vid.
 After saving, the project name is updated in the Project View.
+
+<h1>Create project via drag and drop from file system</h1>
+
+If no project is open, dropping files/folders from the filesystem results in creation of a project.
+If a folder is dropped a sequence is created containing all the files in the folder.
+If a list of files is dropped, a sequence containing these files is created.
+<p>
+Note that if there are multiple video frame rates and/or audio sample rates in the
+files added to the project, then the sequence is created using the frame/sample rate
+that is most frequent in the input files.
+
 </body>
 </html>
