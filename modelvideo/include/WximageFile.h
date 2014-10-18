@@ -1,4 +1,4 @@
-// Copyright 2013,2014 Eric Raijmakers.
+// Copyright 2014 Eric Raijmakers.
 //
 // This file is part of Vidiot.
 //
@@ -15,17 +15,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MODEL_VIDEO_FILE_H
-#define MODEL_VIDEO_FILE_H
+#ifndef MODEL_WX_IMAGE_FILE_H
+#define MODEL_WX_IMAGE_FILE_H
 
-#include "File.h"
-#include "IVideo.h"
+#include "VideoFile.h"
 
 namespace model {
 
-class VideoFile
-    :   public File
-    ,   public IVideo
+class WximageFile
+    :   public VideoFile
 {
 public:
 
@@ -33,18 +31,24 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    VideoFile();
+    /// \return true if the file given must be opened with this class
+    /// \param path file to be checked
+    /// /note only file types with alpha support in wxImage are handled via this class
+    static bool canRead(wxFileName path);
 
-    VideoFile(const wxFileName& path);
+    WximageFile();
 
-    virtual VideoFile* clone() const override;
+    WximageFile(const wxFileName& path);
 
-    virtual ~VideoFile();
+    virtual WximageFile* clone() const override;
+
+    virtual ~WximageFile();
 
     //////////////////////////////////////////////////////////////////////////
     // ICONTROL
     //////////////////////////////////////////////////////////////////////////
 
+    pts getLength() const override;
     void moveTo(pts position) override;
     virtual void clean() override;
 
@@ -58,11 +62,7 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    virtual wxSize getSize();
-
-    FrameRate getFrameRate();
-
-    uint64_t getVideoPacketPts();
+    wxSize getSize() override;
 
 protected:
 
@@ -72,7 +72,7 @@ protected:
 
     /// Copy constructor. Use make_cloned for making deep copies of objects.
     /// \see make_cloned
-    VideoFile(const VideoFile& other);
+    WximageFile(const WximageFile& other);
 
 private:
 
@@ -80,33 +80,20 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    bool mDecodingVideo;
-    pts mPosition;                  ///< Current position of this clip (set via 'moveTo' or changed via 'getNext')
-    VideoFramePtr mDeliveredFrame;  ///< The most recently returned frame in getNext. The pts value stored in this frame is the pts in the input time base (thus, the timebase of the file, and not the timebase of the project).
-    SwsContext* mSwsContext;        ///< Software scaling context
-    pts mVideoPacketPts;            ///< (input) pts value for most recent packet fed into the decoder.
+    wxImagePtr mInputImage;
+    VideoFramePtr mOutputFrame;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    void startDecodingVideo(const VideoCompositionParameters& parameters);
-    void stopDecodingVideo();
-
-    //////////////////////////////////////////////////////////////////////////
-    // FROM FILE
-    //////////////////////////////////////////////////////////////////////////
-
-    bool useStream(const AVMediaType& type) const override;
-    void flush() override;
+    void readImage();
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<(std::ostream& os, const VideoFile& obj);
-    void saveDecodedFrame(AVCodecContext* codec, AVFrame* frame, const wxSize& size, int frameFinished);
-    void saveScaledFrame(AVCodecContext* codec, const wxSize& size, VideoFramePtr frame);
+    friend std::ostream& operator<<(std::ostream& os, const WximageFile& obj);
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION
@@ -119,11 +106,7 @@ private:
 
 } // namespace
 
-// Workaround needed to prevent compile-time errors (mpl_assertion_in_line...) with gcc
-//#include  <boost/preprocessor/slot/counter.hpp>
-//#include BOOST____PP_UPDATE_COUNTER()
-//#line BOOST_____PP_COUNTER
-BOOST_CLASS_VERSION(model::VideoFile, 1)
-BOOST_CLASS_EXPORT_KEY(model::VideoFile)
+BOOST_CLASS_VERSION(model::WximageFile, 1)
+BOOST_CLASS_EXPORT_KEY(model::WximageFile)
 
 #endif

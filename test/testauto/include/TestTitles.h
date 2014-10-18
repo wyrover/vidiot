@@ -1,4 +1,4 @@
-// Copyright 2013,2014 Eric Raijmakers.
+// Copyright 2014 Eric Raijmakers.
 //
 // This file is part of Vidiot.
 //
@@ -15,31 +15,41 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef UTIL_RTTI_H
-#define UTIL_RTTI_H
+#ifndef TEST_TITLES_H
+#define TEST_TITLES_H
 
-/// Needed for checking object types in class hierarchies
-class IRTTI
+#include "TestAuto.h"
+
+namespace test {
+
+class TestTitles: public CxxTest::TestSuite // Must be on same line as class definition. Otherwise 'No tests defined error
+    ,   public SuiteCreator<TestTitles>
 {
 public:
-
     //////////////////////////////////////////////////////////////////////////
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    IRTTI() {};
-    virtual ~IRTTI() {}; /// One virtual method required for RTTI
+    virtual void setUp();       ///< Called before each test.
+    virtual void tearDown();    ///< Called after each test.
 
     //////////////////////////////////////////////////////////////////////////
-    // IRTTI
+    // TEST CASES
     //////////////////////////////////////////////////////////////////////////
-    
-    template <typename Derived>
-    bool isA() 
-    {
-        Derived* derived = dynamic_cast<Derived*>(this);
-        return (derived != 0);
-    }
+
+    void testFileTypes();
+
+private:
+
+    //////////////////////////////////////////////////////////////////////////
+    // MEMBERS
+    //////////////////////////////////////////////////////////////////////////
+
+    FixtureProject mProjectFixture;
 };
+
+} // namespace
+
+using namespace test;
 
 #endif

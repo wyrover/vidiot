@@ -79,10 +79,6 @@ wxPoint VideoFrameLayer::getPosition() const
 void VideoFrameLayer::setOpacity(int opacity)
 {
     ASSERT(mImage);
-    if (mImage->HasAlpha())
-    {
-        mImage->ClearAlpha();
-    }
     mOpacity = opacity;
     mResultingImage.reset();
 }
@@ -127,7 +123,20 @@ wxImagePtr VideoFrameLayer::getImage()
                 mImage->InitAlpha(); // To avoid black being drawn besides the rotated image
             }
         }
-        // else: Alpha already initialized, or even modified (by transition) already.
+        else
+        {
+            // Alpha already initialized.
+            if (mOpacity != Constants::sOpacityMax)
+            {
+                unsigned char* alpha = mImage->GetAlpha();
+                ASSERT_NONZERO(alpha);
+                for (int x = 0; x < mImage->GetWidth() * mImage->GetHeight(); ++x)
+                {
+                    *alpha++ = static_cast<char>(static_cast<int>(*alpha) * mOpacity / Constants::sOpacityMax);
+                }
+            }
+            // else: Keep alpha data 'as is'
+        }
 
         mResultingImage.reset(mImage);
 

@@ -1,4 +1,4 @@
-// Copyright 2013,2014 Eric Raijmakers.
+// Copyright 2014 Eric Raijmakers.
 //
 // This file is part of Vidiot.
 //
@@ -15,11 +15,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef UTIL_RTTI_H
-#define UTIL_RTTI_H
+#ifndef MODEL_WX_IMAGE_CLIP_H
+#define MODEL_WX_IMAGE_CLIP_H
 
-/// Needed for checking object types in class hierarchies
-class IRTTI
+#include "VideoClip.h"
+
+namespace model {
+
+class WximageClip
+    :   public VideoClip
 {
 public:
 
@@ -27,19 +31,30 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    IRTTI() {};
-    virtual ~IRTTI() {}; /// One virtual method required for RTTI
+    WximageClip();
+    WximageClip(const WximageFilePtr& clip);
+    virtual ~WximageClip();
+
+private:
 
     //////////////////////////////////////////////////////////////////////////
-    // IRTTI
+    // LOGGING
     //////////////////////////////////////////////////////////////////////////
-    
-    template <typename Derived>
-    bool isA() 
-    {
-        Derived* derived = dynamic_cast<Derived*>(this);
-        return (derived != 0);
-    }
+
+    friend std::ostream& operator<<(std::ostream& os, const WximageClip& obj);
+
+    //////////////////////////////////////////////////////////////////////////
+    // SERIALIZATION
+    //////////////////////////////////////////////////////////////////////////
+
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive & ar, const unsigned int version);
 };
+
+} // namespace
+
+BOOST_CLASS_VERSION(model::WximageClip, 1)
+BOOST_CLASS_EXPORT_KEY(model::WximageClip)
 
 #endif

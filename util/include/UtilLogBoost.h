@@ -18,12 +18,14 @@
 #ifndef UTIL_LOG_BOOST_H
 #define UTIL_LOG_BOOST_H
 
-namespace boost {
+// Strange but true, some boost classes must be defined outside boost namespace
+// (otherwise, got compile error) and some boost classes must be defined inside
+// boost namespace (otherwise, got link error)...
 
 template <class K, class L, class M>
-std::ostream& operator<<(std::ostream& os, const tuple<K,L,M>& obj)
+std::ostream& operator<<(std::ostream& os, const boost::tuple<K, L, M>& obj)
 {
-    os  << "{"
+    os << "{"
         << obj.template get<0>()
         << ','
         << obj.template get<1>()
@@ -33,6 +35,8 @@ std::ostream& operator<<(std::ostream& os, const tuple<K,L,M>& obj)
     return os;
 }
 
+namespace boost {
+    
 template <class K>
 std::ostream& operator<<(std::ostream& os, const optional<K>& obj)
 {
@@ -60,7 +64,6 @@ std::ostream& operator<<(std::ostream& os, const scoped_ptr<K>& obj)
     }
     return os;
 }
-
 }
 
 #endif

@@ -26,6 +26,10 @@ void ExtendSequenceWithStillImage( model::SequencePtr sequence );
 
 void MakeSequenceEmpty( model::SequencePtr sequence );
 
+void ExtendTrack(model::TrackPtr track, model::IPaths files, int nRepeat = 1);
+
+void MakeTrackEmpty(model::TrackPtr track);
+
 } // namespace
 
 #endif

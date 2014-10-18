@@ -21,6 +21,7 @@
 #include "Constants.h"
 #include "Layout.h"
 #include "UtilInitAvcodec.h"
+#include "UtilLogBoost.h"
 #include "UtilLogWxwidgets.h"
 #include "VideoCompositionParameters.h"
 

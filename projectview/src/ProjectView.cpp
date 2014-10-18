@@ -631,6 +631,13 @@ void ProjectView::onDropPossible(wxDataViewEvent &event)
         return;
     }
 
+    // Cannot drop if there's no item
+    if (event.GetItem() == nullptr)
+    {
+        event.Veto();
+        return;
+    }
+
     // Cannot drop into an autofolder tree
     model::NodePtr p = model::INode::Ptr(static_cast<model::NodeId>(event.GetItem().GetID()));
     if (mModel->isAutomaticallyGenerated(p) || !mModel->isFolder(p) || mModel->isAutoFolder(p))

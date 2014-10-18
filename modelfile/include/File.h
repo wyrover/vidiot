@@ -92,6 +92,9 @@ public:
     bool hasVideo();
     bool hasAudio();
 
+    /// \return true if this file must be opened as a wxImage and not via ffmpeg
+    bool isWxImage();
+
 protected:
 
     //////////////////////////////////////////////////////////////////////////
@@ -159,6 +162,7 @@ private:
     pts mNumberOfFrames;
     bool mHasVideo;
     bool mHasAudio;
+    bool mIsWxImage;
 
     // Status of opening
     bool mMetaDataKnown;    ///< True if the meta data (file path exists, canBeOpened) has been retrieved.
