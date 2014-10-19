@@ -58,37 +58,37 @@ Mouse::Mouse(Timeline* timeline)
 
     wxImage image;
 
-    image = util::window::getImage("cursor_normal.xpm");
+    image = util::window::getImage("cursor_normal.png");
     image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_X, 0);
     image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_Y, 0);
     mCursorNormal = wxCursor(image);
 
-    image = util::window::getImage("cursor_move_cut.xpm");
+    image = util::window::getImage("cursor_move_cut.png");
     image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_X, 16);
     image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_Y, 16);
     mCursorMoveCut = wxCursor(image);
 
-    image = util::window::getImage("cursor_trim_begin.xpm");
+    image = util::window::getImage("cursor_trim_begin.png");
     image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_X, 16);
     image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_Y, 16);
     mCursorTrimBegin = wxCursor(image);
 
-    image = util::window::getImage("cursor_trim_begin.xpm");
+    image = util::window::getImage("cursor_trim_begin.png");
     image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_X, 16);
     image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_Y, 16);
     mCursorTrimShiftBegin = wxCursor(image);
 
-    image = util::window::getImage("cursor_trim_end.xpm");
+    image = util::window::getImage("cursor_trim_end.png");
     image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_X, 16);
     image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_Y, 16);
     mCursorTrimEnd = wxCursor(image);
 
-    image = util::window::getImage("cursor_trim_end.xpm");
+    image = util::window::getImage("cursor_trim_end.png");
     image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_X, 16);
     image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_Y, 16);
     mCursorTrimShiftEnd = wxCursor(image);
 
-    image = util::window::getImage("cursor_track_resize.xpm");
+    image = util::window::getImage("cursor_track_resize.png");
     image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_X, 8);
     image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_Y, 8);
     mCursorTrackResize = wxCursor(image);

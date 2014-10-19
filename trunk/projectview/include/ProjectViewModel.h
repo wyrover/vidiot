@@ -92,11 +92,14 @@ private:
 
     wxDataViewCtrl& mView;
 
+    wxIcon mIconAudio;
     wxIcon mIconAutoFolder;
     wxIcon mIconAutoFolderOpen;
     wxIcon mIconFolder;
     wxIcon mIconFolderOpen;
+    wxIcon mIconPicture;
     wxIcon mIconSequence;
+    wxIcon mIconTitle;
     wxIcon mIconVideo;
 
 };

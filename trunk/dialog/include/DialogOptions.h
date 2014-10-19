@@ -74,6 +74,8 @@ private:
     wxBoxSizer*             mTopSizer;  ///< tab:Sizer for panel
     wxBoxSizer*             mBoxSizer;  ///< box:Sizer for current box
 
+    wxImageList             mIcons;
+
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////

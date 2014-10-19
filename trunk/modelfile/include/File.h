@@ -22,6 +22,7 @@
 #include "IFile.h"
 #include "IPath.h"
 #include "Node.h"
+#include "UtilEnum.h"
 #include "UtilFrameRate.h"
 
 struct AVFormatContext;
@@ -30,6 +31,12 @@ struct AVCodecContext;
 enum AVMediaType;
 
 namespace model {
+
+DECLAREENUM(FileType, \
+    FileType_Video, \
+    FileType_Audio, \
+    FileType_Image, \
+    FileType_Title);
 
 class File
     :   public IFile
@@ -92,8 +99,11 @@ public:
     bool hasVideo();
     bool hasAudio();
 
-    /// \return true if this file must be opened as a wxImage and not via ffmpeg
-    bool isWxImage();
+    /// Determine file type based on the file name. No inspection of the file may
+    /// be done, since this method is also used for cases where file opening is 
+    /// not allowed (in the project view) for performance reasons.
+    /// \return type of this file
+    FileType getType() const;
 
 protected:
 
@@ -162,7 +172,6 @@ private:
     pts mNumberOfFrames;
     bool mHasVideo;
     bool mHasAudio;
-    bool mIsWxImage;
 
     // Status of opening
     bool mMetaDataKnown;    ///< True if the meta data (file path exists, canBeOpened) has been retrieved.
