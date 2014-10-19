@@ -34,13 +34,29 @@ namespace gui {
 //////////////////////////////////////////////////////////////////////////
 
 DialogOptions::DialogOptions(wxWindow* win)
-    :   wxPropertySheetDialog(win, wxID_ANY, _("Preferences"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
-    ,   mPanel(0)
-    ,   mTopSizer(0)
-    ,   mBoxSizer(0)
+    : wxPropertySheetDialog()
+    , mPanel(0)
+    , mTopSizer(0)
+    , mBoxSizer(0)
+    , mIcons(16,16)
 {
     util::window::setIcons(this);
 
+    wxStrings icons = boost::assign::list_of
+        ("disks.png")
+        ("folder-horizontal-open.png")
+        ("clapperboard.png")
+        ("picture.png")
+        ("music-beam.png")
+        ("film.png")
+        ("bug.png");
+    for (wxString icon : icons)
+    {
+        mIcons.Add(util::window::getIcon(icon));
+    }
+
+    Create(win, wxID_ANY, _("Options"), wxDefaultPosition, wxSize(1000, -1), wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+    GetBookCtrl()->SetImageList(&mIcons);
     {
         addtab(_("Load/Save"));
 
@@ -218,7 +234,9 @@ DialogOptions::DialogOptions(wxWindow* win)
     SetExtraStyle(wxDIALOG_EX_CONTEXTHELP|wxWS_EX_VALIDATE_RECURSIVELY);
     CreateButtons(wxOK | wxCANCEL);
 
+    ASSERT_EQUALS(icons.size(), GetBookCtrl()->GetPageCount()); // Ensure the proper amount of icons
     LayoutDialog();
+    SetSize(wxSize(600, -1));
 
 }
 
@@ -271,7 +289,7 @@ DialogOptions::~DialogOptions()
 void DialogOptions::addtab(const wxString& name)
 {
     mPanel = new wxPanel(GetBookCtrl(), wxID_ANY);
-    GetBookCtrl()->AddPage(mPanel, name, true);
+    GetBookCtrl()->AddPage(mPanel, name, true, GetBookCtrl()->GetPageCount());
     mTopSizer = new wxBoxSizer( wxVERTICAL );
     mPanel->SetSizerAndFit(mTopSizer);
     mBoxSizer = 0;

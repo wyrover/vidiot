@@ -19,6 +19,7 @@
 
 #include "AutoFolder.h"
 #include "Constants.h"
+#include "Config.h"
 #include "Convert.h"
 #include "Dialog.h"
 #include "FilePacket.h"
@@ -34,6 +35,8 @@
 #include "WximageFile.h"
 
 namespace model {
+
+IMPLEMENTENUM(FileType);
 
 // static
 const int File::STREAMINDEX_UNDEFINED = -1;
@@ -57,7 +60,6 @@ File::File()
     ,   mNumberOfFrames(LENGTH_UNDEFINED)
     ,   mHasVideo(false)
     ,   mHasAudio(false)
-    ,   mIsWxImage(false)
     // Status of opening
     ,   mMetaDataKnown(false)
     ,   mFileOpened(false)
@@ -85,7 +87,6 @@ File::File(const wxFileName& path, int buffersize)
     ,   mNumberOfFrames(LENGTH_UNDEFINED)
     ,   mHasVideo(false)
     ,   mHasAudio(false)
-    ,   mIsWxImage(false)
     // Status of opening
     ,   mMetaDataKnown(false)
     ,   mFileOpened(false)
@@ -114,7 +115,6 @@ File::File(const File& other)
     ,   mNumberOfFrames(other.mNumberOfFrames)
     ,   mHasVideo(other.mHasVideo)
     ,   mHasAudio(other.mHasAudio)
-    ,   mIsWxImage(false)
     // Status of opening
     ,   mMetaDataKnown(other.mMetaDataKnown)
     ,   mFileOpened(false)
@@ -308,11 +308,33 @@ bool File::hasAudio()
     return mHasAudio;
 }
 
-bool File::isWxImage()
+FileType File::getType() const
 {
-    ASSERT(mMetaDataKnown)(this);
-    return mIsWxImage;
+    static std::map<const wxString, FileType> sMap = boost::assign::map_list_of
+        ("png", FileType_Title)
+        ("tiff", FileType_Title)
+        ("tif", FileType_Title)
+        ("aif", FileType_Audio)
+        ("aiff", FileType_Audio)
+        ("wav", FileType_Audio)
+        ("mp3", FileType_Audio)
+        ("au", FileType_Audio)
+        ("flac", FileType_Audio)
+        ("m4a", FileType_Audio)
+        ("ogg", FileType_Audio)
+        ("wma", FileType_Audio)
+        ("gif", FileType_Image)
+        ("jpg", FileType_Image)
+        ("jpeg", FileType_Image)
+        ("bmp", FileType_Image);
+    auto it = sMap.find(mPath.GetExt());
+    if (it != sMap.end())
+    {
+        return it->second;
+    }
+    return FileType_Video;
 }
+
 
 //////////////////////////////////////////////////////////////////////////
 // STREAMS INTERFACE TO SUBCLASSES
@@ -339,7 +361,6 @@ AVStream* File::getStream()
 
 void File::startReadingPackets()
 {
-    ASSERT(!mIsWxImage);
     // If the end of file is reached, a subsequent getNext* should not
     // trigger a new (useless) sequence of startReadingPackets,
     // bufferPacketsThread, "bufferPacketsThread: End of file."
@@ -428,7 +449,6 @@ AVCodecContext* File::getCodec()
 
 PacketPtr File::getNextPacket()
 {
-    ASSERT(!mIsWxImage);
     if (mEOF)
     {
         // After EOF is reached, first a 'moveTo' must be done.
@@ -484,14 +504,13 @@ void File::openFile()
     int result = 0;
     wxString path = mPath.GetLongPath();
 
-    if (WximageFile::canRead(mPath))
+    if (getType() == FileType_Title && wxImage::CanRead(path))
     {
         // Use wxImage to read from this file
         mNumberOfFrames = 1;
         mHasVideo = true;
         mHasAudio = false;
         mFileOpenedOk = true;
-        mIsWxImage = true;
         return;
     }
 

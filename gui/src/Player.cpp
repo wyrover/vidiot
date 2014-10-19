@@ -51,11 +51,11 @@ Player::Player(wxWindow *parent, model::SequencePtr sequence, wxWindow* focus)
 , mSpeedButton(0)
 , mSpeedSliderFrame(0)
 , mSpeedSlider(0)
-, mBmpHome(util::window::getIcon("preview-home.xpm"))
-, mBmpEnd(util::window::getIcon("preview-end.xpm"))
-, mBmpNext(util::window::getIcon("preview-next.xpm"))
-, mBmpPrevious(util::window::getIcon("preview-previous.xpm"))
-, mBmpPausePlay(util::window::getIcon("preview-pauseplay.xpm"))
+, mBmpHome(util::window::getIcon("preview-home.png"))
+, mBmpEnd(util::window::getIcon("preview-end.png"))
+, mBmpNext(util::window::getIcon("preview-next.png"))
+, mBmpPrevious(util::window::getIcon("preview-previous.png"))
+, mBmpPausePlay(util::window::getIcon("preview-pauseplay.png"))
 {
     VAR_DEBUG(this);
 

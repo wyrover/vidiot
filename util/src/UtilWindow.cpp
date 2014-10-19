@@ -30,26 +30,12 @@ void setIcons(wxTopLevelWindow* window)
 
 wxIcon getIcon(wxString name)
 {
-    return wxIcon(util::path::toFileInInstallationDirectory("images", name), wxBITMAP_TYPE_XPM);
+    return wxIcon(util::path::toFileInInstallationDirectory("images", name), wxBITMAP_TYPE_PNG);
 }
 
 wxBitmap getBitmap(wxString name)
 {
-    wxBitmapType type(wxBITMAP_TYPE_XPM);
-
-    if (name.EndsWith(".ico"))
-    {
-        type = wxBITMAP_TYPE_ICO;
-    }
-    else if (name.EndsWith(".png"))
-    {
-        type = wxBITMAP_TYPE_PNG;
-    }
-    else
-    {
-        ASSERT(name.EndsWith(".xpm"));
-    }
-    return wxBitmap(util::path::toFileInInstallationDirectory("images", name), type);
+    return wxBitmap(util::path::toFileInInstallationDirectory("images", name), wxBITMAP_TYPE_PNG);
 }
 
 wxImage getImage(wxString name)

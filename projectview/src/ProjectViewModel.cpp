@@ -44,12 +44,15 @@ const int sNumberOfColumns = 1;
 ProjectViewModel::ProjectViewModel(wxDataViewCtrl& view)
 : wxDataViewModel()
 , mView(view)
-, mIconAutoFolder(util::window::getIcon("folder-horizontal-plus.xpm"))
-, mIconAutoFolderOpen(util::window::getIcon("folder-horizontal-plus-open.xpm"))
-, mIconFolder(util::window::getIcon("folder-horizontal.xpm"))
-, mIconFolderOpen(util::window::getIcon("folder-horizontal-open.xpm"))
-, mIconSequence(util::window::getIcon("film.xpm"))
-, mIconVideo(util::window::getIcon("picture.xpm"))
+, mIconAudio(util::window::getIcon("music-beam.png"))
+, mIconAutoFolder(util::window::getIcon("folder-horizontal-plus.png"))
+, mIconAutoFolderOpen(util::window::getIcon("folder-horizontal-plus-open.png"))
+, mIconFolder(util::window::getIcon("folder-horizontal.png"))
+, mIconFolderOpen(util::window::getIcon("folder-horizontal-open.png"))
+, mIconPicture(util::window::getIcon("picture.png"))
+, mIconSequence(util::window::getIcon("film.png"))
+, mIconTitle(util::window::getIcon("edit.png"))
+, mIconVideo(util::window::getIcon("clapperboard.png"))
 {
     gui::Window::get().Bind(model::EVENT_OPEN_PROJECT,     &ProjectViewModel::onOpenProject,           this);
     gui::Window::get().Bind(model::EVENT_CLOSE_PROJECT,    &ProjectViewModel::onCloseProject,          this);
@@ -333,7 +336,24 @@ wxIcon ProjectViewModel::getIcon(const model::NodePtr& node) const
     }
     else
     {
-        icon = mIconVideo;
+        model::FilePtr file = boost::dynamic_pointer_cast<model::File>(node);
+        ASSERT(file);
+        switch (file->getType())
+        {
+        case model::FileType_Image:
+            icon = mIconPicture;
+            break;
+        case model::FileType_Title:
+            icon = mIconTitle;
+            break;
+        case model::FileType_Audio:
+            icon = mIconAudio;
+            break;
+        case model::FileType_Video: // FALLTHROUGH
+        default:
+            icon = mIconVideo;
+            break;
+        }
     }
     return icon;
 }

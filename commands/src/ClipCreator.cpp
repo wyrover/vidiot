@@ -53,7 +53,7 @@ std::pair<model::IClipPtr, model::IClipPtr> ClipCreator::makeClips(model::FilePt
     {
         if (length == 1)
         {
-            if (file->isWxImage())
+            if (file->getType() == model::FileType_Title)
             {
                 videoClip = boost::make_shared<model::WximageClip>(boost::make_shared<model::WximageFile>(file->getPath()));
             }
