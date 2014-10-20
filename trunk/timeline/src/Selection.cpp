@@ -50,7 +50,7 @@ Selection::~Selection()
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-void Selection::updateOnLeftClick(const PointerPositionInfo& info)
+void Selection::updateOnLeftDown(const PointerPositionInfo& info)
 {
     ASSERT(wxThread::IsMain());
     bool ctrlPressed = getKeyboard().getCtrlDown();
@@ -59,7 +59,7 @@ void Selection::updateOnLeftClick(const PointerPositionInfo& info)
     VAR_DEBUG(info)(ctrlPressed)(shiftPressed)(altPressed);
 
     // Must be determined before deselecting all clips.
-    bool previousClickedClipWasSelected = true;
+    bool previouslyClickedWasSelected = true;
     if (mPreviouslyClicked)
     {
         if (!mPreviouslyClicked->getTrack())
@@ -70,24 +70,16 @@ void Selection::updateOnLeftClick(const PointerPositionInfo& info)
         }
         else
         {
-            previousClickedClipWasSelected = mPreviouslyClicked->getSelected();
+            previouslyClickedWasSelected = mPreviouslyClicked->getSelected();
         }
     }
-
+    
     // Determine the 'logically clicked' clip and track
     model::IClipPtr clip = info.getLogicalClip();
+    mLeftDown = clip;
+    mLeftDownWasSelected = clip ? clip->getSelected() : false;
+
     model::TrackPtr track = info.track;
-
-    bool currentClickedClipIsSelected = clip ? clip->getSelected() : false;
-
-    // Deselect all clips first, but only if control is not pressed.
-    if (!ctrlPressed)
-    {
-        for ( model::IClipPtr c : getSequence()->getSelectedClips() )
-        {
-            c->setSelected(false);
-        }
-    }
 
     if (clip)
     {
@@ -104,7 +96,7 @@ void Selection::updateOnLeftClick(const PointerPositionInfo& info)
                 }
                 if (firstclip)
                 {
-                    selectClipAndLink(c , !currentClickedClipIsSelected);
+                    selectClipAndLink(c , !mLeftDownWasSelected);
                 }
             }
             setPreviouslyClicked(clip);
@@ -123,7 +115,7 @@ void Selection::updateOnLeftClick(const PointerPositionInfo& info)
 
             if (otherend == clip)
             {
-                selectClipAndLink(clip, previousClickedClipWasSelected);
+                selectClipAndLink(clip, previouslyClickedWasSelected);
             }
             else
             {
@@ -137,7 +129,7 @@ void Selection::updateOnLeftClick(const PointerPositionInfo& info)
                     }
                     if (firstclip)
                     {
-                        selectClipAndLink(c, previousClickedClipWasSelected);
+                        selectClipAndLink(c, previouslyClickedWasSelected);
                         if ((c != firstclip) &&
                             ((c == clip) || (c == otherend)))
                         {
@@ -154,13 +146,24 @@ void Selection::updateOnLeftClick(const PointerPositionInfo& info)
         }
         else if (ctrlPressed)
         {
-            // Control down implies 'toggle' select.
-            selectClipAndLink(clip, !currentClickedClipIsSelected);
+            // To facilitate dragging when (CTRL) clicking on one of the
+            // already selected clips, deselecting is delayed until the 
+            // left up event.
+            if (!mLeftDownWasSelected)
+            {
+                selectClipAndLink(clip, true);
+            }
+            // else: delay the deselection
             setPreviouslyClicked(clip);
         }
-        else
+        else // No modifier down
         {
-            selectClipAndLink(clip, true);
+            if (!mLeftDownWasSelected)
+            {
+                deselectAll();
+                selectClipAndLink(clip, true);
+            }
+            // else: delay the deselection
             setPreviouslyClicked(clip);
         }
     }
@@ -170,6 +173,47 @@ void Selection::updateOnLeftClick(const PointerPositionInfo& info)
     }
 
     QueueEvent(new EventSelectionUpdate(0));
+}
+
+void Selection::updateOnLeftUp(const PointerPositionInfo& info)
+{
+    ASSERT(wxThread::IsMain());
+    bool ctrlPressed = getKeyboard().getCtrlDown();
+    bool shiftPressed = getKeyboard().getShiftDown();
+    bool altPressed = getKeyboard().getAltDown();
+    VAR_DEBUG(info)(shiftPressed)(altPressed);
+    model::IClipPtr clip = info.getLogicalClip();
+
+    if (clip)
+    {
+        // For enabling dragging directly after selecting, in some cases
+        // deselecting clips is postponed to the mouse up event.
+        if (altPressed)
+        {
+
+        }
+        else if (shiftPressed)
+        {
+
+        }
+        else if (ctrlPressed)
+        {
+            if (mLeftDownWasSelected && mLeftDown && clip == mLeftDown)
+            {
+                // Delayed deselection
+                selectClipAndLink(clip, false);
+            }
+        }
+        else // No modifier down
+        {
+            if (mLeftDownWasSelected && mLeftDown && clip == mLeftDown)
+            {
+                // Delayed deselection of other clips if the clip was already selected
+                deselectAll();
+                selectClipAndLink(clip, true);
+            }
+        }
+    }
 }
 
 void Selection::updateOnRightClick(const PointerPositionInfo& info)
@@ -186,7 +230,7 @@ void Selection::updateOnRightClick(const PointerPositionInfo& info)
     model::TrackPtr track = clip ? clip->getTrack() : model::TrackPtr();
 
     // Must be determined before deselecting all clips.
-    bool currentClickedClipIsSelected = clip ? clip->getSelected() : false;
+    bool mLeftDownWasSelected = clip ? clip->getSelected() : false;
 
     // Deselect clips first, in certain cases
     if (!ctrlPressed && (!clip || !clip->getSelected()))
@@ -208,6 +252,13 @@ void Selection::updateOnRightClick(const PointerPositionInfo& info)
     }
 
     QueueEvent(new EventSelectionUpdate(0));
+}
+
+void Selection::updateOnTrim(const model::IClipPtr& clip)
+{
+    ASSERT(clip);
+    deselectAll();
+    selectClipAndLink(clip, true);
 }
 
 bool Selection::isEmpty() const
@@ -293,5 +344,15 @@ void Selection::setPreviouslyClicked(const model::IClipPtr& clip)
 {
     mPreviouslyClicked = clip;
 }
+
+void Selection::deselectAll()
+{
+    for (model::IClipPtr c : getSequence()->getSelectedClips())
+    {
+        c->setSelected(false);
+    }
+
+}
+
 
 }} // namespace

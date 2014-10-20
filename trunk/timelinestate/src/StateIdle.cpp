@@ -265,7 +265,7 @@ boost::statechart::result Idle::leftDown()
     }
     else
     {
-        getSelection().updateOnLeftClick(info);
+        getSelection().updateOnLeftDown(info);
         if (info.clip && !info.clip->isA<model::EmptyClip>())
         {
             switch (info.logicalclipposition)

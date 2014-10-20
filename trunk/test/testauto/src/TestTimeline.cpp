@@ -57,7 +57,10 @@ void TestTimeline::testSelection()
         TimelineKeyDown(WXK_CONTROL);
         for (model::IClipPtr clip : clips)
         {
-            TimelineLeftClick(Center(clip));
+            TimelineMove(Center(clip));
+            TimelineLeftDown();
+            ASSERT(clip->getSelected()); // Clip selected on mouse down event
+            TimelineLeftUp();
         }
         TimelineKeyUp(WXK_CONTROL);
         ASSERT_SELECTION_SIZE(mProjectFixture.InputFiles.size());
