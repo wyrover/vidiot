@@ -272,6 +272,7 @@ void Trim::start()
     }
 
 	ASSERT_ZERO(mCommand);
+    getSelection().updateOnTrim(mOriginalClip);
     mCommand = new command::TrimClip(getSequence(), mOriginalClip, transition, mPosition);
     determinePossibleSnapPoints(mOriginalClip);
     update();

@@ -44,8 +44,10 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    void updateOnLeftClick(const PointerPositionInfo& info);
+    void updateOnLeftDown(const PointerPositionInfo& info);
+    void updateOnLeftUp(const PointerPositionInfo& info);
     void updateOnRightClick(const PointerPositionInfo& info);
+    void updateOnTrim(const model::IClipPtr& clip);
 
     /// \return true if no clip is selected
     bool isEmpty() const;
@@ -73,6 +75,9 @@ private:
 
     model::IClipPtr mPreviouslyClicked;      ///< Clip which was previously (de)selected.
 
+    model::IClipPtr mLeftDown;     ///< Clip on which the most recent leftDown event was received.
+    bool mLeftDownWasSelected;     ///< True if mLeftDown was selected BEFORE the leftDown event.
+
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
@@ -80,6 +85,7 @@ private:
     void selectClipAndLink(const model::IClipPtr& clip, bool selected);
     void selectClip(const model::IClipPtr& clip, bool selected);
     void setPreviouslyClicked(const model::IClipPtr& clip);
+    void deselectAll();
 };
 
 }} // namespace

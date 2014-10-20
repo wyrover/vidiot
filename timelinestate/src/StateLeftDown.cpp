@@ -66,6 +66,20 @@ boost::statechart::result StateLeftDown::react( const EvLeftDown& evt )
 boost::statechart::result StateLeftDown::react( const EvLeftUp& evt )
 {
     VAR_DEBUG(evt);
+    PointerPositionInfo info = getMouse().getInfo(getMouse().getLeftDownPosition());
+    if (info.onAudioVideoDivider)
+    {
+        // Nothing
+    }
+    else if (info.onTrackDivider)
+    {
+        // Nothing
+    }
+    else
+    {
+        getSelection().updateOnLeftUp(info);
+    }
+
     return transit<Idle>();
 }
 

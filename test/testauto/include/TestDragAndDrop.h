@@ -38,6 +38,11 @@ public:
     // TEST CASES
     //////////////////////////////////////////////////////////////////////////
 
+    /// When multiple clips are selected, holding mouse down on a selected clip
+    /// should not change the selection. Instead, dragging the mouse should then
+    /// result in a drag operation that includes the 'clicked on' clip.
+    void testStartDrag();
+
     void testDnd();
 
     /// Test drag and drop scenarios specific to having multiple tracks in the

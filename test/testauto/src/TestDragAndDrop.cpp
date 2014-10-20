@@ -37,6 +37,47 @@ void TestDragAndDrop::tearDown()
 // TEST CASESMove(
 //////////////////////////////////////////////////////////////////////////
 
+void TestDragAndDrop::testStartDrag()
+{
+    StartTestSuite();
+    TimelineLeftClick(Center(VideoClip(0, 1)));
+    ASSERT_SELECTION_SIZE(1);
+    {
+        StartTest("Start drag by CTRL clicking on unselected clip.");
+        TimelineDrag(From(Center(VideoClip(0, 2))).HoldCtrlBeforeDragStarts().To(Center(VideoClip(0, 5))).DontReleaseMouse());
+        ASSERT_SELECTION_SIZE(2);
+        ASSERT(getTimeline().getDrag().isActive());
+        TimelineLeftUp(); // End the drag
+        ASSERT(!getTimeline().getDrag().isActive());
+        ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip);
+        ASSERT_EQUALS(VideoClip(0, 2)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0, 3)); // Test two clips dragged
+        Undo();
+        ASSERT_SELECTION_SIZE(2);
+    }
+    {
+        StartTest("Start drag by CTRL clicking on already selected clip.");
+        TimelineDrag(From(Center(VideoClip(0, 1))).HoldCtrlBeforeDragStarts().To(Center(VideoClip(0, 5))).DontReleaseMouse());
+        ASSERT(getTimeline().getDrag().isActive());
+        TimelineLeftUp(); // End the drag
+        ASSERT(!getTimeline().getDrag().isActive());
+        ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip);
+        ASSERT_EQUALS(VideoClip(0, 2)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0, 3)); // Test two clips dragged
+        Undo();
+        ASSERT_SELECTION_SIZE(2);
+    }
+    {
+        StartTest("Start drag by clicking on already selected clip.");
+        TimelineDrag(From(Center(VideoClip(0, 1))).To(Center(VideoClip(0, 5))).DontReleaseMouse());
+        ASSERT(getTimeline().getDrag().isActive());
+        TimelineLeftUp(); // End the drag
+        ASSERT(!getTimeline().getDrag().isActive());
+        ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip);
+        ASSERT_EQUALS(VideoClip(0, 2)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0, 3)); // Test two clips dragged
+        Undo();
+        ASSERT_SELECTION_SIZE(2);
+    }
+}
+
 void TestDragAndDrop::testDnd()
 {
     StartTestSuite();

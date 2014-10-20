@@ -58,6 +58,19 @@ boost::statechart::result StateTrim::react( const EvLeftUp& evt )
 {
     VAR_DEBUG(evt);
     getTrim().submit();
+    PointerPositionInfo info = getMouse().getInfo(getMouse().getLeftDownPosition());
+    if (info.onAudioVideoDivider)
+    {
+        // Nothing
+    }
+    else if (info.onTrackDivider)
+    {
+        // Nothing
+    }
+    else
+    {
+        getSelection().updateOnLeftUp(info);
+    }
     return transit<Idle>();
 }
 
