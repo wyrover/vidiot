@@ -615,7 +615,17 @@ void File::openFile()
                 }
                 else
                 {
-                    mNumberOfFrames = 0;
+                    // todo suppprt test/filetypes_video/videoonly_encoded.m4v this is a file for which the length seems to be unknown until fully played
+
+                    // todo support test/filetypes_image/filetypes_image:
+                    //if (stream->codec_info_nb_frames > 0)
+                    //{
+                    //    mNumberOfFrames = stream->codec_info_nb_frames;
+                    //}
+                    //else
+                    //{
+                        mNumberOfFrames = 0;
+                    //}
                 }
             }
             VAR_DEBUG(stream)(mNumberOfFrames);

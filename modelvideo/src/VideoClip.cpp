@@ -428,8 +428,15 @@ void VideoClip::updateAutomatedScaling()
         break;
     }
 
-    ASSERT_LESS_THAN_EQUALS(mScalingFactor,boost::rational<int>(Constants::sScalingMax,model::Constants::sScalingPrecisionFactor));
-    ASSERT_MORE_THAN_EQUALS(mScalingFactor,boost::rational<int>(Constants::sScalingMin,model::Constants::sScalingPrecisionFactor));
+    // Ensure that automated scaling never causes the scaling to exceed on of the scaling bounds
+    if (mScalingFactor > boost::rational<int>(Constants::sScalingMax, model::Constants::sScalingPrecisionFactor))
+    {
+        mScalingFactor = boost::rational<int>(Constants::sScalingMax, model::Constants::sScalingPrecisionFactor);
+    }
+    if (mScalingFactor < boost::rational<int>(Constants::sScalingMin, model::Constants::sScalingPrecisionFactor))
+    {
+        mScalingFactor = boost::rational<int>(Constants::sScalingMin, model::Constants::sScalingPrecisionFactor);
+    }
 }
 
 void VideoClip::updateAutomatedPositioning()
