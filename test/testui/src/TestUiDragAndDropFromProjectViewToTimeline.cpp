@@ -110,6 +110,7 @@ void TestUiDragAndDropFromProjectViewToTimeline::testDragAndDropStillImageAndUnd
 
 void TestUiDragAndDropFromProjectViewToTimeline::OpenFolderWithInputFiles()
 {
+    StartTestSuite();
     StartTest("Open the folder in the project view."); // Required for starting the drag: the node must be visible
     model::NodePtrs nodes = mProjectFixture.mRoot->getChildren();
     model::NodePtr folder;

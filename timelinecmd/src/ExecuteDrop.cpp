@@ -64,13 +64,14 @@ std::ostream& operator<<(std::ostream& os, const Drop& obj)
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-ExecuteDrop::ExecuteDrop(const model::SequencePtr& sequence)
-    :   AClipEdit(sequence)
-    ,   mDrags()
-    ,   mDrops()
-    ,   mShift()
+ExecuteDrop::ExecuteDrop(const model::SequencePtr& sequence, bool external)
+    : AClipEdit(sequence)
+    , mExternal(external)
+    , mDrags()
+    , mDrops()
+    , mShift()
 {
-    VAR_INFO(this);
+    VAR_INFO(this)(sequence)(external);
     mCommandName = _("Move clips");
 }
 
@@ -78,11 +79,11 @@ ExecuteDrop::~ExecuteDrop()
 {
 }
 
-void ExecuteDrop::onDragStart(const Drags& drags, bool mIsInsideDrag)
+void ExecuteDrop::onDragStart(const Drags& drags)
 {
-    VAR_INFO(this)(drags)(mIsInsideDrag);
+    VAR_INFO(this)(drags);
 
-    if (!mIsInsideDrag)
+    if (mExternal)
     {
         mDrags = drags;
     }

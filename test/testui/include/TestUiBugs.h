@@ -1,4 +1,4 @@
-// Copyright 2013,2014 Eric Raijmakers.
+// Copyright 2014 Eric Raijmakers.
 //
 // This file is part of Vidiot.
 //
@@ -15,47 +15,29 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef STATE_LEFT_DOWN_H
-#define STATE_LEFT_DOWN_H
+#ifndef TEST_UI_BUGS_H
+#define TEST_UI_BUGS_H
 
-#include "State.h"
+#include "TestUi.h"
 
-namespace gui { namespace timeline { namespace state {
+namespace test {
 
-struct EvLeftDown;
-struct EvLeftUp;
-struct EvMotion;
-struct EvLeave;
-struct EvKeyDown;
-
-struct StateLeftDown
-    :   public TimeLineState< StateLeftDown, Machine >
+class TestUiBugs : public CxxTest::TestSuite // Must be on same line as class definition. Otherwise 'No tests defined error
+    ,   public SuiteCreator<TestUiBugs>
 {
+public:
     //////////////////////////////////////////////////////////////////////////
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    StateLeftDown( my_context ctx );
-
-    virtual ~StateLeftDown();
-
-    typedef boost::mpl::list<
-        boost::statechart::custom_reaction< EvLeftDown >,
-        boost::statechart::custom_reaction< EvLeftUp >,
-        boost::statechart::custom_reaction< EvMotion >,
-        boost::statechart::custom_reaction< EvLeave >,
-        boost::statechart::custom_reaction< EvKeyDown >
-    > reactions;
+    virtual void setUp();       ///< Called before each test.
+    virtual void tearDown();    ///< Called after each test.
 
     //////////////////////////////////////////////////////////////////////////
-    // EVENTS
+    // TEST CASES
     //////////////////////////////////////////////////////////////////////////
 
-    boost::statechart::result react( const EvLeftDown& evt );
-    boost::statechart::result react( const EvLeftUp& evt );
-    boost::statechart::result react( const EvMotion& evt );
-    boost::statechart::result react( const EvLeave& evt );
-    boost::statechart::result react( const EvKeyDown& evt );
+    void testDragAndDropFileLargerThanTimeline();
 
 private:
 
@@ -63,13 +45,12 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-     wxPoint mStartPosition;
+    FixtureProject mProjectFixture;
 
-     bool mSelectionEmpty;
-
-     static const wxString sTooltip;
 };
 
-}}} // namespace
+} // namespace
+
+using namespace test;
 
 #endif

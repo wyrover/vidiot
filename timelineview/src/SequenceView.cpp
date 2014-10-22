@@ -41,13 +41,14 @@ namespace gui { namespace timeline {
 //////////////////////////////////////////////////////////////////////////
 
 SequenceView::SequenceView(Timeline* timeline)
-:   View(timeline)
-,   mTimescaleView(new TimescaleView(this))
-,   mVideoView(new VideoView(this))
-,   mDividerView(new DividerView(this, Layout::AudioVideoDividerHeight))
-,   mAudioView(new AudioView(this))
-,   mWidth(boost::none)
-,   mHeight(boost::none)
+: View(timeline)
+, mTimescaleView(new TimescaleView(this))
+, mVideoView(new VideoView(this))
+, mDividerView(new DividerView(this, Layout::AudioVideoDividerHeight))
+, mAudioView(new AudioView(this))
+, mWidth(boost::none)
+, mHeight(boost::none)
+, mExtraLength(0)
 {
     VAR_DEBUG(this);
 }
@@ -81,6 +82,7 @@ pixel SequenceView::getW() const
     if (!mWidth)
     {
         pts length =
+            mExtraLength +
             getSequence()->getLength() +
             model::Convert::timeToPts(10 * model::Constants::sSecond); // Add 10 extra seconds
         mWidth.reset(
@@ -206,6 +208,15 @@ void SequenceView::setDividerPosition(int position)
 void SequenceView::resetDividerPosition()
 {
     setDividerPosition(getSequence()->getDividerPosition());
+}
+
+void SequenceView::setExtraLength(pts length)
+{
+    if (mExtraLength != length)
+    {
+        mExtraLength = length;
+        getTimeline().resize();
+    }
 }
 
 }} // namespace

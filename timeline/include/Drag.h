@@ -49,8 +49,8 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     /// Must be called whenever a new drag operation is initiated.
-    /// \param isInsideDrag true if this is a drag within the timeline, false if there are new clips being dragged into the timeline (from the project view)
-    void start(const wxPoint& hotspot, bool isInsideDrag);
+    /// \param external true if the dragged clips originate from an external source (project view, file system)
+    void start(const wxPoint& hotspot, bool external);
 
     /// Must be called to show the current drag image. Is required when starting
     /// a new drag, but also when the drag needs to be redisplayed (for instance,
@@ -106,7 +106,6 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     command::ExecuteDrop* mCommand;             ///< The command that is submitted when the drop operation finishes.
-    bool mIsInsideDrag;                         ///< True: drag&drop within the timeline. False: dropping new clips in the timeline (from the project view).
     wxPoint mHotspot;                           ///< Hotspot within the timeline. Basically: pointer position at start of dragging.
     pts mHotspotPts;                            ///< The pts value that corresponds to the hotspot's x position. Required when changing zoom/scrolling.
     wxPoint mPosition;                          ///< Current pointer drag position. In timeline coordinates.

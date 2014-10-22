@@ -56,7 +56,9 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    explicit ExecuteDrop(const model::SequencePtr& sequence);
+    /// \param sequence sequence on which the drop must be applied
+    /// \param external true if the drag originated from an external source (file system, project view)
+    explicit ExecuteDrop(const model::SequencePtr& sequence, bool external);
 
     virtual ~ExecuteDrop();
 
@@ -70,9 +72,8 @@ public:
     /// the code handling the drop easier (don't have to take into account that some of
     /// the clips have been changed for unapplying transitions).
     /// \param drags initial list of dragged clips (note that this also applies to new clips being dragged into the timeline)
-    /// \param isInsideDrag true if this is a drag and drop inside the timeline. False if new clips are being inserted.
     /// \post mDrags contains updated list of dragged clips
-    void onDragStart(const Drags& drags, bool isInsideDrag);
+    void onDragStart(const Drags& drags);
 
     /// Called when the drop operation was finished. After this call, the command will be
     /// executed on the sequence via 'initialize'.
@@ -107,6 +108,7 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
+    bool mExternal;
     Drops mDrops;
     Drags mDrags; ///< Clips that are removed. Use set to avoid duplicate entries (duplicate entries cause errors since a clip's attributes are changed - removed from a track, for instance - and then the clip is removed 'again' from the now nonexistent track)
     Shift mShift;
