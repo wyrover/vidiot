@@ -83,6 +83,7 @@ bool FixtureGui::tearDownWorld()
     boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
     return true;
 }
+
 bool FixtureGui::setUp()
 {
     if (!HelperTestSuite::get().currentTestRequiresWindow()) { return true; } // Test was disabled or does not require window

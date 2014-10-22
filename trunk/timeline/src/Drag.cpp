@@ -157,7 +157,6 @@ public:
 Drag::Drag(Timeline* timeline)
     :   Part(timeline)
     ,   mCommand(0)
-    ,   mIsInsideDrag(true)
     ,   mHotspot(0,0)
     ,   mPosition(0,0)
     ,   mBitmapOffset(0,0)
@@ -183,28 +182,35 @@ Drag::~Drag()
 // START/STOP
 //////////////////////////////////////////////////////////////////////////
 
-void Drag::start(const wxPoint& hotspot, bool isInsideDrag)
+void Drag::start(const wxPoint& hotspot, bool external)
 {
     PointerPositionInfo info = getMouse().getInfo(hotspot);
 
     reset();
     mActive = true;
     mSnappingEnabled = true;
-    mIsInsideDrag = isInsideDrag;
     mHotspot = hotspot;
     mHotspotPts = getZoom().pixelsToPts(mHotspot.x);
     mPosition = hotspot;
     mBitmapOffset = wxPoint(0,0);
     mDropTrack = info.track;
-    mCommand = new command::ExecuteDrop(getSequence());
+    mCommand = new command::ExecuteDrop(getSequence(), external);
     command::Drags drags;
 
-    if (!mIsInsideDrag)
+    if (external)
     {
         ::command::TrackCreator c(ProjectViewDropSource::get().getData().getAssets());
         mVideo.setTempTrack(c.getVideoTrack());
         mAudio.setTempTrack(c.getAudioTrack());
         mDraggedTrack = mVideo.getTempTrack();
+
+        if (getSequence()->getLength() < c.getVideoTrack()->getLength())
+        {
+            // Extend sequence view if it is not big enough to hold the dragged data.
+            getSequenceView().setExtraLength(c.getVideoTrack()->getLength()); 
+            getSequenceView().invalidateRect();
+        }
+
         mHotspot.x = getZoom().ptsToPixels(mVideo.getTempTrack()->getLength() / 2);
         mHotspotPts = getZoom().pixelsToPts(mHotspot.x);
 
@@ -233,7 +239,7 @@ void Drag::start(const wxPoint& hotspot, bool isInsideDrag)
     }
 
     ASSERT(mCommand);
-    mCommand->onDragStart(drags, mIsInsideDrag);
+    mCommand->onDragStart(drags);
 
     VAR_DEBUG(*this);
     ASSERT(mDraggedTrack);
@@ -379,6 +385,7 @@ void Drag::stop()
         mCommand = 0;
     }
     reset();
+    getSequenceView().setExtraLength(0);
     getSequenceView().invalidateRect();
     getTimeline().Refresh(false);
 }
@@ -927,7 +934,6 @@ command::Drops Drag::getDrops(const model::TrackPtr& track)
 std::ostream& operator<<(std::ostream& os, const Drag& obj)
 {
     os  << &obj                 << '|'
-        << obj.mIsInsideDrag    << '|'
         << obj.mHotspot         << '|'
         << obj.mHotspotPts      << '|'
         << obj.mPosition        << '|'

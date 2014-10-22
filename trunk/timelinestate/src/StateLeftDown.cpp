@@ -92,7 +92,7 @@ boost::statechart::result StateLeftDown::react( const EvMotion& evt )
         if (!mSelectionEmpty)
         {
             // If no clip is selecting then starting a drag has no use.
-            getDrag().start(getMouse().getVirtualPosition(), true);
+            getDrag().start(getMouse().getVirtualPosition(), false);
             return transit<Dragging>();
         }
     }

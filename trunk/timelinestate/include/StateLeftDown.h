@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef STATE_TEST_DRAG_START_H
-#define STATE_TEST_DRAG_START_H
+#ifndef STATE_LEFT_DOWN_H
+#define STATE_LEFT_DOWN_H
 
 #include "State.h"
 
