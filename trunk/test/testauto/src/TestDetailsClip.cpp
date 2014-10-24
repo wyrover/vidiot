@@ -280,7 +280,7 @@ void TestDetailsClip::testChangeLengthAfterCreatingTransition()
     {
         StartTest("InOutTransition");
         TimelineLeftClick(LeftCenter(VideoClip(0,1)));
-        TimelineKeyPress('c');
+        TimelineKeyPress('p');
         ASSERT_DETAILSCLIP(VideoClip(0,2));
         pressLengthButtons("InOutTransition", defaultTransitionLength / 2);
         Undo(); // Remove transition
@@ -290,7 +290,7 @@ void TestDetailsClip::testChangeLengthAfterCreatingTransition()
     {
         StartTest("OutInTransition");
         TimelineLeftClick(RightCenter(VideoClip(0,2)));
-        TimelineKeyPress('c');
+        TimelineKeyPress('n');
         ASSERT_DETAILSCLIP(VideoClip(0,2));
         pressLengthButtons("OutInTransition", defaultTransitionLength / 2);
         Undo(); // Remove transition
@@ -300,9 +300,9 @@ void TestDetailsClip::testChangeLengthAfterCreatingTransition()
     {
         StartTest("In+Out Transitions");
         TimelineLeftClick(RightCenter(VideoClip(0,1)));
-        TimelineKeyPress('c');
+        TimelineKeyPress('n');
         TimelineLeftClick(LeftCenter(VideoClip(0,1)));
-        TimelineKeyPress('c');
+        TimelineKeyPress('p');
         ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip)(Transition);
         ASSERT_DETAILSCLIP(VideoClip(0,2));
         pressLengthButtons("In+Out Transitions", defaultTransitionLength);
@@ -313,9 +313,9 @@ void TestDetailsClip::testChangeLengthAfterCreatingTransition()
     {
         StartTest("InOut+OutIn Transitions");
         TimelineLeftClick(RightCenter(VideoClip(0,1)));
-        TimelineKeyPress('c');
+        TimelineKeyPress('n');
         TimelineLeftClick(LeftCenter(VideoClip(0,1)));
-        TimelineKeyPress('c');
+        TimelineKeyPress('p');
         ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip)(Transition);
         ASSERT_DETAILSCLIP(VideoClip(0,2));
         pressLengthButtons("InOut+OutIn Transitions", defaultTransitionLength);

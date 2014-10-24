@@ -196,7 +196,7 @@ MakeInOutTransitionAfterClip::~MakeInOutTransitionAfterClip()
 void MakeInOutTransitionAfterClip::moveMouseAndCreateTransition(int clipNumber)
 {
     TimelineMove(LeftCenter(GetClip(0,clipNumber)));
-    TimelineKeyPress('c');
+    TimelineKeyPress('p');
 }
 
 MakeInTransitionAfterClip::MakeInTransitionAfterClip(int afterclip, bool audio)
