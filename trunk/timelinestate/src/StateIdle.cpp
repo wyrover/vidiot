@@ -134,15 +134,14 @@ boost::statechart::result Idle::react( const EvKeyDown& evt)
         evt.consumed();
         model::ProjectModification::submitIfPossible(new command::SplitAtCursorAndTrim(getSequence(), true));
         break;
+    case 'c':
+    case 'C':
+        getCursor().center();
+        break;
     case 'e':
     case 'E':
         evt.consumed();
         model::ProjectModification::submitIfPossible(new command::SplitAtCursorAndTrim(getSequence(), false));
-        break;
-    case 'c':
-    case 'C':
-        evt.consumed();
-        addTransition(model::TransitionTypeInOut);
         break;
     case 'i':
     case 'I':
