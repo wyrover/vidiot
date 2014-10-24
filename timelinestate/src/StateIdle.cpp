@@ -149,10 +149,20 @@ boost::statechart::result Idle::react( const EvKeyDown& evt)
         evt.consumed();
         addTransition(model::TransitionTypeIn);
         break;
+    case 'n':
+    case 'N':
+        evt.consumed();
+        addTransition(model::TransitionTypeOutIn);
+        break;
     case 'o':
     case 'O':
         evt.consumed();
         addTransition(model::TransitionTypeOut);
+        break;
+    case 'p':
+    case 'P':
+        evt.consumed();
+        addTransition(model::TransitionTypeInOut);
         break;
     case 's':
     case 'S':
@@ -323,18 +333,11 @@ boost::statechart::result Idle::rightDown()
 void Idle::addTransition(model::TransitionType type)
 {
     PointerPositionInfo info = getMouse().getInfo(getMouse().getVirtualPosition());
-    if (info.clip)
+    if (info.clip && 
+        (info.clip->isA<model::VideoClip>() || info.clip->isA<model::AudioClip>()) )
     {
         pts left = getViewMap().getView(info.clip)->getLeftPixel();
         pts right = getViewMap().getView(info.clip)->getRightPixel();
-
-        if (type == model::TransitionTypeInOut &&
-            std::abs(left - getMouse().getVirtualPosition().x) > std::abs(right - getMouse().getVirtualPosition().x))
-        {
-            // The parameter value TransitionTypeInOut indicates 'a crossfade'. Use the correct crossfade
-            // (which begin and end clips to use) based on the position of the mouse within the clip.
-            type = model::TransitionTypeOutIn;
-        }
 
         // Only if the mouse pointer is on a 'regular' clip, creating the transition is allowed.
         switch (info.logicalclipposition)

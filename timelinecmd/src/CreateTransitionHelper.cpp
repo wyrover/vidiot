@@ -41,17 +41,19 @@ void createTransition(const model::SequencePtr& sequence, const model::IClipPtr&
     VAR_INFO(type);
     ASSERT(sequence);
     ASSERT(clip);
+    ASSERT(!clip->isA<model::EmptyClip>());
     ASSERT(transition);
 
     command::CreateTransition* createTransitionCommand = new command::CreateTransition(sequence, clip, transition, type);
     model::IClipPtr leftClip = createTransitionCommand->getLeftClip();
+    model::IClipPtr rightClip = createTransitionCommand->getRightClip();
     if (!model::ProjectModification::submitIfPossible(createTransitionCommand))
     {
-        ASSERT(leftClip);
-        pts defaultSize = Config::ReadLong(Config::sPathDefaultTransitionLength);
-
-        if (type == model::TransitionTypeInOut || type == model::TransitionTypeOutIn)
+        if (leftClip && rightClip &&
+            ((type == model::TransitionTypeInOut || type == model::TransitionTypeOutIn)))
         {
+            pts defaultSize = Config::ReadLong(Config::sPathDefaultTransitionLength);
+
             // Ensure that the transition can be made by shortening the clips, if required (and, if possible)
             model::TrackPtr track = clip->getTrack();
             model::IClipPtr prevClip = leftClip->getPrev(); // Temporarily stored to retrieve the (new) trimmed clips again. NOTE: This may be 0 if leftClip is the first clip of the track!!!

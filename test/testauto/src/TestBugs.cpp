@@ -459,7 +459,7 @@ void TestBugs::testCrashWhenTrimmingWithTransitionOnOneSideOfCut()
         StartTest("Left edge");
         TimelineTrimRight(VideoClip(0,3), -20);
         TimelineMove(RightCenter(VideoClip(0,3)));
-        TimelineKeyPress('c'); // Create the transition
+        TimelineKeyPress('n'); // Create the transition
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip)(Transition)(VideoClip);
         wxPoint position(LeftPixel(VideoClip(0,4)), VCenter(VideoClip(0,5)));
         StartTest("Left edge: Click");
@@ -477,7 +477,7 @@ void TestBugs::testCrashWhenTrimmingWithTransitionOnOneSideOfCut()
         StartTest("Right edge");
         TimelineTrimLeft(VideoClip(0,3), 20);
         TimelineMove(LeftCenter(VideoClip(0,3)));
-        TimelineKeyPress('c'); // Create the transition
+        TimelineKeyPress('p'); // Create the transition
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
         wxPoint position(RightPixel(VideoClip(0,3)), VCenter(VideoClip(0,2)));
         StartTest("Right edge: Click");
@@ -501,7 +501,7 @@ void TestBugs::testTrimmingWithTransitionOnOneSideOfCut()
         StartTest("Left edge");
         TimelineTrimRight(VideoClip(0,1), -20);
         TimelineMove(RightCenter(VideoClip(0,1)));
-        TimelineKeyPress('c'); // Create the transition
+        TimelineKeyPress('n'); // Create the transition
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
         // Due to the 'rounding errors correction' in test::RightPixel(), RightPixel moves 
         // left until the requested clip is returned. However, for this specific scenario 
@@ -526,7 +526,7 @@ void TestBugs::testTrimmingWithTransitionOnOneSideOfCut()
         StartTest("Right edge");
         TimelineTrimLeft(VideoClip(0,1), 20);
         TimelineMove(LeftCenter(VideoClip(0,1)));
-        TimelineKeyPress('c'); // Create the transition
+        TimelineKeyPress('p'); // Create the transition
         ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip)(VideoClip);
         // Due to the 'rounding errors correction' in test::LeftPixel(), LeftPixel moves
         // right until the requested clip is returned. However, for this specific scenario 
@@ -581,7 +581,7 @@ void TestBugs::testCrashWhenDeterminingClipSizeBoundsForLinkedClipsWithDifferent
     // directly after the transition was created.
     TimelineLeftClick(Center(AudioClip(0,1))); 
     TimelineMove(RightCenter(AudioClip(0,1)));
-    TimelineKeyPress('c');
+    TimelineKeyPress('n');
     StartTest("Trimming caused the crash.");
     // Same problem, different scenario.
     // (VideoClip)(VideoClip)
@@ -600,16 +600,16 @@ void TestBugs::testCrashWhenCreatingCrossfadeViaKeyboardTwice()
     StartTest("Prepare");
     ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
     TimelineMove(LeftCenter(VideoClip(0,1)));
-    TimelineKeyPress('c'); // Create the transition
+    TimelineKeyPress('p'); // Create the transition
     ASSERT_CURRENT_COMMAND_TYPE<command::Combiner>();
     ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip);
     TimelineMove(RightCenter(VideoClip(0,1)) + wxPoint(3,0));
     StartTest("InTransition");
-    TimelineKeyPress('c'); // Create transition again: not possible
+    TimelineKeyPress('p'); // Create transition again: not possible
     TimelineKeyPress('i'); // Create transition again: not possible
     TimelineMove(LeftCenter(VideoClip(0,1)) - wxPoint(3,0));
     StartTest("OutTransition");
-    TimelineKeyPress('c'); // Create transition again: not possible
+    TimelineKeyPress('n'); // Create transition again: not possible
     TimelineKeyPress('o'); // Create transition again: not possible
     ASSERT_CURRENT_COMMAND_TYPE<command::Combiner>();
     Undo();
