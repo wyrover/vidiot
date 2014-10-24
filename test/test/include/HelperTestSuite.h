@@ -80,6 +80,7 @@ private:
 
     boost::optional<std::string> mCurrentTestName;
     int mSuiteCount;
+    bool mStartTestSuiteCalled;
 
     wxString mRunOnly;
     wxString mRunFrom;

@@ -65,6 +65,7 @@ std::string HelperTestSuite::currentCxxTest()
 HelperTestSuite::HelperTestSuite()
     : mCurrentTestName(boost::none)
     , mSuiteCount(0)
+    , mStartTestSuiteCalled(false)
     , mRunOnly("")
     , mRunFrom("")
     , mRunCurrent("")
@@ -132,6 +133,8 @@ bool HelperTestSuite::currentTestRequiresWindow()
 bool HelperTestSuite::startTestSuite(const char* suite)
 {
     mSuiteCount++;
+    ASSERT(!mStartTestSuiteCalled);
+    mStartTestSuiteCalled = true;
     if (!currentTestIsEnabled()) return false;
     mCurrentTestName.reset();
     VAR_ERROR(currentCxxTest());
@@ -148,12 +151,29 @@ bool HelperTestSuite::startTestSuite(const char* suite)
 
 void HelperTestSuite::testSuiteDone()
 {
-    if (mSuiteCount == CxxTest::TestTracker::tracker( ).world().numTotalTests())
+    // Verify that for this test suite 'StartTestSuite' was called.
+    // Failing to call 'start' can cause all sorts of strange errors: race conditions due to missing the
+    // proper locking during main thread creation, test run administration (mSuiteCount) going wrong, etc.
+    ASSERT(mStartTestSuiteCalled);
+    mStartTestSuiteCalled = false;
+    int totalSuiteCount = CxxTest::TestTracker::tracker().world().numTotalTests();
+    if (mSuiteCount == totalSuiteCount)
     {
-        util::thread::RunInMainAndWait([this]
+        if (!currentTestRequiresWindow()) 
+        { 
+            wxFileConfig config(wxEmptyString, wxEmptyString, Config::getFileName());
+            wxConfigBase::Set(&config);
+            wxConfigBase::Get()->Write(Config::sPathTestRunCurrent, ""); // Reset
+            wxConfigBase::Set(0);
+        }
+        else
         {
-            Config::WriteString( Config::sPathTestRunCurrent, "" ); // Reset
-        });
+            util::thread::RunInMainAndWait([this]
+            {
+                Config::WriteString(Config::sPathTestRunCurrent, ""); // Reset
+            });
+        }
+
     }
 }
 

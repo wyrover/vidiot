@@ -73,6 +73,8 @@ public:
     /// Tests running with debug info enabled.
     void testShowDebugInfo();
 
+    void testPositionCursor();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////

@@ -86,7 +86,7 @@ bool FixtureGui::tearDownWorld()
 
 bool FixtureGui::setUp()
 {
-    if (!HelperTestSuite::get().currentTestRequiresWindow()) { return true; } // Test was disabled or does not require window
+    if (!mHelperTestSuite->currentTestRequiresWindow()) { return true; } // Test was disabled or does not require window
      // Ensure that onEventLoopEnter blocks on mBarrierStarted. This blocking should
     // only be done for starting the main (application) event loop, not for any dialogs.
     mStartingMainThread = true;
@@ -98,13 +98,13 @@ bool FixtureGui::setUp()
 
 bool FixtureGui::tearDown()
 {
-    if (!HelperTestSuite::get().currentTestRequiresWindow()) { return true; } // Test was disabled or does not require window
+    mHelperTestSuite->testSuiteDone();
+    if (!mHelperTestSuite->currentTestRequiresWindow()) { return true; } // Test was disabled or does not require window
     util::thread::RunInMainAndWait([]
     {
         wxDocument* doc = gui::Window::get().GetDocumentManager()->GetCurrentDocument();
         if (doc) { doc->Modify(false); } // Avoid "Save yes/no/Cancel" dialog
     });
-    mHelperTestSuite->testSuiteDone();
 
      // Ensure that onEventLoopEnter blocks on mBarrierStarted. This blocking should
     // only be done for (re)starting the main (application) event loop, not for any dialogs.
@@ -183,7 +183,7 @@ void FixtureGui::mainThread()
     wxEntryStart(argc, &argv);
 	free(argv);
 
-    HelperTestSuite::get().readConfig();
+    mHelperTestSuite->readConfig();
     mBarrierConfigRead.wait();
 
     while (true)
