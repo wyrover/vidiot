@@ -45,6 +45,7 @@
 #include "SequenceView.h"
 #include "State.h"
 #include "Timeline.h"
+#include "TimelineDropTarget.h"
 #include "Track.h"
 #include "TrackCreator.h"
 #include "TrackView.h"
@@ -66,102 +67,6 @@ namespace gui { namespace timeline {
 //////////////////////////////////////////////////////////////////////////
 // HELPER CLASSES
 //////////////////////////////////////////////////////////////////////////
-
-/// Helper class required to receive DND event from wxWidgets, in case new assets are
-/// being dragged into the timeline (for instance, originating from the Project View).
-class DropTarget
-    :   public Part
-    ,   public wxDropTarget
-{
-public:
-    DropTarget(Timeline* timeline)
-        :   Part(timeline)
-        ,   wxDropTarget()
-        ,   mOk(false)
-        , mFormat(boost::none)
-    {
-
-        wxDataObjectComposite* composite = new wxDataObjectComposite();
-        composite->Add(new ProjectViewDataObject(), true);
-        // todo composite->Add(new wxFileDataObject());
-        SetDataObject(composite);
-    }
-    ~DropTarget()
-    {
-    }
-    wxDragResult OnData(wxCoord x, wxCoord y, wxDragResult def) override
-    {
-        ASSERT(mFormat);
-        GetData(); // Required to initialize the received data object properly
-        wxDataObjectComposite* composite = static_cast<wxDataObjectComposite *>(GetDataObject());
-        wxString formatId = mFormat->GetId();
-        wxDataFormatId formatType = static_cast<wxDataFormatId>(mFormat->GetType());
-        if (formatId == ProjectViewDataObject::sFormat)
-        {
-            ProjectViewDataObject* object = dynamic_cast<ProjectViewDataObject*>(composite->GetObject(*mFormat));
-        }
-        else
-        {
-            ASSERT_EQUALS(formatType, wxDF_FILENAME);
-            wxFileDataObject* object = static_cast<wxFileDataObject *>(composite->GetObject(*mFormat));
-            //... use dataobj->GetFilenames() ...                
-            // todo format for clips from timeline (new dataobject)
-        }
-        return def;
-    };
-    wxDragResult OnEnter (wxCoord x, wxCoord y, wxDragResult def) override
-    {
-        GetData(); // Required to initialize the received data object properly
-        wxDataObjectComposite* composite = static_cast<wxDataObjectComposite *>(GetDataObject());
-        mFormat.reset(composite->GetReceivedFormat());
-
-        getMouse().dragMove(wxPoint(x, y));
-        model::NodePtrs nodes = ProjectViewDropSource::get().getData().getAssets();
-        mOk = true;
-        for ( model::NodePtr node : nodes )
-        {
-            if (!node->isA<model::File>())
-            {
-                mOk = false;
-                break;
-            }
-        }
-        if (mOk)
-        {
-            ProjectViewDropSource::get().setFeedback(false);
-            getKeyboard().update(state::EvKey(wxGetMouseState(),-1)); // To ensure that key events are 'seen' during the drag (timeline itself does not receive keyboard/mouse events)
-            getStateMachine().process_event(state::EvDragEnter());
-            return wxDragMove;
-        }
-        return wxDragNone;
-    }
-    wxDragResult OnDragOver (wxCoord x, wxCoord y, wxDragResult def) override
-    {
-        getKeyboard().update(state::EvKey(wxGetMouseState(), -1)); // To ensure that key events are 'seen' during the drag (timeline itself does not receive keyboard/mouse events)
-        getMouse().dragMove(wxPoint(x,y));
-        if (mOk)
-        {
-            // Accepted: key events not sent during dragging. Therefore the keyboard shortcuts for disabling snapping don't work when dragging from the project view.
-            getStateMachine().process_event(state::EvDragMove());
-            return wxDragMove;
-        }
-        return wxDragNone;
-    }
-    bool OnDrop (wxCoord x, wxCoord y) override
-    {
-        getMouse().dragMove(wxPoint(x,y));
-        getStateMachine().process_event(state::EvDragDrop());
-        return true;
-    }
-    void OnLeave() override
-    {
-        ProjectViewDropSource::get().setFeedback(true);
-        getStateMachine().process_event(state::EvDragEnd());
-        mFormat.reset();
-    }
-    bool mOk;
-    boost::optional<wxDataFormat> mFormat;
-};
 
 /// Dummy class to be able to create views for tracks and clips in case of adding them from the project view.
 /// This is a 'top' view class that ignores all events.
@@ -198,7 +103,7 @@ Drag::Drag(Timeline* timeline)
     ,   mSnappingEnabled(false)
 {
     VAR_DEBUG(this);
-    getTimeline().SetDropTarget(new DropTarget(timeline)); // Drop target is deleted by wxWidgets
+    getTimeline().SetDropTarget(new TimelineDropTarget(timeline)); // Drop target is deleted by wxWidgets
 }
 
 Drag::~Drag()
