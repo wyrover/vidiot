@@ -15,12 +15,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef DATA_OBJECT_H
-#define DATA_OBJECT_H
+#ifndef PROJECT_VIEW_DATA_OBJECT_H
+#define PROJECT_VIEW_DATA_OBJECT_H
 
 namespace gui {
 
-class DataObject
+class ProjectViewDataObject
     :   public wxDataObjectSimple
     ,   public boost::noncopyable
 {
@@ -34,9 +34,9 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    DataObject();
-    DataObject(const model::NodePtrs& assets, CallbackOnDestruction callback = 0);
-    virtual ~DataObject();
+    ProjectViewDataObject();
+    ProjectViewDataObject(const model::NodePtrs& assets, CallbackOnDestruction callback = 0);
+    virtual ~ProjectViewDataObject();
 
     static const wxString sFormat;
 
