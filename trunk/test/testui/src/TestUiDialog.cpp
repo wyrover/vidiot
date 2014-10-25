@@ -39,8 +39,8 @@ class Escape
 {
 public:
     Escape()
-        :   mContinue(true)
-        ,   mBarrierStop(2)
+        : mContinue(true)
+        , mBarrierStop(2)
     {
         // Wait for the main window to lose focus before starting to hit Escape
         gui::Window::get().Bind( wxEVT_ACTIVATE, &Escape::onActivate, this );
@@ -58,7 +58,7 @@ private:
     void onActivate( wxActivateEvent& event )
     {
         VAR_INFO(event.GetActive());
-        if (!event.GetActive() || !mThread)
+        if (!event.GetActive())
         {
             try
             {
@@ -81,7 +81,7 @@ private:
         mBarrierStop.wait();
     }
 
-    bool mContinue;
+    std::atomic<bool> mContinue;
     boost::barrier mBarrierStop;
     boost::scoped_ptr<boost::thread> mThread;
 };
@@ -89,41 +89,52 @@ private:
 void TestUiDialog::testEscape()
 {
     StartTestSuite();
+    wxUIActionSimulator().MouseMove(gui::Window::get().GetScreenPosition() + wxPoint(100, 100));
+    wxUIActionSimulator().MouseClick();
+    WaitForIdle();
     {
         Escape e;
+        StartTest("Files dialog");
         wxStrings result = gui::Dialog::get().getFiles("message", _("Movie clips (*.avi)|*.avi|All files (%s)|%s"));
         ASSERT_ZERO(result.size());
     }
     {
         Escape e;
-        int result = gui::Dialog::get().getConfirmation("title","message", wxOK | wxCANCEL);
+        StartTest("Confirmation dialog");
+        int result = gui::Dialog::get().getConfirmation("title", "message", wxOK | wxCANCEL);
         ASSERT_EQUALS(result,wxCANCEL);
     }
     {
         Escape e;
-        wxString result = gui::Dialog::get().getDir("message","default");
+        StartTest("Dir dialog");
+        wxString result = gui::Dialog::get().getDir("message", "default");
         ASSERT_EQUALS(result,"");
     }
     {
         Escape e;
-        wxString result = gui::Dialog::get().getText("title", "message","default");
+        StartTest("Text dialog");
+        wxString result = gui::Dialog::get().getText("title", "message", "default");
         ASSERT_EQUALS(result,"");
     }
     {
         Escape e;
+        StartTest("Preferences dialog");
         WindowTriggerMenu(wxID_PREFERENCES);
         WaitForIdle();
     }
     {
         Escape e;
+        StartTest("About dialog");
         WindowTriggerMenu(wxID_ABOUT);
         WaitForIdle();
     }
     {
         Escape e;
+        StartTest("Project properties dialog");
         model::FolderPtr root = WindowCreateProject();
         ProjectViewAddSequence("sequence", root);
         WindowTriggerMenu(wxID_PROPERTIES);
+        WaitForIdle();
     }
 }
 } // namespace
