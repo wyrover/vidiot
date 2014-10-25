@@ -25,7 +25,6 @@
 #include "ClipView.h"
 #include "Config.h"
 #include "Cursor.h"
-#include "DataObject.h"
 #include "Drag_Shift.h"
 #include "EmptyClip.h"
 #include "ExecuteDrop.h"
@@ -39,6 +38,7 @@
 #include "Mouse.h"
 #include "PositionInfo.h"
 #include "ProjectView.h"
+#include "ProjectViewDataObject.h"
 #include "Scrolling.h"
 #include "Selection.h"
 #include "Sequence.h"
@@ -76,20 +76,46 @@ class DropTarget
 public:
     DropTarget(Timeline* timeline)
         :   Part(timeline)
-        ,   wxDropTarget(new DataObject())
+        ,   wxDropTarget()
         ,   mOk(false)
+        , mFormat(boost::none)
     {
+
+        wxDataObjectComposite* composite = new wxDataObjectComposite();
+        composite->Add(new ProjectViewDataObject(), true);
+        // todo composite->Add(new wxFileDataObject());
+        SetDataObject(composite);
     }
     ~DropTarget()
     {
     }
-    wxDragResult OnData (wxCoord x, wxCoord y, wxDragResult def) override
+    wxDragResult OnData(wxCoord x, wxCoord y, wxDragResult def) override
     {
+        ASSERT(mFormat);
+        GetData(); // Required to initialize the received data object properly
+        wxDataObjectComposite* composite = static_cast<wxDataObjectComposite *>(GetDataObject());
+        wxString formatId = mFormat->GetId();
+        wxDataFormatId formatType = static_cast<wxDataFormatId>(mFormat->GetType());
+        if (formatId == ProjectViewDataObject::sFormat)
+        {
+            ProjectViewDataObject* object = dynamic_cast<ProjectViewDataObject*>(composite->GetObject(*mFormat));
+        }
+        else
+        {
+            ASSERT_EQUALS(formatType, wxDF_FILENAME);
+            wxFileDataObject* object = static_cast<wxFileDataObject *>(composite->GetObject(*mFormat));
+            //... use dataobj->GetFilenames() ...                
+            // todo format for clips from timeline (new dataobject)
+        }
         return def;
     };
     wxDragResult OnEnter (wxCoord x, wxCoord y, wxDragResult def) override
     {
-        getMouse().dragMove(wxPoint(x,y));
+        GetData(); // Required to initialize the received data object properly
+        wxDataObjectComposite* composite = static_cast<wxDataObjectComposite *>(GetDataObject());
+        mFormat.reset(composite->GetReceivedFormat());
+
+        getMouse().dragMove(wxPoint(x, y));
         model::NodePtrs nodes = ProjectViewDropSource::get().getData().getAssets();
         mOk = true;
         for ( model::NodePtr node : nodes )
@@ -111,7 +137,7 @@ public:
     }
     wxDragResult OnDragOver (wxCoord x, wxCoord y, wxDragResult def) override
     {
-        getKeyboard().update(state::EvKey(wxGetMouseState(),-1)); // To ensure that key events are 'seen' during the drag (timeline itself does not receive keyboard/mouse events)
+        getKeyboard().update(state::EvKey(wxGetMouseState(), -1)); // To ensure that key events are 'seen' during the drag (timeline itself does not receive keyboard/mouse events)
         getMouse().dragMove(wxPoint(x,y));
         if (mOk)
         {
@@ -131,8 +157,10 @@ public:
     {
         ProjectViewDropSource::get().setFeedback(true);
         getStateMachine().process_event(state::EvDragEnd());
+        mFormat.reset();
     }
     bool mOk;
+    boost::optional<wxDataFormat> mFormat;
 };
 
 /// Dummy class to be able to create views for tracks and clips in case of adding them from the project view.

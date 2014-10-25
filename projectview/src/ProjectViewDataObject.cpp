@@ -15,16 +15,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#include "DataObject.h"
+#include "ProjectViewDataObject.h"
 
 #include "Node.h"
 #include "UtilLog.h"
 
 namespace gui {
 
-const wxString DataObject::sFormat = wxString("application/vidiot");
+const wxString ProjectViewDataObject::sFormat = wxString("application/vidiot/nodes");
 
-DataObject::DataObject()
+ProjectViewDataObject::ProjectViewDataObject()
 :   wxDataObjectSimple()
 ,   mFormat(sFormat)
 ,   mAssets()
@@ -33,7 +33,7 @@ DataObject::DataObject()
     SetFormat(mFormat);
 }
 
-DataObject::DataObject(const model::NodePtrs& assets, CallbackOnDestruction callback)
+ProjectViewDataObject::ProjectViewDataObject(const model::NodePtrs& assets, CallbackOnDestruction callback)
 :   wxDataObjectSimple()
 ,   mFormat(sFormat)
 ,   mAssets(assets)
@@ -42,7 +42,7 @@ DataObject::DataObject(const model::NodePtrs& assets, CallbackOnDestruction call
     SetFormat(mFormat);
 }
 
-DataObject::~DataObject()
+ProjectViewDataObject::~ProjectViewDataObject()
 {
     if (mCallback)
     {
@@ -54,7 +54,7 @@ DataObject::~DataObject()
 // FROM wxDataObjectSimple
 //////////////////////////////////////////////////////////////////////////
 
-bool DataObject::GetDataHere(void *buf) const
+bool ProjectViewDataObject::GetDataHere(void *buf) const
 {
     unsigned int i = 0;
     for ( model::NodePtr asset : mAssets )
@@ -65,12 +65,12 @@ bool DataObject::GetDataHere(void *buf) const
     return true;
 }
 
-size_t DataObject::GetDataSize () const
+size_t ProjectViewDataObject::GetDataSize () const
 {
     return sizeof(model::NodeId) * mAssets.size();
 }
 
-bool DataObject::SetData(size_t len, const void *buf)
+bool ProjectViewDataObject::SetData(size_t len, const void *buf)
 {
     ASSERT_ZERO(len % sizeof(model::NodeId));
 
@@ -88,7 +88,7 @@ bool DataObject::SetData(size_t len, const void *buf)
 // GET ALL ASSETS
 //////////////////////////////////////////////////////////////////////////
 
-model::NodePtrs DataObject::getAssets() const
+model::NodePtrs ProjectViewDataObject::getAssets() const
 {
     return mAssets;
 }

@@ -28,7 +28,7 @@ typedef INode* NodeId;
 namespace gui {
 
 class ProjectViewModel;
-class DataObject;
+class ProjectViewDataObject;
 
 class ProjectViewDropSource
     :   public wxDropSource
@@ -53,14 +53,14 @@ public:
     // DRAGGING
     //////////////////////////////////////////////////////////////////////////
 
-    void startDrag(DataObject& data);
+    void startDrag(ProjectViewDataObject& data);
 
     //////////////////////////////////////////////////////////////////////////
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    DataObject& getData();       ///< \return the current associated data object
-    void setFeedback(bool enabled); ///< Enable/disable showing feedback. Used to avoid flicker
+    ProjectViewDataObject& getData(); ///< \return the current associated data object
+    void setFeedback(bool enabled);   ///< Enable/disable showing feedback. Used to avoid flicker
 
     //////////////////////////////////////////////////////////////////////////
     // TEST

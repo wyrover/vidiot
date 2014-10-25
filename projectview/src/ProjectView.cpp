@@ -18,7 +18,6 @@
 #include "ProjectView.h"
 
 #include "AutoFolder.h"
-#include "DataObject.h"
 #include "Dialog.h"
 #include "File.h"
 #include "Folder.h"
@@ -33,6 +32,7 @@
 #include "ProjectViewCreateFile.h"
 #include "ProjectViewCreateFolder.h"
 #include "ProjectViewCreateSequence.h"
+#include "ProjectViewDataObject.h"
 #include "ProjectViewDeleteAsset.h"
 #include "ProjectViewDeleteUnusedFiles.h"
 #include "ProjectViewDropSource.h"
@@ -68,7 +68,7 @@ ProjectView::ProjectView(wxWindow* parent)
     mCtrl.AssociateModel( mModel );
     mModel->DecRef();
 
-    mCtrl.EnableDropTarget( DataObject::sFormat );
+    mCtrl.EnableDropTarget( ProjectViewDataObject::sFormat );
     wxDataViewColumn* nameColumn = mCtrl.AppendIconTextColumn("Name",       0, wxDATAVIEW_CELL_EDITABLE,    400, wxALIGN_LEFT,   wxDATAVIEW_COL_SORTABLE | wxDATAVIEW_COL_RESIZABLE | wxDATAVIEW_COL_REORDERABLE );
 
     gui::Window::get().Bind(model::EVENT_OPEN_PROJECT,     &ProjectView::onOpenProject,             this);
@@ -292,7 +292,7 @@ void ProjectView::onCut()
     ASSERT_MORE_THAN_ZERO(getSelection().size());
     if (wxTheClipboard->Open())
     {
-        wxTheClipboard->SetData(new DataObject(getSelection()));
+        wxTheClipboard->SetData(new ProjectViewDataObject(getSelection()));
         wxTheClipboard->Close();
         model::ProjectModification::submit(new command::ProjectViewDeleteAsset(getSelection()));
     }
@@ -303,7 +303,7 @@ void ProjectView::onCopy()
     ASSERT_MORE_THAN_ZERO(getSelection().size());
     if (wxTheClipboard->Open())
     {
-        wxTheClipboard->SetData(new DataObject(getSelection()));
+        wxTheClipboard->SetData(new ProjectViewDataObject(getSelection()));
         wxTheClipboard->Close();
     }
 }
@@ -312,9 +312,9 @@ void ProjectView::onPaste()
 {
     if (wxTheClipboard->Open())
     {
-        if (wxTheClipboard->IsSupported( DataObject::sFormat ))
+        if (wxTheClipboard->IsSupported(ProjectViewDataObject::sFormat))
         {
-            DataObject data;
+            ProjectViewDataObject data;
             wxTheClipboard->GetData( data );
             if (data.getAssets().size() > 0)
             {
@@ -600,7 +600,7 @@ void ProjectView::onMotion(wxMouseEvent& event)
                 mCtrl.HitTest(mDragStart, item, col );
                 if (item.GetID())
                 {
-                    DataObject data(getSelection(), boost::bind(&ProjectView::onDragEnd,this));
+                    ProjectViewDataObject data(getSelection(), boost::bind(&ProjectView::onDragEnd, this));
                     mDropSource.startDrag(data);
                     mDragCount = 0;
                 }
@@ -625,7 +625,7 @@ void ProjectView::onDragEnd()
 void ProjectView::onDropPossible(wxDataViewEvent &event)
 {
     // Can only drop relevant type of info
-    if (event.GetDataFormat().GetId() != DataObject::sFormat)
+    if (event.GetDataFormat().GetId() != ProjectViewDataObject::sFormat)
     {
         event.Veto();
         return;
@@ -667,7 +667,7 @@ void ProjectView::onDrop(wxDataViewEvent &event)
 {
     LOG_INFO;
 
-    if (event.GetDataFormat().GetId() != DataObject::sFormat)
+    if (event.GetDataFormat().GetId() != ProjectViewDataObject::sFormat)
     {
         event.Veto();
         return;
@@ -679,7 +679,7 @@ void ProjectView::onDrop(wxDataViewEvent &event)
         return;
     }
 
-    DataObject o;
+    ProjectViewDataObject o;
     o.SetData( event.GetDataSize(), event.GetDataBuffer() );
 
     model::FolderPtr folder = boost::dynamic_pointer_cast<model::Folder>(p);

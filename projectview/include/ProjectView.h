@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef GUI_PROJECT_VIEW_H
-#define GUI_PROJECT_VIEW_H
+#ifndef PROJECT_VIEW_H
+#define PROJECT_VIEW_H
 
 #include "ProjectViewCtrl.h"
 #include "ProjectViewModel.h"

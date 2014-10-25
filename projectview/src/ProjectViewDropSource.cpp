@@ -20,7 +20,7 @@
 #include "Layout.h"
 #include "Window.h"
 #include "UtilLog.h"
-#include "DataObject.h"
+#include "ProjectViewDataObject.h"
 #include "Node.h"
 
 namespace gui {
@@ -133,9 +133,13 @@ bool ProjectViewDropSource::GiveFeedback(wxDragResult effect)
 // DRAGGING
 //////////////////////////////////////////////////////////////////////////
 
-void ProjectViewDropSource::startDrag(DataObject& data)
+void ProjectViewDropSource::startDrag(ProjectViewDataObject& data)
 {
     SetData(data);
+    wxDataObject* pObject = &data;
+    VAR_ERROR(pObject);
+    wxDataFormat format = data.GetFormat();
+    wxString id = format.GetId();
     DoDragDrop(wxDrag_DefaultMove);
     mActive = false;
     if (mHint)
@@ -149,9 +153,9 @@ void ProjectViewDropSource::startDrag(DataObject& data)
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-DataObject& ProjectViewDropSource::getData()
+ProjectViewDataObject& ProjectViewDropSource::getData()
 {
-    return *(dynamic_cast<DataObject*>(GetDataObject()));
+    return *(dynamic_cast<ProjectViewDataObject*>(GetDataObject()));
 }
 
 void ProjectViewDropSource::setFeedback(bool enabled)
@@ -171,14 +175,14 @@ void ProjectViewDropSource::setFeedback(bool enabled)
 
 }
 
-    //////////////////////////////////////////////////////////////////////////
-    // TEST
-    //////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// TEST
+//////////////////////////////////////////////////////////////////////////
 
-    bool ProjectViewDropSource::isDragActive() const
-    {
-        return mActive;
-    }
+bool ProjectViewDropSource::isDragActive() const
+{
+    return mActive;
+}
 
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS
