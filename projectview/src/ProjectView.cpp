@@ -28,6 +28,7 @@
 #include "ProjectEvent.h"
 #include "ProjectModification.h"
 #include "ProjectViewAddAsset.h"
+#include "ProjectViewCommand.h"
 #include "ProjectViewCreateAutoFolder.h"
 #include "ProjectViewCreateFile.h"
 #include "ProjectViewCreateFolder.h"
@@ -39,6 +40,7 @@
 #include "ProjectViewMoveAsset.h"
 #include "ProjectViewRenameAsset.h"
 #include "Sequence.h"
+#include "StatusBar.h"
 #include "TimeLinesView.h"
 #include "UtilList.h"
 #include "UtilLog.h"
@@ -74,6 +76,10 @@ ProjectView::ProjectView(wxWindow* parent)
     gui::Window::get().Bind(model::EVENT_OPEN_PROJECT,     &ProjectView::onOpenProject,             this);
     gui::Window::get().Bind(model::EVENT_CLOSE_PROJECT,    &ProjectView::onCloseProject,            this);
 
+    gui::Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED, &ProjectView::onCutFromMainMenu, this, wxID_CUT);
+    gui::Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED, &ProjectView::onCopyFromMainMenu, this, wxID_COPY);
+    gui::Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED, &ProjectView::onPasteFromMainMenu, this, wxID_PASTE);
+
     Bind(wxEVT_COMMAND_DATAVIEW_ITEM_START_EDITING,     &ProjectView::onStartEditing,    this);
     Bind(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,      &ProjectView::onContextMenu,     this);
     Bind(wxEVT_COMMAND_DATAVIEW_ITEM_DROP_POSSIBLE,     &ProjectView::onDropPossible,    this);
@@ -96,7 +102,11 @@ ProjectView::~ProjectView()
     gui::Window::get().Unbind(model::EVENT_OPEN_PROJECT,       &ProjectView::onOpenProject,             this);
     gui::Window::get().Unbind(model::EVENT_CLOSE_PROJECT,      &ProjectView::onCloseProject,            this);
 
-    Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_START_EDITING,   &ProjectView::onStartEditing,    this);
+    gui::Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED, &ProjectView::onCutFromMainMenu, this, wxID_CUT);
+    gui::Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED, &ProjectView::onCopyFromMainMenu, this, wxID_COPY);
+    gui::Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED, &ProjectView::onPasteFromMainMenu, this, wxID_PASTE);
+
+    Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_START_EDITING, &ProjectView::onStartEditing, this);
     Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,    &ProjectView::onContextMenu,     this);
     Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_DROP_POSSIBLE,   &ProjectView::onDropPossible,    this);
     Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_DROP,            &ProjectView::onDrop,            this);
@@ -158,6 +168,7 @@ void ProjectView::onAutoOpenFolder(EventAutoFolderOpen& event)
 
 void ProjectView::select(const model::NodePtrs& nodes)
 {
+    // todo move methods to the ProjectViewCtrl class where possible (reduce this file size)
     ASSERT(wxThread::IsMain());
     mCtrl.UnselectAll();
     for ( model::NodePtr node : nodes )
@@ -173,6 +184,25 @@ void ProjectView::selectAll()
     mCtrl.SelectAll();
 }
 
+model::FolderPtr ProjectView::getSelectedContainerOrRoot() const
+{
+    switch (mCtrl.GetSelectedItemsCount())
+    {
+        case 0:
+            return model::Project::get().getRoot();
+        case 1:
+            wxDataViewItemArray selection;
+            mCtrl.GetSelections(selection);
+            model::NodePtr projectNode = model::INode::Ptr(static_cast<model::NodeId>(selection[0].GetID()));
+            model::FolderPtr folder = boost::dynamic_pointer_cast<model::Folder>(projectNode);
+            if (folder)
+            {
+                return folder;
+            }
+    }
+    return model::FolderPtr();
+}
+
 model::FolderPtr ProjectView::getSelectedContainer() const
 {
     wxDataViewItemArray selection;
@@ -182,6 +212,11 @@ model::FolderPtr ProjectView::getSelectedContainer() const
     model::FolderPtr folder = boost::dynamic_pointer_cast<model::Folder>(projectNode);
     ASSERT(folder);
     return folder;
+}
+
+bool ProjectView::hasSelection() const
+{
+    return mCtrl.HasSelection();
 }
 
 model::NodePtrs ProjectView::getSelection() const
@@ -282,54 +317,62 @@ bool ProjectView::findConflictingName(const model::FolderPtr& parent, const wxSt
     return false;
 }
 
+//////////////////////////////////////////////////////////////////////////
+// MAIN WINDOW EDIT MENU
+//////////////////////////////////////////////////////////////////////////
+
+void ProjectView::onCutFromMainMenu(wxCommandEvent& event)
+{
+    bool focus = hasKeyboardFocus();
+    event.Skip(!focus);
+    if (focus)
+    {
+        onCut();
+    }
+}
+
+void ProjectView::onCopyFromMainMenu(wxCommandEvent& event)
+{
+    bool focus = hasKeyboardFocus();
+    event.Skip(!focus);
+    if (focus)
+    {
+        onCopy();
+    }
+}
+
+void ProjectView::onPasteFromMainMenu(wxCommandEvent& event)
+{
+    // only if one node is selected and that node is a folder or no node is selected (root node)
+    bool focus = hasKeyboardFocus();
+    event.Skip(!focus);
+    if (focus)
+    {
+        onPaste();
+    }
+}
 
 //////////////////////////////////////////////////////////////////////////
 // POPUP MENU
 //////////////////////////////////////////////////////////////////////////
 
+
 void ProjectView::onCut()
 {
-    ASSERT_MORE_THAN_ZERO(getSelection().size());
-    if (wxTheClipboard->Open())
+    if (storeSelectionInClipboard())
     {
-        wxTheClipboard->SetData(new ProjectViewDataObject(getSelection()));
-        wxTheClipboard->Close();
         model::ProjectModification::submit(new command::ProjectViewDeleteAsset(getSelection()));
     }
 }
 
 void ProjectView::onCopy()
 {
-    ASSERT_MORE_THAN_ZERO(getSelection().size());
-    if (wxTheClipboard->Open())
-    {
-        wxTheClipboard->SetData(new ProjectViewDataObject(getSelection()));
-        wxTheClipboard->Close();
-    }
+    storeSelectionInClipboard();
 }
 
 void ProjectView::onPaste()
 {
-    if (wxTheClipboard->Open())
-    {
-        if (wxTheClipboard->IsSupported(ProjectViewDataObject::sFormat))
-        {
-            ProjectViewDataObject data;
-            wxTheClipboard->GetData( data );
-            if (data.getAssets().size() > 0)
-            {
-                for ( model::NodePtr node : data.getAssets() )
-                {
-                    if (findConflictingName(getSelectedContainer(), node->getName(), NODETYPE_ANY ))
-                    {
-                        return;
-                    }
-                }
-                model::ProjectModification::submit(new command::ProjectViewAddAsset(getSelectedContainer(),data.getAssets()));
-            }
-        }
-        wxTheClipboard->Close();
-    }
+    pasteFromClipboard();
 }
 
 void ProjectView::onDelete()
@@ -600,7 +643,7 @@ void ProjectView::onMotion(wxMouseEvent& event)
                 mCtrl.HitTest(mDragStart, item, col );
                 if (item.GetID())
                 {
-                    ProjectViewDataObject data(getSelection(), boost::bind(&ProjectView::onDragEnd, this));
+                    ProjectViewDataObject data(getSelection());
                     mDropSource.startDrag(data);
                     mDragCount = 0;
                 }
@@ -741,6 +784,157 @@ void ProjectView::onStartEditing(wxDataViewEvent &event)
     }
     event.Skip();
 }
+
+//////////////////////////////////////////////////////////////////////////
+// HELPER METHODS
+//////////////////////////////////////////////////////////////////////////
+
+bool ProjectView::hasKeyboardFocus() const
+{
+    wxWindow* focused = wxWindow::FindFocus();
+    if (focused != 0)
+    {
+        return (dynamic_cast<ProjectViewCtrl*>(focused->GetParent()) != 0);
+    }
+    return false;
+}
+
+bool ProjectView::selectionContainsRootNode() const
+{
+    for (model::NodePtr node : getSelection())
+    {
+        if (!node->hasParent())
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool ProjectView::storeSelectionInClipboard() const
+{
+    if (getSelection().empty())
+    {
+        StatusBar::get().timedInfoText(_("Nothing selected in the project view."));
+    }
+    else if (selectionContainsRootNode())
+    {
+        StatusBar::get().timedInfoText(_("Project (topmost item) cannot be stored in clipbaord."));
+    }
+    else
+    {
+        // For nodes in an autofolder, do not copy the nodes if the autofolder is also selected.
+        model::NodePtrs selection = command::ProjectViewCommand::prune(getSelection());
+        if (wxTheClipboard->Open())
+        {
+            wxTheClipboard->SetData(new ProjectViewDataObject(selection));
+            wxTheClipboard->Close();
+            return true;
+        }
+    }
+    return false;
+}
+
+void ProjectView::pasteFromClipboard()
+{
+    model::FolderPtr target = getSelectedContainerOrRoot();
+    if (!target)
+    {
+        StatusBar::get().timedInfoText(_("Wrong node selected for pasting in project tree."));
+        return;
+    }
+    if (wxTheClipboard->Open())
+    {
+        if (wxTheClipboard->IsSupported(ProjectViewDataObject::sFormat))
+        {
+            ProjectViewDataObject data;
+            wxTheClipboard->GetData(data);
+            wxTheClipboard->Close();
+            if (data.getAssets().size() > 0)
+            {
+                model::NodePtrs currentNodes = model::Project::get().getRoot()->getAllDescendants();
+                for (model::NodePtr node : data.getAssets())
+                {
+                    if (std::find(currentNodes.begin(), currentNodes.end(), node) != currentNodes.end())
+                    {
+                        StatusBar::get().timedInfoText(_("Can't paste item in tree twice."));
+                        return;
+                    }
+                    if (node->isA<model::File>())
+                    {
+                        model::FilePtr file = boost::dynamic_pointer_cast<model::File>(node);
+                        if (!wxFileExists(file->getPath().GetFullPath()))
+                        {
+                            StatusBar::get().timedInfoText(_("File was removed from disk. Cannot paste."));
+                            return;
+                        }
+                    }
+                    else if (node->isA<model::AutoFolder>())
+                    {
+                        model::AutoFolderPtr folder = boost::dynamic_pointer_cast<model::AutoFolder>(node);
+                        if (!wxDirExists(folder->getPath().GetFullPath()))
+                        {
+                            StatusBar::get().timedInfoText(_("Folder was removed from disk. Cannot paste."));
+                            return;
+                        }
+                    }
+                    if (findConflictingName(target, node->getName(), NODETYPE_ANY))
+                    {
+                        return;
+                    }
+                }
+                model::ProjectModification::submit(new command::ProjectViewAddAsset(target, data.getAssets()));
+            }
+        }
+        else if (wxTheClipboard->IsSupported(wxDataFormat(wxDF_FILENAME)))
+        {
+            wxFileDataObject data;
+            wxTheClipboard->GetData(data);
+            wxTheClipboard->Close();
+            bool files = false;
+            bool dirs = false;
+            for (wxString filename : data.GetFilenames())
+            {
+                files = files || (wxFileExists(filename));
+                dirs = dirs || (wxDirExists(filename));
+            }
+            if (files && dirs)
+            {
+                StatusBar::get().timedInfoText(_("Cannot paste files and folders together. Only paste files or only paste folders."));
+                return;
+            }
+
+            if (files || dirs) // This check ensures the existence of the files/folders
+            {
+                model::NodePtrs assets;
+                for (wxString filename : data.GetFilenames())
+                {
+                    if (files)
+                    {
+                        model::FilePtr file = boost::make_shared<model::File>(filename);
+                        if (!file->canBeOpened())
+                        {
+                            StatusBar::get().timedInfoText(_("File " + file->getName() + " is not supported."));
+                            return;
+                        }
+                        assets.push_back(file);
+                    }
+                    else
+                    {
+                        assets.push_back(boost::make_shared<model::AutoFolder>(filename));
+                    }
+                }
+                model::ProjectModification::submit(new command::ProjectViewAddAsset(target, assets));
+            }
+        }
+        else
+        {
+            wxTheClipboard->Close();
+        }
+    }
+
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 // SERIALIZATION

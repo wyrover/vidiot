@@ -18,6 +18,7 @@
 #include "Timeline.h"
 
 #include "AudioView.h"
+#include "Clipboard.h"
 #include "Constants.h"
 #include "Cursor.h"
 #include "Details.h"
@@ -62,12 +63,14 @@ Timeline::Timeline(wxWindow *parent, const model::SequencePtr& sequence, bool be
 ,   mBufferBitmap()
 ,   mExecuteOnIdle()
 ,   mRenderThumbnails(false)
+,   mActive(false)
 //////////////////////////////////////////////////////////////////////////
 ,   mTrim(new Trim(this))
 ,   mZoom(new Zoom(this))
 ,   mViewMap(new ViewMap(this))
 ,   mIntervals(new Intervals(this))
 ,   mKeyboard(new Keyboard(this))
+,   mClipboard(new Clipboard(this))
 ,   mMouse(new Mouse(this))
 ,   mScroll(new Scrolling(this))
 ,   mSelection(new Selection(this))
@@ -130,6 +133,7 @@ Timeline::~Timeline()
 	delete mScroll;			mScroll = 0;
     delete mMouse;          mMouse = 0;
     delete mIntervals;      mIntervals = 0;
+    delete mClipboard;      mClipboard = 0;
     delete mKeyboard;       mKeyboard = 0;
     delete mViewMap;        mViewMap = 0;
     delete mZoom;           mZoom = 0;
@@ -205,6 +209,16 @@ Keyboard& Timeline::getKeyboard()
 const Keyboard& Timeline::getKeyboard() const
 {
     return *mKeyboard;
+}
+
+Clipboard& Timeline::getClipboard()
+{
+    return *mClipboard;
+}
+
+const Clipboard& Timeline::getClipboard() const
+{
+    return *mClipboard;
 }
 
 Mouse& Timeline::getMouse()
@@ -493,12 +507,14 @@ void Timeline::clearRect(wxDC& dc, wxRegion region, const wxPoint& offset, const
 }
 
 //////////////////////////////////////////////////////////////////////////
-// PROPAGATE UPDATES UPWARD
+// GET/SET
 //////////////////////////////////////////////////////////////////////////
 
 void Timeline::activate(bool active)
 {
+    // todo replace this with better mechanism (less forwarding)
     VAR_INFO(this)(active);
+    mActive = active;
     getMenuHandler().activate(active);
     if (active)
     {
@@ -507,9 +523,10 @@ void Timeline::activate(bool active)
     }
 }
 
-//////////////////////////////////////////////////////////////////////////
-// GET/SET
-//////////////////////////////////////////////////////////////////////////
+bool Timeline::isActive() const
+{
+    return mActive;
+}
 
 Player* Timeline::getPlayer() const
 {

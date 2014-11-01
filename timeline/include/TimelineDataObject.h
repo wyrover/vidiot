@@ -15,60 +15,54 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TIMELINE_DROP_TARGET_H
-#define TIMELINE_DROP_TARGET_H
-
-#include "Part.h"
+#ifndef TIMELINE_DATA_OBJECT_H
+#define TIMELINE_DATA_OBJECT_H
 
 namespace gui { namespace timeline {
 
-class TimelineDropTarget
-    : public Part
-    , public wxDropTarget
+class TimelineDataObject
+    :   public wxDataObjectSimple
+    ,   public boost::noncopyable
 {
 public:
-    
+
     //////////////////////////////////////////////////////////////////////////
-    // INITIALIZATION 
+    // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    TimelineDropTarget(Timeline* timeline);
-    ~TimelineDropTarget();
-    
+    TimelineDataObject();
+
+    /// The data in the object is deliberately copied.
+    /// Only pointers will be exchanged. By using copies (in the data object)
+    /// their lifetime is maintained by the data object.
+    /// \param videoTracks list of video clips, divided into tracks
+    /// \param audioTracks list of audio clips, divided into tracks
+    TimelineDataObject(model::Tracks videoTracks, model::Tracks audioTracks);
+
+    virtual ~TimelineDataObject();
+
+    static const wxString sFormat;
+
     //////////////////////////////////////////////////////////////////////////
-    // wxDropTarget interface 
+    // FROM wxDataObjectSimple
     //////////////////////////////////////////////////////////////////////////
 
-    wxDragResult OnData(wxCoord x, wxCoord y, wxDragResult def) override;
-    wxDragResult OnEnter(wxCoord x, wxCoord y, wxDragResult def) override;
-    wxDragResult OnDragOver(wxCoord x, wxCoord y, wxDragResult def) override;
-    bool OnDrop(wxCoord x, wxCoord y) override;
-    void OnLeave() override;
+    virtual bool GetDataHere(void *buf) const override;
+    virtual size_t GetDataSize () const override;
+    virtual bool SetData(size_t len, const void *buf) override;
 
     //////////////////////////////////////////////////////////////////////////
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    model::TrackPtr getVideo();
-    model::TrackPtr getAudio();
+    model::Tracks getVideoTracks() const;
+    model::Tracks getAudioTracks() const;
 
 private:
 
-    //////////////////////////////////////////////////////////////////////////
-    // MEMBERS
-    //////////////////////////////////////////////////////////////////////////
-
-    boost::optional<wxDataFormat> mFormat;
-    model::NodePtrs mNodes;
-    model::TrackPtr mVideo;
-    model::TrackPtr mAudio;
-
-    //////////////////////////////////////////////////////////////////////////
-    // HELPER METHODS
-    //////////////////////////////////////////////////////////////////////////
-
-    bool validDataDragged() const;
-
+    wxDataFormat mFormat;
+    model::Tracks mVideoTracks;
+    model::Tracks mAudioTracks;
 };
 
 }} // namespace

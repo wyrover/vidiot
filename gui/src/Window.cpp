@@ -334,6 +334,8 @@ Window::Window()
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnUndo,          GetDocumentManager(), wxID_UNDO);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnRedo,          GetDocumentManager(), wxID_REDO);
 
+    // todo disable menu options when no project is open
+
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onSnapClips,        this, ID_SNAP_CLIPS);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onSnapCursor,       this, ID_SNAP_CURSOR);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onShowBoundingBox,  this, ID_SHOW_BOUNDINGBOX);
@@ -439,7 +441,7 @@ Window::~Window()
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnUndo,          GetDocumentManager(), wxID_UNDO);
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnRedo,          GetDocumentManager(), wxID_REDO);
 
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onSnapClips,        this, ID_SNAP_CLIPS);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED, &Window::onSnapClips, this, ID_SNAP_CLIPS);
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onSnapCursor,       this, ID_SNAP_CURSOR);
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onShowBoundingBox,  this, ID_SHOW_BOUNDINGBOX);
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onShowProject,      this, ID_SHOW_PROJECT);
@@ -517,11 +519,13 @@ void Window::onOpenProject(model::EventOpenProject &event )
     updateTitle();
     mVisibleWorker->start();
     mInvisibleWorker->start();
+    DragAcceptFiles(false);
     event.Skip();
 }
 
 void Window::onCloseProject(model::EventCloseProject &event )
 {
+    DragAcceptFiles(true);
     delete mWatcher;
     mWatcher = 0;
     mMenuFile->Enable(ID_NEW_FILES,false);

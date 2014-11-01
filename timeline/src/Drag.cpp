@@ -47,7 +47,6 @@
 #include "Timeline.h"
 #include "TimelineDropTarget.h"
 #include "Track.h"
-#include "TrackCreator.h"
 #include "TrackView.h"
 #include "Transition.h"
 #include "UtilInt.h"
@@ -132,15 +131,21 @@ void Drag::start(const wxPoint& hotspot, bool external)
 
     if (external)
     {
-        ::command::TrackCreator c(ProjectViewDropSource::get().getData().getAssets());
-        mVideo.setTempTrack(c.getVideoTrack());
-        mAudio.setTempTrack(c.getAudioTrack());
+        TimelineDropTarget* dropTarget = dynamic_cast<TimelineDropTarget*>(getTimeline().GetDropTarget());
+        ASSERT_NONZERO(dropTarget);
+        ASSERT_NONZERO(dropTarget->getVideo());
+        ASSERT_NONZERO(dropTarget->getAudio());
+        ASSERT_EQUALS(dropTarget->getVideo()->getLength(), dropTarget->getAudio()->getLength());
+        ASSERT_NONZERO(dropTarget->getVideo()->getLength());
+        mVideo.setTempTrack(dropTarget->getVideo());
+        mAudio.setTempTrack(dropTarget->getAudio());
+
         mDraggedTrack = mVideo.getTempTrack();
 
-        if (getSequence()->getLength() < c.getVideoTrack()->getLength())
+        if (getSequence()->getLength() < mVideo.getTempTrack()->getLength())
         {
             // Extend sequence view if it is not big enough to hold the dragged data.
-            getSequenceView().setExtraLength(c.getVideoTrack()->getLength()); 
+            getSequenceView().setExtraLength(mVideo.getTempTrack()->getLength());
             getSequenceView().invalidateRect();
         }
 

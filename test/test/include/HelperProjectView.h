@@ -35,6 +35,13 @@ gui::ProjectView& GetProjectView();
 /// \return the position of the project view on screen
 wxPoint ProjectViewPosition();
 
+/// Give the project view the focus
+void ProjectViewSetFocus();
+
+/// Select a list of nodes in the project view
+/// All nodes not in the list will be unselected.
+void ProjectViewSelect(model::NodePtrs nodes);
+
 /// Create a new autofolder to the given path in a given parent folder or in the root (default)
 /// \return new autofolder
 model::FolderPtr ProjectViewAddAutoFolder( wxFileName path, model::FolderPtr parent = getRoot() );

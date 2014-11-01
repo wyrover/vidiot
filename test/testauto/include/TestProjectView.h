@@ -39,6 +39,11 @@ public:
 
     void testAdditionAndRemoval();
 
+    void testClipboardCut();
+    void testClipboardCopy();
+    void testClipboardPaste_ClipboardEmpty();
+    void testClipboardPaste_ClipboardNodes();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////

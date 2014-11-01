@@ -130,6 +130,8 @@ wxFileName getTestFilesPath(wxString subdir)
 
 model::IPaths getListOfInputFiles(wxFileName path)
 {
+    // todo cache this info per path for less disk access
+    // todo replace lists with vectors (where applicable)
     return GetSupportedFiles(path);
 }
 

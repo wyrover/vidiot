@@ -30,8 +30,6 @@ public:
     ProjectViewCommand();
     virtual ~ProjectViewCommand();
 
-protected:
-
     /// This methods serves two purposes:
     /// - Prune the list of selected nodes (See ProjectViewCommand::prune)
     /// - Convert the resulting list of pruning to a list of parent and children

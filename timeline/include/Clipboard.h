@@ -15,60 +15,46 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TIMELINE_DROP_TARGET_H
-#define TIMELINE_DROP_TARGET_H
+#ifndef CLIPBOARD_H
+#define CLIPBOARD_H
 
 #include "Part.h"
 
 namespace gui { namespace timeline {
 
-class TimelineDropTarget
-    : public Part
-    , public wxDropTarget
+class Clipboard
+    :   public Part
 {
 public:
+
+    //////////////////////////////////////////////////////////////////////////
+    // INITIALIZATION METHODS
+    //////////////////////////////////////////////////////////////////////////
+
+    Clipboard(Timeline* timeline);
+    virtual ~Clipboard();
+
+    //////////////////////////////////////////////////////////////////////////
+    // MAIN WINDOW EDIT MENU
+    //////////////////////////////////////////////////////////////////////////
+
+    void onCutFromMainMenu(wxCommandEvent& event);
+    void onCopyFromMainMenu(wxCommandEvent& event);
+    void onPasteFromMainMenu(wxCommandEvent& event);
     
     //////////////////////////////////////////////////////////////////////////
-    // INITIALIZATION 
+    // EVENTS
     //////////////////////////////////////////////////////////////////////////
 
-    TimelineDropTarget(Timeline* timeline);
-    ~TimelineDropTarget();
-    
-    //////////////////////////////////////////////////////////////////////////
-    // wxDropTarget interface 
-    //////////////////////////////////////////////////////////////////////////
-
-    wxDragResult OnData(wxCoord x, wxCoord y, wxDragResult def) override;
-    wxDragResult OnEnter(wxCoord x, wxCoord y, wxDragResult def) override;
-    wxDragResult OnDragOver(wxCoord x, wxCoord y, wxDragResult def) override;
-    bool OnDrop(wxCoord x, wxCoord y) override;
-    void OnLeave() override;
-
-    //////////////////////////////////////////////////////////////////////////
-    // GET/SET
-    //////////////////////////////////////////////////////////////////////////
-
-    model::TrackPtr getVideo();
-    model::TrackPtr getAudio();
-
-private:
-
-    //////////////////////////////////////////////////////////////////////////
-    // MEMBERS
-    //////////////////////////////////////////////////////////////////////////
-
-    boost::optional<wxDataFormat> mFormat;
-    model::NodePtrs mNodes;
-    model::TrackPtr mVideo;
-    model::TrackPtr mAudio;
+    void onCut();
+    void onCopy();
+    void onPaste();
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    bool validDataDragged() const;
-
+    bool hasKeyboardFocus() const;
 };
 
 }} // namespace

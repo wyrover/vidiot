@@ -110,12 +110,12 @@ typedef boost::weak_ptr<Track> WeakTrackPtr;
 typedef std::list<AudioChunkPtr> AudioChunks;
 typedef std::list<FilePtr> Files;
 typedef std::list<IClipPtr> IClips;
-typedef std::list<IPathPtr> IPaths;
 typedef std::list<MoveParameterPtr> MoveParameters; // std::list because moves must be done in a particular order.
 typedef std::list<NodePtr> NodePtrs;
 typedef std::list<TrackPtr> Tracks;
 typedef std::list<VideoFramePtr> VideoFrames;
 typedef std::list<VideoFrameLayerPtr> VideoFrameLayers;
+typedef std::vector<IPathPtr> IPaths;
 
 namespace render {
 

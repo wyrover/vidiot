@@ -99,6 +99,16 @@ const Keyboard& Part::getKeyboard() const
     return getTimeline().getKeyboard();
 }
 
+Clipboard& Part::getClipboard()
+{
+    return getTimeline().getClipboard();
+}
+
+const Clipboard& Part::getClipboard() const
+{
+    return getTimeline().getClipboard();
+}
+
 Selection& Part::getSelection()
 {
     return getTimeline().getSelection();
