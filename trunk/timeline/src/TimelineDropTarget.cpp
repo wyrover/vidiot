@@ -17,7 +17,9 @@
 
 #include "TimelineDropTarget.h"
 
+#include "FileAnalyzer.h"
 #include "State.h"
+#include "TrackCreator.h"
 
 namespace gui { namespace timeline {
 
@@ -28,14 +30,16 @@ namespace gui { namespace timeline {
 TimelineDropTarget::TimelineDropTarget(Timeline* timeline)
     : Part(timeline)
     , wxDropTarget()
-    , mOk(false)
     , mFormat(boost::none)
+    , mNodes()
 {
 
     wxDataObjectComposite* composite = new wxDataObjectComposite();
-    composite->Add(new ProjectViewDataObject(), true);
-    // todo composite->Add(new wxFileDataObject());
+    composite->Add(new ProjectViewDataObject());
+    // NOT: composite->Add(new TimelineDataObject(), true); -- Never via wxWidgets dnd interfaces, but handled directly
+    composite->Add(new wxFileDataObject());
     SetDataObject(composite);
+    // todo copy/paste within timeline
 }
 
 TimelineDropTarget::~TimelineDropTarget()
@@ -44,73 +48,126 @@ TimelineDropTarget::~TimelineDropTarget()
 
 wxDragResult TimelineDropTarget::OnData(wxCoord x, wxCoord y, wxDragResult def)
 {
-    ASSERT(mFormat);
-    GetData(); // Required to initialize the received data object properly
-    wxDataObjectComposite* composite = static_cast<wxDataObjectComposite *>(GetDataObject());
-    wxString formatId = mFormat->GetId();
-    wxDataFormatId formatType = static_cast<wxDataFormatId>(mFormat->GetType());
-    if (formatId == ProjectViewDataObject::sFormat)
-    {
-        ProjectViewDataObject* object = dynamic_cast<ProjectViewDataObject*>(composite->GetObject(*mFormat));
-    }
-    else
-    {
-        ASSERT_EQUALS(formatType, wxDF_FILENAME);
-        wxFileDataObject* object = static_cast<wxFileDataObject *>(composite->GetObject(*mFormat));
-        //... use dataobj->GetFilenames() ...                
-        // todo format for clips from timeline (new dataobject)
-    }
     return def;
 };
+
 wxDragResult TimelineDropTarget::OnEnter(wxCoord x, wxCoord y, wxDragResult def)
 {
     GetData(); // Required to initialize the received data object properly
     wxDataObjectComposite* composite = static_cast<wxDataObjectComposite *>(GetDataObject());
     mFormat.reset(composite->GetReceivedFormat());
 
+    if (mFormat->IsStandard())
+    {
+        // Standard data object
+        if (static_cast<wxDataFormatId>(mFormat->GetType()) == wxDF_FILENAME)
+        {
+            wxFileDataObject* object = static_cast<wxFileDataObject*>(composite->GetObject(*mFormat));
+            ASSERT_NONZERO(object);
+            std::list<wxString> filenames;
+            for (wxString filename : object->GetFilenames())
+            {
+                filenames.push_back(filename);
+
+            }
+            boost::shared_ptr<model::FileAnalyzer> analyzer = boost::make_shared<model::FileAnalyzer>(filenames);
+            mNodes = analyzer->getNodes();
+        }
+    }
+    else
+    {
+        // Custom data object
+        ASSERT_EQUALS(mFormat->GetId(), ProjectViewDataObject::sFormat); // Only supported custom data object
+        ProjectViewDataObject* object = dynamic_cast<ProjectViewDataObject*>(composite->GetObject(*mFormat));
+        ASSERT_NONZERO(object);
+        mNodes = object->getAssets();
+    }
+
     getMouse().dragMove(wxPoint(x, y));
-    model::NodePtrs nodes = ProjectViewDropSource::get().getData().getAssets();
-    mOk = true;
-    for ( model::NodePtr node : nodes )
+
+    for (model::NodePtr node : mNodes)
     {
         if (!node->isA<model::File>())
         {
-            mOk = false;
+            // Dropping anything other than files into the timeline is not supported.
+            mNodes.clear();
             break;
         }
     }
-    if (mOk)
+
+    // todo start drag when playback is active?
+    if (validDataDragged())
     {
+        ::command::TrackCreator c(mNodes);
+        mVideo = c.getVideoTrack();
+        mAudio = c.getAudioTrack();
         ProjectViewDropSource::get().setFeedback(false);
         getKeyboard().update(state::EvKey(wxGetMouseState(),-1)); // To ensure that key events are 'seen' during the drag (timeline itself does not receive keyboard/mouse events)
         getStateMachine().process_event(state::EvDragEnter());
-        return wxDragMove;
+        return wxDragCopy;
+    }
+    else
+    {
+        mVideo.reset();
+        mAudio.reset();
     }
     return wxDragNone;
 }
+
 wxDragResult TimelineDropTarget::OnDragOver(wxCoord x, wxCoord y, wxDragResult def)
 {
     getKeyboard().update(state::EvKey(wxGetMouseState(), -1)); // To ensure that key events are 'seen' during the drag (timeline itself does not receive keyboard/mouse events)
     getMouse().dragMove(wxPoint(x,y));
-    if (mOk)
+    if (validDataDragged())
     {
         // Accepted: key events not sent during dragging. Therefore the keyboard shortcuts for disabling snapping don't work when dragging from the project view.
         getStateMachine().process_event(state::EvDragMove());
-        return wxDragMove;
+        return wxDragCopy;
     }
     return wxDragNone;
 }
+
 bool TimelineDropTarget::OnDrop(wxCoord x, wxCoord y)
 {
     getMouse().dragMove(wxPoint(x,y));
     getStateMachine().process_event(state::EvDragDrop());
+    mNodes.clear();
+    mVideo.reset();
+    mAudio.reset();
     return true;
 }
+
 void TimelineDropTarget::OnLeave()
 {
     ProjectViewDropSource::get().setFeedback(true);
     getStateMachine().process_event(state::EvDragEnd());
     mFormat.reset();
+    mNodes.clear();
+    mVideo.reset();
+    mAudio.reset();
+}
+
+//////////////////////////////////////////////////////////////////////////
+// GET/SET
+//////////////////////////////////////////////////////////////////////////
+
+model::TrackPtr TimelineDropTarget::getVideo()
+{
+    return mVideo;
+}
+
+model::TrackPtr TimelineDropTarget::getAudio()
+{
+    return mAudio;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// HELPER METHODS
+//////////////////////////////////////////////////////////////////////////
+
+bool TimelineDropTarget::validDataDragged() const
+{
+    return !mNodes.empty();
 }
 
 }} // namespace

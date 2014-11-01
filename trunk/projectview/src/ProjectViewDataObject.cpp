@@ -28,26 +28,20 @@ ProjectViewDataObject::ProjectViewDataObject()
 :   wxDataObjectSimple()
 ,   mFormat(sFormat)
 ,   mAssets()
-,   mCallback(0)
 {
     SetFormat(mFormat);
 }
 
-ProjectViewDataObject::ProjectViewDataObject(const model::NodePtrs& assets, CallbackOnDestruction callback)
+ProjectViewDataObject::ProjectViewDataObject(const model::NodePtrs& assets)
 :   wxDataObjectSimple()
 ,   mFormat(sFormat)
 ,   mAssets(assets)
-,   mCallback(callback)
 {
     SetFormat(mFormat);
 }
 
 ProjectViewDataObject::~ProjectViewDataObject()
 {
-    if (mCallback)
-    {
-        mCallback();
-    }
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -67,7 +67,23 @@ public:
     /// \nodes these nodes are selected after the call, all others are not
     void select(const model::NodePtrs& nodes);
     void selectAll();
+
+    /// Return one node to be used for adding nodes.
+    /// If more than one node is selected, or a non-folder node is
+    /// selected, returns a 0 pointer.
+    /// \return nullptr if no single folder can be determined
+    /// \return root node if nothing is selected
+    /// \return single folder if only one folder node is selected
+    model::FolderPtr getSelectedContainerOrRoot() const;
+
+    /// \pre Number of selected items equals 1
+    /// \pre Selected item must be a container (folder)
+    /// \return selected folder
     model::FolderPtr getSelectedContainer() const;
+
+    /// \return true if one or more nodes are selected.
+    bool hasSelection() const;
+
     model::NodePtrs getSelection() const;
 
     //////////////////////////////////////////////////////////////////////////
@@ -87,6 +103,14 @@ public:
 
     bool findConflictingName(const model::FolderPtr& parent, const wxString& name, const NodeType& type);
     
+    //////////////////////////////////////////////////////////////////////////
+    // MAIN WINDOW EDIT MENU
+    //////////////////////////////////////////////////////////////////////////
+
+    void onCutFromMainMenu(wxCommandEvent& event);
+    void onCopyFromMainMenu(wxCommandEvent& event);
+    void onPasteFromMainMenu(wxCommandEvent& event);
+
     //////////////////////////////////////////////////////////////////////////
     // POPUP MENU
     //////////////////////////////////////////////////////////////////////////
@@ -135,6 +159,20 @@ private:
     int mDragCount;                                 ///< Used for determining start of dragging
     wxPoint mDragStart;                             ///< Holds start of dragging point
     int mHeaderHeight;
+
+    //////////////////////////////////////////////////////////////////////////
+    // HELPER METHODS
+    //////////////////////////////////////////////////////////////////////////
+
+    bool hasKeyboardFocus() const;
+    bool selectionContainsRootNode() const;
+
+    /// Check if the current selection can be stored in the clipboard and
+    /// return true if one or more nodes were stored.
+    /// \return true if the selection was stored in the clipboard
+    bool storeSelectionInClipboard() const;
+
+    void pasteFromClipboard();
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

@@ -29,6 +29,22 @@ wxPoint ProjectViewPosition()
     return GetProjectView().GetScreenPosition();
 }
 
+void ProjectViewSetFocus()
+{
+    util::thread::RunInMainAndWait([]
+    {
+        GetProjectView().SetFocus();
+    });
+}
+
+void ProjectViewSelect(model::NodePtrs nodes)
+{
+    util::thread::RunInMainAndWait([nodes]
+    {
+        GetProjectView().select(nodes);
+    });
+}
+
 model::FolderPtr ProjectViewAddAutoFolder( wxFileName path, model::FolderPtr parent )
 {
     gui::Dialog::get().setDir( path.GetShortPath() ); // Add with short path to check that normalizing works

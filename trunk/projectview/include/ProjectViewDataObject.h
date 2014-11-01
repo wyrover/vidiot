@@ -26,16 +26,12 @@ class ProjectViewDataObject
 {
 public:
 
-    /// A callback method which is called upon destruction.
-    /// This is used to let the ProjectView know the end of a drag operation.
-    typedef boost::function<void ()> CallbackOnDestruction;
-
     //////////////////////////////////////////////////////////////////////////
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
     ProjectViewDataObject();
-    ProjectViewDataObject(const model::NodePtrs& assets, CallbackOnDestruction callback = 0);
+    ProjectViewDataObject(const model::NodePtrs& assets);
     virtual ~ProjectViewDataObject();
 
     static const wxString sFormat;
@@ -58,7 +54,6 @@ private:
 
     wxDataFormat mFormat;
     model::NodePtrs mAssets;
-    CallbackOnDestruction mCallback;
 };
 
 } // namespace

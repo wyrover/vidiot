@@ -18,6 +18,8 @@
 #ifndef TIMELINE_H
 #define TIMELINE_H
 
+#include "UtilInt.h"
+
 namespace model {
     class EventLengthChanged;
 }
@@ -29,6 +31,7 @@ namespace command {
 namespace gui {
     class Player;
     namespace timeline {
+        class Clipboard;
         class Cursor;
         class Details;
         class Drag;
@@ -83,6 +86,8 @@ public:
     const Intervals& getIntervals() const;
     Keyboard& getKeyboard();
     const Keyboard& getKeyboard() const;
+    Clipboard& getClipboard();
+    const Clipboard& getClipboard() const;
     Mouse& getMouse();
     const Mouse& getMouse() const;
     Scrolling& getScrolling();
@@ -163,6 +168,9 @@ public:
 
     void activate(bool active); ///< To be called when the timeline becomes the active one
 
+    /// \return true if this timeline is the active one.
+    bool isActive() const;
+
     Player* getPlayer() const;
 
     /// Refresh the rectangle for which
@@ -233,6 +241,8 @@ private:
 
     bool mRenderThumbnails;
 
+    bool mActive;
+
     //////////////////////////////////////////////////////////////////////////
     // PART -> Must be AFTER MEMBERS
     //////////////////////////////////////////////////////////////////////////
@@ -242,6 +252,7 @@ private:
     ViewMap* mViewMap;
     Intervals* mIntervals;
     Keyboard* mKeyboard;
+    Clipboard* mClipboard;
     Mouse* mMouse;
     Scrolling* mScroll;
     Selection* mSelection;

@@ -204,33 +204,43 @@ void FileAnalyzer::indexFolder(const wxFileName& dirName, bool recurse)
 FilePtr FileAnalyzer::indexFile(const wxFileName& fileName)
 {
     FilePtr file = boost::make_shared<File>(fileName);
+    // todo isn't each file opened twice this way (once here, and then again below)
     if (file->canBeOpened())
     {
         mNumberOfMediaFiles++;
         updateProgressDialog();
-        if (file->hasVideo())
+        if (file->getType() == FileType_Title)
         {
-            VideoFilePtr videofile = boost::make_shared<VideoFile>(fileName);
-            mFrameRateOccurrence[videofile->getFrameRate()] = mFrameRateOccurrence[videofile->getFrameRate()] + 1;
-            if (mFrameRateOccurrence[videofile->getFrameRate()] > mFrameRateOccurrence[mMostFrequentFrameRate])
-            {
-                mMostFrequentFrameRate = videofile->getFrameRate();
-            }
-            wxSize size = videofile->getSize();
-            mVideoSizeOccurrence[size] = mVideoSizeOccurrence[size] + 1;
-            if (mVideoSizeOccurrence[size] > mVideoSizeOccurrence[mMostFrequentVideoSize])
-            {
-                mMostFrequentVideoSize = size;
-            }
+            // No frame/sample rate analysis required.
+            // todo default length for dropping image files?
+            // todo not only for titles but also for other image type files
         }
-        if (file->hasAudio())
+        else
         {
-            AudioFilePtr audiofile = boost::make_shared<AudioFile>(fileName);
-            std::pair<int,int> fileAudioRate = std::make_pair(audiofile->getSampleRate(), audiofile->getChannels());
-            mAudioRateOccurrence[fileAudioRate]++;
-            if (mAudioRateOccurrence[fileAudioRate] > mAudioRateOccurrence[mMostFrequentAudioRate])
+            if (file->hasVideo())
             {
-                mMostFrequentAudioRate = fileAudioRate;
+                VideoFilePtr videofile = boost::make_shared<VideoFile>(fileName);
+                mFrameRateOccurrence[videofile->getFrameRate()] = mFrameRateOccurrence[videofile->getFrameRate()] + 1;
+                if (mFrameRateOccurrence[videofile->getFrameRate()] > mFrameRateOccurrence[mMostFrequentFrameRate])
+                {
+                    mMostFrequentFrameRate = videofile->getFrameRate();
+                }
+                wxSize size = videofile->getSize();
+                mVideoSizeOccurrence[size] = mVideoSizeOccurrence[size] + 1;
+                if (mVideoSizeOccurrence[size] > mVideoSizeOccurrence[mMostFrequentVideoSize])
+                {
+                    mMostFrequentVideoSize = size;
+                }
+            }
+            if (file->hasAudio())
+            {
+                AudioFilePtr audiofile = boost::make_shared<AudioFile>(fileName);
+                std::pair<int, int> fileAudioRate = std::make_pair(audiofile->getSampleRate(), audiofile->getChannels());
+                mAudioRateOccurrence[fileAudioRate]++;
+                if (mAudioRateOccurrence[fileAudioRate] > mAudioRateOccurrence[mMostFrequentAudioRate])
+                {
+                    mMostFrequentAudioRate = fileAudioRate;
+                }
             }
         }
     }
