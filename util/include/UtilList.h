@@ -36,7 +36,7 @@ public:
 
     /// Add elements to the list
     /// \param added elements to be added
-    /// \param position elements are added BEFORE the given element. If this equals a null ptr, then the elements are added at the beginning.
+    /// \param position elements are added BEFORE the given element. If this equals a null ptr, then the elements are added at the end.
     void addElements(const ELEMENTS& added, const ELEMENT& position)
     {
         typename ELEMENTS::iterator itPosition = find(mList.begin(), mList.end(), position);
