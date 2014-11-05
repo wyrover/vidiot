@@ -203,4 +203,44 @@ void TestProjectView::testClipboardPaste_ClipboardNodes()
     }
 }
 
+void TestProjectView::testClipboardPaste_ClipboardFiles()
+{
+	StartTestSuite();
+	StartTest("Preparation: Files and one folder in clipboard.");
+	std::list<wxFileName> files;
+	for (auto x : getListOfInputFiles())
+	{
+		files.push_back(x->getPath());
+	}
+	FillClipboardWithFiles(files);
+	ProjectViewSetFocus();
+	{
+		StartTest("Paste from main menu (nothing selected, files in clipboard)");
+		ProjectViewSelect(model::NodePtrs());
+		WindowTriggerMenu(wxID_PASTE);
+		ASSERT_EQUALS(ProjectViewCount(), 3 + files.size());
+		ASSERT_EQUALS(getRoot()->getChildren().size(), 2 + files.size());
+		Undo();
+	}
+	{
+		StartTest("Paste from main menu (root selected, files in clipboard)");
+		ProjectViewSelect(boost::assign::list_of(getRoot()));
+		WindowTriggerMenu(wxID_PASTE);
+		ASSERT_EQUALS(ProjectViewCount(), 3 + +files.size());
+		ASSERT_EQUALS(getRoot()->getChildren().size(), 2 + +files.size());
+		Undo();
+	}
+	{
+		StartTest("Paste from main menu (folder selected, files in clipboard)");
+		model::FolderPtr folder = ProjectViewAddFolder("FOLDER");
+		ASSERT_EQUALS(ProjectViewCount(), 4);
+		ProjectViewSelect(boost::assign::list_of(folder));
+		WindowTriggerMenu(wxID_PASTE);
+		ASSERT_EQUALS(ProjectViewCount(), 4 + +files.size());
+		ASSERT_EQUALS(folder->getChildren().size(), + files.size());
+		Undo(2);
+	}
+}
+
+
 } // namespace

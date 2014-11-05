@@ -17,7 +17,9 @@
 
 #include "ProjectViewDataObject.h"
 
+#include "Folder.h"
 #include "Node.h"
+#include "Sequence.h"
 #include "UtilLog.h"
 
 namespace gui {
@@ -86,5 +88,28 @@ model::NodePtrs ProjectViewDataObject::getAssets() const
 {
     return mAssets;
 }
+
+bool ProjectViewDataObject::checkIfOkForPasteOrDrop() const
+{
+	if (mAssets.empty())
+	{
+		return false;
+	}
+	for (model::NodePtr node : mAssets)
+	{
+		if (node->isA<model::Sequence>())
+		{
+			gui::StatusBar::get().timedInfoText(_("Sequences can not be pasted/dropped."));
+			return false;
+		}
+		else if (node->isA<model::Folder>())
+		{
+			gui::StatusBar::get().timedInfoText(_("Folders can not be pasted/dropped."));
+			return false;
+		}
+	}
+	return true;
+}
+
 
 } // namespace

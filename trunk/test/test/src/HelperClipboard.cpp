@@ -38,51 +38,57 @@ struct DummyDataObject : public wxDataObjectSimple
 
 void ClearClipboard()
 {
-    LOG_ERROR;
-    bool ok = wxTheClipboard->Open();
-    ASSERT(ok);
-    wxTheClipboard->SetData(new DummyDataObject());
-    // NOT: wxTheClipboard->Clear(); -- does not work
-    wxTheClipboard->Close();
-    LOG_ERROR;
-    ASSERT_CLIPBOARD_EMPTY();
+	util::thread::RunInMainAndWait([]
+	{
+		bool ok = wxTheClipboard->Open();
+		ASSERT(ok);
+		ok = wxTheClipboard->SetData(new DummyDataObject());
+		ASSERT(ok);
+		// NOT: wxTheClipboard->Clear(); -- does not work
+		wxTheClipboard->Close();
+		ASSERT_CLIPBOARD_EMPTY();
+	});
 }
 
 void AssertClipboardEmpty()
 {
-    LOG_ERROR;
-    bool ok = wxTheClipboard->Open();
-    ASSERT(ok);
-    ASSERT(!wxTheClipboard->IsSupported(wxDataFormat(gui::ProjectViewDataObject::sFormat)));
-    ASSERT(!wxTheClipboard->IsSupported(wxDataFormat(gui::timeline::TimelineDataObject::sFormat)));
-    ASSERT(!wxTheClipboard->IsSupported(wxDataFormat(wxDF_FILENAME)));
-    wxTheClipboard->Close();
-    LOG_ERROR;
+	util::thread::RunInMainAndWait([]
+	{
+		bool ok = wxTheClipboard->Open();
+		ASSERT(ok);
+		ASSERT(!wxTheClipboard->IsSupported(wxDataFormat(gui::ProjectViewDataObject::sFormat)));
+		ASSERT(!wxTheClipboard->IsSupported(wxDataFormat(gui::timeline::TimelineDataObject::sFormat)));
+		ASSERT(!wxTheClipboard->IsSupported(wxDataFormat(wxDF_FILENAME)));
+		wxTheClipboard->Close();
+	});
 }
 
 void AssertClipboardContains(const wxDataFormat& format)
 {
-    LOG_ERROR;
-    bool ok = wxTheClipboard->Open();
-    ASSERT(ok);
-    ASSERT(wxTheClipboard->IsSupported(format));
-    wxTheClipboard->Close();
-    LOG_ERROR;
+	util::thread::RunInMainAndWait([format]
+	{
+		bool ok = wxTheClipboard->Open();
+		ASSERT(ok);
+		ASSERT(wxTheClipboard->IsSupported(format));
+		wxTheClipboard->Close();
+	});
 }
 
-void FillClipboardWithFiles(std::list<wxFileName> files)
+void FillClipboardWithFiles(std::list<wxFileName> files) 
 {
     wxFileDataObject* data = new wxFileDataObject();
-    for (wxFileName file : files)
-    {
-        data->AddFile(file.GetFullPath());
-    }
-    LOG_ERROR;
-    bool ok = wxTheClipboard->Open();
-    ASSERT(ok);
-    wxTheClipboard->SetData(data);
-    wxTheClipboard->Close();
-    LOG_ERROR;
+	for (wxFileName file : files)
+	{
+		data->AddFile(file.GetFullPath());
+	}
+	util::thread::RunInMainAndWait([data]
+	{
+		bool ok = wxTheClipboard->Open();
+		ASSERT(ok);
+		wxTheClipboard->SetData(data);
+		wxTheClipboard->Close();
+	});
+	ASSERT_CLIPBOARD_CONTAINS_FILES;
 }
 
 

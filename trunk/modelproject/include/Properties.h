@@ -38,6 +38,8 @@ public:
     /// This constructor allows specifying the values used.
     Properties(const FrameRate& fr);
 
+    Properties(const Properties& other);
+
     virtual ~Properties();
 
     //////////////////////////////////////////////////////////////////////////
@@ -67,6 +69,10 @@ public:
     void setDefaultRender(const render::RenderPtr& render);
 
 private:
+
+    //////////////////////////////////////////////////////////////////////////
+    // MEMBERS
+    //////////////////////////////////////////////////////////////////////////
 
     FrameRate mFrameRate;
     long mVideoWidth;

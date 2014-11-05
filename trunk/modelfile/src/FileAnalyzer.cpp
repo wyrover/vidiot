@@ -24,6 +24,7 @@
 #include "ProjectModification.h"
 #include "ProjectViewAddAsset.h"
 #include "ProjectView.h"
+#include "StatusBar.h"
 #include "UtilWindow.h"
 #include "VideoFile.h"
 
@@ -34,7 +35,8 @@ namespace model {
 //////////////////////////////////////////////////////////////////////////
 
 FileAnalyzer::FileAnalyzer(wxStrings fileNames, wxWindow* parent)
-    : mMostFrequentFrameRate(Config::ReadString(Config::sPathDefaultFrameRate))
+    : mParent(parent)
+	, mMostFrequentFrameRate(Config::ReadString(Config::sPathDefaultFrameRate))
     , mMostFrequentAudioRate(std::make_pair(Config::ReadLong(Config::sPathDefaultAudioSampleRate), Config::ReadLong(Config::sPathDefaultAudioChannels)))
     , mMostFrequentVideoSize(Config::ReadLong(Config::sPathDefaultVideoWidth), Config::ReadLong(Config::sPathDefaultVideoHeight))
     , mVideoSizeOccurrence(boost::assign::map_list_of(mMostFrequentVideoSize,0))
@@ -43,48 +45,71 @@ FileAnalyzer::FileAnalyzer(wxStrings fileNames, wxWindow* parent)
     , mNumberOfMediaFiles(0)
     , mFolders(0)
 {
-    if (parent != nullptr)
-    {
-        mDialog = boost::make_shared<wxProgressDialog>(_("Indexing files"),wxEmptyString,100,parent);
-        mDialog->SetWindowStyleFlag(wxPD_APP_MODAL | wxPD_ELAPSED_TIME); //| wxPD_AUTO_HIDE 
-        updateProgressDialog();
-    }
+	for (wxString path : fileNames)
+	{
+		mFileNames.push_back(::util::path::toFileName(path));
+	}
+	init();
+}
 
-    for (wxString path : fileNames)
-    { 
-        mFileNames.push_back(::util::path::toFileName(path));
-    }
-    mFileNames.sort([](const wxFileName& file1, const wxFileName& file2) { return file1.GetFullPath() < file2.GetFullPath(); });
+FileAnalyzer::FileAnalyzer(const wxArrayString& fileNames, wxWindow* parent)
+	: mParent(parent)
+	, mMostFrequentFrameRate(Config::ReadString(Config::sPathDefaultFrameRate))
+	, mMostFrequentAudioRate(std::make_pair(Config::ReadLong(Config::sPathDefaultAudioSampleRate), Config::ReadLong(Config::sPathDefaultAudioChannels)))
+	, mMostFrequentVideoSize(Config::ReadLong(Config::sPathDefaultVideoWidth), Config::ReadLong(Config::sPathDefaultVideoHeight))
+	, mVideoSizeOccurrence(boost::assign::map_list_of(mMostFrequentVideoSize, 0))
+	, mFrameRateOccurrence(boost::assign::map_list_of(mMostFrequentFrameRate, 0))
+	, mAudioRateOccurrence(boost::assign::map_list_of(mMostFrequentAudioRate, 0))
+	, mNumberOfMediaFiles(0)
+	, mFolders(0)
+{
+	for (wxString filename : fileNames)
+	{
+		mFileNames.push_back(::util::path::toFileName(filename));
+	}
+	init();
+}
 
-    // Check if files can be opened, and determine the most frequent frame/sample rates of the files.
+void FileAnalyzer::init()
+{
+	if (mParent != nullptr)
+	{
+		mDialog = boost::make_shared<wxProgressDialog>(_("Indexing files"), wxEmptyString, 100, mParent);
+		mDialog->SetWindowStyleFlag(wxPD_APP_MODAL | wxPD_ELAPSED_TIME); //| wxPD_AUTO_HIDE 
+		updateProgressDialog();
+	}
 
-    for (const wxFileName& filename : mFileNames)
-    {
-        if (filename.Exists())
-        {
-            if (filename.IsDir())
-            {
-                mNodes.push_back(boost::make_shared<AutoFolder>(filename));
-                indexFolder(filename, mFileNames.size() != 1); // Do not recurse if only one folder is given
-            }
-            else
-            {
-                FilePtr file = indexFile(filename);
-                if (file)
-                {
-                    mNodes.push_back(file);
-                }
-            }
-        }
-    }
+	mFileNames.sort([](const wxFileName& file1, const wxFileName& file2) { return file1.GetFullPath() < file2.GetFullPath(); });
 
-    if (mMostFrequentFrameRate == FrameRate(250000,10427))
-    {
-        // Some codecs use this framerate iso s24p.
-        mMostFrequentFrameRate = FrameRate::s24p;
-    }
+	// Check if files can be opened, and determine the most frequent frame/sample rates of the files.
 
-    mDialog.reset();
+	for (const wxFileName& filename : mFileNames)
+	{
+		if (filename.Exists())
+		{
+			if (filename.IsDir())
+			{
+				mNodes.push_back(boost::make_shared<AutoFolder>(filename));
+				indexFolder(filename, mFileNames.size() != 1); // Do not recurse if only one folder is given
+			}
+			else
+			{
+				FilePtr file = indexFile(filename);
+				if (file)
+				{
+					mNodes.push_back(file);
+				}
+			}
+		}
+	}
+
+	if (mMostFrequentFrameRate == FrameRate(250000, 10427))
+	{
+		// Some codecs use this framerate iso s24p.
+		mMostFrequentFrameRate = FrameRate::s24p;
+	}
+
+	mDialog.reset();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -158,6 +183,26 @@ void FileAnalyzer::addNodesToProjectView() const
         }
     }
 }
+
+bool FileAnalyzer::checkIfOkForPasteOrDrop() const
+{
+	for (model::NodePtr node : mNodes)
+	{
+		if (!node->isA<model::File>())
+		{
+			gui::StatusBar::get().timedInfoText(_("Only regular files can be pasted/dropped."));
+			return false;
+		}
+	}
+	if (mNodes.empty())
+	{
+		gui::StatusBar::get().timedInfoText(_("Some of these files cannot be used."));
+		return false;
+	}
+	return true;
+}
+
+
 
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS

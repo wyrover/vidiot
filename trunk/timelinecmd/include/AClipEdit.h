@@ -326,6 +326,14 @@ private:
     /// \param conversionmap mapping for 'maintaining links' that will be updated when splitting
     void replaceLinks();
 
+public:
+
+    // todo refactor into separate class: or better: make ReplacementMap inherit from the std map (i.s.o typedef) and then add a 'replaceLinks' method! and put that in a separate file!
+
+    /// \see replaceLinks
+    static void replaceLinks(ReplacementMap replacementMap);
+
+private:
     /// Merge all consecutive empty clips in any track of the sequence into one clip
     /// \see mergeConsecutiveEmptyClips(model::Tracks tracks)
     void mergeConsecutiveEmptyClips();

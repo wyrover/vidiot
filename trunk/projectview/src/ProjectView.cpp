@@ -811,6 +811,7 @@ bool ProjectView::selectionContainsRootNode() const
     return false;
 }
 
+// todo move to data object or make separate clipboard class
 bool ProjectView::storeSelectionInClipboard() const
 {
     if (getSelection().empty())
@@ -835,6 +836,7 @@ bool ProjectView::storeSelectionInClipboard() const
     return false;
 }
 
+// todo move to data object?
 void ProjectView::pasteFromClipboard()
 {
     model::FolderPtr target = getSelectedContainerOrRoot();

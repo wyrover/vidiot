@@ -79,14 +79,20 @@ void Preview::closeTimeline(timeline::Timeline* timeline)
 
 void Preview::selectTimeline(timeline::Timeline* timeline)
 {
-    hide(mPlayer);
-    if (timeline != 0)
-    {
+	if (timeline == nullptr)
+	{
+	    hide(mPlayer);
+	}
+	else
+	{
         ASSERT_MAP_CONTAINS(mPlayers,timeline);
-        mPlayer = mPlayers[timeline];
-        GetSizer()->Show(mPlayer);
-    }
-
+		if (mPlayer != mPlayers[timeline])
+		{
+			hide(mPlayer);
+			mPlayer = mPlayers[timeline];
+			GetSizer()->Show(mPlayer);
+		}
+	}
     GetSizer()->Layout();
 }
 

@@ -293,7 +293,7 @@
 													<count>24</count>
 													<item_version>1</item_version>
 													<item class_id="37" tracking_level="0" version="1">
-														<px class_id="38" class_name="model::VideoClip" tracking_level="1" version="2" object_id="_23">
+														<px class_id="38" class_name="model::VideoClip" tracking_level="1" version="3" object_id="_23">
 															<ClipInterval class_id="39" tracking_level="0" version="1">
 																<Clip class_id="40" tracking_level="0" version="2">
 																	<mLink class_id="41" tracking_level="0" version="0">
@@ -376,8 +376,12 @@
 																<numerator>0</numerator>
 																<denominator>1</denominator>
 															</mRotation>
+															<mRotationPositionOffset class_id="48" tracking_level="0" version="0">
+																<x>0</x>
+																<y>0</y>
+															</mRotationPositionOffset>
 															<mAlignment>0</mAlignment>
-															<mPosition class_id="48" tracking_level="0" version="0">
+															<mPosition>
 																<x>0</x>
 																<y>0</y>
 															</mPosition>
@@ -481,6 +485,10 @@
 																<numerator>0</numerator>
 																<denominator>1</denominator>
 															</mRotation>
+															<mRotationPositionOffset>
+																<x>0</x>
+																<y>0</y>
+															</mRotationPositionOffset>
 															<mAlignment>0</mAlignment>
 															<mPosition>
 																<x>0</x>
@@ -596,6 +604,10 @@
 																<numerator>0</numerator>
 																<denominator>1</denominator>
 															</mRotation>
+															<mRotationPositionOffset>
+																<x>0</x>
+																<y>0</y>
+															</mRotationPositionOffset>
 															<mAlignment>0</mAlignment>
 															<mPosition>
 																<x>0</x>
@@ -711,6 +723,10 @@
 																<numerator>0</numerator>
 																<denominator>1</denominator>
 															</mRotation>
+															<mRotationPositionOffset>
+																<x>0</x>
+																<y>0</y>
+															</mRotationPositionOffset>
 															<mAlignment>0</mAlignment>
 															<mPosition>
 																<x>0</x>
@@ -802,6 +818,10 @@
 																<numerator>0</numerator>
 																<denominator>1</denominator>
 															</mRotation>
+															<mRotationPositionOffset>
+																<x>0</x>
+																<y>0</y>
+															</mRotationPositionOffset>
 															<mAlignment>0</mAlignment>
 															<mPosition>
 																<x>0</x>
@@ -893,6 +913,10 @@
 																<numerator>0</numerator>
 																<denominator>1</denominator>
 															</mRotation>
+															<mRotationPositionOffset>
+																<x>0</x>
+																<y>0</y>
+															</mRotationPositionOffset>
 															<mAlignment>0</mAlignment>
 															<mPosition>
 																<x>0</x>
@@ -984,6 +1008,10 @@
 																<numerator>0</numerator>
 																<denominator>1</denominator>
 															</mRotation>
+															<mRotationPositionOffset>
+																<x>0</x>
+																<y>0</y>
+															</mRotationPositionOffset>
 															<mAlignment>0</mAlignment>
 															<mPosition>
 																<x>0</x>
@@ -1075,6 +1103,10 @@
 																<numerator>0</numerator>
 																<denominator>1</denominator>
 															</mRotation>
+															<mRotationPositionOffset>
+																<x>0</x>
+																<y>0</y>
+															</mRotationPositionOffset>
 															<mAlignment>0</mAlignment>
 															<mPosition>
 																<x>0</x>
@@ -1166,6 +1198,10 @@
 																<numerator>0</numerator>
 																<denominator>1</denominator>
 															</mRotation>
+															<mRotationPositionOffset>
+																<x>0</x>
+																<y>0</y>
+															</mRotationPositionOffset>
 															<mAlignment>0</mAlignment>
 															<mPosition>
 																<x>0</x>
@@ -1257,6 +1293,10 @@
 																<numerator>0</numerator>
 																<denominator>1</denominator>
 															</mRotation>
+															<mRotationPositionOffset>
+																<x>0</x>
+																<y>0</y>
+															</mRotationPositionOffset>
 															<mAlignment>0</mAlignment>
 															<mPosition>
 																<x>0</x>
@@ -1348,6 +1388,10 @@
 																<numerator>0</numerator>
 																<denominator>1</denominator>
 															</mRotation>
+															<mRotationPositionOffset>
+																<x>0</x>
+																<y>0</y>
+															</mRotationPositionOffset>
 															<mAlignment>0</mAlignment>
 															<mPosition>
 																<x>0</x>
@@ -1439,6 +1483,10 @@
 																<numerator>0</numerator>
 																<denominator>1</denominator>
 															</mRotation>
+															<mRotationPositionOffset>
+																<x>0</x>
+																<y>0</y>
+															</mRotationPositionOffset>
 															<mAlignment>0</mAlignment>
 															<mPosition>
 																<x>0</x>
@@ -1530,6 +1578,10 @@
 																<numerator>0</numerator>
 																<denominator>1</denominator>
 															</mRotation>
+															<mRotationPositionOffset>
+																<x>0</x>
+																<y>0</y>
+															</mRotationPositionOffset>
 															<mAlignment>0</mAlignment>
 															<mPosition>
 																<x>0</x>
@@ -1621,6 +1673,10 @@
 																<numerator>0</numerator>
 																<denominator>1</denominator>
 															</mRotation>
+															<mRotationPositionOffset>
+																<x>0</x>
+																<y>0</y>
+															</mRotationPositionOffset>
 															<mAlignment>0</mAlignment>
 															<mPosition>
 																<x>0</x>
@@ -1712,6 +1768,10 @@
 																<numerator>0</numerator>
 																<denominator>1</denominator>
 															</mRotation>
+															<mRotationPositionOffset>
+																<x>0</x>
+																<y>0</y>
+															</mRotationPositionOffset>
 															<mAlignment>0</mAlignment>
 															<mPosition>
 																<x>0</x>
@@ -1803,6 +1863,10 @@
 																<numerator>0</numerator>
 																<denominator>1</denominator>
 															</mRotation>
+															<mRotationPositionOffset>
+																<x>0</x>
+																<y>0</y>
+															</mRotationPositionOffset>
 															<mAlignment>0</mAlignment>
 															<mPosition>
 																<x>0</x>
@@ -1894,6 +1958,10 @@
 																<numerator>0</numerator>
 																<denominator>1</denominator>
 															</mRotation>
+															<mRotationPositionOffset>
+																<x>0</x>
+																<y>0</y>
+															</mRotationPositionOffset>
 															<mAlignment>0</mAlignment>
 															<mPosition>
 																<x>0</x>
@@ -1985,6 +2053,10 @@
 																<numerator>0</numerator>
 																<denominator>1</denominator>
 															</mRotation>
+															<mRotationPositionOffset>
+																<x>0</x>
+																<y>0</y>
+															</mRotationPositionOffset>
 															<mAlignment>0</mAlignment>
 															<mPosition>
 																<x>0</x>
@@ -2076,6 +2148,10 @@
 																<numerator>0</numerator>
 																<denominator>1</denominator>
 															</mRotation>
+															<mRotationPositionOffset>
+																<x>0</x>
+																<y>0</y>
+															</mRotationPositionOffset>
 															<mAlignment>0</mAlignment>
 															<mPosition>
 																<x>0</x>
@@ -2167,6 +2243,10 @@
 																<numerator>0</numerator>
 																<denominator>1</denominator>
 															</mRotation>
+															<mRotationPositionOffset>
+																<x>0</x>
+																<y>0</y>
+															</mRotationPositionOffset>
 															<mAlignment>0</mAlignment>
 															<mPosition>
 																<x>0</x>
@@ -2224,6 +2304,10 @@
 																	<numerator>0</numerator>
 																	<denominator>1</denominator>
 																</mRotation>
+																<mRotationPositionOffset>
+																	<x>0</x>
+																	<y>0</y>
+																</mRotationPositionOffset>
 																<mAlignment>0</mAlignment>
 																<mPosition>
 																	<x>0</x>
