@@ -48,7 +48,9 @@ public:
     // GET ALL ASSETS
     //////////////////////////////////////////////////////////////////////////
 
-    model::NodePtrs getAssets() const;
+	bool checkIfOkForPasteOrDrop() const;
+
+    model::NodePtrs getAssets() const; // todo rename to getNodes
 
 private:
 

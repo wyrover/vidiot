@@ -39,7 +39,6 @@ TimelineDropTarget::TimelineDropTarget(Timeline* timeline)
     // NOT: composite->Add(new TimelineDataObject(), true); -- Never via wxWidgets dnd interfaces, but handled directly
     composite->Add(new wxFileDataObject());
     SetDataObject(composite);
-    // todo copy/paste within timeline
 }
 
 TimelineDropTarget::~TimelineDropTarget()
@@ -56,6 +55,7 @@ wxDragResult TimelineDropTarget::OnEnter(wxCoord x, wxCoord y, wxDragResult def)
     GetData(); // Required to initialize the received data object properly
     wxDataObjectComposite* composite = static_cast<wxDataObjectComposite *>(GetDataObject());
     mFormat.reset(composite->GetReceivedFormat());
+	mNodes.clear();
 
     if (mFormat->IsStandard())
     {
@@ -64,36 +64,24 @@ wxDragResult TimelineDropTarget::OnEnter(wxCoord x, wxCoord y, wxDragResult def)
         {
             wxFileDataObject* object = static_cast<wxFileDataObject*>(composite->GetObject(*mFormat));
             ASSERT_NONZERO(object);
-            std::list<wxString> filenames;
-            for (wxString filename : object->GetFilenames())
-            {
-                filenames.push_back(filename);
-
-            }
-            boost::shared_ptr<model::FileAnalyzer> analyzer = boost::make_shared<model::FileAnalyzer>(filenames);
-            mNodes = analyzer->getNodes();
+            boost::shared_ptr<model::FileAnalyzer> analyzer = boost::make_shared<model::FileAnalyzer>(object->GetFilenames());
+			if (analyzer->checkIfOkForPasteOrDrop())
+			{
+	            mNodes = analyzer->getNodes();
+			}
         }
     }
-    else
+    else if (mFormat->GetId() == ProjectViewDataObject::sFormat)
     {
-        // Custom data object
-        ASSERT_EQUALS(mFormat->GetId(), ProjectViewDataObject::sFormat); // Only supported custom data object
         ProjectViewDataObject* object = dynamic_cast<ProjectViewDataObject*>(composite->GetObject(*mFormat));
         ASSERT_NONZERO(object);
-        mNodes = object->getAssets();
+		if (object->checkIfOkForPasteOrDrop())
+		{
+			mNodes = object->getAssets();
+		}
     }
 
     getMouse().dragMove(wxPoint(x, y));
-
-    for (model::NodePtr node : mNodes)
-    {
-        if (!node->isA<model::File>())
-        {
-            // Dropping anything other than files into the timeline is not supported.
-            mNodes.clear();
-            break;
-        }
-    }
 
     // todo start drag when playback is active?
     if (validDataDragged())

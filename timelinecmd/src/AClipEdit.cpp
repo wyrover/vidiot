@@ -791,8 +791,32 @@ model::IClips AClipEdit::expandReplacements(const model::IClips& original)
 
 void AClipEdit::replaceLinks()
 {
+    replaceLinks(mExpandedReplacements);
+    if (Config::ReadBool(Config::sPathTest))
+    {
+        // Only in test mode: verify all links.
+        for (model::TrackPtr track : getSequence()->getTracks())
+        {
+            for (model::IClipPtr clip : track->getClips())
+            {
+                if (clip->getLink())
+                {
+                    if (clip != clip->getLink()->getLink())
+                    {
+                        LOG_ERROR << dump(getSequence());
+                    }
+                    ASSERT_EQUALS(clip, clip->getLink()->getLink());
+                }
+            }
+        }
+    }
+}
+
+// static
+void AClipEdit::replaceLinks(ReplacementMap replacementMap)
+{
     LOG_DEBUG;
-    for ( ReplacementMap::value_type link : mExpandedReplacements )
+    for (ReplacementMap::value_type link : replacementMap)
     {
         model::IClipPtr clip1 = link.first;
         model::IClips new1 = link.second;
@@ -807,9 +831,9 @@ void AClipEdit::replaceLinks()
             // (since link1 must be replaced with a clip whose link is replacement1). This must be guaranteed
             // by all AClipEdit derived classes (not solved generally in the base class since that would
             // cause lots of redundant replacements).
-            ASSERT(mExpandedReplacements.find(clip2) != mExpandedReplacements.end())(clip1)(clip2)(mReplacements)(mExpandedReplacements);
+            ASSERT(replacementMap.find(clip2) != replacementMap.end())(clip1)(clip2)(replacementMap);
 
-            model::IClips new2 = mExpandedReplacements[clip2];
+            model::IClips new2 = replacementMap[clip2];
             model::IClips::iterator it2 = new2.begin();
 
             auto NoLinkingAllowed = [](model::IClipPtr clip)->bool
@@ -844,25 +868,6 @@ void AClipEdit::replaceLinks()
             for (; it2 != new2.end(); ++it2)
             {
                 (*it2)->setLink(model::IClipPtr());
-            }
-        }
-    }
-
-    if (Config::ReadBool(Config::sPathTest))
-    {
-        // Only in test mode: verify all links.
-        for ( model::TrackPtr track : getSequence()->getTracks() )
-        {
-            for ( model::IClipPtr clip : track->getClips() )
-            {
-                if (clip->getLink())
-                {
-                    if (clip != clip->getLink()->getLink())
-                    {
-                        LOG_ERROR << dump(getSequence());
-                    }
-                    ASSERT_EQUALS(clip, clip->getLink()->getLink());
-                }
             }
         }
     }

@@ -17,9 +17,23 @@
 
 #include "Clipboard.h"
 
+#include "Cursor.h"
+#include "EventClipboard.h"
+#include "ExecuteDrop.h"
+#include "FileAnalyzer.h"
+#include "Keyboard.h"
+#include "ProjectViewDataObject.h"
+#include "Sequence.h"
+#include "Selection.h"
+#include "State.h"
 #include "Timeline.h"
+#include "TimelineDataObject.h"
+#include "Track.h"
+#include "TrackCreator.h"
 #include "UtilLog.h"
 #include "Window.h"
+
+// todo rename to TimelineClipboard
 
 namespace gui { namespace timeline {
 
@@ -54,7 +68,7 @@ void Clipboard::onCutFromMainMenu(wxCommandEvent& event)
     event.Skip(!focus);
     if (focus)
     {
-        onCut();
+        getStateMachine().process_event(timeline::state::EvCut());
     }
 }
 
@@ -64,7 +78,7 @@ void Clipboard::onCopyFromMainMenu(wxCommandEvent& event)
     event.Skip(!focus);
     if (focus)
     {
-        onCopy();
+        getStateMachine().process_event(timeline::state::EvCopy());
     }
 }
 
@@ -75,10 +89,10 @@ void Clipboard::onPasteFromMainMenu(wxCommandEvent& event)
     event.Skip(!focus);
     if (focus)
     {
-        onPaste();
+        getStateMachine().process_event(timeline::state::EvPaste());
     }
-
 }
+// todo popup menu?
 
 //////////////////////////////////////////////////////////////////////////
 // EVENTS
@@ -87,20 +101,84 @@ void Clipboard::onPasteFromMainMenu(wxCommandEvent& event)
 void Clipboard::onCut()
 {
     LOG_INFO;
-    // todo via state machine?
-    // todo popup menu?
+    TimelineDataObject* dataObject = new TimelineDataObject(getSequence());
+    if (dataObject->storeInClipboard())
+    {
+		getSelection().deleteClips();
+    }
 }
 
 void Clipboard::onCopy()
 {
     LOG_INFO;
-
+    TimelineDataObject* dataObject = new TimelineDataObject(getSequence());
+    dataObject->storeInClipboard();
 }
 
 void Clipboard::onPaste()
 {
     LOG_INFO;
-
+	model::NodePtrs nodes;
+    if (wxTheClipboard->Open())
+    {
+        if (wxTheClipboard->IsSupported(TimelineDataObject::sFormat))
+        {
+            TimelineDataObject data;
+            wxTheClipboard->GetData(data);
+            wxTheClipboard->Close();
+			command::ExecuteDrop* command = new command::ExecuteDrop(getSequence(), true);
+			command->onDrop(data.getDrops(getSequence(),getCursor().getLogicalPosition())); 
+			command->submit();
+        }
+        else
+		{
+			if (wxTheClipboard->IsSupported(wxDataFormat(wxDF_FILENAME)))
+			{
+				wxFileDataObject data;
+				wxTheClipboard->GetData(data);
+				wxTheClipboard->Close();
+				boost::shared_ptr<model::FileAnalyzer> analyzer = boost::make_shared<model::FileAnalyzer>(data.GetFilenames());
+				if (analyzer->checkIfOkForPasteOrDrop())
+				{
+					nodes = analyzer->getNodes();
+				}
+			}
+			else if (wxTheClipboard->IsSupported(wxDataFormat(ProjectViewDataObject::sFormat)))
+			{
+				ProjectViewDataObject data;
+				wxTheClipboard->GetData(data);
+				wxTheClipboard->Close();
+				if (data.checkIfOkForPasteOrDrop())
+				{
+					nodes = data.getAssets();
+				}
+			}
+			else
+			{
+				wxTheClipboard->Close();
+			}
+			if (!nodes.empty())
+			{
+				::command::TrackCreator c(nodes);
+				model::TrackPtr video = c.getVideoTrack();
+				model::TrackPtr audio = c.getAudioTrack();
+				command::Drops drops;
+				command::Drop videoDrop;
+				videoDrop.clips = video->getClips();
+				videoDrop.position = getCursor().getLogicalPosition();
+				videoDrop.track = getSequence()->getVideoTrack(0);
+				command::Drop audioDrop;
+				audioDrop.clips = audio->getClips();
+				audioDrop.position = getCursor().getLogicalPosition();
+				audioDrop.track = getSequence()->getAudioTrack(0);
+				drops.push_back(videoDrop);
+				drops.push_back(audioDrop);
+				command::ExecuteDrop* command = new command::ExecuteDrop(getSequence(), true);
+				command->onDrop(drops);
+				command->submit();
+			}
+		}
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////

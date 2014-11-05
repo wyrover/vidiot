@@ -18,11 +18,18 @@
 #ifndef TIMELINE_DATA_OBJECT_H
 #define TIMELINE_DATA_OBJECT_H
 
+#include "UtilFrameRate.h"
+
 namespace gui { namespace timeline {
 
+    namespace command {
+        struct Drop;
+        typedef std::list<Drop> Drops;
+    }
+
 class TimelineDataObject
-    :   public wxDataObjectSimple
-    ,   public boost::noncopyable
+    : public wxTextDataObject
+    , public boost::noncopyable
 {
 public:
 
@@ -30,39 +37,64 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
+    /// Constructor for reading pasted data from the clipboard.
     TimelineDataObject();
 
-    /// The data in the object is deliberately copied.
-    /// Only pointers will be exchanged. By using copies (in the data object)
-    /// their lifetime is maintained by the data object.
-    /// \param videoTracks list of video clips, divided into tracks
-    /// \param audioTracks list of audio clips, divided into tracks
-    TimelineDataObject(model::Tracks videoTracks, model::Tracks audioTracks);
+    /// Constructor for storing copied data in the clipboard.
+    /// This constructor may only be called if there is a project open, since
+    /// it requires getting the Properties object.
+    /// \param sequence All selected clips in the sequence are made part of the object.
+    TimelineDataObject(model::SequencePtr sequence);
 
     virtual ~TimelineDataObject();
 
     static const wxString sFormat;
 
     //////////////////////////////////////////////////////////////////////////
-    // FROM wxDataObjectSimple
+    // FROM wxTextDataObject
     //////////////////////////////////////////////////////////////////////////
 
-    virtual bool GetDataHere(void *buf) const override;
-    virtual size_t GetDataSize () const override;
+    /// Called when data is copied from the clipboard onto this object.
     virtual bool SetData(size_t len, const void *buf) override;
 
     //////////////////////////////////////////////////////////////////////////
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    model::Tracks getVideoTracks() const;
-    model::Tracks getAudioTracks() const;
+	/// \return drops to be used in ExecuteDrop for adding the clips to the sequence
+	/// \param sequence sequence to be dropped upon (required for looking up tracks)
+	/// \param origin origin (in the sequence) of the leftmost added clip
+	command::Drops getDrops(const model::SequencePtr& sequence, pts sequenceOrigin) const;
+
+    bool storeInClipboard();
 
 private:
 
-    wxDataFormat mFormat;
-    model::Tracks mVideoTracks;
-    model::Tracks mAudioTracks;
+    //////////////////////////////////////////////////////////////////////////
+    // MEMBERS
+    //////////////////////////////////////////////////////////////////////////
+
+    FrameRate mFrameRate; ///< FrameRate used when the data was put in the clipboard
+    int mAudioSampleRate; ///< SampleRate used when the data was put in the clipboard
+    command::Drops mDropsVideo;
+    command::Drops mDropsAudio;
+
+    //////////////////////////////////////////////////////////////////////////
+    // HELPER METHODS
+    //////////////////////////////////////////////////////////////////////////
+
+
+    //////////////////////////////////////////////////////////////////////////
+    // SERIALIZATION
+    //////////////////////////////////////////////////////////////////////////
+
+    void deserialize(wxString from);
+    wxString serialize() const;
+
+    friend class boost::serialization::access;
+
+    template<class Archive>
+    void serialize(Archive & ar, const unsigned int version);
 };
 
 }} // namespace

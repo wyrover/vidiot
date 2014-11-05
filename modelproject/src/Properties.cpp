@@ -25,6 +25,10 @@
 
 namespace model {
 
+//////////////////////////////////////////////////////////////////////////
+// INITIALIZATION
+//////////////////////////////////////////////////////////////////////////
+
 Properties::Properties()
 :   mFrameRate(Config::ReadString(Config::sPathDefaultFrameRate))
 ,   mVideoWidth(Config::ReadLong(Config::sPathDefaultVideoWidth))
@@ -43,6 +47,17 @@ Properties::Properties(const FrameRate& fr)
 ,   mAudioChannels(1)
 ,   mAudioSampleRate(44100)
 ,   mDefaultRender()
+{
+    VAR_DEBUG(this);
+}
+
+Properties::Properties(const Properties& other)
+    : mFrameRate(other.mFrameRate)
+    , mVideoWidth(other.mVideoWidth)
+    , mVideoHeight(other.mVideoHeight)
+    , mAudioChannels(other.mAudioChannels)
+    , mAudioSampleRate(other.mAudioSampleRate)
+    , mDefaultRender()
 {
     VAR_DEBUG(this);
 }

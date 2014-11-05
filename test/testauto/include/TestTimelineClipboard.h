@@ -15,50 +15,50 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef CLIPBOARD_H
-#define CLIPBOARD_H
+#ifndef TEST_TIMELINE_CLIPBOARD_H
+#define TEST_TIMELINE_CLIPBOARD_H
 
-#include "Part.h"
+#include "TestAuto.h"
 
-namespace gui { namespace timeline {
-
-class Clipboard
-    :   public Part
+namespace test
+{
+class TestTimelineClipboard : public CxxTest::TestSuite // Must be on same line as class definition. Otherwise 'No tests defined error
+    ,   public SuiteCreator<TestTimelineClipboard>
 {
 public:
 
     //////////////////////////////////////////////////////////////////////////
-    // INITIALIZATION METHODS
+    // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    Clipboard(Timeline* timeline);
-    virtual ~Clipboard();
+    virtual void setUp();       ///< Called before each test.
+    virtual void tearDown();    ///< Called after each test.
 
     //////////////////////////////////////////////////////////////////////////
-    // EVENTS
+    // TEST CASES
     //////////////////////////////////////////////////////////////////////////
 
-    void onCut();
-    void onCopy();
-    void onPaste();
+    void testCutAndPaste();
+
+	void testCopyAndPaste();
+
+	void testPasteFromProjectView();
+
+	void testPasteFromProjectView_IllegalNodes();
+
+	void testPasteFromFileSystem();
+
+	void testPasteFromFileSystem_IllegalNodes();
 
 private:
 
     //////////////////////////////////////////////////////////////////////////
-    // MAIN WINDOW EDIT MENU
+    // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    void onCutFromMainMenu(wxCommandEvent& event);
-    void onCopyFromMainMenu(wxCommandEvent& event);
-    void onPasteFromMainMenu(wxCommandEvent& event);
-
-    //////////////////////////////////////////////////////////////////////////
-    // HELPER METHODS
-    //////////////////////////////////////////////////////////////////////////
-
-    bool hasKeyboardFocus() const;
+    FixtureProject mProjectFixture;
 };
-
-}} // namespace
+}
+using namespace test;
 
 #endif

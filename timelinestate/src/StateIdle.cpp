@@ -19,11 +19,13 @@
 
 #include "AudioTransitionFactory.h"
 #include "Clip.h"
+#include "Clipboard.h"
 #include "ClipView.h"
 #include "CreateTransitionHelper.h"
 #include "Cursor.h"
 #include "Drag.h"
 #include "EmptyClip.h"
+#include "EventClipboard.h"
 #include "EventDrag.h"
 #include "EventKey.h"
 #include "EventMouse.h"
@@ -82,7 +84,28 @@ Idle::~Idle() // exit
 // EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-boost::statechart::result Idle::react( const EvLeftDown& evt )
+boost::statechart::result Idle::react(const EvCut& evt)
+{
+    VAR_DEBUG(evt);
+    getClipboard().onCut();
+    return discard_event();
+}
+
+boost::statechart::result Idle::react(const EvCopy& evt)
+{
+    VAR_DEBUG(evt);
+    getClipboard().onCopy();
+    return discard_event();
+}
+
+boost::statechart::result Idle::react(const EvPaste& evt)
+{
+    VAR_DEBUG(evt);
+    getClipboard().onPaste();
+    return discard_event();
+}
+
+boost::statechart::result Idle::react(const EvLeftDown& evt)
 {
     VAR_DEBUG(evt);
     return leftDown();

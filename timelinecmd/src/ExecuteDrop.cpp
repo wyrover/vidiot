@@ -61,6 +61,27 @@ std::ostream& operator<<(std::ostream& os, const Drop& obj)
 }
 
 //////////////////////////////////////////////////////////////////////////
+// SERIALIZATION
+//////////////////////////////////////////////////////////////////////////
+
+template<class Archive>
+void Drop::serialize(Archive & ar, const unsigned int version)
+{
+    try
+    {
+        ar & BOOST_SERIALIZATION_NVP(track); // NOTE: for use in the TimelineDataObject class only the index is required.
+        ar & BOOST_SERIALIZATION_NVP(position);
+        ar & BOOST_SERIALIZATION_NVP(clips);
+    }
+    catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
+    catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
+    catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
+    catch (...)                                  { LOG_ERROR;                                   throw; }
+}
+template void Drop::serialize<boost::archive::xml_oarchive>(boost::archive::xml_oarchive& ar, const unsigned int archiveVersion);
+template void Drop::serialize<boost::archive::xml_iarchive>(boost::archive::xml_iarchive& ar, const unsigned int archiveVersion);
+
+//////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 

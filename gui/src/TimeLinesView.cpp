@@ -243,6 +243,7 @@ void TimelinesView::load(Archive & ar, const unsigned int version)
     {
         ASSERT_LESS_THAN(selectedPage,mNotebook.GetPageCount());
         mNotebook.SetSelection(selectedPage);
+        updateActivation();
     }
 
 }

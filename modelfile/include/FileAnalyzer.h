@@ -37,6 +37,12 @@ public:
 
     explicit FileAnalyzer(wxStrings fileNames, wxWindow* parent = nullptr);
 
+	/// Analyzer for file name lists coming from an external source, like
+	/// drag and drop from the file system, or a clipboard paste.
+    explicit FileAnalyzer(const wxArrayString& fileNames, wxWindow* parent = nullptr);
+
+	void init();
+
     //////////////////////////////////////////////////////////////////////////
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
@@ -56,12 +62,15 @@ public:
 
     void addNodesToProjectView() const;
 
+	bool checkIfOkForPasteOrDrop() const;
+
 private:
 
     //////////////////////////////////////////////////////////////////////////
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
+	wxWindow* mParent;
     boost::shared_ptr<wxProgressDialog> mDialog;
     wxFileNames mFileNames; ///< Sorted list of input files.
 

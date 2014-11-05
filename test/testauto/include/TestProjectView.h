@@ -43,6 +43,7 @@ public:
     void testClipboardCopy();
     void testClipboardPaste_ClipboardEmpty();
     void testClipboardPaste_ClipboardNodes();
+	void testClipboardPaste_ClipboardFiles();
 
 private:
 

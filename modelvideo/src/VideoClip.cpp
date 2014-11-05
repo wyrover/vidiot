@@ -513,6 +513,10 @@ void VideoClip::serialize(Archive & ar, const unsigned int version)
         {
             ar & BOOST_SERIALIZATION_NVP(mRotation);
         }
+		if (version >= 3)
+		{
+            ar & BOOST_SERIALIZATION_NVP(mRotationPositionOffset);
+		}
         ar & BOOST_SERIALIZATION_NVP(mAlignment);
         ar & BOOST_SERIALIZATION_NVP(mPosition);
     }

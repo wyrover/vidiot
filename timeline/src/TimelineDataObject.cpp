@@ -17,7 +17,10 @@
 
 #include "TimelineDataObject.h"
 
+#include "AClipEdit.h"
 #include "IClip.h"
+#include "Properties.h"
+#include "StatusBar.h"
 #include "UtilLog.h"
 
 namespace gui { namespace timeline {
@@ -25,21 +28,81 @@ namespace gui { namespace timeline {
 const wxString TimelineDataObject::sFormat = wxString("application/vidiot/clips");
 
 TimelineDataObject::TimelineDataObject()
-: wxDataObjectSimple()
-, mFormat(sFormat)
-, mVideoTracks()
-, mAudioTracks()
+    : wxTextDataObject()
+    , mFrameRate(0,1)
+    , mAudioSampleRate(0)
 {
-    SetFormat(mFormat);
+    SetFormat(wxDataFormat(sFormat));
 }
 
-TimelineDataObject::TimelineDataObject(model::Tracks videoTracks, model::Tracks audioTracks)
-: wxDataObjectSimple()
-, mFormat(sFormat)
-, mVideoTracks(videoTracks)
-, mAudioTracks(audioTracks)
+TimelineDataObject::TimelineDataObject(model::SequencePtr sequence)
+    : wxTextDataObject()
+    , mFrameRate(model::Properties::get().getFrameRate())
+    , mAudioSampleRate(model::Properties::get().getAudioSampleRate())
 {
-    SetFormat(mFormat);
+    SetFormat(wxDataFormat(sFormat));
+
+    // todo disable menu options for cut and copy if no project open
+    command::ReplacementMap replacementMap;
+
+    auto addDrop = [&replacementMap](command::Drops& drops, model::TrackPtr track, model::IClips& clips)
+    {
+        ASSERT(!clips.empty());
+        command::Drop d;
+        d.position = clips.front()->getLeftPts();
+        d.clips = make_cloned(clips);
+        ASSERT_EQUALS(clips.size(), d.clips.size());
+        model::IClips::iterator itOriginal = clips.begin();
+        model::IClips::iterator itReplacement = d.clips.begin();
+        while (itOriginal != clips.end())
+        {
+            ASSERT(itReplacement != d.clips.end());
+            model::IClips replacements;
+            replacements.push_back(*itReplacement);
+            replacementMap[*itOriginal] = replacements;
+            ++itOriginal;
+            ++itReplacement;
+        }
+        d.track = track;
+        drops.push_back(d);
+        clips.clear();
+    };
+
+    auto getDropsInTrack = [&addDrop](command::Drops& drops, model::TrackPtr track)
+    {
+        model::TrackPtr tempTrack = boost::make_shared<model::Track>();
+        tempTrack->setIndex(track->getIndex());
+        model::IClips clips;
+        for (model::IClipPtr clip : track->getClips())
+        {
+            if (clip->getSelected())
+            {
+                clips.push_back(clip);
+            }
+            else if (!clips.empty())
+            {
+                addDrop(drops, tempTrack, clips);
+            }
+        }
+        if (!clips.empty())
+        {
+            addDrop(drops, tempTrack, clips);
+        }
+    };
+
+    for (model::TrackPtr track : sequence->getVideoTracks())
+    {
+        getDropsInTrack(mDropsVideo, track);
+    }
+    for (model::TrackPtr track : sequence->getAudioTracks())
+    {
+        getDropsInTrack(mDropsAudio, track);
+    }
+
+    // Restore links between (cloned) clips.
+    command::AClipEdit::replaceLinks(replacementMap);
+
+    SetText(serialize());
 }
 
 TimelineDataObject::~TimelineDataObject()
@@ -47,82 +110,147 @@ TimelineDataObject::~TimelineDataObject()
 }
 
 //////////////////////////////////////////////////////////////////////////
-// FROM wxDataObjectSimple
+// FROM wxTextDataObject
 //////////////////////////////////////////////////////////////////////////
-
-bool TimelineDataObject::GetDataHere(void *buf) const
-{
-    unsigned int* pCounters = static_cast<unsigned int*>(buf);
-    *pCounters = mVideoTracks.size();
-    ++pCounters;
-    *pCounters = mAudioTracks.size();
-    ++pCounters;
-
-    model::TrackPtr* tracks = 
-        static_cast<model::TrackPtr*>(static_cast<void*>(pCounters));
-
-    for (model::TrackPtr track : mVideoTracks)
-    {
-        *tracks = track;
-        tracks++;
-    }
-    for (model::TrackPtr track : mAudioTracks)
-    {
-        *tracks = track;
-        tracks++;
-    }
-    return true;
-}
-
-size_t TimelineDataObject::GetDataSize () const
-{
-    return 
-        1 + // First byte indicates number of video tracks
-        1 + // Second byte indicates number of audio tracks
-        sizeof(model::TrackPtr) * (mVideoTracks.size() + mAudioTracks.size());
-}
 
 bool TimelineDataObject::SetData(size_t len, const void *buf)
 {
-    unsigned int* pCounters = 
-        const_cast<unsigned int*>(static_cast<const unsigned int*>(buf));
-    unsigned int nVideoTracks = *pCounters;
-    ++pCounters;
-    unsigned int nAudioTracks = *pCounters;
-    ++pCounters;
-
-    model::TrackPtr* tracks =
-        static_cast<model::TrackPtr*>(static_cast<void*>(pCounters));
-
-    mVideoTracks.clear();
-    for (unsigned int i = 0; i < nVideoTracks; ++i)
+    bool ok = wxTextDataObject::SetData(len, buf);
+    if (ok)
     {
-        model::TrackPtr track = *tracks;
-        mVideoTracks.push_back(track);
-        ++tracks;
+        deserialize(GetText());
     }
-    mAudioTracks.clear();
-    for (unsigned int i = 0; i < nAudioTracks; ++i)
-    {
-        model::TrackPtr track = *tracks;
-        mAudioTracks.push_back(track);
-        ++tracks;
-    }
-    return true;
+    return ok;
 }
 
 //////////////////////////////////////////////////////////////////////////
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-model::Tracks TimelineDataObject::getVideoTracks() const
+command::Drops TimelineDataObject::getDrops(const model::SequencePtr& sequence, pts sequenceOrigin) const
 {
-    return mVideoTracks;
+	ASSERT_MORE_THAN_EQUALS_ZERO(sequenceOrigin);
+
+	// Clips are 'copied' using their normal position in the sequence.
+	// However, for dropping, the leftmost pasted clip should be dropped at position '0'.
+    pts clipsOrigin = std::numeric_limits<pts>::max();
+    std::for_each(mDropsVideo.begin(), mDropsVideo.end(), [&clipsOrigin](const command::Drop& d) { clipsOrigin = std::min(clipsOrigin, d.position); });
+    std::for_each(mDropsAudio.begin(), mDropsAudio.end(), [&clipsOrigin](const command::Drop& d) { clipsOrigin = std::min(clipsOrigin, d.position); });
+
+	ASSERT_MORE_THAN_EQUALS_ZERO(clipsOrigin);
+
+	int nVideoTracks = sequence->getVideoTracks().size();
+	int nAudioTracks = sequence->getAudioTracks().size();
+
+	command::Drops result;
+	for (command::Drop drop : mDropsVideo)
+	{
+		if (drop.track->getIndex() >= nVideoTracks)
+		{
+			StatusBar::get().timedInfoText(_("Cannot paste: not enough video tracks."));
+			return command::Drops();
+		}
+		drop.track = sequence->getVideoTrack(drop.track->getIndex());
+		drop.position += (-clipsOrigin) + sequenceOrigin;
+		result.push_back(drop);
+	}
+	for (command::Drop drop : mDropsAudio)
+	{
+		if (drop.track->getIndex() >= nAudioTracks)
+		{
+			StatusBar::get().timedInfoText(_("Cannot paste: not enough audio tracks."));
+			return command::Drops();
+		}
+		drop.track = sequence->getAudioTrack(drop.track->getIndex());
+		drop.position += (-clipsOrigin) + sequenceOrigin;
+		result.push_back(drop);
+	}
+
+	return result;
 }
 
-model::Tracks TimelineDataObject::getAudioTracks() const
+bool TimelineDataObject::storeInClipboard()
 {
-    return mAudioTracks;
+    if (mDropsVideo.empty() && mDropsAudio.empty())
+    {
+        StatusBar::get().timedInfoText(_("Nothing to b e stored in clipboard."));
+    }
+    else
+    {
+        if (wxTheClipboard->Open())
+        {
+            wxTheClipboard->SetData(this);
+            wxTheClipboard->Close();
+            return true;
+        }
+    }
+    return false;
 }
 
+//////////////////////////////////////////////////////////////////////////
+// HELPER METHODS
+//////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////
+// SERIALIZATION
+//////////////////////////////////////////////////////////////////////////
+
+const std::string sXmlName("clips");
+
+void TimelineDataObject::deserialize(wxString from)
+{
+    std::istringstream store(from.ToStdString());
+    try
+    {
+        boost::archive::xml_iarchive ar(store);
+        ar & boost::serialization::make_nvp(sXmlName.c_str(), *this);
+    }
+    catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
+    catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
+    catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
+    catch (...)                                  { LOG_ERROR;                                   throw; }
+}
+
+wxString TimelineDataObject::serialize() const
+{
+    std::ostringstream store;
+    try
+    {
+        boost::archive::xml_oarchive ar(store);
+        ar & boost::serialization::make_nvp(sXmlName.c_str(), *this);
+    }
+    catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
+    catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
+    catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
+    catch (...)                                  { LOG_ERROR;                                   throw; }
+    return store.str();
+}
+
+
+template<class Archive>
+void TimelineDataObject::serialize(Archive & ar, const unsigned int version)
+{
+    ar & BOOST_SERIALIZATION_NVP(mFrameRate);
+    ar & BOOST_SERIALIZATION_NVP(mAudioSampleRate);
+    bool ok = true;
+    if (Archive::is_loading::value)
+    {
+        if ((mFrameRate != model::Properties::get().getFrameRate()) ||
+            (mAudioSampleRate != model::Properties::get().getAudioSampleRate()))
+        {
+            VAR_ERROR(mFrameRate)(mAudioSampleRate);
+            StatusBar::get().timedInfoText(_("Data in clipboard has incompatible properties."));
+            ok = false;
+        }
+    }
+    if (ok)
+    {
+        ar & BOOST_SERIALIZATION_NVP(mDropsVideo);
+        ar & BOOST_SERIALIZATION_NVP(mDropsAudio);
+    }
+    // todo handle pasting of empty data object
+}
+
+template void TimelineDataObject::serialize<boost::archive::xml_oarchive>(boost::archive::xml_oarchive& ar, const unsigned int archiveVersion);
+template void TimelineDataObject::serialize<boost::archive::xml_iarchive>(boost::archive::xml_iarchive& ar, const unsigned int archiveVersion);
 }} // namespace

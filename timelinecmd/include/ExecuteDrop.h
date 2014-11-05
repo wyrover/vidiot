@@ -41,6 +41,15 @@ struct Drop
     Drop();
     Drop(const Drop& other);
     virtual ~Drop();
+
+    //////////////////////////////////////////////////////////////////////////
+    // SERIALIZATION
+    //////////////////////////////////////////////////////////////////////////
+
+    friend class boost::serialization::access;
+
+    template<class Archive>
+    void serialize(Archive & ar, const unsigned int version);
 };
 typedef std::list<Drop> Drops;
 

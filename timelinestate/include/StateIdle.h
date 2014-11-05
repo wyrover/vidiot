@@ -23,6 +23,9 @@
 
 namespace gui { namespace timeline { namespace state {
 
+struct EvCut;
+struct EvCopy;
+struct EvPaste;
 struct EvLeftDown;
 struct EvLeftDouble;
 struct EvRightDown;
@@ -44,6 +47,9 @@ struct Idle
     virtual ~Idle();
 
     typedef boost::mpl::list<
+        boost::statechart::custom_reaction< EvCut >,
+        boost::statechart::custom_reaction< EvCopy >,
+        boost::statechart::custom_reaction< EvPaste >,
         boost::statechart::custom_reaction< EvLeftDown >,
         boost::statechart::custom_reaction< EvLeftDouble >,
         boost::statechart::custom_reaction< EvRightDown >,
@@ -58,14 +64,17 @@ struct Idle
     // EVENTS
     //////////////////////////////////////////////////////////////////////////
 
-    boost::statechart::result react( const EvLeftDown& evt );
-    boost::statechart::result react( const EvLeftDouble& evt );
-    boost::statechart::result react( const EvRightDown& evt );
-    boost::statechart::result react( const EvRightDouble& evt );
-    boost::statechart::result react( const EvMotion& evt );
-    boost::statechart::result react( const EvKeyDown& evt);
-    boost::statechart::result react( const EvDragEnter& evt);
-    boost::statechart::result react( const EvPlaybackChanged& evt);
+    boost::statechart::result react(const EvCut& evt);
+    boost::statechart::result react(const EvCopy& evt);
+    boost::statechart::result react(const EvPaste& evt);
+    boost::statechart::result react(const EvLeftDown& evt);
+    boost::statechart::result react(const EvLeftDouble& evt);
+    boost::statechart::result react(const EvRightDown& evt);
+    boost::statechart::result react(const EvRightDouble& evt);
+    boost::statechart::result react(const EvMotion& evt);
+    boost::statechart::result react(const EvKeyDown& evt);
+    boost::statechart::result react(const EvDragEnter& evt);
+    boost::statechart::result react(const EvPlaybackChanged& evt);
 
 private:
 
