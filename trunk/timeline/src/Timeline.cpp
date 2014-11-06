@@ -18,7 +18,6 @@
 #include "Timeline.h"
 
 #include "AudioView.h"
-#include "Clipboard.h"
 #include "Constants.h"
 #include "Cursor.h"
 #include "Details.h"
@@ -37,6 +36,7 @@
 #include "SequenceView.h"
 #include "State.h"
 #include "ThumbnailView.h"
+#include "TimelineClipboard.h"
 #include "Tooltip.h"
 #include "Track.h"
 #include "Trim.h"
@@ -70,7 +70,7 @@ Timeline::Timeline(wxWindow *parent, const model::SequencePtr& sequence, bool be
 ,   mViewMap(new ViewMap(this))
 ,   mIntervals(new Intervals(this))
 ,   mKeyboard(new Keyboard(this))
-,   mClipboard(new Clipboard(this))
+,   mClipboard(new TimelineClipboard(this))
 ,   mMouse(new Mouse(this))
 ,   mScroll(new Scrolling(this))
 ,   mSelection(new Selection(this))
@@ -211,12 +211,12 @@ const Keyboard& Timeline::getKeyboard() const
     return *mKeyboard;
 }
 
-Clipboard& Timeline::getClipboard()
+TimelineClipboard& Timeline::getClipboard()
 {
     return *mClipboard;
 }
 
-const Clipboard& Timeline::getClipboard() const
+const TimelineClipboard& Timeline::getClipboard() const
 {
     return *mClipboard;
 }

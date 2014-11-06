@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#include "Clipboard.h"
+#include "TimelineClipboard.h"
 
 #include "Cursor.h"
 #include "EventClipboard.h"
@@ -33,36 +33,34 @@
 #include "UtilLog.h"
 #include "Window.h"
 
-// todo rename to TimelineClipboard
-
 namespace gui { namespace timeline {
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
-Clipboard::Clipboard(Timeline* timeline)
+TimelineClipboard::TimelineClipboard(Timeline* timeline)
     : Part(timeline)
 {
     VAR_DEBUG(this);
-    gui::Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED, &Clipboard::onCutFromMainMenu, this, wxID_CUT);
-    gui::Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED, &Clipboard::onCopyFromMainMenu, this, wxID_COPY);
-    gui::Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED, &Clipboard::onPasteFromMainMenu, this, wxID_PASTE);
+    gui::Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED, &TimelineClipboard::onCutFromMainMenu, this, wxID_CUT);
+    gui::Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED, &TimelineClipboard::onCopyFromMainMenu, this, wxID_COPY);
+    gui::Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED, &TimelineClipboard::onPasteFromMainMenu, this, wxID_PASTE);
 }
 
-Clipboard::~Clipboard()
+TimelineClipboard::~TimelineClipboard()
 {
     VAR_DEBUG(this);
-    gui::Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED, &Clipboard::onCutFromMainMenu, this, wxID_CUT);
-    gui::Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED, &Clipboard::onCopyFromMainMenu, this, wxID_COPY);
-    gui::Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED, &Clipboard::onPasteFromMainMenu, this, wxID_PASTE);
+    gui::Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED, &TimelineClipboard::onCutFromMainMenu, this, wxID_CUT);
+    gui::Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED, &TimelineClipboard::onCopyFromMainMenu, this, wxID_COPY);
+    gui::Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED, &TimelineClipboard::onPasteFromMainMenu, this, wxID_PASTE);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // MAIN WINDOW EDIT MENU
 //////////////////////////////////////////////////////////////////////////
 
-void Clipboard::onCutFromMainMenu(wxCommandEvent& event)
+void TimelineClipboard::onCutFromMainMenu(wxCommandEvent& event)
 {
     bool focus = hasKeyboardFocus();
     event.Skip(!focus);
@@ -72,7 +70,7 @@ void Clipboard::onCutFromMainMenu(wxCommandEvent& event)
     }
 }
 
-void Clipboard::onCopyFromMainMenu(wxCommandEvent& event)
+void TimelineClipboard::onCopyFromMainMenu(wxCommandEvent& event)
 {
     bool focus = hasKeyboardFocus();
     event.Skip(!focus);
@@ -82,7 +80,7 @@ void Clipboard::onCopyFromMainMenu(wxCommandEvent& event)
     }
 }
 
-void Clipboard::onPasteFromMainMenu(wxCommandEvent& event)
+void TimelineClipboard::onPasteFromMainMenu(wxCommandEvent& event)
 {
     // only if one node is selected and that node is a folder or no node is selected (root node)
     bool focus = hasKeyboardFocus();
@@ -98,7 +96,7 @@ void Clipboard::onPasteFromMainMenu(wxCommandEvent& event)
 // EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void Clipboard::onCut()
+void TimelineClipboard::onCut()
 {
     LOG_INFO;
     TimelineDataObject* dataObject = new TimelineDataObject(getSequence());
@@ -108,14 +106,14 @@ void Clipboard::onCut()
     }
 }
 
-void Clipboard::onCopy()
+void TimelineClipboard::onCopy()
 {
     LOG_INFO;
     TimelineDataObject* dataObject = new TimelineDataObject(getSequence());
     dataObject->storeInClipboard();
 }
 
-void Clipboard::onPaste()
+void TimelineClipboard::onPaste()
 {
     LOG_INFO;
 	model::NodePtrs nodes;
@@ -126,9 +124,12 @@ void Clipboard::onPaste()
             TimelineDataObject data;
             wxTheClipboard->GetData(data);
             wxTheClipboard->Close();
-			command::ExecuteDrop* command = new command::ExecuteDrop(getSequence(), true);
-			command->onDrop(data.getDrops(getSequence(),getCursor().getLogicalPosition())); 
-			command->submit();
+			if (data.checkIfOkForPasteOrDrop())
+			{
+				command::ExecuteDrop* command = new command::ExecuteDrop(getSequence(), true);
+				command->onDrop(data.getDrops(getSequence(), getCursor().getLogicalPosition()));
+				command->submit();
+			}
         }
         else
 		{
@@ -150,7 +151,7 @@ void Clipboard::onPaste()
 				wxTheClipboard->Close();
 				if (data.checkIfOkForPasteOrDrop())
 				{
-					nodes = data.getAssets();
+					nodes = data.getNodes();
 				}
 			}
 			else
@@ -185,7 +186,7 @@ void Clipboard::onPaste()
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-bool Clipboard::hasKeyboardFocus() const
+bool TimelineClipboard::hasKeyboardFocus() const
 {
     if (getTimeline().isActive())
     {

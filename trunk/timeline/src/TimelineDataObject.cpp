@@ -127,6 +127,23 @@ bool TimelineDataObject::SetData(size_t len, const void *buf)
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
+bool TimelineDataObject::checkIfOkForPasteOrDrop() const
+{
+	if ((mFrameRate != model::Properties::get().getFrameRate()) ||
+		(mAudioSampleRate != model::Properties::get().getAudioSampleRate()))
+	{
+		VAR_ERROR(mFrameRate)(mAudioSampleRate);
+		StatusBar::get().timedInfoText(_("Data in clipboard has incompatible properties."));
+		return false;
+    }
+	if (mDropsVideo.empty() && mDropsAudio.empty())
+	{
+		StatusBar::get().timedInfoText(_("Nothing to be pasted."));
+		return false;
+	}
+	return true;
+}
+
 command::Drops TimelineDataObject::getDrops(const model::SequencePtr& sequence, pts sequenceOrigin) const
 {
 	ASSERT_MORE_THAN_EQUALS_ZERO(sequenceOrigin);
@@ -188,10 +205,6 @@ bool TimelineDataObject::storeInClipboard()
 }
 
 //////////////////////////////////////////////////////////////////////////
-// HELPER METHODS
-//////////////////////////////////////////////////////////////////////////
-
-//////////////////////////////////////////////////////////////////////////
 // SERIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
@@ -232,25 +245,11 @@ void TimelineDataObject::serialize(Archive & ar, const unsigned int version)
 {
     ar & BOOST_SERIALIZATION_NVP(mFrameRate);
     ar & BOOST_SERIALIZATION_NVP(mAudioSampleRate);
-    bool ok = true;
-    if (Archive::is_loading::value)
-    {
-        if ((mFrameRate != model::Properties::get().getFrameRate()) ||
-            (mAudioSampleRate != model::Properties::get().getAudioSampleRate()))
-        {
-            VAR_ERROR(mFrameRate)(mAudioSampleRate);
-            StatusBar::get().timedInfoText(_("Data in clipboard has incompatible properties."));
-            ok = false;
-        }
-    }
-    if (ok)
-    {
-        ar & BOOST_SERIALIZATION_NVP(mDropsVideo);
-        ar & BOOST_SERIALIZATION_NVP(mDropsAudio);
-    }
-    // todo handle pasting of empty data object
+	ar & BOOST_SERIALIZATION_NVP(mDropsVideo);
+	ar & BOOST_SERIALIZATION_NVP(mDropsAudio);
 }
 
 template void TimelineDataObject::serialize<boost::archive::xml_oarchive>(boost::archive::xml_oarchive& ar, const unsigned int archiveVersion);
 template void TimelineDataObject::serialize<boost::archive::xml_iarchive>(boost::archive::xml_iarchive& ar, const unsigned int archiveVersion);
+
 }} // namespace

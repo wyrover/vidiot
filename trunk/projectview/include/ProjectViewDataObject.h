@@ -21,7 +21,7 @@
 namespace gui {
 
 class ProjectViewDataObject
-    :   public wxDataObjectSimple
+    :   public wxTextDataObject
     ,   public boost::noncopyable
 {
 public:
@@ -37,11 +37,10 @@ public:
     static const wxString sFormat;
 
     //////////////////////////////////////////////////////////////////////////
-    // FROM wxDataObjectSimple
+    // FROM wxTextDataObject
     //////////////////////////////////////////////////////////////////////////
 
-    virtual bool GetDataHere(void *buf) const override;
-    virtual size_t GetDataSize () const override;
+    /// Called when data is copied from the clipboard onto this object.
     virtual bool SetData(size_t len, const void *buf) override;
 
     //////////////////////////////////////////////////////////////////////////
@@ -50,12 +49,28 @@ public:
 
 	bool checkIfOkForPasteOrDrop() const;
 
-    model::NodePtrs getAssets() const; // todo rename to getNodes
+    model::NodePtrs getNodes() const;
 
 private:
 
-    wxDataFormat mFormat;
-    model::NodePtrs mAssets;
+	//////////////////////////////////////////////////////////////////////////
+	// MEMBERS
+	//////////////////////////////////////////////////////////////////////////
+
+	model::NodePtrs mAssets;
+
+	//////////////////////////////////////////////////////////////////////////
+	// SERIALIZATION
+	//////////////////////////////////////////////////////////////////////////
+
+	void deserialize(wxString from);
+	wxString serialize() const;
+
+    friend class boost::serialization::access;
+
+    template<class Archive>
+    void serialize(Archive & ar, const unsigned int version);
+
 };
 
 } // namespace

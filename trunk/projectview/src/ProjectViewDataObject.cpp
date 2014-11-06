@@ -27,19 +27,19 @@ namespace gui {
 const wxString ProjectViewDataObject::sFormat = wxString("application/vidiot/nodes");
 
 ProjectViewDataObject::ProjectViewDataObject()
-:   wxDataObjectSimple()
-,   mFormat(sFormat)
+:   wxTextDataObject()
 ,   mAssets()
 {
-    SetFormat(mFormat);
+    SetFormat(wxDataFormat(sFormat));
+    SetText(serialize());
 }
 
 ProjectViewDataObject::ProjectViewDataObject(const model::NodePtrs& assets)
-:   wxDataObjectSimple()
-,   mFormat(sFormat)
+:   wxTextDataObject()
 ,   mAssets(assets)
 {
-    SetFormat(mFormat);
+    SetFormat(wxDataFormat(sFormat));
+    SetText(serialize());
 }
 
 ProjectViewDataObject::~ProjectViewDataObject()
@@ -47,44 +47,24 @@ ProjectViewDataObject::~ProjectViewDataObject()
 }
 
 //////////////////////////////////////////////////////////////////////////
-// FROM wxDataObjectSimple
+// FROM wxTextDataObject
 //////////////////////////////////////////////////////////////////////////
-
-bool ProjectViewDataObject::GetDataHere(void *buf) const
-{
-    unsigned int i = 0;
-    for ( model::NodePtr asset : mAssets )
-    {
-        static_cast<model::NodeId*>(buf)[i] = asset->id();
-        i++;
-    }
-    return true;
-}
-
-size_t ProjectViewDataObject::GetDataSize () const
-{
-    return sizeof(model::NodeId) * mAssets.size();
-}
 
 bool ProjectViewDataObject::SetData(size_t len, const void *buf)
 {
-    ASSERT_ZERO(len % sizeof(model::NodeId));
-
-    mAssets.clear();
-
-    model::NodeId* index = static_cast<model::NodeId*>(const_cast<void*>(buf));
-    for (unsigned int i = 0; i < len / sizeof(model::NodeId); ++i)
+    bool ok = wxTextDataObject::SetData(len, buf);
+    if (ok)
     {
-        mAssets.push_back(model::Node::Ptr(static_cast<const model::NodeId*>(buf)[i]));
+        deserialize(GetText());
     }
-    return true;
+    return ok;
 }
 
 //////////////////////////////////////////////////////////////////////////
 // GET ALL ASSETS
 //////////////////////////////////////////////////////////////////////////
 
-model::NodePtrs ProjectViewDataObject::getAssets() const
+model::NodePtrs ProjectViewDataObject::getNodes() const
 {
     return mAssets;
 }
@@ -111,5 +91,49 @@ bool ProjectViewDataObject::checkIfOkForPasteOrDrop() const
 	return true;
 }
 
+//////////////////////////////////////////////////////////////////////////
+// SERIALIZATION
+//////////////////////////////////////////////////////////////////////////
+
+const std::string sXmlName("nodes");
+
+void ProjectViewDataObject::deserialize(wxString from)
+{
+    std::istringstream store(from.ToStdString());
+    try
+    {
+        boost::archive::xml_iarchive ar(store);
+        ar & boost::serialization::make_nvp(sXmlName.c_str(), *this);
+    }
+    catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
+    catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
+    catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
+    catch (...)                                  { LOG_ERROR;                                   throw; }
+}
+
+wxString ProjectViewDataObject::serialize() const
+{
+    std::ostringstream store;
+    try
+    {
+        boost::archive::xml_oarchive ar(store);
+        ar & boost::serialization::make_nvp(sXmlName.c_str(), *this);
+    }
+    catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
+    catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
+    catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
+    catch (...)                                  { LOG_ERROR;                                   throw; }
+    return store.str();
+}
+
+
+template<class Archive>
+void ProjectViewDataObject::serialize(Archive & ar, const unsigned int version)
+{
+    ar & BOOST_SERIALIZATION_NVP(mAssets);
+}
+
+template void ProjectViewDataObject::serialize<boost::archive::xml_oarchive>(boost::archive::xml_oarchive& ar, const unsigned int archiveVersion);
+template void ProjectViewDataObject::serialize<boost::archive::xml_iarchive>(boost::archive::xml_iarchive& ar, const unsigned int archiveVersion);
 
 } // namespace
