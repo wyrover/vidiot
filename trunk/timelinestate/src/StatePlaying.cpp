@@ -131,6 +131,14 @@ boost::statechart::result Playing::react( const EvKeyUp& evt)
     return forward_event();
 }
 
+boost::statechart::result Playing::react( const EvDragEnter& evt)
+{
+	getPlayer()->stop();
+    triggerEnd();
+    getDrag().start(getMouse().getVirtualPosition(), true);
+    return transit<Dragging>();
+}
+
 boost::statechart::result Playing::react( const EvPlaybackChanged& evt)
 {
     VAR_DEBUG(evt);

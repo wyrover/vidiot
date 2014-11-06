@@ -512,7 +512,6 @@ void Timeline::clearRect(wxDC& dc, wxRegion region, const wxPoint& offset, const
 
 void Timeline::activate(bool active)
 {
-    // todo replace this with better mechanism (less forwarding)
     VAR_INFO(this)(active);
     mActive = active;
     getMenuHandler().activate(active);

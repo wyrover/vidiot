@@ -30,6 +30,7 @@ namespace test {
 namespace gui {
 
 class TimelinesView;
+class ProjectViewClipboard;
 
 enum NodeType
 {
@@ -86,6 +87,8 @@ public:
 
     model::NodePtrs getSelection() const;
 
+	bool selectionContainsRootNode() const;
+    
     //////////////////////////////////////////////////////////////////////////
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
@@ -102,22 +105,11 @@ public:
     void scrollToRight();
 
     bool findConflictingName(const model::FolderPtr& parent, const wxString& name, const NodeType& type);
-    
-    //////////////////////////////////////////////////////////////////////////
-    // MAIN WINDOW EDIT MENU
-    //////////////////////////////////////////////////////////////////////////
-
-    void onCutFromMainMenu(wxCommandEvent& event);
-    void onCopyFromMainMenu(wxCommandEvent& event);
-    void onPasteFromMainMenu(wxCommandEvent& event);
 
     //////////////////////////////////////////////////////////////////////////
     // POPUP MENU
     //////////////////////////////////////////////////////////////////////////
 
-    void onCut();
-    void onCopy();
-    void onPaste();
     void onDelete();
     void onDeleteUnused();
     void onNewFolder(const model::FolderPtr& parent);
@@ -140,7 +132,6 @@ private:
 
     void onContextMenu(wxDataViewEvent &event);
     void onMotion(wxMouseEvent& event);
-    void onDragEnd();
     void onDropPossible(wxDataViewEvent &event);
     void onDrop(wxDataViewEvent &event);
     void onActivated(wxDataViewEvent &event);
@@ -152,6 +143,7 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
+	ProjectViewClipboard* mClipboard;
     ProjectViewCtrl mCtrl;
     ProjectViewModel* mModel;
     ProjectViewDropSource mDropSource;
@@ -159,20 +151,6 @@ private:
     int mDragCount;                                 ///< Used for determining start of dragging
     wxPoint mDragStart;                             ///< Holds start of dragging point
     int mHeaderHeight;
-
-    //////////////////////////////////////////////////////////////////////////
-    // HELPER METHODS
-    //////////////////////////////////////////////////////////////////////////
-
-    bool hasKeyboardFocus() const;
-    bool selectionContainsRootNode() const;
-
-    /// Check if the current selection can be stored in the clipboard and
-    /// return true if one or more nodes were stored.
-    /// \return true if the selection was stored in the clipboard
-    bool storeSelectionInClipboard() const;
-
-    void pasteFromClipboard();
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

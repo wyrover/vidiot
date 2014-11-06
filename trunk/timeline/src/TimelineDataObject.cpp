@@ -42,7 +42,6 @@ TimelineDataObject::TimelineDataObject(model::SequencePtr sequence)
 {
     SetFormat(wxDataFormat(sFormat));
 
-    // todo disable menu options for cut and copy if no project open
     command::ReplacementMap replacementMap;
 
     auto addDrop = [&replacementMap](command::Drops& drops, model::TrackPtr track, model::IClips& clips)

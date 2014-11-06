@@ -47,6 +47,7 @@ struct Playing
         boost::statechart::custom_reaction< EvLeftDown >,
         boost::statechart::custom_reaction< EvKeyDown >,
         boost::statechart::custom_reaction< EvKeyUp >,
+        boost::statechart::custom_reaction< EvDragEnter >,
         boost::statechart::custom_reaction< EvPlaybackChanged >
     > reactions;
 
@@ -57,6 +58,7 @@ struct Playing
     boost::statechart::result react( const EvLeftDown& evt );
     boost::statechart::result react( const EvKeyDown& evt);
     boost::statechart::result react( const EvKeyUp& evt);
+    boost::statechart::result react(const EvDragEnter& evt);
     boost::statechart::result react( const EvPlaybackChanged& evt);
 
 private:

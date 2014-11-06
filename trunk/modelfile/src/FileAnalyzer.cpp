@@ -257,8 +257,6 @@ FilePtr FileAnalyzer::indexFile(const wxFileName& fileName)
         if (file->getType() == FileType_Title)
         {
             // No frame/sample rate analysis required.
-            // todo default length for dropping image files?
-            // todo not only for titles but also for other image type files
         }
         else
         {
