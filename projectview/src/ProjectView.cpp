@@ -690,7 +690,7 @@ void ProjectView::onDropPossible(wxDataViewEvent &event)
     }
 
     // Cannot drop a node into itselves, or one of its children
-    for ( model::NodePtr node : mDropSource.getData().getAssets())
+    for ( model::NodePtr node : mDropSource.getData().getNodes())
     {
         if (p == node || mModel->isDescendantOf(p, node))
         {
@@ -729,7 +729,7 @@ void ProjectView::onDrop(wxDataViewEvent &event)
     ASSERT(folder);
 
     bool conflictingChildExists = false;
-    for ( model::NodePtr node : o.getAssets())
+    for ( model::NodePtr node : o.getNodes())
     {
         if (findConflictingName(folder, node->getName(), NODETYPE_ANY))
         {
@@ -737,9 +737,9 @@ void ProjectView::onDrop(wxDataViewEvent &event)
             return;
         }
     }
-    if (o.getAssets().size() > 0)
+    if (o.getNodes().size() > 0)
     {
-        model::ProjectModification::submit(new command::ProjectViewMoveAsset(o.getAssets(),p));
+        model::ProjectModification::submit(new command::ProjectViewMoveAsset(o.getNodes(),p));
     }
 }
 
@@ -852,10 +852,10 @@ void ProjectView::pasteFromClipboard()
             ProjectViewDataObject data;
             wxTheClipboard->GetData(data);
             wxTheClipboard->Close();
-            if (data.getAssets().size() > 0)
+            if (data.getNodes().size() > 0)
             {
                 model::NodePtrs currentNodes = model::Project::get().getRoot()->getAllDescendants();
-                for (model::NodePtr node : data.getAssets())
+                for (model::NodePtr node : data.getNodes())
                 {
                     if (std::find(currentNodes.begin(), currentNodes.end(), node) != currentNodes.end())
                     {
@@ -885,7 +885,7 @@ void ProjectView::pasteFromClipboard()
                         return;
                     }
                 }
-                model::ProjectModification::submit(new command::ProjectViewAddAsset(target, data.getAssets()));
+                model::ProjectModification::submit(new command::ProjectViewAddAsset(target, data.getNodes()));
             }
         }
         else if (wxTheClipboard->IsSupported(wxDataFormat(wxDF_FILENAME)))

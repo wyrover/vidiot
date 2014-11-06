@@ -61,6 +61,8 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
+	bool checkIfOkForPasteOrDrop() const;
+
 	/// \return drops to be used in ExecuteDrop for adding the clips to the sequence
 	/// \param sequence sequence to be dropped upon (required for looking up tracks)
 	/// \param origin origin (in the sequence) of the leftmost added clip
@@ -78,11 +80,6 @@ private:
     int mAudioSampleRate; ///< SampleRate used when the data was put in the clipboard
     command::Drops mDropsVideo;
     command::Drops mDropsAudio;
-
-    //////////////////////////////////////////////////////////////////////////
-    // HELPER METHODS
-    //////////////////////////////////////////////////////////////////////////
-
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

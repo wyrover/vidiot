@@ -15,14 +15,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef CLIPBOARD_H
-#define CLIPBOARD_H
+#ifndef TIMELINE_CLIPBOARD_H
+#define TIMELINE_CLIPBOARD_H
 
 #include "Part.h"
 
 namespace gui { namespace timeline {
 
-class Clipboard
+class TimelineClipboard
     :   public Part
 {
 public:
@@ -31,8 +31,8 @@ public:
     // INITIALIZATION METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    Clipboard(Timeline* timeline);
-    virtual ~Clipboard();
+    TimelineClipboard(Timeline* timeline);
+    virtual ~TimelineClipboard();
 
     //////////////////////////////////////////////////////////////////////////
     // EVENTS

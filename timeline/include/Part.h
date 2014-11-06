@@ -23,7 +23,6 @@ namespace gui {
 
     namespace timeline {
         class AudioView;
-        class Clipboard;
         class ClipView;
         class Cursor;
         class Details;
@@ -38,6 +37,7 @@ namespace gui {
         class SequenceView;
         class ThumbnailView;
         class Timeline;
+        class TimelineClipboard;
         class Tooltip;
         class TrackView;
         class Trim;
@@ -81,8 +81,8 @@ public:
     Keyboard& getKeyboard();
     const Keyboard& getKeyboard() const;
 
-    Clipboard& getClipboard();
-    const Clipboard& getClipboard() const;
+    TimelineClipboard& getClipboard();
+    const TimelineClipboard& getClipboard() const;
 
     Selection& getSelection();
     const Selection& getSelection() const;

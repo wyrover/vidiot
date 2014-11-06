@@ -77,7 +77,7 @@ wxDragResult TimelineDropTarget::OnEnter(wxCoord x, wxCoord y, wxDragResult def)
         ASSERT_NONZERO(object);
 		if (object->checkIfOkForPasteOrDrop())
 		{
-			mNodes = object->getAssets();
+			mNodes = object->getNodes();
 		}
     }
 

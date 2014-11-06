@@ -31,7 +31,6 @@ namespace command {
 namespace gui {
     class Player;
     namespace timeline {
-        class Clipboard;
         class Cursor;
         class Details;
         class Drag;
@@ -42,6 +41,7 @@ namespace gui {
         class Scrolling;
         class Selection;
         class SequenceView;
+        class TimelineClipboard;
         class Tooltip;
         class Trim;
         class ViewMap;
@@ -86,8 +86,8 @@ public:
     const Intervals& getIntervals() const;
     Keyboard& getKeyboard();
     const Keyboard& getKeyboard() const;
-    Clipboard& getClipboard();
-    const Clipboard& getClipboard() const;
+    TimelineClipboard& getClipboard();
+    const TimelineClipboard& getClipboard() const;
     Mouse& getMouse();
     const Mouse& getMouse() const;
     Scrolling& getScrolling();
@@ -252,7 +252,7 @@ private:
     ViewMap* mViewMap;
     Intervals* mIntervals;
     Keyboard* mKeyboard;
-    Clipboard* mClipboard;
+    TimelineClipboard* mClipboard;
     Mouse* mMouse;
     Scrolling* mScroll;
     Selection* mSelection;

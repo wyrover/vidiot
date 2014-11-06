@@ -85,7 +85,7 @@ bool ProjectViewDropSource::GiveFeedback(wxDragResult effect)
 
     if (!mHint)
     {
-        model::NodePtrs assets = getData().getAssets();
+        model::NodePtrs assets = getData().getNodes();
 
         int width = 0;
         int height = 0;
