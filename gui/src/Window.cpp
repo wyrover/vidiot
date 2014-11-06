@@ -160,6 +160,9 @@ Window::Window()
     mMenuEdit->Append(wxID_CUT);
     mMenuEdit->Append(wxID_COPY);
     mMenuEdit->Append(wxID_PASTE);
+	mMenuEdit->Enable(wxID_CUT,false);
+	mMenuEdit->Enable(wxID_COPY,false);
+	mMenuEdit->Enable(wxID_PASTE,false);
 
     wxMenu* menuview = new wxMenu();
     menuview->AppendCheckItem(ID_SNAP_CLIPS, _("Snap to clips"), _("Check this item to ensure that operations in the timeline 'snap' to adjacent clip boundaries."));
@@ -441,7 +444,7 @@ Window::~Window()
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnUndo,          GetDocumentManager(), wxID_UNDO);
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnRedo,          GetDocumentManager(), wxID_REDO);
 
-    Unbind(wxEVT_COMMAND_MENU_SELECTED, &Window::onSnapClips, this, ID_SNAP_CLIPS);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onSnapClips, this, ID_SNAP_CLIPS);
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onSnapCursor,       this, ID_SNAP_CURSOR);
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onShowBoundingBox,  this, ID_SHOW_BOUNDINGBOX);
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onShowProject,      this, ID_SHOW_PROJECT);
@@ -511,6 +514,9 @@ void Window::onOpenProject(model::EventOpenProject &event )
     mMenuFile->Enable(ID_NEW_AUTOFOLDER,true);
     mMenuFile->Enable(ID_NEW_SEQUENCE,true);
     mMenuFile->Enable(wxID_PROPERTIES,true);
+	mMenuEdit->Enable(wxID_CUT,true);
+	mMenuEdit->Enable(wxID_COPY,true);
+	mMenuEdit->Enable(wxID_PASTE,true);
     GetDocumentManager()->GetCurrentDocument()->GetCommandProcessor()->SetEditMenu(mMenuEdit); // Set menu for do/undo
     GetDocumentManager()->GetCurrentDocument()->GetCommandProcessor()->Initialize();
     GetDocumentManager()->AddFileToHistory(model::Project::get().GetFilename());
@@ -532,6 +538,9 @@ void Window::onCloseProject(model::EventCloseProject &event )
     mMenuFile->Enable(ID_NEW_AUTOFOLDER,false);
     mMenuFile->Enable(ID_NEW_SEQUENCE,false);
     mMenuFile->Enable(wxID_PROPERTIES,false);
+	mMenuEdit->Enable(wxID_CUT,false);
+	mMenuEdit->Enable(wxID_COPY,false);
+	mMenuEdit->Enable(wxID_PASTE,false);
     SetTitle(sTitle); // Remove the title
     mVisibleWorker->abort();
     mInvisibleWorker->abort();

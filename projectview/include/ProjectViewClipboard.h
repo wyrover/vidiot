@@ -1,4 +1,4 @@
-// Copyright 2013,2014 Eric Raijmakers.
+// Copyright 2014 Eric Raijmakers.
 //
 // This file is part of Vidiot.
 //
@@ -15,51 +15,39 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef STATE_PLAYING_H
-#define STATE_PLAYING_H
+#ifndef PROJECT_VIEW_CLIPBOARD_H
+#define PROJECT_VIEW_CLIPBOARD_H
 
-#include "State.h"
+namespace gui {
 
-namespace command {
-class RootCommand;
-}
+class ProjectView;
 
-namespace gui { namespace timeline { namespace state {
-
-struct EvLeftDown;
-struct EvRightDown;
-struct EvKeyDown;
-struct EvKeyUp;
-struct EvPlaybackChanged;
-
-struct Playing
-    :   public TimeLineState< Playing, Machine >
+class ProjectViewClipboard
 {
+public:
+
     //////////////////////////////////////////////////////////////////////////
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    Playing( my_context ctx );
-
-    virtual ~Playing();
-
-    typedef boost::mpl::list<
-        boost::statechart::custom_reaction< EvLeftDown >,
-        boost::statechart::custom_reaction< EvKeyDown >,
-        boost::statechart::custom_reaction< EvKeyUp >,
-        boost::statechart::custom_reaction< EvDragEnter >,
-        boost::statechart::custom_reaction< EvPlaybackChanged >
-    > reactions;
+    ProjectViewClipboard(ProjectView& parent);
+    virtual ~ProjectViewClipboard();
 
     //////////////////////////////////////////////////////////////////////////
-    // EVENTS
+    // MAIN WINDOW EDIT MENU
     //////////////////////////////////////////////////////////////////////////
 
-    boost::statechart::result react( const EvLeftDown& evt );
-    boost::statechart::result react( const EvKeyDown& evt);
-    boost::statechart::result react( const EvKeyUp& evt);
-    boost::statechart::result react(const EvDragEnter& evt);
-    boost::statechart::result react( const EvPlaybackChanged& evt);
+    void onCutFromMainMenu(wxCommandEvent& event);
+    void onCopyFromMainMenu(wxCommandEvent& event);
+    void onPasteFromMainMenu(wxCommandEvent& event);
+
+    //////////////////////////////////////////////////////////////////////////
+    // POPUP MENU
+    //////////////////////////////////////////////////////////////////////////
+
+    void onCut();
+    void onCopy();
+    void onPaste();
 
 private:
 
@@ -67,22 +55,22 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    bool mMakingNewSelection;
-    boost::shared_ptr<EvKeyDown> mSubmitKeyEventOnStop;
-
-    int mKeyCodeTriggeringStop; ///< The key code that triggered the stop of playback 
-
-    static const wxString sTooltip;
+	ProjectView& mProjectView;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    void triggerBegin();
-    void triggerEnd();
+    bool hasKeyboardFocus() const;
 
+    /// Check if the current selection can be stored in the clipboard and
+    /// return true if one or more nodes were stored.
+    /// \return true if the selection was stored in the clipboard
+    bool storeSelectionInClipboard() const;
+
+    void pasteFromClipboard();
 };
 
-}}} // namespace
+} // namespace
 
 #endif

@@ -83,7 +83,6 @@ wxDragResult TimelineDropTarget::OnEnter(wxCoord x, wxCoord y, wxDragResult def)
 
     getMouse().dragMove(wxPoint(x, y));
 
-    // todo start drag when playback is active?
     if (validDataDragged())
     {
         ::command::TrackCreator c(mNodes);
