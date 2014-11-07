@@ -130,9 +130,29 @@ wxFileName getTestFilesPath(wxString subdir)
 
 model::IPaths getListOfInputFiles(wxFileName path)
 {
-    // todo cache this info per path for less disk access
-    // todo replace lists with vectors (where applicable)
-    return GetSupportedFiles(path);
+	//struct compare 
+	//{
+	//	bool operator() (const wxString& s1, const wxString& s2) const
+	//	{
+	//		return s1.Cmp(s2) < 0;
+	//	};
+	//};
+	//static std::map< wxString, model::IPaths, compare > cache;
+	static std::map< wxString, model::IPaths > cache;
+	model::IPaths result;
+	wxString key = path.GetFullPath();
+	auto it = cache.find(key);
+	if (it != cache.end())
+	{
+		result = it->second;
+	}
+	else
+	{
+		result = GetSupportedFiles(path);
+		cache[key] = result;
+	}
+	return result;
+	// todo replace lists with vectors (where applicable)
 }
 
 wxFileName getStillImagePath()
