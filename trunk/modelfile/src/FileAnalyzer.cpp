@@ -249,7 +249,7 @@ void FileAnalyzer::indexFolder(const wxFileName& dirName, bool recurse)
 FilePtr FileAnalyzer::indexFile(const wxFileName& fileName)
 {
     FilePtr file = boost::make_shared<File>(fileName);
-    // todo isn't each file opened twice this way (once here, and then again below)
+	// todo new ffmpeg version (new codecs for input & output?)
     if (file->canBeOpened())
     {
         mNumberOfMediaFiles++;
