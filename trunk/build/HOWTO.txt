@@ -16,6 +16,7 @@ NOTE: <VIDIOT_DIR> is the dir in which all 'vidiot' work is done.
 * Install CodeMaid plugin
   - Disable remove blank lines after opening brace
   - Disable remove blank lines before closing brace
+* Install CodeAlignment plugin
 * Install <VIDIOT_SRC>/build/VisualStudioAddin
   - Install Microsoft Visual Studio SDK
   - Build VisualStudioAddin
