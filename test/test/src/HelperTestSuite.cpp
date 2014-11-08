@@ -179,6 +179,7 @@ void HelperTestSuite::testSuiteDone()
 
 void HelperTestSuite::setTest(const char* test)
 {
+    VAR_ERROR(test);
     mCurrentTestName.reset(test);
     updateTitle();
 }

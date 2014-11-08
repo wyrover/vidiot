@@ -22,6 +22,7 @@
 #include "ExecuteDrop.h"
 #include "FileAnalyzer.h"
 #include "Keyboard.h"
+#include "Mouse.h"
 #include "ProjectViewDataObject.h"
 #include "Sequence.h"
 #include "Selection.h"
@@ -32,6 +33,7 @@
 #include "TrackCreator.h"
 #include "UtilLog.h"
 #include "Window.h"
+#include "Zoom.h"
 
 namespace gui { namespace timeline {
 
@@ -90,7 +92,6 @@ void TimelineClipboard::onPasteFromMainMenu(wxCommandEvent& event)
         getStateMachine().process_event(timeline::state::EvPaste());
     }
 }
-// todo popup menu?
 
 //////////////////////////////////////////////////////////////////////////
 // EVENTS
@@ -113,12 +114,13 @@ void TimelineClipboard::onCopy()
     dataObject->storeInClipboard();
 }
 
-void TimelineClipboard::onPaste()
+void TimelineClipboard::onPaste(bool atCursor)
 {
     LOG_INFO;
 	model::NodePtrs nodes;
     if (wxTheClipboard->Open())
     {
+        pts dropPosition = atCursor ? getCursor().getLogicalPosition() : getZoom().pixelsToPts(getMouse().getRightUpPosition().x);
         if (wxTheClipboard->IsSupported(TimelineDataObject::sFormat))
         {
             TimelineDataObject data;
@@ -127,7 +129,7 @@ void TimelineClipboard::onPaste()
 			if (data.checkIfOkForPasteOrDrop())
 			{
 				command::ExecuteDrop* command = new command::ExecuteDrop(getSequence(), true);
-				command->onDrop(data.getDrops(getSequence(), getCursor().getLogicalPosition()));
+				command->onDrop(data.getDrops(getSequence(), dropPosition));
 				command->submit();
 			}
         }
@@ -166,11 +168,11 @@ void TimelineClipboard::onPaste()
 				command::Drops drops;
 				command::Drop videoDrop;
 				videoDrop.clips = video->getClips();
-				videoDrop.position = getCursor().getLogicalPosition();
+				videoDrop.position = dropPosition;
 				videoDrop.track = getSequence()->getVideoTrack(0);
 				command::Drop audioDrop;
 				audioDrop.clips = audio->getClips();
-				audioDrop.position = getCursor().getLogicalPosition();
+				audioDrop.position = dropPosition;
 				audioDrop.track = getSequence()->getAudioTrack(0);
 				drops.push_back(videoDrop);
 				drops.push_back(audioDrop);
@@ -181,6 +183,27 @@ void TimelineClipboard::onPaste()
 		}
     }
 }
+
+//////////////////////////////////////////////////////////////////////////
+// GET/SET
+//////////////////////////////////////////////////////////////////////////
+
+bool TimelineClipboard::canPaste()
+{
+	bool result = false;
+	if (wxTheClipboard->Open())
+	{
+		if ((wxTheClipboard->IsSupported(TimelineDataObject::sFormat)) ||
+		    (wxTheClipboard->IsSupported(wxDataFormat(wxDF_FILENAME))) ||
+		    (wxTheClipboard->IsSupported(wxDataFormat(ProjectViewDataObject::sFormat))))
+		{
+			result = true;
+		}
+		wxTheClipboard->Close();
+	}
+	return result;
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS

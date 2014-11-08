@@ -49,8 +49,9 @@ Mouse::Mouse(Timeline* timeline)
     :   Part(timeline)
     ,   mPhysicalPosition(-1,-1)
     ,   mVirtualPosition(-1,-1)
-    ,   mLeft(-1,-1)
-    ,   mRight(-1,-1)
+    ,   mLeftDownPosition(-1,-1)
+    ,   mRightDownPosition(-1,-1)
+    ,   mRightUpPosition(-1,-1)
     ,   mLeftDown(false)
     ,   mRightDown(false)
 {
@@ -170,12 +171,17 @@ wxPoint Mouse::getVirtualPosition() const
 
 wxPoint Mouse::getLeftDownPosition() const
 {
-    return mLeft;
+    return mLeftDownPosition;
 }
 
 wxPoint Mouse::getRightDownPosition() const
 {
-    return mRight;
+    return mRightDownPosition;
+}
+
+wxPoint Mouse::getRightUpPosition() const
+{
+    return mRightUpPosition;
 }
 
 void Mouse::setLeftDown(bool down)
@@ -183,7 +189,7 @@ void Mouse::setLeftDown(bool down)
     LOG_DEBUG;
     if (down)
     {
-        mLeft = mVirtualPosition;
+        mLeftDownPosition = mVirtualPosition;
     }
     mLeftDown = down;
 }
@@ -193,7 +199,11 @@ void Mouse::setRightDown(bool down)
     LOG_DEBUG;
     if (down)
     {
-        mRight = mVirtualPosition;
+        mRightDownPosition = mVirtualPosition;
+    }
+    else
+    {
+        mRightUpPosition = mVirtualPosition;
     }
     mRightDown = down;
 }

@@ -152,7 +152,7 @@ model::IPaths getListOfInputFiles(wxFileName path)
 		cache[key] = result;
 	}
 	return result;
-	// todo replace lists with vectors (where applicable)
+	// todo replace lists with vectors (where applicable) - note:preallocate data for some default lists (like lists of clips in tracks) to further speed up
 }
 
 wxFileName getStillImagePath()

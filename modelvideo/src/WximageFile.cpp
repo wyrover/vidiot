@@ -76,7 +76,7 @@ pts WximageFile::getLength() const
 {
     return Convert::timeToPts(Constants::sHour * 8); // 8 Hours...
 }
-// todo implement player autoupdate if the file is modified on disk.
+
 void WximageFile::moveTo(pts position)
 {
     // NOT: VideoFile::moveTo(position) NOR File::moveTo(position); - will cause crash in avcodec

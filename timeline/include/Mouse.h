@@ -78,6 +78,9 @@ public:
     /// \return last (most recent) position at which a 'right down' event was received.
     wxPoint getRightDownPosition() const;
 
+    /// \return last (most recent) position at which a 'right up' event was received.
+    wxPoint getRightUpPosition() const;
+
     void setLeftDown(bool down);
     void setRightDown(bool down);
     bool getLeftDown() const;
@@ -95,8 +98,9 @@ private:
 
     wxPoint mPhysicalPosition;
     wxPoint mVirtualPosition;
-    wxPoint mLeft; ///< Holds the most recent position at which the left button was pressed.
-    wxPoint mRight; ///< Holds the most recent position at which the left button was pressed.
+    wxPoint mLeftDownPosition;  ///< Most recent position at which the left button was moved down..
+    wxPoint mRightDownPosition; ///< Most recent position at which the right button was moved down.
+    wxPoint mRightUpPosition;   ///< Most recent position at which the right button was moved up.
     bool    mLeftDown; 
     bool    mRightDown;
 };

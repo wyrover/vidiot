@@ -59,12 +59,19 @@ boost::statechart::result StateScrolling::react( const EvRightUp& evt )
     //   The second right click is immediately followed by a motion event causing the transition to this state.
     // - Sometimes a right down event is followed by a motion event (within that clip) due to slight mouse movement.
     //   Still, the user wants the popup.
-    PointerPositionInfo infoDown = getMouse().getInfo(getMouse().getRightDownPosition());
-    PointerPositionInfo infoUp = getMouse().getInfo(getMouse().getVirtualPosition());
-    if (infoDown.clip == infoUp.clip)
+    wxPoint down(getMouse().getRightDownPosition());
+    wxPoint up(getMouse().getRightUpPosition());
+    wxPoint diff = down - up;
+    if (diff.x < Layout::DragThreshold && diff.y < Layout::DragThreshold)
     {
-        getMenuHandler().popup(getMouse().getRightDownPosition());
+        PointerPositionInfo infoDown = getMouse().getInfo(down);
+        PointerPositionInfo infoUp = getMouse().getInfo(up);
+        if (infoDown.clip == infoUp.clip)
+        {
+            getMenuHandler().popup();
+        }
     }
+    // else: Actual right drag was done.
     return transit<Idle>();
 }
 
