@@ -28,7 +28,7 @@ public:
 
     static OutputFormatList getList();
 
-    static std::list<wxString> getNames();
+    static wxStrings getNames();
     static OutputFormatPtr getByName(const wxString& name);  ///< \return cloned default output format
     static OutputFormatPtr getByExtension(const wxString& extension); ///< \return cloned output format to be used for given extension
 

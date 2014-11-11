@@ -53,7 +53,8 @@ void DeleteSelectedClips::initialize()
     std::set<model::TransitionPtr> transitionsToBeUnapplied;
     for ( model::TrackPtr track : getTimeline().getSequence()->getTracks() )
     {
-        for ( model::IClipPtr clip : track->getClips() )
+        model::IClips clips = track->getClips();  // Take copy: list of clips in track is modified in the next loop
+        for ( model::IClipPtr clip : clips )
         {
             if (clip->getSelected())
             {
@@ -84,7 +85,7 @@ void DeleteSelectedClips::initialize()
     }
 
     LOG_DEBUG << "STEP 3: Determine the clips to be removed.";
-    std::list<model::IClipPtr> clipsToBeRemoved;
+    model::IClips clipsToBeRemoved;
     PtsIntervals deletionRegion; // Region covered by the deleted clips
     std::map<model::TrackPtr, PtsIntervals> deletionRegionTrack;
     {

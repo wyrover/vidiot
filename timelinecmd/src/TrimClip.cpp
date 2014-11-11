@@ -481,9 +481,9 @@ void TrimClip::applyTrim()
                         {
                             ASSERT(!intransition->getLeft())(intransition); // If the transition was in-out then it should have been removed at the beginning of the trim operation
                             removeClip(intransition);                           // Remove from the timeline...
-                            replacement.push_front(make_cloned(intransition));  // ...and add again in the correct position (clone is added to avoid issues when expanding the link replacements)
+                            replacement.insert(replacement.begin(),make_cloned(intransition));  // ...and add again in the correct position (clone is added to avoid issues when expanding the link replacements)
                         }
-                        replacement.push_front(boost::make_shared<model::EmptyClip>(mTrim)); // Add empty space to keep all clips after the trim in exact the same position
+                        replacement.insert(replacement.begin(),boost::make_shared<model::EmptyClip>(mTrim)); // Add empty space to keep all clips after the trim in exact the same position
                     };
                     adjustEmptySpace(mClip, replaceclip);
                     if (mLink) { adjustEmptySpace(mLink, replacelink); }

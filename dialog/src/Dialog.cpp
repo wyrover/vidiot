@@ -102,10 +102,10 @@ wxString Dialog::getSaveFile(const wxString& message, const wxString& filetypes,
 
 //////////////////////////////////////////////////////////////////////////
 
-void Dialog::setFiles(const std::list<wxString>& files)
+void Dialog::setFiles(const wxStrings& files)
 {
     ASSERT(!mFiles);
-    mFiles = boost::optional<std::list< wxString > >(files);
+    mFiles = boost::optional<wxStrings>(files);
 }
 
 wxStrings getFilesList(const wxString& message, const wxString& filetypes, wxWindow* parent)
@@ -166,7 +166,7 @@ void Dialog::setComboText(const wxString& text)
     mComboText = boost::optional<wxString>(text);
 }
 
-wxString Dialog::getComboText(const wxString& title, const wxString& message, const std::list<wxString>& entries, const wxString& defaultValue, wxWindow* parent )
+wxString Dialog::getComboText(const wxString& title, const wxString& message, const wxStrings& entries, const wxString& defaultValue, wxWindow* parent )
 {
     if (mComboText)
     {
@@ -213,17 +213,17 @@ int Dialog::getConfirmation(const wxString& title, const wxString& message, int 
 
 //////////////////////////////////////////////////////////////////////////
 
-void Dialog::setStringsSelection(const std::list<wxString>& stringsSelection)
+void Dialog::setStringsSelection(const wxStrings& stringsSelection)
 {
     ASSERT(!mStringsSelection);
     mStringsSelection.reset(stringsSelection);
 }
 
-std::list<wxString> Dialog::getStringsSelection(const wxString& title, const wxString& message, const std::list<wxString>& options, wxWindow* parent )
+wxStrings Dialog::getStringsSelection(const wxString& title, const wxString& message, const wxStrings& options, wxWindow* parent )
 {
     if (mStringsSelection)
     {
-        std::list<wxString> result = * mStringsSelection;
+        wxStrings result = * mStringsSelection;
         mStringsSelection.reset();
         return result;
     }
@@ -244,7 +244,7 @@ std::list<wxString> Dialog::getStringsSelection(const wxString& title, const wxS
         return wxGetSelectedChoices(selected, message, title, choices, parent);
     });
 
-    std::list<wxString> result;
+    wxStrings result;
     if (ok != -1) // -1 == cancel
     {
         for ( int selection : selected )

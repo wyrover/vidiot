@@ -21,12 +21,12 @@
 #include "File.h"
 #include "StatusBar.h"
 #include "UtilLog.h"
-#include "UtilList.h"
 #include "UtilLogStl.h"
 #include "UtilLogWxwidgets.h"
 #include "UtilPath.h"
 #include "UtilSerializeBoost.h"
 #include "UtilSerializeWxwidgets.h"
+#include "UtilVector.h"
 #include "Worker.h"
 #include "WorkEvent.h"
 
@@ -81,9 +81,9 @@ struct IndexAutoFolderWork
             for (bool cont = dir.GetFirst(&nodename,wxEmptyString,wxDIR_FILES); cont; cont = dir.GetNext(&nodename))
             {
                 if (isAborted()) { return; }
-                if (UtilList<wxString>(mRemove).hasElement(nodename)) // Existing element. Do not remove
+                if (UtilVector<wxString>(mRemove).hasElement(nodename)) // Existing element. Do not remove
                 {
-                    UtilList<wxString>(mRemove).removeElements(boost::assign::list_of(nodename));
+                    UtilVector<wxString>(mRemove).removeElements(boost::assign::list_of(nodename));
                 }
                 else // New element. Add
                 {
@@ -107,12 +107,12 @@ struct IndexAutoFolderWork
         }
     }
 
-    AutoFolderPtr mFolder;               ///< Folder to be indexed
-    bool mDirExists;                     ///< true if the dir could be opened, false if not (then, assume that it was removed)
-    wxFileName mPath;                    ///< Path to the folder to be indexed
-    std::list<wxString> mCurrentEntries; ///< All entries known when the work was scheduled
-    NodePtrs mAdd;                       ///< When done, holds the list of nodes that must be added
-    std::list<wxString> mRemove;         ///< All entries to be removed when indexing is done
+    AutoFolderPtr mFolder;                 ///< Folder to be indexed
+    bool mDirExists;                       ///< true if the dir could be opened, false if not (then, assume that it was removed)
+    wxFileName mPath;                      ///< Path to the folder to be indexed
+    std::vector<wxString> mCurrentEntries; ///< All entries known when the work was scheduled
+    NodePtrs mAdd;                         ///< When done, holds the list of nodes that must be added
+    std::vector<wxString> mRemove;         ///< All entries to be removed when indexing is done
 };
 
 //////////////////////////////////////////////////////////////////////////

@@ -42,7 +42,7 @@
 #include "UtilLog.h"
 #include "UtilLogStl.h"
 #include "UtilLogWxwidgets.h"
-#include "UtilList.h"
+#include "UtilVector.h"
 #include "VideoClip.h"
 #include "VideoFrame.h"
 #include "VideoCompositionParameters.h"
@@ -411,7 +411,7 @@ pts Trim::determineTrimDiff()
     {
         pts ptsmouse = getZoom().pixelsToPts(position.x + getScrolling().getOffset().x);
         pts minimumsnap = Layout::SnapDistance + 1; // To ensure that the first snap will update this
-        std::list<pts>::const_iterator itTimeline = mSnapPoints.begin();
+        std::vector<pts>::const_iterator itTimeline = mSnapPoints.begin();
         while ( itTimeline != mSnapPoints.end() )
         {
             pts pts_timeline = *itTimeline;
@@ -450,17 +450,17 @@ void Trim::determinePossibleSnapPoints(const model::IClipPtr& originalclip)
     if (Config::ReadBool(Config::sPathSnapClips))
     {
         std::set<model::IClipPtr> exclude = boost::assign::list_of(originalclip)(originalclip->getLink());
-        std::list<pts> all;
-        UtilList<pts>(all).addElements(getSequence()->getCuts(exclude));
+        std::vector<pts> all;
+        UtilVector<pts>(all).addElements(getSequence()->getCuts(exclude));
         // Copy everything between [min,max), discard everything else
-        mSnapPoints.splice(mSnapPoints.begin(),all,std::lower_bound(all.begin(),all.end(), min), std::upper_bound(all.begin(),all.end(),max));
+        mSnapPoints.insert(mSnapPoints.begin(),std::lower_bound(all.begin(),all.end(), min), std::upper_bound(all.begin(),all.end(),max));
     }
     if (Config::ReadBool(Config::sPathSnapCursor))
     {
         mSnapPoints.push_back(getCursor().getLogicalPosition());
     }
-    mSnapPoints.sort();
-    mSnapPoints.unique();
+    std::sort(mSnapPoints.begin(), mSnapPoints.end());
+    std::unique(mSnapPoints.begin(), mSnapPoints.end());
     VAR_DEBUG(originalclip)(min)(max)(mSnapPoints);
 }
 

@@ -60,7 +60,7 @@ model::SequencePtr ProjectViewCreateSequence( model::FolderPtr folder );
 
 /// Create new files in a given parent folder or in the root (default)
 /// \return new files created in the model
-model::Files ProjectViewAddFiles( std::list<wxFileName> name, model::FolderPtr parent = getRoot() );
+model::Files ProjectViewAddFiles( wxFileNames name, model::FolderPtr parent = getRoot() );
 
 /// Remove given node from the project view via selecting it and then triggering the delete menu option
 /// \node node to be removed

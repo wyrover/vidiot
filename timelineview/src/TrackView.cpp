@@ -221,7 +221,7 @@ void TrackView::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) co
     }
 
     // Clear region to the right of clips
-    model::IClips clips = mTrack->getClips();
+    const model::IClips& clips = mTrack->getClips();
     pixel right = getTimeline().getShift(); // When shift trimming, move the cleared region also
     if (!clips.empty())
     {

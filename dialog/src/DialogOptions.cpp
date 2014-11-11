@@ -145,7 +145,7 @@ DialogOptions::DialogOptions(wxWindow* win)
              // Only if a project is opened use that project's frame rate
              framerate = model::Properties::get().getFrameRate();
          }
-         std::list<pts> values = boost::assign::list_of
+         std::vector<pts> values = boost::assign::list_of
              (1)
              (12)
              (1  * model::Convert::timeToPts(model::Constants::sSecond, framerate))
@@ -157,8 +157,8 @@ DialogOptions::DialogOptions(wxWindow* win)
              (10 * model::Convert::timeToPts(model::Constants::sSecond, framerate))
              (1  * model::Convert::timeToPts(model::Constants::sMinute, framerate))
              (initial);
-         values.sort();
-         values.unique();
+         std::sort(values.begin(), values.end());
+         std::unique(values.begin(), values.end());
 
          wxArrayString choices;
          for ( pts value : values )

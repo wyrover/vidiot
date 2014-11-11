@@ -30,7 +30,7 @@ public:
 
     OutputFormat();
 
-    explicit OutputFormat(const wxString& name, const wxString& longname, const std::list<wxString>& extensions, const AVCodecID& defaultaudiocodec, const AVCodecID& defaultvideocodec);
+    explicit OutputFormat(const wxString& name, const wxString& longname, const wxStrings& extensions, const AVCodecID& defaultaudiocodec, const AVCodecID& defaultvideocodec);
 
     OutputFormat(const OutputFormat& other);
 
@@ -53,7 +53,7 @@ public:
     OutputFormat& setName(const wxString& name);
     wxString getName() const;
     wxString getLongName() const;
-    std::list<wxString> getExtensions() const;
+    wxStrings getExtensions() const;
     AVCodecID getDefaultAudioCodec() const;
     AVCodecID getDefaultVideoCodec() const;
 
@@ -77,7 +77,7 @@ private:
 
     wxString mName;
     wxString mLongName;
-    std::list<wxString> mExtensions;
+    wxStrings mExtensions;
     AVOutputFormat* mFormat; ///< Cloned variant of the associated ffmpeg output format. Cloned to avoid messing up ffmpeg internal adminstration when changing its video_codec/audio_codec
     AVCodecID mDefaultAudioCodec;
     AVCodecID mDefaultVideoCodec;

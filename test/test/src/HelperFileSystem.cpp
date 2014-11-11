@@ -128,16 +128,8 @@ wxFileName getTestFilesPath(wxString subdir)
     return result;
 }
 
-model::IPaths getListOfInputFiles(wxFileName path)
+model::IPaths getListOfInputPaths(wxFileName path)
 {
-	//struct compare 
-	//{
-	//	bool operator() (const wxString& s1, const wxString& s2) const
-	//	{
-	//		return s1.Cmp(s2) < 0;
-	//	};
-	//};
-	//static std::map< wxString, model::IPaths, compare > cache;
 	static std::map< wxString, model::IPaths > cache;
 	model::IPaths result;
 	wxString key = path.GetFullPath();
@@ -152,7 +144,26 @@ model::IPaths getListOfInputFiles(wxFileName path)
 		cache[key] = result;
 	}
 	return result;
-	// todo replace lists with vectors (where applicable) - note:preallocate data for some default lists (like lists of clips in tracks) to further speed up
+}
+
+wxStrings getListOfInputPathsAsStrings(wxFileName path)
+{
+    wxStrings result;
+    for (auto f : getListOfInputPathsAsFileNames(path))
+    {
+        result.push_back(f.GetFullPath());
+    }
+    return result;
+}
+
+wxFileNames getListOfInputPathsAsFileNames(wxFileName path)
+{
+    wxFileNames result;
+    for (auto f : getListOfInputPaths(path))
+    {
+        result.push_back(f->getPath());
+    }
+    return result;
 }
 
 wxFileName getStillImagePath()

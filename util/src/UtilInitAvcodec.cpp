@@ -72,9 +72,9 @@ wxString Avcodec::getDefaultLogLevel()
 }
 
 //static
-std::list<wxString> Avcodec::getLogLevels()
+wxStrings Avcodec::getLogLevels()
 {
-    std::list<wxString> result;
+    wxStrings result;
 
     for ( auto value : mapAvcodecLevels.right )
     {

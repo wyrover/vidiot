@@ -59,7 +59,7 @@ public:
 
     /// Add elements from the list to the set
     /// \param set the set of elements to be added
-    void addElements(const std::list<ELEMENT>& list)
+    void addElements(const std::vector<ELEMENT>& list)
     {
         mSet.insert(list.begin(),list.end());
     }

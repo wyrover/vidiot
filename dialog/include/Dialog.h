@@ -20,8 +20,6 @@
 
 #include "UtilSingleInstance.h"
 
-typedef std::list<wxString> wxStrings;
-
 namespace gui {
 
 /// This class serves two purposes:
@@ -77,7 +75,7 @@ public:
 
     /// Set a fixed outcome for the next files selection for testing.
     /// \param files fixed list of absolute file names which will be returned for the next getFiles() call
-    void setFiles(const std::list<wxString>& files);
+    void setFiles(const wxStrings& files);
 
     /// Open a files selection dialog. If before this call setFiles() was called, the files given in
     /// setFiles() are returned and that list is reset.
@@ -107,7 +105,7 @@ public:
     /// Open a text dialog. If before this call setComboText() was called, the text
     /// given in setComboText() is returned and that text is reset.
     /// \post !mComboText
-    wxString getComboText(const wxString& title, const wxString& message, const std::list<wxString>& entries, const wxString& defaultValue = "", wxWindow* parent = 0);
+    wxString getComboText(const wxString& title, const wxString& message, const wxStrings& entries, const wxString& defaultValue = "", wxWindow* parent = 0);
 
     //////////////////////////////////////////////////////////////////////////
 
@@ -129,13 +127,13 @@ public:
 
     /// Set a fixed outcome for the next string selection for testing.
     /// \param selection fixed list of selected strings which will be returned for the next getStringsSelection() call
-    void setStringsSelection(const std::list<wxString>& stringsSelection);
+    void setStringsSelection(const wxStrings& stringsSelection);
 
     /// Open a files selection dialog. If before this call setFiles() was called, the files given in
     /// setFiles() are returned and that list is reset.
     /// In case the dialog is aborted or no file is selected for another reason, an empty list is returned.
     /// \post !sFiles
-    std::list<wxString> getStringsSelection(const wxString& title, const wxString& message, const std::list<wxString>& options, wxWindow* parent = 0);
+    wxStrings getStringsSelection(const wxString& title, const wxString& message, const wxStrings& options, wxWindow* parent = 0);
 
     //////////////////////////////////////////////////////////////////////////
 
@@ -160,7 +158,7 @@ private:
     boost::optional<wxString> mText;
     boost::optional<wxString> mComboText;
     boost::optional<int> mButton;
-    boost::optional<std::list<wxString>> mStringsSelection;
+    boost::optional<wxStrings> mStringsSelection;
 
     /// Cached, since lookup (of the config setting) might fail when crashing
     bool mIncludeScreenshot;

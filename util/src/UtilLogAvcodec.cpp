@@ -211,7 +211,7 @@ std::ostream& operator<<(std::ostream& os, const AVCodec* obj)
             << "id="             << obj->id           << ','
             << "max_lowres="     << (unsigned int)obj->max_lowres   << ','
             << "capabilities="   << obj->capabilities;
-        std::list< std::string > caps;
+        std::vector< std::string > caps;
         if (obj->capabilities & CODEC_CAP_DELAY)               { caps.push_back("CODEC_CAP_DELAY");  }
         if (obj->capabilities & CODEC_CAP_SMALL_LAST_FRAME)    { caps.push_back("CODEC_CAP_SMALL_LAST_FRAME");  }
         if (obj->capabilities & CODEC_CAP_SUBFRAMES)           { caps.push_back("CODEC_CAP_SUBFRAMES");  }

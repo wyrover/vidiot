@@ -40,12 +40,7 @@ void TestTimelineClipboard::tearDown()
 void TestTimelineClipboard::testCutAndPaste()
 {
     StartTestSuite();
-	std::list<wxFileName> l;
-	for (auto x : getListOfInputFiles())
-	{
-		l.push_back(x->getPath());
-	}
-	FillClipboardWithFiles(l);
+	FillClipboardWithFiles(getListOfInputPathsAsFileNames());
 
 	TimelineLeftClick(Center(VideoClip(0, 4)));
 	ASSERT_SELECTION_SIZE(1);
@@ -134,12 +129,7 @@ void TestTimelineClipboard::testPasteFromFileSystem()
 	StartTestSuite();
 	{
 		StartTest("Preparation: Files in clipboard.");
-		std::list<wxFileName> l;
-		for (auto x : getListOfInputFiles())
-		{
-			l.push_back(x->getPath());
-		}
-		FillClipboardWithFiles(l);
+		FillClipboardWithFiles(getListOfInputPathsAsFileNames());
 	}
 	{
 		StartTest("Paste in timeline");
@@ -155,11 +145,7 @@ void TestTimelineClipboard::testPasteFromFileSystem_IllegalNodes()
 	StartTestSuite();
 	{
 		StartTest("Preparation: Files and one folder in clipboard.");
-		std::list<wxFileName> l;
-		for (auto x : getListOfInputFiles())
-		{
-			l.push_back(x->getPath());
-		}
+		wxFileNames l(getListOfInputPathsAsFileNames());
 		l.push_back(getTestFilesPath().GetFullPath());
 		FillClipboardWithFiles(l);
 	}

@@ -43,7 +43,7 @@ std::ostream& dump(std::ostream& os, const SequencePtr& sequence, int depth)
         os << tab << (*sequence);
         os << tab << std::endl << "VIDEO:";
         model::Tracks videotracks = sequence->getVideoTracks();
-        videotracks.reverse(); // Same order as in GUI
+        std::reverse(videotracks.begin(),videotracks.end()); // Same order as in GUI
         dump(os, videotracks, depth + 1);
         os << tab << std::endl << "AUDIO:";
         dump(os, sequence->getAudioTracks(), depth + 1);

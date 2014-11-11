@@ -51,7 +51,7 @@ struct Drop
     template<class Archive>
     void serialize(Archive & ar, const unsigned int version);
 };
-typedef std::list<Drop> Drops;
+typedef std::vector<Drop> Drops;
 
 /// Important: Link information is kept between the clips being dropped by not replacing the dropped clips with other clips, but just by 'moving the originals around'
 class ExecuteDrop

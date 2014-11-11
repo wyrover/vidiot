@@ -283,7 +283,7 @@ void ExecuteDrop::initialize()
             LOG_INFO << "Step 3c: Drop is beyond track length. Adding empty clip before dropped clip,";
             // Drop is beyond track length. Add an empty clip to have it a at the desired position (instead of directly after last clip).
             ASSERT(!remove.second)(remove.second); // The position of the drop should be a null ptr, since the drop is at the end of the track
-            drop.clips.push_front(boost::make_shared<model::EmptyClip>(drop.position - drop.track->getLength()));
+            drop.clips.insert(drop.clips.begin(), boost::make_shared<model::EmptyClip>(drop.position - drop.track->getLength()));
         }
         else if (drop.position == drop.track->getLength())
         {

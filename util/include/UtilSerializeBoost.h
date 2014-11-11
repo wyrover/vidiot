@@ -90,7 +90,7 @@ void serialize(Archive &ar, boost::icl::interval_set<TYPE>& set, const unsigned 
         typedef boost::icl::discrete_interval<TYPE> AnInterval;
         if (Archive::is_loading::value)
         {
-            std::list< Pair > list;
+            std::deque< Pair > list;
             ar & boost::serialization::make_nvp(sList.c_str(),list);
             while (!list.empty())
             {
@@ -101,7 +101,7 @@ void serialize(Archive &ar, boost::icl::interval_set<TYPE>& set, const unsigned 
         }
         else
         {
-            std::list< Pair > list;
+            std::deque< Pair > list;
             for ( AnInterval interval : set )
             {
                 list.push_back(std::pair<TYPE,TYPE>(interval.lower(),interval.upper()));

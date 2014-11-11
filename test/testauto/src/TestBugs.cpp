@@ -17,6 +17,8 @@
 
 #include "TestBugs.h"
 
+#include "UtilInitAvcodec.h"
+
 namespace test {
 
 void TestBugs::setUp()
@@ -330,7 +332,7 @@ void TestBugs::testAddNonexistentFileViaRedo()
 
     // Create temp dir with temp file
     RandomTempDirPtr tempDir = boost::make_shared<RandomTempDir>();
-    model::IPaths inputfiles = getListOfInputFiles();
+    model::IPaths inputfiles = getListOfInputPaths();
     wxString aviFileName = inputfiles.front()->getPath().GetLongPath();
     wxFileName filepath(tempDir->getFileName().GetLongPath(),"file","avi");
     bool copyok = wxCopyFile( aviFileName, filepath.GetLongPath(), false );
@@ -369,7 +371,7 @@ void TestBugs::testAddNonexistentFileViaUndo()
 
     // Create temp dir with temp file
     RandomTempDirPtr tempDir = boost::make_shared<RandomTempDir>();
-    model::IPaths inputfiles = getListOfInputFiles();
+    model::IPaths inputfiles = getListOfInputPaths();
     wxString aviFileName = inputfiles.front()->getPath().GetLongPath();
     wxFileName filepath(tempDir->getFileName().GetLongPath(),"file","avi");
     bool copyok = wxCopyFile( aviFileName, filepath.GetLongPath(), false );

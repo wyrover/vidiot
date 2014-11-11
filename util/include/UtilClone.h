@@ -29,9 +29,9 @@ boost::shared_ptr<T> make_cloned(const boost::shared_ptr<T>& t)
 }
 
 template <typename T>
-std::list< boost::shared_ptr<T> > make_cloned(const std::list< boost::shared_ptr<T> >& elements)
+std::vector< boost::shared_ptr<T> > make_cloned(const std::vector< boost::shared_ptr<T> >& elements)
 {
-    std::list< boost::shared_ptr<T> > result;
+    std::vector< boost::shared_ptr<T> > result;
     for ( boost::shared_ptr<T> element : elements )
     {
         result.push_back(make_cloned<T>(element));

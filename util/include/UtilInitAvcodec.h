@@ -56,7 +56,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     static wxString getDefaultLogLevel();
-    static std::list<wxString> getLogLevels();
+    static wxStrings getLogLevels();
     static boost::bimap<int, wxString> mapAvcodecLevels;
     static void configureLog();
     static wxString getMostRecentLogLine();

@@ -28,7 +28,7 @@ void TestExceptions::testRemovedFileInSequence()
     StartTestSuite();
     model::FolderPtr root = WindowCreateProject();
     ASSERT(root);
-    model::IPaths InputFiles = getListOfInputFiles();
+    model::IPaths InputFiles = getListOfInputPaths();
 
     StartTest("Add file to a non-auto folder");
     RandomTempDirPtr tempDir = RandomTempDir::generate();
@@ -65,7 +65,7 @@ void TestExceptions::testRemovedFileInSequenceBeforeOpening()
     StartTestSuite();
     model::FolderPtr root = WindowCreateProject();
     ASSERT(root);
-    model::IPaths InputFiles = getListOfInputFiles();
+    model::IPaths InputFiles = getListOfInputPaths();
 
     StartTest("Add file to a non-auto folder");
     RandomTempDirPtr tempDir = RandomTempDir::generate();
@@ -104,10 +104,10 @@ void TestExceptions::testRemovedFileUsedForTransitionsBeforeOpening()
     ASSERT_WATCHED_PATHS_COUNT(0);
 
     StartTest("Create document with transitions");
-    model::IPaths InputFiles = getListOfInputFiles();
+    model::IPaths InputFiles = getListOfInputPaths();
     RandomTempDirPtr tempDir = RandomTempDir::generate();
-    std::list<wxFileName> fileNames;
-    for ( model::IPathPtr path : getListOfInputFiles() )
+    wxFileNames fileNames;
+    for ( model::IPathPtr path : getListOfInputPaths() )
     {
         wxFileName filepath(tempDir->getFileName().GetLongPath(), path->getPath().GetFullName());
         bool copyok = wxCopyFile( InputFiles.front()->getPath().GetLongPath(), filepath.GetLongPath(), false );
@@ -127,7 +127,7 @@ void TestExceptions::testRemovedFileUsedForTransitionsBeforeOpening()
 
     std::pair<RandomTempDirPtr, wxFileName> tempDir_fileName = SaveProjectAndClose();
 
-    std::list<wxFileName>::iterator it = fileNames.begin();
+    wxFileNames::iterator it = fileNames.begin();
     ++it; // Need second file
     wxRemoveFile(it->GetLongPath());
     fileNames.erase(it);
@@ -147,7 +147,7 @@ void TestExceptions::testRemovedFileInProjectViewBeforeOpening()
     StartTestSuite();
     model::FolderPtr root = WindowCreateProject();
     ASSERT(root);
-    model::IPaths InputFiles = getListOfInputFiles();
+    model::IPaths InputFiles = getListOfInputPaths();
 
     StartTest("Add file to a non-auto folder");
     RandomTempDirPtr tempDir = RandomTempDir::generate();

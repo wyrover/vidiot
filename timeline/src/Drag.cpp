@@ -50,10 +50,10 @@
 #include "TrackView.h"
 #include "Transition.h"
 #include "UtilInt.h"
-#include "UtilList.h"
 #include "UtilLogStl.h"
 #include "UtilLogWxwidgets.h"
 #include "UtilSet.h"
+#include "UtilVector.h"
 #include "VideoClip.h"
 #include "VideoFile.h"
 #include "VideoTrack.h"
@@ -254,21 +254,21 @@ void Drag::move(wxPoint position)
     mPosition = position;
 
     // Snapping determination
-    std::list<pts> prevsnaps = mSnaps;
+    std::vector<pts> prevsnaps = mSnaps;
     determineSnapOffset();
 
     // Determine which regions of the timeline to update
     redrawRegion.Union(wxRect(mBitmapOffset + mPosition + getSnapPixels() - mHotspot - scroll, mBitmap.GetSize())); // Redraw the new area (moved 'into' this area)
     for ( pts snap : prevsnaps )
     {
-        if (!UtilList<pts>(mSnaps).hasElement(snap))
+        if (!UtilVector<pts>(mSnaps).hasElement(snap))
         {
             getTimeline().refreshPts(snap);
         }
     }
     for ( pts snap : mSnaps )
     {
-        if (!UtilList<pts>(prevsnaps).hasElement(snap))
+        if (!UtilVector<pts>(prevsnaps).hasElement(snap))
         {
             getTimeline().refreshPts(snap);
         }
@@ -303,7 +303,7 @@ void Drag::drop()
     {
         command::Drops adddrops = getDrops(track);
         VAR_INFO(track)(adddrops);
-        drops.splice(drops.end(), adddrops);
+        drops.insert(drops.end(), adddrops.begin(), adddrops.end());
     }
 
     mCommand->onDrop(drops, mShift);
@@ -674,8 +674,8 @@ void Drag::determineSnapOffset()
     if (mSnappingEnabled)
     {
         pts minDiff = Layout::SnapDistance + 1; // To ensure that the first found point will change this value
-        std::list<pts>::const_iterator itTimeline = mSnapPoints.begin();
-        std::list<pts>::const_iterator itDrag = mDragPoints.begin();
+        std::vector<pts>::const_iterator itTimeline = mSnapPoints.begin();
+        std::vector<pts>::const_iterator itDrag = mDragPoints.begin();
         ASSERT(itDrag != mDragPoints.end());
         pts leftMostDragPoint = *itDrag;
 
@@ -720,8 +720,8 @@ void Drag::determineSnapOffset()
 
     // Now determine all 'snaps' (positions where dragged cuts and timeline cuts are aligned)
     mSnaps.clear();
-    std::list<pts>::const_iterator itTimeline = mSnapPoints.begin();
-    std::list<pts>::const_iterator itDrag = mDragPoints.begin();
+    std::vector<pts>::const_iterator itTimeline = mSnapPoints.begin();
+    std::vector<pts>::const_iterator itDrag = mDragPoints.begin();
     while ( itTimeline != mSnapPoints.end() && itDrag != mDragPoints.end() )
     {
         pts pts_timeline = *itTimeline;
@@ -746,14 +746,16 @@ void Drag::determinePossibleSnapPoints()
     mSnapPoints.clear();
     if (mSnappingEnabled && Config::ReadBool(Config::sPathSnapClips))
     {
-        UtilList<pts>(mSnapPoints).addElements(getSequence()->getCuts(mCommand->getDrags()));
+        UtilVector<pts>(mSnapPoints).addElements(getSequence()->getCuts(mCommand->getDrags()));
     }
     if (mSnappingEnabled && Config::ReadBool(Config::sPathSnapCursor))
     {
         mSnapPoints.push_back(getCursor().getLogicalPosition());
     }
-    mSnapPoints.sort();
-    mSnapPoints.unique();
+ 
+    std::sort(mSnapPoints.begin(), mSnapPoints.end());
+    std::unique(mSnapPoints.begin(), mSnapPoints.end());
+    
     VAR_DEBUG(mSnapPoints);
 }
 
@@ -767,8 +769,9 @@ void Drag::determinePossibleDragPoints()
         mDragPoints.push_back(clip->getRightPts());
     }
 
-    mDragPoints.sort();
-    mDragPoints.unique();
+    std::sort(mDragPoints.begin(), mDragPoints.end());
+    std::unique(mDragPoints.begin(), mDragPoints.end());
+    VAR_DEBUG(mDragPoints);
 }
 
 void Drag::determineShift()

@@ -43,11 +43,11 @@
 #include "Sequence.h"
 #include "StatusBar.h"
 #include "TimeLinesView.h"
-#include "UtilList.h"
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
 #include "UtilPath.h"
 #include "UtilRecycle.h"
+#include "UtilVector.h"
 #include "Window.h"
 
 namespace gui {
@@ -153,7 +153,7 @@ void ProjectView::onCloseProject(model::EventCloseProject &event)
 
 void ProjectView::onAutoOpenFolder(EventAutoFolderOpen& event)
 {
-    if (UtilList<model::FolderPtr>(mOpenFolders).hasElement(event.getValue()))
+    if (UtilVector<model::FolderPtr>(mOpenFolders).hasElement(event.getValue()))
     {
         expand(event.getValue());
     }
@@ -280,7 +280,7 @@ void ProjectView::expand(const model::NodePtr& node)
     mCtrl.Expand(wxDataViewItem(node->id() ));
 }
 
-void ProjectView::setOpenFolders(std::list<model::FolderPtr> folders)
+void ProjectView::setOpenFolders(std::vector<model::FolderPtr> folders)
 {
     mOpenFolders = folders;
 }
@@ -710,7 +710,7 @@ void ProjectView::onExpanded(wxDataViewEvent &event)
     model::NodePtr p = model::INode::Ptr(static_cast<model::NodeId>(event.GetItem().GetID()));
     model::FolderPtr folder = boost::dynamic_pointer_cast<model::Folder>(p);
     ASSERT(folder);
-    if(!UtilList<model::FolderPtr>(mOpenFolders).hasElement(folder))
+    if(!UtilVector<model::FolderPtr>(mOpenFolders).hasElement(folder))
     {
         mOpenFolders.push_back(folder);
     }
@@ -721,8 +721,8 @@ void ProjectView::onCollapsed(wxDataViewEvent &event)
     model::NodePtr p = model::INode::Ptr(static_cast<model::NodeId>(event.GetItem().GetID()));
     model::FolderPtr folder = boost::dynamic_pointer_cast<model::Folder>(p);
     ASSERT(folder);
-    ASSERT(UtilList<model::FolderPtr>(mOpenFolders).hasElement(folder));
-    UtilList<model::FolderPtr>(mOpenFolders).removeElements(boost::assign::list_of(folder));
+    ASSERT(UtilVector<model::FolderPtr>(mOpenFolders).hasElement(folder));
+    UtilVector<model::FolderPtr>(mOpenFolders).removeElements(boost::assign::list_of(folder));
 }
 
 void ProjectView::onStartEditing(wxDataViewEvent &event)

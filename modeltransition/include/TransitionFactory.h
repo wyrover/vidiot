@@ -21,7 +21,7 @@
 namespace model {
 
 typedef std::pair< wxString, wxString > TransitionDescription; ///< first: name, second: group
-typedef std::list< TransitionDescription > TransitionDescriptions;
+typedef std::vector< TransitionDescription > TransitionDescriptions;
 typedef std::map< TransitionDescription, TransitionPtr > TransitionMap;
 
 class TransitionFactory

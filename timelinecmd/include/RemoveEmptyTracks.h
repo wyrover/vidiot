@@ -56,8 +56,8 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     bool mInitialized;
-    std::list< model::TrackChange > mVideoUndo;
-    std::list< model::TrackChange > mAudioUndo;
+    std::vector< model::TrackChange > mVideoUndo;
+    std::vector< model::TrackChange > mAudioUndo;
 
 };
 

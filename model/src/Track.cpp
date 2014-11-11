@@ -26,10 +26,10 @@
 #include "ProjectModification.h"
 #include "TrackEvent.h"
 #include "UtilClone.h"
-#include "UtilList.h"
 #include "UtilLog.h"
 #include "UtilLogStl.h"
 #include "UtilSet.h"
+#include "UtilVector.h"
 
 namespace model {
 
@@ -159,7 +159,7 @@ void Track::addClips(const IClips& clips, const IClipPtr& position)
 {
     VAR_DEBUG(*this)(position)(clips);
 
-    UtilList<IClipPtr>(mClips).addElements(clips,position);
+    UtilVector<IClipPtr>(mClips).addElements(clips,position);
 
     updateClips();
 
@@ -187,7 +187,7 @@ void Track::removeClips(const IClips& clips)
         boost::dynamic_pointer_cast<Clip>(clip)->setTrackInfo(); // reset
     }
 
-    IClipPtr position = UtilList<IClipPtr>(mClips).removeElements(clips);
+    IClipPtr position = UtilVector<IClipPtr>(mClips).removeElements(clips);
 
     updateClips();
 

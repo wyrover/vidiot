@@ -99,13 +99,13 @@ void ProjectViewDeleteUnusedFiles::recycleFiles()
         size = "\n\n" + _("Disk space freed: ") + wxFileName::GetHumanReadableSize(mTotalSize);
     }
 
-    std::list<wxString> fileNames;
+    wxStrings fileNames;
     for ( model::FilePtr file : mFiles )
     {
         fileNames.push_back(util::path::normalize(file->getPath()).GetFullPath());
     }
 
-    std::list<wxString> deleted = gui::Dialog::get().getStringsSelection(
+    wxStrings deleted = gui::Dialog::get().getStringsSelection(
         _("Remove unused files"),
         _("The following files are not used in the project.\nPress OK to move these to the recycle bin.") + size,
         fileNames);

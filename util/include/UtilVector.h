@@ -1,4 +1,4 @@
-// Copyright 2013,2014 Eric Raijmakers.
+// Copyright 2014 Eric Raijmakers.
 //
 // This file is part of Vidiot.
 //
@@ -15,21 +15,21 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef UTIL_LIST_H
-#define UTIL_LIST_H
-// todo obsolete
+#ifndef UTIL_VECTOR_H
+#define UTIL_VECTOR_H
+
 #include "UtilLog.h"
 #include "UtilLogStl.h"
 
 template<class ELEMENT>
-class UtilList
+class UtilVector
 {
 public:
-    typedef std::list<ELEMENT> ELEMENTS;
+    typedef std::vector<ELEMENT> ELEMENTS;
 
-    /// Create a new UtilList helper object
+    /// Create a new UtilVector helper object
     /// \param list list which is operated upon
-    UtilList(ELEMENTS& list)
+    UtilVector(ELEMENTS& list)
         :   mList(list)
     {
     }
@@ -47,7 +47,7 @@ public:
         // in the arguments list) before doing the splice call. Furthermore, we can use
         // the original lists for doing the logging.
         ELEMENTS tobeadded = added; // Needed for logging statement below. Without this copy, nothing is logged as 'added' (which is emptied by 'splice').
-        mList.splice(itPosition,tobeadded); // See http://www.cplusplus.com/reference/stl/list/splice: elements added BEFORE position
+        mList.insert(itPosition,tobeadded.begin(),tobeadded.end()); // See http://www.cplusplus.com/reference/stl/list/splice: elements added BEFORE position
         VAR_DEBUG(added)(position)(mList);
     }
 
@@ -111,11 +111,11 @@ private:
 /// STL lists of shared pointers cannot use operator== since that compares the shared_ptrs, not their 'content'.
 /// This comparison invokes operator== of the underlying objects.
 template <typename OBJECT>
-bool equals(const std::list< boost::shared_ptr< OBJECT > >& first, const std::list< boost::shared_ptr< OBJECT > >& second)
+bool equals(const std::vector< boost::shared_ptr< OBJECT > >& first, const std::vector< boost::shared_ptr< OBJECT > >& second)
 {
     if (first.size() != second.size()) { return false; }
-    typename std::list< boost::shared_ptr< OBJECT > >::const_iterator it = first.begin();
-    typename std::list< boost::shared_ptr< OBJECT > >::const_iterator itOther = second.begin();
+    typename std::vector< boost::shared_ptr< OBJECT > >::const_iterator it = first.begin();
+    typename std::vector< boost::shared_ptr< OBJECT > >::const_iterator itOther = second.begin();
     while ((it != first.end()) && (itOther != second.end()))
     {
         if (**it == **itOther)

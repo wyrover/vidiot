@@ -21,15 +21,14 @@
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
-#include <list>
 #include <vector>
 #include <wx/bitmap.h>
 #include <wx/image.h>
 
 typedef boost::shared_ptr<wxBitmap> wxBitmapPtr;
 typedef boost::shared_ptr<wxImage> wxImagePtr;
-typedef std::list<wxString> wxStrings;
-typedef std::list<wxFileName> wxFileNames;
+typedef std::vector<wxString> wxStrings;
+typedef std::vector<wxFileName> wxFileNames;
 
 namespace model {
 
@@ -107,14 +106,14 @@ typedef boost::weak_ptr<IClip> WeakIClipPtr;
 typedef boost::weak_ptr<INode> WeakNodePtr;
 typedef boost::weak_ptr<Sequence> WeakSequencPtr;
 typedef boost::weak_ptr<Track> WeakTrackPtr;
-typedef std::list<AudioChunkPtr> AudioChunks;
-typedef std::list<FilePtr> Files;
-typedef std::list<IClipPtr> IClips;
-typedef std::list<MoveParameterPtr> MoveParameters; // std::list because moves must be done in a particular order.
-typedef std::list<NodePtr> NodePtrs;
-typedef std::list<TrackPtr> Tracks;
-typedef std::list<VideoFramePtr> VideoFrames;
-typedef std::list<VideoFrameLayerPtr> VideoFrameLayers;
+typedef std::vector<AudioChunkPtr> AudioChunks;
+typedef std::vector<FilePtr> Files;
+typedef std::vector<IClipPtr> IClips;
+typedef std::vector<MoveParameterPtr> MoveParameters;
+typedef std::vector<NodePtr> NodePtrs;
+typedef std::vector<TrackPtr> Tracks;
+typedef std::vector<VideoFramePtr> VideoFrames;
+typedef std::vector<VideoFrameLayerPtr> VideoFrameLayers;
 typedef std::vector<IPathPtr> IPaths;
 
 namespace render {
@@ -129,8 +128,8 @@ typedef boost::shared_ptr<ICodecParameter> ICodecParameterPtr;
 typedef boost::shared_ptr<OutputFormat> OutputFormatPtr;
 typedef boost::shared_ptr<Render> RenderPtr;
 typedef boost::shared_ptr<VideoCodec> VideoCodecPtr;
-typedef std::list<OutputFormatPtr> OutputFormatList;
-typedef std::list<ICodecParameterPtr> ICodecParameters;
+typedef std::vector<OutputFormatPtr> OutputFormatList;
+typedef std::vector<ICodecParameterPtr> ICodecParameters;
 
 }}
 

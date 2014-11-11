@@ -130,13 +130,13 @@ void TestProjectView::testClipboardPaste_ClipboardNodes()
     StartTest("Preparation: put nodes in clipboard");
     RandomTempDirPtr tempDir1 = RandomTempDir::generate();
     wxFileName filepath1(tempDir1->getFileName().GetLongPath(), "01.avi");
-    bool copyok = wxCopyFile(getListOfInputFiles().at(0)->getPath().GetLongPath(), filepath1.GetLongPath(), false);
+    bool copyok = wxCopyFile(getListOfInputPaths().at(0)->getPath().GetLongPath(), filepath1.GetLongPath(), false);
     ASSERT(copyok);
     model::NodePtr folder = ProjectViewAddAutoFolder(tempDir1->getFileName());
 
     RandomTempDirPtr tempDir2 = RandomTempDir::generate();
     wxFileName filepath2(tempDir2->getFileName().GetLongPath(), "02.avi");
-    copyok = wxCopyFile(getListOfInputFiles().at(1)->getPath().GetLongPath(), filepath2.GetLongPath(), false);
+    copyok = wxCopyFile(getListOfInputPaths().at(1)->getPath().GetLongPath(), filepath2.GetLongPath(), false);
     ASSERT(copyok);
 
     model::NodePtr file = ProjectViewAddFiles(boost::assign::list_of(filepath2)).front();
@@ -207,11 +207,7 @@ void TestProjectView::testClipboardPaste_ClipboardFiles()
 {
 	StartTestSuite();
 	StartTest("Preparation: Files and one folder in clipboard.");
-	std::list<wxFileName> files;
-	for (auto x : getListOfInputFiles())
-	{
-		files.push_back(x->getPath());
-	}
+    wxFileNames files(getListOfInputPathsAsFileNames());
 	FillClipboardWithFiles(files);
 	ProjectViewSetFocus();
 	{
