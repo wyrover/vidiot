@@ -45,7 +45,7 @@ OutputFormat::OutputFormat()
     ASSERT(mFormat); // mFormat initialized by boost serialization
 }
 
-OutputFormat::OutputFormat(const wxString& name, const wxString& longname, const std::list<wxString>& extensions, const AVCodecID& defaultaudiocodec, const AVCodecID& defaultvideocodec)
+OutputFormat::OutputFormat(const wxString& name, const wxString& longname, const wxStrings& extensions, const AVCodecID& defaultaudiocodec, const AVCodecID& defaultvideocodec)
     :   mName(name)
     ,   mLongName(longname)
     ,   mExtensions(extensions)
@@ -127,7 +127,7 @@ wxString OutputFormat::getLongName() const
     return mLongName;
 }
 
-std::list<wxString> OutputFormat::getExtensions() const
+wxStrings OutputFormat::getExtensions() const
 {
     return mExtensions;
 }

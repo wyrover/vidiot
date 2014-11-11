@@ -134,14 +134,14 @@ model::SequencePtr ProjectViewCreateSequence( model::FolderPtr folder )
     return result;
 }
 
-model::Files ProjectViewAddFiles( std::list<wxFileName> paths, model::FolderPtr parent )
+model::Files ProjectViewAddFiles( wxFileNames paths, model::FolderPtr parent )
 {
     WaitForIdle();
     util::thread::RunInMainAndWait([parent]
     {
         GetProjectView().select(boost::assign::list_of(parent));
     });
-    std::list<wxString> shortpaths;
+    wxStrings shortpaths;
     for ( wxFileName path : paths )
     {
         ASSERT( path.IsAbsolute() );

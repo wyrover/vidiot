@@ -62,7 +62,7 @@ void OutputFormats::initialize()
         if ((audiocodec && videocodec) && (!unknowncodec))
         {
             wxStringTokenizer tokenizer(format->extensions, ",");
-            std::list<wxString> extensions;
+            wxStrings extensions;
             while ( tokenizer.HasMoreTokens() )
             {
                 extensions.push_back(tokenizer.GetNextToken());
@@ -83,9 +83,9 @@ OutputFormatList OutputFormats::getList()
 }
 
 // static
-std::list<wxString> OutputFormats::getNames()
+wxStrings OutputFormats::getNames()
 {
-    std::list<wxString> result;
+    wxStrings result;
     for ( OutputFormatPtr format : sOutputFormats )
     {
         result.push_back(format->getLongName());

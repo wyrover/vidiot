@@ -70,7 +70,7 @@ private:
 
     wxStaticText* mHeader;
     wxWindow* mCurrent;
-    std::list<DetailsPanel*> mDetails;
+    std::vector<DetailsPanel*> mDetails;
 
 };
 

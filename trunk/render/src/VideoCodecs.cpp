@@ -93,9 +93,9 @@ VideoCodecPtr VideoCodecs::getDefault()
 }
 
 // static
-std::list<AVCodecID> VideoCodecs::all()
+std::vector<AVCodecID> VideoCodecs::all()
 {
-    std::list<AVCodecID> result;
+    std::vector<AVCodecID> result;
     for ( VideoCodecMap::value_type entry : sVideoCodecs )
     {
         result.push_back(entry.first);

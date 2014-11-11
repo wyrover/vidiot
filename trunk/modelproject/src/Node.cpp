@@ -19,9 +19,9 @@
 
 #include "NodeEvent.h"
 
-#include "UtilList.h"
 #include "UtilLog.h"
 #include "Window.h"
+#include "UtilVector.h"
 
 namespace model {
 
@@ -87,7 +87,7 @@ NodePtr Node::addChild(const NodePtr& newChild)
 
 NodePtrs Node::addChildren(const NodePtrs& children)
 {
-    UtilList<NodePtr>(mChildren).addElements(children, NodePtr());
+    UtilVector<NodePtr>(mChildren).addElements(children, NodePtr());
     for ( NodePtr child : children )
     {
         child->setParent(self());
@@ -116,7 +116,7 @@ NodePtr Node::removeChild(const NodePtr& child)
 
 NodePtrs Node::removeChildren(const NodePtrs& children)
 {
-    // Can't use UtilList::removeElements since these children may be 'out of order'
+    // Can't use UtilVector::removeElements since these children may be 'out of order'
     for ( NodePtr child : children )
     {
         NodePtrs::iterator it;
@@ -142,10 +142,10 @@ NodePtrs Node::getChildren() const
 NodePtrs Node::getAllDescendants() const
 {
     NodePtrs result;
-    UtilList<NodePtr>(result).addElements(mChildren, NodePtr());
+    UtilVector<NodePtr>(result).addElements(mChildren, NodePtr());
     for ( NodePtr child : mChildren )
     {
-        UtilList<NodePtr>(result).addElements(child->getAllDescendants(), NodePtr());
+        UtilVector<NodePtr>(result).addElements(child->getAllDescendants(), NodePtr());
     }
     return result;
 }
@@ -174,7 +174,7 @@ NodePtrs Node::find(const wxString& name)
     }
     for ( NodePtr child : mChildren )
     {
-        UtilList<NodePtr>(result).addElements(child->find(name), NodePtr());
+        UtilVector<NodePtr>(result).addElements(child->find(name), NodePtr());
     }
     return result;
 }
@@ -184,7 +184,7 @@ NodePtrs Node::findPath(const wxString& path)
     NodePtrs result;
     for ( NodePtr child : mChildren )
     {
-        UtilList<NodePtr>(result).addElements(child->findPath(path), NodePtr());
+        UtilVector<NodePtr>(result).addElements(child->findPath(path), NodePtr());
     }
     return result;
 }

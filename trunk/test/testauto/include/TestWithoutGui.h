@@ -34,6 +34,7 @@ public:
 
     /// Caused a crash  in GetLastModificationTime
     void testOpenAutoFolderWithDriveRoot();
+
 };
 
 }

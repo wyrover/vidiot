@@ -63,7 +63,15 @@ wxFileName getTestFilesPath(wxString subdir = "input");
 
 /// Get the input files in the test input folder
 /// \return list of paths to input files
-model::IPaths getListOfInputFiles(wxFileName path = getTestFilesPath());
+model::IPaths getListOfInputPaths(wxFileName path = getTestFilesPath());
+
+/// Get the input files in the test input folder
+/// \return list of paths to input files as strings
+wxStrings getListOfInputPathsAsStrings(wxFileName path = getTestFilesPath());
+
+/// Get the input files in the test input folder
+/// \return list of paths to input files as file names
+wxFileNames getListOfInputPathsAsFileNames(wxFileName path = getTestFilesPath());
 
 /// \return path to a still image
 wxFileName getStillImagePath();

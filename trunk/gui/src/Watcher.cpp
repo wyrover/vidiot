@@ -22,11 +22,11 @@
 #include "Project.h"
 #include "ProjectEvent.h"
 #include "NodeEvent.h"
-#include "UtilList.h"
 #include "UtilLog.h"
 #include "UtilLogStl.h"
 #include "UtilLogWxwidgets.h"
 #include "UtilPath.h"
+#include "UtilVector.h"
 #include "Window.h"
 
 namespace gui {
@@ -48,7 +48,7 @@ Watcher::Watcher()
 
     start();
 }
-
+// todo searc for reverse and try to use reverse iteration iso copying into reversed lists
 Watcher::~Watcher()
 {
     VAR_DEBUG(this);
@@ -223,7 +223,7 @@ void Watcher::watch(const model::NodePtr& node)
 
     // Check if a child folder of the new folder was already watched. If so, that watch is replaced by the new parent dir watch.
     NodeSet nodesToBeTransferred;
-    std::list<wxString> watchesToBeRemoved;
+    wxStrings watchesToBeRemoved;
     for ( MapFolderToNodes::value_type kv : mWatches )
     {
         if (util::path::isParentOf(toBeWatched, kv.first ))

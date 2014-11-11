@@ -234,7 +234,7 @@ void Render::schedule(const SequencePtr& sequence)
     }
 }
 
-typedef std::list<SequencePtr> Sequences;
+typedef std::vector<SequencePtr> Sequences;
 void findSequences(const FolderPtr& node, Sequences& result)
 {
     for ( NodePtr child : node->getChildren() )
@@ -259,9 +259,9 @@ void Render::scheduleAll()
     bool anError = false;
     wxString error;
     error << _("The following sequence(s) have not been scheduled:\n");
-    std::list<wxString> errors;
+    wxStrings errors;
 
-    std::list<wxFileName> allFilenames;
+    wxFileNames allFilenames;
     for ( SequencePtr sequence : seqs )
     {
         allFilenames.push_back(sequence->getRender()->getFileName());

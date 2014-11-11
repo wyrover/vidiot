@@ -93,7 +93,7 @@ private:
     pts mFixedPts;                  ///< Pts value (in the track) that must be kept at a fixed pixel position. Used for keeping the left/right position of the clip fixed as much as possible when shift trimming.
     pixel mFixedPixel;              ///< Pixel value (physical) that mFixedPts must be aligned with. Used for keeping the left/right position of the clip fixed as much as possible when shift trimming.
 
-    std::list<pts> mSnapPoints;     ///< Sorted list containing all possible 'snap to' points (pts values). Filled upon start of trim.
+    std::vector<pts> mSnapPoints;     ///< Sorted list containing all possible 'snap to' points (pts values). Filled upon start of trim.
     boost::optional<pts> mSnap;     ///< Current snapping position (that is, where the trim position 'touches' the pts position of another clip)
 
     pts mCursorPositionBefore;      ///< Cursor position before the trim is started.

@@ -23,7 +23,7 @@
 namespace gui { namespace timeline { namespace command {
     class ExecuteDrop;
     struct Drop;
-    typedef std::list<Drop> Drops;
+    typedef std::vector<Drop> Drops;
 }}}
 
 namespace gui { namespace timeline {
@@ -112,10 +112,10 @@ private:
     wxBitmap mBitmap;                           ///< The bitmap containing the dragged clips. It is reduced to 'only visible area'.
     wxPoint mBitmapOffset;                      ///< This offset ensures that correct areas can be used when positioning on the timeline.
     bool mActive;                               ///< True if dragging is currently active.
-    std::list<pts> mSnapPoints;                 ///< Sorted list containing all possible 'snap to' points (pts values). Filled upon start of drag.
-    std::list<pts> mDragPoints;                 ///< Sorted list containing all possible 'snapping' points (pts values) in the dragged area. Filled upon start of drag.
+    std::vector<pts> mSnapPoints;                 ///< Sorted list containing all possible 'snap to' points (pts values). Filled upon start of drag.
+    std::vector<pts> mDragPoints;                 ///< Sorted list containing all possible 'snapping' points (pts values) in the dragged area. Filled upon start of drag.
     pts mSnapOffset;                            ///< Resulting offset caused by 'snapping to' a clip
-    std::list<pts> mSnaps;                      ///< List of current snapping positions (that is, where one of the dragged clips 'touches' the pts position of another clip)
+    std::vector<pts> mSnaps;                      ///< List of current snapping positions (that is, where one of the dragged clips 'touches' the pts position of another clip)
     Shift mShift;                               ///< Uninitialized if no shift active. When initialized holds info on the current shift.
     bool mSnappingEnabled;                      ///< Used to overrule snapping during a drag operation.
 

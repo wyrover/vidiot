@@ -28,7 +28,7 @@ void AssertClipboardEmpty();
 
 void AssertClipboardContains(const wxDataFormat& format);
 
-void FillClipboardWithFiles(std::list<wxFileName> files);
+void FillClipboardWithFiles(wxFileNames files);
 
 #define ASSERT_CLIPBOARD_EMPTY AssertClipboardEmpty
 #define ASSERT_CLIPBOARD_CONTAINS_NODES AssertClipboardContains(wxDataFormat(gui::ProjectViewDataObject::sFormat))

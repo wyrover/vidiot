@@ -24,7 +24,7 @@ namespace gui { namespace timeline {
 
     namespace command {
         struct Drop;
-        typedef std::list<Drop> Drops;
+        typedef std::vector<Drop> Drops;
     }
 
 class TimelineDataObject

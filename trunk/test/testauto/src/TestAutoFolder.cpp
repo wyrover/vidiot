@@ -29,7 +29,7 @@ void TestAutoFolder::testAddAutoFolder()
 
     model::FolderPtr root = WindowCreateProject();
     ASSERT(root);
-    model::IPaths InputFiles = getListOfInputFiles();
+    model::IPaths InputFiles = getListOfInputPaths();
 
     {
         StartTest("Add empty autofolder to project view");

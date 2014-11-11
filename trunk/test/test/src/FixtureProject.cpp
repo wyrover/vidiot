@@ -38,7 +38,7 @@ void FixtureProject::init()
 
     mRoot = WindowCreateProject();
     ASSERT(mRoot);
-    InputFiles = getListOfInputFiles();
+    InputFiles = getListOfInputPaths();
 
     mAutoFolder = ProjectViewAddAutoFolder( getTestFilesPath() );
     WaitForChildCount(mRoot, InputFiles.size() + 2); // +2: Root + autofolder

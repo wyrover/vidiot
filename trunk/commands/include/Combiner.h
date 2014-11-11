@@ -62,7 +62,7 @@ protected:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    std::list< wxCommand* > mCommands;
+    std::vector< wxCommand* > mCommands;
 };
 
 } // namespace

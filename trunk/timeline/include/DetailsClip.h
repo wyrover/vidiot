@@ -112,7 +112,7 @@ public:
     // TEST
     //////////////////////////////////////////////////////////////////////////
 
-    std::list<wxToggleButton*> getLengthButtons() const;
+    std::vector<wxToggleButton*> getLengthButtons() const;
     wxSlider* getOpacitySlider() const;
     wxSpinCtrl* getOpacitySpin() const;
     EnumSelector<model::VideoScaling>* getScalingSelector() const;
@@ -141,7 +141,7 @@ private:
     model::EmptyClipPtr  mEmptyClip;
 
     wxStaticText* mCurrentLength;
-    std::list<wxToggleButton*> mLengthButtons;
+    std::vector<wxToggleButton*> mLengthButtons;
     std::map<pts, pts> mTrimAtBegin;
     std::map<pts, pts> mTrimAtEnd;
 

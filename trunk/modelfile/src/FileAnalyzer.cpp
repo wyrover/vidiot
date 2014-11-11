@@ -79,7 +79,7 @@ void FileAnalyzer::init()
 		updateProgressDialog();
 	}
 
-	mFileNames.sort([](const wxFileName& file1, const wxFileName& file2) { return file1.GetFullPath() < file2.GetFullPath(); });
+    std::sort(mFileNames.begin(), mFileNames.end(), [](const wxFileName& file1, const wxFileName& file2) { return file1.GetFullPath() < file2.GetFullPath(); });
 
 	// Check if files can be opened, and determine the most frequent frame/sample rates of the files.
 

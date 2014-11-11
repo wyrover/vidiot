@@ -714,7 +714,7 @@ void Window::onWorkspaceSave(wxCommandEvent& event)
 wxString selectWorkspace(wxString text)
 {
     Config::Perspectives perspectives = Config::WorkspacePerspectives::get();
-    std::list<wxString> entries;
+    wxStrings entries;
     for ( Config::Perspectives::value_type name_perspective : perspectives )
     {
         entries.push_back(name_perspective.first);
@@ -832,7 +832,7 @@ void Window::onAbout(wxCommandEvent& event)
 
 void Window::onDropFiles(wxDropFilesEvent& event)
 {
-    std::list<wxString> filenames;
+    wxStrings filenames;
     for (int i = 0; i < event.GetNumberOfFiles(); ++i)
     {
         filenames.push_back(event.GetFiles()[i]);

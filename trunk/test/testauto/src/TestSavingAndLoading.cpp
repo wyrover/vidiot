@@ -58,7 +58,7 @@ void TestSavingAndLoading::testSaveAndLoad()
     ProjectViewAddFiles( boost::assign::list_of(getStillImagePath()), folder1 );
 
     StartTest("Add video clips to sequence");
-    ExtendSequenceWithRepeatedClips(getSequence(), getListOfInputFiles(), 2);
+    ExtendSequenceWithRepeatedClips(getSequence(), getListOfInputPaths(), 2);
 
     StartTest("Add still image to sequence");
     ExtendSequenceWithStillImage(getSequence()); // Ensure that there is a still image in the timeline
@@ -239,7 +239,7 @@ void TestSavingAndLoading::checkDocument(wxString path)
         StartTest("Enlarge sequence"); // Known bug at some point: enlarging the sequence did not cause an update of the timeline virtual size due to missing event binding
         wxSize paneSize = getTimeline().GetVirtualSize();
         wxSize size = getTimeline().getSequenceView().getSize();
-        ExtendSequenceWithRepeatedClips(getSequence(), getListOfInputFiles(), 1);
+        ExtendSequenceWithRepeatedClips(getSequence(), getListOfInputPaths(), 1);
         ASSERT_DIFFERS(getTimeline().getSequenceView().getSize(), size);
         ASSERT_DIFFERS(getTimeline().GetVirtualSize(), paneSize);
     }

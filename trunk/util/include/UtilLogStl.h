@@ -19,18 +19,6 @@
 #define UTIL_LOG_STL_H
 
 template <class T>
-std::ostream& operator<<(std::ostream& os, const std::list<T>& obj)
-{
-    os << "{";
-    for ( T child : obj )
-    {
-        os << child << " ";
-    }
-    os << "}";
-    return os;
-}
-
-template <class T>
 std::ostream& operator<<(std::ostream& os, const std::vector<T>& obj)
 {
     os << "{";

@@ -147,9 +147,9 @@ void ViewMap::invalidateThumbnails()
     }
 }
 
-std::list<ThumbnailView*> ViewMap::getThumbnails() const
+std::vector<ThumbnailView*> ViewMap::getThumbnails() const
 {
-    std::list<ThumbnailView*> result;
+    std::vector<ThumbnailView*> result;
     boost::copy(mThumbnails | boost::adaptors::map_values, std::back_inserter(result));
     return result;
 }

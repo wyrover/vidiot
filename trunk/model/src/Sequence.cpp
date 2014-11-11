@@ -30,12 +30,12 @@
 #include "Render.h"
 #include "SequenceEvent.h"
 #include "UtilClone.h"
-#include "UtilList.h"
 #include "UtilLog.h"
 #include "UtilLogStl.h"
 #include "UtilLogWxwidgets.h"
 #include "UtilSerializeWxwidgets.h"
 #include "UtilSet.h"
+#include "UtilVector.h"
 #include "VideoComposition.h"
 #include "VideoCompositionParameters.h"
 #include "VideoTrack.h"
@@ -212,7 +212,7 @@ void Sequence::addVideoTracks(const Tracks& tracks, const TrackPtr& position)
          track->Bind(model::EVENT_LENGTH_CHANGED, &Sequence::onTrackLengthChanged, this);
     }
 
-    UtilList<TrackPtr>(mVideoTracks).addElements(tracks,position);
+    UtilVector<TrackPtr>(mVideoTracks).addElements(tracks,position);
 
     updateTracks();
 
@@ -238,7 +238,7 @@ void Sequence::addAudioTracks(const Tracks& tracks, const TrackPtr& position)
          track->Bind(model::EVENT_LENGTH_CHANGED, &Sequence::onTrackLengthChanged, this);
     }
 
-    UtilList<TrackPtr>(mAudioTracks).addElements(tracks,position);
+    UtilVector<TrackPtr>(mAudioTracks).addElements(tracks,position);
 
     updateTracks();
 
@@ -259,7 +259,7 @@ void Sequence::removeVideoTracks(const Tracks& tracks)
         track->clean();
         track->Unbind(model::EVENT_LENGTH_CHANGED, &Sequence::onTrackLengthChanged, this);
     }
-    TrackPtr position = UtilList<TrackPtr>(mVideoTracks).removeElements(tracks);
+    TrackPtr position = UtilVector<TrackPtr>(mVideoTracks).removeElements(tracks);
 
     updateTracks();
     // ProcessEvent is used. Model events must be processed synchronously to avoid inconsistent states in
@@ -279,7 +279,7 @@ void Sequence::removeAudioTracks(const Tracks& tracks)
         track->clean();
         track->Unbind(model::EVENT_LENGTH_CHANGED, &Sequence::onTrackLengthChanged, this);
     }
-    TrackPtr position = UtilList<TrackPtr>(mAudioTracks).removeElements(tracks);
+    TrackPtr position = UtilVector<TrackPtr>(mAudioTracks).removeElements(tracks);
 
     updateTracks();
     // ProcessEvent is used. Model events must be processed synchronously to avoid inconsistent states in

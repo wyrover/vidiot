@@ -73,7 +73,7 @@ public:
 
     void invalidateThumbnails();
 
-    std::list<ThumbnailView*> getThumbnails() const;
+    std::vector<ThumbnailView*> getThumbnails() const;
 
 private:
 

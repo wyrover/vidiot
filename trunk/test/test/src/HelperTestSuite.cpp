@@ -21,7 +21,7 @@
 
 namespace test {
 
-std::list<std::string> SuitesWithoutGui = boost::assign::list_of
+std::vector<std::string> SuitesWithoutGui = boost::assign::list_of
     ("TestConvert::testTimeConversions")
     ("TestConvert::testIntegerConversions")
     ("TestUtilPath::testEquals")

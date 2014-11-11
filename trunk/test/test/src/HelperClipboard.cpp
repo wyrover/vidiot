@@ -74,7 +74,7 @@ void AssertClipboardContains(const wxDataFormat& format)
 	});
 }
 
-void FillClipboardWithFiles(std::list<wxFileName> files) 
+void FillClipboardWithFiles(wxFileNames files) 
 {
     wxFileDataObject* data = new wxFileDataObject();
 	for (wxFileName file : files)

@@ -17,7 +17,7 @@
 
 #ifndef UTIL_LIST_H
 #define UTIL_LIST_H
-
+// todo obsolete
 #include "UtilLog.h"
 #include "UtilLogStl.h"
 

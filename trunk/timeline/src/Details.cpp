@@ -43,9 +43,6 @@ Details::Details(wxWindow* parent, Timeline* timeline)
     // The order in this list is the order of priority in case two panels want to be shown
     mDetails.push_back(new DetailsTrim(this,*timeline));
     mDetails.push_back(new DetailsClip(this,*timeline));
-//        mDetails = (boost::assign::list_of<DetailsPanel*>
-//        (static_cast<DetailsPanel*>(new DetailsTrim(this,*timeline)))
-//        (static_cast<DetailsPanel*>(new DetailsClip(this,*timeline))))).operator std::list<int>();
 
     wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
     mHeader = new wxStaticText(this,wxID_ANY,"", wxDefaultPosition, wxSize(2000,-1), wxBORDER_THEME | wxST_ELLIPSIZE_MIDDLE | wxALIGN_CENTRE);

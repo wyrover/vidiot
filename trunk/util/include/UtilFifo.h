@@ -100,7 +100,7 @@ public:
 
 private:
     long mMaxSize;
-    std::list<ELEMENT> items;
+    std::deque<ELEMENT> items;
 
     boost::mutex mMutex;
     boost::condition_variable conditionNotEmpty;

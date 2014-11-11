@@ -100,7 +100,7 @@ public:
 
     /// Set the folders that must be opened (expanded) after opening a new
     /// project.
-    void setOpenFolders(std::list<model::FolderPtr> folders);
+    void setOpenFolders(std::vector<model::FolderPtr> folders);
 
     void scrollToRight();
 
@@ -147,7 +147,7 @@ private:
     ProjectViewCtrl mCtrl;
     ProjectViewModel* mModel;
     ProjectViewDropSource mDropSource;
-    std::list<model::FolderPtr> mOpenFolders;
+    std::vector<model::FolderPtr> mOpenFolders;
     int mDragCount;                                 ///< Used for determining start of dragging
     wxPoint mDragStart;                             ///< Holds start of dragging point
     int mHeaderHeight;

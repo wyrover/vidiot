@@ -28,7 +28,7 @@ void TestWatch::setUp()
     if (!HelperTestSuite::get().currentTestIsEnabled()) { return; } // Test was disabled
     mRoot = WindowCreateProject();
     ASSERT(mRoot);
-    mInputFiles = getListOfInputFiles();
+    mInputFiles = getListOfInputPaths();
 }
 
 void TestWatch::tearDown()

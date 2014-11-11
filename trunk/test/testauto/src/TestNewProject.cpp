@@ -71,7 +71,7 @@ void TestNewProject::testFolder()
         ASSERT_EQUALS(gui::DialogNewProject::get().GetCurrentPage(), gui::DialogNewProject::get().getPageFolder());
         ASSERT(!gui::DialogNewProject::get().isNextEnabled());
         wxFileName input = getTestFilesPath(foldername);
-        model::IPaths paths = getListOfInputFiles(input);
+        model::IPaths paths = getListOfInputPaths(input);
         gui::Dialog::get().setDir(input.GetFullPath());
         gui::DialogNewProject::get().pressBrowseFolder();
         WaitForIdle();
@@ -142,7 +142,7 @@ void TestNewProject::testFiles()
     ASSERT_EQUALS(gui::DialogNewProject::get().GetCurrentPage(), gui::DialogNewProject::get().getPageFiles());
     ASSERT(!gui::DialogNewProject::get().isNextEnabled());
     wxStrings files;
-    for ( model::IPathPtr path : getListOfInputFiles() )
+    for ( model::IPathPtr path : getListOfInputPaths() )
     {
         files.push_back(path->getPath().GetFullPath());
     }
