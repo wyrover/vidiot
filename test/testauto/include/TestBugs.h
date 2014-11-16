@@ -161,6 +161,19 @@ public:
     /// The second creation of the transition resulted in the crash.
     void testCrashWhenCreatingCrossfadeViaKeyboardTwice();
 
+    /// See [#155]
+    /// Creating a audio transition at the end of a clip (at the end of the underlying file)
+    /// caused the transition to have an illegal length: it overlapped the cut between the
+    /// clips (12 to the left, 12 to the right), which is different than what happened for
+    /// creating the same transition in the video track: in that case the transition was
+    /// fully to the left of the cut (12 to the left only).
+    ///
+    /// This bug was caused by a clip's file using uninitialized data (mLength) during
+    /// the creation of a transition. The uninitialized data was caused by loading a
+    /// timeline (causing the files not to be opened yet) and then creating a transition,
+    /// using data from the not-yet-opened (thus, meta data unknown) file.
+    void testCrashCausedByCreatingTransitionAtAudioClipEndAfterReadingProjectFromDisk();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////

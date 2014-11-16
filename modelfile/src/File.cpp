@@ -206,6 +206,13 @@ void File::check(bool immediately)
 
 pts File::getLength() const
 {
+    // todo store the metadata in the save file (and use mLastModified to determine if it must be updated).
+    //      now files are read over and over again, only for the metadata, which is a waste of time.
+    //      Make metadatachache...
+    // todo then add these asserts again in some way:
+    //ASSERT(mMetaDataKnown); // If not initialized, then all sorts of problems (calculation mistakes) can occur.
+    //ASSERT_DIFFERS(mNumberOfFrames,LENGTH_UNDEFINED); // Must have been initialized
+    // then, finally, remove the  readMetaData() calls in CreateTransition.cpp((111,116).
     ASSERT_MORE_THAN_ZERO(mNumberOfFrames);
     return mNumberOfFrames;
 }
