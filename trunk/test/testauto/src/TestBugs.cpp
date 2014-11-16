@@ -619,4 +619,17 @@ void TestBugs::testCrashWhenCreatingCrossfadeViaKeyboardTwice()
     ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>(); 
 }
 
+void TestBugs::testCrashCausedByCreatingTransitionAtAudioClipEndAfterReadingProjectFromDisk()
+{
+    StartTestSuite();
+    TimelineZoomIn(3);
+    std::pair<RandomTempDirPtr, wxFileName> tempDir_fileName = StartWithProjectReadFromDisk();
+    TimelineLeftClick(Center(AudioClip(0,3)));
+    // Transition created with keyboard press specifically. 
+    // 'MakeInOutTransitionAfterClip' causes the file object to be initialized before
+    // creating the transition.
+    TimelineKeyPress('p'); 
+    Play(LeftPixel(AudioClip(0,3)) -2, 1000);
+}
+
 } // namespace

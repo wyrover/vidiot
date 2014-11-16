@@ -20,6 +20,7 @@
 #include "Config.h"
 #include "EmptyClip.h"
 #include "IClip.h"
+#include "File.h"
 #include "Mouse.h"
 #include "Timeline.h"
 #include "Track.h"
@@ -107,10 +108,12 @@ CreateTransition::CreateTransition(const model::SequencePtr& sequence, const mod
 
     if (mLeft)
     {
+        mLeft->getFile()->readMetaData(); // todo remove after making metadatacache
         mLeftSize.reset(makeLeftPartFit(defaultSize / 2)); // Default length
     }
     if (mRight)
     {
+        mRight->getFile()->readMetaData(); // todo remove after making metadatacache
         mRightSize.reset(makeRightPartFit(defaultSize / 2)); // Default length
     }
     if (mLeft && mRight && getLength() < defaultSize)

@@ -29,6 +29,8 @@ DirAndFile SaveProjectAndClose(boost::optional<RandomTempDirPtr> tempDir = boost
 
 DirAndFile SaveProject(boost::optional<RandomTempDirPtr> tempDir = boost::none, wxString filesuffix = "");
 
+DirAndFile StartWithProjectReadFromDisk();
+
 wxFileName generateSaveFileName(wxFileName dir);
 
 void CloseProjectAndAvoidSaveDialog();
