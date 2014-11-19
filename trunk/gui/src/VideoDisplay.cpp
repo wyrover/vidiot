@@ -407,29 +407,21 @@ void VideoDisplay::showNextFrame()
         return;
     }
 
-        model::VideoFramePtr videoFrame = mVideoFrames.pop();
-        if (!videoFrame)
-        {
-            // End of video reached
-            return;
-        }
+    model::VideoFramePtr videoFrame = mVideoFrames.pop();
+    if (!videoFrame)
+    {
+        // End of video reached
+        return;
+    }
 
-        double elapsed = Pa_GetStreamTime(mAudioOutputStream) - mStartTime - mAudioLatency; // Elapsed time since playback started
-        double speedfactor = static_cast<double>(sDefaultSpeed) / static_cast<double>(mSpeed);
-        double next = speedfactor * static_cast<double>(model::Convert::ptsToTime(videoFrame->getPts() - mStartPts)) / 1000.0; // time at which the frame must be shown; /1000.0: convert ms to s
-        int sleep = static_cast<int>(floor((next - elapsed) * 1000.0));
+    double elapsed = Pa_GetStreamTime(mAudioOutputStream) - mStartTime - mAudioLatency; // Elapsed time since playback started
+    double speedfactor = static_cast<double>(sDefaultSpeed) / static_cast<double>(mSpeed);
+    double next = speedfactor * static_cast<double>(model::Convert::ptsToTime(videoFrame->getPts() - mStartPts)) / 1000.0; // time at which the frame must be shown; /1000.0: convert ms to s
+    int sleep = static_cast<int>(floor((next - elapsed) * 1000.0));
 
-        //LOG_ERROR << "Current time: " << std::fixed << elapsed;
-        //LOG_ERROR << "Time to show next frame: " << std::fixed << next;
-        //LOG_ERROR << "Sleep time:" << std::fixed << sleep;
-
-    //////////////////////////////////////////////////////////////////////////
-    // SCHEDULE NEXT REFRESH
-    //////////////////////////////////////////////////////////////////////////
-
-    //////////////////////////////////////////////////////////////////////////
-    // DISPLAY NEW FRAME
-    //////////////////////////////////////////////////////////////////////////
+    //LOG_ERROR << "Current time: " << std::fixed << elapsed;
+    //LOG_ERROR << "Time to show next frame: " << std::fixed << next;
+    //LOG_ERROR << "Sleep time:" << std::fixed << sleep;
 
     static const int sMinimumSleepTime = 0;
     if (sleep < sMinimumSleepTime)
@@ -447,11 +439,13 @@ void VideoDisplay::showNextFrame()
             mSkipFrames.store(skip * 2);
         }
 
+        if (mVideoFrames.getSize() > 0)
+        {
+            mVideoTimer.Notify(); // Immediately try next frame in buffer
+            return;
+        }
+
         sleep = model::Convert::ptsToTime(1);
-//        // Too late, skip pictures
-//        VAR_WARNING(mVideoFrames.getSize())(mStartTime)(sleep)(mStartPts)(videoFrame->getPts());
-//        mSkipFrames = std::max(mSkipFrames * 2,5);
-//        sleep = model::Convert::ptsToTime(mSkipFrames);
     }
     else
     {
