@@ -111,6 +111,8 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
 {
     startDecodingAudio(parameters);
 
+    // todo use avcodeccontext->delay for more accurate seeking?
+
     if (!canBeOpened())
     {
         // If file could not be read (for whatever reason) return empty audio.
