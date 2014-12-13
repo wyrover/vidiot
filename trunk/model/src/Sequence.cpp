@@ -17,11 +17,9 @@
 
 #include "Sequence.h"
 
-#include "AudioChunk.h"
 #include "AudioComposition.h"
 #include "AudioCompositionParameters.h"
 #include "AudioTrack.h"
-#include "EmptyFrame.h"
 #include "IClip.h"
 #include "ModelEvent.h"
 #include "NodeEvent.h"
@@ -48,19 +46,20 @@ namespace model {
 //////////////////////////////////////////////////////////////////////////
 
 Sequence::Sequence()
-    :   wxEvtHandler()
-    ,	IControl()
-    ,   IVideo()
-    ,   IAudio()
-    ,   Node()
-    ,   mName()
-    ,   mDividerPosition(0)
-    ,   mVideoTracks()
-    ,   mAudioTracks()
-    ,   mVideoTrackMap()
-    ,   mAudioTrackMap()
-    ,   mVideoPosition(0)
-    ,   mRender()
+    : wxEvtHandler()
+    , IControl()
+    , IVideo()
+    , IAudio()
+    , Node()
+    , mName()
+    , mDividerPosition(0)
+    , mVideoTracks()
+    , mAudioTracks()
+    , mVideoTrackMap()
+    , mAudioTrackMap()
+    , mVideoPosition(0)
+    , mAudioPosition(0)
+    , mRender()
 {
     VAR_DEBUG(this);
     // Serialization will fill in the members
@@ -68,19 +67,20 @@ Sequence::Sequence()
 }
 
 Sequence::Sequence(const wxString& name)
-    :   wxEvtHandler()
-    ,	IControl()
-    ,   IVideo()
-    ,   IAudio()
-    ,   Node()
-    ,   mName(name)
-    ,   mDividerPosition(0)
-    ,   mVideoTracks()
-    ,   mAudioTracks()
-    ,   mVideoTrackMap()
-    ,   mAudioTrackMap()
-    ,   mVideoPosition(0)
-    ,   mRender()
+    : wxEvtHandler()
+    , IControl()
+    , IVideo()
+    , IAudio()
+    , Node()
+    , mName(name)
+    , mDividerPosition(0)
+    , mVideoTracks()
+    , mAudioTracks()
+    , mVideoTrackMap()
+    , mAudioTrackMap()
+    , mVideoPosition(0)
+    , mAudioPosition(0)
+    , mRender()
 {
     VAR_DEBUG(this);
     mVideoTracks.push_back(boost::make_shared<VideoTrack>());
@@ -89,19 +89,20 @@ Sequence::Sequence(const wxString& name)
 }
 
 Sequence::Sequence(const Sequence& other)
-    :   wxEvtHandler()
-    ,	IControl()
-    ,   IVideo()
-    ,   IAudio()
-    ,   Node()
-    ,   mName(other.mName)
-    ,   mDividerPosition(other.mDividerPosition)
-    ,   mVideoTracks(make_cloned<Track>(other.mVideoTracks))
-    ,   mAudioTracks(make_cloned<Track>(other.mAudioTracks))
-    ,   mVideoTrackMap() // Duplicate administration left empty! (This constructor should only be used for cloning directly before rendering)
-    ,   mAudioTrackMap()  // Duplicate administration left empty! (...and for rendering the duplicate administration is not required)
-    ,   mVideoPosition(0)
-    ,   mRender(make_cloned<render::Render>(other.mRender))
+    : wxEvtHandler()
+    , IControl()
+    , IVideo()
+    , IAudio()
+    , Node()
+    , mName(other.mName)
+    , mDividerPosition(other.mDividerPosition)
+    , mVideoTracks(make_cloned<Track>(other.mVideoTracks))
+    , mAudioTracks(make_cloned<Track>(other.mAudioTracks))
+    , mVideoTrackMap() // Duplicate administration left empty! (This constructor should only be used for cloning directly before rendering)
+    , mAudioTrackMap()  // Duplicate administration left empty! (...and for rendering the duplicate administration is not required)
+    , mVideoPosition(0)
+    , mAudioPosition(0)
+    , mRender(make_cloned<render::Render>(other.mRender))
 {
     VAR_DEBUG(this);
     updateTracks();
@@ -130,7 +131,7 @@ pts Sequence::getLength() const
     pts nFrames = 0;
     for ( TrackPtr track : mVideoTracks )
     {
-        nFrames = std::max<pts>(nFrames, track->getLength());
+        nFrames = std::max<pts>(nFrames, track->getLength()); // todo use getTracks here (avoid dupe code for audio/video)
     }
     for ( TrackPtr track : mAudioTracks )
     {
@@ -143,7 +144,8 @@ void Sequence::moveTo(pts position)
 {
     VAR_DEBUG(position);
     mVideoPosition = position;
-    for ( TrackPtr track : mVideoTracks )
+    mAudioPosition = position;
+    for ( TrackPtr track : mVideoTracks ) // todo use getTracks here (avoid dupe code for audio/video)
     {
         track->moveTo(position);
     }
@@ -151,7 +153,6 @@ void Sequence::moveTo(pts position)
     {
         track->moveTo(position);
     }
-    mCache.cachedAudio.clear();
 }
 
 wxString Sequence::getDescription() const
@@ -166,7 +167,6 @@ void Sequence::clean()
     {
         track->clean();
     }
-    mCache.cachedAudio.clear();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -187,17 +187,9 @@ VideoFramePtr Sequence::getNextVideo(const VideoCompositionParameters& parameter
 
 AudioChunkPtr Sequence::getNextAudio(const AudioCompositionParameters& parameters)
 {
-    AudioCompositionPtr composition = getAudioComposition(parameters);
+    AudioCompositionPtr composition = getAudioComposition(AudioCompositionParameters(parameters).setPts(mAudioPosition).determineChunkSize());
     AudioChunkPtr audioChunk = composition->generate();
-    if (composition->wasInputChunkReturnedAsOutput())
-    {
-        // The chunk was forwarded immediately to the 'consumer'.
-        // (Performance optimization for the '1 track only' case).
-        // However, no changes in number of read samples were made yet
-        // (since that's to be done by the consumer).
-        // Therefore, ensure that a 'getNextAudio' call is done.
-        mCache.cachedAudio.clear();
-    }
+    mAudioPosition++;
     return audioChunk;
 }
 
@@ -305,7 +297,7 @@ Tracks Sequence::getAudioTracks()
 Tracks Sequence::getTracks()
 {
     Tracks tracks;
-    for ( TrackPtr track : mVideoTracks )
+    for ( TrackPtr track : mVideoTracks ) // todo use insert twice
     {
         tracks.push_back(track);
     }
@@ -371,32 +363,7 @@ AudioCompositionPtr Sequence::getAudioComposition(const AudioCompositionParamete
     AudioCompositionPtr composition(boost::make_shared<AudioComposition>(parameters));
     for ( TrackPtr track : mAudioTracks )
     {
-        std::map< TrackPtr, AudioChunkPtr >::iterator it = mCache.cachedAudio.find(track);
-        if (it != mCache.cachedAudio.end())
-        {
-            if (it->second)
-            {
-                if (it->second->getUnreadSampleCount() == 0)
-                {
-                    mCache.cachedAudio.erase(it); // chunk used completely; get next chunk
-                }
-                // else: cached chunk not completely used yet; use current chunk
-            }
-            // else: end of track reached; keep using this chunk
-        }
-        // else: no cached chunk yet; get first chunk
-
-        if (mCache.cachedAudio.find(track) == mCache.cachedAudio.end())
-        {
-            mCache.cachedAudio[ track ] = boost::dynamic_pointer_cast<IAudio>(track)->getNextAudio(parameters);
-        }
-
-        if (mCache.cachedAudio[ track ])
-        {
-            // Only add non 0 ptrs (if at end of track, then skip)
-            composition->add(mCache.cachedAudio[ track ]);
-        }
-
+        composition->add(boost::dynamic_pointer_cast<IAudio>(track)->getNextAudio(parameters));
     }
     return composition;
 }
@@ -542,6 +509,7 @@ std::ostream& operator<<(std::ostream& os, const Sequence& obj)
         << obj.mVideoTracks              << '|'
         << obj.mAudioTracks              << '|'
         << obj.mVideoPosition            << '|'
+        << obj.mAudioPosition            << '|'
         << obj.mRender;
     return os;
 }

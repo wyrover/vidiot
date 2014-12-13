@@ -63,10 +63,8 @@ protected:
     // IMPLEMENTATION OF TRANSITION
     //////////////////////////////////////////////////////////////////////////
 
-    samplecount getTotalSamples(const AudioCompositionParameters& parameters) const;
-
     virtual void reset() = 0; ///< Reset any data that is cached.
-    virtual AudioChunkPtr getAudio(samplecount position, const IClipPtr& leftClip, const IClipPtr& rightClip, const AudioCompositionParameters& parameters) = 0;
+    virtual AudioChunkPtr getAudio(pts position, const IClipPtr& leftClip, const IClipPtr& rightClip, const AudioCompositionParameters& parameters) = 0;
 
 private:
 
@@ -74,7 +72,7 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    samplecount mProgress;  ///< Last rendered position in frames
+    pts mProgress;          ///< Last rendered position in frames
     IClipPtr mLeftClip;     ///< Clip generating 'left' side. NOTE: Only used for generating frames, not for querying. That should be done by inspecting 'IClip::getPrev'
     IClipPtr mRightClip;    ///< Clip generating 'right' side. NOTE: Only used for generating frames, not for querying. That should be done by inspecting 'IClip::getNext'
 

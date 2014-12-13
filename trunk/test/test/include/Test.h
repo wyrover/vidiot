@@ -39,6 +39,7 @@
 #include "Application.h"
 #include "AudioChunk.h"
 #include "AudioClip.h"
+#include "AudioCodecs.h"
 #include "AudioCompositionParameters.h"
 #include "AudioTrack.h"
 #include "AudioView.h"

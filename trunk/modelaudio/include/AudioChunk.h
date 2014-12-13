@@ -70,7 +70,7 @@ public:
     /// \param dst area to hold the samples
     /// \param requested number of samples to be copied
     /// \return actually stored number of samples (is less than requested if there were no more available samples)
-    samplecount extract(uint16_t* dst, samplecount requested);
+    samplecount extract(sample* dst, samplecount requested);
 
     /// Indicates that a number of samples has been consumed by the process
     /// that reads chunks.
@@ -87,11 +87,15 @@ public:
     /// \return pointer to first unread sample.
     virtual sample* getUnreadSamples();
 
+    samplecount getReadSampleCount() const;
     samplecount getUnreadSampleCount() const;
 
     /// Call this if not all samples in this chunk are 'for use' (typically
     /// required if the extra samples are beyond a clips length.
     void setAdjustedLength(samplecount adjustedLength);
+
+    pts getPts() const;
+    void setPts(pts position);
 
 protected:
 
@@ -100,6 +104,7 @@ protected:
     samplecount mNrReadSamples;     ///< Number of samples that has been marked as read using read()
     samplecount mNrSamples;         ///< Total number of samples allocated in memory
     samplecount mNrSkippedSamples;  ///< Set if the length of the chunk is truncated after decoding (for stopping at right pts)
+    boost::optional<pts> mPts;
 
 private:
 

@@ -36,28 +36,25 @@ namespace model {
 //////////////////////////////////////////////////////////////////////////
 
 EmptyClip::EmptyClip()
-    :	Clip()
-    ,   mLength(0)
-    ,   mProgress(0)
-    ,   mSampleProgress(0)
+    : Clip()
+    , mLength(0)
+    , mProgress(0)
 {
     VAR_DEBUG(*this);
 }
 
 EmptyClip::EmptyClip(pts length)
-    :	Clip()
-    ,   mLength(length)
-    ,   mProgress(0)
-    ,   mSampleProgress(0)
+    : Clip()
+    , mLength(length)
+    , mProgress(0)
 {
     VAR_DEBUG(*this)(length);
 }
 
 EmptyClip::EmptyClip(const EmptyClip& other)
-    :   Clip(other)
-    ,   mLength(other.mLength)
-    ,   mProgress(0)
-    ,   mSampleProgress(0)
+    : Clip(other)
+    , mLength(other.mLength)
+    , mProgress(0)
 {
     VAR_DEBUG(*this)(other);
 }
@@ -73,10 +70,10 @@ EmptyClip::~EmptyClip()
 }
 
 // static
-EmptyClipPtr EmptyClip::replace(const IClipPtr& original )
+EmptyClipPtr EmptyClip::replace(const IClipPtr& original)
 {
     EmptyClipPtr clip = boost::make_shared<EmptyClip>(original->getLength());
-    ASSERT_EQUALS(clip->getLength(),original->getLength());
+    ASSERT_EQUALS(clip->getLength(), original->getLength());
     return clip;
 }
 
@@ -107,9 +104,8 @@ pts EmptyClip::getLength() const
 void EmptyClip::moveTo(pts position)
 {
     VAR_DEBUG(*this)(position);
-    ASSERT_LESS_THAN(position,mLength);
+    ASSERT_LESS_THAN(position, mLength);
     mProgress = position;
-    mSampleProgress = -1;
 }
 
 void EmptyClip::setLink(const IClipPtr& link)
@@ -190,30 +186,11 @@ AudioChunkPtr EmptyClip::getNextAudio(const AudioCompositionParameters& paramete
         return AudioChunkPtr();
     }
 
-    if (mSampleProgress == -1)
-    {
-        // Initialize after move
-        mSampleProgress = parameters.ptsToSamples(mProgress);
-    }
+    mProgress++;
 
-    samplecount totalSamples = parameters.ptsToSamples(mLength);
-    samplecount returnedSamples = std::min(totalSamples - mSampleProgress, parameters.ptsToSamples(1));
-
-    samplecount partialFrame = returnedSamples % parameters.getNrChannels();
-    if (partialFrame > 0)
-    {
-        // There are some samples for which not all the data for all speakers is available. Truncate.
-        // Can be caused by rounding differences (ptsToSamples).
-        returnedSamples--;
-    }
-
-    AudioChunkPtr audioChunk =
+    return
         boost::static_pointer_cast<AudioChunk>(
-        boost::make_shared<EmptyChunk>(parameters.getNrChannels(), returnedSamples));
-    mProgress += 1;
-    mSampleProgress += returnedSamples;
-
-    return audioChunk;
+        boost::make_shared<EmptyChunk>(parameters.getNrChannels(), parameters.getChunkSize()));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -227,9 +204,9 @@ VideoFramePtr EmptyClip::getNextVideo(const VideoCompositionParameters& paramete
         return VideoFramePtr();
     }
 
-    VideoFramePtr videoFrame = boost::static_pointer_cast<VideoFrame>(boost::make_shared<EmptyFrame>(parameters));
     mProgress++;
-    return videoFrame;
+
+    return boost::static_pointer_cast<VideoFrame>(boost::make_shared<EmptyFrame>(parameters));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -239,7 +216,7 @@ VideoFramePtr EmptyClip::getNextVideo(const VideoCompositionParameters& paramete
 std::ostream& operator<<(std::ostream& os, const EmptyClip& obj)
 {
     // Keep order same as Transition and ClipInterval for 'dump' method
-    os  << static_cast<const Clip&>(obj) << '|'
+    os << static_cast<const Clip&>(obj) << '|'
         << std::setw(6) << ' ' << '|'
         << std::setw(6) << obj.mLength;
     return os;

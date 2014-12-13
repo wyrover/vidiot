@@ -67,6 +67,7 @@ public:
 
     wxButton* getFileButton() const;
     EnumSelector<int>* getVideoCodecButton() const;
+    EnumSelector<int>* getAudioCodecButton() const;
     wxCheckBox* getRenderSeparationCheckBox() const;
     wxButton* getRenderButton() const;
     wxButton* getOkButton() const;

@@ -87,11 +87,10 @@ private:
 
     /// Holds the time at which the first audio buffer will be played.
     /// Effectively, that's the start time of the playback. Time is in
-    /// milliseconds.
+    /// seconds since starting the audio playback.
     double mStartTime;
 
-    /// Output latency of PortAudio (diff between what is sent to PortAudio and
-    /// what has already been output by PortAudio).
+    /// Output latency of PortAudio.
     double mAudioLatency;
 
     /// Holds the pts at which the playback was started (thus, the 0-point timewise)

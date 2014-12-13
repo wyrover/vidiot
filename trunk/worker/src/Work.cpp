@@ -29,8 +29,9 @@ namespace worker {
 //////////////////////////////////////////////////////////////////////////
 
 Work::Work(const Callable& work)
-:   mCallable(work)
-,   mAbort(false)
+    : mCallable(work)
+    , mAbort(false)
+    , mShowProgress(true)
 {
     VAR_DEBUG(*this);
 }
@@ -40,28 +41,37 @@ Work::~Work()
     VAR_DEBUG(this);
 }
 
-void Work::execute()
+void Work::execute(bool showProgress)
 {
     VAR_DEBUG(this);
     if (!mAbort)
     {
         mCallable();
-        util::thread::RunInMain([]
+        if (showProgress)
         {
-            // Note that - in the code of mCallable - showProgressText can be called.
-            // That method schedules an event that causes the progress bar update.
-            // Therefore, here another event is scheduled that resets the text afterwards.
-            gui::StatusBar::get().hideProgressBar();
-            gui::StatusBar::get().setProcessingText("");
-        });
+            util::thread::RunInMain([]
+            {
+                // Note that - in the code of mCallable - showProgressText can be called.
+                // That method schedules an event that causes the progress bar update.
+                // Therefore, here another event is scheduled that resets the text afterwards.
+                gui::StatusBar::get().hideProgressBar();
+                gui::StatusBar::get().setProcessingText("");
+            });
+        }
         QueueEvent(new WorkDoneEvent(self()));
     }
     VAR_DEBUG(this);
 }
 
+void Work::stopShowingProgress()
+{
+    mShowProgress = false;
+}
+
 void Work::abort()
 {
     mAbort = true;
+    stopShowingProgress();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -79,7 +89,7 @@ bool Work::isAborted() const
 
 void Work::showProgressText(const wxString& text)
 {
-    if (!mAbort)
+    if (mShowProgress)
     {
         util::thread::RunInMain([text]
         {
@@ -90,7 +100,7 @@ void Work::showProgressText(const wxString& text)
 
 void Work::showProgressBar(int max)
 {
-    if (!mAbort)
+    if (mShowProgress)
     {
         util::thread::RunInMain([max]
         {
@@ -102,7 +112,7 @@ void Work::showProgressBar(int max)
 
 void Work::showProgress(int value)
 {
-    if (!mAbort)
+    if (mShowProgress)
     {
         util::thread::RunInMain([value]
         {

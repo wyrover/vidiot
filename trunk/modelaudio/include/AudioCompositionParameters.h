@@ -44,26 +44,13 @@ public:
     AudioCompositionParameters& setNrChannels(int nChannels);
     int getNrChannels() const;
 
-    //////////////////////////////////////////////////////////////////////////
-    // CONVERSION HELPERS
-    //////////////////////////////////////////////////////////////////////////
+    AudioCompositionParameters& setPts(pts position);
+    AudioCompositionParameters& adjustPts(pts adjustment);
+    bool hasPts() const;
+    pts getPts() const;
 
-    /// Convert a pts value to a number of audio samples, given this set of parameters.
-    /// \param position pts value to be converted
-    samplecount ptsToSamples(pts position) const;
-
-    /// Convert a number of samples to an approximate pts value, given this set of parameters.
-    /// \return number of samples required for this number of pts
-    pts samplesToPts(samplecount nSamples) const;
-
-    /// Convert a number of samples (1 sample == data for one speaker) to a number of frames (1 frame == data for all speakers)
-    /// \return number of frames stored in given number of samples
-    /// \pre nSamples must contain a discrete number of frames (thus nSamples % nChannels == 0)
-    int samplesToFrames(samplecount nSamples) const;
-
-    /// Convert a number of frames to the required number of samples
-    /// \return number of samples stored in given number of frames
-    samplecount framesToSamples(int nFrames) const;
+    AudioCompositionParameters& determineChunkSize();
+    samplecount getChunkSize() const;
 
 private:
 
@@ -73,6 +60,8 @@ private:
 
     int mSampleRate;    ///< The rate (samples per second) at which audio will be played (44100/48000/etc.)
     int mNrChannels;    ///< Number of audio channels (speakers)
+    boost::optional<pts> mPts;
+    boost::optional<samplecount> mChunkSize;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

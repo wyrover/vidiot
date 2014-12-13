@@ -108,7 +108,7 @@ void TestRender::testRenderingSplit()
     }
 }
 
-void TestRender::testRenderingCodecs()
+void TestRender::testRenderingCodecsVideo()
 {
     StartTestSuite();
     model::SequencePtr sequence(getSequence());
@@ -121,6 +121,27 @@ void TestRender::testRenderingCodecs()
         ButtonTriggerPressed(gui::DialogRenderSettings::get().getOkButton());
         RenderAndPlaybackCurrentTimeline();
         ProjectViewOpenTimelineForSequence(sequence);
+    }
+}
+
+
+void TestRender::testRenderingCodecsAudio()
+{
+    StartTestSuite();
+    model::SequencePtr sequence(getSequence());
+    for (int nChannels = 1; nChannels <= 2; ++nChannels)
+    {
+        model::Properties::get().setAudioNumberOfChannels(1);
+        for (AVCodecID id : model::render::AudioCodecs::all())
+        {
+            std::ostringstream os; os << "Render " << id << (nChannels == 1 ? " mono" : " stereo");
+            StartTest(os.str().c_str());
+            WindowTriggerMenu(ID_RENDERSETTINGS);
+            gui::DialogRenderSettings::get().getAudioCodecButton()->select(id);
+            ButtonTriggerPressed(gui::DialogRenderSettings::get().getOkButton());
+            RenderAndPlaybackCurrentTimeline();
+            ProjectViewOpenTimelineForSequence(sequence);
+        }
     }
 }
 

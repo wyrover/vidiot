@@ -96,6 +96,7 @@ VideoFramePtr VideoTransition::getNextVideo(const VideoCompositionParameters& pa
 
         ASSERT(!mLeftClip || !mRightClip || mLeftClip->getLength() == mRightClip->getLength());
     }
+    ASSERT(mLeftClip || mRightClip)(*this);
     VideoFramePtr videoFrame;
     if (mProgress < getLength())
     {

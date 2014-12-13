@@ -29,14 +29,15 @@ static const unsigned int sMaximumBufferedWork = 1000;
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-Worker::Worker(const char* name)
-:   wxEvtHandler()
-,   mName(name)
-,   mEnabled(true)
-,   mRunning(false)
-,   mFifo(sMaximumBufferedWork)
-,   mExecuted(0)
-,   mExecutedLimit(0)
+Worker::Worker(const char* name, bool progress)
+    : wxEvtHandler()
+    , mName(name)
+    , mVisibleProgress(progress)
+    , mEnabled(true)
+    , mRunning(false)
+    , mFifo(sMaximumBufferedWork)
+    , mExecuted(0)
+    , mExecutedLimit(0)
 {
 }
 
@@ -75,8 +76,11 @@ void Worker::abort()
         mThread.reset();
     }
     QueueEvent(new WorkerQueueSizeEvent(0));
-    gui::StatusBar::get().setProcessingText("");
-    gui::StatusBar::get().hideProgressBar();
+    if (mVisibleProgress)
+    {
+        gui::StatusBar::get().setProcessingText("");
+        gui::StatusBar::get().hideProgressBar();
+    }
     mFifo.flush();
 }
 
@@ -96,6 +100,10 @@ void Worker::schedule(const WorkPtr& work)
         {
             return;
         }
+    }
+    if (!mVisibleProgress)
+    {
+        work->stopShowingProgress();
     }
     mFifo.push(work);
     QueueEvent(new WorkerQueueSizeEvent(mFifo.getSize()));
@@ -144,7 +152,7 @@ void Worker::thread()
         QueueEvent(new WorkerQueueSizeEvent(mFifo.getSize()));
         if (w) // Check needed for the case that the fifo is aborted (and thus returns a 0 shared ptr)
         {
-            w->execute();
+            w->execute(mVisibleProgress);
             util::thread::setCurrentThreadName(mName);
             w.reset(); // Clear, so that unfreezing is done if needed
             {

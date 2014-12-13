@@ -18,6 +18,7 @@
 #include "AudioChunk.h"
 
 #include "UtilLog.h"
+#include "UtilLogBoost.h"
 
 namespace model {
 
@@ -28,11 +29,12 @@ const int AudioChunk::sBytesPerSample = 2;
 //////////////////////////////////////////////////////////////////////////
 
 AudioChunk::AudioChunk(int nChannels, samplecount nSamples, bool allocate, bool zero, sample* buffer)
-:   mBuffer(0)
-,   mNrChannels(nChannels)
-,   mNrSamples(nSamples)
-,   mNrReadSamples(0)
-,   mNrSkippedSamples(0)
+    : mBuffer(0)
+    , mNrChannels(nChannels)
+    , mNrSamples(nSamples)
+    , mNrReadSamples(0)
+    , mNrSkippedSamples(0)
+    , mPts(boost::none)
 {
     ASSERT_IMPLIES(zero,        allocate && buffer == 0);
     ASSERT_IMPLIES(buffer != 0, allocate && !zero);
@@ -78,7 +80,7 @@ unsigned int AudioChunk::getNumberOfChannels() const
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-samplecount AudioChunk::extract(uint16_t* dst, samplecount requested)
+samplecount AudioChunk::extract(sample* dst, samplecount requested)
 {
     samplecount actual = min(getUnreadSampleCount(),requested);
     memcpy(dst,getUnreadSamples(), actual * sBytesPerSample);
@@ -104,6 +106,13 @@ sample* AudioChunk::getUnreadSamples()
     return mBuffer + mNrReadSamples;
 }
 
+samplecount AudioChunk::getReadSampleCount() const
+{
+    samplecount result = mNrReadSamples;
+    ASSERT_MORE_THAN_EQUALS_ZERO(result);
+    return result;
+}
+
 samplecount AudioChunk::getUnreadSampleCount() const
 {
     samplecount result = mNrSamples - mNrSkippedSamples - mNrReadSamples;
@@ -119,6 +128,17 @@ void AudioChunk::setAdjustedLength(samplecount adjustedLength)
     ASSERT_ZERO(total % mNrChannels)(mNrSamples)(mNrSkippedSamples)(mNrReadSamples)(mNrChannels);
 }
 
+pts AudioChunk::getPts() const
+{
+    ASSERT(mPts);
+    return *mPts;
+}
+
+void AudioChunk::setPts(pts position)
+{
+    mPts.reset(position);
+}
+
 //////////////////////////////////////////////////////////////////////////
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
@@ -126,6 +146,7 @@ void AudioChunk::setAdjustedLength(samplecount adjustedLength)
 std::ostream& operator<<(std::ostream& os, const AudioChunk& obj)
 {
     os  << &obj                     << "|"
+        << obj.mPts                 << "|"
         << obj.mNrChannels          << "|"
         << obj.mNrSamples           << "|"
         << obj.mNrSkippedSamples    << "|"

@@ -118,7 +118,6 @@ private:
 
     pts mLength;                 ///< Length of empty clip
     pts mProgress;               ///< Current render position in pts units (delivered video frames/audio chunks count - each 1 pts large)
-    samplecount mSampleProgress; ///< Current render position in samples (-1 means: to be initialized after move)
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

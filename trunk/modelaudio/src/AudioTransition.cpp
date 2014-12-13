@@ -75,7 +75,7 @@ void AudioTransition::clean()
 {
     if (getNewStartPosition())
     {
-        pts ptsProgress = *getNewStartPosition(); // Reinitialize mProgress to the last value set in ::moveTo
+        mProgress = *getNewStartPosition(); // Reinitialize mProgress to the last value set in ::moveTo
         invalidateNewStartPosition();
 
         // Note: When creating a transition, the left and right clip are adjusted (shortened) to
@@ -86,39 +86,29 @@ void AudioTransition::clean()
         {
             ASSERT(getPrev());
             mLeftClip = makeLeftClip();
-            mLeftClip->moveTo(ptsProgress);
+            mLeftClip->moveTo(mProgress);
         }
         if (getRight()) 
         {
             ASSERT(getNext());
             mRightClip = makeRightClip();
-            mRightClip->moveTo(ptsProgress);
+            mRightClip->moveTo(mProgress);
         }
 
-        mProgress = parameters.ptsToSamples(ptsProgress);
         reset();
 
         ASSERT(!mLeftClip || !mRightClip || mLeftClip->getLength() == mRightClip->getLength());
     }
-    AudioChunkPtr chunk;
-    if (mProgress < getTotalSamples(parameters))
+
+    AudioChunkPtr audioChunk;
+
+    if (mProgress < getLength())
     {
-        chunk = getAudio(mProgress, mLeftClip, mRightClip, parameters);
-        mProgress += chunk->getUnreadSampleCount();
+        audioChunk = getAudio(mProgress, mLeftClip, mRightClip, parameters);
+        mProgress++;
     }
-
-    return chunk;
+    return audioChunk;
 }
-
- //////////////////////////////////////////////////////////////////////////
- // IMPLEMENTATION OF TRANSITION
- //////////////////////////////////////////////////////////////////////////
-
-samplecount AudioTransition::getTotalSamples(const AudioCompositionParameters& parameters) const
- {
-     return parameters.ptsToSamples(getLength());
-
- }
 
  //////////////////////////////////////////////////////////////////////////
  // LOGGING

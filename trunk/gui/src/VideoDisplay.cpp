@@ -60,26 +60,26 @@ static int portaudio_callback( const void *inputBuffer, void *outputBuffer,
 //////////////////////////////////////////////////////////////////////////
 
 VideoDisplay::VideoDisplay(wxWindow *parent, model::SequencePtr sequence)
-:   wxControl(parent, wxID_ANY)
-,	mWidth(200)
-,	mHeight(100)
-,   mPlaying(false)
-,	mSequence(sequence)
-,   mVideoFrames(200)
-,   mAudioChunks(1000)
-,   mAbortThreads(false)
-,   mAudioBufferThreadPtr(0)
-,   mVideoBufferThreadPtr(0)
-,   mVideoTimer()
-,   mCurrentAudioChunk()
-,   mCurrentBitmap()
-,   mStartTime(0)
-,   mAudioLatency(0)
-,   mStartPts(0)
-,   mNumberOfAudioChannels(model::Properties::get().getAudioNumberOfChannels())
-,   mAudioSampleRate(model::Properties::get().getAudioSampleRate())
-,   mSkipFrames(0)
-,   mSpeed(sDefaultSpeed)
+    : wxControl(parent, wxID_ANY)
+    , mWidth(200)
+    , mHeight(100)
+    , mPlaying(false)
+    , mSequence(sequence)
+    , mVideoFrames(200)
+    , mAudioChunks(1000)
+    , mAbortThreads(false)
+    , mAudioBufferThreadPtr(0)
+    , mVideoBufferThreadPtr(0)
+    , mVideoTimer()
+    , mCurrentAudioChunk()
+    , mCurrentBitmap()
+    , mStartTime(0)
+    , mAudioLatency(0)
+    , mStartPts(0)
+    , mNumberOfAudioChannels(model::Properties::get().getAudioNumberOfChannels())
+    , mAudioSampleRate(model::Properties::get().getAudioSampleRate())
+    , mSkipFrames(0)
+    , mSpeed(sDefaultSpeed)
 {
     VAR_DEBUG(this);
 
@@ -149,6 +149,7 @@ void VideoDisplay::play()
         }
 
         mStartTime = 0;     // This blocks displaying of video until signaled by the audio thread
+        mAudioLatency = 0;
 
         mCurrentAudioChunk.reset();
 
@@ -158,8 +159,7 @@ void VideoDisplay::play()
         err = Pa_StartStream( mAudioOutputStream );
         ASSERT_EQUALS(err,paNoError)(Pa_GetErrorText(err));
 
-        const PaStreamInfo* info = Pa_GetStreamInfo(mAudioOutputStream);
-        mAudioLatency = info->outputLatency;
+        //const PaStreamInfo* info = Pa_GetStreamInfo(mAudioOutputStream);
 
         mStartTime = Pa_GetStreamTime(mAudioOutputStream);
         mStartPts = (mCurrentVideoFrame ? mCurrentVideoFrame->getPts() : 0); // Used for determining inter frame sleep time
@@ -318,6 +318,7 @@ void VideoDisplay::audioBufferThread()
                     model::AudioChunkPtr audioChunk = boost::make_shared<model::AudioChunk>(mNumberOfAudioChannels, nFramesAvailable * mNumberOfAudioChannels, true, false);
                     int nFrames = mSoundTouch.receiveSamples(reinterpret_cast<soundtouch::SAMPLETYPE *>(audioChunk->getBuffer()), nFramesAvailable);
                     ASSERT_EQUALS(nFrames,nFramesAvailable);
+                    audioChunk->setPts(chunk->getPts());
                     mAudioChunks.push(audioChunk);
                 }
             }
@@ -336,7 +337,7 @@ void VideoDisplay::audioBufferThread()
 bool VideoDisplay::audioRequested(void *buffer, const unsigned long& frames, double playtime)
 {
     samplecount remainingSamples = frames * mNumberOfAudioChannels;
-    uint16_t* out = static_cast<uint16_t*>(buffer);
+    sample* out = static_cast<sample*>(buffer);
 
     while (remainingSamples > 0)
     {
@@ -365,6 +366,12 @@ bool VideoDisplay::audioRequested(void *buffer, const unsigned long& frames, dou
                 LOG_INFO << "End";
                 return false;
             }
+
+            double actualPlaytime = playtime - mStartTime;
+            double expectedPlaytime =
+                model::Convert::ptsToSeconds(mCurrentAudioChunk->getPts() - mStartPts) + 
+                model::Convert::samplesToSeconds(remainingSamples);
+            mAudioLatency = actualPlaytime - expectedPlaytime;
         }
 
         samplecount nSamples = mCurrentAudioChunk->extract(out,remainingSamples);
@@ -427,7 +434,14 @@ void VideoDisplay::showNextFrame()
     if (sleep < sMinimumSleepTime)
     {
         // Too late, skip the picture
-        VAR_WARNING(mVideoFrames.getSize())(mStartTime)(elapsed)(next)(sleep)(mStartPts)(videoFrame->getPts());
+
+        if (mVideoFrames.getSize() > 0)
+        {
+            mVideoTimer.Notify(); // Immediately try next frame in buffer
+            return;
+        }
+
+        VAR_WARNING(mVideoFrames.getSize())(mStartTime)(mAudioLatency)(elapsed)(next)(sleep)(mStartPts)(videoFrame->getPts());
 
         int skip = mSkipFrames.load();
         if (skip == 0)
@@ -437,12 +451,6 @@ void VideoDisplay::showNextFrame()
         else
         {
             mSkipFrames.store(skip * 2);
-        }
-
-        if (mVideoFrames.getSize() > 0)
-        {
-            mVideoTimer.Notify(); // Immediately try next frame in buffer
-            return;
         }
 
         sleep = model::Convert::ptsToTime(1);

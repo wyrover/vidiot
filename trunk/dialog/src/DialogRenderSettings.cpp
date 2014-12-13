@@ -330,6 +330,11 @@ EnumSelector<int>* DialogRenderSettings::getVideoCodecButton() const
     return mVideoCodec;
 }
 
+EnumSelector<int>* DialogRenderSettings::getAudioCodecButton() const
+{
+    return mAudioCodec;
+}
+
 wxCheckBox* DialogRenderSettings::getRenderSeparationCheckBox() const
 {
     return mRenderSeparation;

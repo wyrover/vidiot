@@ -19,6 +19,7 @@
 
 #include "Config.h"
 #include "Convert.h"
+#include "UtilLogBoost.h"
 
 namespace model {
 
@@ -27,14 +28,18 @@ namespace model {
 //////////////////////////////////////////////////////////////////////////
 
 AudioCompositionParameters::AudioCompositionParameters()
-    :   mSampleRate(Config::ReadLong(Config::sPathDefaultAudioSampleRate))
-    ,   mNrChannels(Config::ReadLong(Config::sPathDefaultAudioChannels))
+    : mSampleRate(Config::ReadLong(Config::sPathDefaultAudioSampleRate))
+    , mNrChannels(Config::ReadLong(Config::sPathDefaultAudioChannels))
+    , mPts(boost::none)
+    , mChunkSize(boost::none)
 {
 }
 
 AudioCompositionParameters::AudioCompositionParameters(const AudioCompositionParameters& other)
-    :   mSampleRate(other.mSampleRate)
-    ,   mNrChannels(other.mNrChannels)
+    : mSampleRate(other.mSampleRate)
+    , mNrChannels(other.mNrChannels)
+    , mPts(other.mPts)
+    , mChunkSize(other.mChunkSize)
 {
 }
 
@@ -64,28 +69,46 @@ int AudioCompositionParameters::getNrChannels() const
     return mNrChannels;
 }
 
-//////////////////////////////////////////////////////////////////////////
-// CONVERSION HELPERS
-//////////////////////////////////////////////////////////////////////////
-
-samplecount AudioCompositionParameters::ptsToSamples(pts position) const
+AudioCompositionParameters& AudioCompositionParameters::setPts(pts position)
 {
-    return Convert::ptsToSamples(mSampleRate, mNrChannels, position);
+    mPts.reset(position);
+    return *this;
 }
 
-pts AudioCompositionParameters::samplesToPts(samplecount nSamples) const
+AudioCompositionParameters& AudioCompositionParameters::adjustPts(pts adjustment)
 {
-    return Convert::samplesToPts(mSampleRate, mNrChannels, nSamples);
+    if (mPts)
+    {
+        *mPts += adjustment;
+    }
+    return *this;
 }
 
-int AudioCompositionParameters::samplesToFrames(samplecount nSamples) const
+bool AudioCompositionParameters::hasPts() const
 {
-    return Convert::samplesToFrames(mNrChannels, nSamples);
+    return static_cast<bool>(mPts);
 }
 
-samplecount AudioCompositionParameters::framesToSamples(int nFrames) const
+pts AudioCompositionParameters::getPts() const
 {
-    return Convert::framesToSamples(mNrChannels, nFrames);
+    ASSERT(mPts);
+    return *mPts;
+}
+
+AudioCompositionParameters& AudioCompositionParameters::determineChunkSize()
+{
+    ASSERT(!mChunkSize);
+    pts position = getPts();
+    samplecount chunkSize = Convert::ptsToSamples(mSampleRate, mNrChannels, position + 1) - Convert::ptsToSamples(mSampleRate, mNrChannels, position);
+    ASSERT_ZERO(chunkSize % mNrChannels); // Ensure that the data for all speakers is there... If this assert ever fails: maybe there's file formats in which the data for a frame is 'truncated'?
+    mChunkSize.reset(chunkSize);
+    return *this;
+}
+
+samplecount AudioCompositionParameters::getChunkSize() const
+{
+    ASSERT(mChunkSize);
+    return *mChunkSize;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -94,7 +117,7 @@ samplecount AudioCompositionParameters::framesToSamples(int nFrames) const
 
 std::ostream& operator<<(std::ostream& os, const AudioCompositionParameters& obj)
 {
-    os << &obj << '|' << obj.mSampleRate << '|' << obj.mNrChannels;
+    os << &obj << '|' << obj.mSampleRate << '|' << obj.mNrChannels << '|' << obj.mPts << '|' << obj.mChunkSize;
     return os;
 }
 

@@ -50,10 +50,22 @@ pts Convert::rationaltimeToPts(rational64 time, const FrameRate& framerate )
     return floor64(time / rational64(Constants::sSecond) * framerate );
 }
 
+// static 
+double Convert::timeToSeconds(milliseconds time)
+{
+    return boost::rational_cast<double>(rational64(time,1000));
+}
+
 // static
 milliseconds Convert::ptsToTime(pts position)
 {
     return ptsToTime(position, Properties::get().getFrameRate());
+}
+
+// static
+double Convert::ptsToSeconds(pts position)
+{
+    return timeToSeconds(ptsToTime(position));
 }
 
 // static
@@ -104,37 +116,28 @@ wxString Convert::ptsToHumanReadibleString(pts duration, bool minutesAlways, boo
 // static
 samplecount Convert::ptsToSamples(int audioRate, int nAudioChannels, pts position)
 {
-    int64_t nFrames =
+    samplecount nSamples =
         removeRemainder(nAudioChannels, // Ensure that the returned value is never aligned such that the data for one or more speakers is missing
-        static_cast<int64_t>(audioRate * nAudioChannels) *
-        static_cast<int64_t>(model::Convert::ptsToTime(position)) /
-        static_cast<int64_t>(Constants::sSecond));
-    ASSERT_MORE_THAN_EQUALS_ZERO(nFrames);
-    return nFrames;
+        boost::rational_cast<samplecount>(rational64(position) * rational64(audioRate) * rational64(nAudioChannels) / Properties::get().getFrameRate()));
+    ASSERT_MORE_THAN_EQUALS_ZERO(nSamples);
+    return nSamples;
 }
 
 // static
-pts Convert::samplesToPts(int audioRate, int nAudioChannels, samplecount nSamples)
+milliseconds Convert::samplesToTime(int audioRate, int nAudioChannels, samplecount nSamples)
 {
     int64_t time =
         static_cast<int64_t>(nSamples) *
         static_cast<int64_t>(Constants::sSecond) /
         static_cast<int64_t>(audioRate * nAudioChannels);
     ASSERT_MORE_THAN_EQUALS_ZERO(time);
-    return model::Convert::timeToPts(time);
+    return time;
 }
 
 // static
-samplecount Convert::samplesToFrames(int nChannels, samplecount nSamples)
+double Convert::samplesToSeconds(samplecount nSamples)
 {
-    ASSERT_ZERO(nSamples % nChannels);
-    return nSamples / nChannels;
-}
-
-// static
-samplecount Convert::framesToSamples(int nChannels, samplecount nFrames)
-{
-    return nFrames * nChannels;
+    return timeToSeconds(samplesToTime(model::Properties::get().getAudioSampleRate(), model::Properties::get().getAudioNumberOfChannels(), nSamples));
 }
 
 pts convertFrameRate(pts inputposition, const FrameRate& inputrate, const FrameRate& outputrate)
@@ -221,18 +224,6 @@ double Convert::degreesToRadians(boost::rational<int> degrees)
 int Convert::doubleToInt(double x)
 {
     return (x >= 0.0) ? static_cast<int>(std::floor(x + 0.5)) : static_cast<int>(std::ceil(x - 0.5));
-}
-
-// static
-samplecount Convert::audioFramesToSamples(samplecount nFrames, int nChannels)
-{
-    return nFrames * nChannels;
-}
-
-// static
-samplecount Convert::audioFramesToBytes(samplecount nFrames, int nChannels)
-{
-    return audioSamplesToBytes(audioFramesToSamples(nFrames, nChannels));
 }
 
 // static
