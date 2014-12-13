@@ -293,11 +293,44 @@ void Render::scheduleAll()
 // RENDERING
 //////////////////////////////////////////////////////////////////////////
 
+void av_packet_rescale_ts(AVPacket *pkt, AVRational src_tb, AVRational dst_tb)
+{
+    if (pkt->pts != AV_NOPTS_VALUE)
+        pkt->pts = av_rescale_q(pkt->pts, src_tb, dst_tb);
+    if (pkt->dts != AV_NOPTS_VALUE)
+        pkt->dts = av_rescale_q(pkt->dts, src_tb, dst_tb);
+    if (pkt->duration > 0)
+        pkt->duration = av_rescale_q(pkt->duration, src_tb, dst_tb);
+    if (pkt->convergence_duration > 0)
+        pkt->convergence_duration = av_rescale_q(pkt->convergence_duration, src_tb, dst_tb);
+} // todo remove upon new ffmpeg version
+
+struct EncodingError : std::exception
+{
+    explicit EncodingError(wxString _message)
+        : std::exception(_message.mb_str())
+        , message(_message)
+    {
+    }
+
+    char const* what() const throw() { return message; }
+
+    friend
+    std::ostream& operator<<(std::ostream& os, const EncodingError& obj)
+    {
+        os << obj.message;
+        return os;
+    }
+
+    wxString message;
+};
+
 void RenderWork::generate()
 {
     setThreadName("RenderWork::generate");
     model::SequencePtr sequence = mSequence;
     pts from = mFrom;
+    pts position = from;
     pts to = mTo;
     RenderPtr mRender = sequence->getRender();
 
@@ -307,13 +340,18 @@ void RenderWork::generate()
     ASSERT_LESS_THAN_EQUALS(from,sequence->getLength());
     ASSERT_LESS_THAN_EQUALS(to,sequence->getLength());
     sequence->moveTo(from);
-    int length = to - from;
+    pts length = to - from;
+    if (mMaxLength > 0)
+    {
+        length = std::min(length, mMaxLength);
+    }
     showProgressBar(length);
     wxString ps; ps << _("Rendering sequence '") << sequence->getName() << "'";
     showProgressText(ps);
 
     OutputFormatPtr outputformat = mRender->getOutputFormat();
-    AVFormatContext* context = outputformat->getContext();
+
+    AVFormatContext* context = outputformat->getContext(); 
     ASSERT(mRender->getFileName().IsOk());
     ASSERT_NONZERO(context);
     wxString filename = mRender->getFileName().GetFullPath();
@@ -327,6 +365,8 @@ void RenderWork::generate()
     bool storeAudio = outputformat->storeAudio();
     bool storeVideo = outputformat->storeVideo();
     ASSERT(storeAudio || storeVideo)(storeAudio)(storeVideo);
+
+    double lengthInSeconds = Convert::ptsToSeconds(length);
 
     bool fileOpened = false;
 
@@ -346,50 +386,71 @@ void RenderWork::generate()
     AVFrame* colorSpaceConversionPicture = 0;
     struct SwsContext *colorSpaceConversionContext = 0;
 
-    uint16_t* samples = 0;
-    samplecount audioEncodeRequiredInputSize = 0;
+    sample* samples = 0;
+    samplecount nRequiredInputSamplesPerChannel = 0;
+    samplecount nRequiredInputSamplesForAllChannels = 0;
+    int bytesPerSampleForEncoder = 0;
     SwrContext* audioSampleFormatResampleContext = 0;
+    samplecount fedSamples = 0;
 
-    bool ok = true;
-    wxString sErrorMessage;
+    AVRational sampleTimeBase; // sampleTimeBase == 1 / audio sample rate
+    sampleTimeBase.num = 1;
+    sampleTimeBase.den = model::Properties::get().getAudioSampleRate();
 
-    if (ok && storeVideo)
+    boost::shared_ptr<VideoCompositionParameters> videoParameters = boost::make_shared<VideoCompositionParameters>();
+    boost::shared_ptr<AudioCompositionParameters> audioParameters = boost::make_shared<AudioCompositionParameters>();
+
+    try
     {
-        videoStream = outputformat->getVideoCodec()->addStream(context);
-        videoCodec = videoStream->codec;
-        if (Config::Exists(Config::sPathOverruleFourCC))
+
+        //////////////////////////////////////////////////////////////////////////
+        // OPEN STREAMS
+        //////////////////////////////////////////////////////////////////////////
+
+        if (storeVideo)
         {
-            wxString sFourCC = Config::ReadString(Config::sPathOverruleFourCC);
-            wxCharBuffer chars = sFourCC.mb_str();
-            int fourcc = 0;
-            switch (chars.length())
+            videoStream = outputformat->getVideoCodec()->addStream(context);
+            videoCodec = videoStream->codec;
+            ASSERT_EQUALS(videoCodec->ticks_per_frame, 1); // todo not impl yet: more than 1 tick per frame
+
+            if (Config::Exists(Config::sPathOverruleFourCC))
             {
-            case 4: fourcc += chars[static_cast<size_t>(3)] << 24; // Fallthrough
-            case 3: fourcc += chars[static_cast<size_t>(2)] << 16; // Fallthrough
-            case 2: fourcc += chars[static_cast<size_t>(1)] << 8;  // Fallthrough
-            case 1: fourcc += chars[static_cast<size_t>(0)];        break;
-            default: FATAL("FourCC length must be 1, 2, 3, or 4.");
+                wxString sFourCC = Config::ReadString(Config::sPathOverruleFourCC);
+                wxCharBuffer chars = sFourCC.mb_str();
+                int fourcc = 0;
+                switch (chars.length())
+                {
+                case 4: fourcc += chars[static_cast<size_t>(3)] << 24; // Fallthrough
+                case 3: fourcc += chars[static_cast<size_t>(2)] << 16; // Fallthrough
+                case 2: fourcc += chars[static_cast<size_t>(1)] << 8;  // Fallthrough
+                case 1: fourcc += chars[static_cast<size_t>(0)];        break;
+                default: FATAL("FourCC length must be 1, 2, 3, or 4.");
+                }
+                videoCodec->codec_tag = fourcc;
             }
-            videoCodec->codec_tag = fourcc;
+            VAR_INFO(videoCodec);
         }
-        VAR_INFO(videoCodec);
-    }
-    if (ok && storeAudio)
-    {
-        audioStream = outputformat->getAudioCodec()->addStream(context);
-        audioCodec = audioStream->codec;
-        VAR_INFO(audioCodec);
-    }
 
-    av_dump_format(context, 0, filename.c_str(), 1);
-
-    // now that all the parameters are set, we can open the audio and video codecs and allocate the necessary encode buffers
-    if (ok && storeVideo)
-    {
-        ok = outputformat->getVideoCodec()->open(videoCodec);
-
-        if (ok)
+        if (storeAudio)
         {
+            audioStream = outputformat->getAudioCodec()->addStream(context);
+            audioCodec = audioStream->codec;
+            VAR_INFO(audioCodec);
+        }
+
+        av_dump_format(context, 0, filename.c_str(), 1);
+
+        //////////////////////////////////////////////////////////////////////////
+        // OPEN CODECS AND ALLOCATE BUFFERS
+        //////////////////////////////////////////////////////////////////////////
+
+        if (storeVideo)
+        {
+            if (!outputformat->getVideoCodec()->open(videoCodec))
+            {
+                throw EncodingError(_("Failed to open video codec."));
+            }
+
             outputPicture = alloc_picture(videoCodec->pix_fmt, videoCodec->width, videoCodec->height);
             ASSERT(outputPicture);
 
@@ -403,133 +464,140 @@ void RenderWork::generate()
                 colorSpaceConversionContext = sws_getCachedContext(colorSpaceConversionContext, videoCodec->width, videoCodec->height, AV_PIX_FMT_RGB24, videoCodec->width, videoCodec->height, videoCodec->pix_fmt, sws_flags, 0, 0, 0);
                 ASSERT_NONZERO(colorSpaceConversionContext);
             }
+
+            videoParameters->setBoundingBox(wxSize(videoCodec->width, videoCodec->height)).setDrawBoundingBox(false).setOptimizeForQuality();
+
             videoOpened = true;
         }
-        else
-        {
-            sErrorMessage << "Failed to open video codec.";
-        }
-    }
 
-    if (ok && storeAudio)
-    {
-        ok = outputformat->getAudioCodec()->open(audioCodec);
-
-        if (ok)
+        if (storeAudio)
         {
-            ASSERT_NONZERO(audioCodec->frame_size);
-            // ugly hack for PCM codecs (will be removed ASAP with new PCM support to compute the input frame size in samples
-            // See libavformat/output-example.c
-            if (audioCodec->frame_size <= 1)
+            if (!outputformat->getAudioCodec()->open(audioCodec))
             {
-                audioEncodeRequiredInputSize = 10000;
+                throw EncodingError(_("Failed to open audio codec."));
+            }
+
+            nRequiredInputSamplesPerChannel = audioCodec->frame_size;
+            if (audioCodec->frame_size <= 1) // todo recheck if still needed (ugly hack) when integrating new avcodec
+            {
+                // ugly hack for PCM codecs (will be removed ASAP with new PCM support to compute the input frame size in samples
+                // See libavformat/output-example.c
+                nRequiredInputSamplesPerChannel = 10000;
                 switch (audioCodec->codec_id)
                 {
                 case CODEC_ID_PCM_S16LE:
                 case CODEC_ID_PCM_S16BE:
                 case CODEC_ID_PCM_U16LE:
                 case CODEC_ID_PCM_U16BE:
-                    audioEncodeRequiredInputSize >>= 1;
+                    nRequiredInputSamplesPerChannel >>= 1;
                     break;
                 default:
                     break;
                 }
             }
-            else
-            {
-                audioEncodeRequiredInputSize = Convert::audioFramesToSamples(audioCodec->frame_size,audioCodec->channels);
-            }
-            samples = static_cast<uint16_t*>(av_malloc(Convert::audioSamplesToBytes(audioEncodeRequiredInputSize)));
+            
+            nRequiredInputSamplesForAllChannels = nRequiredInputSamplesPerChannel * audioCodec->channels;
+            samples = static_cast<sample*>(av_malloc(Convert::audioSamplesToBytes(nRequiredInputSamplesForAllChannels)));
 
-             if (audioCodec->sample_fmt != AV_SAMPLE_FMT_S16)
-             {
+            if (audioCodec->sample_fmt != AV_SAMPLE_FMT_S16)
+            {
+                bytesPerSampleForEncoder = av_get_bytes_per_sample(audioCodec->sample_fmt);
+                if (bytesPerSampleForEncoder == 0)
+                {
+                    VAR_ERROR(audioCodec->sample_fmt)(audioCodec)(*this);
+                    throw EncodingError(_("Failed to determine audio sample size for encoding."));
+                }
+
                 audioSampleFormatResampleContext = swr_alloc_set_opts(0,
-                    audioCodec->channel_layout, audioCodec->sample_fmt, audioCodec->sample_rate,
-                    audioCodec->channel_layout, AV_SAMPLE_FMT_S16, audioCodec->sample_rate, 0, 0);
+                                                                      audioCodec->channel_layout, audioCodec->sample_fmt, audioCodec->sample_rate,
+                                                                      audioCodec->channel_layout, AV_SAMPLE_FMT_S16, audioCodec->sample_rate, 0, 0);
                 ASSERT_NONZERO(audioSampleFormatResampleContext);
 
                 int result = swr_init(audioSampleFormatResampleContext);
                 ASSERT_ZERO(result)(avcodecErrorString(result));
-             }
+            }
+
+            audioParameters->setSampleRate(audioCodec->sample_rate).setNrChannels(audioCodec->channels);
 
             audioOpened = true;
         }
-        else
-        {
-            sErrorMessage << "Failed to open audio codec.";
-        }
-    }
 
-    VideoCompositionParameters videoparameters = VideoCompositionParameters().setBoundingBox(wxSize(videoCodec->width,videoCodec->height)).setDrawBoundingBox(false).setOptimizeForQuality();
-    AudioCompositionParameters audioparameters = AudioCompositionParameters().setSampleRate(audioCodec->sample_rate).setNrChannels(audioCodec->channels);
+        //////////////////////////////////////////////////////////////////////////
+        // OPEN FILE
+        //////////////////////////////////////////////////////////////////////////
 
-    if (ok)
-    {
-        // Write the actual data into the file
-
-        // Open the output file
         ASSERT(!(context->flags & AVFMT_NOFILE))(context);
-        int result = avio_open(&context->pb, filename.c_str(), AVIO_FLAG_WRITE);
-        ok = result >= 0;
-        if (!ok)
+        if (avio_open(&context->pb, filename.c_str(), AVIO_FLAG_WRITE) < 0)
         {
-            VAR_ERROR(filename)(result)(avcodecErrorString(result))(*this);
-            sErrorMessage << "Failed to open file '" << filename << "' for writing.";
+            VAR_ERROR(filename);
+            throw EncodingError(_("Failed to open file for writing."));
         }
-        else
+
+        fileOpened = true;
+
+        avformat_write_header(context, 0);
+
+        //////////////////////////////////////////////////////////////////////////
+        // WRITE DATA INTO THE FILE
+        //////////////////////////////////////////////////////////////////////////
+
+        AudioChunkPtr currentAudioChunk = storeAudio ? sequence->getNextAudio(*audioParameters) : AudioChunkPtr();
+
+        while (!isAborted())  // write interleaved audio and video frames
         {
-            fileOpened = true;
+            double audioTime = storeAudio ? ((double)audioStream->pts.val) *  (double)audioStream->time_base.num / (double)audioStream->time_base.den : lengthInSeconds;
+            double videoTime = storeVideo ? ((double)videoStream->pts.val) * (double)videoStream->time_base.num / (double)videoStream->time_base.den : lengthInSeconds;
 
-            ASSERT_MORE_THAN_EQUALS_ZERO(result)(filename)(avcodecErrorString(result))(*this);
+            bool writeAudio = storeAudio && audioTime < (double)lengthInSeconds;
+            bool writeVideo = storeVideo && videoTime < (double)lengthInSeconds;
 
-            avformat_write_header(context,0);
-
-            pts numberOfEncodecInputAudioFrames = 0;
-            pts numberOfWrittenOutputAudioFrames = 0;
-            pts numberOfReadInputVideoFrames = 0;
-            pts numberOfWrittenOutputVideoFrames = 0;
-
-            pts lengthInVideoFrames = length;
-            if ((mMaxLength > 0) && (lengthInVideoFrames > mMaxLength))
+            if (!writeAudio && !writeVideo)
             {
-                lengthInVideoFrames = mMaxLength;
+                break; // Done.
             }
-            long lengthInSeconds = Convert::ptsToTime(lengthInVideoFrames) / Constants::sSecond;
 
-            AudioChunkPtr currentAudioChunk = sequence->getNextAudio(audioparameters);
+            //////////////////////////////////////////////////////////////////////////
+            // SHOW PROGRESS
+            //////////////////////////////////////////////////////////////////////////
 
-            double audioTime = storeAudio ? 0.0 : std::numeric_limits<double>::max();
-            double videoTime = storeVideo ? 0.0 : std::numeric_limits<double>::max();
+            wxString s; s << _("(frame ") << position << _(" out of ") << length << ")";
+            showProgressText(ps + " " + s); // todo show eta
+            showProgress(position);
 
-            while (!isAborted())  // write interleaved audio and video frames
+            if (writeAudio && audioTime < videoTime)
             {
-                if (storeAudio) { audioTime = (double)audioStream->pts.val * (double)audioStream->time_base.num / (double)audioStream->time_base.den; }
-                if (storeVideo) { videoTime = (double)videoStream->pts.val * (double)videoStream->time_base.num / (double)videoStream->time_base.den; }
+                //////////////////////////////////////////////////////////////////////////
+                // AUDIO
+                //////////////////////////////////////////////////////////////////////////
 
-                if ((!storeAudio || audioTime >= lengthInSeconds) &&
-                    (!storeVideo || videoTime >= lengthInSeconds))
-                {
-                    break;
-                }
+                sample* q = samples;
+                samplecount remainingSamples = nRequiredInputSamplesForAllChannels;
+                AVFrame* encodeFrame = 0;
 
-                if (storeAudio && audioTime < videoTime) // Write audio frame
+                if (currentAudioChunk)
                 {
-                    uint16_t* q = samples;
-                    samplecount remainingSamples = audioEncodeRequiredInputSize;
+                    //////////////////////////////////////////////////////////////////////////
+                    // EXTRACT AUDIO SAMPLES FROM INPUT
+                    //////////////////////////////////////////////////////////////////////////
 
                     while (remainingSamples > 0)
                     {
                         if (currentAudioChunk)
                         {
                             // Previous chunk not used completely
-                            samplecount nSamples = min(remainingSamples, currentAudioChunk->getUnreadSampleCount());
-                            currentAudioChunk->extract(q,nSamples);
+                            samplecount nSamples = currentAudioChunk->extract(q, remainingSamples);
                             q += nSamples;
                             remainingSamples -= nSamples;
+                            ASSERT_MORE_THAN_EQUALS_ZERO(remainingSamples);
 
                             if (currentAudioChunk->getUnreadSampleCount() == 0)
                             {
-                                currentAudioChunk = sequence->getNextAudio(audioparameters);
+                                currentAudioChunk = sequence->getNextAudio(*audioParameters);
+                                VAR_ERROR(*currentAudioChunk);
+                                if (currentAudioChunk && currentAudioChunk->getPts() > position)
+                                {
+                                    position = currentAudioChunk->getPts();
+                                }
                             }
                         }
                         else // Generate silence to fill last input packet
@@ -538,159 +606,231 @@ void RenderWork::generate()
                         }
                     }
 
+                    //////////////////////////////////////////////////////////////////////////
+                    // CONVERT AUDIO SAMPLES TO INPUT FORMAT REQUIRED FOR ENCODER
+                    //////////////////////////////////////////////////////////////////////////
+
                     int nPlanes = av_sample_fmt_is_planar(audioCodec->sample_fmt) ? audioCodec->channels : 1;
-                    AVFrame* encodeFrame = new AVFrame;
+                    encodeFrame = new AVFrame;
                     encodeFrame->data[0] = (uint8_t*)samples;
-                    encodeFrame->linesize[0] = audioEncodeRequiredInputSize * AudioChunk::sBytesPerSample;
+                    encodeFrame->linesize[0] = Convert::audioSamplesToBytes(nRequiredInputSamplesForAllChannels);
                     if (audioSampleFormatResampleContext != 0)
                     {
                         uint8_t** data = new uint8_t*[nPlanes];
-
-                        int result = av_samples_alloc(data,0,audioCodec->channels,audioCodec->frame_size,audioCodec->sample_fmt,0);
+                        int result = av_samples_alloc(data, 0, audioCodec->channels, nRequiredInputSamplesPerChannel, audioCodec->sample_fmt, 0); // todo reuse this iso reallocating over and over again
                         int nOutputFrames = swr_convert(
-                            audioSampleFormatResampleContext, data, audioCodec->frame_size,
-                            const_cast<const uint8_t**>(encodeFrame->data), audioCodec->frame_size);
-                        ASSERT_MORE_THAN_ZERO(nOutputFrames);
-                        ASSERT_EQUALS(nOutputFrames,audioCodec->frame_size);
+                            audioSampleFormatResampleContext, data, nRequiredInputSamplesPerChannel,
+                            const_cast<const uint8_t**>(encodeFrame->data), nRequiredInputSamplesPerChannel);
+                        ASSERT_EQUALS(nOutputFrames, nRequiredInputSamplesPerChannel);
 
                         delete encodeFrame;
-                        encodeFrame = new AVFrame;
+                        encodeFrame = new AVFrame();
 
                         for (int i = 0; i < nPlanes; ++i)
                         {
                             encodeFrame->data[i] = data[i];
-                            encodeFrame->linesize[i] = audioEncodeRequiredInputSize * AudioChunk::sBytesPerSample;
+                            encodeFrame->linesize[i] = nRequiredInputSamplesPerChannel * bytesPerSampleForEncoder;
                         }
 
                         delete[] data;
                     }
+                }
+                // else: all input fed into encoder
 
-                    encodeFrame->nb_samples = audioCodec->frame_size;
-                    encodeFrame->pts = AV_NOPTS_VALUE; // NOT: numberOfEncodecInputAudioFrames * audioCodec->frame_size; - causes silence...
+                //////////////////////////////////////////////////////////////////////////
+                // ENCODE AUDIO INTO AN OUTPUT PACKET 
+                //////////////////////////////////////////////////////////////////////////
 
-                    AVPacket* audioPacket = new AVPacket();
-                    audioPacket->data = 0;
-                    audioPacket->size = 0;
-                    int gotPacket = 0;
+                AVPacket* audioPacket = new AVPacket();
+                audioPacket->data = 0;
+                audioPacket->size = 0;
+                int gotPacket = 0;
 
-                    // CODEC_CAP_DELAY (see declaration  of avcodec_encode_audio2) is not used: extra silence is added at the end?
-                    int result = avcodec_encode_audio2(audioCodec, audioPacket, encodeFrame, &gotPacket); // if gotPacket == 0, then packet is destructed
-                    ASSERT_ZERO(result)(avcodecErrorString(result))(*this);
-                    numberOfEncodecInputAudioFrames++;
+                // CODEC_CAP_DELAY (see declaration of avcodec_encode_audio2) is not used: extra silence is added at the end?
+                if (encodeFrame != 0)
+                {
+                    encodeFrame->format = audioCodec->sample_fmt;
+                    encodeFrame->channel_layout = audioCodec->channel_layout;
+                    encodeFrame->sample_rate = audioCodec->sample_rate;
+                    encodeFrame->nb_samples = nRequiredInputSamplesPerChannel;
+                    encodeFrame->pts = av_rescale_q(fedSamples, sampleTimeBase, audioCodec->time_base);
+                    fedSamples += nRequiredInputSamplesForAllChannels;
+                    VAR_ERROR(fedSamples)(encodeFrame->pts);
+                }
+                // todo make automated render sync test
+                int result = avcodec_encode_audio2(audioCodec, audioPacket, encodeFrame, &gotPacket); // if gotPacket == 0, then packet is destructed
+                if (0 != result)
+                {
+                    VAR_ERROR(result)(avcodecErrorString(result))(*this);
+                    throw EncodingError(_("Failed to encode audio data."));
+                }
 
+                if (encodeFrame != 0)
+                {
                     if (audioSampleFormatResampleContext)
                     {
                         av_freep(&encodeFrame->data[0]);
                     }
                     delete encodeFrame;
-
-                    if (gotPacket)
-                    {
-                        audioPacket->flags |= AV_PKT_FLAG_KEY;
-                        audioPacket->stream_index = audioStream->index;
-                        int result = av_interleaved_write_frame(context, audioPacket); // av_interleaved_write_frame: transfers ownership of packet
-                        ASSERT_ZERO(result)(avcodecErrorString(result))(*this);
-                        numberOfWrittenOutputAudioFrames++;
-                    }
-                    // else Packet possibly buffered inside codec
-                    delete audioPacket;
                 }
-                else
+
+                //////////////////////////////////////////////////////////////////////////
+                // WRITE AUDIO INTO FILE
+                //////////////////////////////////////////////////////////////////////////
+
+                if (gotPacket)
                 {
-                    // Write video frame
-                    AVFrame* toBeEncodedPicture = 0;
-                    if (!videoEnd)
+                    audioPacket->flags |= AV_PKT_FLAG_KEY;
+                    audioPacket->stream_index = audioStream->index;
+                    av_packet_rescale_ts(audioPacket, audioCodec->time_base, audioStream->time_base);
+                    VAR_ERROR(audioPacket->pts)(audioStream->time_base)(audioTime);
+                    int result = av_interleaved_write_frame(context, audioPacket); // av_interleaved_write_frame: transfers ownership of packet
+                    if (0 != result)
                     {
-                        VideoFramePtr frame = sequence->getNextVideo(videoparameters);
-                        if (!frame)
-                        {
-                            videoEnd = true;
-                        }
-                        else
-                        {
-                            numberOfReadInputVideoFrames++;
-                            if (frame->getForceKeyFrame())
-                            {
-                                outputPicture->key_frame = 1;
-                                outputPicture->pict_type =  AV_PICTURE_TYPE_I;
-                            }
-                            else
-                            {
-                                outputPicture->key_frame = 0;
-                                outputPicture->pict_type =  AV_PICTURE_TYPE_NONE;
-                            }
-                            pts progress = frame->getPts() - from;
-                            wxString s; s << _("(frame ") << progress << _(" out of ") << length << ")";
-                            showProgressText(ps + " " + s);
-                            showProgress(progress);
-                            wxImagePtr image = frame->getImage();
-
-                            int rgbImageSize = avpicture_get_size(AV_PIX_FMT_RGB24, videoCodec->width, videoCodec->height);
-                            AVFrame* toBeFilledPicture = (colorSpaceConversionContext == 0) ? outputPicture : colorSpaceConversionPicture;
-                            if (!image)
-                            {
-                                memset(toBeFilledPicture->data[0], 0, rgbImageSize); // Empty. Fill with 0.
-                            }
-                            else
-                            {
-                                memcpy(toBeFilledPicture->data[0], image->GetData(), rgbImageSize);
-                            }
-                            if (colorSpaceConversionContext != 0)
-                            {
-                                sws_scale(colorSpaceConversionContext, colorSpaceConversionPicture->data, colorSpaceConversionPicture->linesize, 0, videoCodec->height, outputPicture->data, outputPicture->linesize);
-                            }
-                            outputPicture->pts = numberOfReadInputVideoFrames;
-                            toBeEncodedPicture = outputPicture;
-                        }
+                        VAR_ERROR(result)(avcodecErrorString(result))(*this);
+                        throw EncodingError(_("Failed to write audio data."));
                     }
-                    // else (videoEnd): no more frames to compress. The codec has a latency of a few frames if using B frames, so we get the last frames by passing 0.
+                }
+                // else Packet possibly buffered inside codec
+                delete audioPacket;
+            }
+            else if (writeVideo)
+            {
+                //////////////////////////////////////////////////////////////////////////
+                // VIDEO
+                //////////////////////////////////////////////////////////////////////////
 
-                    if (context->oformat->flags & AVFMT_RAWPICTURE)
+                int64_t videoPacketPts = AV_NOPTS_VALUE;
+                AVFrame* toBeEncodedPicture = 0;
+
+                if (!videoEnd)
+                {
+                    VideoFramePtr frame = sequence->getNextVideo(*videoParameters);
+                    if (!frame)
                     {
-                        // raw video case. The API will change slightly in the near future for that
-                        AVPacket* videoPacket = new AVPacket();
-                        av_init_packet(videoPacket);
-                        videoPacket->flags |= AV_PKT_FLAG_KEY;
-                        videoPacket->stream_index= videoStream->index;
-                        videoPacket->data = (uint8_t *)toBeEncodedPicture;
-                        videoPacket->size = sizeof(AVPicture);
-                        videoPacket->pts = numberOfWrittenOutputVideoFrames;
-                        int result = av_interleaved_write_frame(context, videoPacket); // av_interleaved_write_frame: transfers ownership of packet
-                        ASSERT_ZERO(result)(avcodecErrorString(result))(*this);
-                        numberOfWrittenOutputVideoFrames++;
-                        delete videoPacket;
+                        videoEnd = true;
                     }
                     else
                     {
-                        // encode the image
-                        int gotPacket = 0;
-                        AVPacket* videoPacket = new AVPacket();
-                        videoPacket->data = 0;
-                        videoPacket->size = 0;
-                        VAR_DEBUG(numberOfReadInputVideoFrames)(numberOfWrittenOutputVideoFrames)(videoCodec);
-                        result = avcodec_encode_video2(videoCodec, videoPacket, toBeEncodedPicture, &gotPacket);  // if gotPacket == 0, then packet is destructed
-                        ASSERT_ZERO(result)(avcodecErrorString(result))(*this);
-                        if (gotPacket)
+                        if (frame->getPts() > position)
                         {
-                            int result = av_interleaved_write_frame(context, videoPacket); // av_interleaved_write_frame: transfers ownership of packet
-                            ASSERT_ZERO(result)(avcodecErrorString(result))(*this);
-                            numberOfWrittenOutputVideoFrames++;
+                            position = frame->getPts();
                         }
-                        // else Packet possibly buffered inside codec
-                        delete videoPacket;
+
+                        videoPacketPts = frame->getPts() - from;
+                        if (frame->getForceKeyFrame())
+                        {
+                            outputPicture->key_frame = 1;
+                            outputPicture->pict_type = AV_PICTURE_TYPE_I;
+                        }
+                        else
+                        {
+                            outputPicture->key_frame = 0;
+                            outputPicture->pict_type = AV_PICTURE_TYPE_NONE;
+                        }
+                        wxImagePtr image = frame->getImage();
+
+                        //////////////////////////////////////////////////////////////////////////
+                        // CONVERT VIDEO TO REQUIRED FORMAT FOR ENCODER
+                        //////////////////////////////////////////////////////////////////////////
+
+                        int rgbImageSize = avpicture_get_size(AV_PIX_FMT_RGB24, videoCodec->width, videoCodec->height);
+                        AVFrame* toBeFilledPicture = (colorSpaceConversionContext == 0) ? outputPicture : colorSpaceConversionPicture;
+                        if (!image)
+                        {
+                            memset(toBeFilledPicture->data[0], 0, rgbImageSize); // Empty. Fill with 0.
+                        }
+                        else
+                        {
+                            memcpy(toBeFilledPicture->data[0], image->GetData(), rgbImageSize);
+                        }
+                        if (colorSpaceConversionContext != 0)
+                        {
+                            sws_scale(colorSpaceConversionContext, colorSpaceConversionPicture->data, colorSpaceConversionPicture->linesize, 0, videoCodec->height, outputPicture->data, outputPicture->linesize);
+                        }
+                        outputPicture->pts = videoPacketPts;
+                        toBeEncodedPicture = outputPicture;
                     }
                 }
-            }
+                // else (videoEnd): no more frames to compress. The codec has a latency of a few frames if using B frames, so we get the last frames by passing 0.
 
-            int ret = av_write_trailer(context);
-            ASSERT_ZERO(ret)(avcodecErrorString(ret))(*this);
+                AVPacket* videoPacket = new AVPacket();
+                videoPacket->stream_index = videoStream->index;
+                videoPacket->data = 0;
+                videoPacket->size = 0;
+                videoPacket->duration = 1;
+                if (context->oformat->flags & AVFMT_RAWPICTURE)
+                {
+                    //////////////////////////////////////////////////////////////////////////
+                    // WRITE RAW VIDEO
+                    //////////////////////////////////////////////////////////////////////////
+
+                    // raw video case. The API will change slightly in the near future for that
+                    ASSERT_NONZERO(toBeEncodedPicture);
+                    av_init_packet(videoPacket);
+                    videoPacket->flags |= AV_PKT_FLAG_KEY;
+                    videoPacket->data = (uint8_t *)toBeEncodedPicture;
+                    videoPacket->size = sizeof(AVPicture);
+                    videoPacket->pts = toBeEncodedPicture->pts;
+                    videoPacket->dts = videoPacket->pts;
+                    int result = av_interleaved_write_frame(context, videoPacket); // av_interleaved_write_frame: transfers ownership of packet
+                    if (0 != result)
+                    {
+                        VAR_ERROR(result)(avcodecErrorString(result))(*this);
+                        throw EncodingError(_("Failed to write raw video data."));
+                    }
+                }
+                else
+                {
+                    //////////////////////////////////////////////////////////////////////////
+                    // ENCODE VIDEO
+                    //////////////////////////////////////////////////////////////////////////
+
+                    int gotPacket = 0;
+                    VAR_ERROR(videoPacket->pts)(videoStream->time_base)(videoTime);
+                    int result = avcodec_encode_video2(videoCodec, videoPacket, toBeEncodedPicture, &gotPacket);  // if gotPacket == 0, then packet is destructed
+                    if (0 != result)
+                    {
+                        VAR_ERROR(result)(avcodecErrorString(result))(*this);
+                        throw EncodingError(_("Failed to encode video data."));
+                    }
+                    
+                    //////////////////////////////////////////////////////////////////////////
+                    // WRITE ENCODED VIDEO
+                    //////////////////////////////////////////////////////////////////////////
+
+                    if (gotPacket)
+                    {
+                        av_packet_rescale_ts(videoPacket, videoCodec->time_base, videoStream->time_base);
+                        int result = av_interleaved_write_frame(context, videoPacket); // av_interleaved_write_frame: transfers ownership of packet
+                        if (0 != result)
+                        {
+                            VAR_ERROR(result)(avcodecErrorString(result))(*this);
+                            throw EncodingError(_("Failed to write video data."));
+                        }
+                    }
+                    // else Packet possibly buffered inside codec
+                }
+                delete videoPacket;
+            }
+        }
+
+        int result = av_write_trailer(context);
+        if (result != 0)
+        {
+            VAR_ERROR(result)(avcodecErrorString(result))(*this);
+            throw EncodingError(_("Failed to close file."));
         }
     }
-
-    if (!ok)
+    catch (EncodingError error)
     {
-        gui::Dialog::get().getConfirmation(_("Rendering failed"), sErrorMessage);
+        VAR_ERROR(error);
+        gui::Dialog::get().getConfirmation(_("Rendering failed"), error.message);
     }
+
+    //////////////////////////////////////////////////////////////////////////
+    // CLOSE CODECS AND BUFFERS
+    //////////////////////////////////////////////////////////////////////////
 
     if (videoOpened)
     {
@@ -714,6 +854,10 @@ void RenderWork::generate()
         av_freep(&samples);
     }
 
+    //////////////////////////////////////////////////////////////////////////
+    // CLOSE STREAMS
+    //////////////////////////////////////////////////////////////////////////
+
     for (unsigned int i = 0; i < context->nb_streams; i++)
     {
         av_freep(&context->streams[i]->codec);
@@ -721,6 +865,10 @@ void RenderWork::generate()
     }
 
     ASSERT(!(context->flags & AVFMT_NOFILE))(context);
+
+    //////////////////////////////////////////////////////////////////////////
+    // CLOSE FILE
+    //////////////////////////////////////////////////////////////////////////
 
     if (fileOpened)
     {

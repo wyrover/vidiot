@@ -68,7 +68,9 @@ AudioChunkPtr AudioTrack::getNextAudio(const AudioCompositionParameters& paramet
 
     while (!audioChunk && !iterate_atEnd())
     {
-        audioChunk = boost::dynamic_pointer_cast<IAudio>(iterate_get())->getNextAudio(parameters);
+        model::IAudioPtr audio = boost::dynamic_pointer_cast<IAudio>(iterate_get());
+        model::IClipPtr clip = boost::dynamic_pointer_cast<IClip>(iterate_get());
+        audioChunk = audio->getNextAudio(AudioCompositionParameters(parameters).adjustPts(-clip->getLeftPts()));
         if (!audioChunk)
         {
             iterate_next();

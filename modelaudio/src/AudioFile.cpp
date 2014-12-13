@@ -116,7 +116,7 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
     if (!canBeOpened())
     {
         // If file could not be read (for whatever reason) return empty audio.
-        return boost::static_pointer_cast<AudioChunk>(boost::make_shared<EmptyChunk>(parameters.getNrChannels(), parameters.ptsToSamples(1)));
+        return boost::static_pointer_cast<AudioChunk>(boost::make_shared<EmptyChunk>(parameters.getNrChannels(), parameters.getChunkSize()));
     }
 
     PacketPtr audioPacket = getNextPacket();

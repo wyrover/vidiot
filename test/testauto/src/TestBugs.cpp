@@ -186,7 +186,7 @@ void TestBugs::testPlaybackEmptyClip()
     TimelinePositionCursor(HCenter(VideoClip(0,3)));
     model::VideoFramePtr frame = boost::dynamic_pointer_cast<model::EmptyClip>(VideoClip(0,3))->getNextVideo(model::VideoCompositionParameters().setBoundingBox(wxSize(100,100)));
     ASSERT_NONZERO(frame);
-    model::AudioChunkPtr chunk = boost::dynamic_pointer_cast<model::EmptyClip>(AudioClip(0,3))->getNextAudio(model::AudioCompositionParameters());
+    model::AudioChunkPtr chunk = boost::dynamic_pointer_cast<model::EmptyClip>(AudioClip(0,3))->getNextAudio(model::AudioCompositionParameters().setPts(AudioClip(0,3)->getLeftPts()).determineChunkSize());
     ASSERT_NONZERO(chunk);
     // Note: do not pause() or press space at this point. The getNexts above 'mess up' the administration (audioclip is already at end, but the cursor position is not)
     Play(RightPixel(VideoClip(0,3)) - 3,2000);

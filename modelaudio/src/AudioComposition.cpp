@@ -32,17 +32,15 @@ namespace model {
 //////////////////////////////////////////////////////////////////////////
 
 AudioComposition::AudioComposition(const AudioCompositionParameters& parameters)
-    :   mChunks()
-    ,   mParameters(parameters)
-    ,   mInputChunkReturnedAsOutput(false)
+    : mChunks()
+    , mParameters(parameters)
 {
     VAR_DEBUG(this);
 }
 
 AudioComposition::AudioComposition(const AudioComposition& other)
-    :   mChunks(other.mChunks)
-    ,   mParameters(other.mParameters)
-    ,   mInputChunkReturnedAsOutput(false)
+    : mChunks(other.mChunks)
+    , mParameters(other.mParameters)
 {
 }
 
@@ -57,18 +55,22 @@ AudioComposition::~AudioComposition()
 
 void AudioComposition::add(const AudioChunkPtr& chunk)
 {
-    if (chunk)
+    if (chunk && 
+        !chunk->isA<model::EmptyChunk>())
     {
         // Skip empty chunks.
         mChunks.push_back(chunk);
+        ASSERT_EQUALS(chunk->getUnreadSampleCount(), mParameters.getChunkSize());
     }
 }
 
 AudioChunkPtr AudioComposition::generate()
 {
+    AudioChunkPtr result;
+
     if (mChunks.empty())
     {
-        return boost::make_shared<EmptyChunk>(mParameters.getNrChannels(), mParameters.ptsToSamples(1));
+        result = boost::make_shared<EmptyChunk>(mParameters.getNrChannels(), mParameters.getChunkSize());
     }
 
     if (mChunks.size() == 1)
@@ -77,51 +79,45 @@ AudioChunkPtr AudioComposition::generate()
         if (true)
         {
             // Performance optimization: if only one chunk is rendered, return that chunk, but only if the chunk requires no 'processing'.
-            mInputChunkReturnedAsOutput = true;
-            return front;
+            result = front;
         }
     }
 
-    samplecount chunkSize = std::numeric_limits<samplecount>::max();
-    for ( AudioChunkPtr inputChunk : mChunks )
+    if (!result)
     {
-        if (chunkSize > inputChunk->getUnreadSampleCount() )
-        {
-            chunkSize = inputChunk->getUnreadSampleCount();
-        }
-    }
-    ASSERT_DIFFERS(chunkSize, std::numeric_limits<samplecount>::max());
+        samplecount chunkSize = mParameters.getChunkSize();
+        result = boost::make_shared<AudioChunk>(mParameters.getNrChannels(), chunkSize, true, true); // Fills with 0
 
-    VAR_DEBUG(chunkSize);
-    AudioChunkPtr result = boost::make_shared<AudioChunk>(mParameters.getNrChannels(), chunkSize, true, true); // Fills with 0
-
-    for (AudioChunkPtr inputChunk : mChunks)
-    {
-        if (inputChunk)
+        for (AudioChunkPtr inputChunk : mChunks)
         {
-            if (!inputChunk->isA<EmptyChunk>())
+            ASSERT(inputChunk);
+            ASSERT(!inputChunk->isA<EmptyChunk>());
+            sample max = std::numeric_limits<sample>::max();
+            sample* inputSample = inputChunk->getUnreadSamples(); // NOT: getBuffer()
+            sample* resultingSample = result->getBuffer();
+            for (int nSample = 0; nSample < chunkSize; ++nSample)
             {
-                sample max = std::numeric_limits<sample>::max();
-                sample* inputSample = inputChunk->getUnreadSamples(); // NOT: getBuffer()
-                sample* resultingSample = result->getBuffer();
-                for (int nSample = 0; nSample < chunkSize; ++nSample)
+                if (*inputSample > max - *resultingSample)
                 {
-                    if (*inputSample > max - *resultingSample)
-                    {
-                        // Overflow
-                        *resultingSample = max;
-                    }
-                    else
-                    {
-                        *resultingSample += *inputSample;
-                    }
-
-                    inputSample++;
-                    resultingSample++;
+                    // Overflow
+                    *resultingSample = max;
                 }
+                else
+                {
+                    *resultingSample += *inputSample;
+                }
+
+                inputSample++;
+                resultingSample++;
             }
             inputChunk->read(chunkSize);
         }
+    }
+
+    ASSERT_NONZERO(result);
+    if (mParameters.hasPts())
+    {
+        result->setPts(mParameters.getPts());
     }
 
     return result;
@@ -136,18 +132,13 @@ AudioCompositionParameters AudioComposition::getParameters() const
     return mParameters;
 }
 
-bool AudioComposition::wasInputChunkReturnedAsOutput() const
-{
-    return mInputChunkReturnedAsOutput;
-}
-
 //////////////////////////////////////////////////////////////////////////
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
 std::ostream& operator<<(std::ostream& os, const AudioComposition& obj)
 {
-    os << &obj << '|' << obj.mChunks << '|' << obj.mInputChunkReturnedAsOutput;
+    os << &obj << '|' << obj.mChunks;
     return os;
 }
 

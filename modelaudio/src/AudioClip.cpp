@@ -33,25 +33,28 @@ namespace model {
 //////////////////////////////////////////////////////////////////////////
 
 AudioClip::AudioClip()
-    :	ClipInterval()
-    ,   mProgress(0)
-    ,   mVolume(Constants::sDefaultVolume)
+    : ClipInterval()
+    , mProgress(0)
+    , mVolume(Constants::sDefaultVolume)
+    , mInputChunk()
 {
     VAR_DEBUG(*this);
 }
 
 AudioClip::AudioClip(const AudioFilePtr& file)
-    :	ClipInterval(file)
-    ,   mProgress(0)
-    ,   mVolume(Constants::sDefaultVolume)
+    : ClipInterval(file)
+    , mProgress(0)
+    , mVolume(Constants::sDefaultVolume)
+    , mInputChunk()
 {
     VAR_DEBUG(*this);
 }
 
 AudioClip::AudioClip(const AudioClip& other)
-    :   ClipInterval(other)
-    ,   mProgress(0)
-    ,   mVolume(other.mVolume)
+    : ClipInterval(other)
+    , mProgress(0)
+    , mVolume(other.mVolume)
+    , mInputChunk()
 {
     VAR_DEBUG(*this)(other);
 }
@@ -74,6 +77,7 @@ void AudioClip::clean()
 {
     VAR_DEBUG(this);
     mProgress = 0;
+    mInputChunk.reset();
     ClipInterval::clean();
 }
 
@@ -100,62 +104,72 @@ AudioChunkPtr AudioClip::getNextAudio(const AudioCompositionParameters& paramete
 {
     if (getNewStartPosition())
     {
-        mProgress = parameters.ptsToSamples(*getNewStartPosition()); // Reinitialize mProgress to the last value set in ::moveTo
+        mProgress = *getNewStartPosition(); // Reinitialize mProgress to the last value set in ::moveTo
+        mInputChunk.reset(); // Do not use any cached data
         invalidateNewStartPosition();
     }
 
-    int lengthInSamples = parameters.ptsToSamples(getLength());
+    AudioChunkPtr result;
 
-    AudioChunkPtr audioChunk;
+    pts length = getLength();
 
-    int remainingSamples = lengthInSamples - mProgress;
-
-    if (remainingSamples > 0)
+    if (mProgress < length)
     {
-        audioChunk = getDataGenerator<AudioFile>()->getNextAudio(parameters);
-        if (audioChunk)
+
+        samplecount requiredSamples = parameters.getChunkSize();
+        samplecount generatedSamples = 0;
+
+        result = boost::make_shared<AudioChunk>(parameters.getNrChannels(), requiredSamples, true, false);
+        sample* buffer = result->getBuffer();
+
+        while (generatedSamples < requiredSamples)
         {
-            if (mProgress + audioChunk->getUnreadSampleCount() > lengthInSamples)
+            samplecount remainingSamples = requiredSamples - generatedSamples;
+            if (mInputChunk &&
+                mInputChunk->getUnreadSampleCount() > 0)
             {
-                audioChunk->setAdjustedLength(lengthInSamples - mProgress);
-                mProgress = lengthInSamples;
+                generatedSamples += mInputChunk->extract(buffer + generatedSamples, remainingSamples);
             }
             else
             {
-                mProgress += audioChunk->getUnreadSampleCount();
+                mInputChunk = getDataGenerator<AudioFile>()->getNextAudio(AudioCompositionParameters(parameters).adjustPts(+getOffset()));
+
+                if (!mInputChunk)
+                {
+                    // The clip has not provided enough audio data yet (for the pts length of the clip)
+                    // but there is no more audio data. This can typically happen by using a avi file
+                    // for which the video data is longer than the audio data. Instead of clipping the
+                    // extra video part, silence is added here (the user can make the clip shorter if
+                    // required - thus removing the extra video, but that's a user decision to be made).
+                    LOG_WARNING << *this << ": (" << getDescription() << ") Adding " << remainingSamples << " samples to make audio length equal to video length";
+                    memset(buffer + generatedSamples, 0, remainingSamples  * AudioChunk::sBytesPerSample);
+                    generatedSamples = requiredSamples;
+                }
             }
         }
-        else
+        VAR_DEBUG(*this)(mProgress)(requiredSamples);
+
+        if (mVolume != Constants::sDefaultVolume)
         {
-            // The clip has not provided enough audio data yet (for the pts length of the clip)
-            // but there is no more audio data. This can typically happen by using a avi file
-            // for which the video data is longer than the audio data. Instead of clipping the
-            // extra video part, silence is added here (the user can make the clip shorter if
-            // required - thus removing the extra video, but that's a user decision to be made).
-            LOG_WARNING << *this << ": (" << getDescription() << ") Adding " << remainingSamples << " samples to make audio length equal to video length";
-            audioChunk = boost::static_pointer_cast<AudioChunk>(boost::make_shared<EmptyChunk>(parameters.getNrChannels(), remainingSamples));
-            mProgress = lengthInSamples;
+            bool overflow = false;
+            sample* sBegin = buffer;
+            sample* sEnd = sBegin + requiredSamples;
+            sample* s = sBegin;
+            int32_t volume = static_cast<int32_t>(mVolume);
+            int32_t defaultVolume = static_cast<int32_t>(Constants::sDefaultVolume);
+            while (s < sEnd)
+            {
+                *s++ = static_cast<int32_t>(*s) * volume / defaultVolume; // newSample;
+            }
         }
     }
-    VAR_DEBUG(*this)(mProgress)(lengthInSamples);
 
-    if (audioChunk && !audioChunk->isA<EmptyChunk>() && mVolume != Constants::sDefaultVolume)
+    if (result)
     {
-        bool overflow = false;
-        sample* sBegin = audioChunk->getUnreadSamples();
-        sample* sEnd = sBegin + audioChunk->getUnreadSampleCount();
-        sample* s = sBegin;
-        int32_t volume = static_cast<int32_t>(mVolume);
-        int32_t defaultVolume = static_cast<int32_t>(Constants::sDefaultVolume);
-        while (s < sEnd)
-        {
-            //int32_t newSample = static_cast<int32_t>(*s) * volume / defaultVolume;
-            //overflow = overflow || (newSample > std::numeric_limits<sample>::max());
-            *s++ = static_cast<int32_t>(*s) * volume / defaultVolume; // newSample;
-        }
+        mProgress++;
     }
 
-    return audioChunk;
+    return result;
 }
 
 //////////////////////////////////////////////////////////////////////////

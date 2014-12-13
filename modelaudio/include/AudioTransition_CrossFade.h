@@ -22,8 +22,6 @@
 
 namespace model { namespace audio { namespace transition {
 
-struct Cache;
-
 class CrossFade
     :   public AudioTransition
 {
@@ -44,7 +42,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     virtual void reset();
-    virtual AudioChunkPtr getAudio(samplecount position, const IClipPtr& leftClip, const IClipPtr& rightClip, const AudioCompositionParameters& parameters) override;
+    virtual AudioChunkPtr getAudio(pts position, const IClipPtr& leftClip, const IClipPtr& rightClip, const AudioCompositionParameters& parameters) override;
 
 protected:
 
@@ -61,8 +59,6 @@ private:
     //////////////////////////////////////////////////////////////////////////
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
-
-    boost::shared_ptr<Cache> mCache;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

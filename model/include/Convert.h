@@ -47,8 +47,12 @@ public:
     /// \param framerate Frame rate (fps) to be used for the conversion
     static pts rationaltimeToPts(rational64 time, const FrameRate& framerate);
 
+    /// \return time as a double, in seconds
+    /// \param time time duration in milliseconds
+    static double timeToSeconds(milliseconds time);
+
     /// \return time duration in milliseconds
-    /// Uses current project's frame rate for the conversion
+    /// \param position time duration in pts stamps defined by the project's frame rate
     static milliseconds ptsToTime(pts position);
 
     /// \return time duration in milliseconds
@@ -56,6 +60,10 @@ public:
     /// \param framerate framerate to be used for converting pts to time
     /// Uses current project's frame rate for the conversion
     static milliseconds ptsToTime(pts position, const FrameRate& framerate);
+
+    /// \return time duration in seconds
+    /// \param position time duration in pts stamps defined by the project's frame rate
+    static double ptsToSeconds(pts position);
 
     /// \return time duration in microseconds.
     /// Uses current project's frame rate for the conversion
@@ -89,22 +97,17 @@ public:
     /// \return number of samples required for this number of pts
     static samplecount ptsToSamples(int audioRate, int nAudioChannels, pts position);
 
-    /// Convert a number of samples to an approximate pts value.
-    /// \see ptsToSamples
+    /// Convert a number of samples to an approximate time value.
     /// \param audioRate The rate (samples per second) at which audio will be played (44100/48000/etc.)
     /// \param nAudioChannels Number of audio channels (speakers)
     /// \param nSamples Number of samples to be converted
     /// \return number of samples required for this number of pts
-    static pts samplesToPts(int audioRate, int nAudioChannels, samplecount nSamples);
+    static milliseconds samplesToTime(int audioRate, int nAudioChannels, samplecount nSamples);
 
-    /// Convert a number of samples (1 sample == data for one speaker) to a number of frames (1 frame == data for all speakers)
-    /// \return number of frames stored in given number of samples
-    /// \pre nSamples must contain a discrete number of frames (thus nSamples % nChannels == 0)
-    static samplecount samplesToFrames(int nChannels, samplecount nSamples);
-
-    /// Convert a number of frames to the required number of samples
-    /// \return number of samples stored in given number of frames
-    static samplecount framesToSamples(int nChannels, samplecount nFrames);
+    /// Convert a number of samples to an approximate time value in seconds, using the project's framerate/number of channels.
+    /// \param nSamples Number of samples to be converted
+    /// \return number of samples required for this number of pts in seconds
+    static double samplesToSeconds(samplecount nSamples);
 
     /// Determine which timestamp in the project's timebase relates to
     /// a rendered frame timestamp (given an input frame rate)
@@ -140,18 +143,6 @@ public:
     static int doubleToInt(double x);
     static int factorToDigits(boost::rational<int> number, int nDigits);
     static boost::rational<int> digitsToFactor(int number, int nDigits);
-
-    /// Convert a number of audio frames (data for all channels) to a number of samples (data for one channel)
-    /// \param nFrames Number of audio frames
-    /// \param nChannels Number of audio channels (speakers)
-    /// \return number of required samples
-    static samplecount audioFramesToSamples(samplecount nFrames, int nChannels);
-
-    /// Convert a number of audio frames (data for all channels) to a number of bytes required to store this
-    /// \param nFrames Number of audio frames
-    /// \param nChannels Number of audio channels (speakers)
-    /// \return number of required bytes
-    static samplecount audioFramesToBytes(samplecount nFrames, int nChannels);
 
     /// Convert a number of audio samples (data for one speaker) to a number of bytes required to store this
     /// \param nSamples Number of audio samples

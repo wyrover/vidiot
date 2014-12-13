@@ -44,7 +44,11 @@ public:
 
     /// For each video codec, render part of the timeline, and then playback
     /// the generated file.
-    void testRenderingCodecs();
+    void testRenderingCodecsVideo();
+
+    /// For each audio codec, render part of the timeline, and then playback
+    /// the generated file.
+    void testRenderingCodecsAudio();
 
     /// This was a bug once. Caused by the clone not having the proper clip
     /// administration (getPrev/getNext failed when the transition started

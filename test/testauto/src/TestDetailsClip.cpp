@@ -536,7 +536,7 @@ void TestDetailsClip::testChangeVolume()
 {
     StartTestSuite();
 
-    model::AudioCompositionParameters parameters = model::AudioCompositionParameters().setNrChannels(2).setSampleRate(44100);
+    model::AudioCompositionParameters parameters = model::AudioCompositionParameters().setNrChannels(2).setSampleRate(44100).setPts(AudioClip(0,3)->getLeftPts()).determineChunkSize();
 
     model::AudioClipPtr audioclip = getAudioClip(AudioClip(0,3));
     ASSERT_EQUALS(audioclip->getVolume(),100);

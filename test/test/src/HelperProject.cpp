@@ -40,7 +40,8 @@ DirAndFile SaveProject(boost::optional<RandomTempDirPtr> tempDir, wxString files
     filename.SetName(filename.GetName() + filesuffix);
     util::thread::RunInMainAndWait([filename]()
     {
-        gui::Window::get().GetDocumentManager()->GetCurrentDocument()->SetFilename(filename.GetFullPath());
+        // Causes occasional crashes (can't write to recent file list):
+        // gui::Window::get().GetDocumentManager()->GetCurrentDocument()->SetFilename(filename.GetFullPath());
         gui::Window::get().GetDocumentManager()->GetCurrentDocument()->OnSaveDocument(filename.GetFullPath());
     });
     return std::make_pair(tempDirProject, filename);

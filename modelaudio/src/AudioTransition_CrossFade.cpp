@@ -32,14 +32,12 @@ namespace model { namespace audio { namespace transition {
 
 CrossFade::CrossFade()
     :	AudioTransition()
-    ,   mCache()
 {
     VAR_DEBUG(this);
 }
 
 CrossFade::CrossFade(const CrossFade& other)
     :   AudioTransition(other)
-    ,   mCache()
 {
     VAR_DEBUG(*this);
 }
@@ -54,103 +52,51 @@ CrossFade::~CrossFade()
     VAR_DEBUG(this);
 }
 
-struct Cache
-{
-    Cache()
-        :   mLastRenderedFrame(0)
-        ,   mLeftChunk()
-        ,   mRightChunk()
-    {}
-    samplecount mLastRenderedFrame;
-    AudioChunkPtr mLeftChunk;
-    AudioChunkPtr mRightChunk;
-
-    friend std::ostream& operator<<(std::ostream& os, const Cache& obj)
-    {
-        os << obj.mLastRenderedFrame << '|';
-        if (obj.mLeftChunk)
-        {
-            os << *(obj.mLeftChunk);
-        }
-        else
-        {
-            os << '0';
-        }
-        if (obj.mRightChunk)
-        {
-            os << *(obj.mRightChunk);
-        }
-        else
-        {
-            os << '0';
-        }
-        return os;
-    }
-};
-
 //////////////////////////////////////////////////////////////////////////
 // AUDIOTRANSITION
 //////////////////////////////////////////////////////////////////////////
 
 void CrossFade::reset()
 {
-    mCache.reset();
 }
 
-AudioChunkPtr CrossFade::getAudio(samplecount position, const IClipPtr& leftClip, const IClipPtr& rightClip, const AudioCompositionParameters& parameters)
+AudioChunkPtr CrossFade::getAudio(pts position, const IClipPtr& leftClip, const IClipPtr& rightClip, const AudioCompositionParameters& parameters)
 {
-    if (!mCache)
-    {
-        mCache = boost::make_shared<Cache>();
-        mCache->mLastRenderedFrame = parameters.ptsToSamples(position);
-    }
+    AudioChunkPtr leftChunk = 
+        leftClip ? boost::static_pointer_cast<AudioClip>(leftClip)->getNextAudio(parameters)  : AudioChunkPtr();
+    AudioChunkPtr rightChunk = 
+        rightClip ? boost::static_pointer_cast<AudioClip>(rightClip)->getNextAudio(parameters) : AudioChunkPtr();
+    ASSERT(!leftChunk || !rightChunk || leftChunk->getUnreadSampleCount() == rightChunk->getUnreadSampleCount());
 
-    if (!mCache->mLeftChunk || mCache->mLeftChunk->getUnreadSampleCount() == 0)
+    auto determineSampleCountAt = [parameters](pts position) -> samplecount
     {
-        mCache->mLeftChunk = leftClip ? boost::static_pointer_cast<AudioClip>(leftClip)->getNextAudio(parameters)  : AudioChunkPtr();
-    }
-    if (!mCache->mRightChunk || mCache->mRightChunk->getUnreadSampleCount() == 0)
-    {
-        mCache->mRightChunk = rightClip ? boost::static_pointer_cast<AudioClip>(rightClip)->getNextAudio(parameters) : AudioChunkPtr();
-    }
-
-    samplecount nSamples = std::numeric_limits<samplecount>::max();
-    if (mCache->mLeftChunk)
-    {
-        ASSERT_MORE_THAN_ZERO(mCache->mLeftChunk->getUnreadSampleCount());
-        nSamples = std::min(nSamples, mCache->mLeftChunk->getUnreadSampleCount());
-    }
-    if (mCache->mRightChunk)
-    {
-        ASSERT_MORE_THAN_ZERO(mCache->mRightChunk->getUnreadSampleCount());
-        nSamples = std::min(nSamples, mCache->mRightChunk->getUnreadSampleCount());
-    }
-
-    ASSERT_MORE_THAN_ZERO(nSamples);
-    ASSERT_ZERO(nSamples % parameters.getNrChannels())(*mCache); // Ensure that the data for all speakers is there... If this assert ever fails: maybe there's file formats in which the data for a frame is 'truncated'?
+        return Convert::ptsToSamples(parameters.getSampleRate(), parameters.getNrChannels(), position);
+    };
+        
+    samplecount nSamples = parameters.getChunkSize();
+    ASSERT_ZERO(nSamples % parameters.getNrChannels()); // Ensure that the data for all speakers is there... If this assert ever fails: maybe there's file formats in which the data for a frame is 'truncated'?
     sample* p = 0;
     model::AudioChunkPtr result = boost::make_shared<model::AudioChunk>(parameters.getNrChannels(), nSamples, true, false, p);
 
-    samplecount total = getTotalSamples(parameters);
-    sample* dataLeft = mCache->mLeftChunk ? mCache->mLeftChunk->getUnreadSamples() : 0;
-    sample* dataRight = mCache->mRightChunk ? mCache->mRightChunk->getUnreadSamples() : 0;
+    ASSERT_LESS_THAN_EQUALS(getLeftPts() + position, getRightPts());
+    samplecount leftSampleCount = determineSampleCountAt(getLeftPts());
+    samplecount totalSampleCount = determineSampleCountAt(getRightPts()) - leftSampleCount; // Total number of samples in this transition, not just for this chunk
+    samplecount currentSampleCount = determineSampleCountAt(getLeftPts() + position) - leftSampleCount;
+
+    sample* dataLeft = leftChunk ? leftChunk->getUnreadSamples() : 0;
+    sample* dataRight = rightChunk ? rightChunk->getUnreadSamples() : 0;
     sample* dataResult = result->getBuffer();
-    samplecount pos = position;
-    for (samplecount i = 0; i < nSamples; ++i)
+    for (samplecount i = 0; i < nSamples; ++i) // todo does not work properly for multiple channels? (should increment with 2 then?)
     {
-        float factorLeft = ((float)total - (float)pos) / (float)total;
-        float factorRight = (float)pos / (float)total;
+        float factorLeft = ((float)totalSampleCount - (float)currentSampleCount) / (float)totalSampleCount;
+        float factorRight = (float)currentSampleCount / (float)totalSampleCount;
         sample left = dataLeft ? dataLeft[i] : 0;
         sample right = dataRight ? dataRight[i] : 0;
         dataResult[i] = left * factorLeft + right * factorRight;
-        pos++;
+        currentSampleCount++;
     }
 
-    if (mCache->mLeftChunk) { mCache->mLeftChunk->read(nSamples); }
-    if (mCache->mRightChunk) { mCache->mRightChunk->read(nSamples); }
-
-    ASSERT(mCache);
-    VAR_DEBUG(*mCache)(*result);
+    VAR_DEBUG(*result);
 
     return result;
 }
@@ -162,14 +108,6 @@ AudioChunkPtr CrossFade::getAudio(samplecount position, const IClipPtr& leftClip
 std::ostream& operator<<(std::ostream& os, const CrossFade& obj)
 {
     os << static_cast<const AudioTransition&>(obj) << '|';
-    if (obj.mCache)
-    {
-        os << *(obj.mCache);
-    }
-    else
-    {
-        os <<'0';
-    }
     return os;
 }
 

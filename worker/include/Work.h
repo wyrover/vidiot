@@ -38,7 +38,9 @@ public:
     explicit Work(const Callable& work);
     virtual ~Work();
 
-    void execute();
+    void execute(bool showProgress = true);
+
+    void stopShowingProgress();
 
     void abort();
 
@@ -68,6 +70,7 @@ private:
 
     Callable mCallable;
     bool mAbort;
+    bool mShowProgress;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

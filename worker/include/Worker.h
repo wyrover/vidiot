@@ -38,7 +38,7 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    Worker(const char* name);
+    Worker(const char* name, bool progress);
 
     void start();
 
@@ -67,6 +67,7 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     const char* mName;
+    const bool mVisibleProgress;
     std::atomic<bool> mEnabled;
     std::atomic<bool> mRunning;
     boost::scoped_ptr<boost::thread> mThread;
@@ -92,7 +93,7 @@ class VisibleWorker
     ,   public SingleInstance<VisibleWorker>
 {
 public:
-    VisibleWorker() : Worker("VisibleWorker") {}
+    VisibleWorker() : Worker("VisibleWorker", true) {}
 };
 
 /// Worker for background processing
@@ -101,7 +102,7 @@ class InvisibleWorker
     ,   public SingleInstance<InvisibleWorker>
 {
 public:
-    InvisibleWorker() : Worker("InvisibleWorker") {}
+    InvisibleWorker() : Worker("InvisibleWorker", false) {}
 };
 
 } // namespace
