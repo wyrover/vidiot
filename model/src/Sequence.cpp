@@ -129,11 +129,7 @@ Sequence::~Sequence()
 pts Sequence::getLength() const
 {
     pts nFrames = 0;
-    for ( TrackPtr track : mVideoTracks )
-    {
-        nFrames = std::max<pts>(nFrames, track->getLength()); // todo use getTracks here (avoid dupe code for audio/video)
-    }
-    for ( TrackPtr track : mAudioTracks )
+    for ( TrackPtr track : getTracks() )
     {
         nFrames = std::max<pts>(nFrames, track->getLength());
     }
@@ -145,11 +141,7 @@ void Sequence::moveTo(pts position)
     VAR_DEBUG(position);
     mVideoPosition = position;
     mAudioPosition = position;
-    for ( TrackPtr track : mVideoTracks ) // todo use getTracks here (avoid dupe code for audio/video)
-    {
-        track->moveTo(position);
-    }
-    for ( TrackPtr track : mAudioTracks )
+    for ( TrackPtr track : getTracks() )
     {
         track->moveTo(position);
     }
@@ -294,17 +286,11 @@ Tracks Sequence::getAudioTracks()
     return mAudioTracks;
 }
 
-Tracks Sequence::getTracks()
+Tracks Sequence::getTracks() const
 {
     Tracks tracks;
-    for ( TrackPtr track : mVideoTracks ) // todo use insert twice
-    {
-        tracks.push_back(track);
-    }
-    for ( TrackPtr track : mAudioTracks )
-    {
-        tracks.push_back(track);
-    }
+    tracks.insert(tracks.end(), mVideoTracks.begin(), mVideoTracks.end());
+    tracks.insert(tracks.end(), mAudioTracks.begin(), mAudioTracks.end());
     return tracks;
 }
 
