@@ -21,18 +21,30 @@
 namespace model {
 
 template <class OBJ>
-std::ostream& dump(std::ostream& os, const std::vector< boost::shared_ptr< OBJ > >& list, int depth = 0 )
+std::ostream& dump(std::ostream& os, const std::vector< boost::shared_ptr< OBJ > >& list, bool reverse, int depth = 0 )
 {
     typedef boost::shared_ptr< OBJ > OBJPtr;
-    for ( OBJPtr obj : list )
+    if (reverse)
     {
-        dump(os,obj, depth);
+        for (OBJPtr obj : boost::adaptors::reverse(list))
+        {
+            dump(os, obj, depth);
+        }
+    }
+    else
+    {
+        for (OBJPtr obj : list)
+        {
+            dump(os, obj, depth);
+        }
     }
     return os;
 }
 
 std::ostream& dump(std::ostream& os, const SequencePtr& sequence, int depth = 0);
+std::ostream& dump(std::ostream& os, const Tracks& tracks, int depth = 0);
 std::ostream& dump(std::ostream& os, const TrackPtr& track, int depth = 0);
+std::ostream& dump(std::ostream& os, const IClips& clips, int depth = 0);
 std::ostream& dump(std::ostream& os, const IClipPtr& clip, int depth = 0);
 
 template <class OBJ>

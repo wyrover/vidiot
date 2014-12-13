@@ -48,7 +48,7 @@ Watcher::Watcher()
 
     start();
 }
-// todo searc for reverse and try to use reverse iteration iso copying into reversed lists
+
 Watcher::~Watcher()
 {
     VAR_DEBUG(this);

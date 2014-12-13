@@ -29,6 +29,8 @@
 namespace model {
 
 const int TAB_WIDTH = 2;
+const bool ORDER_NORMAL = false;
+const bool ORDER_REVERSED = true;
 
 std::ostream& dump(std::ostream& os, const SequencePtr& sequence, int depth)
 {
@@ -43,10 +45,9 @@ std::ostream& dump(std::ostream& os, const SequencePtr& sequence, int depth)
         os << tab << (*sequence);
         os << tab << std::endl << "VIDEO:";
         model::Tracks videotracks = sequence->getVideoTracks();
-        std::reverse(videotracks.begin(),videotracks.end()); // Same order as in GUI
-        dump(os, videotracks, depth + 1);
+        dump(os, videotracks, ORDER_REVERSED, depth + 1); // Same order as in GUI
         os << tab << std::endl << "AUDIO:";
-        dump(os, sequence->getAudioTracks(), depth + 1);
+        dump(os, sequence->getAudioTracks(), ORDER_NORMAL, depth + 1);
     }
     return os;
 }
@@ -62,8 +63,14 @@ std::ostream& dump(std::ostream& os, const TrackPtr& track, int depth)
     else
     {
         os << (track->isA<VideoTrack>() ? "VideoTrack "  : "AudioTrack ") << track->getIndex() << ": " << (*track);
-        dump(os, track->getClips(), depth + 1);
+        dump(os, track->getClips(), ORDER_NORMAL, depth + 1);
     }
+    return os;
+}
+
+std::ostream& dump(std::ostream& os, const Tracks& tracks, int depth)
+{
+    dump(os, tracks, false, depth);
     return os;
 }
 
@@ -79,6 +86,12 @@ std::ostream& dump(std::ostream& os, const IClipPtr& clip, int depth)
     {
         clip->dump(os);
     }
+    return os;
+}
+
+std::ostream& dump(std::ostream& os, const IClips& clips, int depth)
+{
+    dump(os, clips, false, depth);
     return os;
 }
 
