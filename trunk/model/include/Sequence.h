@@ -103,7 +103,7 @@ public:
 
     Tracks getVideoTracks();
     Tracks getAudioTracks();
-    Tracks getTracks();
+    Tracks getTracks() const;
 
     TrackPtr getVideoTrack(int index);
     TrackPtr getAudioTrack(int index);
