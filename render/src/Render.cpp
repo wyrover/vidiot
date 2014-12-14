@@ -657,7 +657,7 @@ void RenderWork::generate()
                     encodeFrame->pts = av_rescale_q(fedSamples, sampleTimeBase, audioCodec->time_base);
                     fedSamples += nRequiredInputSamplesPerChannel;
                 }
-                // todo make automated render sync test
+
                 int result = avcodec_encode_audio2(audioCodec, audioPacket, encodeFrame, &gotPacket); // if gotPacket == 0, then packet is destructed
                 if (0 != result)
                 {
