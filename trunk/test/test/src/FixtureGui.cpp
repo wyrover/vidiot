@@ -77,7 +77,7 @@ bool FixtureGui::tearDownWorld()
     }
     long runningtime = time(0) - mStartTime;
     std::ostringstream o;
-    o << "Total running time: " << runningtime << " seconds (" << (runningtime/60) << "m" << (runningtime%60) << ")";
+    o << "Total running time: " << runningtime << " seconds (" << (runningtime/60) << "m" << std::setw(2) << std::setfill('0')<< (runningtime%60) << ")";
     wxMessageOutputDebug().Output(o.str());
     TS_TRACE(o.str().c_str());
     boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
