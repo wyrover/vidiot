@@ -139,7 +139,6 @@ AVStream* VideoCodec::addStream(AVFormatContext* context) const
         video_codec->flags |= CODEC_FLAG_GLOBAL_HEADER;
     }
 
-    // todo set video_codec->me_method
     return stream;
 }
 
