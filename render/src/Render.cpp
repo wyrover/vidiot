@@ -25,6 +25,7 @@
 #include "Constants.h"
 #include "Convert.h"
 #include "Dialog.h"
+#include "EmptyFrame.h"
 #include "Folder.h"
 #include "OutputFormat.h"
 #include "OutputFormats.h"
@@ -391,6 +392,8 @@ void RenderWork::generate()
     samplecount nRequiredInputSamplesForAllChannels = 0;
     int bytesPerSampleForEncoder = 0;
     SwrContext* audioSampleFormatResampleContext = 0;
+    int nAudioPlanes = 0;
+    uint8_t** resampledAudioData = 0;
     samplecount fedSamples = 0;
 
     AVRational sampleTimeBase; // sampleTimeBase == 1 / audio sample rate
@@ -514,7 +517,22 @@ void RenderWork::generate()
                 ASSERT_NONZERO(audioSampleFormatResampleContext);
 
                 int result = swr_init(audioSampleFormatResampleContext);
-                ASSERT_ZERO(result)(avcodecErrorString(result));
+                if (result < 0)
+                {
+                    VAR_ERROR(result)(avcodecErrorString(result));
+                    throw EncodingError(_("Failed to initialize audio resampler"));
+                }
+
+                nAudioPlanes = av_sample_fmt_is_planar(audioCodec->sample_fmt) ? audioCodec->channels : 1;
+                resampledAudioData = new uint8_t*[nAudioPlanes];
+                result = av_samples_alloc(resampledAudioData, 0, audioCodec->channels, nRequiredInputSamplesPerChannel, audioCodec->sample_fmt, 0);
+                if (result < 0)
+                {
+                    VAR_ERROR(result)(avcodecErrorString(result));
+                    throw EncodingError(_("Failed to allocate memory for resampling"));
+                }
+
+
             }
 
             audioParameters->setSampleRate(audioCodec->sample_rate).setNrChannels(audioCodec->channels);
@@ -561,7 +579,7 @@ void RenderWork::generate()
             //////////////////////////////////////////////////////////////////////////
 
             wxString s; s << _("(frame ") << position << _(" out of ") << length << ")";
-            showProgressText(ps + " " + s); // todo show eta
+            showProgressText(ps + " " + s); // todo show  and fix 48 out of 47 with testrendering codecs
             showProgress(position);
 
             if (writeAudio && audioTime < videoTime)
@@ -609,30 +627,24 @@ void RenderWork::generate()
                     // CONVERT AUDIO SAMPLES TO INPUT FORMAT REQUIRED FOR ENCODER
                     //////////////////////////////////////////////////////////////////////////
 
-                    int nPlanes = av_sample_fmt_is_planar(audioCodec->sample_fmt) ? audioCodec->channels : 1;
                     encodeFrame = new AVFrame;
                     encodeFrame->data[0] = (uint8_t*)samples;
                     encodeFrame->linesize[0] = Convert::audioSamplesToBytes(nRequiredInputSamplesForAllChannels);
                     if (audioSampleFormatResampleContext != 0)
                     {
-                        uint8_t** data = new uint8_t*[nPlanes];
-                        int result = av_samples_alloc(data, 0, audioCodec->channels, nRequiredInputSamplesPerChannel, audioCodec->sample_fmt, 0); // todo reuse this iso reallocating over and over again
-                        ASSERT_MORE_THAN_EQUALS_ZERO(result)(avcodecErrorString(result))(*this);
                         int nOutputFrames = swr_convert(
-                            audioSampleFormatResampleContext, data, nRequiredInputSamplesPerChannel,
+                            audioSampleFormatResampleContext, resampledAudioData, nRequiredInputSamplesPerChannel,
                             const_cast<const uint8_t**>(encodeFrame->data), nRequiredInputSamplesPerChannel);
                         ASSERT_EQUALS(nOutputFrames, nRequiredInputSamplesPerChannel);
 
                         delete encodeFrame;
                         encodeFrame = new AVFrame();
 
-                        for (int i = 0; i < nPlanes; ++i)
+                        for (int i = 0; i < nAudioPlanes; ++i)
                         {
-                            encodeFrame->data[i] = data[i];
+                            encodeFrame->data[i] = resampledAudioData[i];
                             encodeFrame->linesize[i] = nRequiredInputSamplesPerChannel * bytesPerSampleForEncoder;
                         }
-
-                        delete[] data;
                     }
                 }
                 // else: all input fed into encoder
@@ -665,14 +677,7 @@ void RenderWork::generate()
                     throw EncodingError(_("Failed to encode audio data."));
                 }
 
-                if (encodeFrame != 0)
-                {
-                    if (audioSampleFormatResampleContext)
-                    {
-                        av_freep(&encodeFrame->data[0]);
-                    }
-                    delete encodeFrame;
-                }
+                delete encodeFrame; // May be 0
 
                 //////////////////////////////////////////////////////////////////////////
                 // WRITE AUDIO INTO FILE
@@ -727,7 +732,7 @@ void RenderWork::generate()
                             outputPicture->key_frame = 0;
                             outputPicture->pict_type = AV_PICTURE_TYPE_NONE;
                         }
-                        wxImagePtr image = frame->getImage();
+                        wxImagePtr image = frame->isA<model::EmptyFrame>() ? wxImagePtr() : frame->getImage(); // Performance optimization for empty frames (do not create useless 0 data).
 
                         //////////////////////////////////////////////////////////////////////////
                         // CONVERT VIDEO TO REQUIRED FORMAT FOR ENCODER
@@ -846,6 +851,8 @@ void RenderWork::generate()
     {
         if (audioSampleFormatResampleContext != 0)
         {
+            av_freep(&resampledAudioData[0]);
+            delete[] resampledAudioData;
             swr_free(&audioSampleFormatResampleContext);
         }
         avcodec_close(audioCodec);
