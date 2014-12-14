@@ -583,7 +583,7 @@ void RenderWork::generate()
             //////////////////////////////////////////////////////////////////////////
 
             wxString s; s << _("(frame ") << position << _(" out of ") << length << ")";
-            showProgressText(ps + " " + s); // todo show  and fix 48 out of 47 with testrendering codecs
+            showProgressText(ps + " " + s);
             showProgress(position);
 
             if (writeAudio && audioTime < videoTime)
@@ -615,7 +615,9 @@ void RenderWork::generate()
                             if (currentAudioChunk->getUnreadSampleCount() == 0)
                             {
                                 currentAudioChunk = sequence->getNextAudio(*audioParameters);
-                                if (currentAudioChunk && currentAudioChunk->getPts() > position)
+                                if (currentAudioChunk && 
+                                    currentAudioChunk->getPts() > position && 
+                                    currentAudioChunk->getPts() < length) // Avoid showing progress 48 out of 47 frames
                                 {
                                     position = currentAudioChunk->getPts();
                                 }
