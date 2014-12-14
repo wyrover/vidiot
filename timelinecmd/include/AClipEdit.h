@@ -22,7 +22,8 @@
 #include "UtilInt.h"
 
 namespace gui { namespace timeline { namespace command {
-typedef std::map<model::IClipPtr, model::IClips> ReplacementMap;
+
+class LinkReplacementMap;
 
 /// Base class for all edits of clip lengths/position/etc.
 /// It provides a reusable undo/redo mechanism for such edits.
@@ -255,17 +256,7 @@ private:
 
     boost::optional< model::IClips > mSelected; ///< Store selection
 
-    /// Holds all replacements that were done for this command.
-    /// Used to keep updated clip link information correct.
-    /// Note that a clip may be mapped onto an empty list. That indicates
-    /// the clip has been removed, without replacing it with new clips.
-    ReplacementMap mReplacements;
-
-    /// \see mReplacements
-    /// \see expandReplacements
-    /// In this map, all entries are 'expanded' until no more replaced clips
-    /// are part of any replacement anymore.
-    ReplacementMap mExpandedReplacements;
+    boost::shared_ptr<LinkReplacementMap> mReplacements; ///< Holds administration for keeping linked clips linked over edits.
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
@@ -292,48 +283,7 @@ private:
     /// over the audio part of the couple).
     void avoidDanglingLinks();
 
-    /// Update mExpandedReplacements
-    /// Expand/Recurse, to ensure that the algorithm also works when clips (during the edit)
-    /// are replaced with other clips that, in turn, are replaced with yet other clips.
-    ///
-    /// This works as follows:
-    /// (note: 'left' are all clips that are mapped onto other clips,
-    ///        'right' are all clips that are a replacement clip).
-    ///
-    /// As long as there are 'right' clips that are also present 'left',
-    /// replace these 'right clips' with their replacements (thus the result
-    /// of using them as 'left' keys) in the mappings.
-    void expandReplacements();
 
-    /// Helper method for expandReplacements. This method expands all the clips in
-    /// original to contain all 'final' clips, after consecutively having applied
-    /// a list of clip replacements.
-    /// \param original list of clips to be expanded
-    /// \return list containing all fully expanded clips
-    model::IClips expandReplacements(const model::IClips& original);
-
-    /// Repair 'linking of clips' information after replacing several clips.
-    /// For each
-    /// Clip c1 - linked to clip l1 - which is replaced with r1,r2,...,rn
-    /// and
-    /// Clip l1 - linked to clip c1 - which is replaced with s1,s2,...,sn
-    /// New links are made as follows:
-    /// r1<->s1, r2<->s2, ..., rn<->sn
-    ///
-    /// If l1 was not replaced yet, it is being replaced with a new clip r1 which is a 100% clone of l1.
-    /// If one of the two replacements list is shorter than the other, the extra clips in the other list
-    /// are linked to nothing.
-    /// \param conversionmap mapping for 'maintaining links' that will be updated when splitting
-    void replaceLinks();
-
-public:
-
-    // todo refactor into separate class: or better: make ReplacementMap inherit from the std map (i.s.o typedef) and then add a 'replaceLinks' method! and put that in a separate file!
-
-    /// \see replaceLinks
-    static void replaceLinks(ReplacementMap replacementMap);
-
-private:
     /// Merge all consecutive empty clips in any track of the sequence into one clip
     /// \see mergeConsecutiveEmptyClips(model::Tracks tracks)
     void mergeConsecutiveEmptyClips();

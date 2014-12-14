@@ -19,6 +19,7 @@
 
 #include "AClipEdit.h"
 #include "IClip.h"
+#include "LinkReplacementMap.h"
 #include "Properties.h"
 #include "StatusBar.h"
 #include "UtilLog.h"
@@ -42,7 +43,7 @@ TimelineDataObject::TimelineDataObject(model::SequencePtr sequence)
 {
     SetFormat(wxDataFormat(sFormat));
 
-    command::ReplacementMap replacementMap;
+    command::LinkReplacementMap replacementMap;
 
     auto addDrop = [&replacementMap](command::Drops& drops, model::TrackPtr track, model::IClips& clips)
     {
@@ -58,7 +59,7 @@ TimelineDataObject::TimelineDataObject(model::SequencePtr sequence)
             ASSERT(itReplacement != d.clips.end());
             model::IClips replacements;
             replacements.push_back(*itReplacement);
-            replacementMap[*itOriginal] = replacements;
+            replacementMap.add(*itOriginal,replacements);
             ++itOriginal;
             ++itReplacement;
         }
@@ -99,7 +100,7 @@ TimelineDataObject::TimelineDataObject(model::SequencePtr sequence)
     }
 
     // Restore links between (cloned) clips.
-    command::AClipEdit::replaceLinks(replacementMap);
+    replacementMap.replace();
 
     SetText(serialize());
 }

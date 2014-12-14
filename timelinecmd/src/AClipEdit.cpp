@@ -23,6 +23,7 @@
 #include "Cursor.h"
 #include "EmptyClip.h"
 #include "EmptyClip.h"
+#include "LinkReplacementMap.h"
 #include "Logging.h"
 #include "Selection.h"
 #include "Sequence.h"
@@ -45,10 +46,11 @@ namespace gui { namespace timeline { namespace command {
 //////////////////////////////////////////////////////////////////////////
 
 AClipEdit::AClipEdit(const model::SequencePtr& sequence)
-    :   ATimelineCommand(sequence)
-    ,   mParams()
-    ,   mParamsUndo()
-    ,   mInitialized(false)
+    : ATimelineCommand(sequence)
+    , mParams()
+    , mParamsUndo()
+    , mReplacements(boost::make_shared<LinkReplacementMap>())
+    , mInitialized(false)
 {
     VAR_INFO(this);
 }
@@ -75,17 +77,32 @@ bool AClipEdit::Do()
 
         avoidDanglingLinks();
 
-        expandReplacements();
-
-        replaceLinks();
+        mReplacements->replace();
+        if (Config::ReadBool(Config::sPathTest))
+        {
+            // Only in test mode: verify all links.
+            for (model::TrackPtr track : getSequence()->getTracks())
+            {
+                for (model::IClipPtr clip : track->getClips())
+                {
+                    if (clip->getLink())
+                    {
+                        if (clip != clip->getLink()->getLink())
+                        {
+                            LOG_ERROR << dump(getSequence());
+                        }
+                        ASSERT_EQUALS(clip, clip->getLink()->getLink());
+                    }
+                }
+            }
+        }
 
         removeEmptyClipsAtEndOfTracks();
 
         mInitialized = true;
 
-        // The following are no longer required (avoid extra memory use):
-        mReplacements.clear();
-        mExpandedReplacements.clear();
+        // No longer required (avoid extra memory use):
+        mReplacements.reset();
     }
     else
     {
@@ -195,8 +212,7 @@ void AClipEdit::Revert()
     Undo();
     mParams.clear();
     mParamsUndo.clear();
-    mReplacements.clear();
-    mExpandedReplacements.clear();
+    mReplacements = boost::make_shared<LinkReplacementMap>();
     getTimeline().getSelection().updateOnEdit();
     mInitialized = false;
 }
@@ -306,8 +322,7 @@ void AClipEdit::replaceClip(const model::IClipPtr& original, const model::IClips
 
     if (maintainlinks)
     {
-        ASSERT_MAP_CONTAINS_NOT((mReplacements),original);
-        mReplacements[ original ] = replacements;
+        mReplacements->add(original,replacements);
     }
 
     //      ============= ADD ===========  ========== REMOVE ===========
@@ -338,8 +353,7 @@ void AClipEdit::removeClips(const model::IClips& originals)
 
     for ( model::IClipPtr original : originals )
     {
-        ASSERT_MAP_CONTAINS_NOT((mReplacements),original);
-        mReplacements[ original ] = model::IClips();
+        mReplacements->add(original, model::IClips());
     }
 
     //      ============== ADD =============  ======== REMOVE =========
@@ -732,143 +746,14 @@ void AClipEdit::doMove(const model::MoveParameterPtr& move)
 void AClipEdit::avoidDanglingLinks()
 {
     LOG_DEBUG;
-    for ( auto link : mReplacements )
+    for (auto danglinglink : mReplacements->danglingLinks())
     {
-        model::IClipPtr original = link.first;
-        model::IClipPtr originallink = original->getLink();
-        if (originallink && mReplacements.find(originallink) == mReplacements.end())
-        {
-            // If a link existed, but the original link wasn't replaced, then ensure that
-            // a clone of that link is added to the list of possibly to be linked clips.
-            model::IClipPtr clone = make_cloned<model::IClip>(originallink);
-            clone->setLink(model::IClipPtr()); // The clone is linked to nothing, since linking is done below.
-            ASSERT(originallink->getTrack())(originallink); // Must still be part of a track (thus, can't have been removed, because then it would have to be part of the map)
-            replaceClip(originallink, boost::assign::list_of(clone)); // std::map iterators - foreach - remain valid
-        }
-    }
-}
-
-void AClipEdit::expandReplacements()
-{
-    LOG_DEBUG;
-    std::set<model::IClipPtr> allReplacements;
-    for ( auto entry : mReplacements )
-    {
-        allReplacements.insert(entry.second.begin(),entry.second.end());
-    }
-    for ( auto entry : mReplacements )
-    {
-        if (allReplacements.find(entry.first) == allReplacements.end())
-        {
-            // The expansion is done for all non-intermediate clips in the map. Since the replacement
-            // map is only required for linking of clips, only the original clips and their replacement
-            // are relevant. Intermediate clips are not.
-            mExpandedReplacements[entry.first] = expandReplacements(entry.second);
-        }
-    }
-}
-
-model::IClips AClipEdit::expandReplacements(const model::IClips& original)
-{
-    model::IClips result;
-    for ( model::IClipPtr clip : original )
-    {
-        if (mReplacements.find(clip) == mReplacements.end())
-        {
-            // The replacement clip is not replaced
-            result.push_back(clip);
-        }
-        else
-        {
-            // The replacement clip has been replaced also
-            model::IClips replacements = expandReplacements(mReplacements[clip]);
-            result.insert(result.end(),replacements.begin(),replacements.end());
-        }
-    }
-    return result;
-}
-
-void AClipEdit::replaceLinks()
-{
-    replaceLinks(mExpandedReplacements);
-    if (Config::ReadBool(Config::sPathTest))
-    {
-        // Only in test mode: verify all links.
-        for (model::TrackPtr track : getSequence()->getTracks())
-        {
-            for (model::IClipPtr clip : track->getClips())
-            {
-                if (clip->getLink())
-                {
-                    if (clip != clip->getLink()->getLink())
-                    {
-                        LOG_ERROR << dump(getSequence());
-                    }
-                    ASSERT_EQUALS(clip, clip->getLink()->getLink());
-                }
-            }
-        }
-    }
-}
-
-// static
-void AClipEdit::replaceLinks(ReplacementMap replacementMap)
-{
-    LOG_DEBUG;
-    for (ReplacementMap::value_type link : replacementMap)
-    {
-        model::IClipPtr clip1 = link.first;
-        model::IClips new1 = link.second;
-        model::IClips::iterator it1 = new1.begin();
-
-        model::IClipPtr clip2 = clip1->getLink();
-        if (clip2) // The clip doesn't necessarily have a link with another clip
-        {
-            ASSERT(!clip2->isA<model::EmptyClip>())(clip2); // Linking to an empty clip is not allowed
-
-            // If clip clip1 is replaced with replacement1, then its link link1 MUST also be replaced
-            // (since link1 must be replaced with a clip whose link is replacement1). This must be guaranteed
-            // by all AClipEdit derived classes (not solved generally in the base class since that would
-            // cause lots of redundant replacements).
-            ASSERT(replacementMap.find(clip2) != replacementMap.end())(clip1)(clip2)(replacementMap);
-
-            model::IClips new2 = replacementMap[clip2];
-            model::IClips::iterator it2 = new2.begin();
-
-            auto NoLinkingAllowed = [](model::IClipPtr clip)->bool
-            {
-                return (clip->isA<model::EmptyClip>() || clip->isA<model::Transition>()); // Linking to/from empty clips and transitions is not allowed. Skip these.
-            };
-
-            while ( it1 != new1.end() && it2 != new2.end() )
-            {
-                model::IClipPtr newclip1 = *it1;
-                model::IClipPtr newclip2 = *it2;
-                if (NoLinkingAllowed(newclip1))
-                {
-                    ++it1;
-                    continue;
-                }
-                if (NoLinkingAllowed(newclip2))
-                {
-                    ++it2;
-                    continue;
-                }
-                newclip1->setLink(newclip2);
-                newclip2->setLink(newclip1);
-                ++it1;
-                ++it2;
-            }
-            // For all remaining clips in both lists: not linked.
-            for (; it1 != new1.end(); ++it1)
-            {
-                (*it1)->setLink(model::IClipPtr());
-            }
-            for (; it2 != new2.end(); ++it2)
-            {
-                (*it2)->setLink(model::IClipPtr());
-            }
-        }
+        // If a link existed, but the original link wasn't replaced, then ensure that
+        // a clone of that link is added to the list of possibly to be linked clips.
+        model::IClipPtr clone = make_cloned<model::IClip>(danglinglink);
+        clone->setLink(model::IClipPtr()); // The clone is linked to nothing, since linking is done below.
+        ASSERT(danglinglink->getTrack())(danglinglink); // Must still be part of a track (thus, can't have been removed, because then it would have to be part of the map)
+        replaceClip(danglinglink, boost::assign::list_of(clone)); // std::map iterators - foreach - remain valid
     }
 }
 
