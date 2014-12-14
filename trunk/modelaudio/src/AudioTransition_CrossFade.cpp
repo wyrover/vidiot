@@ -86,14 +86,27 @@ AudioChunkPtr CrossFade::getAudio(pts position, const IClipPtr& leftClip, const 
     sample* dataLeft = leftChunk ? leftChunk->getUnreadSamples() : 0;
     sample* dataRight = rightChunk ? rightChunk->getUnreadSamples() : 0;
     sample* dataResult = result->getBuffer();
-    for (samplecount i = 0; i < nSamples; ++i) // todo does not work properly for multiple channels? (should increment with 2 then?)
+
+    float factorLeft = (static_cast<float>(totalSampleCount) - static_cast<float>(currentSampleCount)) / static_cast<float>(totalSampleCount);;
+    float factorRight = static_cast<float>(currentSampleCount) / static_cast<float>(totalSampleCount);;
+    float step = 1.0 / static_cast<float>(totalSampleCount);
+    
+    int nChannels = parameters.getNrChannels();
+
+    samplecount i = 0;
+    while (i < nSamples)
     {
-        float factorLeft = ((float)totalSampleCount - (float)currentSampleCount) / (float)totalSampleCount;
-        float factorRight = (float)currentSampleCount / (float)totalSampleCount;
         sample left = dataLeft ? dataLeft[i] : 0;
         sample right = dataRight ? dataRight[i] : 0;
         dataResult[i] = left * factorLeft + right * factorRight;
-        currentSampleCount++;
+
+        ++i;
+
+        if (i % nChannels == 0) // Keep same factors for samples played simultaneously on multiple channels
+        {
+            factorLeft -= step;
+            factorRight += step;
+        }
     }
 
     VAR_DEBUG(*result);
