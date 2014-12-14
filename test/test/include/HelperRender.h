@@ -15,12 +15,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TEST_RENDERING_H
-#define TEST_RENDERING_H
-
-//#include <vld.h>
+#ifndef HELPER_RENDER_H
+#define HELPER_RENDER_H
 
 #include "Test.h"
 
+namespace test
+{
+
+  std::pair< RandomTempDirPtr, wxFileName > OpenRenderDialogAndSetFilename();
+  std::pair< RandomTempDirPtr, wxFileName > RenderTimeline(int lengthInS = 1);
+  void PlaybackRenderedTimeline(const wxFileName& path, pixel start = 2, milliseconds t = 600);
+  void RenderAndPlaybackCurrentTimeline(int renderedlengthInS = 2, pixel playbackStart = 2, milliseconds playbackLength = 600);
+
+}
 
 #endif

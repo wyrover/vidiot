@@ -19,6 +19,15 @@
 
 namespace test {
 
+void SetProjectUnmodified()
+{
+    util::thread::RunInMainAndWait([]
+    {
+        wxDocument* doc = gui::Window::get().GetDocumentManager()->GetCurrentDocument();
+        if (doc) { doc->Modify(false); } // Avoid "Save yes/no/Cancel" dialog
+    });
+}
+
 model::FolderPtr getRoot()
 {
     model::FolderPtr root = model::Project::get().getRoot();

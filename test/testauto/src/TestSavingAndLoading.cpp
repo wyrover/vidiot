@@ -112,12 +112,7 @@ void TestSavingAndLoading::testSaveAndLoad()
         referenceFileName.SetFullName(sCurrent);
         if (!getSavedFileContents(tempDir_fileName.second).IsSameAs(getSavedFileContents(referenceFileName)))
         {
-            util::thread::RunInMainAndWait([referenceDirName]()
-            {
-                wxString cmd;
-                cmd << "explorer " << referenceDirName.GetFullPath();
-                ::wxExecute( cmd, wxEXEC_ASYNC, NULL);
-            });
+            OpenFileExplorer(referenceDirName);
             FATAL("File contents are not equal");
         }
     }

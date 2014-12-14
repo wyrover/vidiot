@@ -593,7 +593,6 @@ void RenderWork::generate()
                             if (currentAudioChunk->getUnreadSampleCount() == 0)
                             {
                                 currentAudioChunk = sequence->getNextAudio(*audioParameters);
-                                VAR_ERROR(*currentAudioChunk);
                                 if (currentAudioChunk && currentAudioChunk->getPts() > position)
                                 {
                                     position = currentAudioChunk->getPts();
@@ -618,6 +617,7 @@ void RenderWork::generate()
                     {
                         uint8_t** data = new uint8_t*[nPlanes];
                         int result = av_samples_alloc(data, 0, audioCodec->channels, nRequiredInputSamplesPerChannel, audioCodec->sample_fmt, 0); // todo reuse this iso reallocating over and over again
+                        ASSERT_MORE_THAN_EQUALS_ZERO(result)(avcodecErrorString(result))(*this);
                         int nOutputFrames = swr_convert(
                             audioSampleFormatResampleContext, data, nRequiredInputSamplesPerChannel,
                             const_cast<const uint8_t**>(encodeFrame->data), nRequiredInputSamplesPerChannel);
@@ -651,11 +651,11 @@ void RenderWork::generate()
                 {
                     encodeFrame->format = audioCodec->sample_fmt;
                     encodeFrame->channel_layout = audioCodec->channel_layout;
+                    encodeFrame->channels = audioCodec->channels;
                     encodeFrame->sample_rate = audioCodec->sample_rate;
                     encodeFrame->nb_samples = nRequiredInputSamplesPerChannel;
                     encodeFrame->pts = av_rescale_q(fedSamples, sampleTimeBase, audioCodec->time_base);
-                    fedSamples += nRequiredInputSamplesForAllChannels;
-                    VAR_ERROR(fedSamples)(encodeFrame->pts);
+                    fedSamples += nRequiredInputSamplesPerChannel;
                 }
                 // todo make automated render sync test
                 int result = avcodec_encode_audio2(audioCodec, audioPacket, encodeFrame, &gotPacket); // if gotPacket == 0, then packet is destructed
@@ -683,7 +683,6 @@ void RenderWork::generate()
                     audioPacket->flags |= AV_PKT_FLAG_KEY;
                     audioPacket->stream_index = audioStream->index;
                     av_packet_rescale_ts(audioPacket, audioCodec->time_base, audioStream->time_base);
-                    VAR_ERROR(audioPacket->pts)(audioStream->time_base)(audioTime);
                     int result = av_interleaved_write_frame(context, audioPacket); // av_interleaved_write_frame: transfers ownership of packet
                     if (0 != result)
                     {
@@ -787,7 +786,6 @@ void RenderWork::generate()
                     //////////////////////////////////////////////////////////////////////////
 
                     int gotPacket = 0;
-                    VAR_ERROR(videoPacket->pts)(videoStream->time_base)(videoTime);
                     int result = avcodec_encode_video2(videoCodec, videoPacket, toBeEncodedPicture, &gotPacket);  // if gotPacket == 0, then packet is destructed
                     if (0 != result)
                     {

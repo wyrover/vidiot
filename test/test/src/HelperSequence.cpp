@@ -19,15 +19,17 @@
 
 namespace test {
 
-void ExtendSequenceWithRepeatedClips( model::SequencePtr sequence, model::IPaths files, int nRepeat )
+void ExtendSequenceWithRepeatedClips( model::SequencePtr sequence, model::IPaths files, int nRepeat, bool atBegin )
 {
-    util::thread::RunInMainAndWait([sequence,files,nRepeat]()
+    util::thread::RunInMainAndWait([sequence,files,nRepeat, atBegin]()
     {
         model::TrackPtr videoTrack = sequence->getVideoTrack(0);
         model::TrackPtr audioTrack = sequence->getAudioTrack(0);
         ASSERT(sequence);
         ASSERT(videoTrack);
         ASSERT(audioTrack);
+        ASSERT_IMPLIES(atBegin, !videoTrack->getClips().empty());
+        ASSERT_IMPLIES(atBegin, !audioTrack->getClips().empty());
 
         for (int i = 0; i < nRepeat; ++i)
         {
@@ -35,11 +37,27 @@ void ExtendSequenceWithRepeatedClips( model::SequencePtr sequence, model::IPaths
             {
                 model::FilePtr file = boost::make_shared<model::File>(path->getPath());
                 std::pair<model::IClipPtr,model::IClipPtr> videoClip_audioClip = command::ClipCreator::makeClips(file);
-                videoTrack->addClips(boost::assign::list_of(videoClip_audioClip.first));
-                audioTrack->addClips(boost::assign::list_of(videoClip_audioClip.second));
+                videoTrack->addClips(boost::assign::list_of(videoClip_audioClip.first), atBegin ? videoTrack->getClips().front() : model::IClipPtr() );
+                audioTrack->addClips(boost::assign::list_of(videoClip_audioClip.second), atBegin ? audioTrack->getClips().front() : model::IClipPtr());
             }
         }
     });
+}
+
+void ExtendSequenceWithRepeatedClipsAtBegin(model::SequencePtr sequence, model::IPaths files, int nRepeat)
+{
+    ExtendSequenceWithRepeatedClips(sequence,files,nRepeat,true);
+}
+
+void ExtendSequenceWithEmptyClipAtBegin(model::SequencePtr sequence, milliseconds time)
+{
+
+    for (model::TrackPtr track : sequence->getTracks())
+    {
+        ASSERT_NONZERO(track->getClips().size());
+        model::IClipPtr clip = boost::make_shared<model::EmptyClip>(model::Convert::timeToPts(time));
+        track->addClips( boost::assign::list_of(clip), track->getClips().front() );
+    }
 }
 
 void ExtendSequenceWithStillImage( model::SequencePtr sequence )

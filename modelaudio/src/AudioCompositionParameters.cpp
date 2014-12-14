@@ -99,8 +99,7 @@ AudioCompositionParameters& AudioCompositionParameters::determineChunkSize()
 {
     ASSERT(!mChunkSize);
     pts position = getPts();
-    samplecount chunkSize = Convert::ptsToSamples(mSampleRate, mNrChannels, position + 1) - Convert::ptsToSamples(mSampleRate, mNrChannels, position);
-    ASSERT_ZERO(chunkSize % mNrChannels); // Ensure that the data for all speakers is there... If this assert ever fails: maybe there's file formats in which the data for a frame is 'truncated'?
+    samplecount chunkSize = (Convert::ptsToSamplesPerChannel(mSampleRate, position + 1) - Convert::ptsToSamplesPerChannel(mSampleRate, position)) * mNrChannels;
     mChunkSize.reset(chunkSize);
     return *this;
 }

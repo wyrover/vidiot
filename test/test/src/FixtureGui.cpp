@@ -100,11 +100,7 @@ bool FixtureGui::tearDown()
 {
     mHelperTestSuite->testSuiteDone();
     if (!mHelperTestSuite->currentTestRequiresWindow()) { return true; } // Test was disabled or does not require window
-    util::thread::RunInMainAndWait([]
-    {
-        wxDocument* doc = gui::Window::get().GetDocumentManager()->GetCurrentDocument();
-        if (doc) { doc->Modify(false); } // Avoid "Save yes/no/Cancel" dialog
-    });
+    SetProjectUnmodified();
 
      // Ensure that onEventLoopEnter blocks on mBarrierStarted. This blocking should
     // only be done for (re)starting the main (application) event loop, not for any dialogs.

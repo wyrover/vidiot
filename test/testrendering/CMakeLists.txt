@@ -1,4 +1,4 @@
-# Copyright 2013,2014 Eric Raijmakers.
+# Copyright 2014 Eric Raijmakers.
 #
 # This file is part of Vidiot.
 #
@@ -15,8 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Vidiot. If not, see <http:#www.gnu.org/licenses/>.
 
-ADD_SUBDIRECTORY(test)
-ADD_SUBDIRECTORY(testauto)
-ADD_SUBDIRECTORY(testrendering)
-ADD_SUBDIRECTORY(testsync)
-ADD_SUBDIRECTORY(testui)
+AddTests(testrendering)
+
+
+

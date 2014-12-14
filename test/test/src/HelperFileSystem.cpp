@@ -197,4 +197,15 @@ wxString getSavedFileContents(wxFileName path)
 	return contents;
 }
 
+void OpenFileExplorer(wxFileName dir)
+{
+    ASSERT(dir.IsDir());
+    util::thread::RunInMainAndWait([dir]()
+    {
+        wxString cmd;
+        cmd << "explorer " << dir.GetFullPath();
+        ::wxExecute(cmd, wxEXEC_ASYNC, NULL);
+    });
+}
+
 } // namespace

@@ -88,14 +88,11 @@ public:
     /// \param hoursAlways if true, then hours are shown even if the total time is less than one hour
     static wxString ptsToHumanReadibleString(pts duration, bool minutesAlways = false, bool hoursAlways = false);
 
-    /// Convert a pts value to a number of audio samples. One audio sample is one
-    /// element for one speaker.
-    /// \note rounding is done such that always data for ALL speakers is available
+    /// Convert a pts value to the number of audio samples required for each audio channel.
     /// \param audioRate The rate (samples per second )at which audio will be played (44100/48000/etc.)
-    /// \param nAudioChannels Number of audio channels (speakers)
     /// \param position pts value to be converted
     /// \return number of samples required for this number of pts
-    static samplecount ptsToSamples(int audioRate, int nAudioChannels, pts position);
+    static samplecount ptsToSamplesPerChannel(int audioRate, pts position);
 
     /// Convert a number of samples to an approximate time value.
     /// \param audioRate The rate (samples per second) at which audio will be played (44100/48000/etc.)

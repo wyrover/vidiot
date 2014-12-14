@@ -70,7 +70,7 @@ AudioChunkPtr CrossFade::getAudio(pts position, const IClipPtr& leftClip, const 
 
     auto determineSampleCountAt = [parameters](pts position) -> samplecount
     {
-        return Convert::ptsToSamples(parameters.getSampleRate(), parameters.getNrChannels(), position);
+        return Convert::ptsToSamplesPerChannel(parameters.getSampleRate(), position);
     };
         
     samplecount nSamples = parameters.getChunkSize();

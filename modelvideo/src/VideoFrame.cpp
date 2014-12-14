@@ -200,7 +200,8 @@ std::ostream& operator<<(std::ostream& os, const VideoFrame& obj)
         << obj.mPts                 << '|'
         << obj.mParameters          << '|'
         << obj.mForceKeyFrame       << '|'
-        << obj.mLayers;
+        << obj.mLayers              << '|'
+        << typeid(obj).name();
     return os;
 }
 
