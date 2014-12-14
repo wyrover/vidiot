@@ -114,13 +114,9 @@ wxString Convert::ptsToHumanReadibleString(pts duration, bool minutesAlways, boo
 }
 
 // static
-samplecount Convert::ptsToSamples(int audioRate, int nAudioChannels, pts position)
+samplecount Convert::ptsToSamplesPerChannel(int audioRate, pts position)
 {
-    samplecount nSamples =
-        removeRemainder(nAudioChannels, // Ensure that the returned value is never aligned such that the data for one or more speakers is missing
-        boost::rational_cast<samplecount>(rational64(position) * rational64(audioRate) * rational64(nAudioChannels) / Properties::get().getFrameRate()));
-    ASSERT_MORE_THAN_EQUALS_ZERO(nSamples);
-    return nSamples;
+    return boost::rational_cast<samplecount>(rational64(position) * rational64(audioRate) / Properties::get().getFrameRate());
 }
 
 // static

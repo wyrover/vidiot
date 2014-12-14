@@ -88,6 +88,8 @@ wxString getFileContents(wxFileName path);
 /// \return contents of given file
 wxString getSavedFileContents(wxFileName path);
 
+void OpenFileExplorer(wxFileName dir);
+
 } // namespace
 
 #endif

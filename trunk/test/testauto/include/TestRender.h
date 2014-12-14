@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TEST_ONCE_H
-#define TEST_ONCE_H
+#ifndef TEST_RENDER_H
+#define TEST_RENDER_H
 
 #include "TestAuto.h"
 
@@ -42,14 +42,6 @@ public:
     void testChangeRenderSettings();
     void testRenderingSplit();
 
-    /// For each video codec, render part of the timeline, and then playback
-    /// the generated file.
-    void testRenderingCodecsVideo();
-
-    /// For each audio codec, render part of the timeline, and then playback
-    /// the generated file.
-    void testRenderingCodecsAudio();
-
     /// This was a bug once. Caused by the clone not having the proper clip
     /// administration (getPrev/getNext failed when the transition started
     /// generating frames/chunks).
@@ -69,16 +61,6 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     FixtureProject mProjectFixture;
-
-    //////////////////////////////////////////////////////////////////////////
-    // HELPER METHODS
-    //////////////////////////////////////////////////////////////////////////
-
-    std::pair< RandomTempDirPtr, wxFileName > OpenDialogAndSetFilename();
-    std::pair< RandomTempDirPtr, wxFileName > RenderTimeline(int lengthInS = 1);
-    void PlaybackRenderedTimeline(const wxFileName& path, pixel start = 2, milliseconds t = 600);
-    void RenderAndPlaybackCurrentTimeline(int renderedlengthInS = 2, pixel playbackStart = 2, milliseconds playbackLength = 600);
-
 };
 
 }

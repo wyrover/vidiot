@@ -150,7 +150,8 @@ std::ostream& operator<<(std::ostream& os, const AudioChunk& obj)
         << obj.mNrChannels          << "|"
         << obj.mNrSamples           << "|"
         << obj.mNrSkippedSamples    << "|"
-        << obj.mNrReadSamples;
+        << obj.mNrReadSamples       << "|"
+        << typeid(obj).name();
     return os;
 }
 

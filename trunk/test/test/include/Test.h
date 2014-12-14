@@ -140,6 +140,7 @@
 #include "HelperPopupMenu.h"
 #include "HelperProject.h"
 #include "HelperProjectView.h"
+#include "HelperRender.h"
 #include "HelperSequence.h"
 #include "HelperTestSuite.h"
 #include "HelperTimeline.h"

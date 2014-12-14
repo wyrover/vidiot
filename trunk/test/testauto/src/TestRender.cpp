@@ -43,7 +43,7 @@ void TestRender::testChangeRenderSettings()
     {
         StartTest("If cancel is pressed, nothing is changed.");
         model::render::RenderPtr original = GetCurrentRenderSettings();
-        std::pair< RandomTempDirPtr, wxFileName > tempdir_and_filename = OpenDialogAndSetFilename();
+        std::pair< RandomTempDirPtr, wxFileName > tempdir_and_filename = OpenRenderDialogAndSetFilename();
         SetValue(dynamic_cast<wxSpinCtrl*>(gui::DialogRenderSettings::get().getVideoParam(model::render::BitRate)), 3999996);
         ButtonTriggerPressed(gui::DialogRenderSettings::get().getCancelButton());
         model::render::RenderPtr current = GetCurrentRenderSettings();
@@ -52,7 +52,7 @@ void TestRender::testChangeRenderSettings()
     {
         StartTest("If apply is pressed, the sequence is changed (with a different video codec setting).");
         model::render::RenderPtr original = GetCurrentRenderSettings();
-        std::pair< RandomTempDirPtr, wxFileName > tempdir_and_filename = OpenDialogAndSetFilename();
+        std::pair< RandomTempDirPtr, wxFileName > tempdir_and_filename = OpenRenderDialogAndSetFilename();
         SetValue(dynamic_cast<wxSpinCtrl*>(gui::DialogRenderSettings::get().getVideoParam(model::render::BitRate)), 399999);
         ButtonTriggerPressed(gui::DialogRenderSettings::get().getApplyButton());
         model::render::RenderPtr current = GetCurrentRenderSettings();
@@ -62,7 +62,7 @@ void TestRender::testChangeRenderSettings()
     {
         StartTest("If apply is pressed, the sequence is changed (with a different audio codec setting).");
         model::render::RenderPtr original = GetCurrentRenderSettings();
-        std::pair< RandomTempDirPtr, wxFileName > tempdir_and_filename = OpenDialogAndSetFilename();
+        std::pair< RandomTempDirPtr, wxFileName > tempdir_and_filename = OpenRenderDialogAndSetFilename();
         SetValue(dynamic_cast<wxSpinCtrl*>(gui::DialogRenderSettings::get().getVideoParam(model::render::BitRate)), 300000);
         ButtonTriggerPressed(gui::DialogRenderSettings::get().getApplyButton());
         model::render::RenderPtr current = GetCurrentRenderSettings();
@@ -72,7 +72,7 @@ void TestRender::testChangeRenderSettings()
     {
         StartTest("If OK is pressed, the sequence is changed and the dialog is closed.");
         model::render::RenderPtr original = GetCurrentRenderSettings();
-        std::pair< RandomTempDirPtr, wxFileName > tempdir_and_filename = OpenDialogAndSetFilename();
+        std::pair< RandomTempDirPtr, wxFileName > tempdir_and_filename = OpenRenderDialogAndSetFilename();
         SetValue(dynamic_cast<wxSpinCtrl*>(gui::DialogRenderSettings::get().getVideoParam(model::render::BitRate)), 200000);
         ButtonTriggerPressed(gui::DialogRenderSettings::get().getOkButton());
         model::render::RenderPtr current = GetCurrentRenderSettings();
@@ -95,7 +95,7 @@ void TestRender::testRenderingSplit()
         TimelineKeyUp(WXK_CONTROL);
         TimelineKeyPress(WXK_DELETE);
         model::render::RenderPtr original = GetCurrentRenderSettings();
-        std::pair< RandomTempDirPtr, wxFileName > tempdir_and_filename = OpenDialogAndSetFilename();
+        std::pair< RandomTempDirPtr, wxFileName > tempdir_and_filename = OpenRenderDialogAndSetFilename();
         SetValue(gui::DialogRenderSettings::get().getRenderSeparationCheckBox(),true);
         ButtonTriggerPressed(gui::DialogRenderSettings::get().getRenderButton());
         expectation.wait();
@@ -104,43 +104,6 @@ void TestRender::testRenderingSplit()
             wxFileName f(tempdir_and_filename.first->getFileName().GetLongPath(), wxString::Format("out_%d",i), "avi");
             ASSERT_IMPLIES(i <= 3, f.Exists());
             ASSERT_IMPLIES(i == 4, !f.Exists());
-        }
-    }
-}
-
-void TestRender::testRenderingCodecsVideo()
-{
-    StartTestSuite();
-    model::SequencePtr sequence(getSequence());
-    for ( AVCodecID id : model::render::VideoCodecs::all() )
-    {
-        std::ostringstream os; os << "Render " << id;
-        StartTest(os.str().c_str());
-        WindowTriggerMenu(ID_RENDERSETTINGS);
-        gui::DialogRenderSettings::get().getVideoCodecButton()->select(id);
-        ButtonTriggerPressed(gui::DialogRenderSettings::get().getOkButton());
-        RenderAndPlaybackCurrentTimeline();
-        ProjectViewOpenTimelineForSequence(sequence);
-    }
-}
-
-
-void TestRender::testRenderingCodecsAudio()
-{
-    StartTestSuite();
-    model::SequencePtr sequence(getSequence());
-    for (int nChannels = 1; nChannels <= 2; ++nChannels)
-    {
-        model::Properties::get().setAudioNumberOfChannels(1);
-        for (AVCodecID id : model::render::AudioCodecs::all())
-        {
-            std::ostringstream os; os << "Render " << id << (nChannels == 1 ? " mono" : " stereo");
-            StartTest(os.str().c_str());
-            WindowTriggerMenu(ID_RENDERSETTINGS);
-            gui::DialogRenderSettings::get().getAudioCodecButton()->select(id);
-            ButtonTriggerPressed(gui::DialogRenderSettings::get().getOkButton());
-            RenderAndPlaybackCurrentTimeline();
-            ProjectViewOpenTimelineForSequence(sequence);
         }
     }
 }
@@ -187,51 +150,6 @@ void TestRender::testRenderingTransformedClip()
     });
 
     RenderAndPlaybackCurrentTimeline();
-}
-
-//////////////////////////////////////////////////////////////////////////
-// HELPER METHODS
-//////////////////////////////////////////////////////////////////////////
-
-std::pair< RandomTempDirPtr, wxFileName > TestRender::OpenDialogAndSetFilename()
-{
-    WindowTriggerMenu(ID_RENDERSETTINGS);
-    
-    RandomTempDirPtr tempdir = boost::make_shared<RandomTempDir>();
-    wxFileName path(tempdir->getFileName().GetFullPath(), "out", "avi");
-    gui::Dialog::get().setSaveFile(path.GetFullPath());
-    ButtonTriggerPressed(gui::DialogRenderSettings::get().getFileButton());
-    return std::make_pair(tempdir,path);
-}
-
-std::pair< RandomTempDirPtr, wxFileName > TestRender::RenderTimeline(int lengthInS)
-{
-    ConfigOverruleLong overrule(Config::sPathDebugMaxRenderLength, lengthInS);
-    std::pair< RandomTempDirPtr, wxFileName > tempdir_and_filename = OpenDialogAndSetFilename();
-    ExpectExecutedWork expectation(1);
-    ButtonTriggerPressed(gui::DialogRenderSettings::get().getRenderButton());
-    expectation.wait();
-    ASSERT(tempdir_and_filename.second.Exists());
-    return tempdir_and_filename;
-}
-
-void TestRender::PlaybackRenderedTimeline(const wxFileName& path, pixel start, milliseconds t)
-{
-    model::FolderPtr folder1 = ProjectViewAddFolder( "PlaybackRenderedTimeline" );
-    model::Files files1 = ProjectViewAddFiles( boost::assign::list_of(path), folder1 );
-    model::SequencePtr sequence1 = ProjectViewCreateSequence( folder1 );
-    TimelineZoomIn(4);
-    Play(start, t);
-    ProjectViewRemove(sequence1);
-    ProjectViewRemove(folder1);
-}
-
-void TestRender::RenderAndPlaybackCurrentTimeline(int renderedlengthInS, pixel playbackStart, milliseconds playbackLength)
-{
-    RandomTempDir tempdir;
-    std::pair< RandomTempDirPtr, wxFileName > tempdir_and_filename =  RenderTimeline(renderedlengthInS);
-    WindowTriggerMenu(ID_CLOSESEQUENCE);
-    PlaybackRenderedTimeline(tempdir_and_filename.second, playbackStart, playbackLength);
 }
 
 } // namespace
