@@ -414,7 +414,11 @@ void RenderWork::generate()
         {
             videoStream = outputformat->getVideoCodec()->addStream(context);
             videoCodec = videoStream->codec;
-            ASSERT_EQUALS(videoCodec->ticks_per_frame, 1); // todo not impl yet: more than 1 tick per frame
+            if (videoCodec->ticks_per_frame != 1)
+            {
+                VAR_ERROR(videoCodec->ticks_per_frame)(videoCodec);
+                throw EncodingError("Unsupported number of ticks per frame in target codec.");
+            }
 
             if (Config::Exists(Config::sPathOverruleFourCC))
             {
