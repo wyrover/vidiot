@@ -52,7 +52,6 @@ void TestRenderingSynchronization::testLongSequence()
     ButtonTriggerPressed(gui::DialogRenderSettings::get().getOkButton());
     WindowTriggerMenu(ID_CLOSESEQUENCE);
 
-    // todo prepend sync clip first (to check the sync easier)
     StartTest("Create movie");
     wxFileName syncFileName = getTestPath(); 
     syncFileName.AppendDir("filetypes_sync");
