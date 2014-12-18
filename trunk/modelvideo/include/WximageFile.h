@@ -62,6 +62,8 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
+    bool canBeOpened() override;
+
     wxSize getSize() override;
 
 protected:

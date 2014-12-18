@@ -95,7 +95,7 @@ void WximageFile::clean()
 VideoFramePtr WximageFile::getNextVideo(const VideoCompositionParameters& parameters)
 {
     readImage();
-
+    ASSERT(mInputImage->IsOk());
     if (mOutputFrame == nullptr || 
         parameters.getBoundingBox() != mOutputFrame->getParameters().getBoundingBox())
     {
@@ -116,12 +116,21 @@ VideoFramePtr WximageFile::getNextVideo(const VideoCompositionParameters& parame
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-wxSize WximageFile::getSize()
+bool WximageFile::canBeOpened()
 {
     readImage();
-    return mInputImage->GetSize();
+    return mInputImage->IsOk();
 }
 
+wxSize WximageFile::getSize()
+{
+    readImage(); // Use a default size
+    if (!mInputImage->IsOk())
+    {
+        return wxSize(0,0);
+    }
+    return mInputImage->GetSize();
+}
 
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS

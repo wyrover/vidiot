@@ -135,24 +135,7 @@ void VideoFile::clean()
 VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& parameters)
 {
     startDecodingVideo(parameters);
-    if (!canBeOpened())
-    {
-        // File could not be opened (deleted?)
-        wxImagePtr compositeImage(boost::make_shared<wxImage>(parameters.getBoundingBox()));
-        wxGraphicsContext* gc = wxGraphicsContext::Create(*compositeImage);
-        wxString error_message1 = _("Missing file: ");
-        wxString error_message2 = getPath().GetFullName();
-        wxFont errorFont = wxFont(wxSize(0,20), wxFONTFAMILY_DECORATIVE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD);
-        gc->SetFont(errorFont, wxColour(255,255,255));
-        wxDouble w, h, d, e;
-        gc->GetTextExtent(error_message1, &w, &h, &d, &e);
-        gc->DrawText(error_message1, 20, 20);
-        gc->DrawText(error_message2, 20, 20 + h );
-        delete gc;
-        mDeliveredFrame = boost::make_shared<VideoFrame>(parameters, boost::make_shared<VideoFrameLayer>(compositeImage));
-        return mDeliveredFrame;
-    }
-
+    ASSERT(canBeOpened());
     AVPacket nullPacket;
     memset(&nullPacket,0,sizeof(AVPacket));
 

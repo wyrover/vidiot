@@ -23,82 +23,33 @@ namespace test {
 // TEST CASES
 //////////////////////////////////////////////////////////////////////////
 
-void TestExceptions::testRemovedFileInSequence()
+void TestExceptions::testRemoveFileInSequence_Video()
 {
     StartTestSuite();
-    model::FolderPtr root = WindowCreateProject();
-    ASSERT(root);
-    model::IPaths InputFiles = getListOfInputPaths();
-
-    StartTest("Add file to a non-auto folder");
-    RandomTempDirPtr tempDir = RandomTempDir::generate();
-    wxFileName filepath1(tempDir->getFileName().GetLongPath(), "removedfile.avi");
-    bool copyok = wxCopyFile( InputFiles.front()->getPath().GetLongPath(), filepath1.GetLongPath(), false );
-    ASSERT(copyok);
-
-    ASSERT_WATCHED_PATHS_COUNT(0);
-    model::FolderPtr folder1 = ProjectViewAddFolder( "TestFolder" );
-    WaitForChildCount(root, 2);
-    model::Files files1 = ProjectViewAddFiles( boost::assign::list_of(filepath1), folder1 );
-    WaitForChildCount(root, 3);
-    ASSERT_WATCHED_PATHS_COUNT(1);
-    model::SequencePtr sequence = ProjectViewCreateSequence(folder1);
-    WaitForChildCount(root, 4);
-    ProjectViewRemove(folder1);
-    ASSERT_WATCHED_PATHS_COUNT(0);
-    WindowTriggerMenu(ID_CLOSESEQUENCE);
-
-    tempDir.reset(); // Deletes the file (still used in the sequence) from disk
-
-    // Open the sequence again (file missing from disk)
-    util::thread::RunInMainAndWait([folder1]
-    {
-        GetProjectView().select(boost::assign::list_of(folder1));
-        GetProjectView().onOpen();
-    });
-
-    Play(10, 500);
+    testRemovedFileInSequence(getFileName("input", "00.avi"));
 }
 
-void TestExceptions::testRemovedFileInSequenceBeforeOpening()
+void TestExceptions::testRemovedFileInSequence_Title()
 {
     StartTestSuite();
-    model::FolderPtr root = WindowCreateProject();
-    ASSERT(root);
-    model::IPaths InputFiles = getListOfInputPaths();
+    testRemovedFileInSequence(getFileName("filetypes_title","title.png"));
+}
 
-    StartTest("Add file to a non-auto folder");
-    RandomTempDirPtr tempDir = RandomTempDir::generate();
-    wxFileName filepath1(tempDir->getFileName().GetLongPath(), "removedfile.avi");
-    bool copyok = wxCopyFile( InputFiles.front()->getPath().GetLongPath(), filepath1.GetLongPath(), false );
-    ASSERT(copyok);
+void TestExceptions::testRemovedFileInSequenceBeforeOpening_Video()
+{
+    StartTestSuite();
+    testRemovedFileInSequenceBeforeOpening(getFileName("input", "00.avi"));
+}
 
-    ASSERT_WATCHED_PATHS_COUNT(0);
-    model::FolderPtr folder1 = ProjectViewAddFolder( "TestFolder" );
-    WaitForChildCount(root, 2);
-    model::Files files1 = ProjectViewAddFiles( boost::assign::list_of(filepath1), folder1 );
-    WaitForChildCount(root, 3);
-    ASSERT_WATCHED_PATHS_COUNT(1);
-    model::SequencePtr sequence = ProjectViewCreateSequence(folder1);
-    WaitForChildCount(root, 4);
-    ProjectViewRemove(folder1);
-    ASSERT_WATCHED_PATHS_COUNT(0);
-
-    std::pair<RandomTempDirPtr, wxFileName> tempDir_fileName = SaveProjectAndClose();
-
-    tempDir.reset(); // Deletes the file (still used in the sequence) from disk
-
-    StartTest("Load document");
-    WindowTriggerMenu(wxID_FILE1); // Load document 1 from the file history, this is the file that was saved before. This mechanism avoids the open dialog.
-    WaitForIdle();
-
-    Play(10, 500);
+void TestExceptions::testRemovedFileInSequenceBeforeOpening_Title()
+{
+    StartTestSuite();
+    testRemovedFileInSequenceBeforeOpening(getFileName("filetypes_title","title.png"));
 }
 
 void TestExceptions::testRemovedFileUsedForTransitionsBeforeOpening()
 {
     StartTestSuite();
-
     model::FolderPtr root = WindowCreateProject();
     ASSERT(root);
     ASSERT_WATCHED_PATHS_COUNT(0);
@@ -191,5 +142,78 @@ void TestExceptions::testRemovedFolderInProjectViewBeforeOpening()
     WindowTriggerMenu(wxID_FILE1); // Load document 1 from the file history, this is the file that was saved before. This mechanism avoids the open dialog.
     WaitForIdle();
 }
+
+//////////////////////////////////////////////////////////////////////////
+// HELPER METHODS
+//////////////////////////////////////////////////////////////////////////
+
+std::pair< model::FolderPtr, RandomTempDirPtr> TestExceptions::createProjectWithOneFile(const wxFileName& file)
+{
+    model::FolderPtr root = WindowCreateProject();
+    ASSERT(root);
+    model::IPaths InputFiles = getListOfInputPaths();
+
+    StartTest("Add file to a non-auto folder");
+    RandomTempDirPtr tempDir = RandomTempDir::generate();
+    wxFileName filepath1(tempDir->getFileName().GetLongPath(), "removedfile." + file.GetExt());
+    bool copyok = wxCopyFile( file.GetLongPath(), filepath1.GetLongPath(), false );
+    ASSERT(copyok);
+
+    ASSERT_WATCHED_PATHS_COUNT(0);
+    model::FolderPtr folder1 = ProjectViewAddFolder( "TestFolder" );
+    WaitForChildCount(root, 2);
+    model::Files files1 = ProjectViewAddFiles( boost::assign::list_of(filepath1), folder1 );
+    WaitForChildCount(root, 3);
+    ASSERT_WATCHED_PATHS_COUNT(1);
+    model::SequencePtr sequence = ProjectViewCreateSequence(folder1);
+    WaitForChildCount(root, 4);
+    ProjectViewRemove(folder1);
+    ASSERT_WATCHED_PATHS_COUNT(0);
+    return std::make_pair(folder1, tempDir);
+}
+
+void TestExceptions::testRemovedFileInSequence(const wxFileName& file)
+{
+    std::pair< model::FolderPtr, RandomTempDirPtr> projectfolder_and_dirtoberemoved = createProjectWithOneFile(file);
+    WindowTriggerMenu(ID_CLOSESEQUENCE);
+
+    projectfolder_and_dirtoberemoved.second.reset(); // Deletes the file (still used in the sequence) from disk
+
+    // Open the sequence again (file missing from disk)
+    util::thread::RunInMainAndWait([projectfolder_and_dirtoberemoved]
+    {
+        GetProjectView().select(boost::assign::list_of(projectfolder_and_dirtoberemoved.first));
+        GetProjectView().onOpen();
+    });
+
+    Play(10, 500);
+}
+
+void TestExceptions::testRemovedFileInSequenceBeforeOpening(const wxFileName& file)
+{
+    std::pair< model::FolderPtr, RandomTempDirPtr> projectfolder_and_dirtoberemoved = createProjectWithOneFile(file);
+    std::pair<RandomTempDirPtr, wxFileName> tempDir_fileName = SaveProjectAndClose();
+
+    projectfolder_and_dirtoberemoved.second.reset(); // Deletes the file (still used in the sequence) from disk
+
+    StartTest("Load document");
+    WindowTriggerMenu(wxID_FILE1); // Load document 1 from the file history, this is the file that was saved before. This mechanism avoids the open dialog.
+    WaitForIdle();
+
+    Play(10, 500);
+}
+
+wxFileName TestExceptions::getFileName(wxString folder, wxString file) const
+{
+    wxFileName path = getTestPath();
+    path.AppendDir(folder);
+    ASSERT(path.IsDir());
+    ASSERT(path.DirExists());
+    path.SetFullName(file);
+    ASSERT(path.FileExists());
+    return path;
+}
+
+
 
 } // namespace

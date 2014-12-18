@@ -31,15 +31,42 @@ public:
     // TEST CASES
     //////////////////////////////////////////////////////////////////////////
 
-    void testRemovedFileInSequence();
+    /// Test handling of a file that is part of a sequence and then removed
+    /// on disk, for video files.
+    void testRemoveFileInSequence_Video();
 
-    void testRemovedFileInSequenceBeforeOpening();
+    /// Test handling of a file that is part of a sequence and then removed
+    /// on disk, for title files (handle by wxImageFile).
+    void testRemovedFileInSequence_Title();
+
+    /// Test opening a project with a timeline containing a video file, but
+    /// the video file has been removed from disk.
+    void testRemovedFileInSequenceBeforeOpening_Video();
+
+    /// Test opening a project with a timeline containing a video file, but
+    /// the video file has been removed from disk.
+    void testRemovedFileInSequenceBeforeOpening_Title();
 
     void testRemovedFileUsedForTransitionsBeforeOpening();
 
     void testRemovedFileInProjectViewBeforeOpening();
 
     void testRemovedFolderInProjectViewBeforeOpening();
+
+private:
+
+    //////////////////////////////////////////////////////////////////////////
+    // HELPER METHODS
+    //////////////////////////////////////////////////////////////////////////
+
+    std::pair< model::FolderPtr, RandomTempDirPtr> createProjectWithOneFile(const wxFileName& file);
+
+    void testRemovedFileInSequence(const wxFileName& file);
+
+    void testRemovedFileInSequenceBeforeOpening(const wxFileName& file); 
+
+    wxFileName getFileName(wxString folder, wxString file) const;
+
 };
 
 } // namespace

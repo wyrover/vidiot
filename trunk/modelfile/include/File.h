@@ -94,7 +94,7 @@ public:
     void readMetaData();
 
     /// \return true if this file can be opened properly
-    bool canBeOpened();
+    virtual bool canBeOpened();
 
     bool hasVideo();
     bool hasAudio();
