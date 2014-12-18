@@ -98,10 +98,13 @@ struct IndexAutoFolderWork
                 showProgress(++progress);
             }
 
-            // In case this indexing is called directly from the main thread (instead of being
-            // executed by a worker), then the progress bar must be explicitly cleared.
-            gui::StatusBar::get().hideProgressBar();
-            gui::StatusBar::get().setProcessingText("");
+            if (wxThread::IsMain())
+            {
+                // In case this indexing is called directly from the main thread (instead of being
+                // executed by a worker), then the progress bar must be explicitly cleared.
+                gui::StatusBar::get().hideProgressBar();
+                gui::StatusBar::get().setProcessingText("");
+            }
         }
         else
         {

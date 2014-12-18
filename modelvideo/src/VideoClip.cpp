@@ -46,9 +46,9 @@ VideoClip::VideoClip()
     , mScaling()
     , mScalingFactor(1)
     , mRotation(0)
-    , mRotationPositionOffset(0,0)
+    , mRotationPositionOffset(0, 0)
     , mAlignment()
-    , mPosition(0,0)
+    , mPosition(0, 0)
 {
     VAR_DEBUG(*this);
 }
@@ -60,9 +60,9 @@ VideoClip::VideoClip(const VideoFilePtr& file)
     , mScaling(Config::ReadEnum<VideoScaling>(Config::sPathDefaultVideoScaling))
     , mScalingFactor(1)
     , mRotation(0)
-    , mRotationPositionOffset(0,0)
+    , mRotationPositionOffset(0, 0)
     , mAlignment(Config::ReadEnum<VideoAlignment>(Config::sPathDefaultVideoAlignment))
-    , mPosition(0,0)
+    , mPosition(0, 0)
 {
     VAR_DEBUG(*this);
     updateAutomatedScaling();
@@ -139,59 +139,66 @@ VideoFramePtr VideoClip::getNextVideo(const VideoCompositionParameters& paramete
 
     if (mProgress < length)
     {
-
         VideoFilePtr generator = getDataGenerator<VideoFile>();
-        // Scale the clip's size and region of interest to the bounding box
-        // Determine scaling for 'fitting' a clip with size 'projectSize' in a bounding box of size 'size'
-        wxSize outputsize = Properties::get().getVideoSize();
 
-        boost::rational<int> scaleToBoundingBox(0);
-        wxSize requiredOutputSize = Convert::sizeInBoundingBox(outputsize, parameters.getBoundingBox(), scaleToBoundingBox);
-        ASSERT_NONZERO(scaleToBoundingBox);
-        boost::rational<int> videoscaling = getScalingFactor() * scaleToBoundingBox;
-        wxSize inputsize = generator->getSize();
-        wxSize requiredVideoSize = Convert::scale(inputsize, videoscaling);
-
-        bool isEmpty = (requiredVideoSize.GetWidth() == 0) || (requiredVideoSize.GetHeight() == 0);
-
-        if (isEmpty)
+        if (!generator->canBeOpened())
         {
-            videoFrame = boost::make_shared<EmptyFrame>(parameters);
+            return boost::make_shared<VideoFrame>(parameters, boost::make_shared<VideoFrameLayer>(getErrorImage(getDescription())));
         }
         else
         {
-            // IMPORTANT: When getting video frames 'while' playing the timeline, AND resizing the player in parallel, the returned
-            //            video frame can have a different size than requested!!! This can happen because the previous frame is returned 'again'.
-            //            For this reason, when the videoplayer is resized, playback is stopped.
-            VideoFramePtr fileFrame = generator->getNextVideo(VideoCompositionParameters(parameters).setBoundingBox(requiredVideoSize).adjustPts(+getOffset()));
-            if (fileFrame)
+            // Scale the clip's size and region of interest to the bounding box
+            // Determine scaling for 'fitting' a clip with size 'projectSize' in a bounding box of size 'size'
+            wxSize outputsize = Properties::get().getVideoSize();
+
+            boost::rational<int> scaleToBoundingBox(0);
+            wxSize requiredOutputSize = Convert::sizeInBoundingBox(outputsize, parameters.getBoundingBox(), scaleToBoundingBox);
+            ASSERT_NONZERO(scaleToBoundingBox);
+            boost::rational<int> videoscaling = getScalingFactor() * scaleToBoundingBox;
+            wxSize inputsize = generator->getSize();
+            wxSize requiredVideoSize = Convert::scale(inputsize, videoscaling);
+
+            bool isEmpty = (requiredVideoSize.GetWidth() == 0) || (requiredVideoSize.GetHeight() == 0);
+
+            if (isEmpty)
             {
-                if (parameters.getSkip())
-                {
-                    // No need to apply any transformation, since the returned frame is a skip frame anyway.
-                    videoFrame = fileFrame;
-                }
-                else
-                {
-                    ASSERT_EQUALS(fileFrame->getLayers().size(),1);
-                    videoFrame = boost::make_shared<VideoFrame>(parameters, fileFrame->getLayers().front());
-                    videoFrame->getLayers().front()->setPosition(Convert::scale(mPosition - mRotationPositionOffset, scaleToBoundingBox));
-                    videoFrame->getLayers().front()->setOpacity(mOpacity);
-                    videoFrame->getLayers().front()->setRotation(mRotation);
-                }
+                videoFrame = boost::make_shared<EmptyFrame>(parameters);
             }
             else
             {
-                // See AudioClip::getNextAudio
-                // The clip has not provided enough video data yet (for the pts length of the clip)
-                // but there is no more video data. This can typically happen by using a avi file
-                // for which the audio data is longer than the video data. Instead of clipping the
-                // extra audio part, empty video is added here (the user can make the clip shorter if
-                // required - thus removing the extra audio, but that's a user decision to be made).
-                LOG_WARNING << *this << ": (" << getDescription() << ") Adding extra video frame to make video length equal to audio length";
-                videoFrame = boost::static_pointer_cast<VideoFrame>(boost::make_shared<EmptyFrame>(parameters));
+                // IMPORTANT: When getting video frames 'while' playing the timeline, AND resizing the player in parallel, the returned
+                //            video frame can have a different size than requested!!! This can happen because the previous frame is returned 'again'.
+                //            For this reason, when the videoplayer is resized, playback is stopped.
+                VideoFramePtr fileFrame = generator->getNextVideo(VideoCompositionParameters(parameters).setBoundingBox(requiredVideoSize).adjustPts(+getOffset()));
+                if (fileFrame)
+                {
+                    if (parameters.getSkip()) // No need to apply any transformation, since the returned frame is a skip  frame anyway.
+                    {
+                        videoFrame = fileFrame;
+                    }
+                    else
+                    {
+                        ASSERT_EQUALS(fileFrame->getLayers().size(), 1);
+                        videoFrame = boost::make_shared<VideoFrame>(parameters, fileFrame->getLayers().front());
+                        videoFrame->getLayers().front()->setPosition(Convert::scale(mPosition - mRotationPositionOffset, scaleToBoundingBox));
+                        videoFrame->getLayers().front()->setOpacity(mOpacity);
+                        videoFrame->getLayers().front()->setRotation(mRotation);
+                    }
+                }
+                else
+                {
+                    // See AudioClip::getNextAudio
+                    // The clip has not provided enough video data yet (for the pts length of the clip)
+                    // but there is no more video data. This can typically happen by using a avi file
+                    // for which the audio data is longer than the video data. Instead of clipping the
+                    // extra audio part, empty video is added here (the user can make the clip shorter if
+                    // required - thus removing the extra audio, but that's a user decision to be made).
+                    LOG_WARNING << *this << ": (" << getDescription() << ") Adding extra video frame to make video length equal to audio length";
+                    videoFrame = boost::static_pointer_cast<VideoFrame>(boost::make_shared<EmptyFrame>(parameters));
+                }
             }
         }
+
     }
 
     if (videoFrame)
@@ -245,7 +252,7 @@ wxPoint VideoClip::getPosition() const
 wxPoint VideoClip::getMinPosition()
 {
     wxSize boundingBox = getBoundingBox();
-    return wxPoint(-boundingBox.x,-boundingBox.y);
+    return wxPoint(-boundingBox.x, -boundingBox.y);
 }
 
 wxPoint VideoClip::getMaxPosition()
@@ -261,8 +268,8 @@ void VideoClip::setOpacity(int opacity)
 {
     if (mOpacity != opacity)
     {
-        ASSERT_MORE_THAN_EQUALS(opacity,Constants::sOpacityMin);
-        ASSERT_LESS_THAN_EQUALS(opacity,Constants::sOpacityMax);
+        ASSERT_MORE_THAN_EQUALS(opacity, Constants::sOpacityMin);
+        ASSERT_LESS_THAN_EQUALS(opacity, Constants::sOpacityMax);
         mOpacity = opacity;
         EventChangeVideoClipOpacity event(mOpacity);
         ProcessEvent(event);
@@ -288,7 +295,7 @@ void VideoClip::setScaling(const VideoScaling& scaling, const boost::optional<bo
 
     if (mScaling != oldScaling)
     {
-    EventChangeVideoClipScaling event(mScaling);
+        EventChangeVideoClipScaling event(mScaling);
         ProcessEvent(event);
     }
     if (mScalingFactor != oldScalingFactor)
@@ -387,15 +394,15 @@ void VideoClip::setPosition(const wxPoint& position)
 
 wxSize VideoClip::getBoundingBox()
 {
-    wxSize scaledsize = Convert::scale(getInputSize(),getScalingFactor());
+    wxSize scaledsize = Convert::scale(getInputSize(), getScalingFactor());
     if (mRotation == boost::rational<int>(0))
     {
         return scaledsize;
     }
 
     int boundingBoxHeight = abs(scaledsize.x * sin(Convert::degreesToRadians(mRotation))) + abs(scaledsize.y * cos(Convert::degreesToRadians(mRotation)));
-    int boundingBoxWidth  = abs(scaledsize.x * cos(Convert::degreesToRadians(mRotation))) + abs(scaledsize.y * sin(Convert::degreesToRadians(mRotation)));
-    return wxSize(boundingBoxWidth,boundingBoxHeight);
+    int boundingBoxWidth = abs(scaledsize.x * cos(Convert::degreesToRadians(mRotation))) + abs(scaledsize.y * sin(Convert::degreesToRadians(mRotation)));
+    return wxSize(boundingBoxWidth, boundingBoxHeight);
 }
 
 void VideoClip::updateAutomatedScaling()
@@ -406,22 +413,22 @@ void VideoClip::updateAutomatedScaling()
     switch (mScaling)
     {
     case VideoScalingFitToFill:
-        {
-            boost::rational<int> scalingfactor;
-            Convert::sizeInBoundingBox(inputsize, outputsize, mScalingFactor, true); // The true ensures that the bounding box is filled
-            break;
-        }
+    {
+        boost::rational<int> scalingfactor;
+        Convert::sizeInBoundingBox(inputsize, outputsize, mScalingFactor, true); // The true ensures that the bounding box is filled
+        break;
+    }
     case VideoScalingFitAll:
-        {
-            boost::rational<int> scalingfactor;
-            Convert::sizeInBoundingBox(inputsize, outputsize, mScalingFactor);
-            break;
-        }
+    {
+        boost::rational<int> scalingfactor;
+        Convert::sizeInBoundingBox(inputsize, outputsize, mScalingFactor);
+        break;
+    }
     case VideoScalingNone:
-        {
-            mScalingFactor = 1;
-            break;
-        }
+    {
+        mScalingFactor = 1;
+        break;
+    }
     case VideoScalingCustom:
     default:
         // Do not automatically determine scaling factor
@@ -442,30 +449,30 @@ void VideoClip::updateAutomatedScaling()
 void VideoClip::updateAutomatedPositioning()
 {
     wxSize inputsize = getInputSize();
-    wxSize scaledsize = Convert::scale(inputsize,getScalingFactor());
+    wxSize scaledsize = Convert::scale(inputsize, getScalingFactor());
     wxSize outputsize = Properties::get().getVideoSize();
     wxSize boundingBox = getBoundingBox();
 
-    mRotationPositionOffset = wxPoint( (boundingBox.x - scaledsize.x) / 2, (boundingBox.y - scaledsize.y) / 2);
+    mRotationPositionOffset = wxPoint((boundingBox.x - scaledsize.x) / 2, (boundingBox.y - scaledsize.y) / 2);
 
     switch (mAlignment)
     {
     case VideoAlignmentCenter:
-        {
-            mPosition.x = (outputsize.GetWidth() - scaledsize.GetWidth()) / 2;
-            mPosition.y = (outputsize.GetHeight() - scaledsize.GetHeight()) / 2;
-            break;
-        }
+    {
+        mPosition.x = (outputsize.GetWidth() - scaledsize.GetWidth()) / 2;
+        mPosition.y = (outputsize.GetHeight() - scaledsize.GetHeight()) / 2;
+        break;
+    }
     case VideoAlignmentCenterHorizontal:
-        {
-            mPosition.x = (outputsize.GetWidth() - scaledsize.GetWidth()) / 2;
-            break;
-        }
+    {
+        mPosition.x = (outputsize.GetWidth() - scaledsize.GetWidth()) / 2;
+        break;
+    }
     case VideoAlignmentCenterVertical:
-        {
-            mPosition.y = (outputsize.GetHeight() - scaledsize.GetHeight()) / 2;
-            break;
-        }
+    {
+        mPosition.y = (outputsize.GetHeight() - scaledsize.GetHeight()) / 2;
+        break;
+    }
     case VideoAlignmentCustom:
         // Use current offsets
     default:
@@ -484,7 +491,7 @@ void VideoClip::updateAutomatedPositioning()
 
 std::ostream& operator<<(std::ostream& os, const VideoClip& obj)
 {
-    os  << static_cast<const ClipInterval&>(obj) << '|'
+    os << static_cast<const ClipInterval&>(obj) << '|'
         << std::setw(4) << obj.mProgress << '|'
         << std::setw(2) << std::hex << obj.mOpacity << std::dec << '|'
         << obj.mScaling << '|'
@@ -513,10 +520,10 @@ void VideoClip::serialize(Archive & ar, const unsigned int version)
         {
             ar & BOOST_SERIALIZATION_NVP(mRotation);
         }
-		if (version >= 3)
-		{
+        if (version >= 3)
+        {
             ar & BOOST_SERIALIZATION_NVP(mRotationPositionOffset);
-		}
+        }
         ar & BOOST_SERIALIZATION_NVP(mAlignment);
         ar & BOOST_SERIALIZATION_NVP(mPosition);
     }
