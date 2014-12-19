@@ -202,6 +202,7 @@ void Selection::updateOnLeftUp(const PointerPositionInfo& info)
             {
                 // Delayed deselection
                 selectClipAndLink(clip, false);
+                QueueEvent(new EventSelectionUpdate(0));
             }
         }
         else // No modifier down
@@ -211,6 +212,7 @@ void Selection::updateOnLeftUp(const PointerPositionInfo& info)
                 // Delayed deselection of other clips if the clip was already selected
                 deselectAll();
                 selectClipAndLink(clip, true);
+                QueueEvent(new EventSelectionUpdate(0));
             }
         }
     }
