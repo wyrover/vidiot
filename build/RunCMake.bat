@@ -15,7 +15,7 @@ REM
 REM You should have received a copy of the GNU General Public License
 REM along with Vidiot. If not, see <http://www.gnu.org/licenses />.
 
-set STARTTIME=%TIME%
+set STARTTIME=%TIME: =0%
 
 goto BEGIN
 
@@ -93,14 +93,15 @@ REM Call svn Update to ensure that the about box and the logging show the proper
 cd %SOURCE%
 "C:\Program Files\TortoiseSVN\bin\svn.exe" update
 
-REM Generate revision log file
-call %VIDIOT_DIR%\vidiot_trunk\build\make_readme.bat
            
-
 
 
 REM ============================== BUILD ==============================
 :BUILD
+
+REM === Generate revision log file ===
+call %VIDIOT_DIR%\vidiot_trunk\build\make_readme.bat
+
 REM === FIND BOOST ====
 REM o-d: always use newest version
 %VIDIOT_BUILD_DRIVE%
@@ -147,7 +148,7 @@ cd %VIDIOT_BUILD%\MSVC
 for %%i in (Vidiot*.exe) do start "" /b "%%i"
 
 :END
-set ENDTIME=%TIME%
+set ENDTIME=%TIME: =0%
 
 @echo off
 echo STARTTIME: %STARTTIME%

@@ -17,11 +17,13 @@ REM along with Vidiot. If not, see <http://www.gnu.org/licenses />.
 
 @SETLOCAL enableextensions enabledelayedexpansion
 
-set XML_SOURCE=%TEMP%\revisionlog.xml
+if NOT DEFINED VIDIOT_BUILD SET VIDIOT_BUILD=%VIDIOT_DIR%\Build
+set XML_SOURCE=%VIDIOT_BUILD%\MSVC\revisionlog.xml
 
 REM ==== UPDATE SVN AND GET REVISION LOG ====
-"C:\Program Files\TortoiseSVN\bin\svn.exe" update %VIDIOT_DIR%\vidiot_trunk
-"c:\Program Files\TortoiseSVN\bin\svn.exe" log %VIDIOT_DIR%\vidiot_trunk --xml -r 1200:BASE > %XML_SOURCE%
+if not exist %XML_SOURCE% (
+  "c:\Program Files\TortoiseSVN\bin\svn.exe" log %VIDIOT_DIR%\vidiot_trunk --xml -r 1200:BASE > %XML_SOURCE%
+)
 
 REM ==== FIND SAXON ====
 @echo off
@@ -33,6 +35,7 @@ exit
 goto:end
 
 :foundsaxon
-"%SAXON_PATH%\Transform.exe" -s:%XML_SOURCE% -xsl:%VIDIOT_DIR%\vidiot_trunk\build\make_readme.xslt -o:"%VIDIOT_DIR%\Build\MSVC\README.txt"
+if not exist "%VIDIOT_BUILD%\MSVC\README.txt" "%SAXON_PATH%\Transform.exe" -s:%XML_SOURCE% -xsl:%VIDIOT_DIR%\vidiot_trunk\build\make_readme_txt.xslt -o:"%VIDIOT_BUILD%\MSVC\README.txt"
+if not exist "%VIDIOT_BUILD%\MSVC\history.html" "%SAXON_PATH%\Transform.exe" -s:%XML_SOURCE% -xsl:%VIDIOT_DIR%\vidiot_trunk\build\make_readme_htm.xslt -o:"%VIDIOT_BUILD%\MSVC\history.html"
 
 :end

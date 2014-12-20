@@ -13,16 +13,11 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with Vidiot. If not, see <http:#www.gnu.org/licenses/>.
+# along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
 file (GLOB IconFiles ${PROJECT_SOURCE_DIR}/images/*?.???)
-add_custom_target (images COMMENT "Copying images" SOURCES ${IconFiles})
-source_group ("images"  REGULAR_EXPRESSION ${PROJECT_SOURCE_DIR}/images/*.*)
 
 macro (copy_images_to_target target)
-    add_custom_command (TARGET images DEPENDS ${IconFiles} PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/images $<TARGET_FILE_DIR:${target}>/images)
-    add_custom_command (TARGET images PRE_BUILD COMMAND echo "Images copied to '${target}'")
+    add_custom_command (TARGET ${target} DEPENDS ${IconFiles} PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/images $<TARGET_FILE_DIR:${target}>/images)
+    add_custom_command (TARGET ${target} PRE_BUILD COMMAND echo Images copied to '${target}')
 endmacro ()
-
-copy_images_to_target(main)
-copy_images_to_target(testauto)
