@@ -13,7 +13,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with Vidiot. If not, see <http:#www.gnu.org/licenses/>.
+# along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
 # Add install rules for required system runtimes such as MSVCRxx.dll
 SET (CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_SKIP ON)
@@ -75,6 +75,7 @@ IF(WIN32 AND NOT UNIX)
   install(FILES ${BOOST_INSTALL} COMPONENT ${APPNAME} DESTINATION .  CONFIGURATIONS Release MinSizeRel RelWithDebInfo)
   install(FILES ${BOOST_INSTALL_DEBUG} COMPONENT ${APPNAME} DESTINATION .  CONFIGURATIONS Debug)
   install(DIRECTORY ${PROJECT_SOURCE_DIR}/html/ COMPONENT ${APPNAME} DESTINATION html)
+  install(FILES ${PROJECT_BINARY_DIR}/history.html COMPONENT ${APPNAME} DESTINATION html/about)
   install(DIRECTORY ${PROJECT_SOURCE_DIR}/images/ COMPONENT ${APPNAME} DESTINATION images)
 
   IF (CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS)

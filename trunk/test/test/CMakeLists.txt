@@ -13,7 +13,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with Vidiot. If not, see <http:#www.gnu.org/licenses/>.
+# along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
 source_group ("src"      REGULAR_EXPRESSION ${CMAKE_CURRENT_SOURCE_DIR}/src/.*)
 source_group ("include"  REGULAR_EXPRESSION ${CMAKE_CURRENT_SOURCE_DIR}/include/.*)

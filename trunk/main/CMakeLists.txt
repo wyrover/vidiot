@@ -13,7 +13,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with Vidiot. If not, see <http:#www.gnu.org/licenses/>.
+# along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
 FILE(GLOB installfiles ${PROJECT_SOURCE_DIR}/install/*.txt)
 SOURCE_GROUP("install" REGULAR_EXPRESSION ${PROJECT_SOURCE_DIR}/install/*.*)
@@ -39,8 +39,7 @@ copy_msvc_project_user_file(main)
 
 INSTALL(TARGETS main COMPONENT Vidiot DESTINATION .)
 
-add_custom_command(TARGET main DEPENDS vidiot PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/html ${CMAKE_CURRENT_BINARY_DIR}/Debug/html)
+add_custom_command(TARGET main DEPENDS vidiot)
 
-# Copy images to output folder
-add_custom_command(TARGET main POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/images ${CMAKE_CURRENT_BINARY_DIR}/Debug/images)
-add_custom_command(TARGET main POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/images ${CMAKE_CURRENT_BINARY_DIR}/Release/images)
+copy_html_files_to_target (main)
+copy_images_to_target (main)

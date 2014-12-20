@@ -13,7 +13,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with Vidiot. If not, see <http:#www.gnu.org/licenses/>.
+# along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
 cmake_minimum_required (VERSION 2.6 FATAL_ERROR)
 
@@ -30,6 +30,8 @@ set (CMAKE_PREFIX_PATH  ${CMAKE_PREFIX_PATH}  ${VIDIOT_DIR})
 list (APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/build/cmake")
 
 include (build/cmake/AddDebuggingPath.cmake)
+include (build/cmake/CopyHtmlFiles.cmake)
+include (build/cmake/CopyImageFiles.cmake)
 include (build/cmake/EnableUnityBuild.cmake)
 include (build/cmake/GeneratePrecompiledHeader.cmake)
 include (build/cmake/CxxTestMacros.cmake)
@@ -231,5 +233,3 @@ cmake_policy(SET CMP0043 OLD) # Avoid COMPILE_DEFINITIONS_* Warning
 add_subdirectory (main)
 add_subdirectory (test)
 add_subdirectory (install)
-add_subdirectory (html) # Must be after the other dirs, since it uses the other targets
-add_subdirectory (images) # Must be after the other dirs, since it uses the other targets
