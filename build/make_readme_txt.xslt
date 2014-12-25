@@ -22,7 +22,7 @@
 -->
 
 <xsl:template match="log">
-  <xsl:text>Vidiot version history&#xa;&#xa;Trunk (pending)&#xa;</xsl:text>
+  <xsl:text>Vidiot version history&#xa;</xsl:text>
   <xsl:for-each select="logentry">
     <xsl:sort select="position()" data-type="number" order="descending" />
     <xsl:variable name="revision" select="@revision" />
