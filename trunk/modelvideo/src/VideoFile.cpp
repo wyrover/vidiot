@@ -155,6 +155,9 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
     rational64 ticksPerFrame = rational64(1) / (inputFrameRate * inputTimeBase);
     ASSERT_MORE_THAN_ZERO(ticksPerFrame);
 
+    // todo use floor iso rounding below. That'll cause the smileys always to be shown in the sync test
+    // (then, never info is lost)
+
     // 'Resample' the frame timebase
     // Determine which pts value is required. This is required to first determine
     // if the previously returned frame should be returned again

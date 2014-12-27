@@ -116,7 +116,7 @@ wxString Convert::ptsToHumanReadibleString(pts duration, bool minutesAlways, boo
 // static
 samplecount Convert::ptsToSamplesPerChannel(int audioRate, pts position)
 {
-    return boost::rational_cast<samplecount>(rational64(position) * rational64(audioRate) / Properties::get().getFrameRate());
+    return floor64(rational64(position) * rational64(audioRate) / Properties::get().getFrameRate());
 }
 
 // static

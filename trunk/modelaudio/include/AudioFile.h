@@ -47,6 +47,7 @@ public:
     // ICONTROL
     //////////////////////////////////////////////////////////////////////////
 
+    virtual void moveTo(pts position) override;
     virtual void clean() override;
 
     //////////////////////////////////////////////////////////////////////////
@@ -61,6 +62,7 @@ public:
 
     int getSampleRate();
     int getChannels();
+    boost::optional<pts> getNewStartPosition() const;
 
 protected:
 
@@ -83,10 +85,12 @@ private:
     SwrContext* mSoftwareResampleContext;
     int mNrPlanes;
 
+    boost::optional<pts> mNewStartPosition;
+
     // Do not use the method below for allocating the buffer. That will cause
     // SEGV when compiled with GCC (MingW).
     //int16_t audioDecodeBuffer[AVCODEC_MAX_AUDIO_FRAME_SIZE];
-    uint8_t** audioDecodeBuffer;
+    uint8_t** mAudioDecodeBuffer;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
@@ -94,6 +98,10 @@ private:
 
     void startDecodingAudio(const AudioCompositionParameters& parameters);
     void stopDecodingAudio();
+
+    /// \param pts position (in stream time base units) of a packet returned from ffmpeg
+    /// \return number of the first sample in this packet
+    samplecount getFirstSample(int64_t pts);
 
     //////////////////////////////////////////////////////////////////////////
     // FROM FILE
