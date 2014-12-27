@@ -37,34 +37,37 @@ static const int sAudioBufferSizeInBytes = 192000;
 //////////////////////////////////////////////////////////////////////////
 
 AudioFile::AudioFile()
-    :	File()
-    ,   mSoftwareResampleContext (0)
-    ,   mDecodingAudio(false)
-    ,   mNeedsResampling(false)
-    ,   audioDecodeBuffer(0)
-    ,   mNrPlanes(0)
+    : File()
+    , mSoftwareResampleContext(0)
+    , mDecodingAudio(false)
+    , mNeedsResampling(false)
+    , mAudioDecodeBuffer(0)
+    , mNrPlanes(0)
+    , mNewStartPosition(boost::none)
 {
     VAR_DEBUG(*this);
 }
 
 AudioFile::AudioFile(const wxFileName& path)
-    :	File(path,sMaxBufferSize)
-    ,   mSoftwareResampleContext (0)
-    ,   mDecodingAudio(false)
-    ,   mNeedsResampling(false)
-    ,   audioDecodeBuffer(0)
-    ,   mNrPlanes(0)
+    : File(path, sMaxBufferSize)
+    , mSoftwareResampleContext(0)
+    , mDecodingAudio(false)
+    , mNeedsResampling(false)
+    , mAudioDecodeBuffer(0)
+    , mNrPlanes(0)
+    , mNewStartPosition(boost::none)
 {
     VAR_DEBUG(*this);
 }
 
 AudioFile::AudioFile(const AudioFile& other)
-    :   File(other)
-    ,   mSoftwareResampleContext (0)
-    ,   mDecodingAudio(false)
-    ,   mNeedsResampling(false)
-    ,   audioDecodeBuffer(0)
-    ,   mNrPlanes(0)
+    : File(other)
+    , mSoftwareResampleContext(0)
+    , mDecodingAudio(false)
+    , mNeedsResampling(false)
+    , mAudioDecodeBuffer(0)
+    , mNrPlanes(0)
+    , mNewStartPosition(boost::none)
 {
     VAR_DEBUG(*this);
 }
@@ -84,21 +87,37 @@ AudioFile::~AudioFile()
 // ICONTROL
 //////////////////////////////////////////////////////////////////////////
 
+void AudioFile::moveTo(pts position)
+{
+    mNewStartPosition.reset(position);
+
+    // position - 1: Ensure that the resulting start position is ALWAYS 
+    // before the first required sample. Otherwise, seeking sometimes causes
+    // a start point beyond the first required sample. That, in turn, causes
+    // slight video-audio offset problems and clicks/pops when making cuts
+    // within one clip.
+    // Typical cases of clicks/pops: make a crossfade/fade in and the samples
+    // used within the transition do not align properly with the first samples
+    // used AFTER the transition. Same thing can happen when making a cut 
+    // directly in a clip without any more adjusting.
+    File::moveTo(std::max<pts>(position - 1,0));
+}
+
 void AudioFile::clean()
 {
     VAR_DEBUG(this);
 
     stopDecodingAudio();
 
-    if (audioDecodeBuffer)
+    if (mAudioDecodeBuffer)
     {
         for (int i = 0; i < mNrPlanes; ++i)
         {
-            delete[] audioDecodeBuffer[i];
+            delete[] mAudioDecodeBuffer[i];
         }
-        delete[] audioDecodeBuffer;
+        delete[] mAudioDecodeBuffer;
     }
-    audioDecodeBuffer = 0;
+    mAudioDecodeBuffer = 0;
 
     File::clean();
 }
@@ -111,8 +130,6 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
 {
     startDecodingAudio(parameters);
 
-    // todo use avcodeccontext->delay for more accurate seeking?
-
     if (!canBeOpened())
     {
         // If file could not be read (for whatever reason) return empty audio.
@@ -120,6 +137,46 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
     }
 
     PacketPtr audioPacket = getNextPacket();
+    samplecount nSkipSamples = 0;
+
+    if (mNewStartPosition)
+    {
+        pts position = *mNewStartPosition;
+        samplecount nextSample = Convert::ptsToSamplesPerChannel(position, getCodec()->sample_rate);
+
+        auto getFirstSampleOfNextPacket = [this](AVPacket* packet) -> samplecount
+        {
+            if (packet->duration > 0)
+            {
+                return getFirstSample(packet->pts + packet->duration);
+            }
+            return getFirstSample(packet->pts + 1);
+        };
+        while (audioPacket && 
+               getFirstSampleOfNextPacket(audioPacket->getPacket()) <= nextSample)
+        {
+            // The next packet starts also 'before' the required sample. Use that packet.
+            // Seeking was too far ahread of the required point.
+            audioPacket = getNextPacket();
+        }
+        if (audioPacket)
+        {
+            samplecount firstSample = getFirstSample(audioPacket->getPacket()->pts);
+            if (firstSample > nextSample)
+            {
+                // For some file types the 'sample seeking algorithm' does not work.
+                // For instance, when moving to the beginning of a file, the first packet
+                // returned does not have pts value '0'.
+                LOG_WARNING << "Audio reposition failure [" << getDescription() << "][" << getCodec() << "][" << audioPacket->getPacket() << ']';
+            }
+            else
+            {
+                nSkipSamples = nextSample - firstSample;
+            }
+        }
+
+        mNewStartPosition.reset();
+    }
 
     //////////////////////////////////////////////////////////////////////////
     // DECODING
@@ -177,7 +234,7 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
                 int decodeBufferInBytes = av_samples_get_buffer_size(&decodedLineSize, codec->channels, pFrame->nb_samples, codec->sample_fmt, 1);
                 for (int i = 0; i < mNrPlanes; ++i)
                 {
-                    memcpy(audioDecodeBuffer[i] + targetSizeInBytes, pFrame->extended_data[i], decodedLineSize);
+                    memcpy(mAudioDecodeBuffer[i] + targetSizeInBytes, pFrame->extended_data[i], decodedLineSize);
                 }
 
                 sourceData += usedSourceBytes;
@@ -232,7 +289,7 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
         int decodeBufferInBytes = av_samples_get_buffer_size(&decodedLineSize, codec->channels, frame.nb_samples, codec->sample_fmt, 1);
         for (int i = 0; i < mNrPlanes; ++i)
         {
-            memcpy(audioDecodeBuffer[i], frame.extended_data[i], decodedLineSize);
+            memcpy(mAudioDecodeBuffer[i], frame.extended_data[i], decodedLineSize);
         }
 
         targetSizeInBytes += decodedLineSize;
@@ -252,15 +309,15 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
     {
         // Use the plain decoded data without resampling.
         ASSERT_EQUALS(mNrPlanes,1); // Resulting data is never planar, in case of planar data resampling should be done
-        audioChunk = boost::make_shared<AudioChunk>(parameters.getNrChannels(), nDecodedSamplesPerChannel * parameters.getNrChannels(), true, false, (sample*)audioDecodeBuffer[0]);
+        audioChunk = boost::make_shared<AudioChunk>(parameters.getNrChannels(), nDecodedSamplesPerChannel * parameters.getNrChannels(), true, false, (sample*)mAudioDecodeBuffer[0]);
     }
     else
     {
         // Resample
         typedef boost::rational<int> rational;
-        auto convertInputSampleCountToOutputSampleCount = [parameters,codec](int input) -> int
+        auto convertInputSampleCountToOutputSampleCount = [parameters,codec](samplecount input) -> samplecount
         {
-            return floor(rational(input) * rational(parameters.getSampleRate()) / rational(codec->sample_rate));
+            return floor64(rational64(input) * rational64(parameters.getSampleRate()) / rational64(codec->sample_rate));
         };
 
         int nExpectedOutputSamplesPerChannel = convertInputSampleCountToOutputSampleCount(nDecodedSamplesPerChannel);
@@ -272,15 +329,31 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
 
         uint8_t *out[1]; // Output data always packet into one plane
         out[0] = reinterpret_cast<uint8_t*>(audioChunk->getBuffer());
-        int nOutputFrames = swr_convert(mSoftwareResampleContext, &out[0], bufferSize, const_cast<const uint8_t**>(audioDecodeBuffer), nDecodedSamplesPerChannel);
+        int nOutputFrames = swr_convert(mSoftwareResampleContext, &out[0], bufferSize, const_cast<const uint8_t**>(mAudioDecodeBuffer), nDecodedSamplesPerChannel);
         ASSERT_MORE_THAN_EQUALS_ZERO(nOutputFrames);
         int nOutputSamples = nOutputFrames * parameters.getNrChannels();
+        
         // To check that the buffer was large enough to hold everything produced by swr_convert in one pass.
         ASSERT_LESS_THAN(nOutputSamples, bufferSize);
 
         // More data was allocated (to compensate for differences between the number
         // of output samples 'calculated' and the number that avcodec actually produced).
         audioChunk->setAdjustedLength(nOutputSamples);
+
+        // NOTE: When splitting a clip into several smaller parts, the splitting may cause the total sum of
+        //       returned samples by swr_convert to differ slightly (order of 1 or 2 samples difference per
+        //       decoded packet. So, computing the sum of all returned output samples of a clip split into
+        //       parts is not exactly the same as the returned output samples of the large still joined clip.
+
+        if (nSkipSamples > 0)
+        {
+            nSkipSamples = convertInputSampleCountToOutputSampleCount(nSkipSamples);
+        }
+    }
+
+    if (nSkipSamples > 0)
+    {
+        audioChunk->read(nSkipSamples  * parameters.getNrChannels());
     }
 
     return audioChunk;
@@ -298,6 +371,11 @@ int AudioFile::getSampleRate()
 int AudioFile::getChannels()
 {
     return getCodec()->channels;
+}
+
+boost::optional<pts> AudioFile::getNewStartPosition() const
+{
+    return mNewStartPosition;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -320,12 +398,12 @@ void AudioFile::startDecodingAudio(const AudioCompositionParameters& parameters)
 
     // Allocated upon first use. See also the remark in the header file
     // on GCC in combination with make_shared.
-    if (!audioDecodeBuffer)
+    if (!mAudioDecodeBuffer)
     {
-        audioDecodeBuffer = new uint8_t*[mNrPlanes];
+        mAudioDecodeBuffer = new uint8_t*[mNrPlanes];
         for (int i = 0; i < mNrPlanes; ++i)
         {
-            audioDecodeBuffer[i] = new uint8_t[sAudioBufferSizeInBytes];
+            mAudioDecodeBuffer[i] = new uint8_t[sAudioBufferSizeInBytes];
         }
     }
 
@@ -367,6 +445,16 @@ void AudioFile::stopDecodingAudio()
         avcodec_close(getCodec());
     }
     mDecodingAudio = false;
+}
+
+samplecount AudioFile::getFirstSample(int64_t pts)
+{
+    samplecount result =
+        floor64(
+        rational64(pts) *
+        rational64(getStream()->time_base.num, getStream()->time_base.den) *
+        rational64(getCodec()->sample_rate));
+    return result;
 }
 
 //////////////////////////////////////////////////////////////////////////
