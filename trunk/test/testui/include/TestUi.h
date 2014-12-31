@@ -18,8 +18,6 @@
 #ifndef TESTUI_H
 #define TESTUI_H
 
-//#include <vld.h>
-
 #include "Test.h"
 
 #endif
