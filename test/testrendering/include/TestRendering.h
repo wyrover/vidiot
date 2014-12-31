@@ -18,9 +18,6 @@
 #ifndef TEST_RENDERING_H
 #define TEST_RENDERING_H
 
-//#include <vld.h>
-
 #include "Test.h"
-
 
 #endif

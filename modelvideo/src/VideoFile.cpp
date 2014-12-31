@@ -155,9 +155,6 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
     rational64 ticksPerFrame = rational64(1) / (inputFrameRate * inputTimeBase);
     ASSERT_MORE_THAN_ZERO(ticksPerFrame);
 
-    // todo use floor iso rounding below. That'll cause the smileys always to be shown in the sync test
-    // (then, never info is lost)
-
     // 'Resample' the frame timebase
     // Determine which pts value is required. This is required to first determine
     // if the previously returned frame should be returned again
@@ -228,7 +225,12 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
             ASSERT_NONZERO(nextToBeDecodedPacket);
 
             int len1 = avcodec_decode_video2(codec, pDecodedFrame, &frameFinished, nextToBeDecodedPacket);
-            ASSERT_MORE_THAN_EQUALS_ZERO(len1)(codec);
+            if (len1 < 0)
+            {
+                LOG_WARNING << "Decode error: " << *this;
+            }
+
+            // todo see http://blog.tomaka17.com/2012/03/libavcodeclibavformat-tutorial/ for the cases listed below 'The "isFrameAvailable" and "processedLength" variables are very important.'. One case is missing here (processedLength > 0 but < packet.size)
 
             if (frameFinished)
             {
@@ -370,9 +372,9 @@ void VideoFile::startDecodingVideo(const VideoCompositionParameters& parameters)
 
     if (!canBeOpened()) { return; } // File could not be opened (deleted?)
 
-    mDecodingVideo = true;
-
     boost::mutex::scoped_lock lock(Avcodec::sMutex);
+
+    mDecodingVideo = true;
 
     AVCodecContext* avctx = getCodec();
     avctx->opaque = this; // Store address to be able to access this object from the avcodec callbacks
@@ -418,17 +420,18 @@ void VideoFile::startDecodingVideo(const VideoCompositionParameters& parameters)
 void VideoFile::stopDecodingVideo()
 {
     VAR_DEBUG(this);
+
     if (mDecodingVideo)
     {
         boost::mutex::scoped_lock lock(Avcodec::sMutex);
         avcodec_close(getCodec());
-
     }
     if (mSwsContext != 0)
     {
         sws_freeContext(mSwsContext);
         mSwsContext = 0;
     }
+
     mDecodingVideo = false;
 }
 
@@ -439,14 +442,6 @@ void VideoFile::stopDecodingVideo()
 bool VideoFile::useStream(const AVMediaType& type) const
 {
     return (type == AVMEDIA_TYPE_VIDEO);
-}
-
-void VideoFile::flush()
-{
-    if (mDecodingVideo)
-    {
-        avcodec_flush_buffers(getCodec());
-    }
 }
 
 //////////////////////////////////////////////////////////////////////////

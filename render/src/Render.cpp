@@ -294,18 +294,6 @@ void Render::scheduleAll()
 // RENDERING
 //////////////////////////////////////////////////////////////////////////
 
-void av_packet_rescale_ts(AVPacket *pkt, AVRational src_tb, AVRational dst_tb)
-{
-    if (pkt->pts != AV_NOPTS_VALUE)
-        pkt->pts = av_rescale_q(pkt->pts, src_tb, dst_tb);
-    if (pkt->dts != AV_NOPTS_VALUE)
-        pkt->dts = av_rescale_q(pkt->dts, src_tb, dst_tb);
-    if (pkt->duration > 0)
-        pkt->duration = av_rescale_q(pkt->duration, src_tb, dst_tb);
-    if (pkt->convergence_duration > 0)
-        pkt->convergence_duration = av_rescale_q(pkt->convergence_duration, src_tb, dst_tb);
-} // todo remove upon new ffmpeg version
-
 struct EncodingError : std::exception
 {
     explicit EncodingError(wxString _message)

@@ -466,14 +466,6 @@ bool AudioFile::useStream(const AVMediaType& type) const
     return (type == AVMEDIA_TYPE_AUDIO);
 }
 
-void AudioFile::flush()
-{
-    if (mDecodingAudio)
-    {
-        avcodec_flush_buffers(getCodec());
-    }
-}
-
 //////////////////////////////////////////////////////////////////////////
 // LOGGING
 //////////////////////////////////////////////////////////////////////////

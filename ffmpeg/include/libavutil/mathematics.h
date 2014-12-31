@@ -45,6 +45,9 @@
 #ifndef M_PI
 #define M_PI           3.14159265358979323846  /* pi */
 #endif
+#ifndef M_PI_2
+#define M_PI_2         1.57079632679489661923  /* pi/2 */
+#endif
 #ifndef M_SQRT1_2
 #define M_SQRT1_2      0.70710678118654752440  /* 1/sqrt(2) */
 #endif
@@ -143,7 +146,7 @@ int64_t av_rescale_delta(AVRational in_tb, int64_t in_ts,  AVRational fs_tb, int
 /**
  * Add a value to a timestamp.
  *
- * This function gurantees that when the same value is repeatly added that
+ * This function guarantees that when the same value is repeatly added that
  * no accumulation of rounding errors occurs.
  *
  * @param ts Input timestamp

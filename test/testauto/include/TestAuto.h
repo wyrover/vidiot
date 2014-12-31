@@ -18,9 +18,6 @@
 #ifndef TESTAUTO_H
 #define TESTAUTO_H
 
-//#include <vld.h>
-
 #include "Test.h"
-
 
 #endif

@@ -32,6 +32,8 @@
 #include "Window.h"
 #include <wx/cmdline.h>
 
+//#include <vld.h> // Must be included in at least one cpp file
+
 namespace gui {
 
 wxIMPLEMENT_APP_NO_MAIN(Application);

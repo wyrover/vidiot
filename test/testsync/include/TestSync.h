@@ -18,9 +18,6 @@
 #ifndef TESTSYNC_H
 #define TESTSYNC_H
 
-//#include <vld.h>
-
 #include "Test.h"
-
 
 #endif

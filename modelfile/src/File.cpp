@@ -52,83 +52,83 @@ const int File::LENGTH_UNDEFINED = std::numeric_limits<int>::max();
 //////////////////////////////////////////////////////////////////////////
 
 File::File()
-    :	IFile()
-    ,   Node()
+    : IFile()
+    , Node()
     // Attributes
-    ,   mPath()
-    ,   mName()
-    ,   mNumberOfFrames(LENGTH_UNDEFINED)
-    ,   mHasVideo(false)
-    ,   mHasAudio(false)
+    , mPath()
+    , mName()
+    , mNumberOfFrames(LENGTH_UNDEFINED)
+    , mHasVideo(false)
+    , mHasAudio(false)
     // Status of opening
-    ,   mMetaDataKnown(false)
-    ,   mFileOpened(false)
-    ,   mFileOpenedOk(false)
-    ,   mReadingPackets(false)
-    ,   mEOF(false)
+    , mMetaDataKnown(false)
+    , mFileOpened(false)
+    , mFileOpenedOk(false)
+    , mReadingPackets(false)
+    , mEOF(false)
     // AVCodec access
-    ,	mFileContext(0)
-    ,   mStreamIndex(STREAMINDEX_UNDEFINED)
+    , mFileContext(0)
+    , mStreamIndex(STREAMINDEX_UNDEFINED)
     // Buffering
-    ,   mMaxBufferSize(0)
-    ,   mPackets(1)
-    ,   mBufferPacketsThreadPtr()
-    ,   mTwoInARow(0)
+    , mMaxBufferSize(0)
+    , mPackets(1)
+    , mBufferPacketsThreadPtr()
+    , mTwoInARow(0)
 {
     VAR_DEBUG(this);
 }
 
 File::File(const wxFileName& path, int buffersize)
-    :	IFile()
-    ,   Node()
+    : IFile()
+    , Node()
     // Attributes
-    ,   mPath(path)
-    ,   mName()
-    ,   mNumberOfFrames(LENGTH_UNDEFINED)
-    ,   mHasVideo(false)
-    ,   mHasAudio(false)
+    , mPath(path)
+    , mName()
+    , mNumberOfFrames(LENGTH_UNDEFINED)
+    , mHasVideo(false)
+    , mHasAudio(false)
     // Status of opening
-    ,   mMetaDataKnown(false)
-    ,   mFileOpened(false)
-    ,   mFileOpenedOk(false)
-    ,   mReadingPackets(false)
-    ,   mEOF(false)
+    , mMetaDataKnown(false)
+    , mFileOpened(false)
+    , mFileOpenedOk(false)
+    , mReadingPackets(false)
+    , mEOF(false)
     // AVCodec access
-    ,	mFileContext(0)
-    ,   mStreamIndex(STREAMINDEX_UNDEFINED)
+    , mFileContext(0)
+    , mStreamIndex(STREAMINDEX_UNDEFINED)
     // Buffering
-    ,   mMaxBufferSize(buffersize)
-    ,   mPackets(1)
-    ,   mBufferPacketsThreadPtr()
-    ,   mTwoInARow(0)
+    , mMaxBufferSize(buffersize)
+    , mPackets(1)
+    , mBufferPacketsThreadPtr()
+    , mTwoInARow(0)
 {
     VAR_DEBUG(this);
     readMetaData();
 }
 
 File::File(const File& other)
-    :	IFile()
-    ,   Node()
+    : IFile()
+    , Node()
     // Attributes
-    ,   mPath(other.mPath)
-    ,   mName(other.mName)
-    ,   mNumberOfFrames(other.mNumberOfFrames)
-    ,   mHasVideo(other.mHasVideo)
-    ,   mHasAudio(other.mHasAudio)
+    , mPath(other.mPath)
+    , mName(other.mName)
+    , mNumberOfFrames(other.mNumberOfFrames)
+    , mHasVideo(other.mHasVideo)
+    , mHasAudio(other.mHasAudio)
     // Status of opening
-    ,   mMetaDataKnown(other.mMetaDataKnown)
-    ,   mFileOpened(false)
-    ,   mFileOpenedOk(other.mFileOpenedOk)
-    ,   mReadingPackets(false)
-    ,   mEOF(false)
+    , mMetaDataKnown(other.mMetaDataKnown)
+    , mFileOpened(false)
+    , mFileOpenedOk(other.mFileOpenedOk)
+    , mReadingPackets(false)
+    , mEOF(false)
     // AVCodec access
-    ,	mFileContext(0)
-    ,   mStreamIndex(STREAMINDEX_UNDEFINED)
+    , mFileContext(0)
+    , mStreamIndex(STREAMINDEX_UNDEFINED)
     // Buffering
-    ,   mMaxBufferSize(other.mMaxBufferSize)
-    ,   mPackets(1)
-    ,   mBufferPacketsThreadPtr()
-    ,   mTwoInARow(0)
+    , mMaxBufferSize(other.mMaxBufferSize)
+    , mPackets(1)
+    , mBufferPacketsThreadPtr()
+    , mTwoInARow(0)
 {
     VAR_DEBUG(this);
 }
@@ -220,6 +220,16 @@ pts File::getLength() const
 void File::moveTo(pts position)
 {
     VAR_DEBUG(this)(position);
+    ASSERT_MORE_THAN_EQUALS_ZERO(position);
+    if (position == 0)
+    {
+        // No seek required, just re-open file. Furthermore, for some files seeking to '0' causes problems 
+        // whereas directly getting packets from these files results in proper decoding.
+        // Maybe these files do not start with a keyframe, causing the problems?
+        stopReadingPackets();
+        closeFile();
+    }
+
     openFile(); // Needed for avcodec calls below
 
     if (!canBeOpened()) { return; } // File probably closed
@@ -227,27 +237,30 @@ void File::moveTo(pts position)
     stopReadingPackets();
 
     int64_t timestamp = model::Convert::ptsToMicroseconds(position);
-    ASSERT_LESS_THAN_EQUALS(timestamp,mFileContext->duration)(timestamp)(mFileContext)(position);
+    ASSERT_LESS_THAN_EQUALS(timestamp, mFileContext->duration)(timestamp)(mFileContext)(position);
+    ASSERT_MORE_THAN_EQUALS_ZERO(timestamp);
     VAR_DEBUG(timestamp)(mFileContext->duration);
-    if (timestamp < 0)
-    {
-        timestamp = 0;
-    }
 
-    // First, try seeking to a keyframe at the given position.
-    int result = 0;
-    result = avformat_seek_file(mFileContext, -1, 0, timestamp, timestamp, 0);
-    if (result < 0)
+    if (timestamp > 0)
     {
-        // Second, try seeking to a keyframe before the given position.
-        result = avformat_seek_file(mFileContext, -1, 0, timestamp, timestamp, AVSEEK_FLAG_BACKWARD);
+        // Do not seek if == 0, may mess up some files. See remark at top of method.
+
+        // First, try seeking to a keyframe at the given position.
+        int result = 0;
+        result = avformat_seek_file(mFileContext, -1, 0, timestamp, timestamp, 0);
         if (result < 0)
         {
-            // Last resort, any frame will do.
-            result = avformat_seek_file(mFileContext, -1, 0, timestamp, timestamp, AVSEEK_FLAG_BACKWARD | AVSEEK_FLAG_ANY);
+            // Second, try seeking to a keyframe before the given position.
+            result = avformat_seek_file(mFileContext, -1, 0, timestamp, timestamp, AVSEEK_FLAG_BACKWARD);
+            if (result < 0)
+            {
+                // Last resort, any frame will do.
+                result = avformat_seek_file(mFileContext, -1, 0, timestamp, timestamp, AVSEEK_FLAG_BACKWARD | AVSEEK_FLAG_ANY);
+                LOG_WARNING << "Seek resulted in non-keyframe position.";
+            }
         }
+        ASSERT_MORE_THAN_EQUALS_ZERO(result)(avcodecErrorString(result))(*this);
     }
-    ASSERT_MORE_THAN_EQUALS_ZERO(result)(avcodecErrorString(result))(*this);
 
     ASSERT_ZERO(mPackets.getSize());
     mPackets.resize(1); // Ensures that only one packet is buffered (used for thumbnail generation).
@@ -432,17 +445,16 @@ void File::stopReadingPackets()
     // Flush any buffered data
     // Typically, flush avcodec decoding buffers in AudioFile and VideoFile.
     // The remaining avcodec buffers are no longer necessary.
-    flush();
+    if (avcodec_is_open(getCodec()))
+    {
+        avcodec_flush_buffers(getCodec());
+    }
 
     // From this point onwards, startReadingPackets should initalize reading
     // again.
     mEOF = false;
 
     VAR_DEBUG(this);
-}
-
-void File::flush()
-{
 }
 
 AVCodecContext* File::getCodec()
