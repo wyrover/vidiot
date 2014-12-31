@@ -473,17 +473,17 @@ void RenderWork::generate()
             }
 
             nRequiredInputSamplesPerChannel = audioCodec->frame_size;
-            if (audioCodec->frame_size <= 1) // todo recheck if still needed (ugly hack) when integrating new avcodec
+            if (audioCodec->frame_size <= 1)
             {
                 // ugly hack for PCM codecs (will be removed ASAP with new PCM support to compute the input frame size in samples
                 // See libavformat/output-example.c
                 nRequiredInputSamplesPerChannel = 10000;
                 switch (audioCodec->codec_id)
                 {
-                case CODEC_ID_PCM_S16LE:
-                case CODEC_ID_PCM_S16BE:
-                case CODEC_ID_PCM_U16LE:
-                case CODEC_ID_PCM_U16BE:
+                case AV_CODEC_ID_PCM_S16LE:
+                case AV_CODEC_ID_PCM_S16BE:
+                case AV_CODEC_ID_PCM_U16LE:
+                case AV_CODEC_ID_PCM_U16BE:
                     nRequiredInputSamplesPerChannel >>= 1;
                     break;
                 default:

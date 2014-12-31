@@ -144,12 +144,12 @@ AVCodecID OutputFormat::getDefaultVideoCodec() const
 
 bool OutputFormat::storeAudio() const
 {
-    return mAudioCodec && mAudioCodec->getId() != CODEC_ID_NONE;
+    return mAudioCodec && mAudioCodec->getId() != AV_CODEC_ID_NONE;
 }
 
 bool OutputFormat::storeVideo() const
 {
-    return mVideoCodec && mVideoCodec->getId() != CODEC_ID_NONE;
+    return mVideoCodec && mVideoCodec->getId() != AV_CODEC_ID_NONE;
 }
 
 VideoCodecPtr OutputFormat::getVideoCodec() const
@@ -175,7 +175,7 @@ void OutputFormat::setAudioCodec(const AudioCodecPtr& codec)
 AVFormatContext* OutputFormat::getContext() const
 {
     ASSERT(mFormat);
-    ASSERT(mAudioCodec->getId() != CODEC_ID_NONE || mVideoCodec->getId() != CODEC_ID_NONE);
+    ASSERT(mAudioCodec->getId() != AV_CODEC_ID_NONE || mVideoCodec->getId() != AV_CODEC_ID_NONE);
     mFormat->audio_codec = mAudioCodec->getId();
     mFormat->video_codec = mVideoCodec->getId();
     AVFormatContext* context = avformat_alloc_context();
@@ -185,7 +185,7 @@ AVFormatContext* OutputFormat::getContext() const
 
 int OutputFormat::checkCodec(const AVCodecID& id) const
 {
-    if (id == CODEC_ID_NONE) { return 1; }
+    if (id == AV_CODEC_ID_NONE) { return 1; }
     ASSERT(mFormat);
     int supported = avformat_query_codec(mFormat,id,FF_COMPLIANCE_NORMAL);
     VAR_DEBUG(mName)(id)(supported);

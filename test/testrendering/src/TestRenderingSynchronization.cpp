@@ -47,8 +47,8 @@ void TestRenderingSynchronization::testLongSequence()
     StartTest("Set codecs");
 
     WindowTriggerMenu(ID_RENDERSETTINGS);
-    gui::DialogRenderSettings::get().getVideoCodecButton()->select(CODEC_ID_MPEG4);
-    gui::DialogRenderSettings::get().getAudioCodecButton()->select(CODEC_ID_MP3);
+    gui::DialogRenderSettings::get().getVideoCodecButton()->select(AV_CODEC_ID_MPEG4);
+    gui::DialogRenderSettings::get().getAudioCodecButton()->select(AV_CODEC_ID_MP3);
     ButtonTriggerPressed(gui::DialogRenderSettings::get().getOkButton());
     WindowTriggerMenu(ID_CLOSESEQUENCE);
 
