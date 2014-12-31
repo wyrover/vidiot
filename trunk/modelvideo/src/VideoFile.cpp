@@ -394,7 +394,7 @@ void VideoFile::startDecodingVideo(const VideoCompositionParameters& parameters)
 
         switch(getCodec()->codec_id)
         {
-        case CODEC_ID_H264:
+        case AV_CODEC_ID_H264:
             av_opt_set((void*)getCodec()->priv_data, "profile", "baseline", 0);
             av_opt_set((void*)getCodec()->priv_data, "preset", "ultrafast", 0);
             av_opt_set((void*)getCodec()->priv_data, "tune", "zerolatency,fastdecode", 0);

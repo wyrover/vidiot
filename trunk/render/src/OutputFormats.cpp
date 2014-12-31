@@ -48,13 +48,13 @@ void OutputFormats::initialize()
         VAR_INFO(format);
         bool unknowncodec = false;
         AudioCodecPtr audiocodec;
-        if (format->audio_codec != CODEC_ID_NONE)
+        if (format->audio_codec != AV_CODEC_ID_NONE)
         {
             audiocodec = AudioCodecs::find(format->audio_codec);
             if (!audiocodec) { unknowncodec = true; }
         }
         VideoCodecPtr videocodec;
-        if (format->video_codec != CODEC_ID_NONE)
+        if (format->video_codec != AV_CODEC_ID_NONE)
         {
             videocodec = VideoCodecs::find(format->video_codec);
             if (!videocodec) { unknowncodec = true; }
