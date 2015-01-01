@@ -1,4 +1,4 @@
-REM Copyright 2013,2014 Eric Raijmakers.
+REM Copyright 2013-2015 Eric Raijmakers.
 REM
 REM This file is part of Vidiot.
 REM

@@ -3,7 +3,7 @@
 <xsl:output method="text" omit-xml-declaration="yes" indent="no" />
 
 <!--
-// Copyright 2013,2014 Eric Raijmakers.
+// Copyright 2013-2015 Eric Raijmakers.
 //
 // This file is part of Vidiot.
 //
