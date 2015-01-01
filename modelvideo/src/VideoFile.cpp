@@ -1,4 +1,4 @@
-// Copyright 2013,2014 Eric Raijmakers.
+// Copyright 2013-2015 Eric Raijmakers.
 //
 // This file is part of Vidiot.
 //
@@ -229,6 +229,8 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
             {
                 LOG_WARNING << "Decode error: " << *this;
             }
+
+            ASSERT_EQUALS(len1, nextToBeDecodedPacket->size);
 
             // todo see http://blog.tomaka17.com/2012/03/libavcodeclibavformat-tutorial/ for the cases listed below 'The "isFrameAvailable" and "processedLength" variables are very important.'. One case is missing here (processedLength > 0 but < packet.size)
 
