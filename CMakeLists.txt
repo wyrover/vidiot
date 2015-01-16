@@ -91,7 +91,7 @@ if (MSVC)
     set (BOOST_LIBRARYDIR $ENV{BOOST_ROOT}/lib32-msvc-12.0)
   endif ()
 endif ()
-find_package (Boost 1.56 REQUIRED COMPONENTS date_time thread serialization system)
+find_package (Boost 1.55 REQUIRED COMPONENTS date_time thread serialization system)
 if (MSVC)
   # Find all dlls matching 'release' (== not gd) and 'threading-multi' (== mt)
   # Note: For some boost libraries, there is no dependency for building (above), but these dlls
@@ -229,7 +229,10 @@ add_custom_command (TARGET svnrevision COMMAND ${CMAKE_COMMAND} -DSOURCE_DIR=${C
 #set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/SubversionRevision.h PROPERTIES GENERATED TRUE HEADER_FILE_ONLY TRUE)
 add_dependencies (vidiot svnrevision)
 
-cmake_policy(SET CMP0043 OLD) # Avoid COMPILE_DEFINITIONS_* Warning
+if (POLICY CMP0043)
+  cmake_policy(SET CMP0043 OLD) # Avoid COMPILE_DEFINITIONS_* Warning
+endif ()
+
 add_subdirectory (main)
 add_subdirectory (test)
 add_subdirectory (install)
