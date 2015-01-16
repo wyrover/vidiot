@@ -34,6 +34,9 @@ file (GLOB GenericTestFilesCpp ${CMAKE_CURRENT_SOURCE_DIR}/*/*.cpp)
 
 enable_unity_build (test GenericTestFilesCpp TEST_UNITY_CPP_FILES)
 
-cmake_policy(SET CMP0037 OLD) # Allow test as target name
+if (POLICY CMP0037)
+  cmake_policy(SET CMP0037 OLD) # Allow test as target name
+endif ()
+
 add_library (test ${TEST_UNITY_CPP_FILES} ${GenericTestFilesH} ${GenericTestFilesCpp})
 
