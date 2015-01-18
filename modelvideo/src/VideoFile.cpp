@@ -239,7 +239,7 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
                     // If the assert above fails,
                     // then see http://blog.tomaka17.com/2012/03/libavcodeclibavformat-tutorial/
                     // for the cases listed below 'The "isFrameAvailable" and "processedLength" variables are very important.'. 
-                    // One case is missing here (processedLength > 0 but < packet.size)
+                    // One case is missing here (0 < len1 < packet.size)
                 }
             }
 
