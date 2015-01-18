@@ -347,9 +347,9 @@ void TestDetailsClip::testTransform()
             boost::rational<int>(8000,model::Constants::sScalingPrecisionFactor),
             model::VideoAlignmentCenter,
             wxPoint(-152,0),
-            boost::rational<int>(0)); 
+            boost::rational<int>(0));
         // verify only one command is added to the history when doing multiple edits.
-        ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>(); 
+        ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
     };
 
     StartTest("If one clip is selected the details view changes accordingly.");
@@ -544,7 +544,7 @@ void TestDetailsClip::testChangeVolume()
     model::AudioChunkPtr referenceChunk = audioclip->getNextAudio(parameters);
     ASSERT_EQUALS(audioclip->getVolume(),100);
 
-    auto ASSERT_VOLUME = [parameters](model::AudioClipPtr audioclip, int volume, model::AudioChunkPtr referenceChunk)
+    auto ASSERT_VOLUME = [parameters](model::AudioClipPtr audioclip, int32_t volume, model::AudioChunkPtr referenceChunk)
     {
         ASSERT_EQUALS(audioclip->getVolume(),volume);
         audioclip->moveTo(10);
@@ -634,8 +634,8 @@ void TestDetailsClip::testChangeVolume()
 //////////////////////////////////////////////////////////////////////////
 
 pts TestDetailsClip::getLength(wxToggleButton* button)
-{ 
-    return model::Convert::timeToPts(button->GetId()); 
+{
+    return model::Convert::timeToPts(button->GetId());
 };
 
 } // namespace

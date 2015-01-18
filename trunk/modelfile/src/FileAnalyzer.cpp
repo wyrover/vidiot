@@ -39,9 +39,9 @@ FileAnalyzer::FileAnalyzer(wxStrings fileNames, wxWindow* parent)
 	, mMostFrequentFrameRate(Config::ReadString(Config::sPathDefaultFrameRate))
     , mMostFrequentAudioRate(std::make_pair(Config::ReadLong(Config::sPathDefaultAudioSampleRate), Config::ReadLong(Config::sPathDefaultAudioChannels)))
     , mMostFrequentVideoSize(Config::ReadLong(Config::sPathDefaultVideoWidth), Config::ReadLong(Config::sPathDefaultVideoHeight))
-    , mVideoSizeOccurrence(boost::assign::map_list_of(mMostFrequentVideoSize,0))
-    , mFrameRateOccurrence(boost::assign::map_list_of(mMostFrequentFrameRate,0))
-    , mAudioRateOccurrence(boost::assign::map_list_of(mMostFrequentAudioRate,0))
+    , mVideoSizeOccurrence(boost::assign::map_list_of(mMostFrequentVideoSize,0).convert_to_container< std::map<wxSize, int> >())
+    , mFrameRateOccurrence(boost::assign::map_list_of(mMostFrequentFrameRate,0).convert_to_container< std::map<FrameRate, int> >())
+    , mAudioRateOccurrence(boost::assign::map_list_of(mMostFrequentAudioRate,0).convert_to_container< std::map<std::pair<int,int>, int> >())
     , mNumberOfMediaFiles(0)
     , mFolders(0)
 {
@@ -57,9 +57,9 @@ FileAnalyzer::FileAnalyzer(const wxArrayString& fileNames, wxWindow* parent)
 	, mMostFrequentFrameRate(Config::ReadString(Config::sPathDefaultFrameRate))
 	, mMostFrequentAudioRate(std::make_pair(Config::ReadLong(Config::sPathDefaultAudioSampleRate), Config::ReadLong(Config::sPathDefaultAudioChannels)))
 	, mMostFrequentVideoSize(Config::ReadLong(Config::sPathDefaultVideoWidth), Config::ReadLong(Config::sPathDefaultVideoHeight))
-	, mVideoSizeOccurrence(boost::assign::map_list_of(mMostFrequentVideoSize, 0))
-	, mFrameRateOccurrence(boost::assign::map_list_of(mMostFrequentFrameRate, 0))
-	, mAudioRateOccurrence(boost::assign::map_list_of(mMostFrequentAudioRate, 0))
+	, mVideoSizeOccurrence(boost::assign::map_list_of(mMostFrequentVideoSize, 0).convert_to_container< std::map<wxSize, int> >())
+	, mFrameRateOccurrence(boost::assign::map_list_of(mMostFrequentFrameRate, 0).convert_to_container< std::map<FrameRate, int> >())
+	, mAudioRateOccurrence(boost::assign::map_list_of(mMostFrequentAudioRate, 0).convert_to_container< std::map<std::pair<int,int>, int> >())
 	, mNumberOfMediaFiles(0)
 	, mFolders(0)
 {
@@ -75,7 +75,7 @@ void FileAnalyzer::init()
 	if (mParent != nullptr)
 	{
 		mDialog = boost::make_shared<wxProgressDialog>(_("Indexing files"), wxEmptyString, 100, mParent);
-		mDialog->SetWindowStyleFlag(wxPD_APP_MODAL | wxPD_ELAPSED_TIME); //| wxPD_AUTO_HIDE 
+		mDialog->SetWindowStyleFlag(wxPD_APP_MODAL | wxPD_ELAPSED_TIME); //| wxPD_AUTO_HIDE
 		updateProgressDialog();
 	}
 
@@ -169,14 +169,14 @@ void FileAnalyzer::addNodesToProjectView() const
 {
     for (model::NodePtr node : mNodes)
     {
-        if (::gui::ProjectView::get().findConflictingName(::model::Project::get().getRoot(), node->getName(), node->isA<model::Folder>() ? ::gui::NODETYPE_FOLDER : ::gui::NODETYPE_FILE)) 
-        { 
-            return; 
+        if (::gui::ProjectView::get().findConflictingName(::model::Project::get().getRoot(), node->getName(), node->isA<model::Folder>() ? ::gui::NODETYPE_FOLDER : ::gui::NODETYPE_FILE))
+        {
+            return;
         }
     }
     if (!mNodes.empty())
     {
-        model::ProjectModification::submit(new command::ProjectViewAddAsset(model::Project::get().getRoot(), mNodes)); 
+        model::ProjectModification::submit(new command::ProjectViewAddAsset(model::Project::get().getRoot(), mNodes));
         for (model::NodePtr node : mNodes)
         {
             node->check(true); // Update any added autofolders

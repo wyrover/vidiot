@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-// Pts/Dts synchronization code: 
+// Pts/Dts synchronization code:
 // See http://dranger.com/ffmpeg/tutorial05.html
 
 #include "VideoFile.h"
@@ -37,7 +37,7 @@ namespace model {
 // AVCODEC CALLBACKS
 //////////////////////////////////////////////////////////////////////////
 
-int avcodec_get_buffer(struct AVCodecContext *c, AVFrame *pic) 
+int avcodec_get_buffer(struct AVCodecContext *c, AVFrame *pic)
 {
     ASSERT_NONZERO(c);
     ASSERT_NONZERO(pic);
@@ -49,7 +49,7 @@ int avcodec_get_buffer(struct AVCodecContext *c, AVFrame *pic)
     return ret;
 }
 
-void avcodec_release_buffer(struct AVCodecContext *c, AVFrame *pic) 
+void avcodec_release_buffer(struct AVCodecContext *c, AVFrame *pic)
 {
     ASSERT_NONZERO(c);
     if(pic)
@@ -176,7 +176,7 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
             milliseconds diffNext = abs(boost::rational_cast<milliseconds>(nextTime) - requiredTime);
             result =  diffCurrent < diffNext;
         }
-        // else: Just deliver the first found frame. 
+        // else: Just deliver the first found frame.
         //       Typical case: directly after 'moveTo' during thumbnail generation,
         //       timeline cursor move, trim, etc. (basically, anything except playback)
         return result;
@@ -185,7 +185,7 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
     // NOTE: Sometimes the gotten input frame covers two output frames.
     //       Typically seen with H264 - MPEG4AVC (part10) (avc1) files with a frame rate of 28 frames/s.
     // NOTE: Parameters can be changed during playback by - for instance - changing 'showBoundingBox'
-    
+
     pts decodedFramePts = AV_NOPTS_VALUE;
 
     if (!mDeliveredFrame || !frameTimeOk(mDeliveredFrame->getPts()))
@@ -204,7 +204,7 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
             {
                 nextToBeDecodedPacket = packet->getPacket();
 
-                // Whenever a packet STARTS a frame, avcodec_decode_video() 
+                // Whenever a packet STARTS a frame, avcodec_decode_video()
                 // calls avcodec_get_buffer() to allocate a buffer.
                 mVideoPacketPts = nextToBeDecodedPacket->pts;
             }
@@ -231,10 +231,17 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
             }
             else
             {
-                ASSERT_EQUALS(len1, nextToBeDecodedPacket->size);
+                ASSERT_LESS_THAN_EQUALS(len1, nextToBeDecodedPacket->size);
+                if (len1 < nextToBeDecodedPacket->size)
+                {
+                    ASSERT_LESS_THAN_EQUALS(nextToBeDecodedPacket->size - len1, 8);
+                    // else: Packet probably made aligned?
+                    // If the assert above fails,
+                    // then see http://blog.tomaka17.com/2012/03/libavcodeclibavformat-tutorial/
+                    // for the cases listed below 'The "isFrameAvailable" and "processedLength" variables are very important.'. 
+                    // One case is missing here (processedLength > 0 but < packet.size)
+                }
             }
-
-            // todo see http://blog.tomaka17.com/2012/03/libavcodeclibavformat-tutorial/ for the cases listed below 'The "isFrameAvailable" and "processedLength" variables are very important.'. One case is missing here (processedLength > 0 but < packet.size)
 
             if (frameFinished)
             {
@@ -245,11 +252,11 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
                     // By default: Use DTS of latest packet sent into the decoder for this frame.
                     decodedFramePts = nextToBeDecodedPacket->dts;
                 }
-                else if (pDecodedFrame->opaque != 0) 
+                else if (pDecodedFrame->opaque != 0)
                 {
                     // Try using PTS value of first packet sent into the decoder for this frame.
                     int64_t storedPts = *(static_cast<int64_t*>(pDecodedFrame->opaque));
-                    if (storedPts != AV_NOPTS_VALUE) 
+                    if (storedPts != AV_NOPTS_VALUE)
                     {
                         decodedFramePts = storedPts;
                     }
@@ -328,11 +335,11 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
     // DEBUG: saveScaledFrame(codec,size,mDeliveredFrame);
     ASSERT(mDeliveredFrame)(parameters)(codec)(decodedFramePts);
 
-    // Clone the used frame. Must be done for multiple reasons. 
+    // Clone the used frame. Must be done for multiple reasons.
     // 1. See also "Same frame again" above
     //    If the same frame is returned multiple times, any modifications on the frame
     //    (for instance, pts value) will lead to a changed frame here. And the pts value
-    //    of the frame as used here is the pts value of the INPUT. When returned (by 
+    //    of the frame as used here is the pts value of the INPUT. When returned (by
     //    Sequence) the pts value of the frame is overwritten with the pts OUTPUT value.
     // 2. mDeliveredFrame may have already been queued somewhere (VideoDisplay, for example).
     //    Changing mDeliveredFrame and returning that once more might thus change that previous frame also!
@@ -478,14 +485,14 @@ void VideoFile::saveDecodedFrame(AVCodecContext* codec, AVFrame* frame, const wx
     sws_scale(swsContext,frame->data,frame->linesize,0,codec->height,pWriteToDiskFrame->data,pWriteToDiskFrame->linesize);
 
     wxImagePtr image = boost::make_shared<wxImage>(wxImage(wxSize(codec->width, codec->height), pWriteToDiskFrame->data[0], true).Copy());
-    wxString filename; 
+    wxString filename;
     count++;
     VAR_ERROR(this)(count)(mPosition);
-    filename 
-        << "D:\\savedframes\\" << getPath().GetName() << '_' 
+    filename
+        << "D:\\savedframes\\" << getPath().GetName() << '_'
         << count << '_'
         << "original_"
-        << codec->width << 'x' << codec->height << '_' 
+        << codec->width << 'x' << codec->height << '_'
         << size.x << 'x' << size.y << '_' << frameFinished << ".jpg";
     image->SaveFile(filename);
     av_freep(&bufferToDisk);
@@ -495,12 +502,12 @@ void VideoFile::saveDecodedFrame(AVCodecContext* codec, AVFrame* frame, const wx
 void VideoFile::saveScaledFrame(AVCodecContext* codec, const wxSize& size, VideoFramePtr frame)
 {
     static int count(0);
-    wxString filename; 
-    filename 
-        << "D:\\savedframes\\" << getPath().GetName() << '_' 
-        << count++ << '_' 
+    wxString filename;
+    filename
+        << "D:\\savedframes\\" << getPath().GetName() << '_'
+        << count++ << '_'
         << "delivered_"
-        << codec->width << 'x' << codec->height << '_' 
+        << codec->width << 'x' << codec->height << '_'
         << size.x << 'x' << size.y << ".jpg";
     mDeliveredFrame->getImage()->SaveFile(filename);
 }

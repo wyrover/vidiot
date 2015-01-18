@@ -31,7 +31,7 @@
 
 namespace gui {
 
-// static 
+// static
 boost::optional<wxStrings> DialogNewProject::sDroppedFiles = boost::none;
 
 wxString sNoFiles(_("Found no usable media files."));
@@ -45,10 +45,9 @@ DialogNewProject::DialogNewProject()
     , mDefaultType(Config::ReadEnum<model::DefaultNewProjectWizardStart>(Config::sPathDefaultNewProjectType))
     , mFolderPath("")
 {
-    SetTitle(_("Create new project"));
-
     Create(&Window::get(), wxID_ANY, _("Create new project"), util::window::getBitmap("movie128.png"), wxDefaultPosition, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     util::window::setIcons(this);
+    SetTitle(_("Create new project"));
 
     wxSize minPageSize(0,0);
 
@@ -167,7 +166,7 @@ DialogNewProject::DialogNewProject()
         // Files were dropped from the file system.
         mFileAnalyzer = boost::make_shared<model::FileAnalyzer>(*sDroppedFiles, this);
 
-        if (sDroppedFiles->size() == 1 && 
+        if (sDroppedFiles->size() == 1 &&
             mFileAnalyzer->getNumberOfFolders() == 1)
         {
             mDefaultType = model::DefaultNewProjectWizardStartFolder;
@@ -230,7 +229,7 @@ bool DialogNewProject::runWizard()
     return RunWizard(mPageStart);
 }
 
-// static 
+// static
 void DialogNewProject::setDroppedFiles(wxStrings files)
 {
     sDroppedFiles.reset(files);
@@ -290,7 +289,7 @@ void DialogNewProject::onCancel(wxWizardEvent& event)
 void DialogNewProject::onFinish(wxWizardEvent& event)
 {
     mEditProperties->write();
-    model::DefaultNewProjectWizardStart defaultType = 
+    model::DefaultNewProjectWizardStart defaultType =
         mButtonFolder->GetValue() ? model::DefaultNewProjectWizardStartFolder :
         mButtonFiles->GetValue() ? model::DefaultNewProjectWizardStartFiles :
         model::DefaultNewProjectWizardStartBlank;

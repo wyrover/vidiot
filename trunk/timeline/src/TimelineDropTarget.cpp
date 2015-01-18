@@ -17,6 +17,7 @@
 
 #include "TimelineDropTarget.h"
 
+#include "EventDrag.h"
 #include "FileAnalyzer.h"
 #include "State.h"
 #include "TrackCreator.h"
@@ -57,18 +58,14 @@ wxDragResult TimelineDropTarget::OnEnter(wxCoord x, wxCoord y, wxDragResult def)
     mFormat.reset(composite->GetReceivedFormat());
 	mNodes.clear();
 
-    if (mFormat->IsStandard())
+    if (static_cast<wxDataFormatId>(mFormat->GetType()) == wxDF_FILENAME)
     {
-        // Standard data object
-        if (static_cast<wxDataFormatId>(mFormat->GetType()) == wxDF_FILENAME)
+        wxFileDataObject* object = static_cast<wxFileDataObject*>(composite->GetObject(*mFormat));
+        ASSERT_NONZERO(object);
+        boost::shared_ptr<model::FileAnalyzer> analyzer = boost::make_shared<model::FileAnalyzer>(object->GetFilenames());
+        if (analyzer->checkIfOkForPasteOrDrop())
         {
-            wxFileDataObject* object = static_cast<wxFileDataObject*>(composite->GetObject(*mFormat));
-            ASSERT_NONZERO(object);
-            boost::shared_ptr<model::FileAnalyzer> analyzer = boost::make_shared<model::FileAnalyzer>(object->GetFilenames());
-			if (analyzer->checkIfOkForPasteOrDrop())
-			{
-	            mNodes = analyzer->getNodes();
-			}
+            mNodes = analyzer->getNodes();
         }
     }
     else if (mFormat->GetId() == ProjectViewDataObject::sFormat)
@@ -89,7 +86,9 @@ wxDragResult TimelineDropTarget::OnEnter(wxCoord x, wxCoord y, wxDragResult def)
         mVideo = c.getVideoTrack();
         mAudio = c.getAudioTrack();
         ProjectViewDropSource::get().setFeedback(false);
-        getKeyboard().update(state::EvKey(wxGetMouseState(),-1)); // To ensure that key events are 'seen' during the drag (timeline itself does not receive keyboard/mouse events)
+        wxMouseState mouseState = wxGetMouseState();
+        state::EvKey keyEvent(mouseState,-1);
+        getKeyboard().update(keyEvent); // To ensure that key events are 'seen' during the drag (timeline itself does not receive keyboard/mouse events)
         getStateMachine().process_event(state::EvDragEnter());
         return wxDragCopy;
     }
@@ -103,7 +102,8 @@ wxDragResult TimelineDropTarget::OnEnter(wxCoord x, wxCoord y, wxDragResult def)
 
 wxDragResult TimelineDropTarget::OnDragOver(wxCoord x, wxCoord y, wxDragResult def)
 {
-    getKeyboard().update(state::EvKey(wxGetMouseState(), -1)); // To ensure that key events are 'seen' during the drag (timeline itself does not receive keyboard/mouse events)
+    wxMouseState mouseState = wxGetMouseState();
+    getKeyboard().update(state::EvKey(mouseState, -1)); // To ensure that key events are 'seen' during the drag (timeline itself does not receive keyboard/mouse events)
     getMouse().dragMove(wxPoint(x,y));
     if (validDataDragged())
     {

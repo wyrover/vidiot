@@ -148,15 +148,22 @@ bool hasSubDirectories(wxFileName directory)
     return wxDir::GetAllFiles(directory.GetLongPath(), &allfiles, wxEmptyString, wxDIR_DIRS) > 0;
 }
 
-wxString toFileInInstallationDirectory(wxString subdir, wxString filename)
+wxString toFileInInstallationDirectory(wxString subdirs, wxString filename)
 {
-    if (!subdir.IsEmpty())
+    ASSERT(!subdirs.Contains("\\"))(subdirs);
+    ASSERT(subdirs.GetChar(0) != '/')(subdirs);
+    ASSERT(subdirs.Last() != '/')(subdirs);
+
+    wxFileName result(Config::getExeDir(), filename);
+    if (!subdirs.IsEmpty())
     {
-        ASSERT(subdir.GetChar(0) != '\\')(subdir);
-        ASSERT(subdir.Last() != '\\')(subdir);
-        subdir = '\\' + subdir + '\\';
+        wxStringTokenizer tokenizer(subdirs, "/");
+        while ( tokenizer.HasMoreTokens() )
+        {
+            result.AppendDir(tokenizer.GetNextToken());
+        }
     }
-    return wxFileName(Config::getExeDir() + subdir, filename).GetFullPath();
+    return result.GetFullPath();
 }
 
 

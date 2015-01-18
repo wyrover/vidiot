@@ -19,6 +19,7 @@
 
 #include "Dialog.h"
 #include "File.h"
+#include "Project.h"
 #include "StatusBar.h"
 #include "UtilLog.h"
 #include "UtilLogStl.h"
@@ -285,7 +286,7 @@ void AutoFolder::handleWorkDone(boost::shared_ptr<IndexAutoFolderWork> work, boo
 
 wxString AutoFolder::getName() const
 {
-    if (getParent() &&                  
+    if (getParent() &&
         getParent()->isA<AutoFolder>())
     {
         return util::path::toName(mPath);
@@ -317,7 +318,8 @@ void AutoFolder::serialize(Archive & ar, const unsigned int version)
         }
         else
         {
-            ar & boost::serialization::make_nvp( "mPath", model::Project::get().convertPathForSaving(mPath) );
+            wxFileName path = model::Project::get().convertPathForSaving(mPath);
+            ar & boost::serialization::make_nvp( "mPath", path );
         }
         if (version == 1)
         {

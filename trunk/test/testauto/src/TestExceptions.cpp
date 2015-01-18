@@ -121,6 +121,7 @@ void TestExceptions::testRemovedFileInProjectViewBeforeOpening()
     gui::Dialog::get().setConfirmation(); // A confirmation for the dialog showing that the removed file is deleted from project
     WindowTriggerMenu(wxID_FILE1); // Load document 1 from the file history, this is the file that was saved before. This mechanism avoids the open dialog.
     WaitForIdle();
+    pause();
 }
 
 void TestExceptions::testRemovedFolderInProjectViewBeforeOpening()
@@ -147,7 +148,7 @@ void TestExceptions::testRemovedFolderInProjectViewBeforeOpening()
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-std::pair< model::FolderPtr, RandomTempDirPtr> TestExceptions::createProjectWithOneFile(const wxFileName& file)
+std::pair< model::SequencePtr, RandomTempDirPtr> TestExceptions::createProjectWithOneFile(const wxFileName& file)
 {
     model::FolderPtr root = WindowCreateProject();
     ASSERT(root);
@@ -169,12 +170,12 @@ std::pair< model::FolderPtr, RandomTempDirPtr> TestExceptions::createProjectWith
     WaitForChildCount(root, 4);
     ProjectViewRemove(folder1);
     ASSERT_WATCHED_PATHS_COUNT(0);
-    return std::make_pair(folder1, tempDir);
+    return std::make_pair(sequence, tempDir);
 }
 
 void TestExceptions::testRemovedFileInSequence(const wxFileName& file)
 {
-    std::pair< model::FolderPtr, RandomTempDirPtr> projectfolder_and_dirtoberemoved = createProjectWithOneFile(file);
+    std::pair< model::SequencePtr, RandomTempDirPtr> projectfolder_and_dirtoberemoved = createProjectWithOneFile(file);
     WindowTriggerMenu(ID_CLOSESEQUENCE);
 
     projectfolder_and_dirtoberemoved.second.reset(); // Deletes the file (still used in the sequence) from disk
@@ -191,7 +192,7 @@ void TestExceptions::testRemovedFileInSequence(const wxFileName& file)
 
 void TestExceptions::testRemovedFileInSequenceBeforeOpening(const wxFileName& file)
 {
-    std::pair< model::FolderPtr, RandomTempDirPtr> projectfolder_and_dirtoberemoved = createProjectWithOneFile(file);
+    std::pair< model::SequencePtr, RandomTempDirPtr> projectfolder_and_dirtoberemoved = createProjectWithOneFile(file);
     std::pair<RandomTempDirPtr, wxFileName> tempDir_fileName = SaveProjectAndClose();
 
     projectfolder_and_dirtoberemoved.second.reset(); // Deletes the file (still used in the sequence) from disk

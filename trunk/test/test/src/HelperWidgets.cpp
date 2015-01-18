@@ -82,7 +82,11 @@ void SetValue(wxCheckBox* widget, bool value)
 void ButtonTriggerPressed(wxButton* button)
 {
     // Using QueueEvent (without RunInMainAndWait) did not work.
-    util::thread::RunInMainAndWait([button] {button->GetEventHandler()->ProcessEvent(wxCommandEvent(wxEVT_COMMAND_BUTTON_CLICKED));});
+    util::thread::RunInMainAndWait([button]
+    {
+        wxCommandEvent event(wxEVT_COMMAND_BUTTON_CLICKED);
+        button->GetEventHandler()->ProcessEvent(event);
+    });
 }
 
 } // namespace

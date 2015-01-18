@@ -297,7 +297,7 @@ void Render::scheduleAll()
 struct EncodingError : std::exception
 {
     explicit EncodingError(wxString _message)
-        : std::exception(_message.mb_str())
+        : std::exception()
         , message(_message)
     {
     }
@@ -340,7 +340,7 @@ void RenderWork::generate()
 
     OutputFormatPtr outputformat = mRender->getOutputFormat();
 
-    AVFormatContext* context = outputformat->getContext(); 
+    AVFormatContext* context = outputformat->getContext();
     ASSERT(mRender->getFileName().IsOk());
     ASSERT_NONZERO(context);
     wxString filename = mRender->getFileName().GetFullPath();
@@ -490,7 +490,7 @@ void RenderWork::generate()
                     break;
                 }
             }
-            
+
             nRequiredInputSamplesForAllChannels = nRequiredInputSamplesPerChannel * audioCodec->channels;
             samples = static_cast<sample*>(av_malloc(Convert::audioSamplesToBytes(nRequiredInputSamplesForAllChannels)));
 
@@ -603,8 +603,8 @@ void RenderWork::generate()
                             if (currentAudioChunk->getUnreadSampleCount() == 0)
                             {
                                 currentAudioChunk = sequence->getNextAudio(*audioParameters);
-                                if (currentAudioChunk && 
-                                    currentAudioChunk->getPts() > position && 
+                                if (currentAudioChunk &&
+                                    currentAudioChunk->getPts() > position &&
                                     currentAudioChunk->getPts() < length) // Avoid showing progress 48 out of 47 frames
                                 {
                                     position = currentAudioChunk->getPts();
@@ -644,7 +644,7 @@ void RenderWork::generate()
                 // else: all input fed into encoder
 
                 //////////////////////////////////////////////////////////////////////////
-                // ENCODE AUDIO INTO AN OUTPUT PACKET 
+                // ENCODE AUDIO INTO AN OUTPUT PACKET
                 //////////////////////////////////////////////////////////////////////////
 
                 AVPacket* audioPacket = new AVPacket();
@@ -791,7 +791,7 @@ void RenderWork::generate()
                         VAR_ERROR(result)(avcodecErrorString(result))(*this);
                         throw EncodingError(_("Failed to encode video data."));
                     }
-                    
+
                     //////////////////////////////////////////////////////////////////////////
                     // WRITE ENCODED VIDEO
                     //////////////////////////////////////////////////////////////////////////

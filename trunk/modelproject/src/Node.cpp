@@ -81,7 +81,7 @@ NodePtr Node::addChild(const NodePtr& newChild)
     newChild->setParent(self());
     // Do not use ProcessEvent: this will cause problems with auto-updating autofolders upon
     // first expansion.
-    gui::Window::get().GetEventHandler()->QueueEvent(new model::EventAddNode(ParentAndChildren(self(),newChild)));
+    gui::Window::get().QueueModelEvent(new model::EventAddNode(ParentAndChildren(self(),newChild)));
     return newChild;
 }
 
