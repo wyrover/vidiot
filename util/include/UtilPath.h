@@ -60,9 +60,9 @@ bool isParentOf(const wxString& parent,   const wxString& child );   ///< \retur
 bool hasSubDirectories(wxFileName directory); 
 
 /// \return the full path to a file in the installation directory
-/// \param subdir sub directory of installation directory where file is located (must start and end with '\\')
+/// \param subdirs sub directory of installation directory where file is located (may have multiple levels separated with '/')
 /// \param filename name of file to be retrieved. Leave emtpy for dir only.
-wxString toFileInInstallationDirectory(wxString subdir, wxString filename);
+wxString toFileInInstallationDirectory(wxString subdirs, wxString filename);
 
 }} // namespace
 

@@ -25,7 +25,7 @@ namespace test {
 
 struct WaitHelper
 {
-    WaitHelper() 
+    WaitHelper()
         : Value(true)
     {
     }
@@ -329,7 +329,8 @@ void TimelineKeyDown(int key)
             CurrentTimelineInputState::Get().ControlDown = true;
             break;
         }
-        gui::timeline::state::EvKeyDown event(CurrentTimelineInputState::Get().getWxMouseState(),key);
+        wxMouseState state = CurrentTimelineInputState::Get().getWxMouseState();
+        gui::timeline::state::EvKeyDown event(state,key);
         util::thread::RunInMainAndWait([&event] { getTimeline().getStateMachine().handleKeyDown(event); });
     }
 }
@@ -353,7 +354,8 @@ void TimelineKeyUp(int key)
             CurrentTimelineInputState::Get().ControlDown = false;
             break;
         }
-        gui::timeline::state::EvKeyUp event(CurrentTimelineInputState::Get().getWxMouseState(),key);
+        wxMouseState state = CurrentTimelineInputState::Get().getWxMouseState();
+        gui::timeline::state::EvKeyUp event(state,key);
         util::thread::RunInMainAndWait([&event] { getTimeline().getStateMachine().handleKeyUp(event); });
     }
 }

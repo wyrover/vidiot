@@ -50,7 +50,7 @@ DialogAbout::DialogAbout()
     ////////  ////////
 
     mHtml = new wxHtmlWindow(this);
-    mHtml->LoadPage(util::path::toFileInInstallationDirectory("html\\about", "main.html"));
+    mHtml->LoadPage(util::path::toFileInInstallationDirectory("html/about", "main.html"));
 
     ////////  ////////
 

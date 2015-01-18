@@ -132,7 +132,11 @@ wxImagePtr VideoFrameLayer::getImage()
                 ASSERT_NONZERO(alpha);
                 for (int x = 0; x < mImage->GetWidth() * mImage->GetHeight(); ++x)
                 {
-                    *alpha++ = static_cast<char>(static_cast<int>(*alpha) * mOpacity / Constants::sOpacityMax);
+                    *alpha = static_cast<char>(static_cast<int>(*alpha) * mOpacity / Constants::sOpacityMax);
+                    ++alpha;
+                    // NOT: *alpha++ = static_cast<char>(static_cast<int>(*alpha) * mOpacity / Constants::sOpacityMax);
+                    // Gives problems (on linux/GCC) because operand 'alpha' is used twice in the expression,
+                    // see http://en.wikipedia.org/wiki/Increment_and_decrement_operators
                 }
             }
             // else: Keep alpha data 'as is'

@@ -151,7 +151,6 @@ AudioChunkPtr AudioClip::getNextAudio(const AudioCompositionParameters& paramete
 
         if (mVolume != Constants::sDefaultVolume)
         {
-            bool overflow = false;
             sample* sBegin = buffer;
             sample* sEnd = sBegin + requiredSamples;
             sample* s = sBegin;
@@ -159,10 +158,16 @@ AudioChunkPtr AudioClip::getNextAudio(const AudioCompositionParameters& paramete
             int32_t defaultVolume = static_cast<int32_t>(Constants::sDefaultVolume);
             while (s < sEnd)
             {
-                *s++ = static_cast<int32_t>(*s) * volume / defaultVolume; // newSample;
+                *s = static_cast<sample>(static_cast<int32_t>(*s) * volume / defaultVolume);
+                s++;
+                // NOT: *s++ = static_cast<int32_t>(*s) * volume / defaultVolume;
+                // Gives problems on Linux because operand s is used twice in the expression,
+                // see http://en.wikipedia.org/wiki/Increment_and_decrement_operators
             }
         }
     }
+
+    // todo GCC treat warnings as errors
 
     if (result)
     {

@@ -112,9 +112,13 @@ void VideoTransitionOpacity::applyToAllPixels(const wxImagePtr& image, const boo
     for (int y = 0; y < image->GetSize().GetHeight(); ++y)
     {
         unsigned char* opacity = opacityBegin + y * opacityLineWidth;
-        for (int x = 0; x < image->GetSize().GetWidth(); x += 1)
+        for (int x = 0; x < image->GetSize().GetWidth(); ++x)
         {
-            *opacity++ = *opacity * f(x,y);
+            *opacity = *opacity * f(x,y);
+            ++opacity;
+            // NOT: *opacity++ = *opacity * f(x,y);
+            // Gives problems (on linux/GCC) because operand 'opacity' is used twice in the expression,
+            // see http://en.wikipedia.org/wiki/Increment_and_decrement_operators
         }
     }
 }
@@ -127,9 +131,13 @@ void VideoTransitionOpacity::applyToFirstLineThenCopy(const wxImagePtr& image, c
     unsigned char* opacityBegin = image->GetAlpha();
     unsigned char* opacity = opacityBegin;
     // First line
-    for (int x = 0; x < image->GetSize().GetWidth(); x += 1)
+    for (int x = 0; x < image->GetSize().GetWidth(); ++x)
     {
-        *opacity++ = *opacity * f(x,0);
+        *opacity = *opacity * f(x,0);
+        ++opacity;
+        // NOT: *opacity++ = *opacity * f(x,y);
+        // Gives problems (on linux/GCC) because operand 'opacity' is used twice in the expression,
+        // see http://en.wikipedia.org/wiki/Increment_and_decrement_operators
     }
     // Then other lines
     for (int y = 1; y < image->GetSize().GetHeight(); ++y)

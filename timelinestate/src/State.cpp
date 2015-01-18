@@ -158,7 +158,8 @@ bool Machine::processWheelEvent(int nSteps)
 
 void Machine::onMotion(wxMouseEvent& event)
 {
-    handleMotion(EvMotion(event));
+    EvMotion motionEvent(event);
+    handleMotion(motionEvent);
     event.Skip();
 }
 
@@ -172,7 +173,8 @@ void Machine::handleMotion(EvMotion& event)
 
 void Machine::onLeftDown(wxMouseEvent& event)
 {
-    handleLeftDown(EvLeftDown(event));
+    EvLeftDown leftDownEvent(event);
+    handleLeftDown(leftDownEvent);
     event.Skip();
 }
 
@@ -187,7 +189,8 @@ void Machine::handleLeftDown(EvLeftDown& event)
 
 void Machine::onLeftUp(wxMouseEvent& event)
 {
-    handleLeftUp(EvLeftUp(event));
+    EvLeftUp leftUpEvent(event);
+    handleLeftUp(leftUpEvent);
     event.Skip();
 }
 
@@ -201,7 +204,8 @@ void Machine::handleLeftUp(EvLeftUp& event)
 
 void Machine::onLeftDouble(wxMouseEvent& event)
 {
-    handleLeftDouble(EvLeftDouble(event));
+    EvLeftDouble eventLeftDouble(event);
+    handleLeftDouble(eventLeftDouble);
     event.Skip();
 }
 
@@ -215,7 +219,8 @@ void Machine::handleLeftDouble(EvLeftDouble& event)
 
 void Machine::onMiddleDown(wxMouseEvent& event)
 {
-    handleMiddleDown(EvMiddleDown(event));
+    EvMiddleDown eventMiddleDown(event);
+    handleMiddleDown(eventMiddleDown);
     event.Skip();
 }
 
@@ -229,7 +234,8 @@ void Machine::handleMiddleDown(EvMiddleDown& event)
 
 void Machine::onMiddleUp(wxMouseEvent& event)
 {
-    handleMiddleUp(EvMiddleUp(event));
+    EvMiddleUp eventMiddleUp(event);
+    handleMiddleUp(eventMiddleUp);
     event.Skip();
 }
 
@@ -242,7 +248,8 @@ void Machine::handleMiddleUp(EvMiddleUp& event)
 
 void Machine::onMiddleDouble(wxMouseEvent& event)
 {
-    handleMiddleDouble(EvMiddleDouble(event));
+    EvMiddleDouble eventMiddleDouble(event);
+    handleMiddleDouble(eventMiddleDouble);
     event.Skip();
 }
 
@@ -255,7 +262,8 @@ void Machine::handleMiddleDouble(EvMiddleDouble& event)
 
 void Machine::onRightDown(wxMouseEvent& event)
 {
-    handleRightDown(EvRightDown(event));
+    EvRightDown eventRightDown(event);
+    handleRightDown(eventRightDown);
     event.Skip();
 }
 
@@ -271,7 +279,8 @@ void Machine::handleRightDown(EvRightDown& event)
 
 void Machine::onRightUp(wxMouseEvent& event)
 {
-    handleRightUp(EvRightUp(event));
+    EvRightUp eventRightUp(event);
+    handleRightUp(eventRightUp);
     event.Skip();
 }
 
@@ -285,7 +294,8 @@ void Machine::handleRightUp(EvRightUp& event)
 
 void Machine::onRightDouble(wxMouseEvent& event)
 {
-    handleRightDouble(EvRightDouble(event));
+    EvRightDouble eventRightDouble(event);
+    handleRightDouble(eventRightDouble);
     event.Skip();
 }
 
@@ -299,7 +309,8 @@ void Machine::handleRightDouble(EvRightDouble& event)
 
 void Machine::onEnter(wxMouseEvent& event)
 {
-    handleEnter(EvEnter(event));
+    EvEnter eventEnter(event);
+    handleEnter(eventEnter);
     event.Skip();
 }
 
@@ -313,7 +324,8 @@ void Machine::handleEnter(EvEnter& event)
 
 void Machine::onLeave(wxMouseEvent& event)
 {
-    handleLeave(EvLeave(event));
+    EvLeave eventLeave(event);
+    handleLeave(eventLeave);
     event.Skip();
 }
 
@@ -343,29 +355,32 @@ void Machine::onWheel(wxMouseEvent& event)
 
 void Machine::onKeyDown(wxKeyEvent& event)
 {
-    // By default, the event may propagate upwards. 
+    // By default, the event may propagate upwards.
     // If handled by the state machine, Skip(false) will be called.
-    // For instance, Don't want the left/down keys to propagate further, 
+    // For instance, Don't want the left/down keys to propagate further,
     // since that causes scrolling by wxScrolledWindow
-    event.Skip(); 
-    handleKeyDown(EvKeyDown(event));
+    event.Skip();
+    EvKeyDown eventKeyDown(event);
+    handleKeyDown(eventKeyDown);
 }
 
 void Machine::handleKeyDown(EvKeyDown& event)
 {
     VAR_DEBUG(event);
     getKeyboard().update(event);
+
     process_event(EvKeyDown(event));
 }
 
 void Machine::onKeyUp(wxKeyEvent& event)
 {
-    // By default, the event may propagate upwards. 
+    // By default, the event may propagate upwards.
     // If handled by the state machine, Skip(false) will be called.
-    // For instance, Don't want the left/down keys to propagate further, 
+    // For instance, Don't want the left/down keys to propagate further,
     // since that causes scrolling by wxScrolledWindow
-    event.Skip(); 
-    handleKeyUp(EvKeyUp(event));
+    event.Skip();
+    EvKeyUp eventKeyUp(event);
+    handleKeyUp(eventKeyUp);
 }
 
 void Machine::handleKeyUp(EvKeyUp& event)

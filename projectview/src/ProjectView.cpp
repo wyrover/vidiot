@@ -97,7 +97,7 @@ ProjectView::ProjectView(wxWindow* parent)
 
 ProjectView::~ProjectView()
 {
-	delete(mClipboard); 
+	delete(mClipboard);
 	mClipboard = 0;
 
     gui::Window::get().Unbind(model::EVENT_OPEN_PROJECT,       &ProjectView::onOpenProject,             this);
@@ -172,6 +172,7 @@ void ProjectView::select(const model::NodePtrs& nodes)
         VAR_DEBUG(node->id());
         mCtrl.Select( wxDataViewItem( node->id() ) );
     }
+    ASSERT_EQUALS(mCtrl.GetSelectedItemsCount(), nodes.size());
 }
 
 void ProjectView::selectAll()
@@ -432,7 +433,7 @@ void ProjectView::onOpen()
     {
         if (node->isA<model::Sequence>())
         {
-            gui::Window::get().getTimeLines().Open(boost::dynamic_pointer_cast<model::Sequence>(node));
+            gui::TimelinesView::get().Open(boost::dynamic_pointer_cast<model::Sequence>(node));
         }
     }
 }

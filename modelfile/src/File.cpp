@@ -223,7 +223,7 @@ void File::moveTo(pts position)
     ASSERT_MORE_THAN_EQUALS_ZERO(position);
     if (position == 0)
     {
-        // No seek required, just re-open file. Furthermore, for some files seeking to '0' causes problems 
+        // No seek required, just re-open file. Furthermore, for some files seeking to '0' causes problems
         // whereas directly getting packets from these files results in proper decoding.
         // Maybe these files do not start with a keyframe, causing the problems?
         stopReadingPackets();
@@ -796,7 +796,8 @@ void File::serialize(Archive & ar, const unsigned int version)
         }
         else
         {
-            ar & boost::serialization::make_nvp( "mPath", model::Project::get().convertPathForSaving(mPath) );
+            wxFileName path = model::Project::get().convertPathForSaving(mPath);
+            ar & boost::serialization::make_nvp( "mPath", path );
         }
         if (version == 1)
         {
