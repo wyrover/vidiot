@@ -19,9 +19,11 @@
 
 namespace test {
 
-void WaitForIdle()
+void WaitForIdleImpl(const char* p_szFileName, const size_t& p_lLine)
 {
-    static_cast<gui::Application*>(wxTheApp)->WaitForIdle();
+    wxString log;
+    log << p_szFileName << '(' << p_lLine << ')';
+    static_cast<gui::Application*>(wxTheApp)->WaitForIdleStart(log);
 }
 
 void pause(int ms)

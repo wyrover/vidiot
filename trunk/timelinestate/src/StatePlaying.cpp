@@ -114,9 +114,9 @@ boost::statechart::result Playing::react( const EvKeyUp& evt)
     VAR_DEBUG(evt);
     switch (evt.KeyCode)
     {
-    case WXK_SHIFT:     
+    case WXK_SHIFT:
         evt.consumed();
-        triggerEnd(); 
+        triggerEnd();
         break;
     case 's':
     case 'S':
@@ -148,6 +148,14 @@ boost::statechart::result Playing::react( const EvPlaybackChanged& evt)
         return transit< Idle >();
     }
     return discard_event();
+}
+
+boost::statechart::result Playing::react(const EvPlaybackPositionChanged& evt)
+{
+    VAR_DEBUG(evt);
+    getCursor().onPlaybackPosition(evt.mPosition);
+    return discard_event();
+
 }
 
 //////////////////////////////////////////////////////////////////////////

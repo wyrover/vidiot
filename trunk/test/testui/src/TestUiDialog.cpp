@@ -42,13 +42,19 @@ public:
         : mContinue(true)
         , mBarrierStop(2)
     {
-        // Wait for the main window to lose focus before starting to hit Escape
-        gui::Window::get().Bind( wxEVT_ACTIVATE, &Escape::onActivate, this );
+        util::thread::RunInMainAndWait([this]
+        {
+            // Wait for the main window to lose focus before starting to hit Escape
+            gui::Window::get().Bind( wxEVT_ACTIVATE, &Escape::onActivate, this );
+        });
     }
 
     ~Escape()
     {
-        gui::Window::get().Unbind( wxEVT_ACTIVATE, &Escape::onActivate, this );
+        util::thread::RunInMainAndWait([this]
+        {
+            gui::Window::get().Unbind( wxEVT_ACTIVATE, &Escape::onActivate, this );
+        });
         mContinue = false;
         mBarrierStop.wait();
     }
@@ -91,7 +97,7 @@ void TestUiDialog::testEscape()
     StartTestSuite();
     wxUIActionSimulator().MouseMove(gui::Window::get().GetScreenPosition() + wxPoint(100, 100));
     wxUIActionSimulator().MouseClick();
-    WaitForIdle();
+    WaitForIdle;
     {
         Escape e;
         StartTest("Files dialog");
@@ -120,13 +126,13 @@ void TestUiDialog::testEscape()
         Escape e;
         StartTest("Preferences dialog");
         WindowTriggerMenu(wxID_PREFERENCES);
-        WaitForIdle();
+        WaitForIdle;
     }
     {
         Escape e;
         StartTest("About dialog");
         WindowTriggerMenu(wxID_ABOUT);
-        WaitForIdle();
+        WaitForIdle;
     }
     {
         Escape e;
@@ -134,7 +140,7 @@ void TestUiDialog::testEscape()
         model::FolderPtr root = WindowCreateProject();
         ProjectViewAddSequence("sequence", root);
         WindowTriggerMenu(wxID_PROPERTIES);
-        WaitForIdle();
+        WaitForIdle;
     }
 }
 } // namespace

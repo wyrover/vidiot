@@ -40,7 +40,7 @@ namespace gui {
 
 class CommandLine;
 
-DECLARE_EVENT(EVENT_IDLE_TRIGGER, EventIdleTrigger, bool);
+DECLARE_EVENT(EVENT_IDLE_TRIGGER, EventIdleTrigger, wxString);
 
 class Application
     :   public wxApp
@@ -68,7 +68,8 @@ public:
     /// Trigger an event initiating the idle mechanism, and start the wait
     /// until the idle sequence has finished. Thus, this method blocks until
     /// idle seen.
-    void WaitForIdle();
+    /// \param log extra information to be logged (for debugging)
+    void WaitForIdleStart(wxString log);
 
     /// Original implementation:
     ///    wxWakeUpIdle();

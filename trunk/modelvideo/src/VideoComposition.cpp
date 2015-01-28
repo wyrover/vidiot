@@ -38,12 +38,10 @@ VideoComposition::VideoComposition(const VideoCompositionParameters& parameters)
     :   mFrames()
     ,   mParameters(parameters)
 {
-    VAR_DEBUG(this);
 }
 
 VideoComposition::~VideoComposition()
 {
-    VAR_DEBUG(this);
 }
 
 //////////////////////////////////////////////////////////////////////////

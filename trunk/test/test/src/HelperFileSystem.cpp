@@ -88,6 +88,7 @@ RandomTempDir::~RandomTempDir()
 {
     if (mCleanup && wxDirExists(mFullPath))
     {
+        VAR_DEBUG(mFileName.GetLongPath());
         bool removed = wxFileName::Rmdir( mFileName.GetLongPath(), wxPATH_RMDIR_RECURSIVE );
         ASSERT(removed);
         ASSERT(!wxDirExists(mFileName.GetLongPath()));

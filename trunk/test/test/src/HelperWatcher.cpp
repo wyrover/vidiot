@@ -21,10 +21,10 @@ namespace test {
 
 void ASSERT_WATCHED_PATHS_COUNT(int n)
 {
-    WaitForIdle();
+    WaitForIdle;
     int currentWatchedPathsCount = -1; // Just: different from n
-    util::thread::RunInMainAndWait([&currentWatchedPathsCount] 
-    { 
+    util::thread::RunInMainAndWait([&currentWatchedPathsCount]
+    {
         currentWatchedPathsCount = gui::Watcher::get().getWatchedPathsCount();
     });
     ASSERT_EQUALS(currentWatchedPathsCount,n);

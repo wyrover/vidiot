@@ -40,12 +40,12 @@ void GiveKeyboardFocus(wxWindow* widget)
     }
 #else
     util::thread::RunInMainAndWait([widget] { widget->SetFocus(); });
-    WaitForIdle();
+    WaitForIdle;
     if (dynamic_cast<wxSpinCtrlDouble*>(widget) != 0)
     {
         MouseClickTopLeft(widget, wxPoint(8,8));
     }
-    WaitForIdle();
+    WaitForIdle;
 #endif
 }
 
@@ -53,7 +53,7 @@ void SetValue(wxSlider* widget, int value)
 {
     widget->SetValue(value);
     widget->GetEventHandler()->QueueEvent(new wxCommandEvent(wxEVT_SLIDER));
-    WaitForIdle();
+    WaitForIdle;
 }
 
 void SetValue(wxSpinCtrl* widget, int value)
@@ -62,21 +62,21 @@ void SetValue(wxSpinCtrl* widget, int value)
     wxSpinEvent* event = new wxSpinEvent(wxEVT_SPINCTRL,0);
     event->SetValue(value);
     widget->GetEventHandler()->QueueEvent(event);
-    WaitForIdle();
+    WaitForIdle;
 }
 
 void SetValue(wxSpinCtrlDouble* widget, double value)
 {
     widget->SetValue(value);
     widget->GetEventHandler()->QueueEvent(new wxSpinDoubleEvent(wxEVT_SPINCTRLDOUBLE,0,value));
-    WaitForIdle();
+    WaitForIdle;
 }
 
 void SetValue(wxCheckBox* widget, bool value)
 {
     widget->SetValue(value);
     widget->GetEventHandler()->QueueEvent(new wxCommandEvent(wxEVT_COMMAND_CHECKBOX_CLICKED,0));
-    WaitForIdle();
+    WaitForIdle;
 }
 
 void ButtonTriggerPressed(wxButton* button)

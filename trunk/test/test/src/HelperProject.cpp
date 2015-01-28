@@ -38,7 +38,9 @@ DirAndFile SaveProjectAndClose(boost::optional<RandomTempDirPtr> tempDir, wxStri
 {
     DirAndFile tempDir_fileName = SaveProject(tempDir,filesuffix);
     WindowTriggerMenu(wxID_CLOSE);
-    WaitForIdle();
+    WaitForIdle;
+    ASSERT(!model::Project::exists());
+    ASSERT(!model::Root::exists());
     return tempDir_fileName;
 }
 

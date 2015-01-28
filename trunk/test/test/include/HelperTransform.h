@@ -33,7 +33,7 @@ void ClickOnEnumSelector(EnumSelector<ITEMTYPE>* widget, ITEMTYPE value)
     }
     KeyboardKeyPress(WXK_RETURN);
     ASSERT_EQUALS(widget->getValue(),value);
-    WaitForIdle();
+    WaitForIdle;
 }
 
 void ResizeClip(model::IClipPtr clip, wxSize boundingbox);

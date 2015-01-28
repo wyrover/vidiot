@@ -39,7 +39,7 @@ struct WaitHelper
         f();
         if (WaitHelper::Get().Value)
         {
-            WaitForIdle();
+            WaitForIdle;
         }
     }
     bool Value;
@@ -102,7 +102,7 @@ void MouseClickTopLeft(wxWindow* window, wxPoint extraoffset)
     ASSERT(FixtureGui::UseRealUiEvents);
     MouseMoveOnScreen(window->GetScreenPosition() + extraoffset);
     wxUIActionSimulator().MouseClick();
-    WaitForIdle();
+    WaitForIdle;
 }
 
 void MouseClickBottomLeft(wxWindow* window, wxPoint extraoffset)
@@ -113,7 +113,7 @@ void MouseClickBottomLeft(wxWindow* window, wxPoint extraoffset)
     p.y += r.height;
     MouseMoveOnScreen(p + extraoffset);
     wxUIActionSimulator().MouseClick();
-    WaitForIdle();
+    WaitForIdle;
 
 }
 
@@ -121,7 +121,7 @@ void KeyboardKeyPress(int keycode, int modifiers)
 {
     ASSERT(FixtureGui::UseRealUiEvents);
     wxUIActionSimulator().Char(keycode,modifiers);
-    WaitForIdle();
+    WaitForIdle;
 }
 
 void KeyboardKeyPressN(int count, int keycode, int modifiers)
@@ -178,10 +178,12 @@ void TimelineMove(wxPoint position)
     }
     else
     {
-
-        CurrentTimelineInputState::Get().Position = position  - getTimeline().getScrolling().getOffset();
-        gui::timeline::state::EvMotion event(CurrentTimelineInputState::Get().getWxMouseState());
-        util::thread::RunInMainAndWait([&event] { getTimeline().getStateMachine().handleMotion(event); });
+        util::thread::RunInMainAndWait([&position]
+        {
+            CurrentTimelineInputState::Get().Position = position  - getTimeline().getScrolling().getOffset();
+            gui::timeline::state::EvMotion event(CurrentTimelineInputState::Get().getWxMouseState());
+            getTimeline().getStateMachine().handleMotion(event);
+        });
     }
 }
 
@@ -195,9 +197,12 @@ void TimelineMoveRight(pixel length)
     }
     else
     {
-        CurrentTimelineInputState::Get().Position.x += length;
-        gui::timeline::state::EvMotion event(CurrentTimelineInputState::Get().getWxMouseState());
-        util::thread::RunInMainAndWait([&event] { getTimeline().getStateMachine().handleMotion(event); });
+        util::thread::RunInMainAndWait([&length]
+        {
+            CurrentTimelineInputState::Get().Position.x += length;
+            gui::timeline::state::EvMotion event(CurrentTimelineInputState::Get().getWxMouseState());
+            getTimeline().getStateMachine().handleMotion(event);
+        });
     }
 }
 
@@ -230,10 +235,13 @@ void TimelineLeftDown()
     }
     else
     {
-        ASSERT(!CurrentTimelineInputState::Get().LeftDown);
-        CurrentTimelineInputState::Get().LeftDown = true;
-        gui::timeline::state::EvLeftDown event(CurrentTimelineInputState::Get().getWxMouseState());
-        util::thread::RunInMainAndWait([&event] { getTimeline().getStateMachine().handleLeftDown(event); });
+        util::thread::RunInMainAndWait([]
+        {
+            ASSERT(!CurrentTimelineInputState::Get().LeftDown);
+            CurrentTimelineInputState::Get().LeftDown = true;
+            gui::timeline::state::EvLeftDown event(CurrentTimelineInputState::Get().getWxMouseState());
+            getTimeline().getStateMachine().handleLeftDown(event);
+        });
     }
 }
 
@@ -245,10 +253,13 @@ void TimelineLeftUp()
     }
     else
     {
-        ASSERT(CurrentTimelineInputState::Get().LeftDown);
-        CurrentTimelineInputState::Get().LeftDown = false;
-        gui::timeline::state::EvLeftUp event(CurrentTimelineInputState::Get().getWxMouseState());
-        util::thread::RunInMainAndWait([&event] { getTimeline().getStateMachine().handleLeftUp(event); });
+        util::thread::RunInMainAndWait([]
+        {
+            ASSERT(CurrentTimelineInputState::Get().LeftDown);
+            CurrentTimelineInputState::Get().LeftDown = false;
+            gui::timeline::state::EvLeftUp event(CurrentTimelineInputState::Get().getWxMouseState());
+            getTimeline().getStateMachine().handleLeftUp(event);
+        });
     }
 }
 
@@ -277,10 +288,13 @@ void TimelineRightDown()
     }
     else
     {
-        ASSERT(!CurrentTimelineInputState::Get().RightDown);
-        CurrentTimelineInputState::Get().RightDown = true;
-        gui::timeline::state::EvRightDown event(CurrentTimelineInputState::Get().getWxMouseState());
-        util::thread::RunInMainAndWait([&event] { getTimeline().getStateMachine().handleRightDown(event); });
+        util::thread::RunInMainAndWait([]
+        {
+            ASSERT(!CurrentTimelineInputState::Get().RightDown);
+            CurrentTimelineInputState::Get().RightDown = true;
+            gui::timeline::state::EvRightDown event(CurrentTimelineInputState::Get().getWxMouseState());
+            getTimeline().getStateMachine().handleRightDown(event);
+        });
     }
 }
 
@@ -292,10 +306,13 @@ void TimelineRightUp()
     }
     else
     {
-        ASSERT(CurrentTimelineInputState::Get().RightDown);
-        CurrentTimelineInputState::Get().RightDown = false;
-        gui::timeline::state::EvRightUp event(CurrentTimelineInputState::Get().getWxMouseState());
-        util::thread::RunInMainAndWait([&event] { getTimeline().getStateMachine().handleRightUp(event); });
+        util::thread::RunInMainAndWait([]
+        {
+            ASSERT(CurrentTimelineInputState::Get().RightDown);
+            CurrentTimelineInputState::Get().RightDown = false;
+            gui::timeline::state::EvRightUp event(CurrentTimelineInputState::Get().getWxMouseState());
+            getTimeline().getStateMachine().handleRightUp(event);
+        });
     }
 }
 
@@ -318,20 +335,23 @@ void TimelineKeyDown(int key)
     }
     else
     {
-        switch (key)
+        util::thread::RunInMainAndWait([key]
         {
-        case WXK_SHIFT:
-            ASSERT(!CurrentTimelineInputState::Get().ShiftDown);
-            CurrentTimelineInputState::Get().ShiftDown = true;
-            break;
-        case WXK_CONTROL:
-            ASSERT(!CurrentTimelineInputState::Get().ControlDown);
-            CurrentTimelineInputState::Get().ControlDown = true;
-            break;
-        }
-        wxMouseState state = CurrentTimelineInputState::Get().getWxMouseState();
-        gui::timeline::state::EvKeyDown event(state,key);
-        util::thread::RunInMainAndWait([&event] { getTimeline().getStateMachine().handleKeyDown(event); });
+            switch (key)
+            {
+            case WXK_SHIFT:
+                ASSERT(!CurrentTimelineInputState::Get().ShiftDown);
+                CurrentTimelineInputState::Get().ShiftDown = true;
+                break;
+            case WXK_CONTROL:
+                ASSERT(!CurrentTimelineInputState::Get().ControlDown);
+                CurrentTimelineInputState::Get().ControlDown = true;
+                break;
+            }
+            wxMouseState state = CurrentTimelineInputState::Get().getWxMouseState();
+            gui::timeline::state::EvKeyDown event(state,key);
+            getTimeline().getStateMachine().handleKeyDown(event);
+        });
     }
 }
 
@@ -343,20 +363,23 @@ void TimelineKeyUp(int key)
     }
     else
     {
-        switch (key)
+        util::thread::RunInMainAndWait([key]
         {
-        case WXK_SHIFT:
-            ASSERT(CurrentTimelineInputState::Get().ShiftDown);
-            CurrentTimelineInputState::Get().ShiftDown = false;
-            break;
-        case WXK_CONTROL:
-            ASSERT(CurrentTimelineInputState::Get().ControlDown);
-            CurrentTimelineInputState::Get().ControlDown = false;
-            break;
-        }
-        wxMouseState state = CurrentTimelineInputState::Get().getWxMouseState();
-        gui::timeline::state::EvKeyUp event(state,key);
-        util::thread::RunInMainAndWait([&event] { getTimeline().getStateMachine().handleKeyUp(event); });
+            switch (key)
+            {
+            case WXK_SHIFT:
+                ASSERT(CurrentTimelineInputState::Get().ShiftDown);
+                CurrentTimelineInputState::Get().ShiftDown = false;
+                break;
+            case WXK_CONTROL:
+                ASSERT(CurrentTimelineInputState::Get().ControlDown);
+                CurrentTimelineInputState::Get().ControlDown = false;
+                break;
+            }
+            wxMouseState state = CurrentTimelineInputState::Get().getWxMouseState();
+            gui::timeline::state::EvKeyUp event(state,key);
+            getTimeline().getStateMachine().handleKeyUp(event);
+        });
     }
 }
 

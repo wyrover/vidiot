@@ -20,12 +20,12 @@
 #include "CommandProcessor.h"
 #include "Config.h"
 #include "Dialog.h"
-#include "File.h"
-#include "Folder.h"
-#include "IView.h"
 #include "DialogNewProject.h"
+#include "File.h"
+#include "IView.h"
 #include "ProjectEvent.h"
 #include "Properties.h"
+#include "Root.h"
 #include "StatusBar.h"
 #include "UtilLog.h"
 #include "UtilRecycle.h"
@@ -39,7 +39,7 @@ Project::Project()
 // Do not initialize members with actual data here.
 // For loading that is done via serialize - Initializing here for loading is useless (overwritten by serialize) and causes crashes (mProperties instantiated twice)
 // For new documents initializing is done via OnNewDocument
-,   mRoot(Folder::makeRoot()) // Exception: Initialized here since it is used on OnChangeFilename which is called before any other method when creating a new project.
+,   mRoot()
 ,   mProperties()
 ,   mSaveFolder("")
 {
@@ -80,6 +80,7 @@ bool Project::OnNewDocument()
     bool opened = wxDocument::OnNewDocument();
     if (opened)
     {
+        mRoot = boost::make_shared<Root>();
         mProperties = boost::make_shared<Properties>();
 
         if (!gui::DialogNewProject().runWizard())
@@ -112,9 +113,13 @@ wxCommandProcessor* Project::OnCreateCommandProcessor()
 void Project::OnChangeFilename(bool notifyViews)
 {
     wxDocument::OnChangeFilename(notifyViews);
-    EventRenameProject event(this);
-    IView::getView().ProcessModelEvent(event);
-    gui::Window::get().QueueModelEvent(new EventRenameNode(NodeWithNewName(mRoot,mRoot->getName())));
+    if (mRoot)
+    {
+        EventRenameProject event(this);
+        IView::getView().ProcessModelEvent(event);
+        gui::Window::get().QueueModelEvent(new EventRenameNode(NodeWithNewName(mRoot,mRoot->getName())));
+    }
+    // else: Initialization not complete yet.
 }
 
 //////////////////////////////////////////////////////////////////////////

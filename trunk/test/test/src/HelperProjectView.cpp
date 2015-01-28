@@ -48,7 +48,7 @@ void ProjectViewSelect(model::NodePtrs nodes)
 model::FolderPtr ProjectViewAddAutoFolder( wxFileName path, model::FolderPtr parent )
 {
     gui::Dialog::get().setDir( path.GetShortPath() ); // Add with short path to check that normalizing works
-    WaitForIdle();
+    WaitForIdle;
     util::thread::RunInMainAndWait([parent]
     {
         GetProjectView().select(boost::assign::list_of(parent));
@@ -66,7 +66,7 @@ model::FolderPtr ProjectViewAddAutoFolder( wxFileName path, model::FolderPtr par
 model::FolderPtr ProjectViewAddFolder( wxString name, model::FolderPtr parent )
 {
     gui::Dialog::get().setText( name );
-    WaitForIdle();
+    WaitForIdle;
     util::thread::RunInMainAndWait([parent]
     {
         GetProjectView().select(boost::assign::list_of(parent));
@@ -84,7 +84,7 @@ model::FolderPtr ProjectViewAddFolder( wxString name, model::FolderPtr parent )
 model::SequencePtr ProjectViewAddSequence( wxString name, model::FolderPtr parent )
 {
     gui::Dialog::get().setText( name );
-    WaitForIdle();
+    WaitForIdle;
     util::thread::RunInMainAndWait([parent]
     {
         GetProjectView().select(boost::assign::list_of(parent));
@@ -101,7 +101,7 @@ model::SequencePtr ProjectViewAddSequence( wxString name, model::FolderPtr paren
 
 model::SequencePtr ProjectViewCreateSequence( model::FolderPtr folder )
 {
-    WaitForIdle();
+    WaitForIdle;
     util::thread::RunInMainAndWait([folder]
     {
         GetProjectView().select(boost::assign::list_of(folder));
@@ -136,7 +136,7 @@ model::SequencePtr ProjectViewCreateSequence( model::FolderPtr folder )
 
 model::Files ProjectViewAddFiles( wxFileNames paths, model::FolderPtr parent )
 {
-    WaitForIdle();
+    WaitForIdle;
     util::thread::RunInMainAndWait([parent]
     {
         GetProjectView().select(boost::assign::list_of(parent));
@@ -195,7 +195,7 @@ model::IPaths GetSupportedFiles( wxFileName directory )
 
 int ProjectViewCount()
 {
-    WaitForIdle();
+    WaitForIdle;
     util::thread::RunInMainAndWait([]
     {
         GetProjectView().selectAll();
@@ -258,7 +258,7 @@ void DragFromProjectViewToTimeline( model::NodePtr node, wxPoint to )
         pause(50); // Can't use WaitForIdle: event handling is blocked during DnD
     }
     SetWaitAfterEachInputAction(true);
-    WaitForIdle(); // Can be used again when the DND is done.
+    WaitForIdle; // Can be used again when the DND is done.
 }
 
 void ProjectViewOpenTimelineForSequence(model::SequencePtr sequence)

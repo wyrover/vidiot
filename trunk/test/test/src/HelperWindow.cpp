@@ -27,7 +27,7 @@ void WindowTriggerMenu(int id)
 void WindowTriggerMenu(wxWindow& window, int id)
 {
     window.GetEventHandler()->QueueEvent(new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED,id));
-    WaitForIdle();
+    WaitForIdle;
 }
 
 void WindowCheckMenu(int id, bool checked)
@@ -42,14 +42,58 @@ void WindowCheckMenu(wxFrame& window, int id, bool checked)
     // since the event causes a 'toggle'.
     window.GetMenuBar()->Check(id,!checked);
     window.ProcessCommand(id);
-    WaitForIdle();
+    WaitForIdle;
 }
+
+struct OpenProjectWaiter
+: public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
+{
+    OpenProjectWaiter()
+    : mDone(false)
+    {
+        util::thread::RunInMainAndWait([this]
+        {
+            gui::Window::get().Bind(model::EVENT_OPEN_PROJECT,     &OpenProjectWaiter::onOpenProject,     this);
+        });
+    }
+
+    ~OpenProjectWaiter()
+    {
+        util::thread::RunInMainAndWait([this]
+        {
+            gui::Window::get().Unbind(model::EVENT_OPEN_PROJECT,     &OpenProjectWaiter::onOpenProject,     this);
+        });
+    }
+
+    void onOpenProject(model::EventOpenProject &event )
+    {
+        event.Skip();
+        mDone = true;
+        mCondition.notify_all();
+    }
+
+    void wait()
+    {
+        boost::mutex::scoped_lock lock(mMutex);
+        while (!mDone)
+        {
+            mCondition.wait(lock);
+        }
+    }
+private:
+
+    boost::condition_variable mCondition;
+    boost::mutex mMutex;
+    std::atomic<bool> mDone;
+};
 
 model::FolderPtr WindowCreateProject()
 {
-    WaitForIdle();
+    WaitForIdle;
+    OpenProjectWaiter waitForOpenedProject;
     WindowTriggerMenu(wxID_NEW);
-    WaitForIdle();
+    waitForOpenedProject.wait();
+    // todo ensure that every bind/unbind is done in the main thread!
     return getRoot();
 }
 

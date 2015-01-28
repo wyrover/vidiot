@@ -17,6 +17,8 @@
 
 #include "Test.h"
 
+#include "Root.h"
+
 namespace test {
 
 //static
@@ -117,6 +119,13 @@ bool FixtureGui::tearDown()
 
     // Wait until main thread 'OnRun' stopped
     mBarrierStopped.wait();
+
+    // Had frequent issues with the shared ptr to the root object being held by test code.
+    // Avoid such issues by checking explicitly here.
+    ASSERT(!model::Project::exists());
+    ASSERT(!model::Root::exists()); 
+    ASSERT(!gui::Window::exists());
+
     VAR_DEBUG(this);
     return true;
 }

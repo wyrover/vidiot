@@ -157,7 +157,7 @@ void VideoDisplay::play()
         ASSERT_EQUALS(err,paNoError)(Pa_GetErrorText(err));
 
         err = Pa_StartStream( mAudioOutputStream );
-        ASSERT_EQUALS(err,paNoError)(Pa_GetErrorText(err));
+        ASSERT_EQUALS(err,paNoError)(Pa_GetErrorText(err)); // todo handle these error more gracefully. Not evey error indicates a programming mistake.
 
         //const PaStreamInfo* info = Pa_GetStreamInfo(mAudioOutputStream);
 
