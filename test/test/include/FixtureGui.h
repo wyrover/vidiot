@@ -18,8 +18,6 @@
 #ifndef FIXTURE_GUI_H
 #define FIXTURE_GUI_H
 
-#include "Application.h"
-
 namespace test {
 
 class HelperTestSuite;

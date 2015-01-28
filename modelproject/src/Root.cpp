@@ -1,4 +1,4 @@
-// Copyright 2013-2015 Eric Raijmakers.
+// Copyright 2015 Eric Raijmakers.
 //
 // This file is part of Vidiot.
 //
@@ -15,13 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#include "Folder.h"
+#include "Root.h"
 
-#include "NodeEvent.h"
-#include "Project.h"
-#include "Window.h"
 #include "UtilLog.h"
-#include "UtilSerializeWxwidgets.h"
 
 namespace model {
 
@@ -29,56 +25,37 @@ namespace model {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-Folder::Folder()
-:   mName()
+Root::Root()
+    : Folder("Root")
 {
     VAR_DEBUG(this);
-}
+    sInstance.push_back(this);
+};
 
-Folder::Folder(const wxString& name)
-:   mName(name)
-{
-    VAR_DEBUG(this)(mName);
-}
-
-Folder::~Folder()
+Root::~Root()
 {
     VAR_DEBUG(this);
+    auto it = std::find(sInstance.begin(), sInstance.end(), this);
+    ASSERT(it != sInstance.end());
+    sInstance.erase(it);
+};
+
+wxString Root::getName() const
+{
+    return wxFileName(Project::get().getName()).GetName(); // strip extension
 }
 
 //////////////////////////////////////////////////////////////////////////
-// INODE
+// TEST
 //////////////////////////////////////////////////////////////////////////
 
-void Folder::check(bool immediately)
-{
-    for ( model::NodePtr node : getChildren() )
-    {
-        node->check();
-    }
-}
+// static 
+std::vector<Root*> Root::sInstance;
 
-//////////////////////////////////////////////////////////////////////////
-// GET/SET ATTRIBUTES
-//////////////////////////////////////////////////////////////////////////
-
-wxString Folder::getName() const
+// static
+bool Root::exists()
 {
-    return mName;
-}
-
-void Folder::setName(const wxString& name)
-{
-    if (name != mName)
-    {
-        mName = name;
-        gui::Window::get().QueueModelEvent(new EventRenameNode(NodeWithNewName(self(),mName)));
-    }
-}
-
-wxString Folder::getSequenceName() const
-{
-    return mName;
+    return sInstance.size() != 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -86,12 +63,11 @@ wxString Folder::getSequenceName() const
 //////////////////////////////////////////////////////////////////////////
 
 template<class Archive>
-void Folder::serialize(Archive & ar, const unsigned int version)
+void Root::serialize(Archive & ar, const unsigned int version)
 {
     try
     {
-        ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Node);
-        ar & BOOST_SERIALIZATION_NVP(mName);
+        ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Folder);
     }
     catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
@@ -99,9 +75,9 @@ void Folder::serialize(Archive & ar, const unsigned int version)
     catch (...)                                  { LOG_ERROR;                                   throw; }
 }
 
-template void Folder::serialize<boost::archive::xml_oarchive>(boost::archive::xml_oarchive& ar, const unsigned int archiveVersion);
-template void Folder::serialize<boost::archive::xml_iarchive>(boost::archive::xml_iarchive& ar, const unsigned int archiveVersion);
+template void Root::serialize<boost::archive::xml_oarchive>(boost::archive::xml_oarchive& ar, const unsigned int archiveVersion);
+template void Root::serialize<boost::archive::xml_iarchive>(boost::archive::xml_iarchive& ar, const unsigned int archiveVersion);
 
 } //namespace
 
-BOOST_CLASS_EXPORT_IMPLEMENT(model::Folder)
+BOOST_CLASS_EXPORT_IMPLEMENT(model::Root)

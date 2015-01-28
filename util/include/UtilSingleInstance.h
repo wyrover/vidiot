@@ -41,6 +41,10 @@ public:
         ASSERT_NONZERO(sInstance);
         return *(static_cast<INSTANCETYPE*>(sInstance));
     }
+    static bool exists()
+    {
+        return sInstance != 0;
+    }
 private:
     static SingleInstance* sInstance;
 };

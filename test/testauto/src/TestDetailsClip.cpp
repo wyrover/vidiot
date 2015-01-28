@@ -69,7 +69,7 @@ void TestDetailsClip::testChangeLength()
         std::ostringstream o;
         o << "LengthButton: " << (enlarge?"Enlarge":"Reduce") << " clip length (on " << (begin?"left":"right") << " side) to " << getLength(button);
         StartTest(o.str().c_str());
-        WaitForIdle();
+        WaitForIdle;
         bool enabled = button->IsEnabled();
         util::thread::RunInMainAndWait(boost::bind(&gui::timeline::DetailsClip::handleLengthButtonPressed,DetailsClipView(),button));
         ASSERT_SELECTION_SIZE(1); // Clip and link selected

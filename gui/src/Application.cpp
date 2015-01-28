@@ -38,7 +38,7 @@ namespace gui {
 
 wxIMPLEMENT_APP_NO_MAIN(Application);
 
-DEFINE_EVENT(EVENT_IDLE_TRIGGER,  EventIdleTrigger, bool);
+DEFINE_EVENT(EVENT_IDLE_TRIGGER,  EventIdleTrigger, wxString);
 
 struct wxLogImpl : public wxLog
 {
@@ -133,7 +133,7 @@ Application::~Application()
 // IDLE HANDLING
 //////////////////////////////////////////////////////////////////////////
 
-void Application::WaitForIdle()
+void Application::WaitForIdleStart(wxString log)
 {
     ASSERT(!wxThread::IsMain());
     // Original implementation:
@@ -152,14 +152,14 @@ void Application::WaitForIdle()
     // (including Idle events) are first handled. When this specific event is seen,
     // processing (for 'idle waiting') continues with method triggerIdle().
     Bind(EVENT_IDLE_TRIGGER, &Application::triggerIdle, this);
-    QueueEvent(new EventIdleTrigger(false));
+    QueueEvent(new EventIdleTrigger(log));
 
     static int maxWaitTime = 4000;
     // timed_wait: To avoid indefinite waits. Not the best solution, but working...for now.
     // This caused problems, particularly with the Play() method of the HelperTimeline class.
     // Playback would continue indefinitely...
     mConditionIdle.timed_wait(lock, boost::posix_time::milliseconds(maxWaitTime));
-    LOG_DEBUG << "WAIT_DONE";
+    LOG_DEBUG << "WAIT_IDLE_DONE " << log;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -174,14 +174,17 @@ void Application::triggerIdle(EventIdleTrigger& event)
     boost::mutex::scoped_lock lock(mMutexIdle);
     Unbind(EVENT_IDLE_TRIGGER, &Application::triggerIdle, this);
     Bind(wxEVT_IDLE, &Application::onIdle, this);
-    VAR_DEBUG(idlestart); idlestart++;
+    LOG_DEBUG << "WAIT_IDLE " << idlestart << ' ' << event.getValue();
+    idlestart++;
     wxWakeUpIdle();
 }
+
 void Application::onIdle(wxIdleEvent& event)
 {
     boost::mutex::scoped_lock lock(mMutexIdle);
     mConditionIdle.notify_all();
-    VAR_DEBUG(idleend); idleend++;
+    LOG_DEBUG << "WAIT_IDLE " << idleend;
+    idleend++;
     Unbind(wxEVT_IDLE, &Application::onIdle, this);
     event.Skip();
 }

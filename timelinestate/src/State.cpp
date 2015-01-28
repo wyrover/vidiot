@@ -62,6 +62,7 @@ Machine::Machine(Timeline& tl)
     getTimeline().  Bind(wxEVT_MOUSE_CAPTURE_CHANGED,   &Machine::onCaptureChanged, this);
 
     getPlayer()->Bind(EVENT_PLAYBACK_ACTIVE, &Machine::onPlaybackActive, this);
+    getPlayer()->Bind(EVENT_PLAYBACK_POSITION, &Machine::onPlaybackPosition, this);
 
     VAR_DEBUG(this);
 }
@@ -89,6 +90,8 @@ Machine::~Machine()
     getTimeline().  Unbind(wxEVT_MOUSE_CAPTURE_CHANGED, &Machine::onCaptureChanged, this);
 
     getPlayer()->Unbind(EVENT_PLAYBACK_ACTIVE, &Machine::onPlaybackActive, this);
+    getPlayer()->Bind(EVENT_PLAYBACK_POSITION, &Machine::onPlaybackPosition, this);
+
 }
 
 struct EvStart : boost::statechart::event< EvStart > {};
@@ -405,6 +408,15 @@ void Machine::onPlaybackActive(PlaybackActiveEvent& event)
     LOG_DEBUG;
     process_event(EvPlaybackChanged(event.getValue()));
     event.Skip();
+}
+
+void Machine::onPlaybackPosition(PlaybackPositionEvent& event)
+{
+    LOG_DEBUG;
+    process_event(EvPlaybackPositionChanged(event.getValue()));
+    event.Skip();
+
+
 }
 
 }}} // namespace

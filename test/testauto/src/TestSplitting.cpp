@@ -98,7 +98,7 @@ void TestSplitting::testSplittingDuringPlayback()
     WaitForPlaybackStopped stoppedAgain;
     TimelineKeyPress(' ');
     stoppedAgain.wait();
-    WaitForIdle();
+    WaitForIdle;
 }
 
 } // namespace

@@ -73,7 +73,7 @@ void TestTrimming::testKeyboardTrimming()
 {
     StartTestSuite();
     TimelineZoomIn(3);
-    
+
     auto TestBeginTrimSucceeds = [this](wxString title)
     {
         StartTest(title);
@@ -128,14 +128,14 @@ void TestTrimming::testKeyboardTrimming()
         TimelineKeyPress('e');
         ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
     }
-    
+
     WindowTriggerMenu(ID_ADDVIDEOTRACK);
     WindowTriggerMenu(ID_ADDAUDIOTRACK);
     TimelineTrimRight(VideoClip(0,4), - 250); // Make smaller for easier positioning
-    
+
     TestBeginTrimSucceeds("With other track without clips: Begin trim");
     TestEndTrimSucceeds("With other track without clips: End trim");
-    
+
     TimelineDragToTrack(1,VideoClip(0,4),AudioClip(0,4));
     TestBeginTrimSucceeds("With other track with empty clip: Begin trim");
     TestEndTrimSucceeds("With other track with empty clip: End trim");
@@ -149,7 +149,7 @@ void TestTrimming::testKeyboardTrimming()
     TestBeginTrimSucceeds("With other track with partially right obscuring non-empty clip: Begin trim");
     TestEndTrimImpossible("With other track with partially right obscuring non-empty clip: End trim (no change)");
     Undo();
-    
+
     TimelineDrag(From(RightCenter(VideoClip(1,1)) + wxPoint(-20,0)).AlignRight(LeftPixel(VideoClip(0,2)) + 20));
     TestBeginTrimImpossible("With other track with partially left obscuring non-empty clip: Begin trim");
     TestEndTrimSucceeds("With other track with partially left obscuring non-empty clip: End trim (no change)");
@@ -183,7 +183,7 @@ void TestTrimming::testKeyboardTrimmingDuringPlayback()
     stoppedAgain.wait();
     pause(500);
 
-    WaitForIdle();
+    WaitForIdle;
 }
 
 

@@ -53,6 +53,8 @@ public:
 
     void setLogicalPositionAndKeepVisible(pts position);
 
+    void onPlaybackPosition(pts position);
+
     void prevFrame();
     void nextFrame();
     void prevCut();
@@ -73,12 +75,6 @@ public:
 private:
 
     pts mCursorPosition;
-
-    //////////////////////////////////////////////////////////////////////////
-    // EVENTS
-    //////////////////////////////////////////////////////////////////////////
-
-    void onPlaybackPosition(PlaybackPositionEvent& event);
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS

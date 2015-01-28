@@ -50,32 +50,34 @@ void TestExceptions::testRemovedFileInSequenceBeforeOpening_Title()
 void TestExceptions::testRemovedFileUsedForTransitionsBeforeOpening()
 {
     StartTestSuite();
-    model::FolderPtr root = WindowCreateProject();
-    ASSERT(root);
-    ASSERT_WATCHED_PATHS_COUNT(0);
-
-    StartTest("Create document with transitions");
-    model::IPaths InputFiles = getListOfInputPaths();
     RandomTempDirPtr tempDir = RandomTempDir::generate();
     wxFileNames fileNames;
-    for ( model::IPathPtr path : getListOfInputPaths() )
     {
-        wxFileName filepath(tempDir->getFileName().GetLongPath(), path->getPath().GetFullName());
-        bool copyok = wxCopyFile( InputFiles.front()->getPath().GetLongPath(), filepath.GetLongPath(), false );
-        ASSERT(copyok);
+        model::FolderPtr root = WindowCreateProject();
+        ASSERT(root);
+        ASSERT_WATCHED_PATHS_COUNT(0);
 
-        fileNames.push_back(filepath);
+        StartTest("Create document with transitions");
+        model::IPaths InputFiles = getListOfInputPaths();
+        for (model::IPathPtr path : getListOfInputPaths())
+        {
+            wxFileName filepath(tempDir->getFileName().GetLongPath(), path->getPath().GetFullName());
+            bool copyok = wxCopyFile(InputFiles.front()->getPath().GetLongPath(), filepath.GetLongPath(), false);
+            ASSERT(copyok);
+
+            fileNames.push_back(filepath);
+        }
+        model::FolderPtr folder = ProjectViewAddAutoFolder(tempDir->getFileName());
+        WaitForChildCount(root, 2 + InputFiles.size());
+        ASSERT_WATCHED_PATHS_COUNT(1);
+        model::SequencePtr sequence = ProjectViewCreateSequence(folder);
+        WaitForChildCount(root, 3 + InputFiles.size());
+
+        TimelineZoomIn(6);
+        MakeInOutTransitionAfterClip t2(1); t2.dontUndo();
+        MakeInOutTransitionAfterClip t1(0); t1.dontUndo();
     }
-    model::FolderPtr folder = ProjectViewAddAutoFolder( tempDir->getFileName() );
-    WaitForChildCount(root, 2 + InputFiles.size());
-    ASSERT_WATCHED_PATHS_COUNT(1);
-    model::SequencePtr sequence = ProjectViewCreateSequence(folder);
-    WaitForChildCount(root, 3 + InputFiles.size());
-
-    TimelineZoomIn(6);
-    MakeInOutTransitionAfterClip t2(1); t2.dontUndo();
-    MakeInOutTransitionAfterClip t1(0); t1.dontUndo();
-
+    
     std::pair<RandomTempDirPtr, wxFileName> tempDir_fileName = SaveProjectAndClose();
 
     wxFileNames::iterator it = fileNames.begin();
@@ -85,7 +87,7 @@ void TestExceptions::testRemovedFileUsedForTransitionsBeforeOpening()
 
     StartTest("Load document");
     WindowTriggerMenu(wxID_FILE1); // Load document 1 from the file history, this is the file that was saved before. This mechanism avoids the open dialog.
-    WaitForIdle();
+    WaitForIdle;
 
     Scrub(HCenter(VideoClip(0,1)),RightPixel(VideoClip(0,1)) + 5);
     Scrub(-5 + LeftPixel(VideoClip(0,3)),HCenter(VideoClip(0,3)));
@@ -96,52 +98,53 @@ void TestExceptions::testRemovedFileUsedForTransitionsBeforeOpening()
 void TestExceptions::testRemovedFileInProjectViewBeforeOpening()
 {
     StartTestSuite();
-    model::FolderPtr root = WindowCreateProject();
-    ASSERT(root);
-    model::IPaths InputFiles = getListOfInputPaths();
-
-    StartTest("Add file to a non-auto folder");
     RandomTempDirPtr tempDir = RandomTempDir::generate();
-    wxFileName filepath1(tempDir->getFileName().GetLongPath(), "removedfile.avi");
-    bool copyok = wxCopyFile( InputFiles.front()->getPath().GetLongPath(), filepath1.GetLongPath(), false );
-    ASSERT(copyok);
+    {
+        model::FolderPtr root = WindowCreateProject();
+        ASSERT(root);
+        model::IPaths InputFiles = getListOfInputPaths();
 
-    ASSERT_WATCHED_PATHS_COUNT(0);
-    model::FolderPtr folder1 = ProjectViewAddFolder( "TestFolder" );
-    WaitForChildCount(root, 2);
-    model::Files files1 = ProjectViewAddFiles( boost::assign::list_of(filepath1), folder1 );
-    WaitForChildCount(root, 3);
-    ASSERT_WATCHED_PATHS_COUNT(1);
+        StartTest("Add file to a non-auto folder");
+        wxFileName filepath1(tempDir->getFileName().GetLongPath(), "removedfile.avi");
+        bool copyok = wxCopyFile(InputFiles.front()->getPath().GetLongPath(), filepath1.GetLongPath(), false);
+        ASSERT(copyok);
+
+        ASSERT_WATCHED_PATHS_COUNT(0);
+        model::FolderPtr folder1 = ProjectViewAddFolder("TestFolder");
+        WaitForChildCount(root, 2);
+        model::Files files1 = ProjectViewAddFiles(boost::assign::list_of(filepath1), folder1);
+        WaitForChildCount(root, 3);
+        ASSERT_WATCHED_PATHS_COUNT(1);
+    }
 
     std::pair<RandomTempDirPtr, wxFileName> tempDir_fileName = SaveProjectAndClose();
 
     tempDir.reset(); // Deletes the file (still used in the project view) from disk
-
     StartTest("Load document");
     gui::Dialog::get().setConfirmation(); // A confirmation for the dialog showing that the removed file is deleted from project
     WindowTriggerMenu(wxID_FILE1); // Load document 1 from the file history, this is the file that was saved before. This mechanism avoids the open dialog.
-    WaitForIdle();
-    pause();
+    WaitForIdle;
 }
 
 void TestExceptions::testRemovedFolderInProjectViewBeforeOpening()
 {
     StartTestSuite();
-    model::FolderPtr root = WindowCreateProject();
-    ASSERT(root);
-
     RandomTempDirPtr tempDir = RandomTempDir::generate();
-    model::FolderPtr autofolder = ProjectViewAddAutoFolder( tempDir->getFileName() ); // Also waits for work
-    WaitForChildCount(root, 2);
+    {
+        model::FolderPtr root = WindowCreateProject();
+        ASSERT(root);
+
+        model::FolderPtr autofolder = ProjectViewAddAutoFolder(tempDir->getFileName()); // Also waits for work
+        WaitForChildCount(root, 2);
+    }
 
     std::pair<RandomTempDirPtr, wxFileName> tempDir_fileName = SaveProjectAndClose();
 
     tempDir.reset(); // Deletes the folder (still used in the project view) from disk
-
     StartTest("Load document");
     gui::Dialog::get().setConfirmation(); // A confirmation for the dialog showing that the removed file is deleted from project
     WindowTriggerMenu(wxID_FILE1); // Load document 1 from the file history, this is the file that was saved before. This mechanism avoids the open dialog.
-    WaitForIdle();
+    WaitForIdle;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -199,7 +202,7 @@ void TestExceptions::testRemovedFileInSequenceBeforeOpening(const wxFileName& fi
 
     StartTest("Load document");
     WindowTriggerMenu(wxID_FILE1); // Load document 1 from the file history, this is the file that was saved before. This mechanism avoids the open dialog.
-    WaitForIdle();
+    WaitForIdle;
 
     Play(10, 500);
 }

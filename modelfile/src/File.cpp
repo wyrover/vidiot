@@ -612,7 +612,6 @@ void File::openFile()
     for (unsigned int i=0; i < mFileContext->nb_streams; ++i)
     {
         AVStream* stream = mFileContext->streams[i];
-        VAR_DEBUG(stream);
 
         stream->discard = AVDISCARD_NONE;
 
@@ -644,9 +643,9 @@ void File::openFile()
                     //{
                         mNumberOfFrames = 0;
                     //}
+                    VAR_DEBUG(stream);
                 }
             }
-            VAR_DEBUG(stream)(mNumberOfFrames);
         }
         else if (isAudioSupported(stream))
         {
@@ -661,6 +660,7 @@ void File::openFile()
         }
         else
         {
+            VAR_DEBUG(stream);
             continue; // To ensure that this stream is not used in case the video/audio contents is not supported
         }
 

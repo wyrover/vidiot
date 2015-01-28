@@ -38,7 +38,7 @@ void ExpectExecutedWork::wait()
     worker::VisibleWorker::get().waitForExecutionCount();
     // Any work done generates at least one event (WorkDoneEvent).
     // Wait until those events have been handled by the main thread.
-    WaitForIdle();
+    WaitForIdle;
 }
 
 } // namespace

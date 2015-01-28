@@ -58,6 +58,24 @@ struct EvPlaybackChanged
     }
 };
 
+
+
+struct EvPlaybackPositionChanged
+    : boost::statechart::event< EvPlaybackPositionChanged >
+{
+    EvPlaybackPositionChanged(pts position)
+        : mPosition(position)
+    {}
+    pts mPosition;
+
+    friend std::ostream& operator<<(std::ostream& os, const EvPlaybackPositionChanged& obj)
+    {
+        os  << typeid(obj).name() << '|' // This typeid is required to distinguish the various 'react' methods
+            << obj.mPosition;
+        return os;
+    }
+};
+
 }}} // namespace
 
 #endif

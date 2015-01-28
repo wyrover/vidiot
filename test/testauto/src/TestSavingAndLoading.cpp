@@ -68,9 +68,9 @@ void TestSavingAndLoading::testSaveAndLoad()
     for ( model::TransitionDescription t : model::video::VideoTransitionFactory::get().getAllPossibleTransitions() )
     {
         StartTest("Add transition (" + t.first + "," + t.second + ") to sequence");
-        util::thread::RunInMainAndWait([t,number]() 
-        { 
-            gui::timeline::command::createTransition(getSequence(), VideoClip(0,number),model::TransitionTypeIn, model::video::VideoTransitionFactory::get().getTransition(t)); 
+        util::thread::RunInMainAndWait([t,number]()
+        {
+            gui::timeline::command::createTransition(getSequence(), VideoClip(0,number),model::TransitionTypeIn, model::video::VideoTransitionFactory::get().getTransition(t));
         });
         number += 2; // +2 because the transition was added inbetween
     }
@@ -98,10 +98,11 @@ void TestSavingAndLoading::testSaveAndLoad()
     //////////////////////////////////////////////////////////////////////////
 
     // This project files is saved IN the source tree. This is required for saving
-    // with relative path names. This avoids problems when running this test from a 
-    // repository in a different path. 
+    // with relative path names. This avoids problems when running this test from a
+    // repository in a different path.
     wxFileName referenceDirName(getTestPath());
     referenceDirName.AppendDir("saved_projects");
+    mProjectFixture.destroy();
     std::pair<RandomTempDirPtr, wxFileName> tempDir_fileName = SaveProjectAndClose(boost::make_shared<RandomTempDir>(referenceDirName), "_new");
 
     //////////////////////////////////////////////////////////////////////////
@@ -183,9 +184,9 @@ void TestSavingAndLoading::testBackupBeforeSave()
             ASSERT(!model::Project::createBackupFileName(existingFile,j).Exists());
         }
     }
-    WindowTriggerMenu(wxID_CLOSE);
-    WaitForIdle();
     mProjectFixture.destroy();
+    WindowTriggerMenu(wxID_CLOSE);
+    WaitForIdle;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -201,7 +202,7 @@ void TestSavingAndLoading::checkDocument(wxString path)
     });
 
     // Checks on loaded document
-    WaitForIdle();
+    WaitForIdle;
     {
         StartTest("Cursor position");
         ASSERT_EQUALS(getTimeline().getCursor().getLogicalPosition(), getSequence()->getLength() / 2);

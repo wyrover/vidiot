@@ -50,24 +50,24 @@ void TimelineTrimTransitionRightClipBegin(model::IClipPtr transition, pixel leng
 void TimelineBeginTrim(wxPoint from, bool shift)
 {
     TimelineMove(from);
-    WaitForIdle();
+    WaitForIdle;
     if (shift)
     {
         TimelineKeyDown(WXK_SHIFT);
-        WaitForIdle();
+        WaitForIdle;
     }
     TimelineLeftDown();
-    WaitForIdle();
+    WaitForIdle;
 }
 
 void TimelineEndTrim(bool shift)
 {
     TimelineLeftUp();
-    WaitForIdle();
+    WaitForIdle;
     if (shift)
     {
         TimelineKeyUp(WXK_SHIFT);
-        WaitForIdle();
+        WaitForIdle;
     }
 }
 
@@ -75,7 +75,7 @@ void TimelineTrim(wxPoint from, wxPoint to, bool shift, bool endtrim)
 {
     TimelineBeginTrim(from,shift);
     TimelineMove(to);
-    WaitForIdle();
+    WaitForIdle;
     if (endtrim)
     {
         TimelineEndTrim(shift);

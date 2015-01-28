@@ -43,14 +43,14 @@ Cursor::Cursor(Timeline* timeline)
 {
     VAR_DEBUG(this);
 
-    getPlayer()->Bind(EVENT_PLAYBACK_POSITION, &Cursor::onPlaybackPosition, this);
+//    getPlayer()->Bind(EVENT_PLAYBACK_POSITION, &Cursor::onPlaybackPosition, this);
 }
 
 Cursor::~Cursor()
 {
     VAR_DEBUG(this);
 
-    getPlayer()->Unbind(EVENT_PLAYBACK_POSITION, &Cursor::onPlaybackPosition, this);
+//    getPlayer()->Unbind(EVENT_PLAYBACK_POSITION, &Cursor::onPlaybackPosition, this);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -135,22 +135,9 @@ void Cursor::center()
 
 }
 
-//////////////////////////////////////////////////////////////////////////
-// DRAW
-//////////////////////////////////////////////////////////////////////////
-
-void Cursor::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) const
+void Cursor::onPlaybackPosition(pts position)
 {
-    getTimeline().drawLine(dc,region,offset,mCursorPosition,Layout::get().CursorPen);
-}
-
-//////////////////////////////////////////////////////////////////////////
-// EVENTS
-//////////////////////////////////////////////////////////////////////////
-
-void Cursor::onPlaybackPosition(PlaybackPositionEvent& event)
-{
-    moveTo(event.getValue());
+    moveTo(position);
 
     // Ensure that the scrolling is adjusted if playback moves the cursor beyond the visible region.
     // Note: specifically located here since a slightly different adjustment mechanism is used for user actions.
@@ -158,18 +145,25 @@ void Cursor::onPlaybackPosition(PlaybackPositionEvent& event)
     wxSize size = getTimeline().GetClientSize();
 
     pts lastVisibleFrame = getZoom().pixelsToPts(scroll.x + size.x - EDGE_OFFSET);
-    if (mCursorPosition > lastVisibleFrame  &&                           
-        mCursorPosition <= lastVisibleFrame + getZoom().pixelsToPts(2) ) 
+    if (mCursorPosition > lastVisibleFrame  &&
+        mCursorPosition <= lastVisibleFrame + getZoom().pixelsToPts(2) )
     {
-        // mCursorPosition > lastVisibleFrame: 
+        // mCursorPosition > lastVisibleFrame:
         //    ensures automated scrolling starts when the cursor moves 'too far'
-        // mCursorPosition <= lastVisibleFrame + getZoom().pixelsToPts(2): 
-        //    avoids automated scrolling to mess up manual scrolling during playback. 
+        // mCursorPosition <= lastVisibleFrame + getZoom().pixelsToPts(2):
+        //    avoids automated scrolling to mess up manual scrolling during playback.
         //    pixelsToPts(TWO) is used for the maximum zoom level.
         getScrolling().align(mCursorPosition, size.x - EDGE_OFFSET);
     }
+}
 
-    event.Skip();
+//////////////////////////////////////////////////////////////////////////
+// DRAW
+//////////////////////////////////////////////////////////////////////////
+
+void Cursor::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) const
+{
+    getTimeline().drawLine(dc,region,offset,mCursorPosition,Layout::get().CursorPen);
 }
 
 //////////////////////////////////////////////////////////////////////////

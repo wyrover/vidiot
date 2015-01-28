@@ -26,25 +26,25 @@ namespace test {
 /// \param widget widget to receive focus
 void GiveKeyboardFocus(wxWindow* widget);
 
-/// Set the value of the control to the given value AND generate 
+/// Set the value of the control to the given value AND generate
 /// proper event signaling the update to the application.
 /// \param widget widget to be changed
 /// \param value new value of the slider
 void SetValue(wxSlider* widget, int value);
 
-/// Set the value of the control to the given value AND generate 
+/// Set the value of the control to the given value AND generate
 /// proper event signaling the update to the application.
 /// \param widget widget to be changed
 /// \param value new value of the slider
 void SetValue(wxSpinCtrl* widget, int value);
 
-/// Set the value of the control to the given value AND generate 
+/// Set the value of the control to the given value AND generate
 /// proper event signaling the update to the application.
 /// \param widget widget to be changed
 /// \param value new value of the slider
 void SetValue(wxSpinCtrlDouble* widget, double value);
 
-/// Set the value of the control to the given value AND generate 
+/// Set the value of the control to the given value AND generate
 /// proper event signaling the update to the application.
 /// \param widget widget to be changed
 /// \param value new value of the slider
@@ -53,7 +53,7 @@ void SetValue(EnumSelector<ITEMTYPE>* widget, ITEMTYPE value)
 {
     widget->SetSelection(widget->getIndex(value));
     widget->GetEventHandler()->QueueEvent(new wxCommandEvent(wxEVT_CHOICE));
-    WaitForIdle();
+    WaitForIdle;
 }
 
 /// Simulate the setting of a check box to the given value.

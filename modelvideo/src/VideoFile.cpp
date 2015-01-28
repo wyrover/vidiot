@@ -238,7 +238,7 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
                     // else: Packet probably made aligned?
                     // If the assert above fails,
                     // then see http://blog.tomaka17.com/2012/03/libavcodeclibavformat-tutorial/
-                    // for the cases listed below 'The "isFrameAvailable" and "processedLength" variables are very important.'. 
+                    // for the cases listed below 'The "isFrameAvailable" and "processedLength" variables are very important.'.
                     // One case is missing here (0 < len1 < packet.size)
                 }
             }
@@ -334,6 +334,7 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
 
     // DEBUG: saveScaledFrame(codec,size,mDeliveredFrame);
     ASSERT(mDeliveredFrame)(parameters)(codec)(decodedFramePts);
+    ASSERT_IMPLIES(!mDeliveredFrame->isA<VideoSkipFrame>(), mDeliveredFrame->getLayers().size() == 1);
 
     // Clone the used frame. Must be done for multiple reasons.
     // 1. See also "Same frame again" above

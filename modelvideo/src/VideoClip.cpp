@@ -178,6 +178,7 @@ VideoFramePtr VideoClip::getNextVideo(const VideoCompositionParameters& paramete
                     }
                     else
                     {
+                        ASSERT(!fileFrame->isA<VideoSkipFrame>());
                         ASSERT_EQUALS(fileFrame->getLayers().size(), 1);
                         videoFrame = boost::make_shared<VideoFrame>(parameters, fileFrame->getLayers().front());
                         videoFrame->getLayers().front()->setPosition(Convert::scale(mPosition - mRotationPositionOffset, scaleToBoundingBox));

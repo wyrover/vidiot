@@ -79,6 +79,7 @@
 #include "Player.h"
 #include "PositionInfo.h"
 #include "Project.h"
+#include "ProjectEvent.h"
 #include "ProjectModification.h"
 #include "ProjectView.h"
 #include "ProjectViewCreateAutoFolder.h"

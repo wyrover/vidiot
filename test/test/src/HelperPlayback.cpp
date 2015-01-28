@@ -27,11 +27,17 @@ WaitForPlayback::WaitForPlayback(bool waitForStart)
     :   mWaitForStart(waitForStart)
     ,   mDone(false)
 {
-    getTimeline().getPlayer()->Bind(gui::EVENT_PLAYBACK_ACTIVE, &WaitForPlayback::onPlaybackActive, this);
+    util::thread::RunInMainAndWait([this]
+    {
+        getTimeline().getPlayer()->Bind(gui::EVENT_PLAYBACK_ACTIVE, &WaitForPlayback::onPlaybackActive, this);
+    });
 }
 WaitForPlayback::~WaitForPlayback()
 {
-    getTimeline().getPlayer()->Unbind(gui::EVENT_PLAYBACK_ACTIVE, &WaitForPlayback::onPlaybackActive, this);
+    util::thread::RunInMainAndWait([this]
+    {
+        getTimeline().getPlayer()->Unbind(gui::EVENT_PLAYBACK_ACTIVE, &WaitForPlayback::onPlaybackActive, this);
+    });
 }
 
 //////////////////////////////////////////////////////////////////////////

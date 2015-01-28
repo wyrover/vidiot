@@ -132,7 +132,7 @@ pixel LeftPixel(model::IClipPtr clip)
         //
         // The check for TransitionLeftClipEnd is added to ensure that - in case of a
         // cross transition - not accidentally the rightmost point of the left adjacent clip
-        // (adjacent to the transition) is returned; because in that case info.clip would 
+        // (adjacent to the transition) is returned; because in that case info.clip would
         // equal the transition, see ClipView::getPositionInfo where info.clip is adjusted
         // to become 'nextTransition'.
         p.x++;
@@ -156,7 +156,7 @@ pixel RightPixel(model::IClipPtr clip)
         //
         // The check for TransitionRightClipBegin is added to ensure that - in case of a
         // cross transition - not accidentally the leftmost point of the right adjacent clip
-        // (adjacent to the transition) is returned; because in that case info.clip would 
+        // (adjacent to the transition) is returned; because in that case info.clip would
         // equal the transition, see ClipView::getPositionInfo where info.clip is adjusted
         // to become 'prevTransition'.
 
@@ -369,6 +369,8 @@ void ToggleInterval(pixel from, pixel to)
     // The interval creation does not start before shift is pressed.
     // Therefore, the initial drag is adjusted by this amount, to ensure that the position
     // where the new interval is started is known.
+    //
+    // beforeShift > tolerance in StateLeftDown (otherwise,  Drag won't be started)
     pixel beforeShift = gui::Layout::DragThreshold + 1;
     if (to > from)
     {
@@ -378,9 +380,8 @@ void ToggleInterval(pixel from, pixel to)
     static const pixel y = gui::Layout::TimeScaleHeight - 5;
 
     wxPoint fromPoint(from + beforeShift, y);
+    wxPoint betweenPoint(from, y); // Actual point at which the interval creation starts
     wxPoint toPoint(to,y);
-    wxPoint betweenPoint(fromPoint);
-    betweenPoint.x += (fromPoint.x > toPoint.x) ? -(gui::Layout::DragThreshold+1) : (gui::Layout::DragThreshold+1); // Should be greater than the tolerance in StateLeftDown (otherwise, the Drag won't be started)
     TimelineMove(fromPoint);
     TimelineLeftDown();
     TimelineMove(betweenPoint);
@@ -388,6 +389,7 @@ void ToggleInterval(pixel from, pixel to)
     TimelineMove(toPoint);
     TimelineLeftUp();
     TimelineKeyUp(WXK_SHIFT);
+    VAR_DEBUG(fromPoint)(betweenPoint)(toPoint);
 }
 
 void Scrub(pixel from, pixel to)
@@ -464,21 +466,27 @@ void DumpSequenceAndWait()
 WaitForTimelineToLoseFocus::WaitForTimelineToLoseFocus()
     :   mFound(false)
 {
-    ASSERT( FixtureGui::UseRealUiEvents); // Otherwise timeline never has the focus anyway
+    util::thread::RunInMainAndWait([this]
+    {
+        ASSERT( FixtureGui::UseRealUiEvents); // Otherwise timeline never has the focus anyway
 #ifdef _MSC_VER
-    getTimeline().Bind(wxEVT_LEAVE_WINDOW, &WaitForTimelineToLoseFocus::onLeave, this);
+        getTimeline().Bind(wxEVT_LEAVE_WINDOW, &WaitForTimelineToLoseFocus::onLeave, this);
 #else
-    getTimeline().Bind(wxEVT_KILL_FOCUS,   &WaitForTimelineToLoseFocus::onFocus, this);
+        getTimeline().Bind(wxEVT_KILL_FOCUS,   &WaitForTimelineToLoseFocus::onFocus, this);
 #endif
+    });
 }
 
 WaitForTimelineToLoseFocus::~WaitForTimelineToLoseFocus()
 {
+    util::thread::RunInMainAndWait([this]
+    {
 #ifdef _MSC_VER
     getTimeline().Unbind(wxEVT_LEAVE_WINDOW, &WaitForTimelineToLoseFocus::onLeave, this);
 #else
     getTimeline().Unbind(wxEVT_KILL_FOCUS,   &WaitForTimelineToLoseFocus::onFocus, this);
 #endif
+    });
 }
 
 void WaitForTimelineToLoseFocus::wait()

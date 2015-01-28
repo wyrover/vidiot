@@ -59,8 +59,6 @@ private:
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-
-
     std::pair< model::SequencePtr, RandomTempDirPtr> createProjectWithOneFile(const wxFileName& file);
 
     void testRemovedFileInSequence(const wxFileName& file);

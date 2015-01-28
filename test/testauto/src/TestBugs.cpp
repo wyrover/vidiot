@@ -163,6 +163,8 @@ void TestBugs::testBugsWithLongTimeline()
     std::pair<RandomTempDirPtr, wxFileName> tempDir_fileName;
     {
         StartTest("Bug: StackOverflow when saving");
+        mProjectFixture.destroy(); // Release all references
+        sequence.reset();
         tempDir_fileName = SaveProjectAndClose();
     }
     {
@@ -505,9 +507,9 @@ void TestBugs::testTrimmingWithTransitionOnOneSideOfCut()
         TimelineMove(RightCenter(VideoClip(0,1)));
         TimelineKeyPress('n'); // Create the transition
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
-        // Due to the 'rounding errors correction' in test::RightPixel(), RightPixel moves 
-        // left until the requested clip is returned. However, for this specific scenario 
-        // we want to get a pixel position that is beyond the given clip's 'rightmost' 
+        // Due to the 'rounding errors correction' in test::RightPixel(), RightPixel moves
+        // left until the requested clip is returned. However, for this specific scenario
+        // we want to get a pixel position that is beyond the given clip's 'rightmost'
         // position as returned by RightPixel. Hence, the +1.
         pixel right = RightPixel(VideoClip(0,1)) + 1;
         wxPoint position(right, VCenter(VideoClip(0,1)));
@@ -531,7 +533,7 @@ void TestBugs::testTrimmingWithTransitionOnOneSideOfCut()
         TimelineKeyPress('p'); // Create the transition
         ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip)(VideoClip);
         // Due to the 'rounding errors correction' in test::LeftPixel(), LeftPixel moves
-        // right until the requested clip is returned. However, for this specific scenario 
+        // right until the requested clip is returned. However, for this specific scenario
         // we want to get a pixel position that is beyond the given clip's 'leftmost'
         // position as returned by LeftPixel. Hence, the -1.
         pixel left = LeftPixel(VideoClip(0,2)) - 1;
@@ -572,16 +574,16 @@ void TestBugs::testCrashWhenDeterminingClipSizeBoundsForLinkedClipsWithDifferent
     StartTestSuite();
     TimelineZoomIn(3);
     StartTest("Preparation");
-    // Create 
+    // Create
     // (VideoClip)(VideoClip)
-    // (        AudioClip       )      
+    // (        AudioClip       )
     Unlink(VideoClip(0,2));
     TimelineDrag(From(Center(VideoClip(0,2))).AlignLeft(HCenter(VideoClip(0,1))));
     TimelineTrimRight(VideoClip(0,2), -100, false); // Audio clip had to be longer that the two video clips
     StartTest("Creation of transition caused the crash.");
     // Audio clip must be selected, because the crash was caused by showing the clip details
     // directly after the transition was created.
-    TimelineLeftClick(Center(AudioClip(0,1))); 
+    TimelineLeftClick(Center(AudioClip(0,1)));
     TimelineMove(RightCenter(AudioClip(0,1)));
     TimelineKeyPress('n');
     StartTest("Trimming caused the crash.");
@@ -616,19 +618,20 @@ void TestBugs::testCrashWhenCreatingCrossfadeViaKeyboardTwice()
     ASSERT_CURRENT_COMMAND_TYPE<command::Combiner>();
     Undo();
     // Verify that only one transition was created:
-    ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>(); 
+    ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
 }
 
 void TestBugs::testCrashCausedByCreatingTransitionAtAudioClipEndAfterReadingProjectFromDisk()
 {
     StartTestSuite();
     TimelineZoomIn(3);
+    mProjectFixture.destroy(); // Remove all references to objects .... todo make mProjectFixture a globally accessible (from helpers) fixture that is 'reset' in the CloseProject helper methods ...
     std::pair<RandomTempDirPtr, wxFileName> tempDir_fileName = StartWithProjectReadFromDisk();
     TimelineLeftClick(Center(AudioClip(0,3)));
-    // Transition created with keyboard press specifically. 
+    // Transition created with keyboard press specifically.
     // 'MakeInOutTransitionAfterClip' causes the file object to be initialized before
     // creating the transition.
-    TimelineKeyPress('p'); 
+    TimelineKeyPress('p');
     Play(LeftPixel(AudioClip(0,3)) -2, 1000);
 }
 

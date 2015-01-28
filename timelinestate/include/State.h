@@ -22,7 +22,11 @@
 #include "EventMouse.h"
 #include "Part.h"
 
-namespace gui { class PlaybackActiveEvent; }
+namespace gui
+{
+    class PlaybackActiveEvent;
+    class PlaybackPositionEvent;
+}
 
 namespace gui { namespace timeline {
 
@@ -94,7 +98,7 @@ public:
 
     void onLeftDown         (wxMouseEvent& event);
     void handleLeftDown     (EvLeftDown& event);
-    
+
     void onLeftUp           (wxMouseEvent& event);
     void handleLeftUp       (EvLeftUp& event);
 
@@ -129,7 +133,7 @@ public:
 
     void onKeyDown          (wxKeyEvent& event);
     void handleKeyDown      (EvKeyDown& event);
-    
+
     void onKeyUp            (wxKeyEvent&   event);
     void handleKeyUp        (EvKeyUp& event);
 
@@ -138,6 +142,7 @@ public:
     void onCaptureChanged   (wxMouseCaptureChangedEvent& event);
 
     void onPlaybackActive(PlaybackActiveEvent& event);
+    void onPlaybackPosition(PlaybackPositionEvent& event);
 
 };
 

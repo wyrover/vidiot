@@ -35,7 +35,6 @@ AudioComposition::AudioComposition(const AudioCompositionParameters& parameters)
     : mChunks()
     , mParameters(parameters)
 {
-    VAR_DEBUG(this);
 }
 
 AudioComposition::AudioComposition(const AudioComposition& other)
@@ -46,7 +45,6 @@ AudioComposition::AudioComposition(const AudioComposition& other)
 
 AudioComposition::~AudioComposition()
 {
-    VAR_DEBUG(this);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -55,7 +53,7 @@ AudioComposition::~AudioComposition()
 
 void AudioComposition::add(const AudioChunkPtr& chunk)
 {
-    if (chunk && 
+    if (chunk &&
         !chunk->isA<model::EmptyChunk>())
     {
         // Skip empty chunks.

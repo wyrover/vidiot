@@ -76,7 +76,7 @@ void TestPlayback::testPlaybackComplexSequence()
     //now make resizable again
     gui::Window::get().getUiManager().GetPane(gui::Window::sPaneNameTimelines).Resizable();
     gui::Window::get().getUiManager().Update();
-    WaitForIdle();
+    WaitForIdle;
 
     StartTest("Playback");
     TimelinePositionCursor(RightPixel(VideoClip(1,1)) - 10);

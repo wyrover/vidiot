@@ -59,7 +59,7 @@ void FixtureProject::init()
         mOriginalPtsOfAudioClip.push_back(clip->getLeftPts());
     }
 
-    WaitForIdle();
+    WaitForIdle;
     if (mFocusTimeline && FixtureGui::UseRealUiEvents)
     {
 
