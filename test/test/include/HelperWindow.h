@@ -91,8 +91,9 @@ void ASSERT_CURRENT_COMMAND_TYPE()
 /// certain init code has been done.
 void BREAK();
 
-/// Log the command history
 void LogHistory();
+
+void WaitUntilMainWindowActive(bool active);
 
 } // namespace
 

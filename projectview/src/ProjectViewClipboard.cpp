@@ -114,7 +114,11 @@ bool ProjectViewClipboard::hasKeyboardFocus() const
     wxWindow* focused = wxWindow::FindFocus();
     if (focused != 0)
     {
+#ifdef _MSC_VER
         return (dynamic_cast<ProjectViewCtrl*>(focused->GetParent()) != 0);
+#else
+        return (dynamic_cast<ProjectViewCtrl*>(focused) != 0);
+#endif
     }
     return false;
 }

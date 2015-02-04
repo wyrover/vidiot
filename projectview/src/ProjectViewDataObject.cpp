@@ -31,7 +31,8 @@ ProjectViewDataObject::ProjectViewDataObject()
 ,   mAssets()
 {
     SetFormat(wxDataFormat(sFormat));
-    SetText(serialize());
+    wxTextDataObject::SetText(serialize());
+    VAR_ERROR(GetText().Length());
 }
 
 ProjectViewDataObject::ProjectViewDataObject(const model::NodePtrs& assets)
@@ -39,7 +40,8 @@ ProjectViewDataObject::ProjectViewDataObject(const model::NodePtrs& assets)
 ,   mAssets(assets)
 {
     SetFormat(wxDataFormat(sFormat));
-    SetText(serialize());
+    wxTextDataObject::SetText(serialize());
+    VAR_ERROR(GetText().Length());
 }
 
 ProjectViewDataObject::~ProjectViewDataObject()
@@ -50,15 +52,40 @@ ProjectViewDataObject::~ProjectViewDataObject()
 // FROM wxTextDataObject
 //////////////////////////////////////////////////////////////////////////
 
-bool ProjectViewDataObject::SetData(size_t len, const void *buf)
+//bool ProjectViewDataObject::SetData(size_t len, const void *buf)
+//{
+//    bool ok = wxTextDataObject::SetData(len, buf);
+//    if (ok)
+//    {
+//        VAR_ERROR(GetText().Length());
+//        deserialize(GetText());
+//    }
+//    return ok;
+//}
+
+void ProjectViewDataObject::SetText(const wxString& text)
 {
-    bool ok = wxTextDataObject::SetData(len, buf);
-    if (ok)
-    {
-        deserialize(GetText());
-    }
-    return ok;
+    wxTextDataObject::SetText(text);
+    deserialize(GetText());
 }
+
+wxDataFormat ProjectViewDataObject::GetPreferredFormat(Direction dir) const
+{
+    return wxDataFormat(sFormat);
+}
+
+//size_t ProjectViewDataObject::GetFormatCount(wxDataObject::Direction dir) const
+//{
+//    return wxTextDataObject::GetFormatCount(dir);
+//    return 1;
+//}
+//
+//void ProjectViewDataObject::GetAllFormats(wxDataFormat *formats, wxDataObject::Direction dir) const
+//{
+//    wxTextDataObject::GetAllFormats(formats,dir);
+//    //wxDataFormat* format = new wxDataFormat(sFormat);
+//    //formats = format;
+//}
 
 //////////////////////////////////////////////////////////////////////////
 // GET ALL ASSETS
@@ -99,6 +126,7 @@ const std::string sXmlName("nodes");
 
 void ProjectViewDataObject::deserialize(wxString from)
 {
+    VAR_ERROR(from.Length());
     std::istringstream store(from.ToStdString());
     try
     {
@@ -123,6 +151,7 @@ wxString ProjectViewDataObject::serialize() const
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
     catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
     catch (...)                                  { LOG_ERROR;                                   throw; }
+    VAR_ERROR(store.str().size());
     return store.str();
 }
 
@@ -131,6 +160,7 @@ template<class Archive>
 void ProjectViewDataObject::serialize(Archive & ar, const unsigned int version)
 {
     ar & BOOST_SERIALIZATION_NVP(mAssets);
+    VAR_ERROR(mAssets);
 }
 
 template void ProjectViewDataObject::serialize<boost::archive::xml_oarchive>(boost::archive::xml_oarchive& ar, const unsigned int archiveVersion);
