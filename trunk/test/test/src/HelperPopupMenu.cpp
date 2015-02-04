@@ -22,10 +22,9 @@ namespace test {
 void TimelineOpenPopupMenuAt(wxPoint position)
 {
     TimelineMove(position);
-    WaitForTimelineToLoseFocus w;
     SetWaitAfterEachInputAction(false);
     TimelineRightClick(position);
-    w.wait();
+    pause(1000); // todo better solution for WaitForTimelineToLoseFocus... (this is a crappy solution but waiting for events causes all sorts of issues...)
     SetWaitAfterEachInputAction(true);
 }
 

@@ -66,7 +66,7 @@ add_debugging_path ($ENV{FFMPEGDIR}/bin)
 if (MSVC)
   set (WX_USE_REL_AND_DBG TRUE)
 else ()
-  set (ENV{PATH} $ENV{PATH}:${VIDIOT_DIR}/wxWidgets/install/bin) # To ensure that local wx-config is found
+  set (ENV{PATH} $ENV{PATH}:${VIDIOT_DIR}/wxwidgets/install/bin) # To ensure that local wx-config is found
   set (wxWidgets_USE_DEBUG ON)
   if (CMAKE_BUILD_TYPE STREQUAL "RELEASE")
     set (wxWidgets_USE_DEBUG OFF)

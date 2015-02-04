@@ -188,7 +188,9 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
 
     pts decodedFramePts = AV_NOPTS_VALUE;
 
-    if (!mDeliveredFrame || !frameTimeOk(mDeliveredFrame->getPts()))
+    VideoFramePtr result = mDeliveredFrame;
+
+    if (!result || !frameTimeOk(result->getPts()))
     {
         // Decode new frame
         bool firstPacket = true;
@@ -297,7 +299,7 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
             // Output frame is not required, only advancement of position in file.
             // Note that decoding is required to determine proper frame pts values
             // (and thus determine proper advancenment of position in file).
-            mDeliveredFrame = boost::make_shared<VideoSkipFrame>(parameters);
+            result = boost::make_shared<VideoSkipFrame>(parameters);
         }
         else
         {
@@ -315,7 +317,7 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
                 SWS_FAST_BILINEAR | SWS_CPU_CAPS_MMX | SWS_CPU_CAPS_MMX2, 0, 0, 0);
             sws_scale(mSwsContext,pDecodedFrame->data,pDecodedFrame->linesize,0,codec->height,pScaledFrame->data,pScaledFrame->linesize);
 
-            mDeliveredFrame =
+            result =
                 boost::make_shared<VideoFrame>(parameters,
                 boost::make_shared<VideoFrameLayer>(
                 boost::make_shared<wxImage>(wxImage(size, pScaledFrame->data[0], true).Copy())));
@@ -323,7 +325,7 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
             av_freep(&buffer);
             av_frame_free(&pScaledFrame);
         }
-        mDeliveredFrame->setPts(decodedFramePts);
+        result->setPts(decodedFramePts);
 
         av_frame_free(&pDecodedFrame);
     }
@@ -332,19 +334,23 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
         LOG_DEBUG << "Same frame again";
     }
 
-    // DEBUG: saveScaledFrame(codec,size,mDeliveredFrame);
-    ASSERT(mDeliveredFrame)(parameters)(codec)(decodedFramePts);
-    ASSERT_IMPLIES(!mDeliveredFrame->isA<VideoSkipFrame>(), mDeliveredFrame->getLayers().size() == 1);
+    // DEBUG: saveScaledFrame(codec,size,result);
+    ASSERT(result)(parameters)(codec)(decodedFramePts);
+    if (!result->isA<VideoSkipFrame>())
+    {
+        ASSERT_EQUALS(result->getLayers().size(), 1);
+	    // Clone the used frame. Must be done for multiple reasons.
+	    // 1. See also "Same frame again" above
+	    //    If the same frame is returned multiple times, any modifications on the frame
+	    //    (for instance, pts value) will lead to a changed frame here. And the pts value
+	    //    of the frame as used here is the pts value of the INPUT. When returned (by
+	    //    Sequence) the pts value of the frame is overwritten with the pts OUTPUT value.
+	    // 2. mDeliveredFrame may have already been queued somewhere (VideoDisplay, for example).
+	    //    Changing mDeliveredFrame and returning that once more might thus change that previous frame also!
+        mDeliveredFrame = make_cloned<VideoFrame>(result);
+    }
 
-    // Clone the used frame. Must be done for multiple reasons.
-    // 1. See also "Same frame again" above
-    //    If the same frame is returned multiple times, any modifications on the frame
-    //    (for instance, pts value) will lead to a changed frame here. And the pts value
-    //    of the frame as used here is the pts value of the INPUT. When returned (by
-    //    Sequence) the pts value of the frame is overwritten with the pts OUTPUT value.
-    // 2. mDeliveredFrame may have already been queued somewhere (VideoDisplay, for example).
-    //    Changing mDeliveredFrame and returning that once more might thus change that previous frame also!
-    return make_cloned<VideoFrame>(mDeliveredFrame);
+    return result;
 }
 
 //////////////////////////////////////////////////////////////////////////

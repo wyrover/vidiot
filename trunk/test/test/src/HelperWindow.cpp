@@ -154,6 +154,14 @@ void LogHistory()
     }
     wxCommand* current = proc->GetCurrentCommand();
     VAR_DEBUG(current);
-};
+}
+
+void WaitUntilMainWindowActive(bool active)
+{
+    while ( active != util::thread::RunInMainReturning<bool>([] { return wxTheApp->GetMainLoop()->IsRunning(); }) )
+    {
+        pause(50);
+    }
+}
 
 } // namespace

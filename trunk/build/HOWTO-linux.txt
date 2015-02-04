@@ -35,7 +35,22 @@ NOTE: svn co https://svn.code.sf.net/p/vidiot/code/trunk . # Not needed (svn on 
   NOTE: imported oblivion theme via 'cd .codeblocks ; sudo cb_chare_config xx.conf' (can use that to import from codeblocks.conf as well)
 * Privacy settings: Search -> Include Online results -> Off
 * unity-tweak-tool 
+* Reduce .vdi file size
+  - sudo dd if=/dev/zero of=/bigemptyfile bs=4096k
+  - sudo rm -rf /bigemptyfile
+  StopVM
+  VBoxManage.exe modifyhd c:\path\to\thedisk.vdi --compact
 
+* CodeBlocks dark:
+  installed ubuntu-tweak-tool from 
+  Installed mona theme from http://gnome-look.org/content/show.php/Mona+1.0+-+Dark+and+blue+GTK+theme?content=168447
+  Used unity-tweak-tool to install mona theme
+  copy build/default.conf to ~/.codeblocks
+* Add ~/Vidiot/vidiot_trunk to path in shell:
+  Edit ~/.bashrc
+  export PATH="$HOME/Vidiot/vidiot_trunk/build:$PATH"   
+
+  
 ================ FFMPEG ================
 TODO ERROR: libfdk_aac not found
 

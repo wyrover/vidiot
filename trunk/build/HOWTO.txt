@@ -30,7 +30,7 @@ NOTE: <VIDIOT_DIR> is the dir in which all 'vidiot' work is done.
   - Or: use AppVerifier
 
 =================== VLD ===================
-*  http://www.codeproject.com/tools/visualleakdetector.asp
+* https://vld.codeplex.com/
 
 =================== CMAKE ===================
 * Install cmake from http://www.cmake.org/download/ into c:\Program Files
@@ -38,7 +38,7 @@ NOTE: <VIDIOT_DIR> is the dir in which all 'vidiot' work is done.
 
 =================== CxxTest ===================
 * CxxTest is part of sources
-* Install ActivePerl via installer
+* Install ActivePerl via installer  www.activestate.com/activeperl
 
 ================== VERSION CONTROL  ================
 * Install SVN (tortoise) from http://tortoisesvn.net/downloads.html
@@ -57,8 +57,9 @@ NOTE: <VIDIOT_DIR> is the dir in which all 'vidiot' work is done.
 * Compiled boost:
   - cd <VIDIOT_DIR>\boost_1_xx_y
   - bootstrap
-  - (MSVC) .\bjam --toolset=msvc-12.0 --build-type=complete stage
-
+  - (MSVC) .\bjam --toolset=msvc-12.0 --build-type=complete stage     
+* Cleanup, remove everything except 'boost' and 'lib32-msvc-12.0'
+  
 =================== WXWIDGETS ===================
 * Checkout http://svn.wxwidgets.org/svn/wx/wxWidgets/trunk into <VIDIOT_DIR>\wxwidgets_trunk
 * Copy include/wx/msw/setup0.h to setup.h
@@ -67,9 +68,9 @@ NOTE: <VIDIOT_DIR> is the dir in which all 'vidiot' work is done.
   (fix for wxBufferedPaintDC)
   http://trac.wxwidgets.org/ticket/15497
   (without this patch, the 'shift' handling in Timeline::onPaint becomes awkward - use shift begin trim 'to the right' to see the effect of omitting it.)
-* Apply main.cpp.patch to src/msw/main.cpp
-  (resolve memory leak)
 * (MSVC) build solution Release & Debug
+* Remove temporary files from
+  C:\Vidiot\wxwidgets_trunk\build\msw (ipch, vc_mswu, vc_mswud)
 
 =================== FFMPEG ===================
 * Nothing required: ffmpeg is part of the source tree.

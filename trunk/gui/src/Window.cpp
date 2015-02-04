@@ -99,24 +99,26 @@ int Window::sSequenceMenuIndex = 0;
 static const wxString sTitle(_("Vidiot"));
 
 Window::Window()
-    :   wxDocParentFrame()
-    ,   mDocManager(new wxDocManager())
-    ,	mDocTemplate(new wxDocTemplate(mDocManager, _("Vidiot files"), "*.vid", "", "vid", _("Vidiot Project"), _("Vidiot Project View"), CLASSINFO(model::Project), CLASSINFO(ViewHelper)))
-    ,   mDialog(new Dialog())
-    ,   mLayout(new gui::Layout())
-    ,   mWatcher(0)
-    ,   mVisibleWorker(0)
-    ,   mInvisibleWorker(0)
-    ,   mPreview(0)
-    ,   mDetailsView(0)
-    ,   mTimelinesView(0)
-    ,   mProjectView(0)
-    ,   mMenuBar(0)
-    ,   mMenuEdit(0)
-    ,   mMenuSequence(0)
-    ,   mTestCrash(0)
-    ,   mAudioTransitionFactory(new model::audio::AudioTransitionFactory())
-    ,   mVideoTransitionFactory(new model::video::VideoTransitionFactory())
+    : wxDocParentFrame()
+    , mDocManager(new wxDocManager())
+    , mDocTemplate(new wxDocTemplate(mDocManager, _("Vidiot files"), "*.vid", "", "vid", _("Vidiot Project"), _("Vidiot Project View"), CLASSINFO(model::Project), CLASSINFO(ViewHelper)))
+    , mDialog(new Dialog())
+    , mLayout(new gui::Layout())
+    , mWatcher(0)
+    , mVisibleWorker(0)
+    , mInvisibleWorker(0)
+    , mPreview(0)
+    , mDetailsView(0)
+    , mTimelinesView(0)
+    , mProjectView(0)
+    , mMenuBar(0)
+    , mMenuEdit(0)
+    , mMenuSequence(0)
+    , mTestCrash(0)
+    , mAudioTransitionFactory(new model::audio::AudioTransitionFactory())
+    , mVideoTransitionFactory(new model::video::VideoTransitionFactory())
+    , mProjectOpen(false)
+    , mDialogOpen(false)
 {
     Create(mDocManager, 0, wxID_ANY, sTitle, wxDefaultPosition, wxSize(1000,700));
 
@@ -507,7 +509,7 @@ void Window::onOpenProject(model::EventOpenProject &event )
     ASSERT_ZERO(mWatcher);
     // Needs an event loop (under wxGTK)
     // Therefore, creation is delayed until this moment.
-    mWatcher = new Watcher(); 
+    mWatcher = new Watcher();
     mMenuFile->Enable(ID_NEW_FILES,true);
     mMenuFile->Enable(ID_NEW_AUTOFOLDER,true);
     mMenuFile->Enable(ID_NEW_SEQUENCE,true);
@@ -524,6 +526,7 @@ void Window::onOpenProject(model::EventOpenProject &event )
     mVisibleWorker->start();
     mInvisibleWorker->start();
     DragAcceptFiles(false);
+    mProjectOpen = true;
     event.Skip();
 }
 
@@ -542,6 +545,7 @@ void Window::onCloseProject(model::EventCloseProject &event )
     SetTitle(sTitle); // Remove the title
     mVisibleWorker->abort();
     mInvisibleWorker->abort();
+    mProjectOpen = false;
     event.Skip();
 }
 
@@ -911,7 +915,8 @@ void Window::setAdditionalTitle(const wxString& title)
 
 bool Window::isProjectOpened() const
 {
-    return GetDocumentManager()->GetCurrentDocument() != 0;
+    ASSERT(wxThread::IsMain());
+    return mProjectOpen;
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -49,7 +49,7 @@ echo Sources are in %SOURCE%
 popd
 
 
-if NOT DEFINED VIDIOT_DIR goto NOVAR
+if NOT DEFINED VIDIOT_DIR goto :NOVAR
 call:EXTRACTDRIVE %VIDIOT_DIR%
 %DRIVE%
 cd %VIDIOT_DIR%
@@ -173,4 +173,5 @@ exit
 
 :NOVAR
 echo "Define VIDIOT_DIR first"
+pause
 exit
