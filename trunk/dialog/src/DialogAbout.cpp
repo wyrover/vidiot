@@ -72,7 +72,6 @@ DialogAbout::DialogAbout()
 
 DialogAbout::~DialogAbout()
 {
-
     VAR_DEBUG(this);
     mHtml->Unbind(wxEVT_HTML_LINK_CLICKED, &DialogAbout::onLink, this);
     mBack->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &DialogAbout::onBack, this);

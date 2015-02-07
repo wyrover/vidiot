@@ -103,6 +103,7 @@ void TestUiDialog::testEscape()
         StartTest("Files dialog");
         wxStrings result = gui::Dialog::get().getFiles("message", _("Movie clips (*.avi)|*.avi|All files (%s)|%s"));
         ASSERT_ZERO(result.size());
+
     }
     {
         Escape e;
@@ -123,24 +124,27 @@ void TestUiDialog::testEscape()
         ASSERT_EQUALS(result,"");
     }
     {
-        Escape e;
         StartTest("Preferences dialog");
         WindowTriggerMenu(wxID_PREFERENCES);
-        WaitForIdle;
+        WaitUntilDialogOpen(true);
+        wxUIActionSimulator().Char(WXK_ESCAPE);
+        WaitUntilDialogOpen(false);
     }
     {
-        Escape e;
         StartTest("About dialog");
         WindowTriggerMenu(wxID_ABOUT);
-        WaitForIdle;
+        WaitUntilDialogOpen(true);
+        wxUIActionSimulator().Char(WXK_ESCAPE);
+        WaitUntilDialogOpen(false);
     }
     {
-        Escape e;
         StartTest("Project properties dialog");
         model::FolderPtr root = WindowCreateProject();
         ProjectViewAddSequence("sequence", root);
         WindowTriggerMenu(wxID_PROPERTIES);
-        WaitForIdle;
+        WaitUntilDialogOpen(true);
+        wxUIActionSimulator().Char(WXK_ESCAPE);
+        WaitUntilDialogOpen(false);
     }
 }
 } // namespace
