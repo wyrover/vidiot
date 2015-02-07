@@ -170,6 +170,7 @@ void WaitUntilDialogOpen(bool open)
     {
         pause(50);
     }
+    WaitForIdle;
 }
 
 } // namespace

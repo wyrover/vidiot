@@ -827,6 +827,7 @@ void Window::onAbout(wxCommandEvent& event)
 {
     DialogAbout* dialog = new DialogAbout();
     dialog->ShowModal();
+    delete dialog;
     // NOT: event.Skip() -- see MenuHandler::onRenderSettings for rationale
 }
 
