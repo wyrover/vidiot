@@ -113,14 +113,15 @@ TimelineDataObject::~TimelineDataObject()
 // FROM wxTextDataObject
 //////////////////////////////////////////////////////////////////////////
 
-bool TimelineDataObject::SetData(size_t len, const void *buf)
+void TimelineDataObject::SetText(const wxString& text)
 {
-    bool ok = wxTextDataObject::SetData(len, buf);
-    if (ok)
-    {
-        deserialize(GetText());
-    }
-    return ok;
+    wxTextDataObject::SetText(text);
+    deserialize(GetText());
+}
+
+wxDataFormat TimelineDataObject::GetPreferredFormat(Direction dir) const
+{
+    return wxDataFormat(sFormat);
 }
 
 //////////////////////////////////////////////////////////////////////////

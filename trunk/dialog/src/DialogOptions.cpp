@@ -238,6 +238,7 @@ DialogOptions::DialogOptions(wxWindow* win)
     LayoutDialog();
     SetSize(wxSize(600, -1));
 
+    gui::Window::get().setDialogOpen(true);
 }
 
 DialogOptions::~DialogOptions()
@@ -280,6 +281,8 @@ DialogOptions::~DialogOptions()
         // Use new values
         Log::setReportingLevel(LogLevelConverter::readConfigValue(Config::sPathLogLevel));
     }
+
+    gui::Window::get().setDialogOpen(false);
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -913,6 +913,16 @@ void Window::setAdditionalTitle(const wxString& title)
     SetTitle(sTitle + ": " + title);
 }
 
+bool Window::isDialogOpen() const
+{
+    return mDialogOpen;
+}
+
+void Window::setDialogOpen(bool open)
+{
+    mDialogOpen = open;
+}
+
 bool Window::isProjectOpened() const
 {
     ASSERT(wxThread::IsMain());

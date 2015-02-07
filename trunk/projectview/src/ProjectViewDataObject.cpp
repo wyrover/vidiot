@@ -52,16 +52,6 @@ ProjectViewDataObject::~ProjectViewDataObject()
 // FROM wxTextDataObject
 //////////////////////////////////////////////////////////////////////////
 
-//bool ProjectViewDataObject::SetData(size_t len, const void *buf)
-//{
-//    bool ok = wxTextDataObject::SetData(len, buf);
-//    if (ok)
-//    {
-//        VAR_ERROR(GetText().Length());
-//        deserialize(GetText());
-//    }
-//    return ok;
-//}
 
 void ProjectViewDataObject::SetText(const wxString& text)
 {
@@ -73,19 +63,6 @@ wxDataFormat ProjectViewDataObject::GetPreferredFormat(Direction dir) const
 {
     return wxDataFormat(sFormat);
 }
-
-//size_t ProjectViewDataObject::GetFormatCount(wxDataObject::Direction dir) const
-//{
-//    return wxTextDataObject::GetFormatCount(dir);
-//    return 1;
-//}
-//
-//void ProjectViewDataObject::GetAllFormats(wxDataFormat *formats, wxDataObject::Direction dir) const
-//{
-//    wxTextDataObject::GetAllFormats(formats,dir);
-//    //wxDataFormat* format = new wxDataFormat(sFormat);
-//    //formats = format;
-//}
 
 //////////////////////////////////////////////////////////////////////////
 // GET ALL ASSETS

@@ -17,38 +17,32 @@ NOTE: svn co https://svn.code.sf.net/p/vidiot/code/trunk . # Not needed (svn on 
   - shared folder: C:\Vidiot\wxwidgets_trunk -> wxwidgets_trunk (automount & permanent)
   - mount ubuntu iso and start install
 * After install: 
-  - Install guest additions
+  - Privacy settings: Search -> Include Online results -> Off
+  - unity-tweak-tool, gnome-tweak-tool
+  - Updates & Install guest additions
   - Terminal: sudo adduser ${USER} vboxsf
   - Restart
   - Start "Disks" tool, and format, partition, and mount second disk under name Vidiot. 
-    Manual options (only way it automounted): 'rw,nosuid,nodev', '/media/epra/Vidiot', '/dev/sdb', 'ext4'
+    To automount, add to /etc/fstab (UUID taken from Disks tool):
+    UUID=ed688568-4ff8-42a9-b083-02327ba6bb7f /media/epra/Vidiot  ext4  rw,nosuid,nodev,uhelper=udisks2
 * Terminal:
   /media/sf_vidiot_trunk/build/RunCMake.sh FULLSETUP | tee ${HOME}/linuxsetup.log
 * Codeblocks config 
-  In codeblocks: settings->environment, change "Terminal to launch console programs" to 'gnome-terminal --disable-factory --hide-menubar -t $TITLE --geometry 80x100+50+0 -x' or 'xfce4-terminal -T $TITLE -H -x'
-  In codeblocks: settings->environment, On application startup -> open default workspace
-  In CodeBlocks: set line endings to CR LF (Settings -> Editor -> Line Ending)
-  Enable 'Editor -> Show indentation guids'
-  Editor -> General settings -> Other settings -> Editor's title is the file's name only
-  Set gnome-terminal font to 'nimbus mono 10'
-  copy /vidiot_trunk/build/codeblocks.conf to ~/.codeblocks/default.conf
-  NOTE: imported oblivion theme via 'cd .codeblocks ; sudo cb_chare_config xx.conf' (can use that to import from codeblocks.conf as well)
-* Privacy settings: Search -> Include Online results -> Off
-* unity-tweak-tool 
+  - cp ~/Vidiot/vidiot_trunk/build/codeblocks/default.conf ~/.codeblocks
+  - Settings => environment => Terminal ... : 'gnome-terminal --disable-factory --hide-menubar -t $TITLE --geometry 80x100+50+0 -x'
+                               On application startup => open default workspace
+             => editor => Line endings => CR LF
+             => editor => Show indentation guides (enable)
+                editor => General settings => Other settings => Editor's title is the file's name only
+* Set gnome-terminal font: 'nimbus mono 10'
 * Reduce .vdi file size
   - sudo dd if=/dev/zero of=/bigemptyfile bs=4096k
   - sudo rm -rf /bigemptyfile
   StopVM
   VBoxManage.exe modifyhd c:\path\to\thedisk.vdi --compact
-
 * CodeBlocks dark:
-  installed ubuntu-tweak-tool from 
-  Installed mona theme from http://gnome-look.org/content/show.php/Mona+1.0+-+Dark+and+blue+GTK+theme?content=168447
-  Used unity-tweak-tool to install mona theme
-  copy build/default.conf to ~/.codeblocks
-* Add ~/Vidiot/vidiot_trunk to path in shell:
-  Edit ~/.bashrc
-  export PATH="$HOME/Vidiot/vidiot_trunk/build:$PATH"   
+  Used unity-tweak-tool to install mona theme from http://gnome-look.org/content/show.php/Mona+1.0+-+Dark+and+blue+GTK+theme?content=168447
+* ~/.bashrc: export PATH="$HOME/Vidiot/vidiot_trunk/build:$PATH"   
 
   
 ================ FFMPEG ================

@@ -24,6 +24,8 @@ export BUILD=${VIDIOT_DIR}/Build
 export BUILD_DEBUG=${BUILD}/Debug
 export BUILD_RELEASE=${BUILD}/Release
 
+export BOOSTROOT=${VIDIOT_DIR}/boost/install
+
 LinuxSetup()
 {
 	if [ -h ${VIDIOT_DIR} ]; then
@@ -43,11 +45,43 @@ LinuxSetup()
     sudo add-apt-repository -y ppa:webupd8team/sublime-text-3
     sudo apt-get -y update
     # General
-    sudo apt-get -y install joe unity-tweak-tool subversion sublime-text-installer openjdk-7-jdk libsaxon* codeblocks codeblocks-contrib cmake cmake-qt-gui g++ libboost1.55-dev libboost-serialization1.55-dev libboost-system1.55-dev libboost-chrono1.55-dev libboost-date-time1.55-dev libboost-thread1.55-dev portaudio19-dev libsoundtouch-dev
+#todo remove boost here
+    sudo apt-get -y install joe ubuntu-tweak-tool unity-tweak-tool subversion sublime-text-installer openjdk-7-jdk libsaxon* codeblocks codeblocks-contrib cmake cmake-qt-gui g++ portaudio19-dev libsoundtouch-dev
     # wxwidgets - dos2unix required since windows checkout of wxwidgets gives the wx-config utility dos line endings, making it fail to run.
     sudo apt-get -y install libgtk2.0-dev dos2unix 
     # ffmpeg
     sudo apt-get -y install autoconf automake build-essential libass-dev libfreetype6-dev libgpac-dev libsdl1.2-dev libtheora-dev libtool libva-dev libvdpau-dev libvorbis-dev libx11-dev libxext-dev libxfixes-dev pkg-config texi2html zlib1g-dev yasm libmp3lame-dev libopus-dev
+    # boost
+    sudo apt-get -y install python-dev autotools-dev libicu-dev libbz2-dev libzip-dev
+}
+
+BoostSetup()
+{
+    # Parts taken from http://particlephysicsandcode.com/2013/03/11/installing-boost-1-52-ubuntu-12-04-fedora
+    # Matthew M Reid 10/01/2013.
+    export BOOSTVER="56"
+    if [ ! -d ${VIDIOT_DIR} ]; then 
+        return 
+    fi
+    export BOOSTDIR=${VIDIOT_DIR}/boost
+    if [ -d ${BOOSTDIR} ]; then
+        rm -rf ${BOOSTDIR}
+    fi
+    mkdir -p ${BOOSTDIR}/src
+    mkdir -p ${BOOSTDIR}/install
+
+    # Extract
+    cd ${BOOSTDIR}/src
+    wget -O boost_1_${BOOSTVER}_0.tar.gz http://sourceforge.net/projects/boost/files/boost/1.${BOOSTVER}.0/boost_1_${BOOSTVER}_0.tar.gz/download
+    tar xzvf *.tar.gz
+    cd boost_*/
+
+    # Build
+    ./bootstrap.sh --prefix=${BOOSTDIR}/install
+    n=`cat /proc/cpuinfo | grep "cpu cores" | uniq | awk '{print $NF}'`
+    ./b2 --with=all -j $n cxxflags="-std=c++11" --target=shared,static install
+    sudo echo "${BOOSTDIR}/install/lib" > /etc/ld.so.conf.d/boost-1.56.0.conf
+    sudo ldconfig -v
 }
 
 WxSetup()
@@ -234,9 +268,10 @@ Rebuild()
 }
 
 case $1 in
-FULLSETUP) LinuxSetup ; Icons ; FfmpegSetup ; WxSetup ; Rebuild ;;
+FULLSETUP) LinuxSetup ; Icons ; BoostSetup ; FfmpegSetup ; WxSetup ; Rebuild ;;
 LINUXSETUP) LinuxSetup ;;
 ICONS) Icons ;;
+BOOSTSETUP) BoostSetup ;;
 WXSETUP) WxSetup ;;
 FFMPEGSETUP) FfmpegSetup ;;
 REBUILD) Rebuild ;;

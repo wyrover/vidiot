@@ -46,6 +46,7 @@ void TestRender::testChangeRenderSettings()
         std::pair< RandomTempDirPtr, wxFileName > tempdir_and_filename = OpenRenderDialogAndSetFilename();
         SetValue(dynamic_cast<wxSpinCtrl*>(gui::DialogRenderSettings::get().getVideoParam(model::render::BitRate)), 3999996);
         ButtonTriggerPressed(gui::DialogRenderSettings::get().getCancelButton());
+        WaitUntilDialogOpen(false);
         model::render::RenderPtr current = GetCurrentRenderSettings();
         ASSERT_EQUALS(*original,*current);
     }
@@ -58,6 +59,7 @@ void TestRender::testChangeRenderSettings()
         model::render::RenderPtr current = GetCurrentRenderSettings();
         ASSERT_DIFFERS(*original,*current);
         ButtonTriggerPressed(gui::DialogRenderSettings::get().getCancelButton());
+        WaitUntilDialogOpen(false);
     }
     {
         StartTest("If apply is pressed, the sequence is changed (with a different audio codec setting).");
@@ -68,6 +70,7 @@ void TestRender::testChangeRenderSettings()
         model::render::RenderPtr current = GetCurrentRenderSettings();
         ASSERT_DIFFERS(*original,*current);
         ButtonTriggerPressed(gui::DialogRenderSettings::get().getCancelButton());
+        WaitUntilDialogOpen(false);
     }
     {
         StartTest("If OK is pressed, the sequence is changed and the dialog is closed.");
@@ -75,6 +78,7 @@ void TestRender::testChangeRenderSettings()
         std::pair< RandomTempDirPtr, wxFileName > tempdir_and_filename = OpenRenderDialogAndSetFilename();
         SetValue(dynamic_cast<wxSpinCtrl*>(gui::DialogRenderSettings::get().getVideoParam(model::render::BitRate)), 200000);
         ButtonTriggerPressed(gui::DialogRenderSettings::get().getOkButton());
+        WaitUntilDialogOpen(false);
         model::render::RenderPtr current = GetCurrentRenderSettings();
         ASSERT_DIFFERS(*original,*current);
     }
@@ -98,6 +102,7 @@ void TestRender::testRenderingSplit()
         std::pair< RandomTempDirPtr, wxFileName > tempdir_and_filename = OpenRenderDialogAndSetFilename();
         SetValue(gui::DialogRenderSettings::get().getRenderSeparationCheckBox(),true);
         ButtonTriggerPressed(gui::DialogRenderSettings::get().getRenderButton());
+        WaitUntilDialogOpen(false);
         expectation.wait();
         for (int i = 1; i <= 4; ++i)
         {
@@ -143,10 +148,10 @@ void TestRender::testRenderingTransformedClip()
     model::VideoClipPtr clip = boost::dynamic_pointer_cast<model::VideoClip>(VideoClip(1,0));
     ASSERT(clip);
     util::thread::RunInMainAndWait([clip]
-    { 
+    {
         clip->setOpacity(128);
         clip->setScaling(model::VideoScalingCustom, boost::optional<boost::rational< int > >(1,2));
-        clip->setPosition(wxPoint(50,50)); 
+        clip->setPosition(wxPoint(50,50));
     });
 
     RenderAndPlaybackCurrentTimeline();

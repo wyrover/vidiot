@@ -40,17 +40,9 @@ public:
     // FROM wxTextDataObject
     //////////////////////////////////////////////////////////////////////////
 
-//    /// Called when data is copied from the clipboard onto this object.
-//    virtual bool SetData(size_t len, const void *buf) override;
-
     virtual void SetText(const wxString& text) override;
 
-    /// Required for GTK
     wxDataFormat GetPreferredFormat(Direction dir=Get) const override;
-//    size_t GetFormatCount(wxDataObject::Direction dir=wxDataObject::Get) const override;
-//
-//    /// Required for GTK
-//    void GetAllFormats(wxDataFormat *formats, wxDataObject::Direction dir=wxDataObject::Get) const override;
 
     //////////////////////////////////////////////////////////////////////////
     // GET ALL ASSETS

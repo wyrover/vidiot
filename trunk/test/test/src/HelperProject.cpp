@@ -85,6 +85,7 @@ void CloseProjectAndAvoidSaveDialog()
         doc->Modify(false); // Avoid "Save yes/no/Cancel" dialog
     }
     WindowTriggerMenu(wxID_CLOSE);
+    WaitForIdle;
 }
 
 } // namespace

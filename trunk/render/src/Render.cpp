@@ -90,7 +90,7 @@ void Render::initialize()
 
 Render::Render()
     :   wxEvtHandler()
-    ,   mFileName()
+    ,   mFileName("/")
     ,   mOutputFormat(OutputFormats::getDefault())
     ,   mSeparateAtCuts(false)
     ,   mStart(0)
@@ -572,7 +572,7 @@ void RenderWork::generate()
 
             wxString s; s << _("(frame ") << position << _(" out of ") << length << ")";
             showProgressText(ps + " " + s);
-            showProgress(position);
+            showProgress(position - from);
 
             if (writeAudio && audioTime < videoTime)
             {

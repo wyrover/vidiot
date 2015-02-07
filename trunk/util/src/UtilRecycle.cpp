@@ -62,7 +62,41 @@ bool recycle(const wxString& file)
 
 bool recycle(const wxString& file)
 {
-    // todo GCC implement (move to /tmp???_
+    // See: http://ubuntuforums.org/showthread.php?t=1766301
+
+    wxFileName filename(file);
+    ASSERT(!filename.IsDir())(filename); // Not supported
+
+    wxString home(wxStandardPaths::Get().GetDocumentsDir());
+    wxFileName recyclebin(home + "/.local/share/Trash", "");
+    if (recyclebin.DirExists())
+    {
+        wxFileName infofile(recyclebin);
+        infofile.AppendDir("info");
+        infofile.SetName(filename.GetFullName());
+        infofile.SetExt("trashinfo");
+        wxTextFile infofiletext(infofile.GetFullPath());
+        infofiletext.Open();
+        infofiletext.Clear();
+        infofiletext.AddLine("[Trash Info]");
+        infofiletext.AddLine("Path=" + filename.GetFullPath());
+        infofiletext.AddLine("DeletionDate=" + wxDateTime::Now().Format("%FT%T"));
+        infofiletext.Close();
+
+        wxFileName trashedfile(recyclebin);
+        trashedfile.AppendDir("files");
+        trashedfile.SetFullName(filename.GetFullName());
+
+        bool copyOk = wxCopyFile(filename.GetFullPath(), trashedfile.GetFullPath());
+        if (copyOk)
+        {
+            bool removeOk = wxRemoveFile(filename.GetFullPath());
+        }
+    }
+    else
+    {
+            // todo other variants? /tmp? just delete?
+    }
 }
 
 #endif

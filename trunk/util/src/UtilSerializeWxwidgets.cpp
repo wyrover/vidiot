@@ -61,7 +61,14 @@ void save(Archive & ar, const wxFileName& filename, const unsigned int version)
 {
     try
     {
+        // Saving is always done with windows path style.
+        // Done to avoid having to maintain two test reference sets
+        // and to ensure portability of projects (with relative paths).
+#ifdef _MSC_VER
         wxString longpath = filename.GetLongPath();
+#else
+        wxString longpath = filename.GetFullPath(wxPATH_WIN);
+#endif
         ar & boost::serialization::make_nvp(sFileName.c_str(),longpath);
     }
     catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
@@ -77,7 +84,10 @@ void load(Archive & ar, wxFileName& filename, const unsigned int version)
     {
         wxString longpath;
         ar & boost::serialization::make_nvp(sFileName.c_str(),longpath);
-        filename.Assign(longpath);
+        // Saving is always done with windows path style.
+        // Done to avoid having to maintain two test reference sets
+        // and to ensure portability of projects (with relative paths).
+        filename.Assign(longpath, wxPATH_WIN);
     }
     catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }

@@ -107,6 +107,7 @@ DialogProjectProperties::DialogProjectProperties(wxWindow* win)
 
     Fit();
 
+    gui::Window::get().setDialogOpen(true);
 }
 
 DialogProjectProperties::~DialogProjectProperties()
@@ -131,6 +132,8 @@ DialogProjectProperties::~DialogProjectProperties()
         model::Properties::get().setAudioNumberOfChannels(toLong(mAudioNumberOfChannels->GetValue()));
         model::ProjectModification::trigger();
     }
+
+    gui::Window::get().setDialogOpen(false);
 }
 
 //////////////////////////////////////////////////////////////////////////
