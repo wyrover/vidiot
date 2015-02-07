@@ -625,7 +625,7 @@ void TestBugs::testCrashCausedByCreatingTransitionAtAudioClipEndAfterReadingProj
 {
     StartTestSuite();
     TimelineZoomIn(3);
-    mProjectFixture.destroy(); // Remove all references to objects .... todo make mProjectFixture a globally accessible (from helpers) fixture that is 'reset' in the CloseProject helper methods ...
+    mProjectFixture.destroy(); // Remove all references to objects
     std::pair<RandomTempDirPtr, wxFileName> tempDir_fileName = StartWithProjectReadFromDisk();
     TimelineLeftClick(Center(AudioClip(0,3)));
     // Transition created with keyboard press specifically.

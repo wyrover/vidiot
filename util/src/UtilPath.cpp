@@ -22,17 +22,6 @@
 
 namespace util { namespace path {
 
-wxString correctSlashes(wxString file)
-{
-    // todo remove
-//#ifdef _MSC_VER
-//    file.Replace("/", "\\");
-//#else
-//    file.Replace("\\", "/");
-//#endif // _MSC_VER
-    return file;
-}
-
 wxFileName normalize(wxFileName filename)
 {
     bool normalizeResult = filename.Normalize();
@@ -74,7 +63,7 @@ wxString toPath(const wxFileName& filename)
 
 wxFileName toFileName(const wxString& path)
 {
-    wxString corrected( correctSlashes(path) );
+    wxString corrected( path );
     if (wxDirExists( corrected ))
     {
         return wxFileName(corrected, "");
@@ -116,17 +105,17 @@ bool equals(const wxFileName& f1, const wxFileName& f2)
 
 bool equals(const wxString& f1, const wxFileName& f2)
 {
-    return equals( wxFileName( correctSlashes(f1) ), f2 );
+    return equals( wxFileName( f1 ), f2 );
 }
 
 bool equals(const wxFileName& f1, const wxString& f2)
 {
-    return equals( f1, wxFileName( correctSlashes(f2) ) );
+    return equals( f1, wxFileName( f2 ) );
 }
 
 bool equals(const wxString& f1, const wxString& f2)
 {
-    return equals( wxFileName( correctSlashes(f1) ), wxFileName( correctSlashes(f2) ) );
+    return equals( wxFileName( f1 ), wxFileName( f2 ) );
 }
 
 bool isParentOf(const wxFileName& parent, const wxFileName& child)
@@ -139,17 +128,17 @@ bool isParentOf(const wxFileName& parent, const wxFileName& child)
 
 bool isParentOf(const wxString& parent, const wxFileName& child)
 {
-    return isParentOf( wxFileName( correctSlashes(parent) ), child );
+    return isParentOf( wxFileName( parent ), child );
 }
 
 bool isParentOf(const wxFileName& parent, const wxString& child)
 {
-    return isParentOf( parent, wxFileName( correctSlashes(child) ) );
+    return isParentOf( parent, wxFileName( child ) );
 }
 
 bool isParentOf(const wxString& parent, const wxString& child)
 {
-    return isParentOf( wxFileName( correctSlashes(parent) ),  wxFileName( correctSlashes(child) ) );
+    return isParentOf( wxFileName( parent ),  wxFileName( child ) );
 }
 
 bool hasSubDirectories(wxFileName directory)

@@ -45,7 +45,6 @@ LinuxSetup()
     sudo add-apt-repository -y ppa:webupd8team/sublime-text-3
     sudo apt-get -y update
     # General
-#todo remove boost here
     sudo apt-get -y install joe ubuntu-tweak-tool unity-tweak-tool subversion sublime-text-installer openjdk-7-jdk libsaxon* codeblocks codeblocks-contrib cmake cmake-qt-gui g++ portaudio19-dev libsoundtouch-dev
     # wxwidgets - dos2unix required since windows checkout of wxwidgets gives the wx-config utility dos line endings, making it fail to run.
     sudo apt-get -y install libgtk2.0-dev dos2unix 
