@@ -174,6 +174,8 @@ DialogRenderSettings::DialogRenderSettings(model::SequencePtr sequence)
 
     enableSetDefaultButton();
     enableRenderButton();
+
+    gui::Window::get().setDialogOpen(true);
 }
 
 DialogRenderSettings::~DialogRenderSettings()
@@ -188,6 +190,8 @@ DialogRenderSettings::~DialogRenderSettings()
     mSetDefaultButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, & DialogRenderSettings::onSetDefaultButtonPressed, this);
     mVideoCodec->Unbind(wxEVT_COMMAND_CHOICE_SELECTED, &DialogRenderSettings::onVideoCodecChanged, this);
     mAudioCodec->Unbind(wxEVT_COMMAND_CHOICE_SELECTED, &DialogRenderSettings::onAudioCodecChanged, this);
+
+    gui::Window::get().setDialogOpen(false);
 }
 
 //////////////////////////////////////////////////////////////////////////

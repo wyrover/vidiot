@@ -159,8 +159,8 @@ void HelperTestSuite::testSuiteDone()
     int totalSuiteCount = CxxTest::TestTracker::tracker().world().numTotalTests();
     if (mSuiteCount == totalSuiteCount)
     {
-        if (!currentTestRequiresWindow()) 
-        { 
+        if (!currentTestRequiresWindow())
+        {
             wxFileConfig config(wxEmptyString, wxEmptyString, Config::getFileName());
             wxConfigBase::Set(&config);
             wxConfigBase::Get()->Write(Config::sPathTestRunCurrent, ""); // Reset
@@ -179,7 +179,6 @@ void HelperTestSuite::testSuiteDone()
 
 void HelperTestSuite::setTest(const char* test)
 {
-    VAR_ERROR(test);
     mCurrentTestName.reset(test);
     updateTitle();
 }

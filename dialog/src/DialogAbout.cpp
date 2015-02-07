@@ -66,6 +66,8 @@ DialogAbout::DialogAbout()
 
     mHtml->Bind(wxEVT_HTML_LINK_CLICKED, &DialogAbout::onLink, this);
     mBack->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &DialogAbout::onBack, this);
+
+    gui::Window::get().setDialogOpen(true);
 }
 
 DialogAbout::~DialogAbout()
@@ -74,11 +76,13 @@ DialogAbout::~DialogAbout()
     VAR_DEBUG(this);
     mHtml->Unbind(wxEVT_HTML_LINK_CLICKED, &DialogAbout::onLink, this);
     mBack->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &DialogAbout::onBack, this);
+
+    gui::Window::get().setDialogOpen(false);
 }
 
 void DialogAbout::onLink(wxHtmlLinkEvent& event)
 {
-    if (event.GetLinkInfo().GetHref().StartsWith(_T("http://")) || 
+    if (event.GetLinkInfo().GetHref().StartsWith(_T("http://")) ||
         event.GetLinkInfo().GetHref().StartsWith(_T("https://")))
     {
 		wxLaunchDefaultBrowser(event.GetLinkInfo().GetHref());

@@ -94,6 +94,7 @@ void BREAK();
 void LogHistory();
 
 void WaitUntilMainWindowActive(bool active);
+void WaitUntilDialogOpen(bool open);
 
 } // namespace
 

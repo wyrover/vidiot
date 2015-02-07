@@ -202,6 +202,8 @@ DialogNewProject::DialogNewProject()
 
     setLinks();
     SetPageSize(minPageSize);
+
+    gui::Window::get().setDialogOpen(true);
 }
 
 DialogNewProject::~DialogNewProject()
@@ -217,6 +219,8 @@ DialogNewProject::~DialogNewProject()
     Unbind(wxEVT_WIZARD_PAGE_CHANGED, &DialogNewProject::onPageChanged, this);
     Unbind(wxEVT_WIZARD_CANCEL, &DialogNewProject::onCancel, this);
     Unbind(wxEVT_WIZARD_FINISHED, &DialogNewProject::onFinish, this);
+
+    gui::Window::get().setDialogOpen(false);
 }
 
 bool DialogNewProject::runWizard()

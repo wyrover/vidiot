@@ -27,38 +27,48 @@ void TestUtilPath::testEqualsAndIsParentOf()
 {
     StartTestSuite();
 
-    ASSERT( util::path::equals( wxFileName("C:\\test"), wxString("C:\\test") ) );
-    ASSERT( util::path::equals( wxFileName("C:/test"),  wxString("C:\\test") ) );
-    ASSERT( util::path::equals( wxFileName("C:/test"),  wxString("C:/test") ) );
-    ASSERT( util::path::equals( wxFileName("C:\\test"), wxString("C:\\test\\") ) );
-    ASSERT( util::path::equals( wxFileName("C:\\test"), wxString("C:/test/") ) );
-    ASSERT( util::path::equals( wxFileName("C:\\test"), wxString("C:/test/") ) );
+    VAR_ERROR( wxFileName("C:\\test"))(wxFileName("C:/test"));
 
-    ASSERT( util::path::equals( wxString("C:\\test"),   wxFileName("C:\\test") ) );
-    ASSERT( util::path::equals( wxString("C:\\test"),   wxFileName("C:/test") ) );
+    ASSERT( util::path::equals( wxFileName("C:\\test"), wxString("C:\\test") ) );
+    ASSERT( util::path::equals( wxFileName("C:/test"),  wxString("C:/test") ) );
+    ASSERT( util::path::equals( wxFileName("C:/test"),  wxString("C:/test/") ) );
     ASSERT( util::path::equals( wxString("C:/test"),    wxFileName("C:/test") ) );
-    ASSERT( util::path::equals( wxString("C:\\test\\"), wxFileName("C:\\test") ) );
+
+#ifdef _MSC_VER
+    // Check independence of forward/backward slashes.
+    ASSERT( util::path::equals( wxFileName("C:\\test"), wxString("C:\\test\\") ) );
+    ASSERT( util::path::equals( wxString("C:\\test"),   wxFileName("C:\\test") ) );
+    ASSERT( util::path::equals( wxFileName("C:/test"),  wxString("C:\\test") ) );
+    ASSERT( util::path::equals( wxFileName("C:\\test"), wxString("C:/test/") ) );
+    ASSERT( util::path::equals( wxString("C:\\test"),   wxFileName("C:/test") ) );
     ASSERT( util::path::equals( wxString("C:/test/"),   wxFileName("C:\\test")  ) );
     ASSERT( util::path::equals( wxString("C:/test/"),   wxFileName("C:\\test") ) );
+    ASSERT( util::path::equals( wxString("C:\\test\\"), wxFileName("C:\\test") ) );
+#endif // _MSC_VER
 
     RandomTempDir tempdir;
-
     wxString shortPath = tempdir.getFileName().GetShortPath();
     wxString longPath = tempdir.getFileName().GetLongPath();
+
+#ifdef _MSC_VER
     ASSERT( !shortPath.IsSameAs(longPath) ); // If this fails all the tests below actually test nothing
     ASSERT( util::path::equals( shortPath, longPath ) );
     ASSERT( util::path::equals( wxFileName(shortPath), wxString(longPath) ) );
     ASSERT( util::path::equals( wxFileName(shortPath, "file", "ext"), wxFileName(longPath, "file", "ext") ) );
+#endif
 
-    wxFileName path = tempdir.getFileName();
+    RandomTempDirPtr subdir1 = tempdir.generateSubDir();
+    RandomTempDirPtr subdir2 = subdir1->generateSubDir();
+    wxFileName path = subdir2->getFileName();
     wxFileName root = path;
     wxArrayString paths = path.GetDirs();
     ASSERT_MORE_THAN(paths.GetCount(), 3); // If this fails then the TEMP dir is probably too 'short'
     root.RemoveLastDir();
     root.RemoveLastDir();
     root.RemoveLastDir();
-    wxString path1 = root.GetFullPath() + "\\test\\dir\\dir\\file.ext";
-    wxString path2 = path.GetFullPath() +  "..\\..\\..\\test\\dir\\dir\\file.ext";
+    wxString sep =  wxFileName::GetPathSeparator();
+    wxString path1 = root.GetFullPath() + sep + "test" + sep + "dir" + sep + "dir" + sep + "file.ext";
+    wxString path2 = path.GetFullPath() + sep + ".." + sep + ".." + sep + ".." + sep + "test" + sep + "dir" + sep + "dir" + sep + "file.ext";
     wxFileName fn1 = root;
     fn1.AppendDir("test");
     fn1.AppendDir("dir");
@@ -103,6 +113,9 @@ void TestUtilPath::testEqualsAndIsParentOf()
     ASSERT( !util::path::isParentOf( path2, root.GetFullPath() ) );
     ASSERT( !util::path::isParentOf( fn1, root ) );
     ASSERT( !util::path::isParentOf( fn2, root.GetFullPath() ) );
+
+    subdir2.reset();
+    subdir1.reset();
 }
 
 } // namespace

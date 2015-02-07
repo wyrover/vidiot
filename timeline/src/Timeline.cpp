@@ -563,6 +563,7 @@ void Timeline::resize()
 {
     getSequenceView().invalidateRect();
     SetVirtualSize(getSequenceView().getSize());
+    getScrolling().alignCenterPts();
 }
 
 bool Timeline::renderThumbnails() const

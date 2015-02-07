@@ -124,8 +124,6 @@ void TestSavingAndLoading::testSaveAndLoad()
 
     bool ok = wxRemoveFile(tempDir_fileName.second.GetFullPath());
     ASSERT(ok)(tempDir_fileName.second.GetFullPath());
-
-    mProjectFixture.destroy();
 }
 
 void TestSavingAndLoading::testLoadOldVersions()
@@ -140,6 +138,13 @@ void TestSavingAndLoading::testLoadOldVersions()
     {
         if (!filename.IsSameAs(sCurrent))
         {
+            wxRegEx reVersion("[[:digit:]]+\\.[[:digit:]]+\\.[[:digit:]]+_([[:digit:]]+)\\.vid");
+            ASSERT(reVersion.IsValid());
+            ASSERT_EQUALS(reVersion.GetMatchCount(),2);
+            bool match = reVersion.Matches(filename);
+            ASSERT(match);
+            long revision = wxAtoi(reVersion.GetMatch(filename,1));
+            if (wxPlatformInfo::Get().GetOperatingSystemId() == wxOS_UNIX_LINUX && revision < 1602) { continue; } // Older saved projects contain absolute windows paths which are unreadible.
 			StartTest(filename.c_str());
             wxFileName vidFileName(referenceDirName);
             vidFileName.SetFullName(filename);
@@ -171,22 +176,20 @@ void TestSavingAndLoading::testBackupBeforeSave()
     //////////////////////////////////////////////////////////////////////////
 
     StartTest("Save again multiple times and check that backup files are generated");
-    std::vector<bool> isPresent = std::vector<bool>(20, false); // Indicates which files should be present/not
     for (int count = 0; count < 60; ++count)
     {
-        ASSERT(!model::Project::createBackupFileName(existingFile,count).Exists());
+        ASSERT(!model::Project::createBackupFileName(existingFile,count).Exists())(count);
         tempDir_fileName = SaveProject(tempDirProject);
-        ASSERT(model::Project::createBackupFileName(existingFile,count).Exists());
+        ASSERT(model::Project::createBackupFileName(existingFile,count).Exists())(count);
         ASSERT_FILE_CREATED(existingFile,count);
 
         for (int j = 0; j < count - Config::ReadLong(Config::sPathBackupBeforeSaveMaximum); ++j)
         {
-            ASSERT(!model::Project::createBackupFileName(existingFile,j).Exists());
+            ASSERT(!model::Project::createBackupFileName(existingFile,j).Exists())(count)(j)(tempDir_fileName);
         }
     }
     mProjectFixture.destroy();
-    WindowTriggerMenu(wxID_CLOSE);
-    WaitForIdle;
+    CloseProjectAndAvoidSaveDialog();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -203,29 +206,31 @@ void TestSavingAndLoading::checkDocument(wxString path)
 
     // Checks on loaded document
     WaitForIdle;
-    {
-        StartTest("Cursor position");
-        ASSERT_EQUALS(getTimeline().getCursor().getLogicalPosition(), getSequence()->getLength() / 2);
-    }
+    StartTest("Cursor position");
+    util::thread::RunInMainAndWait([]()
     {
         StartTest("Scroll offset");
+        ASSERT_EQUALS(getTimeline().getCursor().getLogicalPosition(), getSequence()->getLength() / 2);
         ASSERT_EQUALS(getTimeline().getScrolling().getCenterPts(), getSequence()->getLength() / 2);
-    }
-
+    });
     // Actions on loaded document
     util::thread::RunInMainAndWait([]()
     {
         // First move to the left so that all the move actions succeed
         getTimeline().getScrolling().align(0,0);
     });
+    util::thread::RunInMainAndWait([]()
     {
         // Known bug at some point: mLastModified not known for a recently opened file (in the project view).
         // The method getLastModified was accessed when the date column comes into view.
         StartTest("Open folder");
         wxString s = util::path::toPath(util::path::normalize(getTestFilesPath().GetFullPath()));
         gui::ProjectView::get().expand(getRoot()->find(s).front());
+    });
+    util::thread::RunInMainAndWait([]()
+    {
         gui::ProjectView::get().scrollToRight();
-    }
+    });
     {
         StartTest("Trim clip"); // Known bug at some point: a crash due to improper initialization of File class members upon loading (mNumberOfFrames not initialized)
         TimelineTrimLeft(VideoClip(0,1),20);

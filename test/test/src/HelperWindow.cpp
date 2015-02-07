@@ -164,4 +164,12 @@ void WaitUntilMainWindowActive(bool active)
     }
 }
 
+void WaitUntilDialogOpen(bool open)
+{
+    while ( open != util::thread::RunInMainReturning<bool>([] { return gui::Window::get().isDialogOpen(); }) )
+    {
+        pause(50);
+    }
+}
+
 } // namespace

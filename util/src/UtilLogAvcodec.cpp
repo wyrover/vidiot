@@ -318,7 +318,6 @@ std::ostream& operator<<(std::ostream& os, const AVFormatContext* obj)
             << "max_delay="             << obj->max_delay                   << ','
             << "flags="                 << obj->flags                       << ','
             << "probesize="             << obj->probesize                   << ','
-            << "max_analyze_duration="  << obj->max_analyze_duration        << ','
             << "video_codec_id="        << obj->video_codec_id              << ','
             << "audio_codec_id="        << obj->audio_codec_id              << ','
             << "subtitle_codec_id="     << obj->subtitle_codec_id           << ','

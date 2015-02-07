@@ -54,8 +54,9 @@ public:
     // FROM wxTextDataObject
     //////////////////////////////////////////////////////////////////////////
 
-    /// Called when data is copied from the clipboard onto this object.
-    virtual bool SetData(size_t len, const void *buf) override;
+    virtual void SetText(const wxString& text) override;
+
+    wxDataFormat GetPreferredFormat(Direction dir=Get) const override;
 
     //////////////////////////////////////////////////////////////////////////
     // GET/SET

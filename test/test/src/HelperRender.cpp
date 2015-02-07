@@ -22,7 +22,8 @@ namespace test {
 std::pair< RandomTempDirPtr, wxFileName > OpenRenderDialogAndSetFilename()
 {
     WindowTriggerMenu(ID_RENDERSETTINGS);
-    
+    WaitUntilDialogOpen(true);
+
     RandomTempDirPtr tempdir = boost::make_shared<RandomTempDir>();
     wxFileName path(tempdir->getFileName().GetFullPath(), "out", "avi");
     gui::Dialog::get().setSaveFile(path.GetFullPath());

@@ -199,6 +199,9 @@ public:
     /// \param title will be added after the original title
     void setAdditionalTitle(const wxString& title);
 
+    bool isDialogOpen() const;
+    void setDialogOpen(bool open);
+
     bool isProjectOpened() const;
 
 private:
@@ -240,7 +243,7 @@ private:
     wxString            mDefaultPerspective;
 
     bool mProjectOpen;
-    bool mDialogOpen;
+    std::atomic<bool> mDialogOpen;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS

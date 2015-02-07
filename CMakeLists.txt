@@ -91,7 +91,7 @@ if (MSVC)
     set (BOOST_LIBRARYDIR $ENV{BOOST_ROOT}/lib32-msvc-12.0)
   endif ()
 endif ()
-find_package (Boost 1.55 REQUIRED COMPONENTS date_time thread serialization system)
+find_package (Boost 1.56 REQUIRED COMPONENTS date_time thread serialization system)
 if (MSVC)
   # Find all dlls matching 'release' (== not gd) and 'threading-multi' (== mt)
   # Note: For some boost libraries, there is no dependency for building (above), but these dlls

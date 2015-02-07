@@ -288,7 +288,11 @@ void ProjectView::setOpenFolders(std::vector<model::FolderPtr> folders)
 
 void ProjectView::scrollToRight()
 {
+#ifdef _MSC_VER
     mCtrl.ScrollWindow(mCtrl.GetSize().GetWidth(), -1);
+#else
+    ScrollWindow(GetSize().GetWidth(), -1);
+#endif
 }
 
 bool ProjectView::findConflictingName(const model::FolderPtr& parent, const wxString& name, const NodeType& type)
