@@ -93,7 +93,6 @@ model::FolderPtr WindowCreateProject()
     OpenProjectWaiter waitForOpenedProject;
     WindowTriggerMenu(wxID_NEW);
     waitForOpenedProject.wait();
-    // todo ensure that every bind/unbind is done in the main thread!
     return getRoot();
 }
 
