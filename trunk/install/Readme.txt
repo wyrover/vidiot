@@ -1,1 +1,1 @@
-Vidiot Readme
+Vidiot is a non-linear video editor targeted for home video editing. It supports operations like compositing, scaling/rotating, adding transitions and titles, trimming, etc.
