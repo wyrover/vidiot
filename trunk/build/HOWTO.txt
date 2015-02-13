@@ -111,11 +111,12 @@ Optional: C/C++ -> Code Generation -> Floating point model = fast
 * https://sourceforge.net/projects/saxon/files/Saxon-HE/9.4/SaxonHE9-4-0-9N-setup.exe/download
 
 =================== INSTALLER ===================
-* Install NSIS
-* Copy build/FileAssoc.nsh into "C:\Program Files (x86)\NSIS\Include"
+* Install NSIS (v3 - enable all options)
+* Copy build/nsis/FileAssoc.nsh into "C:\Program Files (x86)\NSIS\Include"
 
 =================== BUILD ===================
 * Run <VIDIOT_SRC>/build/RunCMake.bat
+* Note: this also creates desktop shortcuts for rebuilding/deliver build.
 
 =================== MAKE RELEASE ===================
 * Run both Debug and Release tests
@@ -133,12 +134,12 @@ Optional: C/C++ -> Code Generation -> Floating point model = fast
 * RunCleanAndMakePackage.bat
   - Runs 'svn update'
     (for correct svn information in the about box)
-  - Updates BUILDDIR/VersionHistory.txt
+  - Updates BUILDDIR/Changelog.txt
   - Builds installer (RelWithDebInfo)
   - Run installer and test to verify
 * Upload
   - Installer
-  - VersionHistory.txt
+  - Changelog.txt
 
 
 ================== "SHELVE" =======================

@@ -107,6 +107,7 @@ Application::Application(test::IEventLoopListener* eventLoopListener)
     ,   mCommandLine(boost::make_shared<CommandLine>())
 {
     // NOT: wxHandleFatalExceptions(); These are handled via the windows exception filter in Main.cpp
+    // todo for linux?
     wxHandleFatalExceptions(false);
 
     ::wxInitAllImageHandlers();
@@ -119,7 +120,19 @@ Application::Application(test::IEventLoopListener* eventLoopListener)
     // that log during shutdown to crash the shutdown process.
     //
     // Typical example of that: logging the type of crash when generating a debugreport.
-    Log::init(sTestApplicationName, GetAppName());
+    Log::init();
+
+    VAR_ERROR(wxStandardPaths::Get().GetDataDir());
+    VAR_ERROR(wxStandardPaths::Get().GetDocumentsDir());
+    VAR_ERROR(wxStandardPaths::Get().GetConfigDir());
+    VAR_ERROR(wxStandardPaths::Get().GetAppDocumentsDir());
+    VAR_ERROR(wxStandardPaths::Get().GetExecutablePath());
+#ifndef _MSC_VER
+    VAR_ERROR(wxStandardPaths::Get().GetInstallPrefix());
+#endif
+    VAR_ERROR(wxStandardPaths::Get().GetResourcesDir()); // todo dezemoet het zijn
+    VAR_ERROR(wxStandardPaths::Get().GetUserConfigDir());
+    VAR_ERROR(wxStandardPaths::Get().GetUserDataDir());
 
     LOG_ERROR << "Revision: " << SubversionRevision;
 }

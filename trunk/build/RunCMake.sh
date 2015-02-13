@@ -163,34 +163,28 @@ FfmpegSetup()
     hash -r
 }
 
-Icons()
+Icon()
 {
-cat > "${HOME}/Desktop/Run CMake.desktop" <<DELIM
+cat > "${HOME}/Desktop/V_${1}.desktop" <<DELIM
 #!/usr/bin/env xdg-open
 [Desktop Entry]
 Version=1.0
 Type=Application
 Terminal=false
 Icon[en_US]=gnome-panel-launcher
-Name[en_US]=RunCMake
-Exec=gnome-terminal --execute /home/epra/Vidiot/vidiot_trunk/build/RunCMake.sh
-Name=Run CMake
-Icon=/usr/share/pixmaps/cmake.xpm
-DELIM
-cat > "${HOME}/Desktop/Clean and run CMake.desktop" <<DELIM
-#!/usr/bin/env xdg-open
-[Desktop Entry]
-Version=1.0
-Type=Application
-Terminal=false
-Icon[en_US]=gnome-panel-launcher
-Name[en_US]=Clean and run CMake
-Exec=gnome-terminal --execute /home/epra/Vidiot/vidiot_trunk/build/RunCMake.sh REBUILD
+Name[en_US]=V_${1}
+Exec=gnome-terminal --geometry 100x50+0+0 --execute /home/epra/Vidiot/vidiot_trunk/build/RunCMake.sh ${1}
 Name=RunCMake
 Icon=/usr/share/pixmaps/cmake.xpm
 DELIM
-    chmod a+x "${HOME}/Desktop/Run CMake.desktop"
-    chmod a+x "${HOME}/Desktop/Clean and run CMake.desktop"
+  chmod a+x "${HOME}/Desktop/V_${1}.desktop"
+}
+
+Icons()
+{
+    Icon CMAKE
+    Icon REBUILD
+    Icon DELIVER
 }
 
 Clean()
@@ -226,7 +220,7 @@ MakeDirs()
     fi
 }
 
-MakeReadme()
+MakeChangelog()
 {
     echo "\n----------------------------------------\nUpdate svn version and get revision log...\n"
     XML_SOURCE=${BUILD}/revisionlog.xml
@@ -234,14 +228,22 @@ MakeReadme()
       svn log ${SOURCE} --xml -r 1200:BASE > ${XML_SOURCE}
     fi
 
-    echo "\n----------------------------------------\nCreate README and history.html...\n"
-    if [ ! -f ${BUILD_DEBUG}/README.txt ]; then
-        saxonb-xslt -s:${XML_SOURCE} -xsl:${SOURCE}/build/make_readme_txt.xslt -o:${BUILD_DEBUG}/README.txt
-        cp ${BUILD_DEBUG}/README.txt ${BUILD_RELEASE}/README.txt
+    echo "\n----------------------------------------\nCreate Changelog.txt...\n"
+    if [ ! -f ${BUILD_DEBUG}/Changelog.txt ]; then
+        saxonb-xslt -s:${XML_SOURCE} -xsl:${SOURCE}/build/Changelog_txt.xslt -o:${BUILD_DEBUG}/Changelog.txt
+        cp ${BUILD_DEBUG}/Changelog.txt ${BUILD_RELEASE}/Changelog.txt
     fi
-    if [ ! -f ${BUILD_DEBUG}/history.html ]; then
-        saxonb-xslt -s:${XML_SOURCE} -xsl:${SOURCE}/build/make_readme_htm.xslt -o:${BUILD_DEBUG}/history.html
-        cp ${BUILD_DEBUG}/history.html ${BUILD_RELEASE}/history.html
+    echo "\n----------------------------------------\nCreate changelog.gz...\n"
+    if  [ ! -f ${BUILD_RELEASE}/changelog.gz ]; then
+        cd ${BUILD_RELEASE}
+        cp Changelog.txt changelog
+        gzip -9 changelog
+    fi
+
+    echo "\n----------------------------------------\nCreate changelog.html...\n"
+    if [ ! -f ${BUILD_DEBUG}/changelog.html ]; then
+        saxonb-xslt -s:${XML_SOURCE} -xsl:${SOURCE}/build/Changelog_htm.xslt -o:${BUILD_DEBUG}/changelog.html
+        cp ${BUILD_DEBUG}/changelog.html ${BUILD_RELEASE}/changelog.html
     fi
 }
 
@@ -262,8 +264,33 @@ Rebuild()
 	Clean 
 	Prepare
 	MakeDirs
-	MakeReadme
+	MakeChangelog
 	RunCMake
+}
+
+BuildPackage()
+{
+    cd ${BUILD_RELEASE}
+    codeblocks --target=package --profile="batch" --build Vidiot.cbp --no-log
+    cd ${BUILD_RELEASE}
+    package=`ls *.deb | tail -n 1`
+
+    echo "\n----------------------------------------\nFix ${package} permissions...\n"
+    # From https://github.com/paralect/robomongo/blob/master/install/linux/fixup_deb.sh.in
+    # chmod 644 on md5sums in generated package:
+    set -e
+    mkdir fix_up_deb
+    dpkg-deb -x ${package} fix_up_deb
+    dpkg-deb --control ${package} fix_up_deb/DEBIAN
+    rm ${package}
+    chmod 0644 fix_up_deb/DEBIAN/md5sums
+    find -type d -print0 |xargs -0 chmod 755
+    fakeroot dpkg -b fix_up_deb ${package}
+    rm -rf fix_up_deb
+
+    echo "\n----------------------------------------\nRun lintian on generated package ${package}...\n"
+    lintian ${package}
+
 }
 
 case $1 in
@@ -274,8 +301,8 @@ BOOSTSETUP) BoostSetup ;;
 WXSETUP) WxSetup ;;
 FFMPEGSETUP) FfmpegSetup ;;
 REBUILD) Rebuild ;;
-DELIVER) echo "Deliver not implemented yet..." ;;
-*)       MakeDirs ; MakeReadme ; RunCMake ;;
+DELIVER) Rebuild ; BuildPackage ;;
+*)       MakeDirs ; MakeChangelog ; RunCMake ;;
 esac
 
 echo "\n----------------------------------------\nTotal running time: $(date -d @$(($(date +%s)-$start)) +"%M minutes %S seconds")\n"

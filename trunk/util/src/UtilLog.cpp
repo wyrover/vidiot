@@ -19,6 +19,7 @@
 
 #include "UtilAssert.h"
 #include "UtilFifo.h"
+#include "UtilPath.h"
 #include "UtilStackWalker.h"
 #include "UtilThread.h"
 #ifdef _MSC_VER
@@ -192,21 +193,9 @@ void Log::flush()
     sWriter->flush();
 }
 
-void Log::init(const wxString& testApplicationName, const wxString& applicationName)
+void Log::init()
 {
-    wxFileName logFile(wxStandardPaths::Get().GetExecutablePath());
-    logFile.SetExt("log"); // Default, log in same dir as executable
-
-    if (logFile.GetFullPath().Contains("Program Files"))
-    {
-        // When running from "Program Files" (installed version), store this file elsewhere to avoid being unable to write.
-        logFile.SetPath(wxStandardPaths::Get().GetTempDir()); // Store in TEMP
-
-        wxString nameWithProcessId; nameWithProcessId << logFile.GetName() << '_' << wxGetProcessId();
-        logFile.SetName(nameWithProcessId);
-    }
-
-    sFilename = std::string(logFile.GetFullPath());
+    sFilename = std::string(util::path::getLogFilePath().GetFullPath());
 
     // Start the logger
     sWriter = new LogWriter();

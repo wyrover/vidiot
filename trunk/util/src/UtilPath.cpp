@@ -148,13 +148,24 @@ bool hasSubDirectories(wxFileName directory)
     return wxDir::GetAllFiles(directory.GetLongPath(), &allfiles, wxEmptyString, wxDIR_DIRS) > 0;
 }
 
+wxFileName getExeDir()
+{
+    wxString exepath;
+    wxFileName::SplitPath(wxStandardPaths::Get().GetExecutablePath(),&exepath,0,0);
+    wxFileName dir = wxFileName(exepath,"");
+    ASSERT(!dir.HasExt());
+    ASSERT(!dir.HasName());
+    return dir;
+}
+
 wxString toFileInInstallationDirectory(wxString subdirs, wxString filename)
 {
     ASSERT(!subdirs.Contains("\\"))(subdirs);
     ASSERT(subdirs.GetChar(0) != '/')(subdirs);
     ASSERT(subdirs.Last() != '/')(subdirs);
 
-    wxFileName result(Config::getExeDir(), filename);
+    wxFileName result(getResourcesPath());
+    result.SetFullName(filename);
     if (!subdirs.IsEmpty())
     {
         wxStringTokenizer tokenizer(subdirs, "/");
@@ -166,5 +177,62 @@ wxString toFileInInstallationDirectory(wxString subdirs, wxString filename)
     return result.GetFullPath();
 }
 
+wxFileName getLogFilePath()
+{
+    wxFileName result(wxStandardPaths::Get().GetExecutablePath());
+    result.SetExt("log"); // Default, log in same dir as executable
+    wxString nameWithProcessId; nameWithProcessId << result.GetName() << '_' << wxGetProcessId();
+
+    if (result.GetFullPath().Contains("Program Files"))
+    {
+        // When running from "Program Files" (installed version),
+        // store this file elsewhere to avoid being unable to write.
+        result.SetPath(wxStandardPaths::Get().GetTempDir()); // Store in TEMP
+        result.SetName(nameWithProcessId);
+    }
+    else if (result.GetFullPath().StartsWith("/usr"))
+    {
+        // When running from "/usr" (installed version),
+        // store this file elsewhere to avoid being unable to write.
+        result.SetPath("/var/log"); // Store in /var/log
+        result.SetName(nameWithProcessId);
+    }
+    // NOT: VAR_ERROR(result); -- Logging may not yet be initialized here.
+    return result;
+}
+
+wxFileName getResourcesPath()
+{
+    wxFileName result(wxStandardPaths::Get().GetExecutablePath());
+    result.SetFullName("");
+    if (result.GetFullPath().StartsWith("/usr"))
+    {
+        // When running from "/usr" resources are
+        // installed under "/usr/share/appname"
+        result.SetPath(wxStandardPaths::Get().GetDataDir());
+    }
+    VAR_ERROR(result);
+    return result;
+}
+
+wxFileName getConfigFilePath()
+{
+    wxFileName result(wxStandardPaths::Get().GetExecutablePath()); // Using the executable's file name enables using multiple .ini files with multiple settings.
+    result.SetExt("ini");
+    if (result.GetFullPath().Contains("Program Files"))
+    {
+        // When running from "Program Files" (installed version),
+        // store this file elsewhere to avoid being unable to write.
+        result.SetPath(wxStandardPaths::Get().GetUserConfigDir()); // Store in "C:\Users\<username>\AppData\Roaming\<executablename>.ini"
+    }
+    else if (result.GetFullPath().StartsWith("/usr"))
+    {
+        // Store in ~/.appname.ini
+        result.SetPath(wxStandardPaths::Get().GetDocumentsDir());
+        result.SetName("." + result.GetName());
+    }
+    VAR_ERROR(result);
+    return result;
+}
 
 }} // namespace

@@ -39,6 +39,9 @@ include (build/cmake/TestMacros.cmake)
 
 #### VLD ####
 if (MSVC)
+  if (POLICY CMP0053)
+    cmake_policy(SET CMP0053 OLD) # Avoid Warning
+  endif ()
   include(build/cmake/FindVLD.cmake)
 else ()
   set (VLD_LIBRARIES_DIR "")
@@ -90,6 +93,9 @@ if (MSVC)
     set (BOOST_INCLUDEDIR $ENV{BOOST_ROOT}/boost) # Prebuilt boost
     set (BOOST_LIBRARYDIR $ENV{BOOST_ROOT}/lib32-msvc-12.0)
   endif ()
+else ()
+  set (Boost_USE_STATIC_LIBS ON)
+  set (Boost_USE_STATIC_RUNTIME ON)
 endif ()
 find_package (Boost 1.56 REQUIRED COMPONENTS date_time thread serialization system)
 if (MSVC)
