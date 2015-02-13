@@ -141,10 +141,7 @@ public:
     Log();
     virtual ~Log();
 
-    /// Initialize logging.
-    /// \param testApplicationName fixed string used for module test application name
-    /// \param applicationName current application name
-    static void init(const wxString& testApplicationName, const wxString& applicationName);
+    static void init();
     static void exit();
 
     static LogLevel sReportingLevel;

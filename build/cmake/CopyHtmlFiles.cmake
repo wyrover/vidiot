@@ -15,15 +15,15 @@
 # You should have received a copy of the GNU General Public License
 # along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-if (NOT (EXISTS "${PROJECT_BINARY_DIR}/history.html" ) )
-  message ( FATAL_ERROR "${PROJECT_BINARY_DIR}/history.html not found" )
+if (NOT (EXISTS "${PROJECT_BINARY_DIR}/changelog.html" ) )
+  message ( FATAL_ERROR "${PROJECT_BINARY_DIR}/changelog.html not found" )
 endif()
 
 file (GLOB_RECURSE HtmlFiles ${PROJECT_SOURCE_DIR}/html/*.*)
-set( ${HtmlFiles} ${HtmlFiles} ${PROJECT_BINARY_DIR}/history.html )
+set( ${HtmlFiles} ${HtmlFiles} ${PROJECT_BINARY_DIR}/changelog.html )
 
 macro (copy_html_files_to_target target)
   add_custom_command (TARGET ${target} DEPENDS ${HtmlFiles} PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/html  $<TARGET_FILE_DIR:${target}>/html)
-  add_custom_command (TARGET ${target} PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_BINARY_DIR}/history.html  $<TARGET_FILE_DIR:${target}>/html/about)
+  add_custom_command (TARGET ${target} PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_BINARY_DIR}/changelog.html  $<TARGET_FILE_DIR:${target}>/html/about)
   add_custom_command (TARGET ${target} PRE_BUILD COMMAND echo Html files copied to '${target}')
 endmacro ()

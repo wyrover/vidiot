@@ -15,12 +15,12 @@
 # You should have received a copy of the GNU General Public License
 # along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-FILE(GLOB installfiles ${PROJECT_SOURCE_DIR}/install/*.txt)
-SOURCE_GROUP("install" REGULAR_EXPRESSION ${PROJECT_SOURCE_DIR}/install/*.*)
+file (GLOB installfiles ${PROJECT_SOURCE_DIR}/install/*.txt)
+source_group ("install" REGULAR_EXPRESSION ${PROJECT_SOURCE_DIR}/install/*.*)
 
-SOURCE_GROUP("exe" REGULAR_EXPRESSION ${PROJECT_SOURCE_DIR}/main/src/.* FILES CMakeLists.txt ../images/images.rc)
+source_group ("exe" REGULAR_EXPRESSION ${PROJECT_SOURCE_DIR}/main/src/.* FILES CMakeLists.txt ../images/images.rc)
 
-LINK_DIRECTORIES(
+link_directories (
     ${FFMPEG_LIBRARY_DIR}
     ${Boost_LIBRARY_DIRS}
     ${PORTAUDIO_LIBRARY_DIR}
@@ -29,17 +29,27 @@ LINK_DIRECTORIES(
 )
 
 # images.rc is required to embed the icon file in the executable
-ADD_EXECUTABLE(main WIN32 src/Main.cpp ${installfiles} ../images/images.rc)
-SET_TARGET_PROPERTIES(main PROPERTIES OUTPUT_NAME Vidiot)
-TARGET_LINK_LIBRARIES(main vidiot ${Boost_LIBRARIES} ${wxWidgets_LIBRARIES} ${FFMPEG_LIBRARIES} ${PORTAUDIO_LIBRARIES} ${SOUNDTOUCH_LIBRARIES})
+add_executable (main WIN32 src/Main.cpp ${installfiles} ../images/images.rc)
+#if (WIN32)
+	set_target_properties (main PROPERTIES OUTPUT_NAME Vidiot)
+#else ()
+	set_target_properties (main PROPERTIES OUTPUT_NAME vidiot)
+#endif
+target_link_libraries (main vidiot ${Boost_LIBRARIES} ${wxWidgets_LIBRARIES} ${FFMPEG_LIBRARIES} ${PORTAUDIO_LIBRARIES} ${SOUNDTOUCH_LIBRARIES})
 
 reuse_precompiled_header (main "${CMAKE_CURRENT_SOURCE_DIR}/../pch" "Precompiled")
 
-copy_msvc_project_user_file(main)
+copy_msvc_project_user_file (main)
 
-INSTALL(TARGETS main COMPONENT Vidiot DESTINATION .)
+if (WIN32)
+  # install in root of install dir
+  install (TARGETS main COMPONENT Vidiot DESTINATION .)
+ else ()
+  # install in subdir 'bin' of install dir (typically '/usr')
+  install (TARGETS main COMPONENT vidiot DESTINATION bin)
+ endif ()
 
-add_custom_command(TARGET main DEPENDS vidiot)
+add_custom_command (TARGET main DEPENDS vidiot)
 
 copy_html_files_to_target (main)
 copy_images_to_target (main)

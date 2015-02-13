@@ -1,3 +1,5 @@
+@echo off
+
 REM Copyright 2013-2015 Eric Raijmakers.
 REM
 REM This file is part of Vidiot.
@@ -15,7 +17,10 @@ REM
 REM You should have received a copy of the GNU General Public License
 REM along with Vidiot. If not, see <http://www.gnu.org/licenses />.
 
+@SETLOCAL enableextensions enabledelayedexpansion
+
 set STARTTIME=%TIME: =0%
+
 
 goto BEGIN
 
@@ -23,6 +28,19 @@ REM ============================== SUBROUTINES ==============================
 
 :EXTRACTDRIVE
 set DRIVE=%~d1
+goto:eof
+
+:CREATESHORTCUT
+((
+  echo Set oWS = WScript.CreateObject^("WScript.Shell"^) 
+  echo sLinkFile = oWS.ExpandEnvironmentStrings^("%%HOMEDRIVE%%%%HOMEPATH%%\Desktop\V_%2%.lnk"^)
+  echo Set oLink = oWS.CreateShortcut^(sLinkFile^) 
+  echo oLink.TargetPath = oWS.ExpandEnvironmentStrings^(%1%^)
+  echo oLink.Arguments = "%2%" 
+  echo oLink.Save
+)1>%TEMP%\CreateShortcut.vbs
+cscript //nologo %TEMP%\CreateShortcut.vbs
+)1>>%TEMP%\CreateShortcut.log 2>>&1
 goto:eof
 
 :NOVAR
@@ -60,6 +78,13 @@ SET VIDIOT_BUILD_DRIVE=%DRIVE%
 
 
 
+REM ============================== CREATE DESKTOP SHORTCUTS ============================== 
+
+call:CREATESHORTCUT %0% CMAKE
+call:CREATESHORTCUT %0% REBUILD
+call:CREATESHORTCUT %0% DELIVER
+
+
 
 REM ============================== CLEAN ==============================
 :CLEAN
@@ -79,28 +104,38 @@ cd %VIDIOT_DIR%
 if NOT EXIST Build mkdir Build
 
 cd %VIDIOT_BUILD%
-if NOT EXIST MSVC mkdir MSVC
-if NOT EXIST GCCD mkdir GCCD
-if NOT EXIST GCCR mkdir GCCR
-        
 
 
 
 REM ======================= UPDATE VERSION INFO ========================
-if NOT "%1%"=="DELIVER" goto BUILD
 
-REM Call svn Update to ensure that the about box and the logging show the proper revision
+REM === Update svn version ===
 cd %SOURCE%
 "C:\Program Files\TortoiseSVN\bin\svn.exe" update
+
+REM === Generate revision log xml file ===
+set XML_SOURCE=%VIDIOT_BUILD%\Changelog.xml
+if not exist %XML_SOURCE% (
+  "c:\Program Files\TortoiseSVN\bin\svn.exe" log %VIDIOT_DIR%\vidiot_trunk --xml -r 1200:BASE > %XML_SOURCE%
+)
+
+REM ==== Find SAXON ====
+set SAXON_PATH=
+for /R "C:\Program Files\Saxonica" /D %%a in (*) do if exist "%%a\Transform.exe" set SAXON_PATH=%%a& goto:foundsaxon
+echo "Could not find Saxon in C:\Program Files"
+pause
+exit
+
+REM === Generate changelog files ===
+:foundsaxon
+if not exist "%VIDIOT_BUILD%\Changelog.txt" "%SAXON_PATH%\Transform.exe" -s:%XML_SOURCE% -xsl:%VIDIOT_DIR%\vidiot_trunk\build\Changelog_txt.xslt -o:"%VIDIOT_BUILD%\Changelog.txt"
+if not exist "%VIDIOT_BUILD%\changelog.html" "%SAXON_PATH%\Transform.exe" -s:%XML_SOURCE% -xsl:%VIDIOT_DIR%\vidiot_trunk\build\Changelog_htm.xslt -o:"%VIDIOT_BUILD%\changelog.html"
 
            
 
 
 REM ============================== BUILD ==============================
 :BUILD
-
-REM === Generate revision log file ===
-call %VIDIOT_DIR%\vidiot_trunk\build\make_readme.bat
 
 REM === FIND BOOST ====
 REM o-d: always use newest version
@@ -120,22 +155,15 @@ REM add --trace to a cmake line for more logging
 
 if EXIST "C:\Program Files\Microsoft Visual Studio 10.0\VC\bin\vcvars32.bat" call "C:\Program Files\Microsoft Visual Studio 10.0\VC\bin\vcvars32.bat"
 
-cd %VIDIOT_BUILD%\MSVC
+cd %VIDIOT_BUILD%
 set OUTTYPE="Visual Studio 9 2008"
-if EXIST "%ProgramFiles(x86)%\Microsoft Visual Studio 10.0" set OUTTYPE="Visual Studio 10"
-if EXIST "%ProgramFiles%\Microsoft Visual Studio 10.0" set OUTTYPE="Visual Studio 10"
-if EXIST "%ProgramFiles(x86)%\Microsoft Visual Studio 11.0" set OUTTYPE="Visual Studio 11"
-if EXIST "%ProgramFiles%\Microsoft Visual Studio 11.0" set OUTTYPE="Visual Studio 11"
 if EXIST "%ProgramFiles(x86)%\Microsoft Visual Studio 12.0" set OUTTYPE="Visual Studio 12"
 if EXIST "%ProgramFiles%\Microsoft Visual Studio 12.0" set OUTTYPE="Visual Studio 12"
 cmake -G %OUTTYPE% -Wdev --debug-output %SOURCE%
 REM cmake -LAH  %SOURCE% > CMakeVariables.txt
 
-REM cd %VIDIOT_BUILD%\GCCD
-REM cmake -G "CodeBlocks - MinGW Makefiles" -DCMAKE_BUILD_TYPE:STRING="DEBUG" -Wdev --debug-output %SOURCE%
 
-REM cd %VIDIOT_BUILD%\GCCR
-REM cmake -G "CodeBlocks - MinGW Makefiles" -DCMAKE_BUILD_TYPE:STRING="RELEASE" -Wdev --debug-output %SOURCE%
+
 
 
 
@@ -143,7 +171,7 @@ REM ============================== DELIVER ==============================
 :DELIVER
 if NOT "%1%"=="DELIVER" goto END
 
-cd %VIDIOT_BUILD%\MSVC
+cd %VIDIOT_BUILD%
 "C:\Program Files (x86)\Microsoft Visual Studio 12.0\Common7\IDE\devenv" Vidiot.sln /Build RelWithDebInfo /project PACKAGE 
 for %%i in (Vidiot*.exe) do start "" /b "%%i"
 

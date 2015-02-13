@@ -53,8 +53,13 @@ TODO use svn version for ffmpeg or store in svn?
 TODO remove deprecated stuff (warnings)
 
 =================== INSTALLER ===================
+* RunCMake.sh DELIVER
 
 =================== MAKE RELEASE ===================
+                
+todo move howto's one folder up
+todo rename runcmake.bat/.sh to buildvidiot.sh .... add auto open project!
+todo portable versions
 
 
 

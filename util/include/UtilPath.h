@@ -57,12 +57,25 @@ bool isParentOf(const wxString& parent,   const wxString& child );   ///< \retur
 
 /// \return true if the given directory contains one or more subdirectories.
 /// \pre directory must be a directory, not a file.
-bool hasSubDirectories(wxFileName directory); 
+bool hasSubDirectories(wxFileName directory);
 
 /// \return the full path to a file in the installation directory
 /// \param subdirs sub directory of installation directory where file is located (may have multiple levels separated with '/')
 /// \param filename name of file to be retrieved. Leave emtpy for dir only.
-wxString toFileInInstallationDirectory(wxString subdirs, wxString filename);
+/// \note In most cases the 'installation directory' is the folder where the exe is located.
+///       This holds for all test setups, windows installs, and cases where the code and
+///       resources are 'simply unzipped'. Exception is an install on linux where the exe
+///       is in one dir ('/usr/bin') and the resources are elsewhere ('/usr/share').
+wxString toFileInInstallationDirectory(wxString subdirs, wxString filename); // todo rename to getresource
+
+/// \return the full path to where the log file must be stored
+wxFileName getLogFilePath();
+
+/// \return the path where resources reside
+wxFileName getResourcesPath();
+
+/// \return the path where the config (ini) file resides
+wxFileName getConfigFilePath();
 
 }} // namespace
 

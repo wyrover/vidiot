@@ -16,43 +16,43 @@
 # along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
 # Add install rules for required system runtimes such as MSVCRxx.dll
-SET (CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_SKIP ON)
-INCLUDE(InstallRequiredSystemLibraries)
+set (CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_SKIP ON)
+include (InstallRequiredSystemLibraries)
 
-#include(FindSubversion)
-#message( ${PROJECT_SOURCE_DIR} )
-#Subversion_WC_INFO(${PROJECT_SOURCE_DIR} CURRENT)
-#message( "Current revision:  ${CURRENT_WC_REVISION}" )
+set (APPNAME Vidiot)
+string (TOLOWER ${APPNAME} APPNAME_LOWER)
 
-# http://www.vtk.org/Wiki/CMake:CPackPackageGenerators#NSIS_Generator_Specifics_settings
-SET(APPNAME Vidiot)
-SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY ${APPNAME})
-SET(CPACK_PACKAGE_INSTALL_DIRECTORY ${APPNAME})
-SET(CPACK_PACKAGE_VENDOR "Eric Raijmakers")
-SET(CPACK_GENERATOR "NSIS")
-SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/Readme.txt")
-SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/Copyright.txt")
-SET(CPACK_PACKAGE_VERSION_MAJOR "0")
-SET(CPACK_PACKAGE_VERSION_MINOR "3")
-SET(CPACK_PACKAGE_VERSION_PATCH "4" ) # define Vidiot${CPACK_PACKAGE_VERSION_MAJOR}")
-file(WRITE "${PROJECT_BINARY_DIR}/VidiotVersion.h.txt" "#define VidiotVersion \"${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}\"\n")
-execute_process(COMMAND ${CMAKE_COMMAND} -E copy_if_different "${PROJECT_BINARY_DIR}/VidiotVersion.h.txt" "${PROJECT_BINARY_DIR}/VidiotVersion.h") # Reduces needless rebuilds
+#set (CPACK_PACKAGE_DESCRIPTION_SUMMARY "Non-linear video editor for home video editing.")
+set (CPACK_PACKAGE_VENDOR               "Eric Raijmakers")
+set (CPACK_PACKAGE_CONTACT              "Eric Raijmakers <epra@users.sourceforge.net>")
+#set (CPACK_PACKAGE_DESCRIPTION_FILE     "${CMAKE_CURRENT_SOURCE_DIR}/../Readme.txt") todo remove the readme file?
+set (CPACK_RESOURCE_FILE_LICENSE        "${CMAKE_CURRENT_SOURCE_DIR}/../License.txt")
+set (CPACK_PACKAGE_ICON                 "${CMAKE_SOURCE_DIR}\\\\images\\\\movie150x57.bmp") # Installer header icon: 150x57px, 32bit A8R8G8B8, Don't write color space info (GIMP).
+set (CPACK_PACKAGE_VERSION_MAJOR        "0")
+set (CPACK_PACKAGE_VERSION_MINOR        "3")
+set (CPACK_PACKAGE_VERSION_PATCH        "4" )
 
-SET(CPACK_PACKAGE_EXECUTABLES "" "") # See http://public.kitware.com/Bug/view.php?id=7828
-SET(CPACK_NSIS_MENU_LINKS "${APPNAME}.exe" "${APPNAME}")
-IF(WIN32 AND NOT UNIX)
+file (WRITE "${PROJECT_BINARY_DIR}/VidiotVersion.h.txt" "#define VidiotVersion \"${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}\"\n")
+execute_process (COMMAND ${CMAKE_COMMAND} -E copy_if_different "${PROJECT_BINARY_DIR}/VidiotVersion.h.txt" "${PROJECT_BINARY_DIR}/VidiotVersion.h") # Reduces needless rebuilds
+
+set (CPACK_PACKAGE_EXECUTABLES "" "") # See http://public.kitware.com/Bug/view.php?id=7828
+
+if (WIN32 AND NOT UNIX)
+  set (CPACK_GENERATOR                  "NSIS")
+  set (CPACK_PACKAGE_INSTALL_DIRECTORY  ${APPNAME})
+  set (CPACK_NSIS_MENU_LINKS            "${APPNAME}.exe" "${APPNAME}")
+  
   # There is a bug in NSI that does not handle full unix paths properly. Make
   # sure there is at least one set of four (4) backlasshes.
   # NOTE: movie_all.ico generated via http://iconverticons.com/online/
-  SET(CPACK_NSIS_INSTALLED_ICON_NAME "${APPNAME}.exe") # Icon used in windows control panel (add/remove programs)
-  SET(CPACK_NSIS_DISPLAY_NAME "${APPNAME}")
-  SET(CPACK_NSIS_HELP_LINK "http:\\\\\\\\sourceforge.net\\\\projects\\\\vidiot")
-  SET(CPACK_NSIS_URL_INFO_ABOUT "http:\\\\\\\\sourceforge.net\\\\projects\\\\vidiot")
-  SET(CPACK_NSIS_CONTACT "epra@users.sourceforge.net")
-  SET(CPACK_NSIS_MODIFY_PATH OFF)
-  set(CPACK_PACKAGE_ICON "${CMAKE_SOURCE_DIR}\\\\images\\\\movie150x57.bmp") # Icon in the header of the installer: Use 150x57 pixels, 32 bit A8R8G8B8, Do not write color space info (GIMP)
-  set(CPACK_NSIS_MUI_ICON "${CMAKE_SOURCE_DIR}\\\\images\\\\movie_all.ico") #  Required for icon on installer AND uninstaller
-  set(CPACK_NSIS_MUI_UNIICON "${CMAKE_SOURCE_DIR}\\\\images\\\\movie_all.ico")  #  Required for icon on installer AND uninstaller
+  set (CPACK_NSIS_INSTALLED_ICON_NAME "${APPNAME}.exe") # Icon used in windows control panel (add/remove programs)
+  set (CPACK_NSIS_DISPLAY_NAME        "${APPNAME}")
+  set (CPACK_NSIS_HELP_LINK           "http:\\\\\\\\sourceforge.net\\\\projects\\\\vidiot")
+  set (CPACK_NSIS_URL_INFO_ABOUT      "http:\\\\\\\\sourceforge.net\\\\projects\\\\vidiot")
+  set (CPACK_NSIS_CONTACT             "${CPACK_PACKAGE_CONTACT}")
+  set (CPACK_NSIS_MODIFY_PATH         OFF)
+  set (CPACK_NSIS_MUI_ICON            "${CMAKE_SOURCE_DIR}\\\\images\\\\movie_all.ico") #  Required for icon on installer AND uninstaller
+  set (CPACK_NSIS_MUI_UNIICON         "${CMAKE_SOURCE_DIR}\\\\images\\\\movie_all.ico")  #  Required for icon on installer AND uninstaller
 
    set (CPACK_NSIS_EXTRA_INSTALL_COMMANDS "!include FileAssoc.nsh
       !insertmacro APP_ASSOCIATE 'vid' 'vidiot.projectfile' 'Vidiot project file' '$INSTDIR\\\\Vidiot.exe,0' 'Open with Vidiot' '$INSTDIR\\\\Vidiot.exe /e \\\"%1\\\"'
@@ -63,28 +63,45 @@ IF(WIN32 AND NOT UNIX)
        System::Call 'shell32.dll::SHChangeNotify(i, i, i, i) v (0x08000000, 0, 0, 0)'"
    )
 
-  # This file is only generated when the build batch script is called with "DELIVER" 
-  # (generation of revision log takes some time). In all other cases, generate empty file.
-  if(NOT EXISTS "${CMAKE_BINARY_DIR}/VersionHistory.txt")
-      file(WRITE ${CMAKE_BINARY_DIR}/VersionHistory.txt "\n")
-  endif()
-  install(FILES ${CMAKE_BINARY_DIR}/VersionHistory.txt COMPONENT ${APPNAME} DESTINATION .)
+  install (FILES ${FFMPEG_INSTALL}                    COMPONENT ${APPNAME} DESTINATION .)
+  install (FILES ${PORTAUDIO_INSTALL}                 COMPONENT ${APPNAME} DESTINATION .)
+  install (FILES ${BOOST_INSTALL}                     COMPONENT ${APPNAME} DESTINATION .  CONFIGURATIONS Release MinSizeRel RelWithDebInfo)
+  install (FILES ${BOOST_INSTALL_DEBUG}               COMPONENT ${APPNAME} DESTINATION .  CONFIGURATIONS Debug)
+  install (DIRECTORY ${PROJECT_SOURCE_DIR}/images/    COMPONENT ${APPNAME} DESTINATION images)
+  install (DIRECTORY ${PROJECT_SOURCE_DIR}/html/      COMPONENT ${APPNAME} DESTINATION html)
+  install (FILES ${PROJECT_BINARY_DIR}/changelog.html COMPONENT ${APPNAME} DESTINATION html/about)
 
-  install(FILES ${FFMPEG_INSTALL} COMPONENT ${APPNAME} DESTINATION .)
-  install(FILES ${PORTAUDIO_INSTALL} COMPONENT ${APPNAME} DESTINATION .)
-  install(FILES ${BOOST_INSTALL} COMPONENT ${APPNAME} DESTINATION .  CONFIGURATIONS Release MinSizeRel RelWithDebInfo)
-  install(FILES ${BOOST_INSTALL_DEBUG} COMPONENT ${APPNAME} DESTINATION .  CONFIGURATIONS Debug)
-  install(DIRECTORY ${PROJECT_SOURCE_DIR}/html/ COMPONENT ${APPNAME} DESTINATION html)
-  install(FILES ${PROJECT_BINARY_DIR}/history.html COMPONENT ${APPNAME} DESTINATION html/about)
-  install(DIRECTORY ${PROJECT_SOURCE_DIR}/images/ COMPONENT ${APPNAME} DESTINATION images)
+  # todo unused?
+  if (CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS)
+        install (FILES ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS} COMPONENT ${APPNAME} DESTINATION . PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ)
+  endif ()
 
-  IF (CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS)
-        INSTALL(FILES ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS} COMPONENT ${APPNAME} DESTINATION . PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ)
-  ENDIF (CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS)
+else ()
+  set (CPACK_GENERATOR                      "DEB")
+  # Used "dpkg -l libgtk*" and "apt-cache depends libgtk2.0-bin" to get the dependency info
+  set (CPACK_PACKAGE_INSTALL_DIRECTORY      "${APPNAME_LOWER}")
+  set (CPACK_COMPONENTS_ALL_IN_ONE_PACKAGE  1)
+  set (CPACK_PACKAGE_NAME                   "${APPNAME_LOWER}")
+  set (CPACK_DEBIAN_PACKAGE_NAME            "${APPNAME_LOWER}")
+  set (CPACK_DEBIAN_PACKAGE_HOMEPAGE        "https://sourceforge.net/projects/vidiot")
+  set (CPACK_DEBIAN_PACKAGE_DESCRIPTION     "Non-linear video editor targeted for home video editing. \\n Supports compositing, scaling, rotating, transitions, titles, etc.")
+  set (CPACK_STRIP_FILES                    "${APPNAME_LOWER}")
+  set (CPACK_SOURCE_STRIP_FILES             "")
+  set (CPACK_SYSTEM_NAME                    "i386")
+  set (CPACK_DEBIAN_PACKAGE_SECTION         "video")
+  set (CPACK_DEBIAN_PACKAGE_PRIORITY        "optional")
+  set (CPACK_DEBIAN_PACKAGE_DEPENDS         "libc6 (>=2.19), libgtk2.0-bin (>= 2.24.23), libopus0 (>= 1.1), libmp3lame0 (>= 3.99.5), libva1 (>= 1.3.0), libsoundtouch0 (>= 1.7.1), libportaudio2 (>= 19)")
+  
+   #) DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+   # DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 
-ELSE(WIN32 AND NOT UNIX)
-  SET(CPACK_STRIP_FILES "${APPNAME}")
-  SET(CPACK_SOURCE_STRIP_FILES "")
-ENDIF(WIN32 AND NOT UNIX)
+  install (DIRECTORY  ${PROJECT_SOURCE_DIR}/images/               COMPONENT ${APPNAME_LOWER}                  DESTINATION share/${APPNAME_LOWER}/images)
+  install (DIRECTORY  ${PROJECT_SOURCE_DIR}/html/                 COMPONENT ${APPNAME_LOWER}                  DESTINATION share/${APPNAME_LOWER}/html)
+  install (FILES      ${PROJECT_BINARY_DIR}/changelog.html        COMPONENT ${APPNAME_LOWER}                  DESTINATION share/${APPNAME_LOWER}/html/about)
+  install (FILES      ${PROJECT_BINARY_DIR}/changelog.gz          COMPONENT ${APPNAME_LOWER}                  DESTINATION share/doc/${APPNAME_LOWER}  PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)
+  install (FILES      ${PROJECT_SOURCE_DIR}/Copyright.txt         COMPONENT ${APPNAME_LOWER} RENAME copyright DESTINATION share/doc/${APPNAME_LOWER}  PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)
+  install (FILES      ${PROJECT_SOURCE_DIR}/install/vidiot.1.gz   COMPONENT ${APPNAME_LOWER}                  DESTINATION share/man/man1              PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)
 
-INCLUDE(CPack)
+endif ()
+
+include (CPack)
