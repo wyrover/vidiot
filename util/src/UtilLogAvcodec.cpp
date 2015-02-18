@@ -313,7 +313,6 @@ std::ostream& operator<<(std::ostream& os, const AVFormatContext* obj)
             << "start_time="            << obj->start_time                  << ','
             << "duration="              << obj->duration                    << ','
             << "bit_rate="              << obj->bit_rate                    << ','
-            << "data_offset="           << obj->data_offset                 << ','
             << "packet_size="           << obj->packet_size                 << ','
             << "max_delay="             << obj->max_delay                   << ','
             << "flags="                 << obj->flags                       << ','
