@@ -24,6 +24,7 @@
 #include "UtilInitAvcodec.h"
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
+#include "UtilPath.h"
 
 bool Config::sShowDebugInfo(false);
 boost::mutex Config::sMutex;
@@ -95,7 +96,7 @@ void checkEnumFromMap(const wxString& path, const boost::bimap<int, wxString>& b
 void Config::init(const wxString& applicationName, const wxString& vendorName, bool inCxxTestMode)
 {
     // Initialize config object. Will be destructed by wxWidgets at the end of the application
-    wxString ConfigFile(getFileName());
+    wxString ConfigFile(util::path::getConfigFilePath().GetFullPath());
     VAR_ERROR(ConfigFile);
     wxConfigBase::Set(new Config(applicationName, vendorName, ConfigFile));
     wxConfigBase::Get()->Write(Config::sPathTest, inCxxTestMode);
@@ -192,21 +193,6 @@ void Config::init(const wxString& applicationName, const wxString& vendorName, b
     sShowDebugInfo = Config::ReadBool(Config::sPathShowDebugInfoOnWidgets);
 
     Avcodec::configureLog();
-}
-
-// static
-wxString Config::getFileName()
-{
-    wxFileName configFile(wxStandardPaths::Get().GetExecutablePath()); // Using the executable's file name enables using multiple .ini files with multiple settings.
-    configFile.SetExt("ini");
-
-    if (configFile.GetFullPath().Contains("Program Files"))
-    {
-        // When running from "Program Files" (installed version), store this file elsewhere to avoid being unable to write.
-        configFile.SetPath(wxStandardPaths::Get().GetUserConfigDir()); // Store in "C:\Users\<username>\AppData\Roaming\<executablename>.ini"
-    }
-
-    return configFile.GetFullPath();
 }
 
 //////////////////////////////////////////////////////////////////////////

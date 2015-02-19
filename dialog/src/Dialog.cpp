@@ -19,6 +19,7 @@
 
 #include "Config.h"
 #include "UtilLog.h"
+#include "UtilPath.h"
 #include "UtilThread.h"
 #include "Window.h"
 #include <wx/choicdlg.h>
@@ -299,14 +300,14 @@ int generateDebugReport(bool doexit, bool addcontext, bool screenShot, const wxR
 #endif
     }
 
-    if (wxFileName(Config::getFileName()).FileExists())
+    if (util::path::getConfigFilePath().FileExists())
     {
-        report.AddFile(Config::getFileName(), wxT("Options file"));
+        report.AddFile(util::path::getConfigFilePath().GetFullPath(), wxT("Options file"));
     }
 
-    if (wxFileName(Log::getFileName()).FileExists())
+    if (util::path::getLogFilePath().FileExists())
     {
-        report.AddFile(Log::getFileName(), wxT("Log file"));
+        report.AddFile(util::path::getLogFilePath().GetFullPath(), wxT("Log file"));
     }
 
     if ( wxDebugReportPreviewStd().Show(report) )

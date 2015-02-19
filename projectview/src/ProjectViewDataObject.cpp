@@ -32,7 +32,6 @@ ProjectViewDataObject::ProjectViewDataObject()
 {
     SetFormat(wxDataFormat(sFormat));
     wxTextDataObject::SetText(serialize());
-    VAR_ERROR(GetText().Length());
 }
 
 ProjectViewDataObject::ProjectViewDataObject(const model::NodePtrs& assets)
@@ -41,7 +40,6 @@ ProjectViewDataObject::ProjectViewDataObject(const model::NodePtrs& assets)
 {
     SetFormat(wxDataFormat(sFormat));
     wxTextDataObject::SetText(serialize());
-    VAR_ERROR(GetText().Length());
 }
 
 ProjectViewDataObject::~ProjectViewDataObject()
@@ -103,7 +101,6 @@ const std::string sXmlName("nodes");
 
 void ProjectViewDataObject::deserialize(wxString from)
 {
-    VAR_ERROR(from.Length());
     std::istringstream store(from.ToStdString());
     try
     {
@@ -128,7 +125,6 @@ wxString ProjectViewDataObject::serialize() const
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
     catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
     catch (...)                                  { LOG_ERROR;                                   throw; }
-    VAR_ERROR(store.str().size());
     return store.str();
 }
 
@@ -137,7 +133,6 @@ template<class Archive>
 void ProjectViewDataObject::serialize(Archive & ar, const unsigned int version)
 {
     ar & BOOST_SERIALIZATION_NVP(mAssets);
-    VAR_ERROR(mAssets);
 }
 
 template void ProjectViewDataObject::serialize<boost::archive::xml_oarchive>(boost::archive::xml_oarchive& ar, const unsigned int archiveVersion);

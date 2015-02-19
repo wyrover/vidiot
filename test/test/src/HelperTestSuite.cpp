@@ -76,7 +76,7 @@ HelperTestSuite::HelperTestSuite()
 void HelperTestSuite::readConfig()
 {
 
-	wxFileConfig config(wxEmptyString, wxEmptyString, Config::getFileName());
+	wxFileConfig config(wxEmptyString, wxEmptyString, util::path::getConfigFilePath().GetFullPath());
     wxConfigBase::Set(&config);
     wxString current;
     wxConfigBase::Get()->Read(Config::sPathTestRunOnly, &mRunOnly, "");
@@ -161,7 +161,7 @@ void HelperTestSuite::testSuiteDone()
     {
         if (!currentTestRequiresWindow())
         {
-            wxFileConfig config(wxEmptyString, wxEmptyString, Config::getFileName());
+            wxFileConfig config(wxEmptyString, wxEmptyString, util::path::getConfigFilePath().GetFullPath());
             wxConfigBase::Set(&config);
             wxConfigBase::Get()->Write(Config::sPathTestRunCurrent, ""); // Reset
             wxConfigBase::Set(0);
