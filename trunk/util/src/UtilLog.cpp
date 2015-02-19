@@ -178,11 +178,6 @@ void Log::setReportingLevel(const LogLevel& level)
     sReportingLevel = level;
 }
 
-std::string Log::getFileName()
-{
-    return sFilename;
-}
-
 bool Log::isEnabled()
 {
     return sWriter->isEnabled();

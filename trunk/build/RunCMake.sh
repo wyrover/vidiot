@@ -18,11 +18,11 @@
 # along with Vidiot. If not, see <http://www.gnu.org/licenses />.
 
 start=$(date +%s)
-export VIDIOT_DIR=${HOME}/Vidiot
+export VIDIOT_DIR=${HOME}/vidiot
 export SOURCE=${VIDIOT_DIR}/vidiot_trunk
-export BUILD=${VIDIOT_DIR}/Build
-export BUILD_DEBUG=${BUILD}/Debug
-export BUILD_RELEASE=${BUILD}/Release
+export BUILD=${VIDIOT_DIR}/build
+export BUILD_DEBUG=${BUILD}/debug
+export BUILD_RELEASE=${BUILD}/release
 
 export BOOSTROOT=${VIDIOT_DIR}/boost/install
 
@@ -36,7 +36,7 @@ LinuxSetup()
 			exit
 		fi
 	else
-	    ln -s /media/${USER}/Vidiot ${HOME}/Vidiot
+	    ln -s /media/${USER}/Vidiot ${VIDIOT_DIR}
 	fi
 	if [ ! -h ${VIDIOT_DIR}/vidiot_trunk ]; then
 	    ln -s /media/sf_vidiot_trunk ${VIDIOT_DIR}/vidiot_trunk # This helps keeping the paths in codeblocks shorter, otherwise codeblocks lists paths as ../../../media/sf_vidiot_trunk/...
@@ -122,13 +122,12 @@ FfmpegSetup()
     wget http://download.videolan.org/pub/x264/snapshots/last_x264.tar.bz2
     tar xjvf last_x264.tar.bz2
     cd x264-snapshot*
-    read dummy
     ./configure --prefix="${FFBUILD}" --bindir="${FFDIR}/bin" --enable-static
     make
     make install
     make distclean
     # libfdk-aac:
-    cd ${FFDIR}/ffmpeg_sources
+    cd ${FFSRC}
     wget -O fdk-aac.zip https://github.com/mstorsjo/fdk-aac/zipball/master
     unzip fdk-aac.zip
     cd mstorsjo-fdk-aac*
@@ -138,7 +137,7 @@ FfmpegSetup()
     make install
     make distclean
     # libvpx:
-    cd ${FFDIR}/ffmpeg_sources
+    cd ${FFSRC}
     wget http://webm.googlecode.com/files/libvpx-v1.3.0.tar.bz2
     tar xjvf libvpx-v1.3.0.tar.bz2
     cd libvpx-v1.3.0
@@ -147,10 +146,10 @@ FfmpegSetup()
     make install
     make clean
     # ffmpeg:
-    cd ${FFDIR}/ffmpeg_sources
+    cd ${FFSRC}
     wget http://ffmpeg.org/releases/ffmpeg-snapshot.tar.bz2
     tar xjvf ffmpeg-snapshot.tar.bz2
-    cd ${FFDIR}
+    cd ffmpeg
     PKG_CONFIG_PATH="${FFBUILD}/lib/pkgconfig"
     export PKG_CONFIG_PATH
     ./configure --prefix="${FFBUILD}" --extra-cflags="-I${FFBUILD}/include" \
@@ -173,7 +172,7 @@ Type=Application
 Terminal=false
 Icon[en_US]=gnome-panel-launcher
 Name[en_US]=V_${1}
-Exec=gnome-terminal --geometry 100x50+0+0 --execute /home/epra/Vidiot/vidiot_trunk/build/RunCMake.sh ${1}
+Exec=gnome-terminal --geometry 100x50+0+0 --execute ${SOURCE}/build/RunCMake.sh ${1}
 Name=RunCMake
 Icon=/usr/share/pixmaps/cmake.xpm
 DELIM
@@ -191,7 +190,7 @@ Clean()
 {
     echo "\n----------------------------------------\nCleaning...\n"
     cd ${VIDIOT_DIR}
-    rm -rf Build
+    rm -rf build
 }
 
 Prepare()
@@ -206,17 +205,17 @@ Prepare()
 MakeDirs()
 {
     cd ${VIDIOT_DIR}
-    if [ ! -d Build ]; then 
-        mkdir Build
+    if [ ! -d build ]; then 
+        mkdir build
         echo "\n----------------------------------------\nCreate directory structure...\n"
     fi
     cd ${BUILD}
-    if [ ! -d Debug ]; then 
-        mkdir Debug
+    if [ ! -d debug ]; then 
+        mkdir debug
     fi
     cd ${BUILD}
-    if [ ! -d Release ]; then 
-        mkdir Release
+    if [ ! -d release ]; then 
+        mkdir release
     fi
 }
 
@@ -289,20 +288,28 @@ BuildPackage()
     rm -rf fix_up_deb
 
     echo "\n----------------------------------------\nRun lintian on generated package ${package}...\n"
-    lintian ${package}
+    bash -c "lintian ${package}" # The extra shell is required because otherwise the script ends after lintian
 
+    echo "\n----------------------------------------\nInstall generated package ${package}...\n"
+    sudo dpkg -i ${package}
+}
+
+Exec()
+{
+    ${1} | tee /tmp/${1}.log
 }
 
 case $1 in
-FULLSETUP) LinuxSetup ; Icons ; BoostSetup ; FfmpegSetup ; WxSetup ; Rebuild ;;
-LINUXSETUP) LinuxSetup ;;
-ICONS) Icons ;;
-BOOSTSETUP) BoostSetup ;;
-WXSETUP) WxSetup ;;
-FFMPEGSETUP) FfmpegSetup ;;
-REBUILD) Rebuild ;;
-DELIVER) Rebuild ; BuildPackage ;;
-*)       MakeDirs ; MakeChangelog ; RunCMake ;;
+FULLSETUP)      Exec LinuxSetup ; Exec Icons ; Exec BoostSetup ; Exec FfmpegSetup ; Exec WxSetup ; Exec Rebuild ;;
+LINUXSETUP)     Exec LinuxSetup ;;
+ICONS)          Exec Icons ;;
+BOOSTSETUP)     Exec BoostSetup ;;
+WXSETUP)        Exec WxSetup ;;
+FFMPEGSETUP)    Exec FfmpegSetup ;;
+REBUILD)        Exec Rebuild ;;
+DELIVER)        Exec Rebuild ; Exec BuildPackage ;;
+BUILDPACKAGE)   Exec BuildPackage ;;
+*)              Exec MakeDirs ; Exec MakeChangelog ; Exec RunCMake ;;
 esac
 
 echo "\n----------------------------------------\nTotal running time: $(date -d @$(($(date +%s)-$start)) +"%M minutes %S seconds")\n"

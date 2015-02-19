@@ -146,7 +146,6 @@ public:
 
     static LogLevel sReportingLevel;
     static void setReportingLevel(const LogLevel& level);
-    static std::string getFileName();
     static bool isEnabled(); ///< \return true if log file has been opened
     static void flush(); ///< flush the logging. NOTE: Only use for testing!
 

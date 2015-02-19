@@ -793,10 +793,10 @@ void Window::onHelp(wxCommandEvent& event)
 void Window::onLog(wxCommandEvent& event)
 {
 
-    if (!wxLaunchDefaultApplication(Log::getFileName()))
+    if (!wxLaunchDefaultApplication(util::path::getLogFilePath().GetFullPath()))
     {
         wxString msg;
-        msg << "Failed to open log file '" << Log::getFileName() << "'.";
+        msg << "Failed to open log file '" << util::path::getLogFilePath().GetFullPath() << "'.";
         Dialog::get().getConfirmation("Failed to open file", msg);
     }
     event.Skip();
@@ -814,10 +814,10 @@ void Window::onConfig(wxCommandEvent& event)
             "If that happens, delete the file from disk (or make the file empty) and restart.\n"));
         shown = true;
     }
-    if (!wxLaunchDefaultApplication(Config::getFileName()))
+    if (!wxLaunchDefaultApplication(util::path::getConfigFilePath().GetFullPath()))
     {
         wxString msg;
-        msg << "Failed to open config file '" << Log::getFileName() << "'.";
+        msg << "Failed to open config file '" << util::path::getConfigFilePath().GetFullPath() << "'.";
         Dialog::get().getConfirmation("Failed to open file", msg);
     }
     event.Skip();
