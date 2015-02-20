@@ -56,7 +56,7 @@ struct IndexAutoFolderWork
 
     void indexFiles()
     {
-        setThreadName("IndexFiles");
+        if (!wxThread::IsMain()) { setThreadName("IndexFiles"); }
         wxDir dir( mPath.GetLongPath() );
         mDirExists = dir.IsOpened();
 

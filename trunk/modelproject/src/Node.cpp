@@ -87,6 +87,7 @@ NodePtr Node::addChild(const NodePtr& newChild)
 
 NodePtrs Node::addChildren(const NodePtrs& children)
 {
+    ASSERT_NONZERO(children.size());
     UtilVector<NodePtr>(mChildren).addElements(children, NodePtr());
     for ( NodePtr child : children )
     {
@@ -116,6 +117,7 @@ NodePtr Node::removeChild(const NodePtr& child)
 
 NodePtrs Node::removeChildren(const NodePtrs& children)
 {
+    ASSERT_NONZERO(children.size());
     // Can't use UtilVector::removeElements since these children may be 'out of order'
     for ( NodePtr child : children )
     {

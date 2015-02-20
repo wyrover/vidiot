@@ -127,7 +127,8 @@ void Work::showProgress(int value)
 
 void Work::setThreadName(const std::string& name)
 {
-    std::ostringstream s; s << "Worker: " + name;
+    std::ostringstream s;
+    s << "Vidiot Worker: " + name;
     util::thread::setCurrentThreadName(s.str().c_str());
 }
 

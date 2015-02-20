@@ -186,7 +186,7 @@ wxPoint Mouse::getRightUpPosition() const
 
 void Mouse::setLeftDown(bool down)
 {
-    LOG_DEBUG;
+    VAR_DEBUG(down);
     if (down)
     {
         mLeftDownPosition = mVirtualPosition;
@@ -196,7 +196,7 @@ void Mouse::setLeftDown(bool down)
 
 void Mouse::setRightDown(bool down)
 {
-    LOG_DEBUG;
+    VAR_DEBUG(down);
     if (down)
     {
         mRightDownPosition = mVirtualPosition;
