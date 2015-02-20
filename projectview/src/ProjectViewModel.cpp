@@ -366,24 +366,30 @@ void ProjectViewModel::onOpenProject(model::EventOpenProject &event)
 {
     ItemAdded(wxDataViewItem(0), wxDataViewItem(model::Project::get().getRoot()->id()));
 
-    // Without the following statements, upon auto-loading a document, the wxGTK version
-    // does not show any initial nodes under the project node (the topmost visible node).
-    //
-    // Furthermore, any descendents 'deeper down the hierarchy' are also not known.
-    // This causes problems, for instance, when opening a document for which a file on disk
-    // has been removed before opening the document. In that case, the file check causes the
-    // file to be removed from the tree view, but it was not yet known in the data view ctrl,
-    // causing a lookup failure (crash) in wx.
-    std::function<void(model::NodePtr)> addNodes = [this, &addNodes](model::NodePtr parent) -> void
+    if (!event.getValue()) // ! : only if 'loading' a document, see Project::LoadObject()
     {
-        model::EventAddNodes nodesEvent(model::ParentAndChildren(parent, parent->getChildren()));
-        onProjectAssetsAdded(nodesEvent);
-        for (model::NodePtr child : parent->getChildren())
+        // Without the following statements, upon auto-loading a document, the wxGTK version
+        // does not show any initial nodes under the project node (the topmost visible node).
+        //
+        // Furthermore, any descendents 'deeper down the hierarchy' are also not known.
+        // This causes problems, for instance, when opening a document for which a file on disk
+        // has been removed before opening the document. In that case, the file check causes the
+        // file to be removed from the tree view, but it was not yet known in the data view ctrl,
+        // causing a lookup failure (crash) in wx.
+        std::function<void(model::NodePtr)> addNodes = [this, &addNodes](model::NodePtr parent) -> void
         {
-            addNodes(child);
-        }
-    };
-    addNodes(model::Project::get().getRoot());
+            if (parent->getChildren().size() != 0)
+            {
+                model::EventAddNodes nodesEvent(model::ParentAndChildren(parent, parent->getChildren()));
+                onProjectAssetsAdded(nodesEvent);
+                for (model::NodePtr child : parent->getChildren())
+                {
+                    addNodes(child);
+                }
+            }
+        };
+        addNodes(model::Project::get().getRoot());
+    }
 
     gui::Window::get().Bind(model::EVENT_ADD_NODE,     &ProjectViewModel::onProjectAssetAdded,     this);
     gui::Window::get().Bind(model::EVENT_ADD_NODES,    &ProjectViewModel::onProjectAssetsAdded,    this);
@@ -424,6 +430,7 @@ void ProjectViewModel::onProjectAssetsAdded(model::EventAddNodes &event)
     model::NodePtr parent = event.getValue().getParent();
     model::NodePtrs children = event.getValue().getChildren();
     VAR_DEBUG(parent)(children);
+    ASSERT_NONZERO(children.size());
 
     mView.Freeze();
 
@@ -456,6 +463,7 @@ void ProjectViewModel::onProjectAssetsRemoved(model::EventRemoveNodes &event)
     model::NodePtr parent = event.getValue().getParent();
     model::NodePtrs children = event.getValue().getChildren();
     VAR_DEBUG(parent)(children);
+    ASSERT_NONZERO(children.size());
 
     mView.Freeze();
 
