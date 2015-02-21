@@ -84,6 +84,8 @@ void TestRender::testChangeRenderSettings()
     }
 }
 
+// todo one of these tests has wrong counting in progress bar
+
 void TestRender::testRenderingSplit()
 {
     StartTestSuite();
