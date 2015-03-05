@@ -1,5 +1,5 @@
-Requires Visual Studio 2010 SP1 SDK:
-http://www.microsoft.com/download/en/details.aspx?id=21835
+Requires Visual Studio SDK:
+http://www.microsoft.com/en-us/download/details.aspx?id=40758
 
 Installation:
 Copy both .addin file and .dll to one of the AddIns folder
