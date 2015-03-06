@@ -148,7 +148,7 @@ pts ClipView::getLeftPts() const
     model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(mClip->getInTransition());
     if (transition)
     {
-        ASSERT(!mClip->isA<model::Transition>());
+        ASSERT(!mClip->isA<model::Transition>())(mClip);
         boost::optional<pts> right = transition->getRight();
         if (right)
         {
@@ -164,7 +164,7 @@ pts ClipView::getRightPts() const
     model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(mClip->getOutTransition());
     if (transition)
     {
-        ASSERT(!mClip->isA<model::Transition>());
+        ASSERT(!mClip->isA<model::Transition>())(mClip);
         boost::optional<pts> left = transition->getLeft();
         if (left)
         {
