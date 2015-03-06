@@ -145,7 +145,7 @@ void Intervals::startToggle()
 {
     mToggleBegin = determineSnap(getCursor().getLogicalPosition());
     mToggleEnd = mToggleBegin;
-    VAR_ERROR(mToggleBegin)(mToggleEnd);
+    VAR_DEBUG(mToggleBegin)(mToggleEnd);
     mToggleActive = true;
 }
 
@@ -154,7 +154,7 @@ void Intervals::endToggle()
     if (mToggleActive)
     {
         mToggleActive = false;
-        VAR_ERROR(mToggleBegin)(mToggleEnd);
+        VAR_DEBUG(mToggleBegin)(mToggleEnd);
         (new command::IntervalChange(getSequence(), makeInterval(mToggleBegin,mToggleEnd), toggleIsAddition()))->submit();
     }
 }
@@ -168,7 +168,7 @@ bool Intervals::toggleIsAddition() const
 void Intervals::update(pts newCursorPosition)
 {
     pts cursor = determineSnap(newCursorPosition);
-    VAR_ERROR(cursor)(getCursor().getLogicalPosition());
+    VAR_DEBUG(cursor)(getCursor().getLogicalPosition());
     if (mNewIntervalActive)
     {
         mNewIntervalEnd = cursor +  model::Convert::timeToPts(Config::ReadDouble(Config::sPathMarkerEndAddition) * model::Constants::sSecond);
