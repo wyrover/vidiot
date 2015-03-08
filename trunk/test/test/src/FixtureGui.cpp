@@ -24,7 +24,7 @@ namespace test {
 //static
 FixtureGui sInstance;
 
-// static 
+// static
 bool FixtureGui::UseRealUiEvents = false;;
 
 //////////////////////////////////////////////////////////////////////////
@@ -81,6 +81,8 @@ bool FixtureGui::tearDownWorld()
     std::ostringstream o;
     o << "Total running time: " << runningtime << " seconds (" << (runningtime/60) << "m" << std::setw(2) << std::setfill('0')<< (runningtime%60) << ")";
     wxMessageOutputDebug().Output(o.str());
+    std::cout << o.str() << std::flush;
+    std::cerr << o.str() << std::flush;
     TS_TRACE(o.str().c_str());
     boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
     return true;
@@ -123,7 +125,7 @@ bool FixtureGui::tearDown()
     // Had frequent issues with the shared ptr to the root object being held by test code.
     // Avoid such issues by checking explicitly here.
     ASSERT(!model::Project::exists());
-    ASSERT(!model::Root::exists()); 
+    ASSERT(!model::Root::exists());
     ASSERT(!gui::Window::exists());
 
     VAR_DEBUG(this);
@@ -167,7 +169,7 @@ void FixtureGui::mainThread()
     util::thread::setCurrentThreadName("Main");
     wxApp::SetInstance(new gui::Application(this));
 
-    FixtureGui::UseRealUiEvents = 
+    FixtureGui::UseRealUiEvents =
         wxStandardPaths::Get().GetExecutablePath().Contains("testui");
 
     int argc = 1;

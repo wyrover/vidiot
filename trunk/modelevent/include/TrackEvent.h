@@ -78,8 +78,7 @@ struct MoveParameter
 
 std::ostream& operator<<(std::ostream& os, const MoveParameter& obj);
 
-DECLARE_EVENT(EVENT_ADD_CLIPS,          EventAddClips,              MoveParameter);
-DECLARE_EVENT(EVENT_REMOVE_CLIPS,       EventRemoveClips,           MoveParameter);
+DECLARE_EVENT(EVENT_CLIPS_REPLACED,     EventClipsReplaced,         MoveParameter);
 DECLARE_EVENT(EVENT_HEIGHT_CHANGED,     EventHeightChanged,         int);
 
 } // namespace

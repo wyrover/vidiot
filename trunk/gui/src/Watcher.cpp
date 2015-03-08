@@ -189,6 +189,8 @@ boost::optional<wxString> requiredWatchPath(const model::NodePtr& node)
         path.SetFullName(""); // Remove filename and use the folder
     }
 
+    wxString result(util::path::toPath(path));
+    ASSERT(!result.IsSameAs(""));
     return boost::optional<wxString>(util::path::toPath(path));
 }
 

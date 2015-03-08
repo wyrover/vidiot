@@ -60,16 +60,14 @@ TrackView::TrackView(const model::TrackPtr& track, View* parent)
         new ClipView(clip,this);
     }
 
-    mTrack->Bind(model::EVENT_ADD_CLIPS,        &TrackView::onClipsAdded,       this);
-    mTrack->Bind(model::EVENT_REMOVE_CLIPS,     &TrackView::onClipsRemoved,     this);
+    mTrack->Bind(model::EVENT_CLIPS_REPLACED, &TrackView::onClipsReplaced, this);
 }
 
 TrackView::~TrackView()
 {
     VAR_DEBUG(this);
 
-    mTrack->Unbind(model::EVENT_ADD_CLIPS,      &TrackView::onClipsAdded,       this);
-    mTrack->Unbind(model::EVENT_REMOVE_CLIPS,   &TrackView::onClipsRemoved,     this);
+    mTrack->Unbind(model::EVENT_CLIPS_REPLACED, &TrackView::onClipsReplaced, this);
 
     getViewMap().unregisterView(mTrack);
 
@@ -238,22 +236,15 @@ void TrackView::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) co
 // MODEL EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void TrackView::onClipsAdded(model::EventAddClips& event )
-{
-    for ( model::IClipPtr clip : event.getValue().addClips )
-    {
-        new ClipView(clip,this);
-    }
-    invalidateRect();
-    getTimeline().Refresh(false);
-    event.Skip();
-}
-
-void TrackView::onClipsRemoved(model::EventRemoveClips& event )
+void TrackView::onClipsReplaced(model::EventClipsReplaced& event )
 {
     for ( model::IClipPtr clip : event.getValue().removeClips )
     {
         delete getViewMap().getView(clip);
+    }
+    for ( model::IClipPtr clip : event.getValue().addClips )
+    {
+        new ClipView(clip,this);
     }
     invalidateRect();
     getTimeline().Refresh(false);

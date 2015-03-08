@@ -733,13 +733,20 @@ void AClipEdit::newMove(
 
 void AClipEdit::doMove(const model::MoveParameterPtr& move)
 {
-    if (move->removeClips.size() > 0)
+    if (move->addTrack == move->removeTrack)
     {
-        move->removeTrack->removeClips(move->removeClips);
+        move->addTrack->replaceClips(move->removeClips, move->addClips, move->addPosition);
     }
-    if (move->addClips.size() > 0)
+    else
     {
-        move->addTrack->addClips(move->addClips,move->addPosition);
+        if (!move->removeClips.empty())
+        {
+            move->removeTrack->removeClips(move->removeClips);
+        }
+        if (!move->addClips.empty())
+        {
+            move->addTrack->addClips(move->addClips,move->addPosition);
+        }
     }
 }
 

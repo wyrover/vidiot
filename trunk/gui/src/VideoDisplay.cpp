@@ -369,7 +369,7 @@ bool VideoDisplay::audioRequested(void *buffer, const unsigned long& frames, dou
 
             double actualPlaytime = playtime - mStartTime;
             double expectedPlaytime =
-                model::Convert::ptsToSeconds(mCurrentAudioChunk->getPts() - mStartPts) + 
+                model::Convert::ptsToSeconds(mCurrentAudioChunk->getPts() - mStartPts) +
                 model::Convert::samplesToSeconds(remainingSamples);
             mAudioLatency = actualPlaytime - expectedPlaytime;
         }

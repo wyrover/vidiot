@@ -104,7 +104,7 @@ SplitAtCursorAndTrim::SplitAtCursorAndTrim(const model::SequencePtr& sequence, b
     :   Combiner()
     ,   mSequence(sequence)
     ,   mBackwards(backwards)
-    ,   mPosition(gui::TimelinesView::get().getTimeline(sequence).getCursor().getLogicalPosition())
+    ,   mPosition(getTimeline().getCursor().getLogicalPosition())
     ,   mPossible(false)
 {
     VAR_INFO(this)(mPosition)(mBackwards);
@@ -167,6 +167,7 @@ SplitAtCursorAndTrim::SplitAtCursorAndTrim(const model::SequencePtr& sequence, b
             pts right = clip->getRightPts(); // Clip will be changed by the trim below, thus store here
 
             pts trim = mBackwards ? mPosition - left : mPosition - right;
+            getTimeline().beginTransaction();
             cmd->update(trim,true);
             if (cmd->getDiff() != 0)
             {
@@ -188,6 +189,7 @@ SplitAtCursorAndTrim::SplitAtCursorAndTrim(const model::SequencePtr& sequence, b
                 gui::StatusBar::get().timedInfoText(_("Can't trim: position of clips prevents proper shifting"));
                 delete cmd;
             }
+            getTimeline().endTransaction();
         }
     }
 
@@ -201,6 +203,15 @@ SplitAtCursorAndTrim::~SplitAtCursorAndTrim()
 bool SplitAtCursorAndTrim::isPossible()
 {
     return mPossible;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// HELPER METHODS
+//////////////////////////////////////////////////////////////////////////
+
+Timeline& SplitAtCursorAndTrim::getTimeline()
+{
+    return gui::TimelinesView::get().getTimeline(mSequence);
 }
 
 }}} // namespace

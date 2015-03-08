@@ -236,6 +236,35 @@ void TestBugs::testDeleteClipInbetweenTransitionsCausesTimelineMessUp()
     Undo();
 }
 
+void TestBugs::testTrimClipInbetweenTransitionsCausesCrash()
+{
+    StartTestSuite();
+    TimelineZoomIn(3);
+    MakeInOutTransitionAfterClip t1(1,true);
+    t1.dontUndo();
+    MakeInOutTransitionAfterClip t2(0,true);
+    t2.dontUndo();
+    TimelineZoomIn(2);
+    mProjectFixture.destroy(); // Release all references
+    // Project saved and read again to avoid a zoom operation having
+    // occurred on the timeline. In the 'buggy' case, a variable was not
+    // properly initialized - which was undone by zooming which caused an
+    // update of that variable.
+    DirAndFile tempDir_fileName = SaveProjectAndClose();
+    util::thread::RunInMainAndWait([tempDir_fileName]()
+    {
+        gui::Window::get().GetDocumentManager()->CreateDocument(tempDir_fileName.second.GetFullPath(), wxDOC_SILENT);
+    });
+    WaitForIdle;// Otherwise the scrolling doesn't work?
+    util::thread::RunInMainAndWait([]()
+    {
+        getTimeline().getScrolling().align(50, 2);
+    });
+    TimelinePositionCursor(HCenter(VideoClip(0, 1)));
+    TimelineKeyPress('e');
+    Undo();
+}
+
 void TestBugs::testCrashWhenDroppingPartiallyOverATransition()
 {
     StartTestSuite();

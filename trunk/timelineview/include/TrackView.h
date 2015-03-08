@@ -21,8 +21,7 @@
 #include "View.h"
 
 namespace model {
-class EventAddClips;
-class EventRemoveClips;
+class EventClipsReplaced;
 class EventHeightChanged;
 }
 
@@ -73,8 +72,7 @@ public:
     // MODEL EVENTS
     //////////////////////////////////////////////////////////////////////////
 
-    void onClipsAdded(model::EventAddClips& event);
-    void onClipsRemoved(model::EventRemoveClips& event);
+    void onClipsReplaced(model::EventClipsReplaced& event);
 
 private:
 

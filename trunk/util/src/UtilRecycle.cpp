@@ -95,7 +95,7 @@ bool recycle(const wxString& file)
     }
     else
     {
-            // todo other variants? /tmp? just delete?
+        bool removeOk = wxRemoveFile(filename.GetFullPath());
     }
 }
 

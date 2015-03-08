@@ -105,6 +105,15 @@ public:
     /// Note: This also tests explicitly adding a transition (type) twice in the same sequence (bug once)
     void testDeleteClipInbetweenTransitionsCausesTimelineMessUp();
 
+    /// See [#172]
+    /// Trimming a clip that has both an in- and an out-transition caused a crash, because the UI
+    /// was already updating while the clip edit was only partially done. First, a clip is removed,
+    /// then, its replacement is added. However, after the removal an illegal intermediary state
+    /// could be present. In the bug case, the UI update was at that exact moment, causing a crash
+    /// in ClipView (check for a transition for which the previous clip was an in-transition, or
+    /// a transition for which the next clip was an out-transition - both are impossible).
+    void testTrimClipInbetweenTransitionsCausesCrash();
+
     /// Due to operations in multiple tracks, the first operation removed some of the clips that were
     /// required for the operations in the second track. Since these clips had already been removed
     /// a crash occurred (check that replacing a clip in AClipEdit is only allowed if a clip is still
