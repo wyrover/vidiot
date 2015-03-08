@@ -108,7 +108,13 @@ Timeline::Timeline(wxWindow *parent, const model::SequencePtr& sequence, bool be
     // Ensure that for newly opened timelines the initial position is ok
     getSequenceView().resetDividerPosition();
 
-    mExecuteOnIdle = boost::bind(&Timeline::alignCenterPtsAfterInitialization, this); // Run this when the whole startup is done.
+    mExecuteOnSize = [this]
+    {
+        // Delayed until after first resize event.
+        // Otherwise GTK port will call 'alignCenterPts...' before the
+        // widget's size is properly initialized.
+        mExecuteOnIdle = boost::bind(&Timeline::alignCenterPtsAfterInitialization, this); // Run this when the whole startup is done.
+    };
 }
 
 Timeline::~Timeline()
@@ -346,7 +352,13 @@ void Timeline::onIdle(wxIdleEvent& event)
 
 void Timeline::onSize(wxSizeEvent& event)
 {
-    mBufferBitmap.reset(new wxBitmap(GetClientSize()));
+    if (mExecuteOnSize)
+    {
+        mExecuteOnSize();
+        mExecuteOnSize.clear();
+    }
+    wxSize size = GetClientSize();
+    mBufferBitmap.reset(new wxBitmap(size));
     resize();
     event.Skip();
 }
@@ -563,7 +575,6 @@ void Timeline::resize()
 {
     getSequenceView().invalidateRect();
     SetVirtualSize(getSequenceView().getSize());
-    getScrolling().alignCenterPts();
 }
 
 bool Timeline::renderThumbnails() const

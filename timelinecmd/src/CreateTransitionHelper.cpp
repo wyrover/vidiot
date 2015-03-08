@@ -44,6 +44,9 @@ void createTransition(const model::SequencePtr& sequence, const model::IClipPtr&
     ASSERT(!clip->isA<model::EmptyClip>());
     ASSERT(transition);
 
+    Timeline& timeline = gui::TimelinesView::get().getTimeline(sequence);
+
+    timeline.beginTransaction();
     command::CreateTransition* createTransitionCommand = new command::CreateTransition(sequence, clip, transition, type);
     model::IClipPtr leftClip = createTransitionCommand->getLeftClip();
     model::IClipPtr rightClip = createTransitionCommand->getRightClip();
@@ -107,6 +110,7 @@ void createTransition(const model::SequencePtr& sequence, const model::IClipPtr&
             delete createTransitionCommand;
         }
     }
+    timeline.endTransaction();
 }
 
 }}} // namespace

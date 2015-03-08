@@ -22,8 +22,7 @@
 
 namespace model {
 
-DEFINE_EVENT(EVENT_ADD_CLIPS,           EventAddClips,          MoveParameter);
-DEFINE_EVENT(EVENT_REMOVE_CLIPS,        EventRemoveClips,       MoveParameter);
+DEFINE_EVENT(EVENT_CLIPS_REPLACED,      EventClipsReplaced,     MoveParameter);
 DEFINE_EVENT(EVENT_HEIGHT_CHANGED,      EventHeightChanged,     int);
 
 MoveParameter::MoveParameter()

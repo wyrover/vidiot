@@ -192,7 +192,7 @@ void TestSavingAndLoading::testBackupBeforeSave()
     CloseProjectAndAvoidSaveDialog();
 }
 
-//////////////////////////////////////////////////////////////////////////
+///////////////////////////d///////////////////////////////////////////////
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
@@ -205,6 +205,10 @@ void TestSavingAndLoading::checkDocument(wxString path)
     });
 
     // Checks on loaded document
+    // Must wait for Idle twice, since the timeline class uses
+    // two Idle events to start its initialization
+    // See the use of Timeline::mExecuteOnIdle
+    WaitForIdle;
     WaitForIdle;
     StartTest("Cursor position");
     util::thread::RunInMainAndWait([]()
@@ -222,7 +226,7 @@ void TestSavingAndLoading::checkDocument(wxString path)
     util::thread::RunInMainAndWait([]()
     {
         // Known bug at some point: mLastModified not known for a recently opened file (in the project view).
-        // The method getLastModified was accessed when the date column comes into view.
+        // The method geteLastModified was accessed when the date column comes into view.
         StartTest("Open folder");
         wxString s = util::path::toPath(util::path::normalize(getTestFilesPath().GetFullPath()));
         gui::ProjectView::get().expand(getRoot()->find(s).front());

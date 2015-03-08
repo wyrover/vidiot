@@ -77,6 +77,7 @@ public:
 
     virtual void removeClips(const IClips& clips);
     virtual void addClips(const IClips& clips, const IClipPtr& position = IClipPtr());
+    virtual void replaceClips(const IClips& clipsRemoved, const IClips& clipsAdded, const IClipPtr& positionAdded);
 
     const IClips& getClips();
 

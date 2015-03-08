@@ -158,36 +158,36 @@ bool Track::isEmpty() const
 void Track::addClips(const IClips& clips, const IClipPtr& position)
 {
     VAR_DEBUG(*this)(position)(clips);
-
-    UtilVector<IClipPtr>(mClips).addElements(clips,position);
-
-    updateClips();
-
-    // ProcessEvent is used. Model events must be processed synchronously to avoid inconsistent states in
-    // the receivers of these events (typically, the view classes in the timeline).
-    // Example:
-    // 1. Add clip
-    // 2. Remove clip again
-    // 3. Event of addition is received a bit later. Here the added clip is no longer part of the track. ERROR.
-    EventAddClips event(MoveParameter(self(), position, clips, TrackPtr(), IClipPtr(), IClips()));
-    ProcessEvent(event); // Must be handled immediately
-
-    // This may NOT be called before the add/remove event is sent: updateLength() may cause view updates,
-    // which cause accesses to the model. By that time, all views must know the proper list of clips.
-    updateLength();
+    ASSERT_NONZERO(clips.size());
+    replaceClips(model::IClips(), clips, position);
 }
 
 void Track::removeClips(const IClips& clips)
 {
     VAR_DEBUG(*this)(clips);
+    ASSERT_NONZERO(clips.size());
+    replaceClips(clips, model::IClips(), model::IClipPtr());
+}
 
-    for ( IClipPtr clip : clips )
+void Track::replaceClips(const IClips& clipsRemoved, const IClips& clipsAdded, const IClipPtr& positionAdded)
+{
+    VAR_DEBUG(*this)(clipsRemoved)(clipsAdded)(positionAdded);
+    ASSERT(!clipsRemoved.empty() || !clipsAdded.empty());
+
+    IClipPtr positionRemoved = model::IClipPtr();
+    if (!clipsRemoved.empty())
     {
-        clip->clean();
-        boost::dynamic_pointer_cast<Clip>(clip)->setTrackInfo(); // reset
+        for (IClipPtr clip : clipsRemoved)
+        {
+            clip->clean();
+            boost::dynamic_pointer_cast<Clip>(clip)->setTrackInfo(); // reset
+        }
+        positionRemoved = UtilVector<IClipPtr>(mClips).removeElements(clipsRemoved);
     }
-
-    IClipPtr position = UtilVector<IClipPtr>(mClips).removeElements(clips);
+    if (!clipsAdded.empty())
+    {
+        UtilVector<IClipPtr>(mClips).addElements(clipsAdded,positionAdded);
+    }
 
     updateClips();
 
@@ -197,7 +197,7 @@ void Track::removeClips(const IClips& clips)
     // 1. Add clip
     // 2. Remove clip again
     // 3. Event of addition is received a bit later. Here the added clip is no longer part of the track. ERROR.
-    EventRemoveClips event(MoveParameter(TrackPtr(), IClipPtr(), IClips(), self(), position, clips));
+    EventClipsReplaced event(MoveParameter(self(), positionAdded, clipsAdded, self(), positionRemoved, clipsRemoved));
     ProcessEvent(event); // Must be handled immediately
 
     // This may NOT be called before the add/remove event is sent: updateLength() may cause view updates,

@@ -611,6 +611,8 @@ void DetailsClip::handleLengthButtonPressed(wxToggleButton* button)
 
     ::command::Combiner* command = new ::command::Combiner();
 
+    getTimeline().beginTransaction();
+
     model::IClipPtr clip = mClip;
     pts endtrim = mTrimAtEnd[length];
     pts begintrim = mTrimAtBegin[length];
@@ -673,6 +675,8 @@ void DetailsClip::handleLengthButtonPressed(wxToggleButton* button)
     // must be used.
     setClip(clip);
     //NOT: updateLengthButtons(); -- this is automatically done after selecting a new clip
+    getTimeline().endTransaction();
+    getTimeline().Refresh();
     getTimeline().SetFocus();
 
 }
