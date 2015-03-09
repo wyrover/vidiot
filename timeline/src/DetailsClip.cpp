@@ -555,7 +555,7 @@ void DetailsClip::onPositionXSliderChanged(wxCommandEvent& event)
 
 void DetailsClip::onPositionXSpinChanged(wxSpinEvent& event)
 {
-    int value = mPositionXSpin->GetValue(); // NOT: event.GetValue() -- The event's value may be outside the range boundaries 
+    int value = mPositionXSpin->GetValue(); // NOT: event.GetValue() -- The event's value may be outside the range boundaries
     VAR_INFO(value);
     makeTransformCommand();
     updateAlignment(true);
@@ -574,7 +574,7 @@ void DetailsClip::onPositionYSliderChanged(wxCommandEvent& event)
 
 void DetailsClip::onPositionYSpinChanged(wxSpinEvent& event)
 {
-    int value = mPositionYSpin->GetValue(); // NOT: event.GetValue() -- The event's value may be outside the range boundaries 
+    int value = mPositionYSpin->GetValue(); // NOT: event.GetValue() -- The event's value may be outside the range boundaries
     VAR_INFO(value);
     makeTransformCommand();
     updateAlignment(false);
@@ -592,7 +592,7 @@ void DetailsClip::onVolumeSliderChanged(wxCommandEvent& event)
 
 void DetailsClip::onVolumeSpinChanged(wxSpinEvent& event)
 {
-    int value = mVolumeSpin->GetValue(); // NOT: event.GetValue() -- The event's value may be outside the range boundaries 
+    int value = mVolumeSpin->GetValue(); // NOT: event.GetValue() -- The event's value may be outside the range boundaries
     VAR_INFO(value);
     makeChangeVolumeCommand();
     mVolumeCommand->setVolume(value);
@@ -636,7 +636,7 @@ void DetailsClip::handleLengthButtonPressed(wxToggleButton* button)
             // That may cause certain trim operations to cause unwanted results. Instead of applying one trim and then determining the final trim result, or trying
             // another 'trick', before doing the second trim here, an additional boundaries check is done here.
             //
-            // The differences between the original computation and the result here are particularly related to shifting clips in other tracks and 
+            // The differences between the original computation and the result here are particularly related to shifting clips in other tracks and
             // related to having multiple transitions besides the clip.
             command::TrimClip::TrimLimit limitsBeginTrim;
             if (mTransition)
@@ -916,7 +916,7 @@ void DetailsClip::preview()
     {
         // The cursor is not positioned under the clip being adjusted. Move the cursor to the middle frame of that clip
         position = mVideoClip->getLeftPts() + mVideoClip->getLength() / 2; // Show the middle frame of the clip
-        VAR_ERROR(position);
+        VAR_DEBUG(position);
         getCursor().setLogicalPosition(position); // ...and move the cursor to that position
     }
 
