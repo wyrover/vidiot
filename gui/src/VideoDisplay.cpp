@@ -153,7 +153,16 @@ void VideoDisplay::play()
 
         mCurrentAudioChunk.reset();
 
-        PaError err = Pa_OpenDefaultStream( &mAudioOutputStream, 0, mNumberOfAudioChannels, paInt16, model::Properties::get().getAudioSampleRate(), paFramesPerBufferUnspecified, portaudio_callback, this );
+        // todo use Pa_GetHostApiInfo in log
+        unsigned long bufferSize = paFramesPerBufferUnspecified;
+#ifdef __GNUC__
+        // On Linux (Ubuntu), the default buffer size is around 383.
+        // Current implementation locks too much to keep up.
+        // todo use less locking and use the default number of frames per buffer for linux also.
+        bufferSize = model::Convert::ptsToSamplesPerChannel(mAudioSampleRate, 2);
+#endif // __GNUC__
+
+        PaError err = Pa_OpenDefaultStream( &mAudioOutputStream, 0, mNumberOfAudioChannels, paInt16, mAudioSampleRate, bufferSize, portaudio_callback, this );
         ASSERT_EQUALS(err,paNoError)(Pa_GetErrorText(err));
 
         err = Pa_StartStream( mAudioOutputStream );
@@ -352,7 +361,8 @@ bool VideoDisplay::audioRequested(void *buffer, const unsigned long& frames, dou
                 return false;
             }
 
-            if (mAudioChunks.getSize() == 0)
+            int chunks = mAudioChunks.getSize(); // lock 1
+            if (chunks == 0)
             {
                 // When there is no new chunk, do not block, but return silence.
                 memset(out,0,remainingSamples * model::AudioChunk::sBytesPerSample); // * 2: bytes vs int16
@@ -360,7 +370,7 @@ bool VideoDisplay::audioRequested(void *buffer, const unsigned long& frames, dou
                 return true;
             }
 
-            mCurrentAudioChunk = mAudioChunks.pop();
+            mCurrentAudioChunk = mAudioChunks.pop(); // lock 2
             if (!mCurrentAudioChunk)
             {
                 LOG_INFO << "End";
