@@ -104,8 +104,9 @@ DialogNewProject::DialogNewProject()
         sizer->Add(textBrowse,wxSizerFlags(0).Expand().Border(wxBOTTOM, sBorderSize));
 
         mButtonBrowseFolder = new wxButton(mPageFolder, wxID_ANY, _("Select folder"));
-        mContentsFolder = new wxStaticText(mPageFolder, wxID_ANY, "");
+        mContentsFolder = new wxTextCtrl(mPageFolder, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY | wxTE_MULTILINE | wxTE_NO_VSCROLL | wxBORDER_NONE);
         mContentsFolder->SetFont(mContentsFolder->GetFont().MakeItalic());
+        mContentsFolder->SetBackgroundColour(mPageFolder->GetBackgroundColour());
 
         sizer->Add(mButtonBrowseFolder,wxSizerFlags(0).Border(wxBOTTOM, sBorderSize));
         sizer->Add(mContentsFolder,wxSizerFlags(1).Expand());
@@ -539,7 +540,6 @@ void DialogNewProject::showFoundFilesInFolder()
         }
     }
     mContentsFolder->SetLabel(overview);
-    mContentsFolder->Wrap(GetClientSize().GetWidth());
 }
 
 void DialogNewProject::showSelectedFiles()

@@ -107,7 +107,7 @@ private:
     // Page: From folder
     wxWizardPageSimple* mPageFolder;
     wxButton* mButtonBrowseFolder;
-    wxStaticText* mContentsFolder;
+    wxTextCtrl* mContentsFolder;
     wxString mFolderPath;
 
     // Page: From files

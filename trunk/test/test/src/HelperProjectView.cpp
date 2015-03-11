@@ -228,8 +228,7 @@ void DragFromProjectViewToTimeline( model::NodePtr node, wxPoint to )
     ASSERT(!wxGetMouseState().LeftIsDown());
     MouseMoveOnScreen(position);
     MouseLeftDown();
-
-    //pause(5000);
+    ASSERT(wxGetMouseState().LeftIsDown());
 
     // Note 1: Need at least three consecutive drag events before the ProjectView decides that we're actually dragging. See ProjectView::onMotion.
     // Note 2: When DND is active (DoDragStart has been called) event handling is blocked. Therefore, WaitForIdle does not work below, until the drop is done (or the drag is aborted).
