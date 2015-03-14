@@ -278,20 +278,29 @@ BuildPackage()
     # From https://github.com/paralect/robomongo/blob/master/install/linux/fixup_deb.sh.in
     # chmod 644 on md5sums in generated package:
     set -e
+    rm -rf fix_up_deb # Remove any previous results
     mkdir fix_up_deb
     dpkg-deb -x ${package} fix_up_deb
     dpkg-deb --control ${package} fix_up_deb/DEBIAN
     rm ${package}
     chmod 0644 fix_up_deb/DEBIAN/md5sums
-    find -type d -print0 |xargs -0 chmod 755
+    chmod 0755 fix_up_deb/DEBIAN/postinst
+    chmod 0755 fix_up_deb/DEBIAN/postrm
+    find -type d -print0 |xargs -0 chmod 0755
     fakeroot dpkg -b fix_up_deb ${package}
-    rm -rf fix_up_deb
 
     echo "\n----------------------------------------\nRun lintian on generated package ${package}...\n"
-    bash -c "lintian ${package}" # The extra shell is required because otherwise the script ends after lintian
+    lintian "${package}"
 
+    # Note: code after lintian doesn't seem to run when inside this function.
+}
+
+Install()
+{
+    cd ${BUILD_RELEASE}
+    package=`ls *.deb | tail -n 1`
     echo "\n----------------------------------------\nInstall generated package ${package}...\n"
-    sudo dpkg -i ${package}
+    sudo dpkg --install ${package}
 }
 
 Exec()
@@ -307,8 +316,9 @@ BOOSTSETUP)     Exec BoostSetup ;;
 WXSETUP)        Exec WxSetup ;;
 FFMPEGSETUP)    Exec FfmpegSetup ;;
 REBUILD)        Exec Rebuild ;;
-DELIVER)        Exec Rebuild ; Exec BuildPackage ;;
 BUILDPACKAGE)   Exec BuildPackage ;;
+INSTALL)        Exec BuildPackage ; Exec Install ;;
+DELIVER)        Exec Rebuild ; Exec BuildPackage  ; Exec Install ;;
 *)              Exec MakeDirs ; Exec MakeChangelog ; Exec RunCMake ;;
 esac
 
