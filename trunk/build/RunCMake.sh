@@ -289,6 +289,9 @@ BuildPackage()
     find -type d -print0 |xargs -0 chmod 0755
     fakeroot dpkg -b fix_up_deb ${package}
 
+    echo "\n----------------------------------------\nValidating desktop file...\n"
+    desktop-file-validate ${SOURCE}/install/linux/vidiot.desktop 
+
     echo "\n----------------------------------------\nRun lintian on generated package ${package}...\n"
     lintian "${package}"
 

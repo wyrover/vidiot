@@ -7,7 +7,7 @@ Exec=vidiot %f
 Icon=vidiot
 Terminal=false
 X-MultipleArgs=false
-Categories=AudioVideo;Audio;Video;AudioVideoEditing
+Categories=AudioVideo;Audio;Video;AudioVideoEditing;
 StartupNotify=true
 MimeType=application/vidiot;
 
