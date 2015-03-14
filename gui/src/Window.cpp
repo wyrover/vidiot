@@ -775,8 +775,18 @@ void Window::onWorkspaceDefault(wxCommandEvent& event)
 
 void Window::onWorkspaceFullscreen(wxCommandEvent& event)
 {
-    bool fullscreen = !IsFullScreen();
-    ShowFullScreen(fullscreen, wxFULLSCREEN_NOTOOLBAR | wxFULLSCREEN_NOBORDER | wxFULLSCREEN_NOCAPTION);
+    static boost::posix_time::ptime previous = boost::posix_time::ptime(boost::date_time::min_date_time);
+    boost::posix_time::ptime t = boost::posix_time::microsec_clock::local_time();
+    boost::posix_time::time_duration diff = t - previous;
+    if (diff.total_milliseconds() > 50)
+    {
+        // Under wxGTK, sometimes the move from fullscreen to normal does not work.
+        // This is caused by multiple events being triggered upon one key press.
+        // Given that this is a toggle, two consecutive events negate each other.
+        // Therefore, consecutive events within 50ms are ignored.
+        ShowFullScreen(!IsFullScreen(), wxFULLSCREEN_NOTOOLBAR | wxFULLSCREEN_NOBORDER | wxFULLSCREEN_NOCAPTION);
+    }
+    previous = t;
     event.Skip();
 }
 
