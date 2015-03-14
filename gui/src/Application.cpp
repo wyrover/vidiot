@@ -348,10 +348,9 @@ void Application::OnInitCmdLine (wxCmdLineParser &parser)
 {
     static const wxCmdLineEntryDesc cmdLineDesc[] =
     {
-        { wxCMD_LINE_SWITCH, "h", "help", "show help" },
-        { wxCMD_LINE_SWITCH, "v", "verbose", "be verbose" }, // Required for running debug (apparently for logging)
-        { wxCMD_LINE_OPTION, "e", "edit", "edit given file" },
-        //{ wxCMD_LINE_PARAM, NULL, NULL, "input file", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_MULTIPLE },
+        { wxCMD_LINE_PARAM, "file", "file to be opened", "vidiot project file (*.vid)", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
+        { wxCMD_LINE_SWITCH, "h", "help", "show this help message" },
+        { wxCMD_LINE_SWITCH, "v", "verbose", "be verbose (only required for development)" }, // Required for running debug (apparently for logging)
         { wxCMD_LINE_NONE }
     };
     parser.SetDesc(cmdLineDesc);
@@ -359,10 +358,14 @@ void Application::OnInitCmdLine (wxCmdLineParser &parser)
 
 bool Application::OnCmdLineParsed (wxCmdLineParser &parser)
 {
-    wxString filename;
-    if (parser.Found("e", &filename))
+    if (parser.GetParamCount() > 1) { return false; }
+    if (parser.GetParamCount() == 1)
     {
-        CommandLine::get().EditFile = boost::optional<wxString>(filename);
+        CommandLine::get().EditFile = boost::optional<wxString>(parser.GetParam(0));
+    }
+    if (parser.Found("h"))
+    {
+        parser.Usage();
     }
     return wxApp::OnCmdLineParsed(parser);
 }
