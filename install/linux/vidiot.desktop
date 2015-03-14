@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Vidiot Movie Editor
+Comment=Edit vidiot projects
+Exec=vidiot %f
+Icon=vidiot
+Terminal=false
+X-MultipleArgs=false
+Categories=AudioVideo;Audio;Video;AudioVideoEditing
+StartupNotify=true
+MimeType=application/vidiot;
+
