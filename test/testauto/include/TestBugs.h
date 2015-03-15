@@ -200,6 +200,11 @@ public:
     /// See testEndTrimAtOutTransitionInSavedDocumentEndCausesSnappingProblemVideo()
     void testEndTrimAtOutTransitionInSavedDocumentEndCausesSnappingProblemAudio();
 
+    /// See [#177]
+    /// Was unable to trim and extend a clip when both the clip and its link had out transitions,
+    /// even though there was enough empty space after both of these transitions.
+    void testTrimAndExtendVideoAndAudioClipsThatBothHaveOutTransitions();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////
