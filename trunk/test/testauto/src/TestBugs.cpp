@@ -160,21 +160,11 @@ void TestBugs::testBugsWithLongTimeline()
         TimelineKeyPress(WXK_DELETE);
         ASSERT(VideoClip(0,-2)->isA<model::EmptyClip>());
     }
-    std::pair<RandomTempDirPtr, wxFileName> tempDir_fileName;
     {
-        StartTest("Bug: StackOverflow when saving");
-        mProjectFixture.destroy(); // Release all references
+        StartTest("Bug: StackOverflow when saving and when loading");
         sequence.reset();
-        tempDir_fileName = SaveProjectAndClose();
+        DirAndFile tempDir_fileName = mProjectFixture.saveAndReload();
     }
-    {
-        StartTest("Bug: StackOverflow when loading");
-        util::thread::RunInMainAndWait([tempDir_fileName]()
-        {
-            gui::Window::get().GetDocumentManager()->CreateDocument(tempDir_fileName.second.GetFullPath(),wxDOC_SILENT);
-        });
-    }
-
     CloseProjectAndAvoidSaveDialog();
     Config::setShowDebugInfo(false);
 }
@@ -245,17 +235,11 @@ void TestBugs::testTrimClipInbetweenTransitionsCausesCrash()
     MakeInOutTransitionAfterClip t2(0,true);
     t2.dontUndo();
     TimelineZoomIn(2);
-    mProjectFixture.destroy(); // Release all references
     // Project saved and read again to avoid a zoom operation having
     // occurred on the timeline. In the 'buggy' case, a variable was not
     // properly initialized - which was undone by zooming which caused an
     // update of that variable.
-    DirAndFile tempDir_fileName = SaveProjectAndClose();
-    util::thread::RunInMainAndWait([tempDir_fileName]()
-    {
-        gui::Window::get().GetDocumentManager()->CreateDocument(tempDir_fileName.second.GetFullPath(), wxDOC_SILENT);
-    });
-    WaitForIdle;// Otherwise the scrolling doesn't work?
+    DirAndFile tempDir_fileName = mProjectFixture.saveAndReload();
     util::thread::RunInMainAndWait([]()
     {
         getTimeline().getScrolling().align(50, 2);
@@ -654,8 +638,7 @@ void TestBugs::testCrashCausedByCreatingTransitionAtAudioClipEndAfterReadingProj
 {
     StartTestSuite();
     TimelineZoomIn(3);
-    mProjectFixture.destroy(); // Remove all references to objects
-    std::pair<RandomTempDirPtr, wxFileName> tempDir_fileName = StartWithProjectReadFromDisk();
+    DirAndFile tempDir_fileName = mProjectFixture.saveAndReload();
     TimelineLeftClick(Center(AudioClip(0,3)));
     // Transition created with keyboard press specifically.
     // 'MakeInOutTransitionAfterClip' causes the file object to be initialized before
@@ -663,5 +646,60 @@ void TestBugs::testCrashCausedByCreatingTransitionAtAudioClipEndAfterReadingProj
     TimelineKeyPress('p');
     Play(LeftPixel(AudioClip(0,3)) -2, 1000);
 }
+
+void TestBugs::testEndTrimAtOutTransitionInSavedDocumentEndCausesSnappingProblemVideo()
+{
+    StartTestSuite();
+    TimelineZoomIn(6);
+    {
+        StartTest("Preparation");
+        TimelineTrimRight(VideoClip(0,0), -300);
+        DeleteClip(VideoClip(0,1));
+        MakeOutTransitionAfterClip preparationVideo(0);
+        preparationVideo.dontUndo();
+    }
+    pts length = getSequence()->getLength();
+    ASSERT_EQUALS(length, getSequence()->getLength());
+    DirAndFile tempDir_fileName = mProjectFixture.saveAndReload();
+    ConfigOverruleBool overruleSnapToCursor(Config::sPathSnapClips,true);
+    ConfigOverruleBool overruleSnapToClips(Config::sPathSnapCursor,false);
+    {
+        StartTest("Trim video");
+        ASSERT_EQUALS(length, getSequence()->getLength());
+
+        pts position = VideoClip(0, 1)->getRightPts();
+        TimelineBeginTrim(UnderTransitionRightEdge(VideoClip(0,1)), false);
+        ASSERT_EQUALS(position, VideoClip(0, 1)->getRightPts()); // Clip length should not have been extended yet.
+        TimelineEndTrim(false);
+    }
+}
+
+void TestBugs::testEndTrimAtOutTransitionInSavedDocumentEndCausesSnappingProblemAudio()
+{
+    StartTestSuite();
+    TimelineZoomIn(6);
+    {
+        StartTest("Preparation video");
+        TimelineTrimRight(VideoClip(0,0), -300);
+        DeleteClip(VideoClip(0,1));
+        MakeOutTransitionAfterClip preparationAudio(0, true);
+        preparationAudio.dontUndo();
+    }
+    pts length = getSequence()->getLength();
+    ASSERT_EQUALS(length, getSequence()->getLength());
+    DirAndFile tempDir_fileName = mProjectFixture.saveAndReload();
+    ConfigOverruleBool overruleSnapToCursor(Config::sPathSnapClips,true);
+    ConfigOverruleBool overruleSnapToClips(Config::sPathSnapCursor,false);
+    {
+        StartTest("Trim audio");
+        ASSERT_EQUALS(length, getSequence()->getLength());
+
+        pts position = AudioClip(0, 1)->getRightPts();
+        TimelineBeginTrim(UnderTransitionRightEdge(AudioClip(0,1)), false);
+        ASSERT_EQUALS(position, AudioClip(0, 1)->getRightPts()); // Clip length should not have been extended yet.
+        TimelineEndTrim(false);
+    }
+}
+
 
 } // namespace

@@ -84,6 +84,18 @@ void FixtureProject::destroy()
     mRoot.reset();
 }
 
+DirAndFile FixtureProject::saveAndReload()
+{
+    destroy(); // Release all references
+    DirAndFile tempDir_fileName = SaveProjectAndClose();
+    util::thread::RunInMainAndWait([tempDir_fileName]()
+    {
+        gui::Window::get().GetDocumentManager()->CreateDocument(tempDir_fileName.second.GetFullPath(), wxDOC_SILENT);
+    });
+    WaitForIdle;
+    return tempDir_fileName;
+}
+
 pts FixtureProject::OriginalLengthOfVideoClip(int trackindex, int clipindex)
 {
     ASSERT_ZERO(trackindex); // Other tracks are not stored

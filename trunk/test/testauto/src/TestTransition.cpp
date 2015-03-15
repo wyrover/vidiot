@@ -776,7 +776,7 @@ void TestTransition::testTrimmingLinkedClips()
         StartTest("InOutTransition: Without shift: scrub with an 'in' clip which is fully obscured by the transition");
         Scrub(RightPixel(VideoClip(0,1))-5, HCenter(VideoClip(0,3))); // Bug once: The empty video clip that is 'just before' the transition asserted when doing a moveTo(0), since !(0<length) for a clip with length 0.
         StartTest("InOutTransition: Without shift: enlarge 'in' clip which is fully obscured by the transition");
-        TimelineTrim(LeftVBottomQuarter(VideoClip(0,2)),LeftCenter(VideoClip(0,1)));
+        TimelineTrim(UnderTransitionLeftEdge(VideoClip(0,3)),LeftCenter(VideoClip(0,1)));
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip)(VideoClip)(VideoClip);
         ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)            (AudioClip)(AudioClip)(AudioClip)(AudioClip);
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
@@ -793,7 +793,7 @@ void TestTransition::testTrimmingLinkedClips()
         StartTest("InOutTransition: Without shift: scrub an 'out' clip which is fully obscured by the transition");
         Scrub(HCenter(VideoClip(0,2)), LeftPixel(VideoClip(0,4)) + 5); // Bug once: The empty video clip that is 'just before' the transition asserted when doing a moveTo(0), since !(0<length) for a clip with length 0.
         StartTest("InOutTransition: Without shift: enlarge 'out' clip which is fully obscured by the transition");
-        TimelineTrim(RightVBottomQuarter(VideoClip(0,3)),RightCenter(VideoClip(0,4)));
+        TimelineTrim(UnderTransitionRightEdge(VideoClip(0,2)),RightCenter(VideoClip(0,4)));
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip)(VideoClip)(VideoClip);
         ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)            (AudioClip)(AudioClip)(AudioClip)(AudioClip);
         ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);

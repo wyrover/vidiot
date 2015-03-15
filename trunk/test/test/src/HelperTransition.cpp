@@ -113,6 +113,7 @@ void MakeTransitionAfterClip::dontUndo()
 
 void MakeTransitionAfterClip::makeTransition()
 {
+    ASSERT_SELECTION_SIZE(0); // Done to avoid 'leaving' selected clips which cause other tests to fail
     storeVariablesBeforeMakingTransition();
     TimelinePositionCursor(LeftPixel(GetClip(0,clipNumberAfterTransition)));
     moveMouseAndCreateTransition(clipNumberAfterTransition);
@@ -171,6 +172,7 @@ MakeInOutTransitionAfterClip::MakeInOutTransitionAfterClip(int afterclip, bool a
     ASSERT_LESS_THAN_ZERO(GetClip(0,clipNumberAfterTransition)->getMinAdjustBegin())(GetClip(0,clipNumberAfterTransition));
     TimelineTrimRight(GetClip(0,clipNumberBeforeTransition),-30,true);
     ASSERT_MORE_THAN_ZERO(GetClip(0,clipNumberBeforeTransition)->getMaxAdjustEnd())(GetClip(0,clipNumberBeforeTransition));
+    DeselectAllClips();
 
     makeTransition();
 
@@ -190,6 +192,7 @@ MakeInOutTransitionAfterClip::~MakeInOutTransitionAfterClip()
         Undo(); // Undo TimelineTrimRight
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::TrimClip>();
         Undo(); // Undo TimelineTrimLeft
+        DeselectAllClips(); // Done to avoid 'leaving' selected clips which cause other tests to fail
     }
 }
 
@@ -205,11 +208,6 @@ MakeInTransitionAfterClip::MakeInTransitionAfterClip(int afterclip, bool audio)
     ConfigOverruleBool overruleSnapToCursor(Config::sPathSnapClips,false);
     ConfigOverruleBool overruleSnapToClips(Config::sPathSnapCursor,false);
 
-    // Reduce size of clips to be able to create transition
-    TimelineTrimRight(GetClip(0,clipNumberBeforeTransition),-30,true);
-    ASSERT_MORE_THAN_ZERO(GetClip(0,clipNumberBeforeTransition)->getMaxAdjustEnd())(GetClip(0,clipNumberBeforeTransition));
-    ASSERT_ZERO(GetClip(0,clipNumberAfterTransition)->getMinAdjustBegin())(GetClip(0,clipNumberAfterTransition));
-
     makeTransition();
 
     ASSERT(GetClip(0,clipNumberAfterTransition)->isA<model::Transition>())(GetClip(0,clipNumberAfterTransition));
@@ -224,8 +222,7 @@ MakeInTransitionAfterClip::~MakeInTransitionAfterClip()
     {
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>();
         Undo(); // Undo create transition
-        ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::TrimClip>();
-        Undo(); // Undo TimelineTrimRight
+        DeselectAllClips(); // Done to avoid 'leaving' selected clips which cause other tests to fail
     }
 }
 
@@ -241,11 +238,6 @@ MakeOutTransitionAfterClip::MakeOutTransitionAfterClip(int afterclip, bool audio
     ConfigOverruleBool overruleSnapToCursor(Config::sPathSnapClips,false);
     ConfigOverruleBool overruleSnapToClips(Config::sPathSnapCursor,false);
 
-    // Reduce size of clips to be able to create transition
-    TimelineTrimLeft(GetClip(0,clipNumberAfterTransition),30,true);
-    ASSERT_ZERO(GetClip(0,clipNumberBeforeTransition)->getMaxAdjustEnd())(GetClip(0,clipNumberBeforeTransition));
-    ASSERT_LESS_THAN_ZERO(GetClip(0,clipNumberAfterTransition)->getMinAdjustBegin())(GetClip(0,clipNumberAfterTransition));
-
     makeTransition();
 
     ASSERT(GetClip(0,clipNumberAfterTransition)->isA<model::Transition>())(GetClip(0,clipNumberAfterTransition));
@@ -260,8 +252,7 @@ MakeOutTransitionAfterClip::~MakeOutTransitionAfterClip()
     {
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>();
         Undo(); // Undo create transition
-        ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::TrimClip>();
-        Undo(); // Undo TimelineTrimLeft
+        DeselectAllClips(); // Done to avoid 'leaving' selected clips which cause other tests to fail
     }
 }
 

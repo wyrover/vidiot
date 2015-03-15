@@ -58,16 +58,6 @@ DirAndFile SaveProject(boost::optional<RandomTempDirPtr> tempDir, wxString files
     return std::make_pair(tempDirProject, filename);
 }
 
-DirAndFile StartWithProjectReadFromDisk()
-{
-    std::pair<RandomTempDirPtr, wxFileName> result = SaveProjectAndClose();
-    util::thread::RunInMainAndWait([result]()
-    {
-        gui::Window::get().GetDocumentManager()->CreateDocument(result.second.GetFullPath(), wxDOC_SILENT);
-    });
-    return result;
-}
-
 wxFileName generateSaveFileName(wxFileName dir)
 {
     ASSERT(dir.IsDir());

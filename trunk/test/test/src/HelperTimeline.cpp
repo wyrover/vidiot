@@ -108,6 +108,11 @@ pixel TopPixel(model::TrackPtr track)
     return getTimeline().getViewMap().getView(track)->getY();
 }
 
+pixel VBottomQuarter(model::TrackPtr track)
+{
+    return TopPixel(track) + (track->getHeight() * 3 / 4);
+}
+
 pixel RightPixel(model::TrackPtr track)
 {
     int nClips = track->getClips().size();
@@ -222,38 +227,33 @@ wxPoint VBottomQuarterHCenter(model::IClipPtr clip)
     return wxPoint( HCenter(clip), VBottomQuarter(clip) );
 }
 
-wxPoint LeftVBottomQuarter(model::IClipPtr clip)
+wxPoint UnderTransitionLeftEdge(model::IClipPtr clip)
 {
-    // Not allowed for transitions:
-    // When the clip in front of the transition has length 0, then using this position
-    // on the transition causes the mouse pointer information to actually return the clip
-    // in front of the transition (so that it can be selected for trimming).
-    //
+    model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(clip);
+    ASSERT(transition);
     // The algoritm in the method 'LeftPixel' contains code for 'adjusting the found point'
     // until the actual given clip is found (to accommodate for rounding errors). However,
-    // that algorithm, in combination with the 'return the empty clip in front of the transition
-    // and not the transition' causes the wrong position to be returned here.
-    //
-    // To resolve this issue: call this method with the clip before the transition as input.
-    ASSERT(!clip->isA<model::Transition>());
-    return wxPoint( LeftPixel(clip), VBottomQuarter(clip) );
+    // that algorithm, in combination with the 'return the empty clip after the transition
+    // and not the transition' can cause the wrong position to be returned here.
+    // Therefore, this method is not allowed in case of empty length clip used for transition.
+    ASSERT_IMPLIES(transition->getRight(), transition->getRight() > 0);
+    return wxPoint( LeftPixel(clip), VBottomQuarter(clip->getTrack()) );
 }
 
-wxPoint RightVBottomQuarter(model::IClipPtr clip)
+wxPoint UnderTransitionRightEdge(model::IClipPtr clip)
 {
-    // Not allowed for transitions:
-    // When the clip in front of the transition has length 0, then using this position
-    // on the transition causes the mouse pointer information to actually return the clip
-    // in front of the transition (so that it can be selected for trimming).
-    //
+    model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(clip);
+    ASSERT(transition);
     // The algoritm in the method 'RightPixel' contains code for 'adjusting the found point'
     // until the actual given clip is found (to accommodate for rounding errors). However,
     // that algorithm, in combination with the 'return the empty clip in front of the transition
-    // and not the transition' causes the wrong position to be returned here.
-    //
-    // To resolve this issue: call this method with the clip after the transition as input.
-    ASSERT(!clip->isA<model::Transition>());
-    return wxPoint( RightPixel(clip), VBottomQuarter(clip) );
+    // and not the transition' can cause the wrong position to be returned here.
+    // Therefore, this method is not allowed in case of empty length clip used for transition.
+    ASSERT_IMPLIES(transition->getLeft(), transition->getLeft() > 0);
+
+    VAR_ERROR(TopPixel(clip->getTrack()));
+    VAR_ERROR(VBottomQuarter(clip->getTrack()));
+    return wxPoint( RightPixel(clip), VBottomQuarter(clip->getTrack()) );
 }
 
 wxPoint LeftCenter(model::IClipPtr clip)

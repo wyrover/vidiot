@@ -18,6 +18,8 @@
 #ifndef FIXTURE_PROJECT_H
 #define FIXTURE_PROJECT_H
 
+#include "Test.h" // todo make all test classes include this (via cmake?)
+
 namespace test {
 
 class FixtureProject
@@ -39,6 +41,13 @@ public:
     /// Destruct objects here. This method must be called in a test's
     /// teardown method.
     void destroy();
+
+    /// Some problems only occur after loading a saved document.
+    /// After creating the proper structures (in the test), this method
+    /// ensures that the project is saved to disk and then reread.
+    /// \note store the result in a local variable to guarantee the 
+    ///       lifetime of the project on disk.
+    DirAndFile saveAndReload();
 
     //////////////////////////////////////////////////////////////////////////
     // MEMBERS

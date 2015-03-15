@@ -149,9 +149,9 @@ void Trim::start()
             ASSERT(transition);
             ASSERT(transition->getRight());
             ASSERT_MORE_THAN_EQUALS_ZERO(*(transition->getRight()));
+            mStartPts = transition->getTouchPosition();
             mOriginalClip = info.getLogicalClip();
             mFixedPts = mOriginalClip->getRightPts(); // Do not optimize away (using ->getRightPts() in the calculation. Since the scrolling is changed and clips are added/removed, that's very volatile information).
-            mStartPts = mOriginalClip->getLeftPts();
             boost::optional<pts> left = transition->getLeft();
             if (left)
             {
@@ -171,9 +171,9 @@ void Trim::start()
             ASSERT(transition);
             ASSERT(transition->getLeft());
             ASSERT_MORE_THAN_EQUALS_ZERO(*(transition->getLeft()));
+            mStartPts = transition->getTouchPosition();
             mOriginalClip = info.getLogicalClip();
             mFixedPts = mOriginalClip->getLeftPts(); // Do not optimize away (using ->getLeftPts() in the calculation. Since the scrolling is changed and clips are added/removed, that's very volatile information).
-            mStartPts = mOriginalClip->getRightPts();
             boost::optional<pts> right = transition->getRight();
             if (right)
             {
