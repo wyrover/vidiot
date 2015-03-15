@@ -695,11 +695,61 @@ void TestBugs::testEndTrimAtOutTransitionInSavedDocumentEndCausesSnappingProblem
         ASSERT_EQUALS(length, getSequence()->getLength());
 
         pts position = AudioClip(0, 1)->getRightPts();
-        TimelineBeginTrim(UnderTransitionRightEdge(AudioClip(0,1)), false);
+        TimelineBeginTrim(UnderTransitionRightEdge(AudioClip(0,1)), false); // todo duplication between UnderTransition... and TimelineTrimTransitionLeftClipEnd
         ASSERT_EQUALS(position, AudioClip(0, 1)->getRightPts()); // Clip length should not have been extended yet.
         TimelineEndTrim(false);
     }
 }
 
+void TestBugs::testTrimAndExtendVideoAndAudioClipsThatBothHaveOutTransitions()
+{
+    StartTestSuite();
+    TimelineZoomIn(6);
+
+    DeleteClip(VideoClip(0,0));
+    DeleteClip(VideoClip(0,2));
+    TimelineTrimRight(VideoClip(0,1), -100);
+    TimelineTrimLeft(VideoClip(0,1), 100);
+    DeselectAllClips();
+    MakeOutTransitionAfterClip preparationVideo(1);
+    MakeOutTransitionAfterClip preparationAudio(1,true);
+    MakeInTransitionAfterClip preparationVideoIn(0);
+    MakeInTransitionAfterClip preparationAudioIn(0, true);
+
+    ASSERT_VIDEOTRACK0(EmptyClip)(Transition)(VideoClip)(Transition)(EmptyClip);
+    ASSERT_AUDIOTRACK0(EmptyClip)(Transition)(AudioClip)(Transition)(EmptyClip);
+
+    pts length = VideoClip(0,2)->getLength();
+    ASSERT_EQUALS(AudioClip(0, 2)->getLength(), length);
+
+    TimelineTrimTransitionLeftClipEnd(VideoClip(0,3), 100, false);
+    ASSERT_MORE_THAN(VideoClip(0, 2)->getLength(), length);
+    ASSERT_EQUALS(AudioClip(0, 2)->getLength(), VideoClip(0, 2)->getLength());
+    Undo();
+    ASSERT_EQUALS(VideoClip(0, 2)->getLength(), length);
+    ASSERT_EQUALS(AudioClip(0, 2)->getLength(), length);
+
+    TimelineTrimTransitionRightClipBegin(VideoClip(0,1), -100, false);
+    ASSERT_MORE_THAN(VideoClip(0, 2)->getLength(), length);
+    ASSERT_EQUALS(AudioClip(0, 2)->getLength(), VideoClip(0, 2)->getLength());
+    Undo();
+    ASSERT_EQUALS(VideoClip(0, 2)->getLength(), length);
+    ASSERT_EQUALS(AudioClip(0, 2)->getLength(), length);
+
+    TimelineTrimTransitionLeftClipEnd(AudioClip(0,3), 100, false);
+    ASSERT_MORE_THAN(VideoClip(0, 2)->getLength(), length);
+    ASSERT_EQUALS(AudioClip(0, 2)->getLength(), VideoClip(0, 2)->getLength());
+    Undo();
+    ASSERT_EQUALS(VideoClip(0, 2)->getLength(), length);
+    ASSERT_EQUALS(AudioClip(0, 2)->getLength(), length);
+
+    TimelineTrimTransitionRightClipBegin(AudioClip(0,1), -100, false);
+    ASSERT_MORE_THAN(VideoClip(0, 2)->getLength(), length);
+    ASSERT_EQUALS(AudioClip(0, 2)->getLength(), VideoClip(0, 2)->getLength());
+    Undo();
+    ASSERT_EQUALS(VideoClip(0, 2)->getLength(), length);
+    ASSERT_EQUALS(AudioClip(0, 2)->getLength(), length);
+
+}
 
 } // namespace

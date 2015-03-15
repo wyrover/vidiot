@@ -238,24 +238,33 @@ TrimClip::TrimLimit TrimClip::determineBoundaries(const model::SequencePtr& sequ
 
     if (!shift)
     {
-        // When not shift trimming the extended clip must be able to fit within the empty area before/after the clip:
+        // When not shift trimming the extended clip must be able to fit within the empty area before/after the clip
+
+        auto emptyArea = [](const model::IClipPtr& clip) -> std::pair < pts, pts >
+        {
+            if (clip)
+            {
+                // If there's a transition before or after the clip, the empty area must be looked for
+                // before or after that transition.
+                return std::make_pair(
+                    clip->getTrack()->getLeftEmptyArea(clip->getInTransition() ? clip->getInTransition() : clip),
+                    clip->getTrack()->getRightEmptyArea(clip->getOutTransition() ? clip->getOutTransition() : clip));
+
+            }
+            return std::make_pair(-1 * std::numeric_limits<pts>::max(), std::numeric_limits<pts>::max());
+        };
+
         switch (position)
         {
         case ClipBegin:
-            lowerlimit(result, clip->getTrack()->getLeftEmptyArea(clip));                 // When not shift trimming: extended clip must fit into the available empty area in front of the clip
-            if (link) { lowerlimit(result, link->getTrack()->getLeftEmptyArea(link)); }   // When not shift trimming: extended link must fit into the available empty area in front of the link
+        case TransitionRightClipBegin:
+            lowerlimit(result, emptyArea(clip).first);
+            lowerlimit(result, emptyArea(link).first);
             break;
         case ClipEnd:
-            upperlimit(result, clip->getTrack()->getRightEmptyArea(clip));                // When not shift trimming: extended clip must fit into the available empty area in front of the clip
-            if (link) { upperlimit(result, link->getTrack()->getRightEmptyArea(link)); }  // When not shift trimming: extended link must fit into the available empty area in front of the link
-            break;
-        case TransitionRightClipBegin:
-            lowerlimit(result, clip->getTrack()->getLeftEmptyArea(clip->getPrev()));      // When not shift trimming: extended clip must fit into the available empty area in front of the clip. For in-out transitions this will always be 0...
-            if (link) { lowerlimit(result, link->getTrack()->getLeftEmptyArea(link)); }   // When not shift trimming: extended link must fit into the available empty area in front of the link
-            break;
         case TransitionLeftClipEnd:
-            upperlimit(result, clip->getTrack()->getRightEmptyArea(clip->getNext()));     // When not shift trimming: extended clip must fit into the available empty area in front of the transition. For in-out transitions this will always be 0...
-            if (link) { upperlimit(result, link->getTrack()->getRightEmptyArea(link)); }  // When not shift trimming: extended link must fit into the available empty area in front of the link
+            upperlimit(result, emptyArea(clip).second);
+            upperlimit(result, emptyArea(link).second);
             break;
         case TransitionBegin:
         case TransitionEnd:

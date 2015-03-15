@@ -66,7 +66,7 @@ wxPoint TransitionLeftClipEnd(model::IClipPtr clip)
 {
     ASSERT(clip->isA<model::Transition>());
     model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(clip);
-    wxPoint position = wxPoint(getTimeline().getZoom().ptsToPixels(transition->getTouchPosition()) - 1,BottomPixel(clip));
+    wxPoint position = wxPoint(getTimeline().getZoom().ptsToPixels(transition->getTouchPosition()) - 1, VBottomQuarter(clip->getTrack()));
     ASSERT_LOGICALCLIPPOSITION(position, gui::timeline::TransitionLeftClipEnd);
     return position;
 }
@@ -83,7 +83,7 @@ wxPoint TransitionRightClipBegin(model::IClipPtr clip)
 {
     ASSERT(clip->isA<model::Transition>());
     model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(clip);
-    wxPoint position = wxPoint(getTimeline().getZoom().ptsToPixels(transition->getTouchPosition()),BottomPixel(clip));
+    wxPoint position = wxPoint(getTimeline().getZoom().ptsToPixels(transition->getTouchPosition()), VBottomQuarter(clip->getTrack()));
     ASSERT_LOGICALCLIPPOSITION(position, gui::timeline::TransitionRightClipBegin);
     return position;
 }
