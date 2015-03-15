@@ -183,6 +183,23 @@ public:
     /// using data from the not-yet-opened (thus, meta data unknown) file.
     void testCrashCausedByCreatingTransitionAtAudioClipEndAfterReadingProjectFromDisk();
 
+    /// See [#164]
+    /// If a audio+video clip has an out transition on either audio OR video, then the
+    /// snapping behaviour was different between starting the trim on either audio OR video.
+    /// When trimming was started on the part without a transition, then snapping behaviour
+    /// was ok. When starting the trim on the part with the transition (thus, starting the
+    /// trim while hovering over the end of the transition) snapping caused the clip to
+    /// be extended to the end of the transition immediately. Thus, without really moving
+    /// the mouse the clip was already extended (to the length of the transition).
+    ///
+    /// Note that this behaviour was only seen with out-transitions that were part of
+    /// a project that was ready from disk. For newly created transitions, the behaviour 
+    /// was not seen.
+    void testEndTrimAtOutTransitionInSavedDocumentEndCausesSnappingProblemVideo();
+
+    /// See testEndTrimAtOutTransitionInSavedDocumentEndCausesSnappingProblemVideo()
+    void testEndTrimAtOutTransitionInSavedDocumentEndCausesSnappingProblemAudio();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////

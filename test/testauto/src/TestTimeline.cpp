@@ -232,6 +232,7 @@ void TestTimeline::testDeletion()
         ASSERT_SELECTION_SIZE(1);
         Undo();
         ASSERT_SELECTION_SIZE(2);
+        DeselectAllClips();
     }
     {
         StartTest("When deleting a clip, an in-only transition must be deleted also.");

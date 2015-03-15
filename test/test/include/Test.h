@@ -126,6 +126,14 @@
 #include "Worker.h"
 #include "Zoom.h"
 
+namespace test {
+
+class RandomTempDir;
+typedef boost::shared_ptr<RandomTempDir> RandomTempDirPtr;
+typedef std::pair<RandomTempDirPtr, wxFileName> DirAndFile;
+
+}
+
 // All test includes (avoid having to include them in all tests.cpp files)
 #include "FixtureConfig.h"
 #include "FixtureGui.h"

@@ -20,9 +20,6 @@
 
 namespace test {
 
-class RandomTempDir;
-typedef boost::shared_ptr<RandomTempDir> RandomTempDirPtr;
-
 class RandomTempDir : boost::noncopyable
 {
 public:

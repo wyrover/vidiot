@@ -23,15 +23,11 @@ namespace test {
 /// \return root node of the project
 model::FolderPtr getRoot();
 
-typedef std::pair<RandomTempDirPtr, wxFileName> DirAndFile;
-
 void SetProjectUnmodified();
 
 DirAndFile SaveProjectAndClose(boost::optional<RandomTempDirPtr> tempDir = boost::none, wxString filesuffix = "");
 
 DirAndFile SaveProject(boost::optional<RandomTempDirPtr> tempDir = boost::none, wxString filesuffix = "");
-
-DirAndFile StartWithProjectReadFromDisk();
 
 wxFileName generateSaveFileName(wxFileName dir);
 

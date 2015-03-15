@@ -101,7 +101,7 @@ struct MakeInOutTransitionAfterClip : public MakeTransitionAfterClip
     virtual void moveMouseAndCreateTransition(int clipNumber) override;
 };
 
-struct MakeInTransitionAfterClip : public MakeTransitionAfterClip // tod rename to make in before clip...
+struct MakeInTransitionAfterClip : public MakeTransitionAfterClip
 {
     MakeInTransitionAfterClip(int afterclip, bool audio = false);
     virtual ~MakeInTransitionAfterClip();

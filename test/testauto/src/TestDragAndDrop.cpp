@@ -282,6 +282,7 @@ void TestDragAndDrop::testDropAdjacentToTransition()
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip);
         TimelinePositionCursor(HCenter(VideoClip(0,2))); // try to get one frame from the transition (was not removed when the error occurred)
         Undo();
+        DeselectAllClips();
     }
     {
         StartTest("InTransition: Drop adjacent to right edge");

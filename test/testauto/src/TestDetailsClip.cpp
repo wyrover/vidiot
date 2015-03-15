@@ -205,6 +205,7 @@ void TestDetailsClip::testChangeLengthOfTransition()
             pressLengthButtons();
         }
         Undo(2);
+        DeselectAllClips();
     }
     {
         StartTest("InTransition: Change length via details view.");
