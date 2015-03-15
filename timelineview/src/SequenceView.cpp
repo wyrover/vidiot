@@ -48,7 +48,7 @@ SequenceView::SequenceView(Timeline* timeline)
 , mAudioView(new AudioView(this))
 , mWidth(boost::none)
 , mHeight(boost::none)
-, mExtraLength(0)
+, mMinimumLength(0)
 {
     VAR_DEBUG(this);
 }
@@ -81,14 +81,11 @@ pixel SequenceView::getW() const
 {
     if (!mWidth)
     {
-        pts length =
-            mExtraLength +
-            getSequence()->getLength() +
-            model::Convert::timeToPts(10 * model::Constants::sSecond); // Add 10 extra seconds
-        mWidth.reset(
-            std::max(
+        pts length = std::max(getDefaultLength(), mMinimumLength); // At least the fixed minimum length
+        mWidth.reset(std::max(
             getTimeline().GetClientSize().GetWidth(),   // At least the widget size
-            getZoom().ptsToPixels(length)));            // At least enough to hold all clips
+            getZoom().ptsToPixels(length)               // At least enough to hold all clips
+            ));                           
     }
     return *mWidth;
 }
@@ -99,13 +96,13 @@ pixel SequenceView::getH() const
     {
         int height =
             std::max(
-            getTimeline().GetClientSize().GetHeight(),        // At least the widget size
+            getTimeline().GetClientSize().GetHeight(),      // At least the widget size
             Layout::TimeScaleHeight +
             Layout::MinimalGreyAboveVideoTracksHeight +
             mVideoView->getH() +
             Layout::AudioVideoDividerHeight +
             mAudioView->getH() +
-            Layout::MinimalGreyBelowAudioTracksHeight);    // Height of all combined components
+            Layout::MinimalGreyBelowAudioTracksHeight);     // Height of all combined components
         mHeight.reset(height);
     }
     return *mHeight;
@@ -210,13 +207,15 @@ void SequenceView::resetDividerPosition()
     setDividerPosition(getSequence()->getDividerPosition());
 }
 
-void SequenceView::setExtraLength(pts length)
+pts SequenceView::getDefaultLength() const
 {
-    if (mExtraLength != length)
-    {
-        mExtraLength = length;
-        getTimeline().resize();
-    }
+    return getSequence()->getLength() + model::Convert::timeToPts(10 * model::Constants::sSecond); // Add 10 extra seconds
+}
+
+void SequenceView::setMinimumLength(pts length)
+{
+    mMinimumLength = length;
+    getTimeline().resize();
 }
 
 }} // namespace

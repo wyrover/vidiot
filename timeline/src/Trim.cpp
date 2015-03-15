@@ -275,6 +275,10 @@ void Trim::start()
     getSelection().updateOnTrim(mOriginalClip);
     mCommand = new command::TrimClip(getSequence(), mOriginalClip, transition, mPosition);
     determinePossibleSnapPoints(mOriginalClip);
+    // Fix the length of the timeline such that it will never be shortened during
+    // the trim operation. Otherwise, trimming at the end of the sequence gives
+    // awkward feedback due to the shrinking of the widget.
+    getSequenceView().setMinimumLength(getSequenceView().getDefaultLength()); 
     update();
 }
 
@@ -314,6 +318,7 @@ void Trim::stop()
 {
     VAR_DEBUG(this);
     mActive = false;
+    getSequenceView().setMinimumLength(0);
     getTimeline().getDetails().get<DetailsTrim>()->hide();
 
     // Store before destroying mCommand
