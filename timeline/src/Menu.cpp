@@ -277,11 +277,15 @@ void MenuHandler::onTriggerPopupMenu(wxCommandEvent& event)
         }
 
         // Check if the adjacent clip has room for making a crossfade
-        if (!clickedClip->getPrev() || clickedClip->getPrev()->getMinAdjustEnd() >= 0)
+        if (!clickedClip->getPrev() || 
+            clickedClip->getPrev()->isA<model::EmptyClip>() || 
+            clickedClip->getPrev()->getMinAdjustEnd() >= 0)
         {
             canFadeFromPrevious = false;
         }
-        if (!clickedClip->getNext() || clickedClip->getNext()->getMaxAdjustBegin() <= 0)
+        if (!clickedClip->getNext() || 
+            clickedClip->getNext()->isA<model::EmptyClip>() ||
+            clickedClip->getNext()->getMaxAdjustBegin() <= 0)
         {
             canFadeToNext = false;
         }
@@ -344,10 +348,10 @@ void MenuHandler::onTriggerPopupMenu(wxCommandEvent& event)
             id++;
         }
         menu.AppendSeparator();
-        menu.AppendSubMenu(menuFadeIn, _("More fade in"), _("Show fade in transitions"));
-        menu.AppendSubMenu(menuFadeOut, _("More fade out"), _("Show fade out transitions"));
-        menu.AppendSubMenu(menuFadeInOut, _("More fade from previous"), _("Show fade from previous transitions"));
-        menu.AppendSubMenu(menuFadeOutIn, _("More fade to next"), _("Show fade to next transitions"));
+        menu.Enable(menu.AppendSubMenu(menuFadeIn,    _("More fade in"),            _("Show fade in transitions"))->GetId(),            canFadeIn);
+        menu.Enable(menu.AppendSubMenu(menuFadeOut,   _("More fade out"),           _("Show fade out transitions"))->GetId(),           canFadeOut);
+        menu.Enable(menu.AppendSubMenu(menuFadeInOut, _("More fade from previous"), _("Show fade from previous transitions"))->GetId(), canFadeFromPrevious);
+        menu.Enable(menu.AppendSubMenu(menuFadeOutIn, _("More fade to next"),       _("Show fade to next transitions"))->GetId(),       canFadeToNext);
     }
 
     add(menu, wxID_CUT, _("Cut"), true, selectedMediaClip, true);
