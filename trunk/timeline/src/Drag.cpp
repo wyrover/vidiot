@@ -145,7 +145,7 @@ void Drag::start(const wxPoint& hotspot, bool external)
         if (getSequence()->getLength() < mVideo.getTempTrack()->getLength())
         {
             // Extend sequence view if it is not big enough to hold the dragged data.
-            getSequenceView().setExtraLength(mVideo.getTempTrack()->getLength());
+            getSequenceView().setMinimumLength(getSequenceView().getDefaultLength() + mVideo.getTempTrack()->getLength());
             getSequenceView().invalidateRect();
         }
 
@@ -323,7 +323,7 @@ void Drag::stop()
         mCommand = 0;
     }
     reset();
-    getSequenceView().setExtraLength(0);
+    getSequenceView().setMinimumLength(0);
     getSequenceView().invalidateRect();
     getTimeline().Refresh(false);
 }

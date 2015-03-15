@@ -75,7 +75,8 @@ public:
 
     void getPositionInfo(const wxPoint& position, PointerPositionInfo& info ) const;
 
-    void setExtraLength(pts length);
+    pts getDefaultLength() const;
+    void setMinimumLength(pts length);
 
 private:
 
@@ -89,7 +90,7 @@ private:
     AudioView*  mAudioView;
     mutable boost::optional<pixel> mWidth; ///< Can be reset to ensure recalc.
     mutable boost::optional<pixel> mHeight; ///< Can be reset to ensure recalc.
-    pts mExtraLength;
+    pts mMinimumLength;
 };
 
 }} // namespace
