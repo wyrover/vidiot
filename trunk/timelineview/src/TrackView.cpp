@@ -170,7 +170,7 @@ void TrackView::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) co
     }
 
     // Determine which clips are 'in the region'
-    pixel redrawFromPixel = region.GetBox().GetLeft() + offset.x;
+    pixel redrawFromPixel = region.GetBox().GetLeft() + offset.x - getTimeline().getShift();
     std::map<pixel, model::IClipPtr>::const_iterator from = mClips->upper_bound(redrawFromPixel);
     model::IClipPtr fromClip = (from != mClips->end()) ? from->second : model::IClipPtr();
     while (fromClip &&

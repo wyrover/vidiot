@@ -304,7 +304,7 @@ void Trim::update()
     }
 
     getTimeline().endTransaction();
-    getTimeline().Refresh();
+    getTimeline().Refresh(false);
     getTimeline().Update();
 }
 
