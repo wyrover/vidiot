@@ -1218,6 +1218,7 @@ void TestTransition::testCreateTransitionAfterLastClip()
     }
 }
 
+//todo move into separated test
 void TestTransition::testVideoTransitionTypes()
 {
     auto setOpacity = [](model::IClipPtr clip, int opacity)

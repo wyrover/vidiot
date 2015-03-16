@@ -423,7 +423,16 @@ void ClipView::drawForDragging(const wxPoint& position, int height, wxDC& dc, wx
 {
     if (getDrag().contains(mClip))
     {
-        wxBitmap b(getW(),height);
+        int tmpBitmapHeight = height;
+        if (mClip->isA<model::Transition>())
+        {
+            // Only the top halve of the track height is filled for transitions.
+            // Do not use a 'too big' bitmap here, since it is blit'ed in its entirety.
+            // Using a 'track height' bitmap causes the area under the transition to
+            // become black during dragging.
+            height = std::min(height, Layout::TransitionHeight);
+        }
+        wxBitmap b(getW(),std::min(height, getH())); 
         draw(b, true, false);
         // Don't use DrawBitmap since this gives wrong output when using wxGTK.
         wxMemoryDC dcBmp(b);
