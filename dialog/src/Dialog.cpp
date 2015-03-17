@@ -36,7 +36,7 @@ namespace gui {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-wxString Dialog::sMediaFileTypes = _("Supported files|*.avi;*.bmp;*.gif;*.jpg;*.mov;*.mp3;*.mp4;*.png;*.tga;*.tif;*.tiff;*.wav| Movie clips (*.avi;*.mov;*.mp4)|*.avi;*.mov;*.mp4|Images (*.bmp;*.gif;*.jpg;*.png;*.tga;*.tif;*.tiff)|*.bmp;*.gif;*.jpg;*.png;*.tga;*.tif;*.tiff|Sound files (*.wav;*.mp3)|*.wav;*.mp3|All files (%s)|%s");
+wxString Dialog::sMediaFileTypes = _T("Supported files|*.avi;*.bmp;*.gif;*.jpg;*.mov;*.mp3;*.mp4;*.png;*.tga;*.tif;*.tiff;*.wav;*.AVI;*.BMP;*.GIF;*.JPG;*.MOV;*.MP3;*.MP4;*.PNG;*.TGA;*.TIF;*.TIFF;*.WAV|Movie clips (*.avi;*.mov;*.mp4)|*.avi;*.mov;*.mp4;*.AVI;*.MOV;*.MP4|Images (*.bmp;*.gif;*.jpg;*.png;*.tga;*.tif;*.tiff)|*.bmp;*.gif;*.jpg;*.png;*.tga;*.tif;*.tiff;*.BMP;*.GIF;*.JPG;*.PNG;*.TGA;*.TIF;*.TIFF|Sound files (*.wav;*.mp3)|*.wav;*.mp3;*.WAV;*.MP3|All files (%s)|%s");
 
 Dialog::Dialog()
     :   mDir(boost::none)

@@ -539,7 +539,8 @@ void DialogNewProject::showFoundFilesInFolder()
             mFolderPath = "";
         }
     }
-    mContentsFolder->SetLabel(overview);
+    mContentsFolder->Clear();
+    mContentsFolder->AppendText(overview);
 }
 
 void DialogNewProject::showSelectedFiles()
