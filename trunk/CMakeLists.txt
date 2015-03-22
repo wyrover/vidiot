@@ -60,7 +60,7 @@ if (MSVC)
     file (GLOB FFMPEG_INSTALL $ENV{FFMPEGDIR}/bin/avcodec*.dll $ENV{FFMPEGDIR}/bin/avutil*.dll $ENV{FFMPEGDIR}/bin/avformat*.dll $ENV{FFMPEGDIR}/bin/swscale*.dll $ENV{FFMPEGDIR}/bin/swresample*.dll)
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHa /D \"__STDC_CONSTANT_MACROS\" /D \"__STDC_FORMAT_MACROS\"")
 else()
-  set (FFMPEG_LIBRARIES ${FFMPEG_LIBRARIES} opus mp3lame fdk-aac vpx x264 theora theoraenc theoradec vorbis vorbisenc vorbisfile va)
+  set (FFMPEG_LIBRARIES ${FFMPEG_LIBRARIES} opus mp3lame fdk-aac vpx x264 theora theoraenc theoradec vorbis vorbisenc vorbisfile va bz2)
    # todo use pkg_check_modules iso listing all libraries? -- in the .pc files these libs have already been listed!!!
 endif ()
 add_debugging_path ($ENV{FFMPEGDIR}/bin)

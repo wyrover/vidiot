@@ -40,7 +40,7 @@
 #include "StatusBar.h"
 #include "Timeline.h"
 #include "TimelineClipboard.h"
-#include "TimeLinesView.h"
+#include "TimelinesView.h"
 #include "Track.h"
 #include "Transition.h"
 #include "TrimClip.h"
@@ -277,13 +277,13 @@ void MenuHandler::onTriggerPopupMenu(wxCommandEvent& event)
         }
 
         // Check if the adjacent clip has room for making a crossfade
-        if (!clickedClip->getPrev() || 
-            clickedClip->getPrev()->isA<model::EmptyClip>() || 
+        if (!clickedClip->getPrev() ||
+            clickedClip->getPrev()->isA<model::EmptyClip>() ||
             clickedClip->getPrev()->getMinAdjustEnd() >= 0)
         {
             canFadeFromPrevious = false;
         }
-        if (!clickedClip->getNext() || 
+        if (!clickedClip->getNext() ||
             clickedClip->getNext()->isA<model::EmptyClip>() ||
             clickedClip->getNext()->getMaxAdjustBegin() <= 0)
         {

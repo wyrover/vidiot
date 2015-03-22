@@ -94,7 +94,7 @@
 #include "State.h"
 #include "Timeline.h"
 #include "TimelineDataObject.h"
-#include "TimeLinesView.h"
+#include "TimelinesView.h"
 #include "TimescaleView.h"
 #include "Track.h"
 #include "TrackView.h"

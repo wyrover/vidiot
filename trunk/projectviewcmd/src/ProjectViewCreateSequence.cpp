@@ -20,7 +20,7 @@
 #include "AutoFolder.h"
 #include "Folder.h"
 #include "Sequence.h"
-#include "TimeLinesView.h"
+#include "TimelinesView.h"
 #include "TrackCreator.h"
 #include "UtilLog.h"
 #include "Window.h"

@@ -42,7 +42,7 @@
 #include "ProjectViewRenameAsset.h"
 #include "Sequence.h"
 #include "StatusBar.h"
-#include "TimeLinesView.h"
+#include "TimelinesView.h"
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
 #include "UtilPath.h"

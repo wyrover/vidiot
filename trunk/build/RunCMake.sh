@@ -28,29 +28,79 @@ export BOOSTROOT=${VIDIOT_DIR}/boost/install
 
 LinuxSetup()
 {
-	if [ -h ${VIDIOT_DIR} ]; then
-		target=`ls -l ${VIDIOT_DIR} | awk '{print $11}'`
-		if [ ! ${target} = /media/${USER}/Vidiot ]; then
-			echo "Link ${VIDIOT_DIR} points to ${target}."
-			read
-			exit
-		fi
-	else
-	    ln -s /media/${USER}/Vidiot ${VIDIOT_DIR}
-	fi
-	if [ ! -h ${VIDIOT_DIR}/vidiot_trunk ]; then
-	    ln -s /media/sf_vidiot_trunk ${VIDIOT_DIR}/vidiot_trunk # This helps keeping the paths in codeblocks shorter, otherwise codeblocks lists paths as ../../../media/sf_vidiot_trunk/...
-	fi
-    gsettings set com.canonical.desktop.interface scrollbar-mode normal # fix nasty ubuntu scrollbars
+    if [ -d /media/sf_vidiot_trunk ]; then
+        # Running in VirtualBox
+        PATH_TO_SOURCES=/media/sf_vidiot_trunk
+        if [ -h ${VIDIOT_DIR} ]; then
+            target=`ls -l ${VIDIOT_DIR} | awk '{print $11}'`
+            if [ ! ${target} = /media/${USER}/Vidiot ]; then
+                echo "Link ${VIDIOT_DIR} points to ${target}."
+                read
+                exit
+            fi
+        else
+            ln -s /media/${USER}/Vidiot ${VIDIOT_DIR}
+        fi
+    else
+        # Not in Virtualbox
+        PATH_TO_SOURCES=/media/${USER}/System/Vidiot/vidiot_trunk
+        mkdir -p ${VIDIOT_DIR}
+    fi
+    if [ ! -h ${VIDIOT_DIR}/vidiot_trunk ]; then
+        ln -s ${PATH_TO_SOURCES} ${VIDIOT_DIR} # This helps keeping the paths in codeblocks shorter, otherwise codeblocks lists paths as ../../../media/sf_vidiot_trunk/...
+    fi
+    # gsettings set com.canonical.desktop.interface scrollbar-mode normal # fix ubuntu scrollbars
     sudo add-apt-repository -y ppa:webupd8team/sublime-text-3
     sudo apt-get -y update
-    # General
-    sudo apt-get -y install joe ubuntu-tweak-tool unity-tweak-tool subversion sublime-text-installer openjdk-7-jdk libsaxon* codeblocks codeblocks-contrib cmake cmake-qt-gui g++ portaudio19-dev libsoundtouch-dev
+    echo "\n----------------------------------------\nGeneral...\n"
+    sudo apt-get -y install joe \
+    						nautilus-open-terminal \
+    						unity-tweak-tool \
+    						subversion \
+    						sublime-text-installer \
+    						openjdk-7-jdk \
+    						libsaxon* \
+    						codeblocks codeblocks-contrib \
+    						cmake cmake-qt-gui \
+    						g++ \
+    						portaudio19-dev \
+    						libsoundtouch-dev
+    nautilus -q
+    echo "\n----------------------------------------\nwx...\n"
     # wxwidgets - dos2unix required since windows checkout of wxwidgets gives the wx-config utility dos line endings, making it fail to run.
+#    sudo add-apt-repository -y 'http://repos.codelite.org/wx3.0.2/ubuntu/ universe'	
+#    sudo apt-get -y update
     sudo apt-get -y install libgtk2.0-dev dos2unix 
-    # ffmpeg
-    sudo apt-get -y install autoconf automake build-essential libass-dev libfreetype6-dev libgpac-dev libsdl1.2-dev libtheora-dev libtool libva-dev libvdpau-dev libvorbis-dev libx11-dev libxext-dev libxfixes-dev pkg-config texi2html zlib1g-dev yasm libmp3lame-dev libopus-dev
-    # boost
+#    sudo apt-get install libwxbase3.0-0-unofficial \
+#		                 libwxbase3.0-dev \#
+#		                 libwxgtk3.0-0-unofficial \
+#		                 libwxgtk3.0-dev \
+#		                 wx3.0-headers \
+#		                 wx-common \
+#		                 libwxbase3.0-dbg \
+#		                 libwxgtk3.0-dbg \
+#		                 wx3.0-i18n \
+#		                 wx3.0-examples \
+#		                 wx3.0-doc
+    echo "\n----------------------------------------\nffmpeg...\n"
+    sudo apt-get -y install autoconf \
+    						automake \
+    						build-essential \
+    						libass-dev \
+    						libfreetype6-dev \
+    						libgpac-dev \
+    						libtheora-dev \
+    						libtool \
+                            libva-dev \
+    						libvorbis-dev \
+    						pkg-config \
+    						texi2html \
+    						zlib1g-dev \
+    						yasm \
+    						libmp3lame-dev \
+    						libopus-dev \
+    						libx264-dev
+    echo "\n----------------------------------------\nboost...\n"
     sudo apt-get -y install python-dev autotools-dev libicu-dev libbz2-dev libzip-dev
 }
 
@@ -79,7 +129,7 @@ BoostSetup()
     ./bootstrap.sh --prefix=${BOOSTDIR}/install
     n=`cat /proc/cpuinfo | grep "cpu cores" | uniq | awk '{print $NF}'`
     ./b2 --with=all -j $n cxxflags="-std=c++11" --target=shared,static install
-    sudo echo "${BOOSTDIR}/install/lib" > /etc/ld.so.conf.d/boost-1.56.0.conf
+    echo "${BOOSTDIR}/install/lib" | sudo tee /etc/ld.so.conf.d/boost-1.56.0.conf
     sudo ldconfig -v
 }
 
@@ -96,7 +146,11 @@ WxSetup()
     mkdir -p ${WXDIR}/build
     mkdir -p ${WXDIR}/install
     cd ${WXDIR}/build
-    /media/sf_wxwidgets_trunk/configure --enable-debug --enable-debug_info --enable-debug_gdb --prefix=${WXDIR}/install \
+    WXSRC_DIR=/media/sf_wxwidgets_trunk 
+    if [ ! -d ${WXSRC_DIR} ]; then
+        WXSRC_DIR=/media/${USER}/System/Vidiot/wxwidgets_trunk
+    fi
+    ${WXSRC_DIR}/configure --enable-debug --enable-debug_info --enable-debug_gdb --prefix=${WXDIR}/install \
         --enable-unicode --disable-shared --disable-compat28 --enable-dataviewctrl
     make
     make install
@@ -117,15 +171,15 @@ FfmpegSetup()
     fi
     mkdir -p ${FFBUILD}
     mkdir -p ${FFSRC}
-    # libx264:
-    cd ${FFSRC}
-    wget http://download.videolan.org/pub/x264/snapshots/last_x264.tar.bz2
-    tar xjvf last_x264.tar.bz2
-    cd x264-snapshot*
-    ./configure --prefix="${FFBUILD}" --bindir="${FFDIR}/bin" --enable-static
-    make
-    make install
-    make distclean
+#    # libx264:
+#    cd ${FFSRC}
+#    wget http://download.videolan.org/pub/x264/snapshots/last_x264.tar.bz2
+#    tar xjvf last_x264.tar.bz2
+#    cd x264-snapshot*
+#    ./configure --prefix="${FFBUILD}" --bindir="${FFDIR}/bin" --enable-static
+#    make
+#    make install
+#    make distclean
     # libfdk-aac:
     cd ${FFSRC}
     wget -O fdk-aac.zip https://github.com/mstorsjo/fdk-aac/zipball/master
@@ -154,8 +208,8 @@ FfmpegSetup()
     export PKG_CONFIG_PATH
     ./configure --prefix="${FFBUILD}" --extra-cflags="-I${FFBUILD}/include" \
        --extra-ldflags="-L${FFBUILD}/lib" --bindir="${FFDIR}/bin" --extra-libs="-ldl" --enable-gpl \
-       --enable-libass --enable-libfdk-aac --enable-libfreetype --enable-libmp3lame --enable-libopus \
-       --enable-libtheora --enable-libvorbis --enable-libvpx --enable-libx264 --enable-nonfree --enable-x11grab
+       --enable-libass --enable-libfdk-aac --enable-libmp3lame --enable-libopus \
+       --enable-libtheora --enable-libvorbis --enable-libvpx --enable-libx264 --enable-nonfree
     make
     make install
     make distclean
@@ -170,7 +224,7 @@ cat > "${HOME}/Desktop/V_${1}.desktop" <<DELIM
 Version=1.0
 Type=Application
 Terminal=false
-Icon[en_US]=gnome-panel-launcher
+Icon[en_US]=${SOURCE}/images/movie48.png
 Name[en_US]=V_${1}
 Exec=gnome-terminal --geometry 100x50+0+0 --execute ${SOURCE}/build/RunCMake.sh ${1}
 Name=RunCMake
@@ -181,9 +235,7 @@ DELIM
 
 Icons()
 {
-    Icon CMAKE
-    Icon REBUILD
-    Icon DELIVER
+    Icon Menu
 }
 
 Clean()
@@ -193,7 +245,7 @@ Clean()
     rm -rf build
 }
 
-Prepare()
+FixWxLineEndings()
 {
     echo "\n----------------------------------------\nPrepare...\n"
     # Avoid problems with windows line endings
@@ -261,7 +313,7 @@ RunCMake()
 Rebuild()
 {
 	Clean 
-	Prepare
+	FixWxLineEndings
 	MakeDirs
 	MakeChangelog
 	RunCMake
@@ -311,18 +363,38 @@ Exec()
     ${1} | tee /tmp/${1}.log
 }
 
-case $1 in
-FULLSETUP)      Exec LinuxSetup ; Exec Icons ; Exec BoostSetup ; Exec FfmpegSetup ; Exec WxSetup ; Exec Rebuild ;;
-LINUXSETUP)     Exec LinuxSetup ;;
+action="${1}"
+if [ "$action" = "" ] || [ "$action" = "Menu" ]; then
+  action=`zenity --list --height=400 --width=270 \
+          --hide-column="1"  \
+          --print-column="1" \
+          --hide-header \
+          --title="Select action" \
+          --text="Select action to be executed" \
+          --column="Action" --column="Description" \
+            LINUXSETUP    "Setup linux (folders, tools, icons)" \
+            BOOSTSETUP    "Rebuild boost" \
+            WXSETUP       "Rebuild wxwidgets" \
+            FFMPEGSETUP   "Rebuild ffmpeg" \
+            \             "" \
+            REBUILD       "Clean & Prepare & CMake" \
+            RUNCMAKE      "CMake only" \
+            BUILDPACKAGE  "Build package" \
+            DELIVER       "Rebuild & Install" | cut -f 1 -d '|'`
+fi
+
+case ${action} in
+LINUXSETUP)     Exec LinuxSetup ; Exec Icons ;;
 ICONS)          Exec Icons ;;
+FULLSETUP)      Exec LinuxSetup ; Exec Icons ; Exec BoostSetup ; Exec WxSetup ; Exec FfmpegSetup ;;
 BOOSTSETUP)     Exec BoostSetup ;;
 WXSETUP)        Exec WxSetup ;;
 FFMPEGSETUP)    Exec FfmpegSetup ;;
+RUNCMAKE)       Exec RunCMake ;;
 REBUILD)        Exec Rebuild ;;
 BUILDPACKAGE)   Exec BuildPackage ;;
-INSTALL)        Exec BuildPackage ; Exec Install ;;
 DELIVER)        Exec Rebuild ; Exec BuildPackage  ; Exec Install ;;
-*)              Exec MakeDirs ; Exec MakeChangelog ; Exec RunCMake ;;
+*)              exit ;;
 esac
 
 echo "\n----------------------------------------\nTotal running time: $(date -d @$(($(date +%s)-$start)) +"%M minutes %S seconds")\n"

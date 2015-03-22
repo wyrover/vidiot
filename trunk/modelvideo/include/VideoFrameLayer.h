@@ -25,6 +25,8 @@
 
 namespace model {
 
+class VideoCompositionParameters;
+
 class VideoFrameLayer
     :   public IRTTI
 {
