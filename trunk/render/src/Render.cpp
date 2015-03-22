@@ -605,7 +605,7 @@ void RenderWork::generate()
                                 currentAudioChunk = sequence->getNextAudio(*audioParameters);
                                 if (currentAudioChunk &&
                                     currentAudioChunk->getPts() > position &&
-                                    currentAudioChunk->getPts() < length) // Avoid showing progress 48 out of 47 frames
+                                    (currentAudioChunk->getPts() - from) < length) // Avoid showing progress 48 out of 47 frames
                                 {
                                     position = currentAudioChunk->getPts();
                                 }
@@ -710,7 +710,8 @@ void RenderWork::generate()
                     }
                     else
                     {
-                        if (frame->getPts() > position)
+                        if (frame->getPts() > position &&
+                            (frame->getPts() - from) < length) // Avoid showing progress 48 out of 47 frames
                         {
                             position = frame->getPts();
                         }
