@@ -60,11 +60,11 @@ DialogProjectProperties::DialogProjectProperties(wxWindow* win)
     addoption(_("Framerate"), mVideoFrameRate);
 
     long initial = model::Properties::get().getVideoSize().GetWidth();
-    mVideoWidth = new wxSpinCtrl(this, wxID_ANY, wxString::Format("%d", initial), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, 20, 10000, initial);
+    mVideoWidth = new wxSpinCtrl(this, wxID_ANY, wxString::Format("%ld", initial), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, 20, 10000, initial);
     addoption(_("Video width"), mVideoWidth);
 
     initial = model::Properties::get().getVideoSize().GetHeight();
-    mVideoHeight = new wxSpinCtrl(this, wxID_ANY, wxString::Format("%d", initial), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, 20, 10000, initial);
+    mVideoHeight = new wxSpinCtrl(this, wxID_ANY, wxString::Format("%ld", initial), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, 20, 10000, initial);
     addoption(_("Video height"), mVideoHeight);
 
     addbox(_("Audio"));
@@ -77,7 +77,7 @@ DialogProjectProperties::DialogProjectProperties(wxWindow* win)
     sampleRateValidator.SetMin(1000);
     sampleRateValidator.SetMax(1000);
     initial = model::Properties::get().getAudioSampleRate();
-    mAudioSampleRate = new wxComboBox(this, wxID_ANY, wxString::Format("%d", initial),  wxDefaultPosition, wxDefaultSize, sampleRateChoices, 0, sampleRateValidator);
+    mAudioSampleRate = new wxComboBox(this, wxID_ANY, wxString::Format("%ld", initial),  wxDefaultPosition, wxDefaultSize, sampleRateChoices, 0, sampleRateValidator);
     mAudioSampleRate->Enable(!hasSequences);
     addoption(_("Audio sample rate"), mAudioSampleRate);
 
@@ -88,7 +88,7 @@ DialogProjectProperties::DialogProjectProperties(wxWindow* win)
     channelChoices.Add("1");
     channelChoices.Add("2");
     initial = Config::ReadLong(Config::sPathDefaultAudioChannels);
-    mAudioNumberOfChannels = new wxComboBox(this, wxID_ANY, wxString::Format("%d", initial),  wxDefaultPosition, wxDefaultSize, channelChoices, 0, channelValidator);
+    mAudioNumberOfChannels = new wxComboBox(this, wxID_ANY, wxString::Format("%ld", initial),  wxDefaultPosition, wxDefaultSize, channelChoices, 0, channelValidator);
     addoption(_("Audio channels"), mAudioNumberOfChannels);
 
     if (hasSequences)

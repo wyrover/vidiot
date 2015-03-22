@@ -20,7 +20,7 @@
 #include "Config.h"
 #include "Preview.h"
 #include "ProjectView.h"
-#include "TimeLinesView.h"
+#include "TimelinesView.h"
 #include "Details.h"
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"

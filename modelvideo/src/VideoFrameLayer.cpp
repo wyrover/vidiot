@@ -22,6 +22,7 @@
 #include "Constants.h"
 #include "UtilInitAvcodec.h"
 #include "UtilLogWxwidgets.h"
+#include "VideoCompositionParameters.h"
 
 namespace model {
 

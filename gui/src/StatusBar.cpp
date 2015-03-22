@@ -91,7 +91,7 @@ void StatusBar::onWorkerQueueSize(worker::WorkerQueueSizeEvent& event)
     }
     else if (event.getValue() > 1)
     {
-        queuetext = wxString::Format("%d %s", event.getValue(), _("items queued"));
+        queuetext = wxString::Format("%ld %s", event.getValue(), _("items queued"));
     }
     setQueueText(queuetext);
 }
@@ -155,7 +155,7 @@ void StatusBar::showProgressBar(int max)
 void StatusBar::showProgress(int value)
 {
     ASSERT(wxThread::IsMain());
-    mProgress->SetValue(value);
+    mProgress->SetValue(value); // todo get crash here in testAddAndRemoveFileToWatchedAutoFolder Test: Add supported but not valid file on disk -- upon indexing the value exceeeds vlength (value was 2, max swas 1 in the failing case)
 }
 
 void StatusBar::hideProgressBar()

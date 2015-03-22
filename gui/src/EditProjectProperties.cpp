@@ -47,7 +47,7 @@ EditProjectProperties::EditProjectProperties(wxWindow* win)
     mVideoFrameRate = new wxRadioBox(this, wxID_ANY, wxT(""),wxPoint(10,10), wxDefaultSize, choices, 1, wxRA_SPECIFY_COLS );
     addoption(_("Framerate"), mVideoFrameRate);
 
-    long initial = model::Properties::get().getVideoSize().GetWidth();
+    int initial = model::Properties::get().getVideoSize().GetWidth();
     mVideoWidth = new wxSpinCtrl(this, wxID_ANY, wxString::Format("%d", initial), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, 20, 10000, initial);
     addoption(_("Video width"), mVideoWidth);
 

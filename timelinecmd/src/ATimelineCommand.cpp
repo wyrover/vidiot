@@ -17,7 +17,7 @@
 
 #include "ATimelineCommand.h"
 
-#include "TimeLinesView.h"
+#include "TimelinesView.h"
 
 namespace gui { namespace timeline { namespace command {
 

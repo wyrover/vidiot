@@ -73,7 +73,7 @@ DialogOptions::DialogOptions(wxWindow* win)
         addoption(_("Make backup of existing save file when overwriting"), mBackupBeforeSave);
 
         long maximum = Config::ReadLong(Config::sPathBackupBeforeSaveMaximum);
-        mBackupBeforeSaveMaximum = new wxSpinCtrl(mPanel, wxID_ANY, wxString::Format("%d", maximum), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, 0, 10000, maximum);
+        mBackupBeforeSaveMaximum = new wxSpinCtrl(mPanel, wxID_ANY, wxString::Format("%ld", maximum), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, 0, 10000, maximum);
         addoption(_("Maximum number of generated save files (0 - infinite)"), mBackupBeforeSaveMaximum);
 
         mSaveAbsolute = new wxCheckBox(mPanel, wxID_ANY, _T(""), wxDefaultPosition, wxDefaultSize);
@@ -87,11 +87,11 @@ DialogOptions::DialogOptions(wxWindow* win)
         addbox(_("Make sequence: divide clips if clip's prefix differs"));
 
         long initial = Config::ReadLong(Config::sPathMakeSequenceEmptyClipLength);
-        mMakeSequenceEmptyLength = new wxSpinCtrl(mPanel, wxID_ANY, wxString::Format("%d", initial), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, 0, 100000, initial);
+        mMakeSequenceEmptyLength = new wxSpinCtrl(mPanel, wxID_ANY, wxString::Format("%ld", initial), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, 0, 100000, initial);
         addoption(_("Length of empty division (0 - disabled)"), mMakeSequenceEmptyLength);
 
         initial = Config::ReadLong(Config::sPathMakeSequencePrefixLength);
-        mMakeSequencePrefixLength = new wxSpinCtrl(mPanel, wxID_ANY, wxString::Format("%d", initial), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, 0, 100000, initial);
+        mMakeSequencePrefixLength = new wxSpinCtrl(mPanel, wxID_ANY, wxString::Format("%ld", initial), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, 0, 100000, initial);
         addoption(_("Length of name (prefix) to be matched"), mMakeSequencePrefixLength);
     }
     {
@@ -116,11 +116,11 @@ DialogOptions::DialogOptions(wxWindow* win)
         addoption(_("Framerate for new projects"), mFrameRate);
 
         long initial = Config::ReadLong(Config::sPathDefaultVideoWidth);
-        mDefaultVideoWidth = new wxSpinCtrl(mPanel, wxID_ANY, wxString::Format("%d", initial), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, 20, 10000, initial);
+        mDefaultVideoWidth = new wxSpinCtrl(mPanel, wxID_ANY, wxString::Format("%ld", initial), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, 20, 10000, initial);
         addoption(_("Default video width"), mDefaultVideoWidth);
 
         initial = Config::ReadLong(Config::sPathDefaultVideoHeight);
-        mDefaultVideoHeight = new wxSpinCtrl(mPanel, wxID_ANY, wxString::Format("%d", initial), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, 20, 10000, initial);
+        mDefaultVideoHeight = new wxSpinCtrl(mPanel, wxID_ANY, wxString::Format("%ld", initial), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, 20, 10000, initial);
         addoption(_("Default video height"), mDefaultVideoHeight);
 
         mDefaultVideoScaling = new EnumSelector<model::VideoScaling>(mPanel, model::VideoScalingConverter::mapToHumanReadibleString, model::VideoScalingConverter::readConfigValue(Config::sPathDefaultVideoScaling));
@@ -181,7 +181,7 @@ DialogOptions::DialogOptions(wxWindow* win)
          sampleRateValidator.SetMin(1000);
          sampleRateValidator.SetMax(1000);
          long initial = Config::ReadLong(Config::sPathDefaultAudioSampleRate);
-         mDefaultAudioSampleRate = new wxComboBox(mPanel, wxID_ANY, wxString::Format("%d", initial),  wxDefaultPosition, wxDefaultSize, sampleRateChoices, 0, sampleRateValidator);
+         mDefaultAudioSampleRate = new wxComboBox(mPanel, wxID_ANY, wxString::Format("%ld", initial),  wxDefaultPosition, wxDefaultSize, sampleRateChoices, 0, sampleRateValidator);
          addoption(_("Default audio sample rate"), mDefaultAudioSampleRate);
 
          wxIntegerValidator<int> channelValidator;
@@ -191,7 +191,7 @@ DialogOptions::DialogOptions(wxWindow* win)
          channelChoices.Add("1");
          channelChoices.Add("2");
          initial = Config::ReadLong(Config::sPathDefaultAudioChannels);
-         mDefaultAudioNumberOfChannels = new wxComboBox(mPanel, wxID_ANY, wxString::Format("%d", initial),  wxDefaultPosition, wxDefaultSize, channelChoices, 0, channelValidator);
+         mDefaultAudioNumberOfChannels = new wxComboBox(mPanel, wxID_ANY, wxString::Format("%ld", initial),  wxDefaultPosition, wxDefaultSize, channelChoices, 0, channelValidator);
          addoption(_("Default number of audio channels"), mDefaultAudioNumberOfChannels);
     }
     {

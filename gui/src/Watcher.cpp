@@ -191,7 +191,7 @@ boost::optional<wxString> requiredWatchPath(const model::NodePtr& node)
 
     wxString result(util::path::toPath(path));
     ASSERT(!result.IsSameAs(""));
-    return boost::optional<wxString>(util::path::toPath(path));
+    return boost::optional<wxString>(result);
 }
 
 void Watcher::watch(const model::NodePtr& node)
@@ -278,6 +278,7 @@ void Watcher::unwatch(const model::NodePtr& node)
     }
 
     wxString obsoleteWatch = *requiresWatch;
+    ASSERT(!obsoleteWatch.IsSameAs(""));
 
     // Sometimes, the given folder is not watched, because one of its parents is
     if (mWatches.count(obsoleteWatch) == 0) { return; }
