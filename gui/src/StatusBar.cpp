@@ -155,7 +155,15 @@ void StatusBar::showProgressBar(int max)
 void StatusBar::showProgress(int value)
 {
     ASSERT(wxThread::IsMain());
-    mProgress->SetValue(value); // todo get crash here in testAddAndRemoveFileToWatchedAutoFolder Test: Add supported but not valid file on disk -- upon indexing the value exceeeds vlength (value was 2, max swas 1 in the failing case)
+    if (mProgress->GetRange() < value)
+    {
+        // Got crash here occasionally in some tests.
+        // Maybe caused by initially setting the max to 'the number of files to be index' in an AutoFolder.
+        // However, during the indexed (or, directly after setting the max) a new file may be added in the
+        // folder causing the number of items to exceed the original max value.
+        mProgress->SetRange(value);
+    }
+    mProgress->SetValue(value);
 }
 
 void StatusBar::hideProgressBar()

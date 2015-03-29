@@ -131,6 +131,7 @@ wxImagePtr VideoFrameLayer::getImage()
             {
                 unsigned char* alpha = mImage->GetAlpha();
                 ASSERT_NONZERO(alpha);
+
                 for (int x = 0; x < mImage->GetWidth() * mImage->GetHeight(); ++x)
                 {
                     *alpha = static_cast<char>(static_cast<int>(*alpha) * mOpacity / Constants::sOpacityMax);
@@ -159,6 +160,40 @@ void VideoFrameLayer::draw(wxGraphicsContext* gc, const VideoCompositionParamete
     wxImagePtr image = getImage();
     if (image)
     {
+#ifdef __WXGTK__
+        // See [#185]. A bug in the underlying libraries causes pixels with
+        //              an alpha value of '0' to be interpreted as 'opaque'.
+        // That resulted in multiple problems:
+        // - transitions starting with a flash as the image 'faded in' was
+        //   shown fully opaque in the first step (instead of transparent).
+        // - video frames opacity handling showing a opaque image instead
+        //   of transparent.
+        //
+        // VideoFrameLayer::draw() contains the basic:
+        // Loop over all pixels and for any fully transparent
+        // pixels set the corresponding RGB value to 0 also.
+        if (image->HasAlpha())
+        {
+            unsigned char* alpha = image->GetAlpha();
+            ASSERT_NONZERO(alpha);
+            unsigned char* rgb = image->GetData();
+            ASSERT_NONZERO(rgb);
+            for (int pixel = 0; pixel < image->GetWidth() * image->GetHeight(); ++pixel)
+            {
+                if (*alpha++ == 0)
+                {
+                    *rgb++ = 0;
+                    *rgb++ = 0;
+                    *rgb++ = 0;
+                }
+                else
+                {
+                    rgb += 3;
+                }
+            }
+        }
+#endif // __WXGTK__
+
         wxRect r(parameters.getRequiredRectangle());
         gc->DrawBitmap(
             gc->GetRenderer()->CreateBitmapFromImage(*image),

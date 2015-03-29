@@ -252,14 +252,25 @@ void Watcher::watch(const model::NodePtr& node)
     {
         start();
     }
-    bool ok = mWatcher->AddTree(wxFileName(toBeWatched + "/",""));
-    if (!ok)
+
+    wxArrayString watchedPaths;
+    int nWatched = mWatcher->GetWatchedPaths(&watchedPaths);
+    mWatcher->AddTree(wxFileName(toBeWatched + "/",""));
+
+    if (mWatcher->GetWatchedPaths(&watchedPaths) == nWatched)
     {
+        // Adding the watch failed (using return value of AddTree does not work)
         VAR_WARNING(toBeWatched);
+        mWatches.erase(toBeWatched); // If it fails, then silently ignore instead of crashing (happens too often), unfortunately without clear cause).
         stop();
         start();
     }
+#ifdef _MSC_VER
     ASSERT_MORE_THAN_EQUALS(mWatcher->GetWatchedPathsCount(), static_cast<int>(mWatches.size())); // Note that sometimes both 'folder' and 'folder/' are added.
+    //      Under GTK, often adding the watch fails (no space left on device).
+    //      Err on the safe side (application still works, just no automated
+    //      projectview updates).
+#endif
     VAR_DEBUG(*this);
 }
 
@@ -280,7 +291,7 @@ void Watcher::unwatch(const model::NodePtr& node)
     wxString obsoleteWatch = *requiresWatch;
     ASSERT(!obsoleteWatch.IsSameAs(""));
 
-    // Sometimes, the given folder is not watched, because one of its parents is
+    // Sometimes, the given folder is not watched, because one of its parents is, or if adding the watch failed.
     if (mWatches.count(obsoleteWatch) == 0) { return; }
 
     ASSERT_EQUALS(mWatches.count(obsoleteWatch),1);
@@ -293,16 +304,25 @@ void Watcher::unwatch(const model::NodePtr& node)
         mWatches.erase(obsoleteWatch);
         if (mWatcher)
         {
-            bool ok = mWatcher->RemoveTree(wxFileName(obsoleteWatch,""));
-            if (!ok)
+            wxArrayString watchedPaths;
+            int nWatched = mWatcher->GetWatchedPaths(&watchedPaths);
+            mWatcher->RemoveTree(wxFileName(obsoleteWatch,""));
+
+            if (mWatcher->GetWatchedPaths(&watchedPaths) == nWatched)
             {
+                // Removing the watch failed (using return value of RemoveTree does not work)
                 VAR_WARNING(obsoleteWatch);
                 stop();
                 start();
             }
             else
             {
+#ifdef _MSC_VER
                 ASSERT_MORE_THAN_EQUALS(mWatcher->GetWatchedPathsCount(), static_cast<int>(mWatches.size())); // Note that sometimes both 'folder' and 'folder/' are added.
+                //      Under GTK, often adding the watch fails (no space left on device).
+                //      Err on the safe side (application still works, just no automated
+                //      projectview updates).
+#endif
                 if (mWatches.empty())
                 {
                     stop();
