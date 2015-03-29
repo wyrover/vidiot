@@ -55,6 +55,10 @@ NOTE: svn co https://svn.code.sf.net/p/vidiot/code/trunk . # Not needed (svn on 
   Download mona theme from http://gnome-look.org/content/show.php/Mona+1.0+-+Dark+and+blue+GTK+theme?content=168447
   Copy mona theme to ~/.themes
   Used unity-tweak-tool to install theme
+* Avoid inotify crashes:
+  (run using sudo gnome-terminal)
+  echo 1048576 > /proc/sys/fs/inotify/max_user_watches
+  PERMANENT: sudo joe /etc/sysctl.conf - ADD fs.inotify.max_user_watches=16384
 
 ================ FFMPEG ================
 TODO check license warning at end of ffmpeg configure step...
