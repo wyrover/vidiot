@@ -130,7 +130,7 @@ REM === Generate changelog files ===
 :foundsaxon
 if not exist "%VIDIOT_BUILD%\Changelog.txt" "%SAXON_PATH%\Transform.exe" -s:%XML_SOURCE% -xsl:%VIDIOT_DIR%\vidiot_trunk\build\Changelog_txt.xslt -o:"%VIDIOT_BUILD%\Changelog.txt"
 if not exist "%VIDIOT_BUILD%\changelog.html" "%SAXON_PATH%\Transform.exe" -s:%XML_SOURCE% -xsl:%VIDIOT_DIR%\vidiot_trunk\build\Changelog_htm.xslt -o:"%VIDIOT_BUILD%\changelog.html"
-
+copy /Y "%VIDIOT_BUILD%\Changelog.txt" "%VIDIOT_BUILD%\README.txt"
            
 
 

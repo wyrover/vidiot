@@ -283,6 +283,7 @@ MakeChangelog()
     if [ ! -f ${BUILD_DEBUG}/Changelog.txt ]; then
         saxonb-xslt -s:${XML_SOURCE} -xsl:${SOURCE}/build/Changelog_txt.xslt -o:${BUILD_DEBUG}/Changelog.txt
         cp ${BUILD_DEBUG}/Changelog.txt ${BUILD_RELEASE}/Changelog.txt
+        cp ${BUILD_DEBUG}/Changelog.txt ${BUILD_RELEASE}/README.txt
     fi
     echo "\n----------------------------------------\nCreate changelog.gz...\n"
     if  [ ! -f ${BUILD_RELEASE}/changelog.gz ]; then
