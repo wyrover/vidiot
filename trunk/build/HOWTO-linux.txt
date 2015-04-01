@@ -68,5 +68,5 @@ todo move howto's one folder up
 todo rename runcmake.bat/.sh to buildvidiot.sh .... add auto open project!
 todo portable versions
 
-
+todo use https://sourceforge.net/rest/p/vidiot/tickets/ to get list of release notes. see https://sourceforge.net/p/forge/documentation/Allura%20API/
 
