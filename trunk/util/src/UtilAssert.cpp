@@ -19,24 +19,7 @@
 
 #include "UtilLog.h"
 
-IAssert* sInstance;
-
-//////////////////////////////////////////////////////////////////////////
-// INITIALIZATION
-//////////////////////////////////////////////////////////////////////////
-
-IAssert::IAssert()
-{
-    sInstance = this;
-}
-
-IAssert::~IAssert()
-{
-    sInstance = 0;
-}
-
-// static
-void IAssert::breakIntoDebugger()
+void breakIntoDebugger()
 {
 #ifdef _MSC_VER
     if (wxIsDebuggerRunning())
@@ -44,17 +27,13 @@ void IAssert::breakIntoDebugger()
         Log::exit(); // Ensures that remaining log lines are flushed
         __asm { int 3 };
     }
-    else
-    {
-        sInstance->onAssert();
-    }
-#endif
-#ifdef __GNUC__
-#ifndef NDEBUG
-    Log::exit(); // Ensures that remaining log lines are flushed
-  __asm ("int $0x3");
 #else
-    sInstance->onAssert();
+#ifndef NDEBUG
+    // On Linux, detection does not work, or interferes with generating the debug report.
+    // For DEBUG builds do the interrupt, for RELEASE builds show the dialog.
+     Log::exit(); // Ensures that remaining log lines are flushed
+    __asm ("int $0x3");
 #endif
+    // Not reached if running in debugger
 #endif
 }

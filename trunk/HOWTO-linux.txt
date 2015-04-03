@@ -42,8 +42,9 @@ NOTE: svn co https://svn.code.sf.net/p/vidiot/code/trunk . # Not needed (svn on 
 
 ================ SETUP  ================
 * ~/.bashrc: export PATH="$HOME/vidiot/vidiot_trunk/build:$PATH"   
+* Nautilus: changed dir for Desktop to ${HOME}/.Desktop
 * Terminal: Run 
-  RunCMake.sh FULLSETUP
+  buildvidiot.sh FULLSETUP
 * Codeblocks config 
   - cp ~/Vidiot/vidiot_trunk/build/codeblocks/default.conf ~/.codeblocks
   - Settings => environment => Terminal ... : 'gnome-terminal --disable-factory --hide-menubar -t $TITLE --geometry 80x100+50+0 -x'
@@ -64,8 +65,6 @@ NOTE: svn co https://svn.code.sf.net/p/vidiot/code/trunk . # Not needed (svn on 
 TODO check license warning at end of ffmpeg configure step...
 TODO use svn version for ffmpeg or store in svn?
 TODO remove deprecated stuff (warnings)
-todo move howto's one folder up
-todo rename runcmake.bat/.sh to buildvidiot.sh .... add auto open project!
 todo portable versions
 
 todo use https://sourceforge.net/rest/p/vidiot/tickets/ to get list of release notes. see https://sourceforge.net/p/forge/documentation/Allura%20API/

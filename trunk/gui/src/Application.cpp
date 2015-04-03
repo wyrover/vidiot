@@ -22,6 +22,7 @@
 #include "Dialog.h"
 #include "Render.h"
 #include "SubversionRevision.h"
+#include "UtilAssert.h"
 #include "UtilInitAvcodec.h"
 #include "UtilInitPortAudio.h"
 #include "UtilLog.h"
@@ -31,6 +32,7 @@
 #include "VidiotVersion.h"
 #include "Window.h"
 #include <wx/cmdline.h>
+#include <wx/platinfo.h>
 
 //#include <vld.h> // Must be included in at least one cpp file
 
@@ -101,13 +103,12 @@ const wxString Application::sTestApplicationName = "VidiotTestSuite";
 
 Application::Application(test::IEventLoopListener* eventLoopListener)
     :   wxApp()
-    ,   IAssert()
     ,   mEventLoopListener(eventLoopListener)
     ,   mEventLoopStarted(false)
     ,   mCommandLine(boost::make_shared<CommandLine>())
 {
-    // NOT: wxHandleFatalExceptions(); These are handled via the windows exception filter in Main.cpp
-    // todo for linux?
+    // NOT: wxHandleFatalExceptions();
+    // These are handled via the exception handlers in Main.cpp.
     wxHandleFatalExceptions(false);
 
     ::wxInitAllImageHandlers();
@@ -122,8 +123,9 @@ Application::Application(test::IEventLoopListener* eventLoopListener)
     // Typical example of that: logging the type of crash when generating a debugreport.
     Log::init();
 
-
-    LOG_ERROR << "Revision: " << SubversionRevision;
+    int Revision(SubversionRevision);
+    wxString Platform(wxPlatformInfo().GetOperatingSystemDescription());
+    VAR_ERROR(Revision)(Platform);
 }
 
 Application::~Application()
@@ -272,22 +274,18 @@ int Application::OnExit()
 
 void Application::OnAssertFailure(const wxChar *file, int Line, const wxChar *function, const wxChar *condition, const wxChar *message)
 {
-    LOG_ERROR;
-    LOG_STACKTRACE;
     wxString File(file);
     wxString Function(function);
     wxString Condition(condition);
     wxString Message(message);
     VAR_ERROR(File)(Line)(Function)(Condition)(Message);
-
+    LOG_STACKTRACE;
     breakIntoDebugger();
-    Dialog::get().getDebugReport(true, wxThread::IsMain());
+    Dialog::get().getDebugReport(true, wxThread::IsMain()); // Adding context fails on secondary thread on Windows.
 }
 
 bool Application::OnExceptionInMainLoop()
 {
-    LOG_ERROR;
-    LOG_STACKTRACE;
     try
     {
         throw;
@@ -304,6 +302,7 @@ bool Application::OnExceptionInMainLoop()
     {
         LOG_ERROR << "unknown exception type";
     }
+    LOG_STACKTRACE;
     breakIntoDebugger();
     Dialog::get().getDebugReport();
     return true; // Continue the main loop, in order to be able to show the crash dialog
@@ -311,8 +310,6 @@ bool Application::OnExceptionInMainLoop()
 
 void Application::OnUnhandledException()
 {
-    LOG_ERROR;
-    LOG_STACKTRACE;
     try
     {
         throw;
@@ -320,18 +317,16 @@ void Application::OnUnhandledException()
     catch (boost::exception &e)
     {
         LOG_ERROR << "boost::exception" << std::endl << boost::diagnostic_information(e);
-        Dialog::get().getDebugReport();
     }
     catch (std::exception const& e)
     {
         LOG_ERROR << "std::exception" << std::endl << boost::diagnostic_information(e);
-        Dialog::get().getDebugReport();
     }
     catch ( ... )
     {
         LOG_ERROR << "unknown exception type";
-        Dialog::get().getDebugReport();
     }
+    LOG_STACKTRACE;
     breakIntoDebugger();
     Dialog::get().getDebugReport();
 }
@@ -368,17 +363,6 @@ bool Application::OnCmdLineParsed (wxCmdLineParser &parser)
         parser.Usage();
     }
     return wxApp::OnCmdLineParsed(parser);
-}
-
-//////////////////////////////////////////////////////////////////////////
-// IASSERT
-//////////////////////////////////////////////////////////////////////////
-
-void Application::onAssert()
-{
-    LOG_ERROR;
-    LOG_STACKTRACE;
-    Dialog::get().getDebugReport();
 }
 
 //////////////////////////////////////////////////////////////////////////

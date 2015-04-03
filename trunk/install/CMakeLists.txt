@@ -25,7 +25,6 @@ string (TOLOWER ${APPNAME} APPNAME_LOWER)
 #set (CPACK_PACKAGE_DESCRIPTION_SUMMARY "Non-linear video editor for home video editing.")
 set (CPACK_PACKAGE_VENDOR               "Eric Raijmakers")
 set (CPACK_PACKAGE_CONTACT              "Eric Raijmakers <epra@users.sourceforge.net>")
-#set (CPACK_PACKAGE_DESCRIPTION_FILE     "${CMAKE_CURRENT_SOURCE_DIR}/../Readme.txt") todo remove the readme file?
 set (CPACK_RESOURCE_FILE_LICENSE        "${CMAKE_CURRENT_SOURCE_DIR}/../License.txt")
 set (CPACK_PACKAGE_ICON                 "${CMAKE_SOURCE_DIR}\\\\images\\\\movie150x57.bmp") # Installer header icon: 150x57px, 32bit A8R8G8B8, Don't write color space info (GIMP).
 set (CPACK_PACKAGE_VERSION_MAJOR        "0")
@@ -71,7 +70,6 @@ if (WIN32 AND NOT UNIX)
   install (DIRECTORY ${PROJECT_SOURCE_DIR}/html/      COMPONENT ${APPNAME} DESTINATION html)
   install (FILES ${PROJECT_BINARY_DIR}/changelog.html COMPONENT ${APPNAME} DESTINATION html/about)
 
-  # todo unused?
   if (CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS)
         install (FILES ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS} COMPONENT ${APPNAME} DESTINATION . PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ)
   endif ()

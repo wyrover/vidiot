@@ -17,14 +17,10 @@
 
 #include "Application.h"
 
-#ifdef _MSC_VER
 #include "Dialog.h"
 #include "UtilLog.h"
-#include "UtilLogWindows.h"
+#include "UtilAssert.h"
 #include "UtilStackWalker.h"
-
-#include <windows.h>
-// todo GCC investigate zthread lib
 
 /// Only show first exception. When the exception occurs in a separate thread,
 /// the delay in showing the dialog (via the main thread, not directly in the
@@ -32,12 +28,18 @@
 /// causes repeated exceptions.
 bool exceptionShown = false;
 
+#ifdef _MSC_VER
+#include "UtilLogWindows.h"
+
+#include <windows.h>
+
 LONG __stdcall ExceptionFilter( EXCEPTION_POINTERS* exception )
 {
     if (exceptionShown) return EXCEPTION_CONTINUE_EXECUTION;
     exceptionShown = true;
     VAR_ERROR(*exception);
     LOG_STACKTRACE;
+    breakIntoDebugger();
     gui::Dialog::get().getDebugReport(); // Execution is aborted in getDebugReport(). May run in other thread.
     return EXCEPTION_CONTINUE_EXECUTION;
 }
@@ -51,6 +53,7 @@ void InvalidParameterHandler(const wchar_t* expression_, const wchar_t* function
     wxString file(file_);
     VAR_ERROR(file)(line)(function)(expression)(reserved); // If all strings are empty in the logging: that is due to the absence of debug info in the build (release build without debug info?)
     LOG_STACKTRACE;
+    breakIntoDebugger();
     gui::Dialog::get().getDebugReport(); // Execution is aborted in getDebugReport(). May run in other thread.
 }
 
@@ -60,6 +63,7 @@ void PureVirtualCallHandler(void)
     exceptionShown = true;
     LOG_ERROR;
     LOG_STACKTRACE;
+    breakIntoDebugger();
     gui::Dialog::get().getDebugReport(); // Execution is aborted in getDebugReport(). May run in other thread.
 }
 
@@ -113,16 +117,66 @@ extern "C" int WINAPI WinMain(HINSTANCE hInstance,
 
 #else
 
+#include <signal.h>
+#include <stdio.h>
+#include <X11/Xlib.h>
+#include "UtilLogX.h"
+#include "UtilLogLinux.h"
+
+static void signalHandler(int sig, siginfo_t *signal, void *context)
+{
+    if (exceptionShown) return;
+    exceptionShown = true;
+    VAR_ERROR(signal);
+    LOG_STACKTRACE;
+    for ( auto sig : { SIGQUIT, SIGINT, SIGTERM } )
+    {
+        if (sig == signal->si_signo) { exit(0); }
+    }
+    breakIntoDebugger();
+    gui::Dialog::get().getDebugReport(); // Execution is aborted in getDebugReport(). May run in other thread.
+
+}
+
+
+#include <X11/Xproto.h>
+static XErrorHandler previousXErrorHandler = static_cast<XErrorHandler>(0);
+
+/// Log the first x error, then pass on error handling to the
+/// previous (wxWidgets) error handler.
+static int onXError(Display *display, XErrorEvent *error)
+{
+    if (exceptionShown) return previousXErrorHandler(display,error);
+    exceptionShown = true;
+    VAR_ERROR(error);
+    LOG_STACKTRACE;
+    breakIntoDebugger();
+    return previousXErrorHandler(display,error);
+}
+
 int main(int argc, char *argv[])
 {
-    //wxDISABLE_DEBUG_SUPPORT();
-    //wxDISABLE_ASSERTS_IN_RELEASE_BUILD();
     wxDISABLE_DEBUG_LOGGING_IN_RELEASE_BUILD();
+
+    std::vector<int> signals;
+#ifdef NDEBUG
+    signals = { SIGQUIT, SIGSEGV, SIGHUP, SIGINT, SIGILL, SIGTRAP, SIGABRT, SIGBUS, SIGFPE, SIGPIPE, SIGTERM, SIGALRM, SIGSTKFLT, SIGTSTP, SIGSYS };
+#endif
+
+    for (int signal : signals)
+    {
+        struct sigaction act;
+        memset (&act, '\0', sizeof(act));
+        act.sa_sigaction = &signalHandler; // sa_sigaction field used because of two additional parameters
+        act.sa_flags = SA_SIGINFO; // use sa_sigaction field, not sa_handler
+        sigaction(signal, &act, 0);
+    }
 
     wxApp::SetInstance(new gui::Application());
     wxEntryStart(argc,argv);
     if (wxTheApp->OnInit())
     {
+        previousXErrorHandler = XSetErrorHandler(onXError) ;
         wxTheApp->OnRun();
         wxTheApp->OnExit();
     }

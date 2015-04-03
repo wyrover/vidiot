@@ -17,6 +17,7 @@
 
 #include "UtilLog.h"
 
+#include "Dialog.h"
 #include "UtilAssert.h"
 #include "UtilFifo.h"
 #include "UtilPath.h"
@@ -256,7 +257,8 @@ LogVar::~LogVar()
         std::cout << std::endl << std::endl << *mAssert << std::endl << std::endl << osVars.str();
         Log().get(mLevel, mFileName, mLine, mFunction) << *mAssert << osVars.str();
         LOG_STACKTRACE;
-        IAssert::breakIntoDebugger();
+        breakIntoDebugger();
+        gui::Dialog::get().getDebugReport();
     }
     else
     {

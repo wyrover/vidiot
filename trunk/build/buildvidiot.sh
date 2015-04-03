@@ -218,7 +218,7 @@ FfmpegSetup()
 
 Icon()
 {
-cat > "${HOME}/Desktop/V_${1}.desktop" <<DELIM
+cat > "${HOME}/.Desktop/V_${1}.desktop" <<DELIM
 #!/usr/bin/env xdg-open
 [Desktop Entry]
 Version=1.0
@@ -226,11 +226,11 @@ Type=Application
 Terminal=false
 Icon[en_US]=${SOURCE}/images/movie48.png
 Name[en_US]=V_${1}
-Exec=gnome-terminal --geometry 100x50+0+0 --execute ${SOURCE}/build/RunCMake.sh ${1}
-Name=RunCMake
+Exec=gnome-terminal --geometry 100x50+0+0 --execute ${0} ${1}
+Name=Vidiot Menu
 Icon=/usr/share/pixmaps/cmake.xpm
 DELIM
-  chmod a+x "${HOME}/Desktop/V_${1}.desktop"
+  chmod a+x "${HOME}/.Desktop/V_${1}.desktop"
 }
 
 Icons()
