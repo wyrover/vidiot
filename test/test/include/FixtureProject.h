@@ -18,7 +18,7 @@
 #ifndef FIXTURE_PROJECT_H
 #define FIXTURE_PROJECT_H
 
-#include "Test.h" // todo make all test classes include this (via cmake?)
+#include "Test.h"
 
 namespace test {
 
