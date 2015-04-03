@@ -28,6 +28,29 @@
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
+std::ostream& operator<<(std::ostream& os, const PaHostApiTypeId& id)
+{
+    #define LOG_ENUM(enumvalue) case enumvalue: os << #enumvalue << '(' << static_cast<int>(enumvalue) << ')';  break
+    switch (id)
+    {
+        LOG_ENUM(paInDevelopment);
+        LOG_ENUM(paDirectSound);
+        LOG_ENUM(paMME);
+        LOG_ENUM(paSoundManager);
+        LOG_ENUM(paCoreAudio);
+        LOG_ENUM(paOSS);
+        LOG_ENUM(paALSA);
+        LOG_ENUM(paAL);
+        LOG_ENUM(paBeOS);
+        LOG_ENUM(paWDMKS);
+        LOG_ENUM(paJACK);
+        LOG_ENUM(paWASAPI);
+        LOG_ENUM(paAudioScienceHPI);
+        default: os << "Unknown" << '(' << static_cast<int>(id) << ')'; break;
+    }
+    return os;
+}
+
 void PortAudio::init()
 {
 #ifdef _MSC_VER
@@ -36,6 +59,25 @@ void PortAudio::init()
 #endif
     PaError err = Pa_Initialize();
     ASSERT_EQUALS(err,paNoError)(Pa_GetErrorText(err));
+
+    PaHostApiIndex count = Pa_GetHostApiCount();
+    ASSERT_MORE_THAN_EQUALS_ZERO(count);
+
+    PaHostApiIndex default = Pa_GetDefaultHostApi();
+    ASSERT_MORE_THAN_EQUALS_ZERO(default);
+    ASSERT_LESS_THAN(default,count);
+
+    const PaHostApiInfo * paInfo = Pa_GetHostApiInfo(default);
+    ASSERT_NONZERO(paInfo);
+
+    LOG_INFO 
+        << "[Type=" << paInfo->type 
+        << "][Name=" << paInfo->name 
+        << "][DeviceCount=" << paInfo->deviceCount
+        << "][DefaultInputDevice=" << paInfo->defaultInputDevice
+        << "][DefaultOutputDevice=" << paInfo->defaultOutputDevice
+        << "]";
+
 }
 
 void PortAudio::exit()

@@ -60,12 +60,3 @@ NOTE: svn co https://svn.code.sf.net/p/vidiot/code/trunk . # Not needed (svn on 
   (run using sudo gnome-terminal)
   echo 1048576 > /proc/sys/fs/inotify/max_user_watches
   PERMANENT: sudo joe /etc/sysctl.conf - ADD fs.inotify.max_user_watches=16384
-
-================ FFMPEG ================
-TODO check license warning at end of ffmpeg configure step...
-TODO use svn version for ffmpeg or store in svn?
-TODO remove deprecated stuff (warnings)
-todo portable versions
-
-todo use https://sourceforge.net/rest/p/vidiot/tickets/ to get list of release notes. see https://sourceforge.net/p/forge/documentation/Allura%20API/
-
