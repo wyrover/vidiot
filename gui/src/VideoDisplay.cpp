@@ -153,7 +153,6 @@ void VideoDisplay::play()
 
         mCurrentAudioChunk.reset();
 
-        // todo use Pa_GetHostApiInfo in log
         unsigned long bufferSize = paFramesPerBufferUnspecified;
 #ifdef __GNUC__
         // On Linux (Ubuntu), the default buffer size is around 383.

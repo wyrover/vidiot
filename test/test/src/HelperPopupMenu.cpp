@@ -24,7 +24,7 @@ void TimelineOpenPopupMenuAt(wxPoint position)
     TimelineMove(position);
     SetWaitAfterEachInputAction(false);
     TimelineRightClick(position);
-    pause(1000); // todo better solution for WaitForTimelineToLoseFocus... (this is a crappy solution but waiting for events causes all sorts of issues...)
+    pause(1000);
     SetWaitAfterEachInputAction(true);
 }
 
