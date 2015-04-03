@@ -249,7 +249,7 @@ void FileAnalyzer::indexFolder(const wxFileName& dirName, bool recurse)
 FilePtr FileAnalyzer::indexFile(const wxFileName& fileName)
 {
     FilePtr file = boost::make_shared<File>(fileName);
-	// todo new ffmpeg version (new codecs for input & output?)
+
     if (file->canBeOpened())
     {
         mNumberOfMediaFiles++;

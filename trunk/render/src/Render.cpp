@@ -61,9 +61,18 @@ public:
     :   worker::Work(boost::bind(&RenderWork::generate,this))
     ,   mSequence(sequence)
     ,   mFrom(from)
-    ,   mTo(to)
-    ,   mMaxLength(Convert::timeToPts(Config::ReadLong(Config::sPathDebugMaxRenderLength) *  Constants::sSecond))
     {
+        pts maxLength = Convert::timeToPts(Config::ReadLong(Config::sPathDebugMaxRenderLength) *  Constants::sSecond);
+        mLength = to - from;
+        if (maxLength > 0 && maxLength < mLength)
+        {
+            mLength = maxLength;
+        }
+        VAR_INFO(sequence)(from)(to)(mFrom)(mLength);
+        ASSERT_MORE_THAN_EQUALS_ZERO(mFrom);
+        ASSERT_MORE_THAN_ZERO(mLength);
+        ASSERT_LESS_THAN_EQUALS(mFrom,sequence->getLength());
+        ASSERT_LESS_THAN_EQUALS(mFrom + mLength,sequence->getLength());
     }
 
     void generate();
@@ -72,8 +81,7 @@ private:
 
     model::SequencePtr mSequence;
     pts mFrom;
-    pts mTo;
-    pts mMaxLength;
+    pts mLength;
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -316,25 +324,14 @@ struct EncodingError : std::exception
 
 void RenderWork::generate()
 {
+    VAR_INFO(this);
     setThreadName("RenderWork::generate");
     model::SequencePtr sequence = mSequence;
-    pts from = mFrom;
-    pts position = from;
-    pts to = mTo;
+    pts position = mFrom;
     RenderPtr mRender = sequence->getRender();
 
-    VAR_INFO(sequence)(from)(to);
-    ASSERT_MORE_THAN_EQUALS_ZERO(from);
-    ASSERT_MORE_THAN_ZERO(to);
-    ASSERT_LESS_THAN_EQUALS(from,sequence->getLength());
-    ASSERT_LESS_THAN_EQUALS(to,sequence->getLength());
-    sequence->moveTo(from);
-    pts length = to - from;
-    if (mMaxLength > 0)
-    {
-        length = std::min(length, mMaxLength);
-    }
-    showProgressBar(length);
+    sequence->moveTo(mFrom);
+    showProgressBar(mLength);
     wxString ps; ps << _("Rendering sequence '") << sequence->getName() << "'";
     showProgressText(ps);
 
@@ -355,7 +352,7 @@ void RenderWork::generate()
     bool storeVideo = outputformat->storeVideo();
     ASSERT(storeAudio || storeVideo)(storeAudio)(storeVideo);
 
-    double lengthInSeconds = Convert::ptsToSeconds(length);
+    double lengthInSeconds = Convert::ptsToSeconds(mLength);
 
     bool fileOpened = false;
 
@@ -570,9 +567,9 @@ void RenderWork::generate()
             // SHOW PROGRESS
             //////////////////////////////////////////////////////////////////////////
 
-            wxString s; s << _("(frame ") << position << _(" out of ") << length << ")";
+            wxString s; s << _("(frame ") << (position - mFrom) << _(" out of ") << mLength << ")";
             showProgressText(ps + " " + s);
-            showProgress(position - from);
+            showProgress(position - mFrom);
 
             if (writeAudio && audioTime < videoTime)
             {
@@ -605,7 +602,7 @@ void RenderWork::generate()
                                 currentAudioChunk = sequence->getNextAudio(*audioParameters);
                                 if (currentAudioChunk &&
                                     currentAudioChunk->getPts() > position &&
-                                    (currentAudioChunk->getPts() - from) < length) // Avoid showing progress 48 out of 47 frames
+                                    (currentAudioChunk->getPts() - mFrom) < mLength) // Avoid showing progress 48 out of 47 frames
                                 {
                                     position = currentAudioChunk->getPts();
                                 }
@@ -711,12 +708,12 @@ void RenderWork::generate()
                     else
                     {
                         if (frame->getPts() > position &&
-                            (frame->getPts() - from) < length) // Avoid showing progress 48 out of 47 frames
+                            (frame->getPts() - mFrom) < mLength) // Avoid showing progress 48 out of 47 frames
                         {
                             position = frame->getPts();
                         }
 
-                        videoPacketPts = frame->getPts() - from;
+                        videoPacketPts = frame->getPts() - mFrom;
                         if (frame->getForceKeyFrame())
                         {
                             outputPicture->key_frame = 1;

@@ -38,8 +38,6 @@ void TestFileTypes::tearDown()
 // TEST CASES
 //////////////////////////////////////////////////////////////////////////
 
-//todo move into separated test
-
 void TestFileTypes::testFileTypes_audio_1_44100()
 {
     StartTestSuite();
