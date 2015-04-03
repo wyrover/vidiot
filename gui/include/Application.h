@@ -18,10 +18,8 @@
 #ifndef APPLICATION_H
 #define APPLICATION_H
 
-#include "UtilAssert.h"
 #include "UtilEvent.h"
 
-#include <boost/thread/condition_variable.hpp>
 #include <wx/app.h>
 #include <wx/cmdline.h>
 #include <wx/evtloop.h>
@@ -44,7 +42,6 @@ DECLARE_EVENT(EVENT_IDLE_TRIGGER, EventIdleTrigger, wxString);
 
 class Application
     :   public wxApp
-    ,   public IAssert
 {
 public:
 
@@ -104,12 +101,6 @@ public:
 
     virtual void OnInitCmdLine (wxCmdLineParser &parser) override;
     virtual bool OnCmdLineParsed (wxCmdLineParser &parser) override;
-
-    //////////////////////////////////////////////////////////////////////////
-    // IASSERT
-    //////////////////////////////////////////////////////////////////////////
-
-    void onAssert();
 
     //////////////////////////////////////////////////////////////////////////
     // VERSION INFORMATION

@@ -1,4 +1,4 @@
-// Copyright 2013-2015 Eric Raijmakers.
+// Copyright 2015 Eric Raijmakers.
 //
 // This file is part of Vidiot.
 //
@@ -15,25 +15,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#include "UtilAssert.h"
+#ifndef UTIL_LOG_LINUX_H
+#define UTIL_LOG_LINUX_H
 
-#include "UtilLog.h"
+#ifdef __GNUC__
 
-void breakIntoDebugger()
-{
-#ifdef _MSC_VER
-    if (wxIsDebuggerRunning())
-    {
-        Log::exit(); // Ensures that remaining log lines are flushed
-        __asm { int 3 };
-    }
-#else
-#ifndef NDEBUG
-    // On Linux, detection does not work, or interferes with generating the debug report.
-    // For DEBUG builds do the interrupt, for RELEASE builds show the dialog.
-     Log::exit(); // Ensures that remaining log lines are flushed
-    __asm ("int $0x3");
+#include <signal.h>
+
+std::ostream& operator<<(std::ostream& os, siginfo_t* signal);
+
 #endif
-    // Not reached if running in debugger
+
 #endif
-}

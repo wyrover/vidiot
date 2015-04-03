@@ -143,6 +143,7 @@ void triggerPureVirtualCall()
 {
     Derived d;
 }
+
 //////////////////////////////////////////////////////////////////////////
 //
 //////////////////////////////////////////////////////////////////////////
@@ -155,7 +156,9 @@ const std::vector< CrashInfo > crashes = boost::assign::list_of
     (std::make_pair("Access Violation", boost::bind(&triggerAccessViolation)))
     (std::make_pair("Assert", boost::bind(&triggerAssertion)))
     (std::make_pair("Divide by zero exception", boost::bind(&triggerDivideByZeroException)))
+#ifdef _MSC_VER
     (std::make_pair("Invalid parameter", boost::bind(&triggerInvalidParameter)))
+#endif
     (std::make_pair("Pure virtual call", boost::bind(&triggerPureVirtualCall)))
     (std::make_pair("Unhandled boost exception", boost::bind(&triggerBoostException)))
     (std::make_pair("Unhandled std exception", boost::bind(&triggerStdException)))

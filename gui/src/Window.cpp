@@ -96,7 +96,11 @@ IMPLEMENT_DYNAMIC_CLASS(ViewHelper, wxView);
 
 const int sStatusProcessing = 8;
 int Window::sSequenceMenuIndex = 0;
+#ifndef NDEBUG
+static const wxString sTitle(_("Vidiot (DEBUG)"));
+#else
 static const wxString sTitle(_("Vidiot"));
+#endif
 
 Window::Window()
     : wxDocParentFrame()
