@@ -66,7 +66,7 @@ bool hasSubDirectories(wxFileName directory);
 ///       This holds for all test setups, windows installs, and cases where the code and
 ///       resources are 'simply unzipped'. Exception is an install on linux where the exe
 ///       is in one dir ('/usr/bin') and the resources are elsewhere ('/usr/share').
-wxString toFileInInstallationDirectory(wxString subdirs, wxString filename); // todo rename to getresource
+wxString getResource(wxString subdirs, wxString filename);
 
 /// \return the full path to where the log file must be stored
 wxFileName getLogFilePath();

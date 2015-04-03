@@ -695,7 +695,7 @@ void TestBugs::testEndTrimAtOutTransitionInSavedDocumentEndCausesSnappingProblem
         ASSERT_EQUALS(length, getSequence()->getLength());
 
         pts position = AudioClip(0, 1)->getRightPts();
-        TimelineBeginTrim(UnderTransitionRightEdge(AudioClip(0,1)), false); // todo duplication between UnderTransition... and TimelineTrimTransitionLeftClipEnd
+        TimelineBeginTrim(UnderTransitionRightEdge(AudioClip(0,1)), false);
         ASSERT_EQUALS(position, AudioClip(0, 1)->getRightPts()); // Clip length should not have been extended yet.
         TimelineEndTrim(false);
     }

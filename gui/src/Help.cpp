@@ -163,7 +163,7 @@ void Help::onTimer(wxTimerEvent& event)
 
 void Help::home()
 {
-    mHtml->LoadPage(util::path::toFileInInstallationDirectory("html/help", "index.html"));
+    mHtml->LoadPage(util::path::getResource("html/help", "index.html"));
 }
 
 void Help::updateButtons()

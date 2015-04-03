@@ -158,7 +158,7 @@ wxFileName getExeDir()
     return dir;
 }
 
-wxString toFileInInstallationDirectory(wxString subdirs, wxString filename)
+wxString getResource(wxString subdirs, wxString filename)
 {
     ASSERT(!subdirs.Contains("\\"))(subdirs);
     ASSERT(subdirs.GetChar(0) != '/')(subdirs);

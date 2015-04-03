@@ -24,18 +24,18 @@ namespace util { namespace window {
 void setIcons(wxTopLevelWindow* window)
 {
     wxIconBundle icons;
-    icons.AddIcon(util::path::toFileInInstallationDirectory("images","movie_all.ico")); // Icon in title bar of window
+    icons.AddIcon(util::path::getResource("images","movie_all.ico")); // Icon in title bar of window
     window->SetIcons(icons);
 }
 
 wxIcon getIcon(wxString name)
 {
-    return wxIcon(util::path::toFileInInstallationDirectory("images", name), wxBITMAP_TYPE_PNG);
+    return wxIcon(util::path::getResource("images", name), wxBITMAP_TYPE_PNG);
 }
 
 wxBitmap getBitmap(wxString name)
 {
-    return wxBitmap(util::path::toFileInInstallationDirectory("images", name), wxBITMAP_TYPE_PNG);
+    return wxBitmap(util::path::getResource("images", name), wxBITMAP_TYPE_PNG);
 }
 
 wxImage getImage(wxString name)
