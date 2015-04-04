@@ -84,6 +84,9 @@ public:
     /// \note if the scrollbar is at its left most position, then '0' is returned.
     pts getCenterPts() const;
 
+    /// \return pts shown at 1/4th of the timeline
+    pts getFourthPts() const;
+
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////

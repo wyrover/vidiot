@@ -144,6 +144,13 @@ pts Scrolling::getCenterPts() const
     return 0;
 }
 
+pts Scrolling::getFourthPts() const
+{
+    wxPoint position = getOffset();
+    wxSize size = getTimeline().GetClientSize();
+    return getZoom().pixelsToPts( position.x + size.x / 4 );
+}
+
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////

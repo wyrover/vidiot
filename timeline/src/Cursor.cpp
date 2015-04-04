@@ -126,12 +126,12 @@ void Cursor::end()
     ensureCursorVisible();
 }
 
-void Cursor::center()
+void Cursor::focus()
 {
     wxPoint scroll = getScrolling().getOffset();
     wxSize size = getTimeline().GetClientSize();
 
-    getScrolling().align(mCursorPosition, size.x / 2);
+    getScrolling().align(mCursorPosition, size.x / 4);
 
 }
 
