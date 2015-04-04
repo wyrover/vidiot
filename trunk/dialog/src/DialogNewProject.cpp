@@ -282,7 +282,7 @@ void DialogNewProject::onPageChanged(wxWizardEvent& event)
             }
         }
         mEditProperties->read();
-    }
+    } // todo in case of the 'folder' and 'files' pages immediately open the file picker if nothing is selected yet.
     event.Skip();
 }
 

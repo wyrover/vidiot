@@ -63,16 +63,16 @@ void PortAudio::init()
     PaHostApiIndex count = Pa_GetHostApiCount();
     ASSERT_MORE_THAN_EQUALS_ZERO(count);
 
-    PaHostApiIndex default = Pa_GetDefaultHostApi();
-    ASSERT_MORE_THAN_EQUALS_ZERO(default);
-    ASSERT_LESS_THAN(default,count);
+    PaHostApiIndex defaultIndex = Pa_GetDefaultHostApi();
+    ASSERT_MORE_THAN_EQUALS_ZERO(defaultIndex);
+    ASSERT_LESS_THAN(defaultIndex,count);
 
-    const PaHostApiInfo * paInfo = Pa_GetHostApiInfo(default);
+    const PaHostApiInfo * paInfo = Pa_GetHostApiInfo(defaultIndex);
     ASSERT_NONZERO(paInfo);
 
-    LOG_INFO 
-        << "[Type=" << paInfo->type 
-        << "][Name=" << paInfo->name 
+    LOG_INFO
+        << "[Type=" << paInfo->type
+        << "][Name=" << paInfo->name
         << "][DeviceCount=" << paInfo->deviceCount
         << "][DefaultInputDevice=" << paInfo->defaultInputDevice
         << "][DefaultOutputDevice=" << paInfo->defaultOutputDevice

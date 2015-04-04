@@ -99,7 +99,6 @@ private:
     pts mCursorPositionBefore;      ///< Cursor position before the trim is started.
 
     boost::shared_ptr<wxBitmap> mAdjacentBitmap;
-    model::VideoClipPtr mPreviewVideoClip;
     wxMemoryDC mDc;
     pts mStartPositionPreview;
     wxBitmapPtr mBitmapSingle;

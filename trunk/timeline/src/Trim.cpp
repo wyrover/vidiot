@@ -96,7 +96,7 @@ void Trim::start()
     model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(info.clip);
     mPosition = info.logicalclipposition;
 
-    model::IClipPtr mOriginalClip;
+    model::IClipPtr originalclip;
     model::IClipPtr adjacentClip;
     bool isBeginTrim = true;
     switch (mPosition)
@@ -105,10 +105,10 @@ void Trim::start()
         {
             ASSERT(!transition);
             ASSERT(!info.clip->isA<model::Transition>());
-            mOriginalClip = info.clip;
-            mFixedPts = mOriginalClip->getRightPts(); // Do not optimize away (using ->getRightPts() in the calculation. Since the scrolling is changed and clips are added/removed, that's very volatile information).
-            mStartPts = mOriginalClip->getLeftPts();
-            adjacentClip = mOriginalClip->getPrev();
+            originalclip = info.clip;
+            mFixedPts = originalclip->getRightPts(); // Do not optimize away (using ->getRightPts() in the calculation. Since the scrolling is changed and clips are added/removed, that's very volatile information).
+            mStartPts = originalclip->getLeftPts();
+            adjacentClip = originalclip->getPrev();
             if (adjacentClip)
             {
                 if (adjacentClip->getLength() == 0)
@@ -126,10 +126,10 @@ void Trim::start()
         {
             ASSERT(!transition);
             ASSERT(!info.clip->isA<model::Transition>());
-            mOriginalClip = info.clip;
-            mFixedPts = mOriginalClip->getLeftPts(); // Do not optimize away (using ->getLeftPts() in the calculation. Since the scrolling is changed and clips are added/removed, that's very volatile information).
-            mStartPts = mOriginalClip->getRightPts();
-            adjacentClip = mOriginalClip->getNext();
+            originalclip = info.clip;
+            mFixedPts = originalclip->getLeftPts(); // Do not optimize away (using ->getLeftPts() in the calculation. Since the scrolling is changed and clips are added/removed, that's very volatile information).
+            mStartPts = originalclip->getRightPts();
+            adjacentClip = originalclip->getNext();
             if (adjacentClip)
             {
                 if (adjacentClip->getLength() == 0)
@@ -150,8 +150,8 @@ void Trim::start()
             ASSERT(transition->getRight());
             ASSERT_MORE_THAN_EQUALS_ZERO(*(transition->getRight()));
             mStartPts = transition->getTouchPosition();
-            mOriginalClip = info.getLogicalClip();
-            mFixedPts = mOriginalClip->getRightPts(); // Do not optimize away (using ->getRightPts() in the calculation. Since the scrolling is changed and clips are added/removed, that's very volatile information).
+            originalclip = info.getLogicalClip();
+            mFixedPts = originalclip->getRightPts(); // Do not optimize away (using ->getRightPts() in the calculation. Since the scrolling is changed and clips are added/removed, that's very volatile information).
             boost::optional<pts> left = transition->getLeft();
             if (left)
             {
@@ -172,8 +172,8 @@ void Trim::start()
             ASSERT(transition->getLeft());
             ASSERT_MORE_THAN_EQUALS_ZERO(*(transition->getLeft()));
             mStartPts = transition->getTouchPosition();
-            mOriginalClip = info.getLogicalClip();
-            mFixedPts = mOriginalClip->getLeftPts(); // Do not optimize away (using ->getLeftPts() in the calculation. Since the scrolling is changed and clips are added/removed, that's very volatile information).
+            originalclip = info.getLogicalClip();
+            mFixedPts = originalclip->getLeftPts(); // Do not optimize away (using ->getLeftPts() in the calculation. Since the scrolling is changed and clips are added/removed, that's very volatile information).
             boost::optional<pts> right = transition->getRight();
             if (right)
             {
@@ -193,16 +193,16 @@ void Trim::start()
     case TransitionBegin:
         {
             ASSERT(transition);
-            mOriginalClip = info.clip;
-            mStartPts = mOriginalClip->getLeftPts();
+            originalclip = info.clip;
+            mStartPts = originalclip->getLeftPts();
             transition.reset();
             break;
         }
     case TransitionEnd:
         {
             ASSERT(transition);
-            mOriginalClip = info.clip;
-            mStartPts = mOriginalClip->getRightPts();
+            originalclip = info.clip;
+            mStartPts = originalclip->getRightPts();
             transition.reset();
             isBeginTrim = false;
             break;
@@ -214,7 +214,7 @@ void Trim::start()
     default:
         FATAL("Illegal clip position");
     }
-    ASSERT(mOriginalClip);
+    ASSERT(originalclip);
 
     mFixedPixel = getScrolling().ptsToPixel(mFixedPts); // See remark above.
     if (adjacentClip && (adjacentClip->isA<model::IVideo>()))
@@ -224,18 +224,20 @@ void Trim::start()
         model::VideoFramePtr adjacentFrame = adjacentvideoclip->getNextVideo(model::VideoCompositionParameters().setBoundingBox(wxSize(getPlayer()->getVideoSize().GetWidth() / 2,  getPlayer()->getVideoSize().GetHeight())));
         mAdjacentBitmap = adjacentFrame->getBitmap();
     }
+    else
+    {
+        mAdjacentBitmap.reset(); // Do not use bitmap stored for any previous trim operation
+    }
 
     // Prepare for previewing
-    mPreviewVideoClip = boost::dynamic_pointer_cast<model::VideoClip>(make_cloned<model::IClip>(mOriginalClip));
-    if (mPreviewVideoClip)
+    model::VideoClipPtr videoclip = boost::dynamic_pointer_cast<model::VideoClip>(originalclip);
+    if (videoclip)
     {
-        wxSize playerSize = getPlayer()->getVideoSize();
+        model::TransitionPtr inTransition = originalclip->getInTransition();
+        model::TransitionPtr outTransition = originalclip->getOutTransition();
 
-        model::TransitionPtr inTransition = mOriginalClip->getInTransition();
-        model::TransitionPtr outTransition = mOriginalClip->getOutTransition();
-
-        pts originalOffset = mPreviewVideoClip->getOffset();
-        pts originalLength = mPreviewVideoClip->getLength();
+        pts originalOffset = videoclip->getOffset();
+        pts originalLength = videoclip->getLength();
         if (isBeginTrim)
         {
             mStartPositionPreview = originalOffset; // Left begin point
@@ -252,33 +254,34 @@ void Trim::start()
                 mStartPositionPreview += *(outTransition->getLeft()); // Since the trim starts on the position where the two transitioned clips 'touched'
             }
         }
-        mPreviewVideoClip->maximize();
-
-        mBitmapSingle = boost::make_shared<wxBitmap>(playerSize);
-        mDc.SelectObject(*mBitmapSingle);
-        mDc.SetBrush(Layout::get().PreviewBackgroundBrush);
-        mDc.SetPen(Layout::get().PreviewBackgroundPen);
-        mDc.DrawRectangle(wxPoint(0,0),mDc.GetSize());
-        if (mAdjacentBitmap)
-        {
-            mBitmapSideBySide = boost::make_shared<wxBitmap>(playerSize);
-            mDc.SelectObject(*mBitmapSideBySide);
-            int xAdjacent = (isBeginTrim ? 0 : playerSize.GetWidth() / 2);
-
-            wxMemoryDC dcBmp(*mAdjacentBitmap);
-            mDc.Blit(wxPoint(xAdjacent, (playerSize.GetHeight() - mAdjacentBitmap->GetHeight()) / 2),mAdjacentBitmap->GetSize(),&dcBmp,wxPoint(0,0));
-        }
-        mDc.SelectObject(wxNullBitmap);
     }
 
+    // Create preview bitmaps.
+    wxSize playerSize = getPlayer()->getVideoSize();
+    mBitmapSingle = boost::make_shared<wxBitmap>(playerSize);
+    mDc.SelectObject(*mBitmapSingle);
+    mDc.SetBrush(Layout::get().PreviewBackgroundBrush);
+    mDc.SetPen(Layout::get().PreviewBackgroundPen);
+    mDc.DrawRectangle(wxPoint(0,0),mDc.GetSize());
+    if (mAdjacentBitmap)
+    {
+        mBitmapSideBySide = boost::make_shared<wxBitmap>(playerSize);
+        mDc.SelectObject(*mBitmapSideBySide);
+        int xAdjacent = (isBeginTrim ? 0 : playerSize.GetWidth() / 2);
+
+        wxMemoryDC dcBmp(*mAdjacentBitmap);
+        mDc.Blit(wxPoint(xAdjacent, (playerSize.GetHeight() - mAdjacentBitmap->GetHeight()) / 2),mAdjacentBitmap->GetSize(),&dcBmp,wxPoint(0,0));
+    }
+    mDc.SelectObject(wxNullBitmap);
+
 	ASSERT_ZERO(mCommand);
-    getSelection().updateOnTrim(mOriginalClip);
-    mCommand = new command::TrimClip(getSequence(), mOriginalClip, transition, mPosition);
-    determinePossibleSnapPoints(mOriginalClip);
+    getSelection().updateOnTrim(originalclip);
+    mCommand = new command::TrimClip(getSequence(), originalclip, transition, mPosition);
+    determinePossibleSnapPoints(originalclip);
     // Fix the length of the timeline such that it will never be shortened during
     // the trim operation. Otherwise, trimming at the end of the sequence gives
     // awkward feedback due to the shrinking of the widget.
-    getSequenceView().setMinimumLength(getSequenceView().getDefaultLength()); 
+    getSequenceView().setMinimumLength(getSequenceView().getDefaultLength());
     update();
 }
 
@@ -471,17 +474,23 @@ void Trim::determinePossibleSnapPoints(const model::IClipPtr& originalclip)
 
 void Trim::preview()
 {
-    if (!mPreviewVideoClip) { return; }
+    model::VideoClipPtr originalvideoclip = boost::dynamic_pointer_cast<model::VideoClip>(mCommand->getOriginalClip());
+    if (!originalvideoclip) { return; }
+
+    // Always create a new clip. Reusing an existing videoclip leads to decoding errors sometimes.
+    // See [#191]. The decoding errors result in wrong trimming feedback.
+    model::VideoClipPtr preview = make_cloned<model::VideoClip>(originalvideoclip);
+    preview->maximize();
 
     pts diff = mCommand->getDiff();
+    ASSERT_LESS_THAN_EQUALS(mStartPositionPreview + diff,preview->getLength());
     pts position(mStartPositionPreview + diff);
     wxSize playerSize = getPlayer()->getVideoSize();
     bool isBeginTrim = mCommand->isBeginTrim();
     bool drawSideBySide = getKeyboard().getShiftDown() && mAdjacentBitmap;
 
     bool completelyTrimmedAway = false;
-    ASSERT_LESS_THAN_EQUALS(mStartPositionPreview + diff,mPreviewVideoClip->getLength());
-    if (position == mPreviewVideoClip->getLength())
+    if (position == preview->getLength())
     {
         ASSERT(isBeginTrim);
         completelyTrimmedAway = true; // Clip has been trimmed away completely. From the beginning.
@@ -512,13 +521,12 @@ void Trim::preview()
     }
     else
     {
-        mPreviewVideoClip->moveTo(position);
-        model::VideoFramePtr videoFrame = mPreviewVideoClip->getNextVideo(model::VideoCompositionParameters().setBoundingBox(wxSize(w, h)));
+        preview->moveTo(position);
+        model::VideoFramePtr videoFrame = preview->getNextVideo(model::VideoCompositionParameters().setBoundingBox(wxSize(w, h)));
         ASSERT(videoFrame); // A frame must be possible, due to the 'completelyTrimmedAway' check above.
         wxBitmapPtr trimmedBmp = videoFrame->getBitmap();
         if (trimmedBmp)
         {
-            // todo GCC first edit operation, the editdisplay does not show bitmap until first 'idle' moment?
             wxMemoryDC dcBmp(*trimmedBmp);
             mDc.Blit(wxPoint(x, (h - trimmedBmp->GetHeight()) / 2), trimmedBmp->GetSize(), &dcBmp, wxPoint(0,0));
         }
