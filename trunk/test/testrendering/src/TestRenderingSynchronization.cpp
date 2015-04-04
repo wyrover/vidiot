@@ -66,7 +66,7 @@ void TestRenderingSynchronization::testLongSequence()
 
     StartTest("Play before render");
     TimelinePositionCursor(getTimeline().getZoom().ptsToPixels(model::Convert::timeToPts(EMPTY_LENGTH - 1000))); // 1 second before the end of the empty region
-    TimelineKeyPress('c'); // Show the proper timeline part
+    TimelineKeyPress('v'); // Show the proper timeline part
     Play(4000);
 
     StartTest("Render");
@@ -78,7 +78,7 @@ void TestRenderingSynchronization::testLongSequence()
     model::Files files1 = ProjectViewAddFiles( boost::assign::list_of(tempdir_and_filename.second), folder1 );
     model::SequencePtr sequence1 = ProjectViewCreateSequence( folder1 );
     TimelinePositionCursor(getTimeline().getZoom().ptsToPixels(model::Convert::timeToPts(EMPTY_LENGTH - 1000))); // 1 second before the end of the empty region
-    TimelineKeyPress('c'); // Show the proper timeline part
+    TimelineKeyPress('v'); // Show the proper timeline part
 
     StartTest("Play rendered");
     OpenFileExplorer(tempdir_and_filename.first->getFileName());

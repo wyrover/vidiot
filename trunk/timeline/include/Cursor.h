@@ -63,8 +63,8 @@ public:
     void end();
 
     /// Ensure that the scrolling is adjusted such that the cursor is displayed
-    /// in the center of the widget as much as possible.
-    void center();
+    /// at 1/4th position (horizontally) of the widget length.
+    void focus();
 
     //////////////////////////////////////////////////////////////////////////
     // DRAW

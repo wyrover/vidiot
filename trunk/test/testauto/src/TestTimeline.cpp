@@ -795,9 +795,9 @@ void TestTimeline::testPositionCursor()
     StartTestSuite();
     TimelineZoomIn(6);
     TimelinePositionCursor(LeftPixel(VideoClip(0, 4)));
-    ASSERT_DIFFERS(getTimeline().getScrolling().getCenterPts(), VideoClip(0, 4)->getLeftPts());
-    TimelineKeyPress('c');
-    ASSERT_EQUALS(getTimeline().getScrolling().getCenterPts(), VideoClip(0, 4)->getLeftPts());
+    ASSERT_DIFFERS(getTimeline().getScrolling().getFourthPts(), VideoClip(0, 4)->getLeftPts());
+    TimelineKeyPress('v');
+    ASSERT_EQUALS(getTimeline().getScrolling().getFourthPts(), VideoClip(0, 4)->getLeftPts());
 }
 
 } // namespace

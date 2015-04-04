@@ -157,10 +157,6 @@ boost::statechart::result Idle::react( const EvKeyDown& evt)
         evt.consumed();
         model::ProjectModification::submitIfPossible(new command::SplitAtCursorAndTrim(getSequence(), true));
         break;
-    case 'c':
-    case 'C':
-        getCursor().center();
-        break;
     case 'e':
     case 'E':
         evt.consumed();
@@ -188,8 +184,11 @@ boost::statechart::result Idle::react( const EvKeyDown& evt)
         break;
     case 's':
     case 'S':
-        evt.consumed();
-        model::ProjectModification::submitIfPossible(new command::SplitAtCursor(getSequence()));
+        if (!evt.CtrlDown)
+        {
+            evt.consumed();
+            model::ProjectModification::submitIfPossible(new command::SplitAtCursor(getSequence()));
+        }
         break;
     case '-':
         evt.consumed();
@@ -202,7 +201,7 @@ boost::statechart::result Idle::react( const EvKeyDown& evt)
     case 'v':
     case 'V':
         evt.consumed();
-        getCursor().center();
+        getCursor().focus();
         break;
     case WXK_LEFT:
         evt.consumed();
