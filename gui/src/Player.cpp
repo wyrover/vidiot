@@ -373,7 +373,6 @@ void Player::updateSpeedButton()
 
 void Player::startEdit()
 {
-    // todo GCC: Very first trim operation the edit feedback is a gray bg only (until first screen refresh?)
     GetSizer()->Hide(mDisplay);
     GetSizer()->Show(mEdit);
     GetSizer()->Layout();
