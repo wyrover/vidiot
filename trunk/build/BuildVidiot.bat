@@ -132,6 +132,10 @@ if not exist "%VIDIOT_BUILD%\Changelog.txt" "%SAXON_PATH%\Transform.exe" -s:%XML
 if not exist "%VIDIOT_BUILD%\changelog.html" "%SAXON_PATH%\Transform.exe" -s:%XML_SOURCE% -xsl:%VIDIOT_DIR%\vidiot_trunk\build\Changelog_htm.xslt -o:"%VIDIOT_BUILD%\changelog.html"
 copy /Y "%VIDIOT_BUILD%\Changelog.txt" "%VIDIOT_BUILD%\README.txt"
            
+REM ==== Generate Known Problems file ====
+
+C:\Python27\python.exe "%VIDIOT_DIR%\vidiot_trunk\build\make_knownproblems.py" "%VIDIOT_BUILD%\knownproblems.html" Windows
+
 
 
 REM ============================== BUILD ==============================
