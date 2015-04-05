@@ -36,6 +36,9 @@ NOTE: <VIDIOT_DIR> is the dir in which all 'vidiot' work is done.
 * Install cmake from http://www.cmake.org/download/ into c:\Program Files
 * Enable changing the path variable
 
+=================== PYTHON ===================
+* Install python in c:\Python27
+
 =================== CxxTest ===================
 * CxxTest is part of sources
 * Install ActivePerl via installer  www.activestate.com/activeperl

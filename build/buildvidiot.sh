@@ -297,6 +297,9 @@ MakeChangelog()
         saxonb-xslt -s:${XML_SOURCE} -xsl:${SOURCE}/build/Changelog_htm.xslt -o:${BUILD_DEBUG}/changelog.html
         cp ${BUILD_DEBUG}/changelog.html ${BUILD_RELEASE}/changelog.html
     fi
+    echo "\n----------------------------------------\nCreate knownproblems.html...\n"
+    python "${SOURCE}/build/make_knownproblems.py" "${BUILD_DEBUG}/knownproblems.html" Linux
+    cp ${BUILD_DEBUG}/knownproblems.html ${BUILD_RELEASE}/knownproblems.html
 }
 
 RunCMake()

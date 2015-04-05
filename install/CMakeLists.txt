@@ -62,13 +62,14 @@ if (WIN32 AND NOT UNIX)
        System::Call 'shell32.dll::SHChangeNotify(i, i, i, i) v (0x08000000, 0, 0, 0)'"
    )
 
-  install (FILES ${FFMPEG_INSTALL}                    COMPONENT ${APPNAME} DESTINATION .)
-  install (FILES ${PORTAUDIO_INSTALL}                 COMPONENT ${APPNAME} DESTINATION .)
-  install (FILES ${BOOST_INSTALL}                     COMPONENT ${APPNAME} DESTINATION .  CONFIGURATIONS Release MinSizeRel RelWithDebInfo)
-  install (FILES ${BOOST_INSTALL_DEBUG}               COMPONENT ${APPNAME} DESTINATION .  CONFIGURATIONS Debug)
-  install (DIRECTORY ${PROJECT_SOURCE_DIR}/images/    COMPONENT ${APPNAME} DESTINATION images)
-  install (DIRECTORY ${PROJECT_SOURCE_DIR}/html/      COMPONENT ${APPNAME} DESTINATION html)
-  install (FILES ${PROJECT_BINARY_DIR}/changelog.html COMPONENT ${APPNAME} DESTINATION html/about)
+  install (FILES ${FFMPEG_INSTALL}                        COMPONENT ${APPNAME} DESTINATION .)
+  install (FILES ${PORTAUDIO_INSTALL}                     COMPONENT ${APPNAME} DESTINATION .)
+  install (FILES ${BOOST_INSTALL}                         COMPONENT ${APPNAME} DESTINATION .  CONFIGURATIONS Release MinSizeRel RelWithDebInfo)
+  install (FILES ${BOOST_INSTALL_DEBUG}                   COMPONENT ${APPNAME} DESTINATION .  CONFIGURATIONS Debug)
+  install (DIRECTORY ${PROJECT_SOURCE_DIR}/images/        COMPONENT ${APPNAME} DESTINATION images)
+  install (DIRECTORY ${PROJECT_SOURCE_DIR}/html/          COMPONENT ${APPNAME} DESTINATION html)
+  install (FILES ${PROJECT_BINARY_DIR}/changelog.html     COMPONENT ${APPNAME} DESTINATION html/about)
+  install (FILES ${PROJECT_BINARY_DIR}/knownproblems.html COMPONENT ${APPNAME} DESTINATION html/about)
 
   if (CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS)
         install (FILES ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS} COMPONENT ${APPNAME} DESTINATION . PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ)
@@ -104,6 +105,10 @@ else ()
   # Install informational files
   install (
     FILES ${PROJECT_BINARY_DIR}/changelog.html
+    COMPONENT ${APPNAME_LOWER}
+    DESTINATION share/${APPNAME_LOWER}/html/about )
+  install (
+    FILES ${PROJECT_BINARY_DIR}/knownproblems.html
     COMPONENT ${APPNAME_LOWER}
     DESTINATION share/${APPNAME_LOWER}/html/about )
   install (
