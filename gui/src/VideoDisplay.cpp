@@ -20,6 +20,7 @@
 #include "AudioCompositionParameters.h"
 #include "Config.h"
 #include "Convert.h"
+#include "Dialog.h"
 #include "Layout.h"
 #include "Properties.h"
 #include "Sequence.h"
@@ -161,13 +162,22 @@ void VideoDisplay::play()
         bufferSize = model::Convert::ptsToSamplesPerChannel(mAudioSampleRate, 2);
 #endif // __GNUC__
 
+        auto verify = [this](PaError err, wxString message)
+        {
+            if (err == paNoError) { return true; }
+            wxString msg; msg << _("Could not initialize playback.\n") << message << Pa_GetErrorText(err);
+            VAR_ERROR(msg);
+            gui::Dialog::get().getConfirmation("Error", msg);
+            mPlaying = true; // Ensure that 'stop' code is executed.
+            stop();
+            return false;
+        };
+
         PaError err = Pa_OpenDefaultStream( &mAudioOutputStream, 0, mNumberOfAudioChannels, paInt16, mAudioSampleRate, bufferSize, portaudio_callback, this );
-        ASSERT_EQUALS(err,paNoError)(Pa_GetErrorText(err));
+        if (!verify(err, _("Opening audio stream failed:"))) { return; }
 
         err = Pa_StartStream( mAudioOutputStream );
-        ASSERT_EQUALS(err,paNoError)(Pa_GetErrorText(err)); // todo handle these error more gracefully. Not evey error indicates a programming mistake.
-
-        //const PaStreamInfo* info = Pa_GetStreamInfo(mAudioOutputStream);
+        if (!verify(err, _("Starting audio stream failed:"))) { return; }
 
         mStartTime = Pa_GetStreamTime(mAudioOutputStream);
         mStartPts = (mCurrentVideoFrame ? mCurrentVideoFrame->getPts() : 0); // Used for determining inter frame sleep time
@@ -200,10 +210,13 @@ void VideoDisplay::stop()
         mVideoTimer.Stop();
 
         // Stop audio
-        PaError err = Pa_AbortStream(mAudioOutputStream);
-        ASSERT_EQUALS(err,paNoError)(Pa_GetErrorText(err));
+        if (0 == Pa_IsStreamStopped(mAudioOutputStream))
+        {
+            PaError err = Pa_AbortStream(mAudioOutputStream);
+            ASSERT_EQUALS(err,paNoError)(Pa_GetErrorText(err));
+        }
 
-        err = Pa_CloseStream(mAudioOutputStream);
+        PaError err = Pa_CloseStream(mAudioOutputStream);
         ASSERT_EQUALS(err,paNoError)(Pa_GetErrorText(err));
 
         // End buffer threads
@@ -269,7 +282,6 @@ void VideoDisplay::setSpeed(int speed)
     bool wasPlaying = mPlaying;
     mSpeed = speed;
 #ifdef __GNUC__
-        // todo GCC make SoundTouch work under linux (probably caused by wrong sample format, which I fixed to 2 bytes i.s.o. default float)
         mSpeed = sDefaultSpeed;
 #endif
     moveTo(mCurrentVideoFrame ? mCurrentVideoFrame->getPts() : 0);

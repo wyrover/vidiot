@@ -167,8 +167,6 @@ AudioChunkPtr AudioClip::getNextAudio(const AudioCompositionParameters& paramete
         }
     }
 
-    // todo GCC treat warnings as errors
-
     if (result)
     {
         mProgress++;

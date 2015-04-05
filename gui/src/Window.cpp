@@ -556,7 +556,7 @@ void Window::onCloseProject(model::EventCloseProject &event )
 void Window::onRenameProject(model::EventRenameProject &event )
 {
     GetDocumentManager()->AddFileToHistory(model::Project::get().GetFilename());
-    GetDocumentManager()->FileHistorySave(*wxConfigBase::Get()); // todo crash here on linux auto test sometimes. furthermore file history doesn't work on linux
+    GetDocumentManager()->FileHistorySave(*wxConfigBase::Get());
     wxConfigBase::Get()->Flush();
     updateTitle();
     event.Skip();

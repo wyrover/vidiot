@@ -62,8 +62,10 @@ public:
     void onActivateBlankText(wxMouseEvent& event);
     void onChangeType(wxCommandEvent& event);
     void onBrowseFolder(wxCommandEvent& event);
+    void browseFolder();
     void handleFolder(wxString folder);
     void onBrowseFiles(wxCommandEvent& event);
+    void browseFiles();
     void handleFiles(wxStrings files);
 
     //////////////////////////////////////////////////////////////////////////
