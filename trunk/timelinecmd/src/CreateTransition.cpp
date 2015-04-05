@@ -108,12 +108,12 @@ CreateTransition::CreateTransition(const model::SequencePtr& sequence, const mod
 
     if (mLeft)
     {
-        mLeft->getFile()->readMetaData(); // todo remove after making metadatacache
+        mLeft->getFile()->readMetaData();
         mLeftSize.reset(makeLeftPartFit(defaultSize / 2)); // Default length
     }
     if (mRight)
     {
-        mRight->getFile()->readMetaData(); // todo remove after making metadatacache
+        mRight->getFile()->readMetaData();
         mRightSize.reset(makeRightPartFit(defaultSize / 2)); // Default length
     }
     if (mLeft && mRight && getLength() < defaultSize)

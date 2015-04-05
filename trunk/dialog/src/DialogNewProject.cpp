@@ -282,7 +282,15 @@ void DialogNewProject::onPageChanged(wxWizardEvent& event)
             }
         }
         mEditProperties->read();
-    } // todo in case of the 'folder' and 'files' pages immediately open the file picker if nothing is selected yet.
+    }
+    else if ((event.GetPage() == mPageFolder) && mFolderPath.IsEmpty())
+    {
+        browseFolder();
+    }
+    else if ((event.GetPage() == mPageFiles) && mFilePaths.empty())
+    {
+        browseFiles();
+    }
     event.Skip();
 }
 
@@ -357,13 +365,18 @@ void DialogNewProject::onChangeType(wxCommandEvent& event)
 
 void DialogNewProject::onBrowseFolder(wxCommandEvent& event)
 {
+    browseFolder();
+    event.Skip();
+}
+
+void DialogNewProject::browseFolder()
+{
     wxString selection = gui::Dialog::get().getDir( _("Select folder with media files"),wxStandardPaths::Get().GetDocumentsDir());
     if (!selection.IsEmpty())
     {
         mFileAnalyzer.reset();
         handleFolder(selection);
     }
-    event.Skip();
 }
 
 void DialogNewProject::handleFolder(wxString folder)
@@ -373,8 +386,13 @@ void DialogNewProject::handleFolder(wxString folder)
     setLinks();
 }
 
-
 void DialogNewProject::onBrowseFiles(wxCommandEvent& event)
+{
+    browseFiles();
+    event.Skip();
+}
+
+void DialogNewProject::browseFiles()
 {
     wxStrings selection = gui::Dialog::get().getFiles( _("Select media files") );
     if (!selection.empty())
@@ -382,7 +400,6 @@ void DialogNewProject::onBrowseFiles(wxCommandEvent& event)
         mFileAnalyzer.reset();
         handleFiles(selection);
     }
-    event.Skip();
 }
 
 void DialogNewProject::handleFiles(wxStrings files)

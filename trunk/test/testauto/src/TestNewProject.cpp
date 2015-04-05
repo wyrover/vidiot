@@ -28,6 +28,8 @@ namespace test {
 void TestNewProject::testEmptyFolder()
 {
     StartTestSuite();
+    RandomTempDirPtr tempDir = RandomTempDir::generate();
+    gui::Dialog::get().setDir(tempDir->getFileName().GetFullPath());
     ASSERT(!util::thread::RunInMainReturning<bool>([] { return gui::Window::get().isProjectOpened(); } ));
     ConfigOverruleString openwizard(Config::sPathDefaultNewProjectType, model::DefaultNewProjectWizardStart_toString(model::DefaultNewProjectWizardStartFiles));
     WindowTriggerMenu(wxID_NEW);
@@ -36,15 +38,9 @@ void TestNewProject::testEmptyFolder()
     gui::DialogNewProject::get().pressButtonFolder();
     WaitForIdle;
     ASSERT(gui::DialogNewProject::get().isNextEnabled());
-    ASSERT(gui::DialogNewProject::get().isNextEnabled());
     gui::DialogNewProject::get().pressNext();
     WaitForIdle;
     ASSERT_EQUALS(gui::DialogNewProject::get().GetCurrentPage(), gui::DialogNewProject::get().getPageFolder());
-    ASSERT(!gui::DialogNewProject::get().isNextEnabled());
-    RandomTempDirPtr tempDir = RandomTempDir::generate();
-    gui::Dialog::get().setDir(tempDir->getFileName().GetFullPath());
-    gui::DialogNewProject::get().pressBrowseFolder();
-    WaitForIdle;
     ASSERT(!gui::DialogNewProject::get().isNextEnabled());
     WaitForIdle;
     gui::DialogNewProject::get().pressCancel();
@@ -62,19 +58,19 @@ void TestNewProject::testFolder()
     auto test = [](wxString foldername, FrameRate expectedFrameRate, int expectedSampleRate, int expectedChannels)
     {
         StartTest(foldername);
+
         WindowTriggerMenu(wxID_NEW);
         WaitUntilMainWindowActive(false);
+
+        wxFileName input = getTestFilesPath(foldername);
+        model::IPaths paths = getListOfInputPaths(input);
+        gui::Dialog::get().setDir(input.GetFullPath());
+
         ASSERT_EQUALS(gui::DialogNewProject::get().GetCurrentPage(), gui::DialogNewProject::get().getPageStart());
         ASSERT(gui::DialogNewProject::get().isNextEnabled());
         gui::DialogNewProject::get().pressNext();
         WaitForIdle;
         ASSERT_EQUALS(gui::DialogNewProject::get().GetCurrentPage(), gui::DialogNewProject::get().getPageFolder());
-        ASSERT(!gui::DialogNewProject::get().isNextEnabled());
-        wxFileName input = getTestFilesPath(foldername);
-        model::IPaths paths = getListOfInputPaths(input);
-        gui::Dialog::get().setDir(input.GetFullPath());
-        gui::DialogNewProject::get().pressBrowseFolder();
-        WaitForIdle;
         ASSERT(gui::DialogNewProject::get().isNextEnabled());
         gui::DialogNewProject::get().pressNext();
         WaitForIdle;
@@ -106,6 +102,8 @@ void TestNewProject::testNoUsableFiles()
     ConfigOverruleString openwizard(Config::sPathDefaultNewProjectType, model::DefaultNewProjectWizardStart_toString(model::DefaultNewProjectWizardStartFolder));
     WindowTriggerMenu(wxID_NEW);
     WaitUntilMainWindowActive(false);
+    wxStrings files;
+    gui::Dialog::get().setFiles(files);
     ASSERT_EQUALS(gui::DialogNewProject::get().GetCurrentPage(), gui::DialogNewProject::get().getPageStart());
     gui::DialogNewProject::get().pressButtonFiles();
     WaitForIdle;
@@ -113,11 +111,6 @@ void TestNewProject::testNoUsableFiles()
     gui::DialogNewProject::get().pressNext();
     WaitForIdle;
     ASSERT_EQUALS(gui::DialogNewProject::get().GetCurrentPage(), gui::DialogNewProject::get().getPageFiles());
-    ASSERT(!gui::DialogNewProject::get().isNextEnabled());
-    wxStrings files;
-    gui::Dialog::get().setFiles(files);
-    gui::DialogNewProject::get().pressBrowseFiles();
-    WaitForIdle;
     ASSERT(!gui::DialogNewProject::get().isNextEnabled());
     WaitForIdle;
     gui::DialogNewProject::get().pressCancel();
@@ -134,20 +127,19 @@ void TestNewProject::testFiles()
     ConfigOverruleString openwizard(Config::sPathDefaultNewProjectType, model::DefaultNewProjectWizardStart_toString(model::DefaultNewProjectWizardStartFiles));
     WindowTriggerMenu(wxID_NEW);
     WaitUntilMainWindowActive(false);
-    ASSERT_EQUALS(gui::DialogNewProject::get().GetCurrentPage(), gui::DialogNewProject::get().getPageStart());
-    WaitForIdle;
-    ASSERT(gui::DialogNewProject::get().isNextEnabled());
-    gui::DialogNewProject::get().pressNext();
-    WaitForIdle;
-    ASSERT_EQUALS(gui::DialogNewProject::get().GetCurrentPage(), gui::DialogNewProject::get().getPageFiles());
-    ASSERT(!gui::DialogNewProject::get().isNextEnabled());
     wxStrings files;
     for ( model::IPathPtr path : getListOfInputPaths() )
     {
         files.push_back(path->getPath().GetFullPath());
     }
     gui::Dialog::get().setFiles(files);
-    gui::DialogNewProject::get().pressBrowseFiles();
+    ASSERT_EQUALS(gui::DialogNewProject::get().GetCurrentPage(), gui::DialogNewProject::get().getPageStart());
+    WaitForIdle;
+    ASSERT(gui::DialogNewProject::get().isNextEnabled());
+    gui::DialogNewProject::get().pressNext();
+    WaitForIdle;
+    ASSERT_EQUALS(gui::DialogNewProject::get().GetCurrentPage(), gui::DialogNewProject::get().getPageFiles());
+    ASSERT(gui::DialogNewProject::get().isNextEnabled());
     WaitForIdle;
     ASSERT(gui::DialogNewProject::get().isNextEnabled());
     gui::DialogNewProject::get().pressNext();

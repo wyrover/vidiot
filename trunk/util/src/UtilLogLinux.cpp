@@ -21,25 +21,25 @@
 
 std::ostream& operator<<(std::ostream& os, siginfo_t* signal)
 {
-    #define LOG_ENUM(enumvalue) case enumvalue: os << #enumvalue << '(' << enumvalue << ')';  break
+    #define LOG_SIGNAL(enumvalue) case enumvalue: os << #enumvalue << '(' << enumvalue << ')';  break
     switch (signal->si_signo)
     {
-        LOG_ENUM(SIGHUP);
-        LOG_ENUM(SIGINT);
-        LOG_ENUM(SIGQUIT);
-        LOG_ENUM(SIGILL);
-        LOG_ENUM(SIGTRAP);
-        LOG_ENUM(SIGABRT);
-        LOG_ENUM(SIGBUS);
-        LOG_ENUM(SIGFPE);
-        LOG_ENUM(SIGSEGV);
-        LOG_ENUM(SIGPIPE);
-        LOG_ENUM(SIGTERM);
-        LOG_ENUM(SIGALRM);
-        LOG_ENUM(SIGSTKFLT);
-        LOG_ENUM(SIGCHLD);
-        LOG_ENUM(SIGTSTP);
-        LOG_ENUM(SIGSYS);
+        LOG_SIGNAL(SIGHUP);
+        LOG_SIGNAL(SIGINT);
+        LOG_SIGNAL(SIGQUIT);
+        LOG_SIGNAL(SIGILL);
+        LOG_SIGNAL(SIGTRAP);
+        LOG_SIGNAL(SIGABRT);
+        LOG_SIGNAL(SIGBUS);
+        LOG_SIGNAL(SIGFPE);
+        LOG_SIGNAL(SIGSEGV);
+        LOG_SIGNAL(SIGPIPE);
+        LOG_SIGNAL(SIGTERM);
+        LOG_SIGNAL(SIGALRM);
+        LOG_SIGNAL(SIGSTKFLT);
+        LOG_SIGNAL(SIGCHLD);
+        LOG_SIGNAL(SIGTSTP);
+        LOG_SIGNAL(SIGSYS);
         default: os << "Unknown" << '(' << signal->si_signo << ')'; break;
     }
 
