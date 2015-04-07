@@ -34,7 +34,7 @@ namespace model {
 // static 
 bool WximageFile::canRead(wxFileName path)
 {
-    static std::set<wxString> sSupportedExts = boost::assign::list_of("png")("tiff")("tif");
+    static std::set<wxString> sSupportedExts = { "png", "tiff", "tif" };
     return
         sSupportedExts.find(path.GetExt()) != sSupportedExts.end() &&
         wxImage::CanRead(path.GetLongPath());

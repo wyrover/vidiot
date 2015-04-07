@@ -30,24 +30,26 @@ namespace gui { namespace timeline {
 
 static rational sDefaultZoom(1,5);
 typedef std::vector<rational> zoomlist;
-static zoomlist sZooms = boost::assign::list_of // NOTE: Match with map used in TimescaleView!!!
-(rational(1,120))
-(rational(1,60))
-(rational(1,45))
-(rational(1,30))
-(rational(1,20))
-(rational(1,15))
-(rational(1,10))
-(rational(1,9))
-(rational(1,8))
-(rational(1,7))
-(rational(1,6))
-(rational(1,5))
-(rational(1,4))
-(rational(1,3))
-(rational(1,2))
-(rational(1,1))
-(rational(2,1));
+// NOTE: Match with map used in TimescaleView!!!
+static zoomlist sZooms = {
+    { rational(1, 120) },
+    { rational(1, 60) },
+    { rational(1, 45) },
+    { rational(1, 30) },
+    { rational(1, 20) },
+    { rational(1, 15) },
+    { rational(1, 10) },
+    { rational(1, 9) },
+    { rational(1, 8) },
+    { rational(1, 7) },
+    { rational(1, 6) },
+    { rational(1, 5) },
+    { rational(1, 4) },
+    { rational(1, 3) },
+    { rational(1, 2) },
+    { rational(1, 1) },
+    { rational(2, 1) },
+};
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION METHODS

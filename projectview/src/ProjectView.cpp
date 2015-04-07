@@ -727,7 +727,7 @@ void ProjectView::onCollapsed(wxDataViewEvent &event)
     model::FolderPtr folder = boost::dynamic_pointer_cast<model::Folder>(p);
     ASSERT(folder);
     ASSERT(UtilVector<model::FolderPtr>(mOpenFolders).hasElement(folder));
-    UtilVector<model::FolderPtr>(mOpenFolders).removeElements(boost::assign::list_of(folder));
+    UtilVector<model::FolderPtr>(mOpenFolders).removeElements({ folder });
 }
 
 void ProjectView::onStartEditing(wxDataViewEvent &event)

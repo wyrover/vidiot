@@ -50,7 +50,7 @@ void TestProjectView::testAdditionAndRemoval()
 
     model::FolderPtr folder1 = ProjectViewAddFolder( sFolder1 );
     model::SequencePtr sequence1 = ProjectViewAddSequence( sSequence1, folder1 );
-    model::Files files1 = ProjectViewAddFiles( boost::assign::list_of(filepath), folder1 );
+    model::Files files1 = ProjectViewAddFiles({ filepath }, folder1);
 
     ASSERT_EQUALS(folder1->getParent(),mProjectFixture.mRoot);
     ASSERT_EQUALS(sequence1->getParent(),folder1);
@@ -109,7 +109,7 @@ void TestProjectView::testClipboardPaste_ClipboardEmpty()
     }
     {
         StartTest("Paste from main menu (root selected, nothing in clipboard)");
-        ProjectViewSelect(boost::assign::list_of(getRoot()));
+        ProjectViewSelect({ getRoot() });
         WindowTriggerMenu(wxID_PASTE);
         ASSERT_EQUALS(ProjectViewCount(), 3);
     }
@@ -117,7 +117,7 @@ void TestProjectView::testClipboardPaste_ClipboardEmpty()
         StartTest("Paste from main menu (folder selected, nothing in clipboard)");
         model::FolderPtr folder = ProjectViewAddFolder("FOLDER");
         ASSERT_EQUALS(ProjectViewCount(), 4);
-        ProjectViewSelect(boost::assign::list_of(folder));
+        ProjectViewSelect({ folder });
         WindowTriggerMenu(wxID_PASTE);
         ASSERT_EQUALS(ProjectViewCount(), 4);
     }
@@ -139,11 +139,11 @@ void TestProjectView::testClipboardPaste_ClipboardNodes()
     copyok = wxCopyFile(getListOfInputPaths().at(1)->getPath().GetLongPath(), filepath2.GetLongPath(), false);
     ASSERT(copyok);
 
-    model::NodePtr file = ProjectViewAddFiles(boost::assign::list_of(filepath2)).front();
+    model::NodePtr file = ProjectViewAddFiles({ filepath2 }).front();
 
     ASSERT_EQUALS(ProjectViewCount(), 5);
     ProjectViewSetFocus();
-    ProjectViewSelect(boost::assign::list_of(folder)(file));
+    ProjectViewSelect({ folder, file});
     WindowTriggerMenu(wxID_CUT);
     ASSERT_EQUALS(ProjectViewCount(), 3);
     ASSERT_CLIPBOARD_CONTAINS_NODES;
@@ -158,7 +158,7 @@ void TestProjectView::testClipboardPaste_ClipboardNodes()
     }
     {
         StartTest("Paste from main menu (root selected, nodes in clipboard)");
-        ProjectViewSelect(boost::assign::list_of(getRoot()));
+        ProjectViewSelect({ getRoot() });
         WindowTriggerMenu(wxID_PASTE);
         ASSERT_EQUALS(ProjectViewCount(), 5);
         ASSERT_EQUALS(getRoot()->getChildren().size(), 4);
@@ -168,7 +168,7 @@ void TestProjectView::testClipboardPaste_ClipboardNodes()
         StartTest("Paste from main menu (folder selected, nodes in clipboard)");
         model::FolderPtr folder = ProjectViewAddFolder("FOLDER");
         ASSERT_EQUALS(ProjectViewCount(), 4);
-        ProjectViewSelect(boost::assign::list_of(folder));
+        ProjectViewSelect({ folder });
         WindowTriggerMenu(wxID_PASTE);
         ASSERT_EQUALS(ProjectViewCount(), 6);
         ASSERT_EQUALS(folder->getChildren().size(), 2);
@@ -187,7 +187,7 @@ void TestProjectView::testClipboardPaste_ClipboardNodes()
     }
     {
         StartTest("Paste from main menu (root selected, nodes in clipboard, files removed)");
-        ProjectViewSelect(boost::assign::list_of(getRoot()));
+        ProjectViewSelect({ getRoot() });
         WindowTriggerMenu(wxID_PASTE);
         ASSERT_EQUALS(ProjectViewCount(), 3);
         ASSERT_EQUALS(getRoot()->getChildren().size(), 2);
@@ -196,7 +196,7 @@ void TestProjectView::testClipboardPaste_ClipboardNodes()
         StartTest("Paste from main menu (folder selected, nodes in clipboard, files removed)");
         model::FolderPtr folder = ProjectViewAddFolder("FOLDER");
         ASSERT_EQUALS(ProjectViewCount(), 4);
-        ProjectViewSelect(boost::assign::list_of(folder));
+        ProjectViewSelect({ folder });
         WindowTriggerMenu(wxID_PASTE);
         ASSERT_EQUALS(ProjectViewCount(), 4);
         ASSERT_EQUALS(folder->getChildren().size(), 0);
@@ -220,7 +220,7 @@ void TestProjectView::testClipboardPaste_ClipboardFiles()
 	}
 	{
 		StartTest("Paste from main menu (root selected, files in clipboard)");
-		ProjectViewSelect(boost::assign::list_of(getRoot()));
+        ProjectViewSelect({ getRoot() });
 		WindowTriggerMenu(wxID_PASTE);
 		ASSERT_EQUALS(ProjectViewCount(), 3 + +files.size());
 		ASSERT_EQUALS(getRoot()->getChildren().size(), 2 + +files.size());
@@ -230,7 +230,7 @@ void TestProjectView::testClipboardPaste_ClipboardFiles()
 		StartTest("Paste from main menu (folder selected, files in clipboard)");
 		model::FolderPtr folder = ProjectViewAddFolder("FOLDER");
 		ASSERT_EQUALS(ProjectViewCount(), 4);
-		ProjectViewSelect(boost::assign::list_of(folder));
+        ProjectViewSelect({ folder });
 		WindowTriggerMenu(wxID_PASTE);
 		ASSERT_EQUALS(ProjectViewCount(), 4 + +files.size());
 		ASSERT_EQUALS(folder->getChildren().size(), + files.size());

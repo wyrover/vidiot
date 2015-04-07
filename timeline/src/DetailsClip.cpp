@@ -113,8 +113,8 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     mCurrentLength = new wxStaticText(this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT | wxST_NO_AUTORESIZE);
     addOption(_("Current length"), mCurrentLength);
 
-    std::vector<int> defaultLengths = boost::assign::list_of(250)   (500)  (1000) (1500) (2000) (2500) (3000);
-    wxStrings labels    = boost::assign::list_of("0.25")("0.5")("1.0")("1.5")("2.0")("2.5")("3.0");
+    std::vector<int> defaultLengths = { 250, 500, 1000, 1500, 2000, 2500, 3000 };
+    wxStrings labels = { "0.25", "0.5", "1.0", "1.5", "2.0", "2.5", "3.0" };
     wxPanel* lengthbuttonspanel = new wxPanel(this);
     lengthbuttonspanel->SetSizer(new wxBoxSizer(wxHORIZONTAL));
     auto it = defaultLengths.begin();

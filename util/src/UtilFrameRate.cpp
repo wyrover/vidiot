@@ -23,10 +23,11 @@ const FrameRate FrameRate::s25p = FrameRate(       25, 1);
 const FrameRate FrameRate::s30p = FrameRate(30 * 1000, 1001);
 
 typedef boost::tuple<wxString, FrameRate> FrameRateEntry;
-const std::vector<FrameRateEntry> sPossibleFrameRates = boost::assign::tuple_list_of
-    ( wxT("23.97"), FrameRate::s24p )
-    ( wxT("25"),    FrameRate::s25p )
-    ( wxT("29.97"), FrameRate::s30p );
+const std::vector<FrameRateEntry> sPossibleFrameRates = {
+    { wxT("23.97"), FrameRate::s24p },
+    { wxT("25"), FrameRate::s25p },
+    { wxT("29.97"), FrameRate::s30p },
+};
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION

@@ -42,14 +42,15 @@ DialogOptions::DialogOptions(wxWindow* win)
 {
     util::window::setIcons(this);
 
-    wxStrings icons = boost::assign::list_of
-        ("disks.png")
-        ("folder-horizontal-open.png")
-        ("clapperboard.png")
-        ("picture.png")
-        ("music-beam.png")
-        ("film.png")
-        ("bug.png");
+    wxStrings icons = {
+        { "disks.png" },
+        { "folder-horizontal-open.png" },
+        { "clapperboard.png" },
+        { "picture.png" },
+        { "music-beam.png" },
+        { "film.png" },
+        { "bug.png" },
+    };
     for (wxString icon : icons)
     {
         mIcons.Add(util::window::getIcon(icon));
@@ -145,18 +146,19 @@ DialogOptions::DialogOptions(wxWindow* win)
              // Only if a project is opened use that project's frame rate
              framerate = model::Properties::get().getFrameRate();
          }
-         std::vector<pts> values = boost::assign::list_of
-             (1)
-             (12)
-             (1  * model::Convert::timeToPts(model::Constants::sSecond, framerate))
-             (2  * model::Convert::timeToPts(model::Constants::sSecond, framerate))
-             (3  * model::Convert::timeToPts(model::Constants::sSecond, framerate))
-             (4  * model::Convert::timeToPts(model::Constants::sSecond, framerate))
-             (5  * model::Convert::timeToPts(model::Constants::sSecond, framerate))
-             (6  * model::Convert::timeToPts(model::Constants::sSecond, framerate))
-             (10 * model::Convert::timeToPts(model::Constants::sSecond, framerate))
-             (1  * model::Convert::timeToPts(model::Constants::sMinute, framerate))
-             (initial);
+         std::vector<pts> values = {
+             { 1 },
+             { 12 },
+             { 1 * model::Convert::timeToPts(model::Constants::sSecond, framerate) },
+             { 2 * model::Convert::timeToPts(model::Constants::sSecond, framerate) },
+             { 3 * model::Convert::timeToPts(model::Constants::sSecond, framerate) },
+             { 4 * model::Convert::timeToPts(model::Constants::sSecond, framerate) },
+             { 5 * model::Convert::timeToPts(model::Constants::sSecond, framerate) },
+             { 6 * model::Convert::timeToPts(model::Constants::sSecond, framerate) },
+             { 10 * model::Convert::timeToPts(model::Constants::sSecond, framerate) },
+             { 1 * model::Convert::timeToPts(model::Constants::sMinute, framerate) },
+             { initial },
+         };
          std::sort(values.begin(), values.end());
          std::unique(values.begin(), values.end());
 

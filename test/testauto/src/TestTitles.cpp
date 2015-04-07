@@ -71,7 +71,7 @@ void TestTitles::testFileTypes()
 
         StartTest(path->getPath().GetFullName());
         model::FilePtr file = boost::make_shared<model::File>(path->getPath());
-        ExtendTrack(track, boost::assign::list_of(path)); // Note: Not via a command (thus, 'outside' the undo system)
+        ExtendTrack(track, { path }); // Note: Not via a command (thus, 'outside' the undo system)
         ProjectViewOpenTimelineForSequence(sequence);
         boost::tuple<int, int, int> curPixel = getPixel(400, 400);
         ASSERT_EQUALS(curPixel, referencePixel); // This pixel is taken from video layer 0 (the video)

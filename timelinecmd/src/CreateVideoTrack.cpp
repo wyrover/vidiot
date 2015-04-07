@@ -46,14 +46,14 @@ bool CreateVideoTrack::Do()
     {
         mNewTrack = boost::make_shared<model::VideoTrack>();
     }
-    getTimeline().getSequence()->addVideoTracks(boost::assign::list_of(mNewTrack));
+    getTimeline().getSequence()->addVideoTracks({ mNewTrack });
     return true;
 }
 
 bool CreateVideoTrack::Undo()
 {
     VAR_INFO(this);
-    getTimeline().getSequence()->removeVideoTracks(boost::assign::list_of(mNewTrack));
+    getTimeline().getSequence()->removeVideoTracks({ mNewTrack });
     return true;
 }
 

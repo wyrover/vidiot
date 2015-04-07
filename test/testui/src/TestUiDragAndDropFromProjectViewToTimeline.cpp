@@ -89,7 +89,7 @@ void TestUiDragAndDropFromProjectViewToTimeline::testDragAndDropStillImageAndUnd
     ASSERT(TestFilesPath.IsDir());
     ASSERT(TestFilesPath.DirExists());
     TestFilesPath.SetFullName("Laney -6th best amp.jpg");
-    model::Files files1 = ProjectViewAddFiles( boost::assign::list_of(TestFilesPath.GetFullPath()), folder1 );
+    model::Files files1 = ProjectViewAddFiles({ TestFilesPath.GetFullPath() }, folder1);
     model::FilePtr imageFile = files1.front();
 
     DragFromProjectViewToTimeline( imageFile,  getTimeline().GetScreenPosition() - getTimeline().getScrolling().getOffset()  + wxPoint(HCenter(VideoClip(0,4)), VCenter(VideoTrack(0))) );

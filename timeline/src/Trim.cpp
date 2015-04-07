@@ -457,7 +457,7 @@ void Trim::determinePossibleSnapPoints(const model::IClipPtr& originalclip)
     mSnapPoints.clear();
     if (Config::ReadBool(Config::sPathSnapClips))
     {
-        std::set<model::IClipPtr> exclude = boost::assign::list_of(originalclip)(originalclip->getLink());
+        std::set<model::IClipPtr> exclude = { originalclip, originalclip->getLink() };
         std::vector<pts> all;
         UtilVector<pts>(all).addElements(getSequence()->getCuts(exclude));
         // Copy everything between [min,max), discard everything else

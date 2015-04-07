@@ -399,7 +399,7 @@ void TrimClip::adjust(const model::IClipPtr& clip, pts begin, pts end)
     {
         clone->adjustEnd(end);
     }
-    replaceClip(clip, boost::assign::list_of(clone));
+    replaceClip(clip, { clone });
 }
 
 void TrimClip::applyTrim()
@@ -430,7 +430,7 @@ void TrimClip::applyTrim()
             // becomes 0 after trimming.
             return model::IClips();
         }
-        return boost::assign::list_of(clone);
+        return{ clone };
     };
 
     model::IClips replaceclip = makeTrimmedClone(mClip,mClipIsPartOfTransition);
@@ -461,7 +461,7 @@ void TrimClip::applyTrim()
             // Move clips in other tracks (that's the 'shift') - and only in other tracks
             // The clips in the same track as mClip and linked are shifted automatically
             // because of the enlargement/reduction of these two clips.
-            model::Tracks exclude = boost::assign::list_of(mClip->getTrack());
+            model::Tracks exclude = { mClip->getTrack() };
             if (mLink) { exclude.push_back(mLink->getTrack()); }
 
             if (isBeginTrim())

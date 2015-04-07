@@ -55,7 +55,7 @@ void TestSavingAndLoading::testSaveAndLoad()
     model::FolderPtr folder1 = ProjectViewAddFolder( sFolder );
 
     StartTest("Add still image to project view");
-    ProjectViewAddFiles( boost::assign::list_of(getStillImagePath()), folder1 );
+    ProjectViewAddFiles({ getStillImagePath() }, folder1);
 
     StartTest("Add video clips to sequence");
     ExtendSequenceWithRepeatedClips(getSequence(), getListOfInputPaths(), 2);

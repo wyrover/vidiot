@@ -48,7 +48,7 @@ bool ProjectViewCreateAutoFolder::Do()
     }
     ASSERT_NONZERO(autofolder);
     mPair.second = autofolder;
-    bool ok = addNodes(boost::assign::list_of(mPair));
+    bool ok = addNodes({ mPair });
     if (!ok)
     {
         return false; // Folder missing on disk. Can happen in case of Redo.
@@ -61,7 +61,7 @@ bool ProjectViewCreateAutoFolder::Do()
 
 bool ProjectViewCreateAutoFolder::Undo()
 {
-    return removeNodes(boost::assign::list_of(mPair));
+    return removeNodes({ mPair });
 }
 
 } // namespace

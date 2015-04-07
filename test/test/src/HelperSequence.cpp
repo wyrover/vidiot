@@ -37,8 +37,8 @@ void ExtendSequenceWithRepeatedClips( model::SequencePtr sequence, model::IPaths
             {
                 model::FilePtr file = boost::make_shared<model::File>(path->getPath());
                 std::pair<model::IClipPtr,model::IClipPtr> videoClip_audioClip = command::ClipCreator::makeClips(file);
-                videoTrack->addClips(boost::assign::list_of(videoClip_audioClip.first), atBegin ? videoTrack->getClips().front() : model::IClipPtr() );
-                audioTrack->addClips(boost::assign::list_of(videoClip_audioClip.second), atBegin ? audioTrack->getClips().front() : model::IClipPtr());
+                videoTrack->addClips({ videoClip_audioClip.first }, atBegin ? videoTrack->getClips().front() : model::IClipPtr());
+                audioTrack->addClips({ videoClip_audioClip.second }, atBegin ? audioTrack->getClips().front() : model::IClipPtr());
             }
         }
     });
@@ -56,7 +56,7 @@ void ExtendSequenceWithEmptyClipAtBegin(model::SequencePtr sequence, millisecond
     {
         ASSERT_NONZERO(track->getClips().size());
         model::IClipPtr clip = boost::make_shared<model::EmptyClip>(model::Convert::timeToPts(time));
-        track->addClips( boost::assign::list_of(clip), track->getClips().front() );
+        track->addClips({ clip }, track->getClips().front());
     }
 }
 
@@ -75,8 +75,8 @@ void ExtendSequenceWithStillImage( model::SequencePtr sequence )
         ASSERT(file->canBeOpened());
 
         std::pair<model::IClipPtr,model::IClipPtr> videoClip_audioClip = command::ClipCreator::makeClips(file);
-        videoTrack->addClips(boost::assign::list_of(videoClip_audioClip.first));
-        audioTrack->addClips(boost::assign::list_of(videoClip_audioClip.second));
+        videoTrack->addClips({ videoClip_audioClip.first });
+        audioTrack->addClips({ videoClip_audioClip.second });
     });
 }
 
@@ -101,11 +101,11 @@ void ExtendTrack(model::TrackPtr track, model::IPaths files, int nRepeat)
             std::pair<model::IClipPtr, model::IClipPtr> videoClip_audioClip = command::ClipCreator::makeClips(file);
             if (track->isA<model::VideoTrack>())
             {
-                track->addClips(boost::assign::list_of(videoClip_audioClip.first));
+                track->addClips({ videoClip_audioClip.first });
             }
             else
             {
-                track->addClips(boost::assign::list_of(videoClip_audioClip.second));
+                track->addClips({ videoClip_audioClip.second });
             }
         }
     }

@@ -53,12 +53,13 @@ const wxString Window::sPaneNameDetails("Details");
 const wxString Window::sPaneNamePreview("Preview");
 const wxString Window::sPaneNameTimelines("Timelines");
 
-const std::map<int, wxString> Window::sMapMenuIdToPaneName = boost::assign::map_list_of
-    (static_cast<int>(ID_SHOW_PROJECT),     Window::sPaneNameProject)
-    (static_cast<int>(ID_SHOW_DETAILS),     Window::sPaneNameDetails)
-    (static_cast<int>(ID_SHOW_PREVIEW),     Window::sPaneNamePreview)
-    (static_cast<int>(ID_SHOW_TIMELINES),   Window::sPaneNameTimelines)
-    (static_cast<int>(wxID_HELP),           Window::sPaneNameHelp);
+const std::map<int, wxString> Window::sMapMenuIdToPaneName = {
+    { static_cast<int>(ID_SHOW_PROJECT), Window::sPaneNameProject },
+    { static_cast<int>(ID_SHOW_DETAILS), Window::sPaneNameDetails },
+    { static_cast<int>(ID_SHOW_PREVIEW), Window::sPaneNamePreview },
+    { static_cast<int>(ID_SHOW_TIMELINES), Window::sPaneNameTimelines },
+    { static_cast<int>(wxID_HELP), Window::sPaneNameHelp }
+};
 
 const wxString sPaneCaptionHelp(_("Help"));
 const wxString sPaneCaptionProject(_("Project"));

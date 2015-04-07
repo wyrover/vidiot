@@ -112,7 +112,7 @@ void TestExceptions::testRemovedFileInProjectViewBeforeOpening()
         ASSERT_WATCHED_PATHS_COUNT(0);
         model::FolderPtr folder1 = ProjectViewAddFolder("TestFolder");
         WaitForChildCount(root, 2);
-        model::Files files1 = ProjectViewAddFiles(boost::assign::list_of(filepath1), folder1);
+        model::Files files1 = ProjectViewAddFiles({ filepath1 }, folder1);
         WaitForChildCount(root, 3);
         ASSERT_WATCHED_PATHS_COUNT(1);
     }
@@ -166,7 +166,7 @@ std::pair< model::SequencePtr, RandomTempDirPtr> TestExceptions::createProjectWi
     ASSERT_WATCHED_PATHS_COUNT(0);
     model::FolderPtr folder1 = ProjectViewAddFolder( "TestFolder" );
     WaitForChildCount(root, 2);
-    model::Files files1 = ProjectViewAddFiles( boost::assign::list_of(filepath1), folder1 );
+    model::Files files1 = ProjectViewAddFiles({ filepath1 }, folder1);
     WaitForChildCount(root, 3);
     ASSERT_WATCHED_PATHS_COUNT(1);
     model::SequencePtr sequence = ProjectViewCreateSequence(folder1);
@@ -186,7 +186,7 @@ void TestExceptions::testRemovedFileInSequence(const wxFileName& file)
     // Open the sequence again (file missing from disk)
     util::thread::RunInMainAndWait([projectfolder_and_dirtoberemoved]
     {
-        GetProjectView().select(boost::assign::list_of(projectfolder_and_dirtoberemoved.first));
+        GetProjectView().select({ projectfolder_and_dirtoberemoved.first });
         GetProjectView().onOpen();
     });
 

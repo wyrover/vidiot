@@ -50,13 +50,13 @@ bool CreateAudioTrack::Do()
     {
         mNewTrack = boost::make_shared<model::AudioTrack>();
     }
-    getTimeline().getSequence()->addAudioTracks(boost::assign::list_of(mNewTrack));
+    getTimeline().getSequence()->addAudioTracks({ mNewTrack });
     return true;
 }
 
 bool CreateAudioTrack::Undo()
 {
-    getTimeline().getSequence()->removeAudioTracks(boost::assign::list_of(mNewTrack));
+    getTimeline().getSequence()->removeAudioTracks({ mNewTrack });
     return true;
 }
 

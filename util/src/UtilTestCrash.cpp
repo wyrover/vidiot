@@ -152,19 +152,19 @@ const int FirstId = meID_LAST + 1;
 
 typedef boost::function<void()> Method;
 typedef std::pair<wxString,util::Method> CrashInfo;
-const std::vector< CrashInfo > crashes = boost::assign::list_of
-    (std::make_pair("Access Violation", boost::bind(&triggerAccessViolation)))
-    (std::make_pair("Assert", boost::bind(&triggerAssertion)))
-    (std::make_pair("Divide by zero exception", boost::bind(&triggerDivideByZeroException)))
+const std::vector< CrashInfo > crashes = {
+    (std::make_pair("Access Violation", boost::bind(&triggerAccessViolation))),
+    (std::make_pair("Assert", boost::bind(&triggerAssertion))),
+    (std::make_pair("Divide by zero exception", boost::bind(&triggerDivideByZeroException))),
 #ifdef _MSC_VER
-    (std::make_pair("Invalid parameter", boost::bind(&triggerInvalidParameter)))
+    (std::make_pair("Invalid parameter", boost::bind(&triggerInvalidParameter))),
 #endif
-    (std::make_pair("Pure virtual call", boost::bind(&triggerPureVirtualCall)))
-    (std::make_pair("Unhandled boost exception", boost::bind(&triggerBoostException)))
-    (std::make_pair("Unhandled std exception", boost::bind(&triggerStdException)))
-    (std::make_pair("Unhandled unknown exception", boost::bind(&triggerUnknownException)))
-    (std::make_pair("WX assert", boost::bind(&triggerWxAssertion)))
-;
+    (std::make_pair("Pure virtual call", boost::bind(&triggerPureVirtualCall))),
+    (std::make_pair("Unhandled boost exception", boost::bind(&triggerBoostException))),
+    (std::make_pair("Unhandled std exception", boost::bind(&triggerStdException))),
+    (std::make_pair("Unhandled unknown exception", boost::bind(&triggerUnknownException))),
+    (std::make_pair("WX assert", boost::bind(&triggerWxAssertion))),
+};
 
 void TestCrash::onCrashTest(wxCommandEvent& event)
 {
