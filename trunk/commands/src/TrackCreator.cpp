@@ -54,15 +54,15 @@ TrackCreator::TrackCreator(const model::NodePtrs& assets)
                 if (!previousPrefix.IsEmpty() &&
                     !previousPrefix.IsSameAs(newPrefix))
                 {
-                    mVideo->addClips(boost::assign::list_of(boost::make_shared<model::EmptyClip>(emptyLength)));
-                    mAudio->addClips(boost::assign::list_of(boost::make_shared<model::EmptyClip>(emptyLength)));
+                    mVideo->addClips({ boost::make_shared<model::EmptyClip>(emptyLength) });
+                    mAudio->addClips({ boost::make_shared<model::EmptyClip>(emptyLength) });
                 }
             }
 
             std::pair<model::IClipPtr,model::IClipPtr> videoClip_audioClip = ClipCreator::makeClips(file);
 
-            mVideo->addClips(boost::assign::list_of(videoClip_audioClip.first));
-            mAudio->addClips(boost::assign::list_of(videoClip_audioClip.second));
+            mVideo->addClips({ videoClip_audioClip.first });
+            mAudio->addClips({ videoClip_audioClip.second });
 
             previousPrefix = file->getName().Left(prefixLength);
         }

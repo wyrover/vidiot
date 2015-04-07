@@ -183,7 +183,7 @@ void DeleteSelectedClips::initialize()
         getTimeline().beginTransaction();
         for ( model::IClipPtr clip : clipsToBeRemoved )
         {
-            replaceClip(clip,boost::assign::list_of(boost::make_shared<model::EmptyClip>(clip->getLength())));
+            replaceClip(clip, { boost::make_shared<model::EmptyClip>(clip->getLength()) });
         }
     }
     getTimeline().endTransaction();

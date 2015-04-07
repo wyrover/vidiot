@@ -60,7 +60,7 @@ void TestRenderingSynchronization::testLongSequence()
     syncFileName.SetFullName("Audio Video Sync Test & Calibration 23976fps.xvid.avi");
     model::FilePtr syncFile = boost::make_shared<model::File>(syncFileName );
     MakeSequenceEmpty(sequence);
-    ExtendSequenceWithRepeatedClips(sequence, boost::assign::list_of(syncFile), 1); // Note: Not via a command (thus, 'outside' the undo system)
+    ExtendSequenceWithRepeatedClips(sequence, { syncFile }, 1); // Note: Not via a command (thus, 'outside' the undo system)
     ExtendSequenceWithEmptyClipAtBegin(sequence, EMPTY_LENGTH);
     ProjectViewOpenTimelineForSequence(sequence);
 
@@ -75,7 +75,7 @@ void TestRenderingSynchronization::testLongSequence()
 
     StartTest("Open");
     model::FolderPtr folder1 = ProjectViewAddFolder("Playback");
-    model::Files files1 = ProjectViewAddFiles( boost::assign::list_of(tempdir_and_filename.second), folder1 );
+    model::Files files1 = ProjectViewAddFiles({ tempdir_and_filename.second }, folder1);
     model::SequencePtr sequence1 = ProjectViewCreateSequence( folder1 );
     TimelinePositionCursor(getTimeline().getZoom().ptsToPixels(model::Convert::timeToPts(EMPTY_LENGTH - 1000))); // 1 second before the end of the empty region
     TimelineKeyPress('v'); // Show the proper timeline part

@@ -21,11 +21,12 @@
 
 namespace test {
 
-std::vector<std::string> SuitesWithoutGui = boost::assign::list_of
-    ("TestConvert::testTimeConversions")
-    ("TestConvert::testIntegerConversions")
-    ("TestUtilPath::testEquals")
-    ("TestWithoutGui");
+std::vector<std::string> SuitesWithoutGui = {
+    { "TestConvert::testTimeConversions" },
+    { "TestConvert::testIntegerConversions" },
+    { "TestUtilPath::testEquals" },
+    { "TestWithoutGui" }
+};
 
 //////////////////////////////////////////////////////////////////////////
 // LOCAL HELPER METHODS

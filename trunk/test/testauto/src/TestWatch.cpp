@@ -125,7 +125,7 @@ void TestWatch::testAddAndRemoveFileToWatchedNonAutoFolder()
     copyok = wxCopyFile( filepath2_input.GetLongPath(), filepath2.GetLongPath(), false );
     ASSERT(copyok);
 
-    model::Files files1 = ProjectViewAddFiles( boost::assign::list_of(filepath1)(filepath2), folder1 );
+    model::Files files1 = ProjectViewAddFiles({ filepath1, filepath2 }, folder1);
     WaitForChildCount(mRoot, 4);
     ASSERT_WATCHED_PATHS_COUNT(1);
 
@@ -156,7 +156,7 @@ void TestWatch::testRemoveProjectViewFolderContainingFileOnDisk()
     bool copyok = wxCopyFile( mInputFiles.front()->getPath().GetLongPath(), filepath1.GetLongPath(), false );
     ASSERT(copyok);
 
-    model::Files files1 = ProjectViewAddFiles( boost::assign::list_of(filepath1), folder1 );
+    model::Files files1 = ProjectViewAddFiles({ filepath1 }, folder1 );
     WaitForChildCount(mRoot, 3);
     ASSERT_WATCHED_PATHS_COUNT(1);
 

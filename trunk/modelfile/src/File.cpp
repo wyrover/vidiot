@@ -78,7 +78,6 @@ File::File()
     VAR_DEBUG(this);
 }
 
-// todo use delegating constructors
 // todo replace boost assign listof with initializer lists
 
 File::File(const wxFileName& path, int buffersize)
@@ -333,23 +332,24 @@ bool File::hasAudio()
 
 FileType File::getType() const
 {
-    static std::map<const wxString, FileType> sMap = boost::assign::map_list_of
-        ("png", FileType_Title)
-        ("tiff", FileType_Title)
-        ("tif", FileType_Title)
-        ("aif", FileType_Audio)
-        ("aiff", FileType_Audio)
-        ("wav", FileType_Audio)
-        ("mp3", FileType_Audio)
-        ("au", FileType_Audio)
-        ("flac", FileType_Audio)
-        ("m4a", FileType_Audio)
-        ("ogg", FileType_Audio)
-        ("wma", FileType_Audio)
-        ("gif", FileType_Image)
-        ("jpg", FileType_Image)
-        ("jpeg", FileType_Image)
-        ("bmp", FileType_Image);
+    static std::map<const wxString, FileType> sMap = {
+        {"png", FileType_Title},
+        {"tiff", FileType_Title},
+        {"tif", FileType_Title},
+        {"aif", FileType_Audio},
+        {"aiff", FileType_Audio},
+        {"wav", FileType_Audio},
+        {"mp3", FileType_Audio},
+        {"au", FileType_Audio},
+        {"flac", FileType_Audio},
+        {"m4a", FileType_Audio},
+        {"ogg", FileType_Audio},
+        {"wma", FileType_Audio},
+        {"gif", FileType_Image},
+        {"jpg", FileType_Image},
+        {"jpeg", FileType_Image},
+        {"bmp", FileType_Image},
+    };
     auto it = sMap.find(mPath.GetExt());
     if (it != sMap.end())
     {

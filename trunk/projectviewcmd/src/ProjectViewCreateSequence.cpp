@@ -82,8 +82,8 @@ bool ProjectViewCreateSequence::Do()
         TrackCreator c(mNodes);
         model::Tracks vt = mSequence->getVideoTracks();
         model::Tracks at = mSequence->getAudioTracks();
-        mSequence->addVideoTracks(boost::assign::list_of(c.getVideoTrack()));
-        mSequence->addAudioTracks(boost::assign::list_of(c.getAudioTrack()));
+        mSequence->addVideoTracks({ c.getVideoTrack() });
+        mSequence->addAudioTracks({ c.getAudioTrack() });
         mSequence->removeVideoTracks(vt);
         mSequence->removeAudioTracks(at);
     }

@@ -71,7 +71,7 @@ bool RemoveEmptyTracks::Do()
     {
         if (track->isEmpty() && getSequence()->getVideoTracks().size() > 1) // Always one track must remain
         {
-            getSequence()->removeVideoTracks(boost::assign::list_of(track));
+            getSequence()->removeVideoTracks({ track });
         }
     }
     model::Tracks audioTracks = getSequence()->getAudioTracks();
@@ -79,7 +79,7 @@ bool RemoveEmptyTracks::Do()
     {
         if (track->isEmpty() && getSequence()->getAudioTracks().size() > 1) // Always one track must remain
         {
-            getSequence()->removeAudioTracks(boost::assign::list_of(track));
+            getSequence()->removeAudioTracks({ track });
         }
     }
     getSequence()->Unbind(model::EVENT_REMOVE_VIDEO_TRACK,    &RemoveEmptyTracks::onVideoTracksRemoved,  this);

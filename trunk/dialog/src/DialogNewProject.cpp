@@ -314,7 +314,7 @@ void DialogNewProject::onFinish(wxWizardEvent& event)
         model::FolderPtr root = ::model::Project::get().getRoot();
 
         // Expand root immediately after opening the project
-        ProjectView::get().setOpenFolders(boost::assign::list_of(root));
+        ProjectView::get().setOpenFolders({ root });
 
         mFileAnalyzer->addNodesToProjectView();
 
@@ -545,7 +545,7 @@ void DialogNewProject::showFoundFilesInFolder()
     {
         if (!mFileAnalyzer)
         {
-            wxStrings paths = boost::assign::list_of(mFolderPath);
+            wxStrings paths = { mFolderPath };
             mFileAnalyzer = boost::make_shared<model::FileAnalyzer>(paths,this);
         }
         // else: Dialog canceled or FileAnalyzer already initialized by drag and drop

@@ -45,7 +45,7 @@ std::pair< RandomTempDirPtr, wxFileName > RenderTimeline(int lengthInS)
 void PlaybackRenderedTimeline(const wxFileName& path, pixel start, milliseconds t)
 {
     model::FolderPtr folder1 = ProjectViewAddFolder( "PlaybackRenderedTimeline" );
-    model::Files files1 = ProjectViewAddFiles( boost::assign::list_of(path), folder1 );
+    model::Files files1 = ProjectViewAddFiles({ path }, folder1);
     model::SequencePtr sequence1 = ProjectViewCreateSequence( folder1 );
     TimelineZoomIn(4);
     Play(start, t);

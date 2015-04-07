@@ -60,7 +60,7 @@ void Unlink(model::IClipPtr clip)
     ASSERT_NONZERO(clip->getLink()->getLink());
     util::thread::RunInMainAndWait([sequence,clip]()
     {
-        (new gui::timeline::command::UnlinkClips(getSequence(),boost::assign::list_of(clip)(clip->getLink())))->submit();
+        (new gui::timeline::command::UnlinkClips(getSequence(), { clip, clip->getLink() }))->submit();
     });
 }
 

@@ -84,7 +84,7 @@ struct IndexAutoFolderWork
                 if (isAborted()) { return; }
                 if (UtilVector<wxString>(mRemove).hasElement(nodename)) // Existing element. Do not remove
                 {
-                    UtilVector<wxString>(mRemove).removeElements(boost::assign::list_of(nodename));
+                    UtilVector<wxString>(mRemove).removeElements({ nodename });
                 }
                 else // New element. Add
                 {

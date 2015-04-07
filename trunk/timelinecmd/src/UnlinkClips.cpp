@@ -47,7 +47,7 @@ void UnlinkClips::initialize()
     {
         // Replace clip with unlinked close.
         // The 'false' ensures that the link is not restored in 'AClipEdit::replaceLinks'
-        replaceClip(clip, boost::assign::list_of(make_cloned<model::IClip>(clip)),false);
+        replaceClip(clip, { make_cloned<model::IClip>(clip) }, false);
     }
 }
 

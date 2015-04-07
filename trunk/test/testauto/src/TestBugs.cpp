@@ -358,7 +358,7 @@ void TestBugs::testAddNonexistentFileViaRedo()
     model::FolderPtr folder1 = ProjectViewAddFolder( sFolder1 );
 
     // Add file to folder
-    model::Files files1 = ProjectViewAddFiles( boost::assign::list_of(filepath), folder1 );
+    model::Files files1 = ProjectViewAddFiles({ filepath }, folder1);
     ASSERT_WATCHED_PATHS_COUNT(2);
 
     // Remove the file via 'Undo'
@@ -397,7 +397,7 @@ void TestBugs::testAddNonexistentFileViaUndo()
     model::FolderPtr folder1 = ProjectViewAddFolder( sFolder1 );
 
     // Add file to folder
-    model::Files files1 = ProjectViewAddFiles( boost::assign::list_of(filepath), folder1 );
+    model::Files files1 = ProjectViewAddFiles({ filepath }, folder1);
     ASSERT_WATCHED_PATHS_COUNT(2);
 
     // Remove the file via 'Delete'

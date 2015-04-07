@@ -233,7 +233,7 @@ void ExecuteDrop::initialize()
         // with the 'drops', not the 'drags'. Note that clips typically are part of both mDrags
         // AND mDrops. Replacing them first with empty clips here, and then later on with other
         // clips (when dropping, for instance) causes problems (unable to correctly map the links).
-        replaceClip(clip,boost::assign::list_of(model::EmptyClip::replace(clip)),false);
+        replaceClip(clip, { model::EmptyClip::replace(clip) }, false);
     }
 
     if (mShift)

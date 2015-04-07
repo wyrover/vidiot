@@ -51,7 +51,7 @@ model::FolderPtr ProjectViewAddAutoFolder( wxFileName path, model::FolderPtr par
     WaitForIdle;
     util::thread::RunInMainAndWait([parent]
     {
-        GetProjectView().select(boost::assign::list_of(parent));
+        GetProjectView().select({ parent });
         GetProjectView().onNewAutoFolder(parent);
     });
 
@@ -69,7 +69,7 @@ model::FolderPtr ProjectViewAddFolder( wxString name, model::FolderPtr parent )
     WaitForIdle;
     util::thread::RunInMainAndWait([parent]
     {
-        GetProjectView().select(boost::assign::list_of(parent));
+        GetProjectView().select({ parent });
         GetProjectView().onNewFolder(parent);
     });
 
@@ -87,7 +87,7 @@ model::SequencePtr ProjectViewAddSequence( wxString name, model::FolderPtr paren
     WaitForIdle;
     util::thread::RunInMainAndWait([parent]
     {
-        GetProjectView().select(boost::assign::list_of(parent));
+        GetProjectView().select({ parent });
         GetProjectView().onNewSequence(parent);
     });
 
@@ -104,7 +104,7 @@ model::SequencePtr ProjectViewCreateSequence( model::FolderPtr folder )
     WaitForIdle;
     util::thread::RunInMainAndWait([folder]
     {
-        GetProjectView().select(boost::assign::list_of(folder));
+        GetProjectView().select({ folder });
         GetProjectView().onCreateSequence();
     });
 
@@ -139,7 +139,7 @@ model::Files ProjectViewAddFiles( wxFileNames paths, model::FolderPtr parent )
     WaitForIdle;
     util::thread::RunInMainAndWait([parent]
     {
-        GetProjectView().select(boost::assign::list_of(parent));
+        GetProjectView().select({ parent });
     });
     wxStrings shortpaths;
     for ( wxFileName path : paths )
@@ -169,7 +169,7 @@ void ProjectViewRemove( model::NodePtr node )
 {
     util::thread::RunInMainAndWait([node]
     {
-        GetProjectView().select(boost::assign::list_of(node));
+        GetProjectView().select({ node });
         GetProjectView().onDelete();
     });
 }
@@ -267,7 +267,7 @@ void ProjectViewOpenTimelineForSequence(model::SequencePtr sequence)
 {
     util::thread::RunInMainAndWait([sequence]
     {
-        gui::ProjectView::get().select(boost::assign::list_of(boost::dynamic_pointer_cast<model::Node>(sequence)));
+        gui::ProjectView::get().select({ boost::dynamic_pointer_cast<model::Node>(sequence) });
         GetProjectView().onOpen();
     });
 }

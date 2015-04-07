@@ -49,7 +49,7 @@ void TestUiBugs::testDragAndDropFileLargerThanTimeline()
     file.SetFullName("Dawn - Another Day.mp3"); // long file
     ASSERT(file.FileExists());
 
-    model::Files files = ProjectViewAddFiles(boost::assign::list_of(file));
+    model::Files files = ProjectViewAddFiles({ file });
 
     DragFromProjectViewToTimeline(files.front(), getTimeline().GetScreenPosition() + wxPoint(5, VCenter(AudioTrack(0))));
     ASSERT_EQUALS(NumberOfVideoClipsInTrack(0), 7);

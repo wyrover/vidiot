@@ -39,7 +39,7 @@ void ExecuteOnAllFiles(wxString pathToFiles, boost::function<void()> action)
     {
         StartTest(path->getPath().GetFullName());
         model::FilePtr file = boost::make_shared<model::File>(path->getPath());
-        ExtendSequenceWithRepeatedClips( sequence, boost::assign::list_of(path), 1); // Note: Not via a command (thus, 'outside' the undo system)
+        ExtendSequenceWithRepeatedClips(sequence, { path }, 1); // Note: Not via a command (thus, 'outside' the undo system)
         ProjectViewOpenTimelineForSequence(sequence);
         ASSERT_EQUALS(NumberOfVideoClipsInTrack(0),1);
         ASSERT_EQUALS(NumberOfAudioClipsInTrack(0),1);
