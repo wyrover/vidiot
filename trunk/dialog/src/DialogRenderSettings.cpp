@@ -455,9 +455,7 @@ void DialogRenderSettings::changeAudioCodecInfo(model::render::AudioCodecPtr old
         {
             wxWindow* window = parameter->makeWidget(mAudioParameters,this);
             addOption(mAudioParameters,vSizer,parameter->getName(),window);
-            //mAudioParameterWidgets[model::render::AudioCodecParameterTypeConverter::mapToHumanReadibleString.right[parameter->getName()]] = window;
-            //mAudioParameterWidgets.insert(std::make_pair(model::render::AudioCodecParameterTypeConverter::mapToHumanReadibleString.right[parameter->getName()],window));
-            mAudioParameterWidgets.insert(std::make_pair(model::render::getAudioCodecIdFromHumanReadibleName(parameter->getName()),window));
+            mAudioParameterWidgets.insert(std::make_pair(static_cast<model::render::AudioCodecParameterType>(parameter->getIdAsInt()),window));
         }
         mAudioParameters->SetSizer(vSizer);
         mAudioParameters->Layout();
@@ -484,8 +482,7 @@ void DialogRenderSettings::changeVideoCodecInfo(model::render::VideoCodecPtr old
         {
             wxWindow* window = parameter->makeWidget(mVideoParameters,this);
             addOption(mVideoParameters,vSizer,parameter->getName(),window);
-            mVideoParameterWidgets.insert(std::make_pair(model::render::getVideoCodecIdFromHumanReadibleName(parameter->getName()),window));
-            //mVideoParameterWidgets[model::render::VideoCodecParameterTypeConverter::mapToHumanReadibleString.right[parameter->getName()]] = window;
+            mVideoParameterWidgets.insert(std::make_pair(static_cast<model::render::VideoCodecParameterType>(parameter->getIdAsInt()),window));
         }
         mVideoParameters->SetSizer(vSizer);
         mVideoParameters->Layout();

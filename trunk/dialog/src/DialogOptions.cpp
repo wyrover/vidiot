@@ -25,6 +25,7 @@
 #include "UtilFrameRate.h"
 #include "UtilInitAvcodec.h"
 #include "UtilLog.h"
+#include "UtilMap.h"
 #include "UtilWindow.h"
 
 namespace gui {
@@ -221,7 +222,7 @@ DialogOptions::DialogOptions(wxWindow* win)
         mSelectLogLevel = new EnumSelector<LogLevel>(mPanel, LogLevelConverter::mapToHumanReadibleString, LogLevelConverter::readConfigValue(Config::sPathLogLevel));
         addoption(_("Log level"), mSelectLogLevel);
 
-        mSelectLogLevelAvcodec = new EnumSelector<int>(mPanel, Avcodec::mapAvcodecLevels, Avcodec::mapAvcodecLevels.right.at(Config::ReadString(Config::sPathLogLevelAvcodec)));
+        mSelectLogLevelAvcodec = new EnumSelector<int>(mPanel, Avcodec::mapAvcodecLevels, UtilMap<int,wxString>(Avcodec::mapAvcodecLevels).reverseLookup(Config::ReadString(Config::sPathLogLevelAvcodec), Avcodec::getDefaultLogLevel()));
         addoption(_("Avcodec log level (requires restart)"), mSelectLogLevelAvcodec);
 
         mShowDebugInfoOnWidgets = new wxCheckBox(mPanel, wxID_ANY, _T(""));
@@ -264,7 +265,7 @@ DialogOptions::~DialogOptions()
         Config::WriteLong(      Config::sPathMakeSequenceEmptyClipLength, mMakeSequenceEmptyLength->GetValue());
         Config::WriteLong(      Config::sPathMakeSequencePrefixLength,    mMakeSequencePrefixLength->GetValue());
         Config::WriteString(    Config::sPathLogLevel,                    LogLevel_toString(mSelectLogLevel->getValue()).c_str());
-        Config::WriteString(    Config::sPathLogLevelAvcodec,             Avcodec::mapAvcodecLevels.left.at(mSelectLogLevelAvcodec->getValue()));
+        Config::WriteString(    Config::sPathLogLevelAvcodec,             Avcodec::mapAvcodecLevels[mSelectLogLevelAvcodec->getValue()]);
         Config::WriteBool(      Config::sPathShowDebugInfoOnWidgets,      mShowDebugInfoOnWidgets->IsChecked());
         Config::WriteBool(      Config::sPathDebugLogSequenceOnEdit,      mLogSequenceOnEdit->IsChecked());
         Config::WriteString(    Config::sPathDefaultFrameRate,            (FrameRate::getSupported()[mFrameRate->GetSelection()]).toString());

@@ -83,13 +83,11 @@ void checkBool(const wxString& path)
     if (e == ENUMNAME ## _MAX) { wxConfigBase::Get()->DeleteEntry(path); } \
 }
 
-void checkEnumFromMap(const wxString& path, const boost::bimap<int, wxString>& bimap)
+void checkEnumFromMap(const wxString& path, const std::map<int, wxString>& map)
 {
     wxString s = wxConfigBase::Get()->Read(path, "");
-    if (bimap.right.find(s) == bimap.right.end())
-    {
-        wxConfigBase::Get()->DeleteEntry(path);
-    }
+    for (auto kvp : map) { if (kvp.second == s) { return;} }
+    wxConfigBase::Get()->DeleteEntry(path);
 }
 
 // static
@@ -146,14 +144,14 @@ void Config::init(const wxString& applicationName, const wxString& vendorName, b
     setDefault(Config::sPathDefaultExtension, "avi");
     setDefault(Config::sPathDefaultStillImageLength, 150);
     setDefault(Config::sPathDefaultTransitionLength, 20); // Divisible by 4 for automated tests
-    setDefault(Config::sPathDefaultVideoAlignment, model::VideoAlignment_toString(model::VideoAlignmentCenter).c_str());
+    setDefault(Config::sPathDefaultVideoAlignment, model::VideoAlignment_toString(model::VideoAlignmentCenter));
     setDefault(Config::sPathDefaultVideoHeight, 720);
-    setDefault(Config::sPathDefaultVideoScaling, model::VideoScaling_toString(model::VideoScalingFitToFill).c_str());
+    setDefault(Config::sPathDefaultVideoScaling, model::VideoScaling_toString(model::VideoScalingFitToFill));
     setDefault(Config::sPathDefaultVideoWidth, 1280);
     setDefault(Config::sPathLastOpened, "");
-    setDefault(Config::sPathLogLevel, LogLevel_toString(LogWarning).c_str());
-    setDefault(Config::sPathDefaultNewProjectType, model::DefaultNewProjectWizardStart_toString(model::DefaultNewProjectWizardStartFolder).c_str());
-    setDefault(Config::sPathLogLevelAvcodec, Avcodec::getDefaultLogLevel());
+    setDefault(Config::sPathLogLevel, LogLevel_toString(LogWarning));
+    setDefault(Config::sPathDefaultNewProjectType, model::DefaultNewProjectWizardStart_toString(model::DefaultNewProjectWizardStartFolder));
+    setDefault(Config::sPathLogLevelAvcodec, Avcodec::getDefaultLogLevelString());
     setDefault(Config::sPathMakeSequenceEmptyClipLength, 0);
     setDefault(Config::sPathMakeSequencePrefixLength, 14);
     setDefault(Config::sPathMarkerBeginAddition, 0);
@@ -175,7 +173,7 @@ void Config::init(const wxString& applicationName, const wxString& vendorName, b
 
     if (inCxxTestMode)
     {
-        WriteString(Config::sPathDefaultNewProjectType, model::DefaultNewProjectWizardStart_toString(model::DefaultNewProjectWizardStartNone).c_str());
+        WriteString(Config::sPathDefaultNewProjectType, model::DefaultNewProjectWizardStart_toString(model::DefaultNewProjectWizardStartNone));
     }
 
     // Special cases checking and default handling

@@ -60,8 +60,6 @@ extern "C" {
 #include <boost/archive/xml_iarchive.hpp>
 #include <boost/archive/xml_oarchive.hpp>
 #include <boost/assert.hpp>
-#include <boost/assign/list_of.hpp>
-#include <boost/bimap.hpp>
 #include <boost/bind.hpp>
 #include <boost/config.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>

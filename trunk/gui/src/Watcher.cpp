@@ -306,7 +306,7 @@ void Watcher::unwatch(const model::NodePtr& node)
         {
             wxArrayString watchedPaths;
             int nWatched = mWatcher->GetWatchedPaths(&watchedPaths);
-            mWatcher->RemoveTree(wxFileName(obsoleteWatch,""));
+            mWatcher->RemoveTree(wxFileName(obsoleteWatch,"")); // todo often crash here in module test (wxdir not opened yet)
 
             if (mWatcher->GetWatchedPaths(&watchedPaths) == nWatched)
             {

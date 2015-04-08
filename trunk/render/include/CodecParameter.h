@@ -140,6 +140,11 @@ public:
         return getHumanReadibleName(mId);
     }
 
+    int getIdAsInt() const override
+    {
+        return mId;
+    }
+
 protected:
 
     wxWindow* mWindow;
@@ -252,7 +257,7 @@ private:
     ICodecParameterChangeListener* mChangeListener;
 };
 
-typedef boost::bimap<int,wxString> MappingType;
+typedef std::map<int,wxString> MappingType;
 template <typename MOSTDERIVED, typename IDTYPE, IDTYPE ID, MappingType& NAMEMAPPING >
 struct CodecParameterEnum
     :   public CodecParameter<MOSTDERIVED,IDTYPE,int>
@@ -260,10 +265,10 @@ struct CodecParameterEnum
     CodecParameterEnum()
         :   CodecParameter<MOSTDERIVED,IDTYPE,int>(ID)
     {
-        for ( MappingType::left_reference item : NAMEMAPPING.left )
+        for ( auto kvp : NAMEMAPPING )
         {
-            if (item.first < this->getMinimum()) { this->setMinimum(item.first); }
-            if (item.first > this->getMaximum()) { this->setMaximum(item.first); }
+            if (kvp.first < this->getMinimum()) { this->setMinimum(kvp.first); }
+            if (kvp.first > this->getMaximum()) { this->setMaximum(kvp.first); }
         }
     }
 

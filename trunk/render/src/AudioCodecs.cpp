@@ -27,14 +27,13 @@ namespace model { namespace render {
 AudioCodecMap AudioCodecs::sAudioCodecs;
 
 // static
-boost::bimap<int,wxString> AudioCodecs::mapToName;
+std::map<int,wxString> AudioCodecs::mapToName;
 
 // static
 void AudioCodecs::add(const wxString& name, const AudioCodec& codec)
 {
     sAudioCodecs[codec.getId()] = boost::make_shared<AudioCodec>(codec);
-    typedef boost::bimap<int, wxString> bimap;
-    mapToName.insert( bimap::value_type(codec.getId(), name) );
+    mapToName[codec.getId()] = name;
 }
 
 // static

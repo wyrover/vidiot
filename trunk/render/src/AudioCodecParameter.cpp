@@ -23,19 +23,14 @@ namespace model { namespace render {
 
 IMPLEMENTENUM(AudioCodecParameterType);
 
-boost::bimap<AudioCodecParameterType, wxString> AudioCodecParameterTypeConverter::mapToHumanReadibleString = boost::assign::list_of<boost::bimap<AudioCodecParameterType, wxString>::relation >
-    (AudioBitRate, _("Bit rate"));
+std::map<AudioCodecParameterType, wxString> AudioCodecParameterTypeConverter::mapToHumanReadibleString = {
+    { AudioBitRate, _("Bit rate") },
+};
 
 wxString getHumanReadibleName(const AudioCodecParameterType& id)
 {
-    ASSERT(AudioCodecParameterTypeConverter::mapToHumanReadibleString.left.find(id) != AudioCodecParameterTypeConverter::mapToHumanReadibleString.left.end())(id);
-    return (AudioCodecParameterTypeConverter::mapToHumanReadibleString.left.find(id))->second;
-}
-
-AudioCodecParameterType getAudioCodecIdFromHumanReadibleName(const wxString& name)
-{
-    ASSERT(AudioCodecParameterTypeConverter::mapToHumanReadibleString.right.find(name) != AudioCodecParameterTypeConverter::mapToHumanReadibleString.right.end())(name);
-    return (AudioCodecParameterTypeConverter::mapToHumanReadibleString.right.find(name))->second;
+    ASSERT(AudioCodecParameterTypeConverter::mapToHumanReadibleString.find(id) != AudioCodecParameterTypeConverter::mapToHumanReadibleString.end())(id);
+    return (AudioCodecParameterTypeConverter::mapToHumanReadibleString.find(id))->second;
 }
 
 void AudioCodecParameterBitrate::set(AVCodecContext* codec)
