@@ -28,7 +28,7 @@ public:
     static void initialize();
     static void add(const wxString& name, const VideoCodec& codec);
 
-    static boost::bimap<int,wxString> mapToName;
+    static std::map<int,wxString> mapToName;
 
     static VideoCodecPtr getDefault();
     static std::vector<AVCodecID> all();

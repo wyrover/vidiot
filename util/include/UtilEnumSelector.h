@@ -25,13 +25,13 @@ class EnumSelector
     : public wxChoice
 {
 public:
-    typedef boost::bimap<ITEMTYPE,wxString> Mapping;
+    typedef std::map<ITEMTYPE,wxString> Mapping;
     EnumSelector(wxWindow* parent, const Mapping& mapping, const ITEMTYPE& defaultValue )
         :   wxChoice(parent, wxID_ANY)
         ,   mMapping(mapping)
     {
         int index = 0;
-        for ( typename Mapping::left_reference entry : mMapping.left )
+        for ( auto entry : mMapping )
         {
             Append(entry.second);
             mSelectionToItem[index] = entry.first;

@@ -78,8 +78,6 @@ File::File()
     VAR_DEBUG(this);
 }
 
-// todo replace boost assign listof with initializer lists
-
 File::File(const wxFileName& path, int buffersize)
     : IFile()
     , Node()

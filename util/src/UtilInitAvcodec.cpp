@@ -21,14 +21,16 @@
 #include "UtilEnum.h"
 #include "UtilLog.h"
 #include "UtilLogAvcodec.h"
+#include "UtilMap.h"
 
-boost::bimap<int, wxString> Avcodec::mapAvcodecLevels = boost::assign::list_of<boost::bimap<int, wxString>::relation >
-            (AV_LOG_QUIET,     _("None"))
-            (AV_LOG_FATAL,     _("Fatal"))
-            (AV_LOG_ERROR,     _("Error"))
-            (AV_LOG_WARNING,   _("Warning"))
-            (AV_LOG_INFO,      _("Info"))
-            (AV_LOG_VERBOSE,   _("Verbose"));
+std::map<int, wxString> Avcodec::mapAvcodecLevels = {
+    { AV_LOG_QUIET, _("None") },
+    { AV_LOG_FATAL, _("Fatal") },
+    { AV_LOG_ERROR, _("Error") },
+    { AV_LOG_WARNING, _("Warning") },
+    { AV_LOG_INFO, _("Info") },
+    { AV_LOG_VERBOSE, _("Verbose") },
+};
 
 //////////////////////////////////////////////////////////////////////////
 // MEMBERS
@@ -66,33 +68,26 @@ boost::mutex Avcodec::sMutex;
 //////////////////////////////////////////////////////////////////////////
 
 //static
-wxString Avcodec::getDefaultLogLevel()
+int Avcodec::getDefaultLogLevel()
 {
-    return mapAvcodecLevels.left.find(AV_LOG_ERROR)->second;
+    return AV_LOG_ERROR;
+}
+
+//static
+wxString Avcodec::getDefaultLogLevelString()
+{
+    return mapAvcodecLevels.find(AV_LOG_ERROR)->second;
 }
 
 //static
 wxStrings Avcodec::getLogLevels()
 {
-    wxStrings result;
-
-    for ( auto value : mapAvcodecLevels.right )
-    {
-        result.push_back(value.first);
-    }
-    return result;
+	return UtilMap<int,wxString>(mapAvcodecLevels).values();
 }
 
 void Avcodec::configureLog()
 {
-    for ( auto value : mapAvcodecLevels.right )
-    {
-        if (value.first.IsSameAs(Config::ReadString(Config::sPathLogLevelAvcodec)))
-        {
-            sLevel = value.second;
-            break;
-        }
-    }
+	sLevel = UtilMap<int,wxString>(mapAvcodecLevels).reverseLookup(Config::ReadString(Config::sPathLogLevelAvcodec),AV_LOG_ERROR);
     av_log_set_level(sLevel); // Only required for default avcodec log method
     av_log_set_callback(Avcodec::log);
 }

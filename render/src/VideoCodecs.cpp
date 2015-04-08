@@ -27,14 +27,13 @@ namespace model { namespace render {
 VideoCodecMap VideoCodecs::sVideoCodecs;
 
 // static
-boost::bimap<int,wxString> VideoCodecs::mapToName;
+std::map<int,wxString> VideoCodecs::mapToName;
 
 // static
 void VideoCodecs::add(const wxString& name, const VideoCodec& codec)
 {
     sVideoCodecs[codec.getId()] = boost::make_shared<VideoCodec>(codec);
-    typedef boost::bimap<int, wxString> bimap;
-    mapToName.insert( bimap::value_type(codec.getId(), name) );
+    mapToName[codec.getId()] = name;
 }
 
 // static

@@ -25,23 +25,18 @@ IMPLEMENTENUM(VideoCodecParameterType);
 
 // Check mpegvideo_enc.c for all parameters and their bounds and dependencies...
 
-boost::bimap<VideoCodecParameterType, wxString> VideoCodecParameterTypeConverter::mapToHumanReadibleString = boost::assign::list_of<boost::bimap<VideoCodecParameterType, wxString>::relation >
-    (BitRate, _("Bit rate"))
-    (BitRateTolerance, _("Bit rate tolerance"))
-    (GopSize, _("Gop size (max frame distance between 2 I-frames)"))
-    (BFrames, _("B Frames"))
-    (MacroBlockDecision, _("Macro block decision"));
+std::map<VideoCodecParameterType, wxString> VideoCodecParameterTypeConverter::mapToHumanReadibleString = {
+    { BitRate, _("Bit rate") },
+    { BitRateTolerance, _("Bit rate tolerance") },
+    { GopSize, _("Gop size (max frame distance between 2 I-frames)") },
+    { BFrames, _("B Frames") },
+    { MacroBlockDecision, _("Macro block decision") },
+};
 
 wxString getHumanReadibleName(const VideoCodecParameterType& id)
 {
-    ASSERT(VideoCodecParameterTypeConverter::mapToHumanReadibleString.left.find(id) != VideoCodecParameterTypeConverter::mapToHumanReadibleString.left.end())(id);
-    return (VideoCodecParameterTypeConverter::mapToHumanReadibleString.left.find(id))->second;
-}
-
-VideoCodecParameterType getVideoCodecIdFromHumanReadibleName(const wxString& name)
-{
-    ASSERT(VideoCodecParameterTypeConverter::mapToHumanReadibleString.right.find(name) != VideoCodecParameterTypeConverter::mapToHumanReadibleString.right.end())(name);
-    return (VideoCodecParameterTypeConverter::mapToHumanReadibleString.right.find(name))->second;
+    ASSERT(VideoCodecParameterTypeConverter::mapToHumanReadibleString.find(id) != VideoCodecParameterTypeConverter::mapToHumanReadibleString.end())(id);
+    return (VideoCodecParameterTypeConverter::mapToHumanReadibleString.find(id))->second;
 }
 
 void VideoCodecParameterBitrate::set(AVCodecContext* codec)
@@ -59,10 +54,11 @@ void VideoCodecParameterBFrames::set(AVCodecContext* codec)
     codec->max_b_frames = getValue();
 };
 
-boost::bimap<int,wxString> MacroBlockDecisionEnumMapping = boost::assign::list_of<boost::bimap<int, wxString>::relation >
+std::map<int, wxString> MacroBlockDecisionEnumMapping = {
     //(FF_MB_DECISION_SIMPLE, _("Simple - use mb_cmp (Not supported yet)"))
-    (FF_MB_DECISION_BITS,   _("Least bits"))
-    (FF_MB_DECISION_RD,     _("Rate distortion"));
+    { FF_MB_DECISION_BITS, _("Least bits") },
+    { FF_MB_DECISION_RD, _("Rate distortion") }
+};
 
 void VideoCodecParameterMacroBlockDecision::set(AVCodecContext* codec)
 {
