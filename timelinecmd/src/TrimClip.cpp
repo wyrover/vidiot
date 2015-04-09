@@ -119,6 +119,12 @@ void TrimClip::update(pts diff, bool shift)
     }
 }
 
+void TrimClip::setCursorPositionAfter(pts position)
+{
+    VAR_DEBUG(position);
+    mCursorPositionAfter = position;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // ACLIPEDIT INTERFACE
 //////////////////////////////////////////////////////////////////////////
@@ -343,9 +349,9 @@ void TrimClip::removeTransition()
     {
         model::IClipPtr result = clip;
         // Do not use mTrim here. That is initialized AFTER this method!
-        if (!mShift && 
-            transition && 
-            transition->getLeft() && 
+        if (!mShift &&
+            transition &&
+            transition->getLeft() &&
             transition->getRight())
         {
             ASSERT_MORE_THAN_EQUALS_ZERO(*(transition->getLeft()));

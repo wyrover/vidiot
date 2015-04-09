@@ -29,72 +29,6 @@
 
 namespace gui { namespace timeline { namespace command {
 
-struct MoveCursor
-    :   public ATimelineCommand
-{
-    MoveCursor(const model::SequencePtr& sequence, pts position)
-        :   ATimelineCommand(sequence)
-        ,   mOldPosition(getTimeline().getCursor().getLogicalPosition())
-        ,   mNewPosition(position)
-    {}
-
-    bool Do()
-    {
-        getTimeline().getCursor().setLogicalPosition(mNewPosition);
-        return true;
-    }
-
-    bool Undo()
-    {
-        getTimeline().getCursor().setLogicalPosition(mOldPosition);
-        return true;
-    }
-
-private:
-    pts mOldPosition;
-    pts mNewPosition;
-};
-
-struct BeginTransaction
-    :   public ATimelineCommand
-{
-    BeginTransaction(const model::SequencePtr& sequence)
-        :   ATimelineCommand(sequence)
-    {}
-
-    bool Do()
-    {
-        getTimeline().beginTransaction();
-        return true;
-    }
-
-    bool Undo()
-    {
-        getTimeline().endTransaction();
-        return true;
-    }
-};
-
-struct EndTransaction
-    :   public ATimelineCommand
-{
-    EndTransaction(const model::SequencePtr& sequence)
-        :   ATimelineCommand(sequence)
-    {}
-
-    bool Do()
-    {
-        getTimeline().endTransaction();
-        getTimeline().Refresh(false);
-        return true;
-    }
-
-    bool Undo()
-    {
-        getTimeline().beginTransaction();
-        return true;
-    }
-};
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
@@ -169,20 +103,11 @@ SplitAtCursorAndTrim::SplitAtCursorAndTrim(const model::SequencePtr& sequence, b
             pts trim = mBackwards ? mPosition - left : mPosition - right;
             getTimeline().beginTransaction();
             cmd->update(trim,true);
-            if (cmd->getDiff() != 0)
+            mPossible = (cmd->getDiff() != 0);
+            if (isPossible())
             {
-                mPossible = true;
-                add(new BeginTransaction(sequence));
                 add(cmd);
-                if (mBackwards)
-                {
-                    add(new MoveCursor(sequence, left));
-                }
-                else
-                {
-                    add(new MoveCursor(sequence, mPosition)); // Without this statement, playback immediately after the key press would result in black video.
-                }
-                add(new EndTransaction(sequence)); // Added to avoid temporarily showing the wrong frame between the Trim::update() and the submission of the MoveCursor command.
+                cmd->setCursorPositionAfter(mBackwards ? left : mPosition);
             }
             else
             {

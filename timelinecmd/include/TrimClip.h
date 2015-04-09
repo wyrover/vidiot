@@ -52,6 +52,10 @@ public:
     /// \note The position may be changed between differnet updates. Not required for 'normal' (mouse operated) trimming operations, but required for changing a clip's length from the 'clip details' view.
     void update(pts diff, bool shift);
 
+    /// Set the cursor position to be applied after the trim has been executed.
+    /// \param position new cursor position after trimming.
+    void setCursorPositionAfter(pts position);
+
     virtual ~TrimClip();
 
     //////////////////////////////////////////////////////////////////////////
