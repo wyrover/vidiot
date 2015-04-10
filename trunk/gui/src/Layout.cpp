@@ -67,7 +67,7 @@ Layout::Layout()
 , CursorPen                     (*wxRED, 1)
 , DropAreaPen                   (*wxYELLOW, 1)
 , DropAreaBrush                 (*wxYELLOW_BRUSH)
-, DividerBackgroundColour       (wxColour(132,132,132))  
+, DividerBackgroundColour       (wxColour(132,132,132))
 , DividerPen                    (wxColour(64,64,64),1)
 , DividerBrush                  (DividerBackgroundColour,wxBRUSHSTYLE_SOLID)
 , ClipBorderColour              (32,32,32)
@@ -110,7 +110,7 @@ Layout::Layout()
 
 Layout::~Layout()
 {
-    sCurrent = 0;
+    sCurrent = 0; // todo got crash in linux auto test when running succesfully all tests in one run, crash upon cleanup of wxStockGDI::Cleanall. Probably caused by this static object. To be replaced with 'utilsingleinstance' and then create upon creating window.
 }
 
 // static
