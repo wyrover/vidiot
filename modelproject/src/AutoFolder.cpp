@@ -225,35 +225,6 @@ void AutoFolder::onWorkDone(worker::WorkDoneEvent& event)
 
 void AutoFolder::handleWorkDone(boost::shared_ptr<IndexAutoFolderWork> work, bool immediately)
 {
-    if (!work->mAdd.empty())
-    {
-        addChildren(work->mAdd); // Add all at once, for better performance (less UI updates)
-        for ( NodePtr node : work->mAdd )
-        {
-            AutoFolderPtr autoFolder = boost::dynamic_pointer_cast<AutoFolder>(node);
-            if (autoFolder)
-            {
-                autoFolder->check(immediately);
-            }
-        }
-    }
-
-    if (!work->mRemove.empty())
-    {
-        model::NodePtrs nodes;
-        for ( wxString name : work->mRemove )
-        {
-            for ( NodePtr child : getChildren() )
-            {
-                if (child->getName().IsSameAs(name))
-                {
-                    nodes.push_back(child);
-                    break;
-                }
-            }
-        }
-        removeChildren(nodes);// All at once, for better performance (less UI updates)
-    }
     if (!work->mDirExists)
     {
         // Directory was removed. Remove the node also.
@@ -272,6 +243,36 @@ void AutoFolder::handleWorkDone(boost::shared_ptr<IndexAutoFolderWork> work, boo
     }
     else
     {
+        if (!work->mAdd.empty())
+        {
+            addChildren(work->mAdd); // Add all at once, for better performance (less UI updates)
+            for ( NodePtr node : work->mAdd )
+            {
+                AutoFolderPtr autoFolder = boost::dynamic_pointer_cast<AutoFolder>(node);
+                if (autoFolder)
+                {
+                    autoFolder->check(immediately);
+                }
+            }
+        }
+
+        if (!work->mRemove.empty())
+        {
+            model::NodePtrs nodes;
+            for ( wxString name : work->mRemove )
+            {
+                for ( NodePtr child : getChildren() )
+                {
+                    if (child->getName().IsSameAs(name))
+                    {
+                        nodes.push_back(child);
+                        break;
+                    }
+                }
+            }
+            removeChildren(nodes);// All at once, for better performance (less UI updates)
+        }
+
         if (mUpdateAgain)
         {
             check();
