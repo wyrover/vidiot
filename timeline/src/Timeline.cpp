@@ -594,6 +594,12 @@ void Timeline::beginTransaction()
 void Timeline::endTransaction()
 {
     mTransaction = false;
+    // See [#166]: First playback after trim (or shift-delete) shows only black video sometimes.
+    // This was caused by the playback position not being reset (normally
+    // done in AClipEdit::Do()/Undo() when changing the timeline. However,
+    // In case of a 'transacted' edit (multiple edits to be 'viewed as one
+    // edit', this was not done.
+    modelChanged();
 }
 
 //////////////////////////////////////////////////////////////////////////
