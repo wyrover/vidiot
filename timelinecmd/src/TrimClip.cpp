@@ -55,7 +55,7 @@ TrimClip::TrimClip(const model::SequencePtr& sequence, const model::IClipPtr& cl
     ,   mCursorPositionBefore(0)
     ,   mCursorPositionAfter(0)
 {
-    VAR_INFO(this)(mClip)(mTransition);
+    VAR_INFO(this)(mOriginalClip)(mOriginalLink)(mTransition);
     mCommandName = _("Adjust length");
     ASSERT(!mOriginalClip->isA<model::EmptyClip>());
 }
