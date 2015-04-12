@@ -23,13 +23,14 @@
 #include "ProjectEvent.h"
 #include "NodeEvent.h"
 #include "UtilLog.h"
+#include "UtilLogBoost.h"
 #include "UtilLogStl.h"
 #include "UtilLogWxwidgets.h"
 #include "UtilPath.h"
 #include "UtilVector.h"
 #include "Window.h"
 
-namespace gui {
+namespace gui { // todo move to model file FileWatcher
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
@@ -191,12 +192,14 @@ boost::optional<wxString> requiredWatchPath(const model::NodePtr& node)
 
     wxString result(util::path::toPath(path));
     ASSERT(!result.IsSameAs(""));
+    ASSERT(!wxEndsWithPathSeparator(result));
     return boost::optional<wxString>(result);
 }
 
 void Watcher::watch(const model::NodePtr& node)
 {
     boost::optional<wxString> requiresWatch = requiredWatchPath(node);
+    VAR_DEBUG(requiresWatch);
     if (!requiresWatch)
     {
         // The node itselves does not need watching, but maybe it's children do.
@@ -214,7 +217,7 @@ void Watcher::watch(const model::NodePtr& node)
         wxString alreadyWatchedPath = kv.first;
         bool isWatched = util::path::equals(alreadyWatchedPath, toBeWatched);
         bool isParentWatched = util::path::isParentOf(alreadyWatchedPath, toBeWatched );
-        if (isWatched ||  isParentWatched)
+        if (isWatched || isParentWatched)
         {
             mWatches[alreadyWatchedPath].insert(node); // This folder, or one of its parents is already watched. As long as this node is present, don't remove that watch
             return;
@@ -222,61 +225,19 @@ void Watcher::watch(const model::NodePtr& node)
     }
 
     ASSERT(mWatches.find(toBeWatched) == mWatches.end()); // The required watch path is not watched yet. Nor is one of its parents.
-
-    // Check if a child folder of the new folder was already watched. If so, that watch is replaced by the new parent dir watch.
-    NodeSet nodesToBeTransferred;
-    wxStrings watchesToBeRemoved;
-    for ( MapFolderToNodes::value_type kv : mWatches )
-    {
-        if (util::path::isParentOf(toBeWatched, kv.first ))
-        {
-            // This is a child dir watch. All nodes in that watch are now covered by the parent folder watch.
-            watchesToBeRemoved.push_back(kv.first);
-            nodesToBeTransferred.insert(kv.second.begin(),kv.second.end());
-        }
-    }
-
-    NodeSet newset;
-    newset.insert(node);
-    newset.insert(nodesToBeTransferred.begin(),nodesToBeTransferred.end());
-    mWatches[toBeWatched] = newset;
-    for ( wxString obsoleteWatch : watchesToBeRemoved )
-    {
-        mWatches.erase(obsoleteWatch);
-        mWatcher->RemoveTree(wxFileName(obsoleteWatch,""));
-    }
-
-    // Start watching the new folder
-    VAR_DEBUG(mWatches);
-    if (!mWatcher)
-    {
-        start();
-    }
-
-    wxArrayString watchedPaths;
-    int nWatched = mWatcher->GetWatchedPaths(&watchedPaths);
-    mWatcher->AddTree(wxFileName(toBeWatched + "/",""));
-
-    if (mWatcher->GetWatchedPaths(&watchedPaths) == nWatched)
-    {
-        // Adding the watch failed (using return value of AddTree does not work)
-        VAR_WARNING(toBeWatched);
-        mWatches.erase(toBeWatched); // If it fails, then silently ignore instead of crashing (happens too often), unfortunately without clear cause).
-        stop();
-        start();
-    }
-#ifdef _MSC_VER
-    ASSERT_MORE_THAN_EQUALS(mWatcher->GetWatchedPathsCount(), static_cast<int>(mWatches.size())); // Note that sometimes both 'folder' and 'folder/' are added.
-    //      Under GTK, often adding the watch fails (no space left on device).
-    //      Err on the safe side (application still works, just no automated
-    //      projectview updates).
-#endif
+    mWatches[toBeWatched] = { node }; // Watch new path
+    // Original code used mWatcher->Remove/RemoveTree, but that caused too much errors.
+    // (Quite often crashes somewhere in handling - late - notifications from the file systems,
+    // both on Linux and Windows).
+    stop();
+    start();
     VAR_DEBUG(*this);
 }
 
 void Watcher::unwatch(const model::NodePtr& node)
 {
     boost::optional<wxString> requiresWatch = requiredWatchPath(node);
+    VAR_DEBUG(requiresWatch);
     if (!requiresWatch)
     {
         // The node itselves does not need watching, but maybe it's children do.
@@ -298,38 +259,15 @@ void Watcher::unwatch(const model::NodePtr& node)
     ASSERT_EQUALS(mWatches[obsoleteWatch].count(node),1);
 
     mWatches[obsoleteWatch].erase(node);
-
     if (mWatches[obsoleteWatch].empty())
     {
         mWatches.erase(obsoleteWatch);
-        if (mWatcher)
-        {
-            wxArrayString watchedPaths;
-            int nWatched = mWatcher->GetWatchedPaths(&watchedPaths);
-            mWatcher->RemoveTree(wxFileName(obsoleteWatch,"")); // todo often crash here in module test on Linux (wxdir not opened yet)
-
-            if (mWatcher->GetWatchedPaths(&watchedPaths) == nWatched)
-            {
-                // Removing the watch failed (using return value of RemoveTree does not work)
-                VAR_WARNING(obsoleteWatch);
-                stop();
-                start();
-            }
-            else
-            {
-#ifdef _MSC_VER
-                ASSERT_MORE_THAN_EQUALS(mWatcher->GetWatchedPathsCount(), static_cast<int>(mWatches.size())); // Note that sometimes both 'folder' and 'folder/' are added.
-                //      Under GTK, often adding the watch fails (no space left on device).
-                //      Err on the safe side (application still works, just no automated
-                //      projectview updates).
-#endif
-                if (mWatches.empty())
-                {
-                    stop();
-                }
-            }
-        }
     }
+    // Original code used mWatcher->Remove/RemoveTree, but that caused too much errors.
+    // (Quite often crashes somewhere in handling - late - notifications from the file systems,
+    // both on Linux and Windows).
+    stop();
+    start();
     VAR_DEBUG(*this);
 }
 
@@ -348,10 +286,10 @@ void Watcher::start()
     ASSERT(!mWatcher);
     mWatcher = new wxFileSystemWatcher();
     mWatcher->Bind(wxEVT_FSWATCHER, &Watcher::onChange, this);
-    VAR_DEBUG(*this);
+    VAR_DEBUG(*this)(mWatches);
     for ( MapFolderToNodes::value_type kv : mWatches )
     {
-        mWatcher->AddTree(kv.first);
+        mWatcher->Add(wxFileName(kv.first,""));
     }
 }
 
