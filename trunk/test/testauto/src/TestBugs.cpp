@@ -347,10 +347,8 @@ void TestBugs::testAddNonexistentFileViaRedo()
 
     // Create temp dir with temp file
     RandomTempDirPtr tempDir = boost::make_shared<RandomTempDir>();
-    model::IPaths inputfiles = getListOfInputPaths();
-    wxString aviFileName = inputfiles.front()->getPath().GetLongPath();
     wxFileName filepath(tempDir->getFileName().GetLongPath(),"file","avi");
-    bool copyok = wxCopyFile( aviFileName, filepath.GetLongPath(), false );
+    bool copyok = wxCopyFile( getListOfInputPaths().front()->getPath().GetLongPath(), filepath.GetLongPath(), false );
     ASSERT(copyok);
 
     // Add folder to project view
