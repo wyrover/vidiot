@@ -292,3 +292,14 @@ std::ostream& operator<<(std::ostream& os, const wxGraphicsContext& obj)
         << obj.GetAntialiasMode()           ;
     return os;
 }
+
+std::ostream& operator<<(std::ostream& os, const wxArrayString& obj)
+{
+    os << '{';
+    for (auto s : obj)
+    {
+        os << s << ' ';
+    }
+    os  << '}';
+    return os;
+}
