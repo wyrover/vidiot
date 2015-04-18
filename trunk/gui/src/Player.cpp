@@ -288,12 +288,13 @@ void Player::onSpeed(wxCommandEvent& event)
 
     wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
 
-    mSpeedSlider = new wxSlider(mSpeedSliderFrame, wxID_ANY, VideoDisplay::sDefaultSpeed, VideoDisplay::sMinimumSpeed, VideoDisplay::sMaximumSpeed, wxDefaultPosition, wxDefaultSize, wxSL_VERTICAL | wxSL_INVERSE);
+    mSpeedSlider = new wxSlider(mSpeedSliderFrame, wxID_ANY, mDisplay->getSpeed(), VideoDisplay::sMinimumSpeed, VideoDisplay::sMaximumSpeed, wxDefaultPosition, wxDefaultSize, wxSL_VERTICAL | wxSL_INVERSE);
     sizer->Add(new wxStaticText(mSpeedSliderFrame,wxID_ANY, wxString::Format("%d", VideoDisplay::sMaximumSpeed)), wxSizerFlags(0).Center());
     sizer->Add(mSpeedSlider, wxSizerFlags(1).Expand().Bottom().Center());
     sizer->Add(new wxStaticText(mSpeedSliderFrame,wxID_ANY, wxString::Format("%d", VideoDisplay::sMinimumSpeed)), wxSizerFlags(0).Center());
 
     mSpeedSliderFrame->SetSizerAndFit(sizer);
+    mSpeedSliderFrame->SetSize(wxSize(40,160)); // todo test windows
 
     wxPoint pos = mSpeedButton->GetScreenPosition();
     wxSize buttonSize = mSpeedButton->GetSize();
