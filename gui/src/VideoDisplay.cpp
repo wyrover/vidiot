@@ -81,6 +81,8 @@ VideoDisplay::VideoDisplay(wxWindow *parent, model::SequencePtr sequence)
     , mAudioSampleRate(model::Properties::get().getAudioSampleRate())
     , mSkipFrames(0)
     , mSpeed(sDefaultSpeed)
+    , mSoundTouchLatency(-1)
+    , mSpeedFactor(1.0)
 {
     VAR_DEBUG(this);
 
@@ -127,6 +129,7 @@ void VideoDisplay::play()
         mAbortThreads = false;
 
         // SoundTouch must be initialized before starting the audio buffer thread
+        mSpeedFactor = static_cast<double>(sDefaultSpeed) / static_cast<double>(mSpeed);
         mSoundTouch.setSampleRate(mAudioSampleRate);
         mSoundTouch.setChannels(mNumberOfAudioChannels);
         mSoundTouch.setTempo(1.0);
@@ -137,6 +140,11 @@ void VideoDisplay::play()
         mSoundTouch.setSetting(SETTING_SEQUENCE_MS, 40);    // Optimize for speech
         mSoundTouch.setSetting(SETTING_SEEKWINDOW_MS, 15);  // Optimize for speech
         mSoundTouch.setSetting(SETTING_OVERLAP_MS, 8);      // Optimize for speech
+        mSoundTouchLatency = -1;
+
+        // Used for determining inter frame sleep time. Is used for the buffered
+        // audio packets and is therefore initialized before starting the thread.
+        mStartPts = (mCurrentVideoFrame ? mCurrentVideoFrame->getPts() : 0);
 
         // Start buffering ASAP
         try
@@ -149,9 +157,7 @@ void VideoDisplay::play()
             FATAL(boost::diagnostic_information(e));
         }
 
-        mStartTime = 0;     // This blocks displaying of video until signaled by the audio thread
         mAudioLatency = 0;
-
         mCurrentAudioChunk.reset();
 
         unsigned long bufferSize = paFramesPerBufferUnspecified;
@@ -176,11 +182,10 @@ void VideoDisplay::play()
         PaError err = Pa_OpenDefaultStream( &mAudioOutputStream, 0, mNumberOfAudioChannels, paInt16, mAudioSampleRate, bufferSize, portaudio_callback, this );
         if (!verify(err, _("Opening audio stream failed:"))) { return; }
 
+        mStartTime = Pa_GetStreamTime(mAudioOutputStream);
+
         err = Pa_StartStream( mAudioOutputStream );
         if (!verify(err, _("Starting audio stream failed:"))) { return; }
-
-        mStartTime = Pa_GetStreamTime(mAudioOutputStream);
-        mStartPts = (mCurrentVideoFrame ? mCurrentVideoFrame->getPts() : 0); // Used for determining inter frame sleep time
 
         showNextFrame();
 
@@ -281,9 +286,9 @@ void VideoDisplay::setSpeed(int speed)
     ASSERT(wxThread::IsMain());
     bool wasPlaying = mPlaying;
     mSpeed = speed;
-#ifdef __GNUC__
-        mSpeed = sDefaultSpeed;
-#endif
+//#ifdef __GNUC__
+      //  mSpeed = sDefaultSpeed;
+//#endif
     moveTo(mCurrentVideoFrame ? mCurrentVideoFrame->getPts() : 0);
     if (wasPlaying)
     {
@@ -310,46 +315,96 @@ model::SequencePtr VideoDisplay::getSequence() const
 // AUDIO METHODS
 //////////////////////////////////////////////////////////////////////////
 
+void VideoDisplay::sendToSoundTouch(model::AudioChunkPtr chunk)
+{
+#ifdef SOUNDTOUCH_INTEGER_SAMPLES
+    mSoundTouch.putSamples(reinterpret_cast<const short *>(chunk->getUnreadSamples()), chunk->getUnreadSampleCount() / mNumberOfAudioChannels);
+#else
+    float *convertTo = new float[chunk->getUnreadSampleCount()];
+    sample* s = chunk->getUnreadSamples();
+    float* t = convertTo;
+    static const float M = 32767.0; // 2 ^ 15
+    for (int i = 0; i < chunk->getUnreadSampleCount(); ++i)
+    {
+        *t++ = static_cast<float>(*s++) / M;
+    }
+    mSoundTouch.putSamples(convertTo, chunk->getUnreadSampleCount() / mNumberOfAudioChannels);
+    delete[] convertTo;
+#endif
+}
+
+samplecount VideoDisplay::receiveFromSoundTouch(model::AudioChunkPtr chunk, samplecount offset, samplecount nSamplesRequired)
+{
+    int nFramesAvailable = mSoundTouch.numSamples();
+    int nFramesRequired = nSamplesRequired / mNumberOfAudioChannels;
+#ifdef SOUNDTOUCH_INTEGER_SAMPLES
+    samplecount nFrames = mSoundTouch.receiveSamples(reinterpret_cast<short*>(chunk->getBuffer()) + offset, nFramesRequired);
+    ASSERT_LESS_THAN_EQUALS(nFrames, nFramesAvailable);
+ #else // SOUNDTOUCH_FLOAT_SAMPLES
+    static const float M = 32767.0; // 2 ^ 15
+    float* convertFrom = new float[nSamplesRequired];
+    samplecount nFrames = mSoundTouch.receiveSamples(convertFrom, nFramesRequired);
+    ASSERT_LESS_THAN_EQUALS(nFrames, nFramesAvailable);
+    ASSERT_LESS_THAN_EQUALS(nFrames, nFramesRequired);
+
+    int nSamples = nFrames * mNumberOfAudioChannels;
+    sample* t = chunk->getBuffer() + offset;
+    float* s = convertFrom;
+    for (int i = 0; i < nSamples; ++i)
+    {
+        float f = *s++ * M;
+        if ( f < -M )  { f = -M; }
+        if ( f > M-1 ) { f = M - 1; }
+        *t++ = static_cast<sample>(f);
+    }
+    delete convertFrom;
+#endif
+    return nFrames * mNumberOfAudioChannels;
+}
+
 void VideoDisplay::audioBufferThread()
 {
     util::thread::setCurrentThreadName("AudioBufferThread");
-    while (!mAbortThreads)
+    model::AudioChunkPtr inputChunk;
+    if (mSpeed == sDefaultSpeed)
     {
-        model::AudioChunkPtr chunk = mSequence->getNextAudio(model::AudioCompositionParameters().setSampleRate(mAudioSampleRate).setNrChannels(mNumberOfAudioChannels));
-
-        if (chunk)
+        while (!mAbortThreads)
         {
-            if (mSpeed != sDefaultSpeed)
+            mAudioChunks.push(mSequence->getNextAudio(model::AudioCompositionParameters().setSampleRate(mAudioSampleRate).setNrChannels(mNumberOfAudioChannels))); // No speed change. Just insert chunk.
+        }
+    }
+    else
+    {
+        bool atEnd = false;
+        pts outputPts = mStartPts;
+        while (!mAbortThreads)
+        {
+            samplecount chunksize = model::AudioCompositionParameters().setSampleRate(mAudioSampleRate).setNrChannels(mNumberOfAudioChannels).setPts(outputPts).determineChunkSize().getChunkSize();
+            model::AudioChunkPtr outputChunk = boost::make_shared<model::AudioChunk>(mNumberOfAudioChannels, chunksize, true, false);
+            samplecount writtenSamples = 0;
+            while (writtenSamples < chunksize)
             {
-                // In SoundTouch context a sample is the data for both speakers.
-                // In AudioChunk it's the data for one speaker.
-                // Soundtouch needs at least 4 * 2 bytes, see RateTransposerInteger::transposeStereo (uses src[3] - which is the fourth sample).
-                //
-                // To avoid access violations, too small chunks are skipped (given their size that should pose no problems for previewing only).
-                static const samplecount sMinimumChunkSizeInSamples = 4;
-                if (chunk->getUnreadSampleCount() < sMinimumChunkSizeInSamples) { continue; } // Skip this chunk
-
-                //if (chunk->getUnreadSampleCount() < 3) continue;
-                mSoundTouch.putSamples(reinterpret_cast<const soundtouch::SAMPLETYPE *>(chunk->getUnreadSamples()), chunk->getUnreadSampleCount() / mNumberOfAudioChannels) ;
-                while (!mSoundTouch.isEmpty())
+                if (!mSoundTouch.isEmpty())
                 {
-                    int nFramesAvailable = mSoundTouch.numSamples();
-                    sample* p = 0;
-                    model::AudioChunkPtr audioChunk = boost::make_shared<model::AudioChunk>(mNumberOfAudioChannels, nFramesAvailable * mNumberOfAudioChannels, true, false);
-                    int nFrames = mSoundTouch.receiveSamples(reinterpret_cast<soundtouch::SAMPLETYPE *>(audioChunk->getBuffer()), nFramesAvailable);
-                    ASSERT_EQUALS(nFrames,nFramesAvailable);
-                    audioChunk->setPts(chunk->getPts());
-                    mAudioChunks.push(audioChunk);
+                    writtenSamples += receiveFromSoundTouch(outputChunk, writtenSamples, chunksize - writtenSamples);
+                }
+                else if (atEnd)
+                {
+                    mAudioChunks.push(model::AudioChunkPtr()); // Signal end
+                    return;
+                }
+                else
+                {
+                    model::AudioChunkPtr chunk = mSequence->getNextAudio(model::AudioCompositionParameters().setSampleRate(mAudioSampleRate).setNrChannels(mNumberOfAudioChannels));
+                    atEnd = chunk == nullptr;
+                    if (!atEnd)
+                    {
+                        sendToSoundTouch(chunk);
+                    }
                 }
             }
-            else
-            {
-                mAudioChunks.push(chunk); // No speed change. Just insert chunk.
-            }
-        }
-        else
-        {
-            mAudioChunks.push(chunk); // Signal end
+            outputChunk->setPts(outputPts++);
+            mAudioChunks.push(outputChunk);
         }
     }
 }
@@ -390,8 +445,8 @@ bool VideoDisplay::audioRequested(void *buffer, const unsigned long& frames, dou
 
             double actualPlaytime = playtime - mStartTime;
             double expectedPlaytime =
-                model::Convert::ptsToSeconds(mCurrentAudioChunk->getPts() - mStartPts) +
-                model::Convert::samplesToSeconds(remainingSamples);
+                (model::Convert::ptsToSeconds(mCurrentAudioChunk->getPts() - mStartPts) +
+                 model::Convert::samplesToSeconds(remainingSamples));
             mAudioLatency = actualPlaytime - expectedPlaytime;
         }
 
@@ -443,8 +498,7 @@ void VideoDisplay::showNextFrame()
     }
 
     double elapsed = Pa_GetStreamTime(mAudioOutputStream) - mStartTime - mAudioLatency; // Elapsed time since playback started
-    double speedfactor = static_cast<double>(sDefaultSpeed) / static_cast<double>(mSpeed);
-    double next = speedfactor * static_cast<double>(model::Convert::ptsToTime(videoFrame->getPts() - mStartPts)) / 1000.0; // time at which the frame must be shown; /1000.0: convert ms to s
+    double next = static_cast<double>(model::Convert::ptsToSeconds(videoFrame->getPts() - mStartPts)) * mSpeedFactor; // time at which the frame must be shown; /1000.0: convert ms to s
     int sleep = static_cast<int>(floor((next - elapsed) * 1000.0));
 
     //LOG_ERROR << "Current time: " << std::fixed << elapsed;

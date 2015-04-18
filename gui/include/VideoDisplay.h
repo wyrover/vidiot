@@ -90,7 +90,8 @@ private:
     /// seconds since starting the audio playback.
     double mStartTime;
 
-    /// Output latency of PortAudio.
+    /// Delta between the expected time at which audio is output and the
+    /// actual time at which time are reported to be output by PortAudio.
     double mAudioLatency;
 
     /// Holds the pts at which the playback was started (thus, the 0-point timewise)
@@ -109,12 +110,17 @@ private:
     model::AudioChunkPtr mCurrentAudioChunk;
 
     boost::scoped_ptr<boost::thread> mAudioBufferThreadPtr;
+    void sendToSoundTouch(model::AudioChunkPtr chunk);
+    samplecount receiveFromSoundTouch(model::AudioChunkPtr chunk, samplecount nSamples, samplecount nSamplesRequired);
     void audioBufferThread();
 
     /// Required for portaudio
     void* mAudioOutputStream;
 
+    /// Required for SoundTouch
     soundtouch::SoundTouch mSoundTouch;
+    std::atomic<samplecount> mSoundTouchLatency;
+    double mSpeedFactor;
 
     //////////////////////////////////////////////////////////////////////////
     // VIDEO
