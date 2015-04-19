@@ -602,7 +602,7 @@ void ProjectView::onMotion(wxMouseEvent& event)
                 mCtrl.HitTest(mDragStart, item, col );
                 if (item.GetID())
                 {
-                    ProjectViewDataObject data(getSelection());
+                    ProjectViewDataObject data(command::ProjectViewCommand::prune(getSelection()));
                     mDropSource.startDrag(data);
                     mDragCount = 0;
                 }
@@ -677,14 +677,11 @@ void ProjectView::onDrop(wxDataViewEvent &event)
         return;
     }
 
-    ProjectViewDataObject o;
-    o.SetData( event.GetDataSize(), event.GetDataBuffer() );
-
     model::FolderPtr folder = boost::dynamic_pointer_cast<model::Folder>(p);
     ASSERT(folder);
 
     bool conflictingChildExists = false;
-    for ( model::NodePtr node : o.getNodes())
+    for ( model::NodePtr node : mDropSource.getData().getNodes())
     {
         if (findConflictingName(folder, node->getName(), NODETYPE_ANY))
         {
@@ -692,9 +689,9 @@ void ProjectView::onDrop(wxDataViewEvent &event)
             return;
         }
     }
-    if (o.getNodes().size() > 0)
+    if (mDropSource.getData().getNodes().size() > 0)
     {
-        model::ProjectModification::submit(new command::ProjectViewMoveAsset(o.getNodes(),p));
+        model::ProjectModification::submit(new command::ProjectViewMoveAsset(mDropSource.getData().getNodes(),p));
     }
 }
 

@@ -19,7 +19,7 @@
 
 #include "Dialog.h"
 #include "File.h"
-#include "Node.h"
+#include "Node.h" 
 #include "UtilLog.h"
 
 namespace command {

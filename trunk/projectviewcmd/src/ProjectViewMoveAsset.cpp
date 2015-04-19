@@ -28,6 +28,7 @@ ProjectViewMoveAsset::ProjectViewMoveAsset(const model::NodePtrs& nodes, const m
 ,   mPairs(ProjectViewCommand::makeParentAndChildPairs(nodes))
 {
     VAR_INFO(this)(mNewParent)(mPairs);
+    ASSERT_NONZERO(mNewParent);
     if (nodes.size() == 1)
     {
         mCommandName = _("Move ") + _("\"") + (*(nodes.begin()))->getName() + _("\"");
@@ -47,6 +48,7 @@ bool ProjectViewMoveAsset::Do()
     VAR_INFO(this);
     for ( ParentAndChildPair p : mPairs )
     {
+        ASSERT(p.first);
         // Ignore nodes that are moved to their original
         // parent.
         if (p.first != mNewParent)

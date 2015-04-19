@@ -63,7 +63,11 @@ wxDragResult TimelineDropTarget::OnEnter(wxCoord x, wxCoord y, wxDragResult def)
         wxFileDataObject* object = static_cast<wxFileDataObject*>(composite->GetObject(*mFormat));
         ASSERT_NONZERO(object);
         boost::shared_ptr<model::FileAnalyzer> analyzer = boost::make_shared<model::FileAnalyzer>(object->GetFilenames());
-        if (analyzer->checkIfOkForPasteOrDrop())
+        if (analyzer->isProjectOnly())
+        {
+            return wxDragNone;
+        }
+        else if (analyzer->checkIfOkForPasteOrDrop())
         {
             mNodes = analyzer->getNodes();
         }

@@ -32,6 +32,9 @@
 
 namespace model {
 
+// static
+const wxString Project::sFileExtension{ "vid" };
+
 IMPLEMENT_DYNAMIC_CLASS(Project, wxDocument)
 
 Project::Project()

@@ -106,7 +106,7 @@ static const wxString sTitle(_("Vidiot"));
 Window::Window()
     : wxDocParentFrame()
     , mDocManager(new wxDocManager())
-    , mDocTemplate(new wxDocTemplate(mDocManager, _("Vidiot files"), "*.vid", "", "vid", _("Vidiot Project"), _("Vidiot Project View"), CLASSINFO(model::Project), CLASSINFO(ViewHelper)))
+    , mDocTemplate(new wxDocTemplate(mDocManager, _("Vidiot files"), "*." + model::Project::sFileExtension, "", model::Project::sFileExtension, _("Vidiot Project"), _("Vidiot Project View"), CLASSINFO(model::Project), CLASSINFO(ViewHelper)))
     , mDialog(new Dialog())
     , mLayout(new gui::Layout())
     , mWatcher(0)
@@ -530,14 +530,12 @@ void Window::onOpenProject(model::EventOpenProject &event )
     updateTitle();
     mVisibleWorker->start();
     mInvisibleWorker->start();
-    DragAcceptFiles(false);
     mProjectOpen = true;
     event.Skip();
 }
 
 void Window::onCloseProject(model::EventCloseProject &event )
 {
-    DragAcceptFiles(true);
     delete mWatcher;
     mWatcher = 0;
     mMenuFile->Enable(ID_NEW_FILES,false);
@@ -857,9 +855,15 @@ void Window::onDropFiles(wxDropFilesEvent& event)
     {
         filenames.push_back(event.GetFiles()[i]);
     }
-    if (isProjectOpened())
+    boost::shared_ptr<model::FileAnalyzer> analyzer{ boost::make_shared < model::FileAnalyzer > ( filenames, this ) };
+
+    if (analyzer->isProjectOnly())
     {
-        boost::make_shared<model::FileAnalyzer>(filenames, this)->addNodesToProjectView();
+        mDocManager->CreateDocument(filenames.front());
+    }
+    else if (isProjectOpened())
+    {
+        analyzer->addNodesToProjectView();
     }
     else
     {
