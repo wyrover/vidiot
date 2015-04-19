@@ -138,7 +138,7 @@ void TestSavingAndLoading::testLoadOldVersions()
     {
         if (!filename.IsSameAs(sCurrent))
         {
-            wxRegEx reVersion("[[:digit:]]+\\.[[:digit:]]+\\.[[:digit:]]+_([[:digit:]]+)\\.vid");
+            wxRegEx reVersion("[[:digit:]]+\\.[[:digit:]]+\\.[[:digit:]]+_([[:digit:]]+)\\." + model::Project::sFileExtension);
             ASSERT(reVersion.IsValid());
             ASSERT_EQUALS(reVersion.GetMatchCount(),2);
             bool match = reVersion.Matches(filename);

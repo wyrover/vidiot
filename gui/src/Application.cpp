@@ -20,6 +20,7 @@
 #include "CommandLine.h"
 #include "Config.h"
 #include "Dialog.h"
+#include "Project.h"
 #include "Render.h"
 #include "SubversionRevision.h"
 #include "UtilAssert.h"
@@ -343,7 +344,7 @@ void Application::OnInitCmdLine (wxCmdLineParser &parser)
 {
     static const wxCmdLineEntryDesc cmdLineDesc[] =
     {
-        { wxCMD_LINE_PARAM, "file", "file to be opened", "vidiot project file (*.vid)", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
+        { wxCMD_LINE_PARAM, "file", "file to be opened", "vidiot project file (*." + model::Project::sFileExtension + ")", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
         { wxCMD_LINE_SWITCH, "h", "help", "show this help message" },
         { wxCMD_LINE_SWITCH, "v", "verbose", "be verbose (only required for development)" }, // Required for running debug (apparently for logging)
         { wxCMD_LINE_NONE }

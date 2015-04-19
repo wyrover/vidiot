@@ -42,8 +42,9 @@ FileAnalyzer::FileAnalyzer(wxStrings fileNames, wxWindow* parent)
     , mVideoSizeOccurrence({ { mMostFrequentVideoSize, 0 } })
     , mFrameRateOccurrence({ { mMostFrequentFrameRate, 0 } })
     , mAudioRateOccurrence({ { mMostFrequentAudioRate, 0 } })
-    , mNumberOfMediaFiles(0)
-    , mFolders(0)
+    , mNumberOfProjects{ 0 }
+    , mNumberOfMediaFiles{ 0 }
+    , mFolders{ 0 }
 {
 	for (wxString path : fileNames)
 	{
@@ -60,8 +61,9 @@ FileAnalyzer::FileAnalyzer(const wxArrayString& fileNames, wxWindow* parent)
     , mVideoSizeOccurrence({ { mMostFrequentVideoSize, 0 } })
     , mFrameRateOccurrence({ { mMostFrequentFrameRate, 0 } })
     , mAudioRateOccurrence({ { mMostFrequentAudioRate, 0 } })
-	, mNumberOfMediaFiles(0)
-	, mFolders(0)
+    , mNumberOfProjects{ 0 }
+    , mNumberOfMediaFiles{ 0 }
+    , mFolders{ 0 }
 {
 	for (wxString filename : fileNames)
 	{
@@ -92,7 +94,11 @@ void FileAnalyzer::init()
 				mNodes.push_back(boost::make_shared<AutoFolder>(filename));
 				indexFolder(filename, mFileNames.size() != 1); // Do not recurse if only one folder is given
 			}
-			else
+            else if (wxFileName(filename).GetExt().IsSameAs(Project::sFileExtension))
+            {
+                mNumberOfProjects++;
+            }
+            else
 			{
 				FilePtr file = indexFile(filename);
 				if (file)
@@ -115,6 +121,17 @@ void FileAnalyzer::init()
 //////////////////////////////////////////////////////////////////////////
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
+
+bool FileAnalyzer::isProjectOnly() const
+{
+    return mNumberOfProjects == 1;
+}
+
+wxString FileAnalyzer::getProject() const
+{
+    ASSERT(isProjectOnly());
+    return util::path::toPath(mFileNames.front());
+}
 
 int FileAnalyzer::getNumberOfFolders() const
 {

@@ -63,7 +63,7 @@ wxFileName generateSaveFileName(wxFileName dir)
     ASSERT(dir.IsDir());
     wxFileName result(dir);
     result.SetName(wxString::Format(wxT("%s_%d"), gui::Application::getVersion(), gui::Application::getRevision()));
-    result.SetExt("vid");
+    result.SetExt(model::Project::sFileExtension);
     return result;
 }
 

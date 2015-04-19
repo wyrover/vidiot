@@ -47,6 +47,12 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
+    bool isProjectOnly() const;
+
+    /// \pre isProjectOnly() returns true
+    /// \return name of project in the list.
+    wxString getProject() const;
+
     int getNumberOfFolders() const;
     int getNumberOfFiles() const;
     int getNumberOfMediaFiles() const;
@@ -84,6 +90,7 @@ private:
     std::map<FrameRate, int> mFrameRateOccurrence;
     std::map<std::pair<int,int>, int> mAudioRateOccurrence;
 
+    int mNumberOfProjects;
     int mFolders;
     int mNumberOfMediaFiles;
 
