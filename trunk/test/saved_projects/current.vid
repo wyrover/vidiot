@@ -2485,7 +2485,7 @@
 			<sequence class_id="63" tracking_level="0" version="1">
 				<px class_id_reference="30" object_id_reference="_20"></px>
 			</sequence>
-			<timeline class_id="64" tracking_level="0" version="1">
+			<timeline class_id="64" tracking_level="0" version="2">
 				<zoom class_id="65" tracking_level="0" version="1">
 					<mZoom>
 						<numerator>1</numerator>
@@ -2514,6 +2514,9 @@
 				<cursor class_id="71" tracking_level="0" version="0">
 					<mCursorPosition>3487</mCursorPosition>
 				</cursor>
+				<player class_id="72" tracking_level="0" version="0">
+					<speed>100</speed>
+				</player>
 			</timeline>
 		</timelinesview>
 	</window>

@@ -670,6 +670,10 @@ void Timeline::serialize(Archive & ar, const unsigned int version)
         ar & boost::serialization::make_nvp("intervals",*mIntervals);
         ar & boost::serialization::make_nvp("scrolling",*mScroll); // Must be done before cursor (since cursor uses the scroll position)
         ar & boost::serialization::make_nvp("cursor",*mCursor);
+        if (version >= 2)
+        {
+            ar & boost::serialization::make_nvp("player",*mPlayer);
+        }
     }
     catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }

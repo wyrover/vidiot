@@ -414,4 +414,32 @@ void Player::onConfigUpdated(EventConfigUpdated& event)
     event.Skip();
 }
 
+
+//////////////////////////////////////////////////////////////////////////
+// SERIALIZATION
+//////////////////////////////////////////////////////////////////////////
+
+template<class Archive>
+void Player::serialize(Archive & ar, const unsigned int version)
+{
+    try
+    {
+        int speed = mDisplay->getSpeed();
+        ar & boost::serialization::make_nvp("speed", speed);
+
+        if (Archive::is_loading::value)
+        {
+            mDisplay->setSpeed(speed);
+            updateSpeedButton();
+        }
+    }
+    catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
+    catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
+    catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
+    catch (...)                                  { LOG_ERROR;                                   throw; }
+}
+
+template void Player::serialize<boost::archive::xml_oarchive>(boost::archive::xml_oarchive& ar, const unsigned int archiveVersion);
+template void Player::serialize<boost::archive::xml_iarchive>(boost::archive::xml_iarchive& ar, const unsigned int archiveVersion);
+
 } // namespace
