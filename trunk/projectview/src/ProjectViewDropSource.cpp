@@ -137,7 +137,7 @@ void ProjectViewDropSource::startDrag(ProjectViewDataObject& data)
 {
     SetData(data);
     wxDataObject* pObject = &data;
-    VAR_ERROR(pObject);
+    VAR_INFO(pObject);
     wxDataFormat format = data.GetFormat();
     wxString id = format.GetId();
     DoDragDrop(wxDrag_DefaultMove);
