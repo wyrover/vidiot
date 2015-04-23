@@ -113,7 +113,7 @@ public:
     {
         if (mEnabled)
         {
-            mFifo.push(logLine);
+            mFifo.push(logLine); // todo crash here when running with debug logging -  (at end, file is deleted)
         }
     }
     void flush()

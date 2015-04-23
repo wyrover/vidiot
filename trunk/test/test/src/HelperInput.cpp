@@ -394,4 +394,14 @@ void TimelineKeyPressN(int count, int keycode)
     for (int i = 0; i < count; ++i) { TimelineKeyPress(keycode); }
 }
 
+void TimelineRightMouseScroll(pixel length)
+{
+    ASSERT(!FixtureGui::UseRealUiEvents);
+    ASSERT_LESS_THAN(std::abs(length), getTimeline().GetSize().GetWidth() / 2);
+    TimelineMove(wxPoint(getTimeline().getScrolling().getOffset().x + getTimeline().GetSize().GetWidth() / 2, CurrentTimelineInputState::Get().Position.y));
+    TimelineRightDown();
+    TimelineMoveRight(length);
+    TimelineRightUp();
+}
+
 } // namespace
