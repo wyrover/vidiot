@@ -116,6 +116,8 @@ void TimelineKeyPress(int key);
 /// \param count number of times the event is generated
 void TimelineKeyPressN(int count, int key);
 
+void TimelineRightMouseScroll(pixel length);
+
 } // namespace
 
 #endif

@@ -215,6 +215,47 @@ void TestDragAndDrop::testDndMultipleTracks()
     }
 }
 
+void TestDragAndDrop::testDndRightMouseScrolling()
+{
+    StartTestSuite();
+    TimelineZoomIn(6);
+    {
+        StartTest("Left to right");
+        pts length{ VideoClip(0, 0)->getLength() };
+        wxPoint inbetween(Center(VideoClip(0,1)));
+        TimelineDrag(From(Center(VideoClip(0,0))).To(inbetween).DontReleaseMouse());
+        for (int i = 0; i < 3; ++i) // Right mouse scroll such that the original clip's position is no longer visible.
+        {
+            TimelineRightMouseScroll(-300);
+        }
+        TimelineMove(wxPoint(getTimeline().getScrolling().getOffset().x + getTimeline().GetSize().GetWidth() - 100, inbetween.y));
+        TimelineLeftUp(); // End drag
+        ASSERT_VIDEOTRACK0(EmptyClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip)(EmptyClip)(VideoClip);
+        ASSERT_EQUALS(VideoClip(0, 8)->getLength(), length);
+        Undo(1);
+    }
+    {
+        StartTest("Right to left");
+        for (int i = 0; i < 3; ++i) // Move to the right
+        {
+            TimelineRightMouseScroll(-300);
+        }
+        pts length{ VideoClip(0, 6)->getLength() };
+        wxPoint inbetween(Center(VideoClip(0,5)));
+        TimelineDrag(From(Center(VideoClip(0,6))).To(inbetween).DontReleaseMouse());
+        for (int i = 0; i < 3; ++i) // Left mouse scroll such that the original clip's position is no longer visible.
+        {
+            TimelineRightMouseScroll(300);
+        }
+        TimelineMove(wxPoint(2, inbetween.y));
+        TimelineLeftUp(); // End drag
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip);
+        ASSERT_EQUALS(VideoTrack(0)->getClips().size(), 5);
+        ASSERT_EQUALS(VideoClip(0, 0)->getLength(), length);
+        Undo(1);
+    }
+}
+
 void TestDragAndDrop::testSnapping()
 {
     StartTestSuite();

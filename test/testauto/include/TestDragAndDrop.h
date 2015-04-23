@@ -49,6 +49,8 @@ public:
     /// timeline.
     void testDndMultipleTracks();
 
+    void testDndRightMouseScrolling();
+
     void testSnapping();
 
     /// See [#79]: Crash when dropping clip adjacent to a transition

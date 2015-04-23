@@ -158,7 +158,7 @@ void Drag::start(const wxPoint& hotspot, bool external)
         UtilSet<model::IClipPtr>(drags).addElements(mVideo.getTempTrack()->getClips());
         UtilSet<model::IClipPtr>(drags).addElements(mAudio.getTempTrack()->getClips());
         // EmptyClip areas must not be dragged along.
-        for (auto it = drags.begin(); it != drags.end();) 
+        for (auto it = drags.begin(); it != drags.end();)
         {
             if ((*it)->isA<model::EmptyClip>())
             {
@@ -216,10 +216,22 @@ void Drag::move(wxPoint position)
 
     PointerPositionInfo info = getMouse().getInfo(position);
 
+    wxPoint previousHotSpot(mHotspot);
     if (getKeyboard().getCtrlDown())
     {
-        // As long as CTRL is down, the dragged image stays the same, but the hotspot is moved
-        mHotspot -=  mPosition - position;
+        // As long as CTRL is down, the vertical position of the hotspot is moved.
+        //
+        // Can be used to position the mouse on another track (for instance, audio vs.
+        // video). Example: drag video clip from track 0 to video track 1, and drag the
+        // linked audio clip to audio track 1 also.
+        //
+        // Note that horizontal movement still results in drag movement.
+        // Rationale: due to the clipping for the dragged bitmap (not starting with 
+        //            the maximum virtual size of the timeline but only maximally
+        //            2x the client area size of the timeline), moving the hotspot
+        //            horizontally can 'move in' part of the dragged clips that are
+        //            not part of the drag bitmap anymore.
+        mHotspot.y -=  mPosition.y - position.y;
         mHotspotPts = getZoom().pixelsToPts(mHotspot.x);
         updateDraggedTrack(info.track);
     }
@@ -371,19 +383,29 @@ pts Drag::getSnapOffset() const
 wxBitmap Drag::getDragBitmap()
 {
     VAR_DEBUG(*this);
-    wxSize size = getSequenceView().getSize();
+    // X region of the drag bitmap initially contains one time the entire timeline client area 
+    // to the left of the hotspot, and one time the entire timeline client width to the right of 
+    // the hotspot x position. In that way, there's just enough to fully drag to the leftmost
+    // pixel of the client area or drag to the rightmost pixel of the client area.
+    //
+    // Note that the area around the hotspot is used and not the area currently visible:
+    // The to-be-dragged clips are not always in the visible region, particularly when
+    // using right-mouse-scrolling during the drag and drop operation.
+    pixel dragBitmapOffsetX = std::max(0, mHotspot.x - getTimeline().GetClientSize().GetWidth());
+    pixel dragBitmapOffsetY = getSequenceView().getVideo().getY();
+    wxSize bitmapSize{ std::min(2 * getTimeline().GetClientSize().GetWidth(), getTimeline().GetVirtualSize().GetWidth()), getSequenceView().getH() };
 
-    wxBitmap temp(size); // Create a bitmap equal in size to the entire virtual area (for simpler drawing code)
-    wxBitmap mask(size,1);
+    wxBitmap temp(bitmapSize);
+    wxBitmap mask(bitmapSize,1);
 
-    wxMemoryDC dc(temp); // Must go out of scope to be able to use temp.data below
+    wxMemoryDC dc(temp);
     wxMemoryDC dcMask(mask);
 
     dc.SetBackground(*wxTRANSPARENT_BRUSH);
     dc.Clear();
     dc.SetBrush(*wxTRANSPARENT_BRUSH);
     dc.SetPen(*wxTRANSPARENT_PEN);
-    dc.DrawRectangle(wxPoint(0,0),size);
+    dc.DrawRectangle(wxPoint(0,0),bitmapSize);
 
     dcMask.SetBackground(*wxBLACK_BRUSH);
     dcMask.Clear();
@@ -391,7 +413,7 @@ wxBitmap Drag::getDragBitmap()
     dcMask.SetBrush(*wxWHITE_BRUSH);
 
     // Draw video tracks
-    wxPoint position(0,getSequenceView().getVideo().getY());
+    wxPoint position(-dragBitmapOffsetX, getSequenceView().getVideo().getY() - dragBitmapOffsetY);
     model::Tracks videoTracks = getSequence()->getVideoTracks(); // Can't use reverse on temporary inside for loop
     for ( model::TrackPtr track : boost::adaptors::reverse( videoTracks ) )
     {
@@ -405,7 +427,7 @@ wxBitmap Drag::getDragBitmap()
     }
 
     // Draw audio tracks
-    position.y = getSequenceView().getAudio().getY();
+    position.y = getSequenceView().getAudio().getY() - dragBitmapOffsetY;
     for ( model::TrackPtr track : getSequence()->getAudioTracks() )
     {
         model::TrackPtr draggedTrack = trackOnTopOf(track);
@@ -416,21 +438,33 @@ wxBitmap Drag::getDragBitmap()
         position.y += track->getHeight() + Layout::TrackDividerHeight;
     }
 
-    mBitmapOffset.x = std::max(dcMask.MinX(),0);
-    mBitmapOffset.y = std::max(dcMask.MinY(),0);
+    pixel roi_x = std::max(dcMask.MinX(),0);
+    pixel roi_y = std::max(dcMask.MinY(),0);
 
-    int size_x = dcMask.MaxX() - mBitmapOffset.x;
-    int size_y = dcMask.MaxY() - mBitmapOffset.y;
+    int size_x = std::min(bitmapSize.GetWidth(),  dcMask.MaxX()) - roi_x;
+    int size_y = std::min(bitmapSize.GetHeight(), dcMask.MaxY()) - roi_y;
 
     dc.SelectObject(wxNullBitmap);
     dcMask.SelectObject(wxNullBitmap);
 
     temp.SetMask(new wxMask(mask));
 
-    VAR_DEBUG(mBitmapOffset)(size_x)(size_y);
+    VAR_DEBUG(bitmapSize)(roi_x)(roi_y)(size_x)(size_y);
     ASSERT_MORE_THAN_ZERO(size_x);
     ASSERT_MORE_THAN_ZERO(size_y);
-    return temp.GetSubBitmap(wxRect(mBitmapOffset.x,mBitmapOffset.y,size_x,size_y));
+    mBitmapOffset.x = dragBitmapOffsetX + roi_x;
+    mBitmapOffset.y = dragBitmapOffsetY + roi_y;
+
+    ASSERT(temp.IsOk());
+    ASSERT_MORE_THAN_EQUALS_ZERO(roi_x);
+    ASSERT_MORE_THAN_EQUALS_ZERO(roi_y);
+    ASSERT_LESS_THAN_EQUALS(roi_x + size_x, temp.GetWidth());
+    ASSERT_LESS_THAN_EQUALS(roi_y + size_y, temp.GetHeight());
+    // GetSubBitmap is not an obsolete call: the bitmap becomes smaller, although only
+    // slightly. Furthermore, dragging to the left doesn't work, if the 'unclipped'
+    // bitmap still touches the left edge of the timeline (low scrolling offset) 6.
+    return temp.GetSubBitmap(wxRect(roi_x,roi_y,size_x,size_y));
+    // todo add right-vertical-scrolling
 }
 
 void Drag::drawDraggedClips(wxDC& dc, const wxRegion& region, const wxPoint& offset) const
@@ -752,10 +786,10 @@ void Drag::determinePossibleSnapPoints()
     {
         mSnapPoints.push_back(getCursor().getLogicalPosition());
     }
- 
+
     std::sort(mSnapPoints.begin(), mSnapPoints.end());
     std::unique(mSnapPoints.begin(), mSnapPoints.end());
-    
+
     VAR_DEBUG(mSnapPoints);
 }
 
