@@ -47,8 +47,6 @@ const pixel Layout::CursorClipEditDistance               = 6;
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-static Layout* sCurrent;
-
 Layout::Layout()
 //////////////////////////////////////////////////////////////////////////
 // BRUSHES AND PENS
@@ -99,8 +97,6 @@ Layout::Layout()
 , ClipDescriptionFont           (wxFont(wxSize(0,11),wxFONTFAMILY_DEFAULT,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL))
 , RenderInProgressFont          (wxFont(wxSize(60,60),wxFONTFAMILY_DEFAULT,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD))
 {
-    sCurrent = this;
-
     wxBitmap tmp(100,100 ); // tmp, so size not that important.
     wxMemoryDC dc(tmp);
     dc.SetFont(ClipDescriptionFont);
@@ -110,15 +106,6 @@ Layout::Layout()
 
 Layout::~Layout()
 {
-    sCurrent = 0; // todo got crash in linux auto test when running succesfully all tests in one run, crash upon cleanup of wxStockGDI::Cleanall. Probably caused by this static object. To be replaced with 'utilsingleinstance' and then create upon creating window.
-}
-
-// static
-Layout& Layout::get()
-{
-    ASSERT(sCurrent);
-    ASSERT(wxThread::IsMain()); // To avoid threading issues with GDI objects
-    return *sCurrent;
 }
 
 } // namespace

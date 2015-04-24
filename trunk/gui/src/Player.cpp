@@ -294,7 +294,7 @@ void Player::onSpeed(wxCommandEvent& event)
     sizer->Add(new wxStaticText(mSpeedSliderFrame,wxID_ANY, wxString::Format("%d", VideoDisplay::sMinimumSpeed)), wxSizerFlags(0).Center());
 
     mSpeedSliderFrame->SetSizerAndFit(sizer);
-    mSpeedSliderFrame->SetSize(wxSize(40,160)); // todo test windows
+    mSpeedSliderFrame->SetSize(wxSize(40,160));
 
     wxPoint pos = mSpeedButton->GetScreenPosition();
     wxSize buttonSize = mSpeedButton->GetSize();

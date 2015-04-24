@@ -19,18 +19,18 @@
 #define LAYOUT_H
 
 #include "UtilInt.h"
+#include "UtilSingleInstance.h"
 
 namespace gui {
 
 /// Fonts/brushes/pens may not be initialized statically (since wxWidgets is not prepared yet).
 /// (leads to uninitialized wxStockGDI, for example)
-class Layout
+class Layout : public SingleInstance<Layout>
 {
 public:
 
     Layout();
     virtual ~Layout();
-    static Layout& get();
 
     //////////////////////////////////////////////////////////////////////////
     // DRAWING
