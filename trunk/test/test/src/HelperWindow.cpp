@@ -26,6 +26,7 @@ void WindowTriggerMenu(int id)
 
 void WindowTriggerMenu(wxWindow& window, int id)
 {
+    VAR_DEBUG(id);
     window.GetEventHandler()->QueueEvent(new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED,id));
     WaitForIdle;
 }

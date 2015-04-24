@@ -131,8 +131,19 @@ wxFileName getTestFilesPath(wxString subdir)
 
 model::IPaths getListOfInputPaths(wxFileName path)
 {
+    // Not store model::FilePtr objects in the cache.
+    // Otherwise, lifetime issues may (will...) arise.
+    struct CachedPath : public model::IPath
+    {
+        explicit CachedPath(wxFileName path)
+            : mFileName{ path }
+        {}
+        wxFileName getPath() const override { return mFileName; };
+        wxFileName mFileName;
+    };
 	static std::map< wxString, model::IPaths > cache;
-	model::IPaths result;
+    
+    model::IPaths result;
 	wxString key = path.GetFullPath();
 	auto it = cache.find(key);
 	if (it != cache.end())
@@ -141,7 +152,10 @@ model::IPaths getListOfInputPaths(wxFileName path)
 	}
 	else
 	{
-		result = GetSupportedFiles(path);
+        for (model::IPathPtr path : GetSupportedFiles(path))
+        {
+            result.push_back(boost::make_shared<CachedPath>(path->getPath()));
+        }
 		cache[key] = result;
 	}
 	return result;
