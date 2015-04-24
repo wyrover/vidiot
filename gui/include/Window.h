@@ -27,6 +27,7 @@ namespace util {
 }
 
 namespace model {
+    class Watcher;
     namespace audio {
         class AudioTransitionFactory;
     }
@@ -51,7 +52,6 @@ namespace gui {
 
 class Dialog;
 class Layout;
-class Watcher;
 class Worker;
 class TimelinesView;
 class Preview;
@@ -215,7 +215,7 @@ private:
 
     Dialog* mDialog;
 
-    Watcher* mWatcher;
+    model::Watcher* mWatcher;
 
     worker::VisibleWorker*   mVisibleWorker;
     worker::InvisibleWorker* mInvisibleWorker;

@@ -514,7 +514,7 @@ void Window::onOpenProject(model::EventOpenProject &event )
     ASSERT_ZERO(mWatcher);
     // Needs an event loop (under wxGTK)
     // Therefore, creation is delayed until this moment.
-    mWatcher = new Watcher();
+    mWatcher = new model::Watcher();
     mMenuFile->Enable(ID_NEW_FILES,true);
     mMenuFile->Enable(ID_NEW_AUTOFOLDER,true);
     mMenuFile->Enable(ID_NEW_SEQUENCE,true);

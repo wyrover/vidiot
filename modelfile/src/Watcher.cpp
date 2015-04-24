@@ -30,7 +30,7 @@
 #include "UtilVector.h"
 #include "Window.h"
 
-namespace gui { // todo move to model file FileWatcher
+namespace model {
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
