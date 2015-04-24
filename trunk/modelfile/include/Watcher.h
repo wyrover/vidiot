@@ -26,9 +26,6 @@ namespace model {
     class EventRemoveNode;
     class EventRemoveNodes;
     class EventRenameNode;
-}
-
-namespace  gui {
 
 /// For each node in the project view that is a file/dir on disk, the parent folder
 /// must be watched for changes (to detect that the file/dir is removed).
