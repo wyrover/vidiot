@@ -17,6 +17,7 @@
 
 #include "UtilPath.h"
 
+#include <wx/msgdlg.h>
 #include "Config.h"
 #include "UtilLogWxwidgets.h"
 
@@ -184,7 +185,7 @@ bool isInstalledOnWindows()
 
 bool isInstalledOnLinux()
 {
-    return (wxStandardPaths::Get().GetExecutablePath().StartsWith("/usr"));
+    return (wxStandardPaths::Get().GetExecutablePath().StartsWith("/usr/bin"));
 }
 
 bool isInstalled()
@@ -209,14 +210,57 @@ wxFileName getLogFilePath()
 
 wxFileName getResourcesPath()
 {
-    wxFileName result(wxStandardPaths::Get().GetExecutablePath()); // Default, resource in subdir of dir holding executable
-    result.SetFullName("");
-    if (isInstalledOnLinux()) // Installed version on Linux
+    boost::optional<wxFileName> cached = boost::none;
+    if (cached)
     {
-        // GetResourcesDir() returns path with capital V (App name is Vidiot).
-        result.SetPath(wxStandardPaths::Get().GetResourcesDir().Lower());
+        return *cached;
     }
-    return result;
+
+    std::vector<wxFileName> paths;
+
+    // Resource in <exedir>
+    // - Automated tests
+    // - Windows installed version
+    // - Windows portable version
+    wxFileName path{ wxStandardPaths::Get().GetExecutablePath() };
+    path.SetFullName("");
+    paths.push_back(path);
+
+    // Try to find <exedir>/../share/vidiot
+    // - Linux installed version (/usr/bin and /usr/share/vidiot)
+    // - Linux portable version (<package>/bin and <package/share/vidiot)
+    path.RemoveLastDir();
+    path.AppendDir("share");
+    path.AppendDir("vidiot");
+    paths.push_back(path);
+
+    for ( wxFileName path : paths )
+    {
+        wxFileName test{ path };
+        test.AppendDir("images");
+        test.SetFullName("movie_all.ico");
+        if (!test.FileExists()) { continue; }
+        test.RemoveLastDir();
+        test.AppendDir("html");
+        test.AppendDir("about");
+        test.SetFullName("main.html");
+        if (!test.FileExists()) { continue; }
+        test.RemoveLastDir();
+        test.AppendDir("help");
+        test.SetFullName("index.html");
+        if (!test.FileExists()) { continue; }
+        return path;
+    }
+
+    wxString error{_("Could not locate resources (images/html files) in the following folders:\n")};
+    for ( wxFileName path : paths )
+    {
+        error += path.GetFullPath() + "\n";
+    }
+    error += _("Press OK to exit.");
+    wxMessageBox( error, _("Resources not found")) ;
+    exit(0);
+    return wxFileName();
 }
 
 wxFileName getConfigFilePath()
