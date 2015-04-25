@@ -57,18 +57,23 @@ void Scrolling::update(state::EvMouse& state)
 {
     wxPoint current = state.Position;
 
-    int distance = mRightScrollOrigin.x - current.x;
+    int dx = mRightScrollOrigin.x - current.x;
+    int dy = mRightScrollOrigin.y - current.y;
 
-    if (state.RightIsDown && distance != 0)
+    if (state.RightIsDown && (dx != 0 || dy !=0))
     {
-        rational factor = rational(getTimeline().GetVirtualSize().x, getTimeline().GetClientSize().x);
-        factor = std::max(factor,rational(1)); // Factor >= 1
+        rational factor_x = rational(getTimeline().GetVirtualSize().x, getTimeline().GetClientSize().x);
+        factor_x = std::max(factor_x,rational(1)); // Factor >= 1
+        rational factor_y = rational(getTimeline().GetVirtualSize().y, getTimeline().GetClientSize().y);
+        factor_y = std::max(factor_y,rational(1)); // Factor >= 1
 
         int x ,y;
         getTimeline().GetViewStart(&x,&y);
-        x += floor(rational(distance) * factor);
+        x += floor(rational(dx) * factor_x);
         x = std::max(x,0); // x >= 0
-        getTimeline().Scroll(x, -1);
+        y += floor(rational(dy) * factor_y);
+        y = std::max(y,0); // y >= 0
+        getTimeline().Scroll(x, y);
     }
     mRightScrollOrigin = current;
 }
