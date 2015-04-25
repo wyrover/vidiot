@@ -464,7 +464,6 @@ wxBitmap Drag::getDragBitmap()
     // slightly. Furthermore, dragging to the left doesn't work, if the 'unclipped'
     // bitmap still touches the left edge of the timeline (low scrolling offset) 6.
     return temp.GetSubBitmap(wxRect(roi_x,roi_y,size_x,size_y));
-    // todo add right-vertical-scrolling
 }
 
 void Drag::drawDraggedClips(wxDC& dc, const wxRegion& region, const wxPoint& offset) const
