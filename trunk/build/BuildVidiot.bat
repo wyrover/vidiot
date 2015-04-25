@@ -89,6 +89,7 @@ call:CREATESHORTCUT %0% DELIVER
 REM ============================== CLEAN ==============================
 :CLEAN
 if "%1%"=="" goto PREPARE
+if "%1%"=="CMAKE" goto PREPARE
 
 del /s/q/f %VIDIOT_BUILD%\*
 rd /s/q  %VIDIOT_BUILD%
