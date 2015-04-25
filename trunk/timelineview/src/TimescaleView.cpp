@@ -174,9 +174,8 @@ void TimescaleView::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset
                 int position = getZoom().timeToPixels(ms);
                 bool showTime = (ms % steps.NumberStep == 0);
 
-                int linePosition = scrolledAndShiftedPosition.x + position;
                 int lineHeight = showTime ? Layout::TimeScaleMinutesHeight : Layout::TimeScaleSecondHeight;
-                dc.DrawLine(linePosition, 0, linePosition, lineHeight);
+                dc.DrawLine(scrolledAndShiftedPosition + wxPoint(position,0), scrolledAndShiftedPosition + wxPoint(position, lineHeight));
 
                 if (ms == 0)
                 {
