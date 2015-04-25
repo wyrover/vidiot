@@ -142,7 +142,7 @@ model::IPaths getListOfInputPaths(wxFileName path)
         wxFileName mFileName;
     };
 	static std::map< wxString, model::IPaths > cache;
-    
+
     model::IPaths result;
 	wxString key = path.GetFullPath();
 	auto it = cache.find(key);
@@ -152,9 +152,9 @@ model::IPaths getListOfInputPaths(wxFileName path)
 	}
 	else
 	{
-        for (model::IPathPtr path : GetSupportedFiles(path))
+        for (model::IPathPtr apath : GetSupportedFiles(path))
         {
-            result.push_back(boost::make_shared<CachedPath>(path->getPath()));
+            result.push_back(boost::make_shared<CachedPath>(apath->getPath()));
         }
 		cache[key] = result;
 	}
