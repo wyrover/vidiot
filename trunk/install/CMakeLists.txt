@@ -37,7 +37,7 @@ execute_process (COMMAND ${CMAKE_COMMAND} -E copy_if_different "${PROJECT_BINARY
 set (CPACK_PACKAGE_EXECUTABLES "" "") # See http://public.kitware.com/Bug/view.php?id=7828
 
 if (WIN32 AND NOT UNIX)
-  set (CPACK_GENERATOR                  "NSIS")
+  set (CPACK_GENERATOR                  "NSIS;ZIP")
   set (CPACK_PACKAGE_INSTALL_DIRECTORY  ${APPNAME})
   set (CPACK_NSIS_MENU_LINKS            "${APPNAME}.exe" "${APPNAME}")
   
@@ -76,7 +76,7 @@ if (WIN32 AND NOT UNIX)
   endif ()
 
 else ()
-  set (CPACK_GENERATOR                      "DEB")
+  set (CPACK_GENERATOR                      "DEB;TGZ")
   # Used "dpkg -l libgtk*" and "apt-cache depends libgtk2.0-bin" to get the dependency info
   set (CPACK_PACKAGE_INSTALL_DIRECTORY      "${APPNAME_LOWER}")
   set (CPACK_COMPONENTS_ALL_IN_ONE_PACKAGE  1)
