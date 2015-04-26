@@ -203,11 +203,6 @@ void VideoDisplay::stop()
 
     mAbortThreads = true; // Stop getting new video/audio data
 
-#ifdef __GNUC__
-    //todo GCC get hangup if I do abortstream and closestream immediately after timer.stop....
-    boost::this_thread::sleep(boost::posix_time::milliseconds(250));
-#endif
-
     if (mPlaying)
     {
         LOG_DEBUG << "Playback stopping";
@@ -267,7 +262,15 @@ void VideoDisplay::moveTo(pts position)
     mSequence->moveTo(position);
     GetEventHandler()->QueueEvent(new PlaybackPositionEvent(position));
 
-    mCurrentVideoFrame = mSequence->getNextVideo(model::VideoCompositionParameters().setBoundingBox(wxSize(mWidth,mHeight)));
+    if (mWidth > 0 && mHeight > 0)
+    {
+        // Avoid getting bitmaps for empty windows during startup.
+        mCurrentVideoFrame = mSequence->getNextVideo(model::VideoCompositionParameters().setBoundingBox(wxSize(mWidth,mHeight)));
+    }
+    else
+    {
+        mCurrentVideoFrame.reset();
+    }
     if (mCurrentVideoFrame)
     {
         mCurrentBitmap = mCurrentVideoFrame->getBitmap();
@@ -286,9 +289,6 @@ void VideoDisplay::setSpeed(int speed)
     ASSERT(wxThread::IsMain());
     bool wasPlaying = mPlaying;
     mSpeed = speed;
-//#ifdef __GNUC__
-      //  mSpeed = sDefaultSpeed;
-//#endif
     moveTo(mCurrentVideoFrame ? mCurrentVideoFrame->getPts() : 0);
     if (wasPlaying)
     {
