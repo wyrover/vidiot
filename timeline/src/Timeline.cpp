@@ -622,6 +622,9 @@ void Timeline::modelChanged()
 
 void Timeline::alignCenterPtsAfterInitialization()
 {
+    // Give newly opened timelines the keyboard focus.
+    SetFocus();
+
     getScrolling().alignCenterPts();
     mExecuteOnIdle = boost::bind(&Timeline::readFocusedThumbnails, this);
 }
