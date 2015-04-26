@@ -17,6 +17,8 @@
 
 #include "Render.h"
 
+// todo use wxAppProgressIndicator 
+
 #include "AudioChunk.h"
 #include "AudioCodec.h"
 #include "AudioCodecs.h"
