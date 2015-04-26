@@ -64,7 +64,8 @@ LinuxSetup()
     						cmake cmake-qt-gui \
     						g++ \
     						portaudio19-dev \
-    						libsoundtouch-dev
+    						libsoundtouch-dev \
+                            meld
     nautilus -q
     echo "\n----------------------------------------\nwx...\n"
     # wxwidgets - dos2unix required since windows checkout of wxwidgets gives the wx-config utility dos line endings, making it fail to run.

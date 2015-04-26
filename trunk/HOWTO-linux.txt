@@ -4,7 +4,7 @@ NOTE: Debugging x errors:
   - "break _XError"
   - run
   - backtrace
-NOTE: svn co https://svn.code.sf.net/p/vidiot/code/trunk . # Not needed (svn on windows), but may become handy someday
+NOTE: svn co https://svn.code.sf.net/p/vidiot/code/trunk . #Not needed (svn on windows), maybe someday
 
 ================ VIRTUALBOX ================
 
@@ -31,24 +31,12 @@ NOTE: svn co https://svn.code.sf.net/p/vidiot/code/trunk . # Not needed (svn on 
   StopVM
   VBoxManage.exe modifyhd c:\path\to\thedisk.vdi --compact
 
-================ INSTALLED LINUX (NO VM)  ================
-* Remove "Unsupported updates"
-* Mount NTFS partitions (with proper permissions handling)
-  Note: use id -u ${USER} and id -g ${USER} to get proper uid and gid
-  Disks: 
-  - Display name: System
-  - Options: nosuid,nodev,nofail,x-gvfs-show,uid=1000,gid=1000,umask=022,x-gvfs-name=System
-  - Mount point: /media/${USER}/System  
-
 ================ SETUP  ================
 * ~/.bashrc: export PATH="$HOME/vidiot/vidiot_trunk/build:$PATH"   
-* Nautilus: changed dir for Desktop to ${HOME}/.Desktop
-* Terminal: Run 
-  buildvidiot.sh FULLSETUP
+* Nautilus Run <vidiot_sources>/build/buildvidiot.sh
 * Codeblocks config 
-  - cp ~/Vidiot/vidiot_trunk/build/codeblocks/default.conf ~/.codeblocks
-  - Settings => environment => Terminal ... : 'gnome-terminal --disable-factory --hide-menubar -t $TITLE --geometry 80x100+50+0 -x'
-                               On application startup => open default workspace
+  - cp ~/vidiot/vidiot_trunk/build/codeblocks/default.conf ~/.codeblocks
+  - Settings => environment => Terminal ... : '/usr/bin/xterm -T $TITLE -geometry 140x100+50+0 -e '
              => editor => Line endings => CR LF
              => editor => Show indentation guides (enable)
                 editor => General settings => Other settings => Editor's title is the file's name only
