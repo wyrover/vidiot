@@ -98,13 +98,13 @@ void Work::showProgressText(const wxString& text)
     }
 }
 
-void Work::showProgressBar(int max)
+void Work::showProgressBar(int max, bool taskbar)
 {
     if (mShowProgress)
     {
-        util::thread::RunInMain([max]
+        util::thread::RunInMain([max, taskbar]
         {
-            gui::StatusBar::get().showProgressBar(max);
+            gui::StatusBar::get().showProgressBar(max, taskbar);
         });
 
     }

@@ -20,6 +20,8 @@
 
 #include "UtilSingleInstance.h"
 
+class wxAppProgressIndicator;
+
 namespace worker {
     class Work;
     class Worker;
@@ -70,7 +72,7 @@ public:
     void setQueueText(const wxString& text = "");
 
     void setProcessingText(const wxString& text = "");
-    void showProgressBar(int max);
+    void showProgressBar(int max, bool taskbar);
     void showProgress(int value);
     void hideProgressBar();
 
@@ -82,7 +84,7 @@ private:
 
     wxGauge* mProgress;
     Timer* mInfoTimer;
-
+    boost::shared_ptr<wxAppProgressIndicator> mTaskBarProgress;
 };
 
 } // namespace

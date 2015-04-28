@@ -17,8 +17,6 @@
 
 #include "Render.h"
 
-// todo use wxAppProgressIndicator 
-
 #include "AudioChunk.h"
 #include "AudioCodec.h"
 #include "AudioCodecs.h"
@@ -333,7 +331,7 @@ void RenderWork::generate()
     RenderPtr mRender = sequence->getRender();
 
     sequence->moveTo(mFrom);
-    showProgressBar(mLength);
+    showProgressBar(mLength, true);
     wxString ps; ps << _("Rendering sequence '") << sequence->getName() << "'";
     showProgressText(ps);
 
