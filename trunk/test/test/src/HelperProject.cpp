@@ -25,6 +25,14 @@ void SetProjectUnmodified()
     {
         wxDocument* doc = gui::Window::get().GetDocumentManager()->GetCurrentDocument();
         if (doc) { doc->Modify(false); } // Avoid "Save yes/no/Cancel" dialog
+
+        // Clear history also since there are often crashes on saving the history
+        // when running the tests under GTK.
+        wxFileHistory* history = gui::Window::get().GetDocumentManager()->GetFileHistory();
+        while (history->GetCount() > 0)
+        {
+            history->RemoveFileFromHistory(0);
+        }
     });
 }
 

@@ -57,7 +57,7 @@ protected:
     //////////////////////////////////////////////////////////////////////////
 
     void showProgressText(const wxString& text);
-    void showProgressBar(int max);
+    void showProgressBar(int max, bool taskbar = false);
     void showProgress(int value);
 
     //////////////////////////////////////////////////////////////////////////
