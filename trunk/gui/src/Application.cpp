@@ -251,7 +251,7 @@ void Application::OnEventLoopEnter(wxEventLoopBase* loop)
 
     if (!mEventLoopStarted && loop->IsMain())
     {
-        util::thread::setCurrentThreadName("Main");
+        util::thread::setCurrentThreadName("Vidiot"); // Required to show proper name in Ubuntu system monitor
         mEventLoopStarted = true;
         dynamic_cast<Window*>(GetTopWindow())->init();
     }
