@@ -212,9 +212,18 @@ void VideoDisplay::stop()
         // Stop audio
         if (0 == Pa_IsStreamStopped(mAudioOutputStream))
         {
-            PaError err = Pa_AbortStream(mAudioOutputStream);
+            // Do not use Pa_AbortStream here, that may lead to
+            // hangups/crashes. Just start playback and then hold
+            // the spacebar to continuously toggle playback start/stop.
+            // Eventually, a crash/hangup occurs.
+            //
+            // That is probably caused by the stream not being
+            // fully stopped after aborting. Then, the subsequent
+            // Pa_CloseStream seems to trigger the crash/hangup.
+            PaError err = Pa_StopStream(mAudioOutputStream);
             ASSERT_EQUALS(err,paNoError)(Pa_GetErrorText(err));
         }
+        ASSERT_EQUALS(Pa_IsStreamStopped(mAudioOutputStream),1);
 
         PaError err = Pa_CloseStream(mAudioOutputStream);
         ASSERT_EQUALS(err,paNoError)(Pa_GetErrorText(err));
@@ -426,7 +435,6 @@ bool VideoDisplay::audioRequested(void *buffer, const unsigned long& frames, dou
                 LOG_DEBUG << "Abort";
                 return false;
             }
-
             int chunks = mAudioChunks.getSize(); // lock 1
             if (chunks == 0)
             {
