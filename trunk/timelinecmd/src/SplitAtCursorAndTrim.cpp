@@ -34,14 +34,13 @@ namespace gui { namespace timeline { namespace command {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-SplitAtCursorAndTrim::SplitAtCursorAndTrim(const model::SequencePtr& sequence, bool backwards)
-    :   Combiner()
-    ,   mSequence(sequence)
-    ,   mBackwards(backwards)
-    ,   mPosition(getTimeline().getCursor().getLogicalPosition())
-    ,   mPossible(false)
+void SplitAtCursorAndTrim(const model::SequencePtr& sequence, bool backwards)
 {
-    VAR_INFO(this)(mPosition)(mBackwards);
+
+    Timeline& timeline{ gui::TimelinesView::get().getTimeline(sequence) };
+    pts position{ timeline.getCursor().getLogicalPosition() };
+
+    VAR_INFO(position)(backwards);
 
     int nVideo = 0;
     int nAudio = 0;
@@ -51,16 +50,16 @@ SplitAtCursorAndTrim::SplitAtCursorAndTrim(const model::SequencePtr& sequence, b
 
     //////////////////////////////////////////////////////////////////////////
 
-    std::set<pts> cuts = mSequence->getCuts();
-    if (cuts.find(mPosition) != cuts.end())
+    std::set<pts> cuts = sequence->getCuts();
+    if (cuts.find(position) != cuts.end())
     {
         gui::StatusBar::get().timedInfoText(_("Can't trim: cut at cursor position."));
     }
     else
     {
-        for ( model::TrackPtr track : mSequence->getTracks() )
+        for ( model::TrackPtr track : sequence->getTracks() )
         {
-            model::IClipPtr clip = mBackwards ? track->getClip(mPosition - 1) : track->getClip(mPosition);
+            model::IClipPtr clip = backwards ? track->getClip(position - 1) : track->getClip(position);
             if (clip)
             {
                 if (clip->isA<model::VideoClip>())
@@ -95,48 +94,25 @@ SplitAtCursorAndTrim::SplitAtCursorAndTrim(const model::SequencePtr& sequence, b
         {
             model::IClipPtr clip = videoClip ? videoClip : audioClip;
             ASSERT_NONZERO(clip);
-            command::TrimClip* cmd = new command::TrimClip(sequence, clip, model::TransitionPtr(), mBackwards ? ClipBegin : ClipEnd);
+            command::TrimClip* cmd = new command::TrimClip(sequence, clip, model::TransitionPtr(), backwards ? ClipBegin : ClipEnd);
 
             pts left = clip->getLeftPts(); // Clip will be changed by the trim below, thus store here
             pts right = clip->getRightPts(); // Clip will be changed by the trim below, thus store here
 
-            pts trim = mBackwards ? mPosition - left : mPosition - right;
-            getTimeline().beginTransaction();
+            pts trim = backwards ? position - left : position - right;
             cmd->update(trim,true);
-            mPossible = (cmd->getDiff() != 0);
-            if (isPossible())
+            cmd->setCursorPositionAfter(backwards ? left : position);
+            if (cmd->getDiff() != 0)
             {
-                add(cmd);
-                cmd->setCursorPositionAfter(mBackwards ? left : mPosition);
+                cmd->submit();
             }
             else
             {
                 gui::StatusBar::get().timedInfoText(_("Can't trim: position of clips prevents proper shifting"));
                 delete cmd;
             }
-            getTimeline().endTransaction();
         }
     }
-
-    setName( _("Split at cursor position and remove ") + (backwards ? _("begin") : _("end")) + " of clip");
-}
-
-SplitAtCursorAndTrim::~SplitAtCursorAndTrim()
-{
-}
-
-bool SplitAtCursorAndTrim::isPossible()
-{
-    return mPossible;
-}
-
-//////////////////////////////////////////////////////////////////////////
-// HELPER METHODS
-//////////////////////////////////////////////////////////////////////////
-
-Timeline& SplitAtCursorAndTrim::getTimeline()
-{
-    return gui::TimelinesView::get().getTimeline(mSequence);
 }
 
 }}} // namespace

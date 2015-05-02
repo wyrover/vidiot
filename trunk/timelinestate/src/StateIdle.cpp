@@ -155,12 +155,12 @@ boost::statechart::result Idle::react( const EvKeyDown& evt)
     case 'b':
     case 'B':
         evt.consumed();
-        model::ProjectModification::submitIfPossible(new command::SplitAtCursorAndTrim(getSequence(), true));
+        command::SplitAtCursorAndTrim(getSequence(), true);
         break;
     case 'e':
     case 'E':
         evt.consumed();
-        model::ProjectModification::submitIfPossible(new command::SplitAtCursorAndTrim(getSequence(), false));
+        command::SplitAtCursorAndTrim(getSequence(), false);
         break;
     case 'i':
     case 'I':
@@ -354,7 +354,7 @@ boost::statechart::result Idle::rightDown()
 void Idle::addTransition(model::TransitionType type)
 {
     PointerPositionInfo info = getMouse().getInfo(getMouse().getVirtualPosition());
-    if (info.clip && 
+    if (info.clip &&
         (info.clip->isA<model::VideoClip>() || info.clip->isA<model::AudioClip>()) )
     {
         pts left = getViewMap().getView(info.clip)->getLeftPixel();
@@ -374,12 +374,12 @@ void Idle::addTransition(model::TransitionType type)
         // Check if there is already a transition at the given position
         switch (type)
         {
-        case model::TransitionTypeIn:                               
-        case model::TransitionTypeInOut: 
+        case model::TransitionTypeIn:
+        case model::TransitionTypeInOut:
             if (info.clip->getInTransition() != nullptr) { return; }
             break;
-        case model::TransitionTypeOut: 
-        case model::TransitionTypeOutIn: 
+        case model::TransitionTypeOut:
+        case model::TransitionTypeOutIn:
             if (info.clip->getOutTransition() != nullptr) { return; }
             break;
         }
