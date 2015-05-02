@@ -39,7 +39,7 @@
     <xsl:variable name="revision" select="@revision" />
     <xsl:if test="$revision>1220">
       <xsl:choose>
-        <xsl:when test="$revision=1769"><![CDATA[</ul></td></tr><tr><td><h2>]]>Release 0.3.6  (revision <xsl:value-of select="$revision" />)<![CDATA[</h2></td></tr><tr><td><ul>]]></xsl:when>
+        <xsl:when test="$revision=1773"><![CDATA[</ul></td></tr><tr><td><h2>]]>Release 0.3.6  (revision <xsl:value-of select="$revision" />)<![CDATA[</h2></td></tr><tr><td><ul>]]></xsl:when>
         <xsl:when test="$revision=1723"><![CDATA[</ul></td></tr><tr><td><h2>]]>Release 0.3.5  (revision <xsl:value-of select="$revision" />)<![CDATA[</h2></td></tr><tr><td><ul>]]></xsl:when>
         <xsl:when test="$revision=1682"><![CDATA[</ul></td></tr><tr><td><h2>]]>Release 0.3.4  (revision <xsl:value-of select="$revision" />)<![CDATA[</h2></td></tr><tr><td><ul>]]></xsl:when>
         <xsl:when test="$revision=1674"><![CDATA[</ul></td></tr><tr><td><h2>]]>Release 0.3.3  (revision <xsl:value-of select="$revision" />)<![CDATA[</h2></td></tr><tr><td><ul>]]></xsl:when>
