@@ -55,8 +55,7 @@ Playing::~Playing() // exit
     {
     case 'b':
     case 'B':
-        cmd = new command::SplitAtCursorAndTrim(getSequence(), true);
-        model::ProjectModification::submitIfPossible(cmd);
+        command::SplitAtCursorAndTrim(getSequence(), true);
         getPlayer()->play();
         break;
     case 's':

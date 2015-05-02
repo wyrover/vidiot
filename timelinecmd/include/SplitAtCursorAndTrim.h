@@ -18,43 +18,9 @@
 #ifndef SPLIT_AT_CURSOR_AND_TRIM_H
 #define SPLIT_AT_CURSOR_AND_TRIM_H
 
-#include "Combiner.h"
-
 namespace gui { namespace timeline { namespace command {
 
-class SplitAtCursorAndTrim
-    :   public ::command::Combiner
-{
-public:
-
-    //////////////////////////////////////////////////////////////////////////
-    // INITIALIZATION
-    //////////////////////////////////////////////////////////////////////////
-
-    SplitAtCursorAndTrim(const model::SequencePtr& sequence, bool backwards);
-
-    virtual ~SplitAtCursorAndTrim();
-
-    bool isPossible() override;
-
-private:
-
-    //////////////////////////////////////////////////////////////////////////
-    // MEMBERS
-    //////////////////////////////////////////////////////////////////////////
-
-    model::SequencePtr mSequence;
-    pts mPosition;
-    bool mBackwards;
-    bool mPossible;
-
-    //////////////////////////////////////////////////////////////////////////
-    // HELPER METHODS
-    //////////////////////////////////////////////////////////////////////////
-
-    Timeline& getTimeline();
-
-};
+void SplitAtCursorAndTrim(const model::SequencePtr& sequence, bool backwards);
 
 }}} // namespace
 
