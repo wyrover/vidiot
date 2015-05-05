@@ -135,7 +135,7 @@ void ProjectViewDeleteUnusedFiles::recycleFiles()
         gui::StatusBar::get().timedInfoText(_("File moved to recycle bin."));
         break;
     default:
-        gui::StatusBar::get().timedInfoText(wxString::Format("%d",deleted.size()) + _(" files moved to recycle bin."));
+        gui::StatusBar::get().timedInfoText(wxString::Format("%zu",deleted.size()) + _(" files moved to recycle bin."));
         break;
     }
 }

@@ -31,6 +31,7 @@
 #include <tchar.h>
 
 #else // _MSC_VER
+#include <wx/uri.h>
 #endif
 
 namespace util { namespace path {
@@ -63,6 +64,7 @@ bool recycle(const wxString& file)
 bool recycle(const wxString& file)
 {
     // See: http://ubuntuforums.org/showthread.php?t=1766301
+    bool success{false};
 
     wxFileName filename(file);
     ASSERT(!filename.IsDir())(filename); // Not supported
@@ -71,32 +73,50 @@ bool recycle(const wxString& file)
     wxFileName recyclebin(home + "/.local/share/Trash", "");
     if (recyclebin.DirExists())
     {
+        // Find proper name for .trashinfo file and for deleted file
         wxFileName infofile(recyclebin);
         infofile.AppendDir("info");
         infofile.SetName(filename.GetFullName());
         infofile.SetExt("trashinfo");
-        wxTextFile infofiletext(infofile.GetFullPath());
-        infofiletext.Open();
-        infofiletext.Clear();
-        infofiletext.AddLine("[Trash Info]");
-        infofiletext.AddLine("Path=" + filename.GetFullPath());
-        infofiletext.AddLine("DeletionDate=" + wxDateTime::Now().Format("%FT%T"));
-        infofiletext.Close();
-
-        wxFileName trashedfile(recyclebin);
-        trashedfile.AppendDir("files");
-        trashedfile.SetFullName(filename.GetFullName());
-
-        bool copyOk = wxCopyFile(filename.GetFullPath(), trashedfile.GetFullPath());
-        if (copyOk)
+        int index = 2; // First 'renamed' file labeled with '2'.
+        while (infofile.FileExists())
         {
-            bool removeOk = wxRemoveFile(filename.GetFullPath());
+            infofile.SetName(filename.GetFullName() + wxString::Format(wxT(".%d"), index++));
+        }
+
+        // Create .trashinfo file
+        wxTextFile infofiletext(infofile.GetFullPath());
+        success = infofiletext.Create(infofile.GetFullPath());
+        if (success)
+        {
+            infofiletext.AddLine("[Trash Info]");
+            infofiletext.AddLine("Path=" + wxURI(filename.GetFullPath()).BuildURI());
+            infofiletext.AddLine("DeletionDate=" + wxDateTime::Now().Format("%FT%T"));
+            success = infofiletext.Write();
+            infofiletext.Close();
+        }
+
+        // Create copy of file in Trash
+        if (success)
+        {
+            wxFileName trashedfile(recyclebin);
+            trashedfile.AppendDir("files");
+            trashedfile.SetFullName(infofile.GetFullName()); // Use the indexed name
+            trashedfile.ClearExt(); // Remove the .trashinfo extension
+            success = wxCopyFile(filename.GetFullPath(), trashedfile.GetFullPath());
+        }
+
+        // Remove file from original location
+        if (success)
+        {
+            success = wxRemoveFile(filename.GetFullPath());
         }
     }
     else
     {
-        bool removeOk = wxRemoveFile(filename.GetFullPath());
+        success = wxRemoveFile(filename.GetFullPath());
     }
+    return success;
 }
 
 #endif
