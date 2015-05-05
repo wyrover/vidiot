@@ -345,6 +345,8 @@ void ProjectView::onDeleteUnused()
     ASSERT(folder);
 
     command::ProjectViewDeleteUnusedFiles(folder).recycleFiles();
+    // To ensure that starting this again doesn't use files that no longer exist:
+    folder->check(true);
 }
 
 void ProjectView::onNewFolder(const model::FolderPtr& parent)
