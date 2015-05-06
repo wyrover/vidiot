@@ -188,7 +188,7 @@ void File::check(bool immediately)
             readMetaData();
             if (!canBeOpened())
             {
-                gui::Dialog::get().getConfirmation(_("File removed"), _("The file ") + util::path::toName(mPath) + _(" has been removed from disk. File is removed from project also."));
+                gui::Dialog::get().getConfirmation(_("File removed"), _("The file ") + util::path::toPath(mPath) + _(" has been removed from disk. File is removed from project also."));
                 parent->removeChild(self());
             }
         }
