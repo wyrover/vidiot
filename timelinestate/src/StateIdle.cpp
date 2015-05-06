@@ -29,6 +29,7 @@
 #include "EventKey.h"
 #include "EventMouse.h"
 #include "EventPart.h"
+#include "Intervals.h"
 #include "Keyboard.h"
 #include "Menu.h"
 #include "Mouse.h"
@@ -141,84 +142,128 @@ boost::statechart::result Idle::react( const EvKeyDown& evt)
     VAR_DEBUG(evt);
     switch (evt.KeyCode)
     {
-    case WXK_SPACE:
-        evt.consumed();
-        return start();
-        break;
-    case WXK_DELETE:
-        evt.consumed();
-        getSelection().deleteClips(getKeyboard().getShiftDown());
-        break;
-    case WXK_F1:
-        getTooltip().show(sTooltip);
-        break;
-    case 'b':
-    case 'B':
-        evt.consumed();
-        command::SplitAtCursorAndTrim(getSequence(), true);
-        break;
-    case 'e':
-    case 'E':
-        evt.consumed();
-        command::SplitAtCursorAndTrim(getSequence(), false);
-        break;
-    case 'i':
-    case 'I':
-        evt.consumed();
-        addTransition(model::TransitionTypeIn);
-        break;
-    case 'n':
-    case 'N':
-        evt.consumed();
-        addTransition(model::TransitionTypeOutIn);
-        break;
-    case 'o':
-    case 'O':
-        evt.consumed();
-        addTransition(model::TransitionTypeOut);
-        break;
-    case 'p':
-    case 'P':
-        evt.consumed();
-        addTransition(model::TransitionTypeInOut);
-        break;
-    case 's':
-    case 'S':
-        if (!evt.CtrlDown)
+        case WXK_SPACE:
         {
             evt.consumed();
-            model::ProjectModification::submitIfPossible(new command::SplitAtCursor(getSequence()));
+            return start();
+            break;
         }
-        break;
-    case '-':
-        evt.consumed();
-        getZoom().change( evt.CtrlDown ? -1000 : -1);
-        break;
-    case '=':
-        evt.consumed();
-        getZoom().change( evt.CtrlDown ?  1000 :  1);
-        break;
-    case 'v':
-    case 'V':
-        evt.consumed();
-        getCursor().focus();
-        break;
-    case WXK_LEFT:
-        evt.consumed();
-        evt.CtrlDown ? getCursor().prevCut() : getCursor().prevFrame();
-        break;
-    case WXK_RIGHT:
-        evt.consumed();
-        evt.CtrlDown ? getCursor().nextCut() : getCursor().nextFrame();
-        break;
-    case WXK_HOME:
-        evt.consumed();
-        getCursor().home();
-        break;
-    case WXK_END:
-        evt.consumed();
-        getCursor().end();
-        break;
+        case WXK_DELETE:
+        {
+            evt.consumed();
+            getSelection().deleteClips(getKeyboard().getShiftDown());
+            break;
+        }
+        case WXK_F1:
+        {
+            getTooltip().show(sTooltip);
+            break;
+        }
+        case 'b':
+        case 'B':
+        {
+            evt.consumed();
+            command::SplitAtCursorAndTrim(getSequence(), true);
+            break;
+        }
+        case 'c':
+        case 'C':
+        {
+            PointerPositionInfo info = getMouse().getInfo(getMouse().getVirtualPosition());
+            if (info.clip && info.clip->isA<model::EmptyClip>())
+            {
+                getIntervals().deleteEmptyClip(info.clip);
+            }
+            break;
+        }
+        case 'e':
+        case 'E':
+        {
+            evt.consumed();
+            command::SplitAtCursorAndTrim(getSequence(), false);
+            break;
+        }
+        case 'i':
+        case 'I':
+        {
+            evt.consumed();
+            addTransition(model::TransitionTypeIn);
+            break;
+        }
+        case 'n':
+        case 'N':
+        {
+            evt.consumed();
+            addTransition(model::TransitionTypeOutIn);
+            break;
+        }
+        case 'o':
+        case 'O':
+        {
+            evt.consumed();
+            addTransition(model::TransitionTypeOut);
+            break;
+        }
+        case 'p':
+        case 'P':
+        {
+            evt.consumed();
+            addTransition(model::TransitionTypeInOut);
+            break;
+        }
+        case 's':
+        case 'S':
+        {
+            if (!evt.CtrlDown)
+            {
+                evt.consumed();
+                model::ProjectModification::submitIfPossible(new command::SplitAtCursor(getSequence()));
+            }
+            break;
+        }
+        case '-':
+        {
+            evt.consumed();
+            getZoom().change(evt.CtrlDown ? -1000 : -1);
+            break;
+        }
+        case '=':
+        {
+            evt.consumed();
+            getZoom().change(evt.CtrlDown ? 1000 : 1);
+            break;
+        }
+        case 'v':
+        case 'V':
+        {
+            evt.consumed();
+            getCursor().focus();
+            break;
+        }
+        case WXK_LEFT:
+        {
+            evt.consumed();
+            evt.CtrlDown ? getCursor().prevCut() : getCursor().prevFrame();
+            break;
+        }
+        case WXK_RIGHT:
+        {
+            evt.consumed();
+            evt.CtrlDown ? getCursor().nextCut() : getCursor().nextFrame();
+            break;
+        }
+        case WXK_HOME:
+        {
+            evt.consumed();
+            getCursor().home();
+            break;
+        }
+        case WXK_END:
+        {
+            evt.consumed();
+            getCursor().end();
+            break;
+        }
     }
     return forward_event();
 }

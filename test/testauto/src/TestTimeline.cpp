@@ -800,4 +800,26 @@ void TestTimeline::testPositionCursor()
     ASSERT_EQUALS(getTimeline().getScrolling().getFourthPts(), VideoClip(0, 4)->getLeftPts());
 }
 
+
+void TestTimeline::testRemoveEmptyClip()
+{
+    StartTestSuite();
+    TimelineLeftClick(Center(VideoClip(0, 1)));
+    TimelineKeyPress(WXK_DELETE);
+    ASSERT_SELECTION_SIZE(0);
+    ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip);
+    ASSERT_AUDIOTRACK0(AudioClip)(EmptyClip)(AudioClip);
+    TimelineMove(Center(VideoClip(0, 1)));
+    TimelineKeyPress('c');
+    ASSERT_VIDEOTRACK0(VideoClip)(VideoClip);
+    ASSERT_AUDIOTRACK0(AudioClip)(AudioClip);
+    ASSERT_EQUALS(VideoClip(0, 1)->getLeftPts(), mProjectFixture.OriginalLengthOfVideoClip(0,0));
+    ASSERT_EQUALS(VideoClip(0, 1)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,2));
+    ASSERT_EQUALS(AudioClip(0, 1)->getLeftPts(), mProjectFixture.OriginalLengthOfAudioClip(0,0));
+    ASSERT_EQUALS(AudioClip(0, 1)->getLength(), mProjectFixture.OriginalLengthOfAudioClip(0,2));
+    Undo();
+    ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip);
+    ASSERT_AUDIOTRACK0(AudioClip)(EmptyClip)(AudioClip);
+}
+
 } // namespace
