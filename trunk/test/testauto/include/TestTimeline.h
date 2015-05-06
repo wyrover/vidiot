@@ -75,6 +75,10 @@ public:
 
     void testPositionCursor();
 
+    /// When 'c' is pressed while the mouse is over an empty clip, that empty
+    /// clip is removed.
+    void testRemoveEmptyClip();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////
