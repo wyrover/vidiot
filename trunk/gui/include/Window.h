@@ -27,7 +27,7 @@ namespace util {
 }
 
 namespace model {
-    class Watcher;
+    class FileWatcher;
     namespace audio {
         class AudioTransitionFactory;
     }
@@ -215,7 +215,7 @@ private:
 
     Dialog* mDialog;
 
-    model::Watcher* mWatcher;
+    model::FileWatcher* mWatcher;
 
     worker::VisibleWorker*   mVisibleWorker;
     worker::InvisibleWorker* mInvisibleWorker;
@@ -265,10 +265,6 @@ private:
 
 } // namespace
 
-// Workaround needed to prevent compile-time errors (mpl_assertion_in_line...) with gcc
-//#include  <boost/preprocessor/slot/counter.hpp>
-//#include BOOST____PP_UPDATE_COUNTER()
-//#line BOOST_____PP_COUNTER
 BOOST_CLASS_VERSION(gui::Window, 1)
 
 #endif

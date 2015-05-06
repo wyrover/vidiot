@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef WATCHER_H
-#define WATCHER_H
+#ifndef MODEL_FILE_WATCHER_H
+#define MODEL_FILE_WATCHER_H
 
 inline bool operator<(wxFileName l, const wxFileName& r) { return l.GetFullPath() < r.GetFullPath(); }
 
@@ -29,8 +29,8 @@ namespace model {
 
 /// For each node in the project view that is a file/dir on disk, the parent folder
 /// must be watched for changes (to detect that the file/dir is removed).
-class Watcher
-    :   public SingleInstance<Watcher>
+class FileWatcher
+    :   public SingleInstance<FileWatcher>
 {
 public:
 
@@ -38,8 +38,8 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    Watcher();
-    virtual ~Watcher();
+    FileWatcher();
+    virtual ~FileWatcher();
 
     //////////////////////////////////////////////////////////////////////////
     // TEST
@@ -106,7 +106,7 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     static wxString GetFSWEventChangeTypeName(int changeType);
-    friend std::ostream& operator<<(std::ostream& os, const Watcher& obj);
+    friend std::ostream& operator<<(std::ostream& os, const FileWatcher& obj);
 };
 
 } // namespace

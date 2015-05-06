@@ -223,10 +223,6 @@ private:
 
 } // namespace
 
-// Workaround needed to prevent compile-time errors (mpl_assertion_in_line...) with gcc
-//#include  <boost/preprocessor/slot/counter.hpp>
-//#include BOOST____PP_UPDATE_COUNTER()
-//#line BOOST_____PP_COUNTER
 BOOST_CLASS_VERSION(model::File, 2)
 BOOST_CLASS_EXPORT_KEY(model::File)
 

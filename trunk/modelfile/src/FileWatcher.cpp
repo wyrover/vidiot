@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#include "Watcher.h"
+#include "FileWatcher.h"
 
 #include "AutoFolder.h"
 #include "File.h"
@@ -36,28 +36,28 @@ namespace model {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-Watcher::Watcher()
+FileWatcher::FileWatcher()
     :   mWatcher(0)
     ,   mWatches()
 {
     VAR_DEBUG(this);
 
-    gui::Window::get().Bind(model::EVENT_ADD_NODE,     &Watcher::onProjectAssetAdded,    this);
-    gui::Window::get().Bind(model::EVENT_ADD_NODES,    &Watcher::onProjectAssetsAdded,   this);
-    gui::Window::get().Bind(model::EVENT_REMOVE_NODE,  &Watcher::onProjectAssetRemoved,  this);
-    gui::Window::get().Bind(model::EVENT_RENAME_NODE,  &Watcher::onProjectAssetRenamed,  this);
+    gui::Window::get().Bind(model::EVENT_ADD_NODE,     &FileWatcher::onProjectAssetAdded,    this);
+    gui::Window::get().Bind(model::EVENT_ADD_NODES,    &FileWatcher::onProjectAssetsAdded,   this);
+    gui::Window::get().Bind(model::EVENT_REMOVE_NODE,  &FileWatcher::onProjectAssetRemoved,  this);
+    gui::Window::get().Bind(model::EVENT_RENAME_NODE,  &FileWatcher::onProjectAssetRenamed,  this);
 
     start();
 }
 
-Watcher::~Watcher()
+FileWatcher::~FileWatcher()
 {
     VAR_DEBUG(this);
 
-    gui::Window::get().Unbind(model::EVENT_ADD_NODE,       &Watcher::onProjectAssetAdded,    this);
-    gui::Window::get().Unbind(model::EVENT_ADD_NODES,      &Watcher::onProjectAssetsAdded,   this);
-    gui::Window::get().Unbind(model::EVENT_REMOVE_NODE,    &Watcher::onProjectAssetRemoved,  this);
-    gui::Window::get().Unbind(model::EVENT_RENAME_NODE,    &Watcher::onProjectAssetRenamed,  this);
+    gui::Window::get().Unbind(model::EVENT_ADD_NODE,       &FileWatcher::onProjectAssetAdded,    this);
+    gui::Window::get().Unbind(model::EVENT_ADD_NODES,      &FileWatcher::onProjectAssetsAdded,   this);
+    gui::Window::get().Unbind(model::EVENT_REMOVE_NODE,    &FileWatcher::onProjectAssetRemoved,  this);
+    gui::Window::get().Unbind(model::EVENT_RENAME_NODE,    &FileWatcher::onProjectAssetRenamed,  this);
 
     mWatches.clear();
     stop();
@@ -67,7 +67,7 @@ Watcher::~Watcher()
 // TEST
 //////////////////////////////////////////////////////////////////////////
 
-int Watcher::getWatchedPathsCount() const
+int FileWatcher::getWatchedPathsCount() const
 {
     return mWatches.size();
 }
@@ -76,7 +76,7 @@ int Watcher::getWatchedPathsCount() const
 // EVENT HANDLING
 //////////////////////////////////////////////////////////////////////////
 
-void Watcher::onChange(wxFileSystemWatcherEvent& event)
+void FileWatcher::onChange(wxFileSystemWatcherEvent& event)
 {
     VAR_INFO(event.ToString());
     VAR_INFO(GetFSWEventChangeTypeName(event.GetChangeType()))(event.GetPath())(event.GetNewPath());
@@ -135,13 +135,13 @@ void Watcher::onChange(wxFileSystemWatcherEvent& event)
 // PROJECT EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void Watcher::onProjectAssetAdded(model::EventAddNode &event)
+void FileWatcher::onProjectAssetAdded(model::EventAddNode &event)
 {
     watch( event.getValue().getChild() );
     event.Skip();
 }
 
-void Watcher::onProjectAssetsAdded(model::EventAddNodes &event)
+void FileWatcher::onProjectAssetsAdded(model::EventAddNodes &event)
 {
     for ( model::NodePtr node : event.getValue().getChildren() )
     {
@@ -150,13 +150,13 @@ void Watcher::onProjectAssetsAdded(model::EventAddNodes &event)
     event.Skip();
 }
 
-void Watcher::onProjectAssetRemoved(model::EventRemoveNode &event)
+void FileWatcher::onProjectAssetRemoved(model::EventRemoveNode &event)
 {
     unwatch( event.getValue().getChild() );
     event.Skip();
 }
 
-void Watcher::onProjectAssetsRemoved(model::EventRemoveNodes &event)
+void FileWatcher::onProjectAssetsRemoved(model::EventRemoveNodes &event)
 {
     for ( model::NodePtr node : event.getValue().getChildren() )
     {
@@ -165,7 +165,7 @@ void Watcher::onProjectAssetsRemoved(model::EventRemoveNodes &event)
     event.Skip();
 }
 
-void Watcher::onProjectAssetRenamed(model::EventRenameNode &event)
+void FileWatcher::onProjectAssetRenamed(model::EventRenameNode &event)
 {
     event.Skip();
 }
@@ -196,7 +196,7 @@ boost::optional<wxString> requiredWatchPath(const model::NodePtr& node)
     return boost::optional<wxString>(result);
 }
 
-void Watcher::watch(const model::NodePtr& node)
+void FileWatcher::watch(const model::NodePtr& node)
 {
     boost::optional<wxString> requiresWatch = requiredWatchPath(node);
     VAR_DEBUG(requiresWatch);
@@ -234,7 +234,7 @@ void Watcher::watch(const model::NodePtr& node)
     VAR_DEBUG(*this);
 }
 
-void Watcher::unwatch(const model::NodePtr& node)
+void FileWatcher::unwatch(const model::NodePtr& node)
 {
     boost::optional<wxString> requiresWatch = requiredWatchPath(node);
     VAR_DEBUG(requiresWatch);
@@ -271,21 +271,21 @@ void Watcher::unwatch(const model::NodePtr& node)
     VAR_DEBUG(*this);
 }
 
-void Watcher::stop()
+void FileWatcher::stop()
 {
     if (mWatcher)
     {
-        mWatcher->Unbind(wxEVT_FSWATCHER, &Watcher::onChange, this);
+        mWatcher->Unbind(wxEVT_FSWATCHER, &FileWatcher::onChange, this);
         delete mWatcher;
         mWatcher = 0;
     }
 }
 
-void Watcher::start()
+void FileWatcher::start()
 {
     ASSERT(!mWatcher);
     mWatcher = new wxFileSystemWatcher();
-    mWatcher->Bind(wxEVT_FSWATCHER, &Watcher::onChange, this);
+    mWatcher->Bind(wxEVT_FSWATCHER, &FileWatcher::onChange, this);
     VAR_DEBUG(*this)(mWatches);
     for ( MapFolderToNodes::value_type kv : mWatches )
     {
@@ -297,14 +297,14 @@ void Watcher::start()
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<(std::ostream& os, const Watcher& obj)
+std::ostream& operator<<(std::ostream& os, const FileWatcher& obj)
 {
     os << &obj << '|' << obj.mWatches;
     return os;
 }
 
 // static
-wxString Watcher::GetFSWEventChangeTypeName(int changeType)
+wxString FileWatcher::GetFSWEventChangeTypeName(int changeType)
 {
     switch (changeType)
     {
