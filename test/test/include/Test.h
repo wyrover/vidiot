@@ -121,7 +121,7 @@
 #include "VideoTransitionFactory.h"
 #include "VideoView.h"
 #include "ViewMap.h"
-#include "Watcher.h"
+#include "FileWatcher.h"
 #include "Window.h"
 #include "Worker.h"
 #include "Zoom.h"

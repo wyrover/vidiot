@@ -1,4 +1,4 @@
-// Copyright 2013-2015 Eric Raijmakers.
+// Copyright 2015 Eric Raijmakers.
 //
 // This file is part of Vidiot.
 //
@@ -15,17 +15,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MODEL_AUDIO_TRACK_H
-#define MODEL_AUDIO_TRACK_H
+#ifndef MODEL_FILE_META_DATA_CACHE_H
+#define MODEL_FILE_META_DATA_CACHE_H
 
-#include "Track.h"
-#include "IAudio.h"
+#include "UtilSingleInstance.h"
 
 namespace model {
 
-class AudioTrack
-    :   public Track
-    ,   public IAudio
+class FileMetaDataCache
+    :   public SingleInstance<FileMetaDataCache>
 {
 public:
 
@@ -33,49 +31,44 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    AudioTrack();
+    FileMetaDataCache();
 
-    virtual AudioTrack* clone() const override;
-
-    virtual ~AudioTrack();
+    virtual ~FileMetaDataCache();
 
     //////////////////////////////////////////////////////////////////////////
-    // ICONTROL
+    // GET/SET
     //////////////////////////////////////////////////////////////////////////
-
-    virtual void clean() override;
-
-    //////////////////////////////////////////////////////////////////////////
-    // PLAYBACK
-    //////////////////////////////////////////////////////////////////////////
-
-    virtual AudioChunkPtr getNextAudio(const AudioCompositionParameters& parameters) override;
 
 protected:
 
-    //////////////////////////////////////////////////////////////////////////
-    // COPY CONSTRUCTOR
-    //////////////////////////////////////////////////////////////////////////
-
-    /// Copy constructor. Use make_cloned for making deep copies of objects.
-    /// \see make_cloned
-    AudioTrack(const AudioTrack& other);
-
 private:
+
+    //////////////////////////////////////////////////////////////////////////
+    // MEMBERS
+    //////////////////////////////////////////////////////////////////////////
+
+    //////////////////////////////////////////////////////////////////////////
+    // HELPER METHODS
+    //////////////////////////////////////////////////////////////////////////
+
+    //////////////////////////////////////////////////////////////////////////
+    // LOGGING
+    //////////////////////////////////////////////////////////////////////////
+
+    friend std::ostream& operator<<(std::ostream& os, const File& obj);
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
     friend class boost::serialization::access;
-
     template<class Archive>
     void serialize(Archive & ar, const unsigned int version);
 };
 
 } // namespace
 
-BOOST_CLASS_VERSION(model::AudioTrack, 1)
-BOOST_CLASS_EXPORT_KEY(model::AudioTrack)
+BOOST_CLASS_VERSION(model::FileMetaDataCache, 1)
+BOOST_CLASS_EXPORT_KEY(model::FileMetaDataCache)
 
 #endif

@@ -42,7 +42,7 @@
 #include "UtilTestCrash.h"
 #include "UtilWindow.h"
 #include "VideoTransitionFactory.h"
-#include "Watcher.h"
+#include "FileWatcher.h"
 #include "Worker.h"
 
 namespace gui {
@@ -514,7 +514,7 @@ void Window::onOpenProject(model::EventOpenProject &event )
     ASSERT_ZERO(mWatcher);
     // Needs an event loop (under wxGTK)
     // Therefore, creation is delayed until this moment.
-    mWatcher = new model::Watcher();
+    mWatcher = new model::FileWatcher();
     mMenuFile->Enable(ID_NEW_FILES,true);
     mMenuFile->Enable(ID_NEW_AUTOFOLDER,true);
     mMenuFile->Enable(ID_NEW_SEQUENCE,true);

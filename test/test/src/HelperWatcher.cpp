@@ -25,7 +25,7 @@ void ASSERT_WATCHED_PATHS_COUNT(int n)
     int currentWatchedPathsCount = -1; // Just: different from n
     util::thread::RunInMainAndWait([&currentWatchedPathsCount]
     {
-        currentWatchedPathsCount = model::Watcher::get().getWatchedPathsCount();
+        currentWatchedPathsCount = model::FileWatcher::get().getWatchedPathsCount();
     });
     ASSERT_EQUALS(currentWatchedPathsCount,n);
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <!DOCTYPE boost_serialization>
 <boost_serialization signature="serialization::archive" version="11">
-<project class_id="0" tracking_level="1" version="1" object_id="_0">
+<project class_id="0" tracking_level="1" version="2" object_id="_0">
 	<mProperties class_id="1" tracking_level="0" version="1">
 		<px class_id="2" tracking_level="1" version="3" object_id="_1">
 			<mFrameRate class_id="3" tracking_level="0" version="1">
@@ -90,34 +90,37 @@
 			</mDefaultRender>
 		</px>
 	</mProperties>
-	<mRoot class_id="21" tracking_level="0" version="1">
-		<px class_id="23" class_name="model::Root" tracking_level="1" version="1" object_id="_9">
-			<Folder class_id="22" tracking_level="1" version="1" object_id="_10">
-				<Node class_id="24" tracking_level="0" version="1">
-					<INode class_id="25" tracking_level="0" version="1"></INode>
-					<parent class_id="26" tracking_level="0" version="1">
+	<mMetaDataCache class_id="21" tracking_level="0" version="1">
+		<px class_id="22" tracking_level="1" version="1" object_id="_9"></px>
+	</mMetaDataCache>
+	<mRoot class_id="23" tracking_level="0" version="1">
+		<px class_id="25" class_name="model::Root" tracking_level="1" version="1" object_id="_10">
+			<Folder class_id="24" tracking_level="1" version="1" object_id="_11">
+				<Node class_id="26" tracking_level="0" version="1">
+					<INode class_id="27" tracking_level="0" version="1"></INode>
+					<parent class_id="28" tracking_level="0" version="1">
 						<px class_id="-1"></px>
 					</parent>
-					<mChildren class_id="27" tracking_level="0" version="0">
+					<mChildren class_id="29" tracking_level="0" version="0">
 						<count>3</count>
 						<item_version>1</item_version>
 						<item>
-							<px class_id="28" class_name="model::AutoFolder" tracking_level="1" version="2" object_id="_11">
-								<Folder object_id="_12">
+							<px class_id="30" class_name="model::AutoFolder" tracking_level="1" version="2" object_id="_12">
+								<Folder object_id="_13">
 									<Node>
 										<INode></INode>
 										<parent>
-											<px class_id_reference="23" object_id_reference="_9"></px>
+											<px class_id_reference="25" object_id_reference="_10"></px>
 										</parent>
 										<mChildren>
 											<count>7</count>
 											<item_version>1</item_version>
 											<item>
-												<px class_id="29" class_name="model::File" tracking_level="1" version="2" object_id="_13">
+												<px class_id="31" class_name="model::File" tracking_level="1" version="2" object_id="_14">
 													<Node>
 														<INode></INode>
 														<parent>
-															<px class_id_reference="28" object_id_reference="_11"></px>
+															<px class_id_reference="30" object_id_reference="_12"></px>
 														</parent>
 														<mChildren>
 															<count>0</count>
@@ -133,11 +136,11 @@
 												</px>
 											</item>
 											<item>
-												<px class_id_reference="29" object_id="_14">
+												<px class_id_reference="31" object_id="_15">
 													<Node>
 														<INode></INode>
 														<parent>
-															<px class_id_reference="28" object_id_reference="_11"></px>
+															<px class_id_reference="30" object_id_reference="_12"></px>
 														</parent>
 														<mChildren>
 															<count>0</count>
@@ -153,11 +156,11 @@
 												</px>
 											</item>
 											<item>
-												<px class_id_reference="29" object_id="_15">
+												<px class_id_reference="31" object_id="_16">
 													<Node>
 														<INode></INode>
 														<parent>
-															<px class_id_reference="28" object_id_reference="_11"></px>
+															<px class_id_reference="30" object_id_reference="_12"></px>
 														</parent>
 														<mChildren>
 															<count>0</count>
@@ -173,11 +176,11 @@
 												</px>
 											</item>
 											<item>
-												<px class_id_reference="29" object_id="_16">
+												<px class_id_reference="31" object_id="_17">
 													<Node>
 														<INode></INode>
 														<parent>
-															<px class_id_reference="28" object_id_reference="_11"></px>
+															<px class_id_reference="30" object_id_reference="_12"></px>
 														</parent>
 														<mChildren>
 															<count>0</count>
@@ -193,11 +196,11 @@
 												</px>
 											</item>
 											<item>
-												<px class_id_reference="29" object_id="_17">
+												<px class_id_reference="31" object_id="_18">
 													<Node>
 														<INode></INode>
 														<parent>
-															<px class_id_reference="28" object_id_reference="_11"></px>
+															<px class_id_reference="30" object_id_reference="_12"></px>
 														</parent>
 														<mChildren>
 															<count>0</count>
@@ -213,11 +216,11 @@
 												</px>
 											</item>
 											<item>
-												<px class_id_reference="29" object_id="_18">
+												<px class_id_reference="31" object_id="_19">
 													<Node>
 														<INode></INode>
 														<parent>
-															<px class_id_reference="28" object_id_reference="_11"></px>
+															<px class_id_reference="30" object_id_reference="_12"></px>
 														</parent>
 														<mChildren>
 															<count>0</count>
@@ -233,11 +236,11 @@
 												</px>
 											</item>
 											<item>
-												<px class_id_reference="29" object_id="_19">
+												<px class_id_reference="31" object_id="_20">
 													<Node>
 														<INode></INode>
 														<parent>
-															<px class_id_reference="28" object_id_reference="_11"></px>
+															<px class_id_reference="30" object_id_reference="_12"></px>
 														</parent>
 														<mChildren>
 															<count>0</count>
@@ -266,12 +269,12 @@
 							</px>
 						</item>
 						<item>
-							<px class_id="30" class_name="model::Sequence" tracking_level="1" version="1" object_id="_20">
-								<IAudio class_id="31" tracking_level="0" version="1"></IAudio>
+							<px class_id="32" class_name="model::Sequence" tracking_level="1" version="1" object_id="_21">
+								<IAudio class_id="33" tracking_level="0" version="1"></IAudio>
 								<Node>
 									<INode></INode>
 									<parent>
-										<px class_id_reference="23" object_id_reference="_9"></px>
+										<px class_id_reference="25" object_id_reference="_10"></px>
 									</parent>
 									<mChildren>
 										<count>0</count>
@@ -282,34 +285,34 @@
 									<string>input</string>
 								</mName>
 								<mDividerPosition>89</mDividerPosition>
-								<mVideoTracks class_id="32" tracking_level="0" version="0">
+								<mVideoTracks class_id="34" tracking_level="0" version="0">
 									<count>1</count>
 									<item_version>1</item_version>
-									<item class_id="33" tracking_level="0" version="1">
-										<px class_id="35" class_name="model::VideoTrack" tracking_level="1" version="1" object_id="_21">
-											<Track class_id="34" tracking_level="1" version="2" object_id="_22">
+									<item class_id="35" tracking_level="0" version="1">
+										<px class_id="37" class_name="model::VideoTrack" tracking_level="1" version="1" object_id="_22">
+											<Track class_id="36" tracking_level="1" version="2" object_id="_23">
 												<mIndex>0</mIndex>
-												<mClips class_id="36" tracking_level="0" version="0">
+												<mClips class_id="38" tracking_level="0" version="0">
 													<count>24</count>
 													<item_version>1</item_version>
-													<item class_id="37" tracking_level="0" version="1">
-														<px class_id="38" class_name="model::VideoClip" tracking_level="1" version="3" object_id="_23">
-															<ClipInterval class_id="39" tracking_level="0" version="1">
-																<Clip class_id="40" tracking_level="0" version="2">
-																	<mLink class_id="41" tracking_level="0" version="0">
+													<item class_id="39" tracking_level="0" version="1">
+														<px class_id="40" class_name="model::VideoClip" tracking_level="1" version="3" object_id="_24">
+															<ClipInterval class_id="41" tracking_level="0" version="1">
+																<Clip class_id="42" tracking_level="0" version="2">
+																	<mLink class_id="43" tracking_level="0" version="0">
 																		<ptr>
-																			<px class_id="42" class_name="model::AudioClip" tracking_level="1" version="2" object_id="_24">
+																			<px class_id="44" class_name="model::AudioClip" tracking_level="1" version="2" object_id="_25">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
 																							<ptr>
-																								<px class_id_reference="38" object_id_reference="_23"></px>
+																								<px class_id_reference="40" object_id_reference="_24"></px>
 																							</ptr>
 																						</mLink>
 																					</Clip>
-																					<mRender class_id="43" tracking_level="0" version="1">
-																						<px class_id="44" class_name="model::AudioFile" tracking_level="1" version="1" object_id="_25">
-																							<File object_id="_26">
+																					<mRender class_id="45" tracking_level="0" version="1">
+																						<px class_id="46" class_name="model::AudioFile" tracking_level="1" version="1" object_id="_26">
+																							<File object_id="_27">
 																								<Node>
 																									<INode></INode>
 																									<parent>
@@ -340,8 +343,8 @@
 																	</mLink>
 																</Clip>
 																<mRender>
-																	<px class_id="45" class_name="model::VideoFile" tracking_level="1" version="1" object_id="_27">
-																		<File object_id="_28">
+																	<px class_id="47" class_name="model::VideoFile" tracking_level="1" version="1" object_id="_28">
+																		<File object_id="_29">
 																			<Node>
 																				<INode></INode>
 																				<parent>
@@ -359,7 +362,7 @@
 																			</mPath>
 																			<mMaxBufferSize>10</mMaxBufferSize>
 																		</File>
-																		<IVideo class_id="46" tracking_level="0" version="1"></IVideo>
+																		<IVideo class_id="48" tracking_level="0" version="1"></IVideo>
 																	</px>
 																</mRender>
 																<mOffset>0</mOffset>
@@ -368,7 +371,7 @@
 															<IVideo></IVideo>
 															<mOpacity>255</mOpacity>
 															<mScaling>1</mScaling>
-															<mScalingFactor class_id="47" tracking_level="0" version="0">
+															<mScalingFactor class_id="49" tracking_level="0" version="0">
 																<numerator>1</numerator>
 																<denominator>1</denominator>
 															</mScalingFactor>
@@ -376,7 +379,7 @@
 																<numerator>0</numerator>
 																<denominator>1</denominator>
 															</mRotation>
-															<mRotationPositionOffset class_id="48" tracking_level="0" version="0">
+															<mRotationPositionOffset class_id="50" tracking_level="0" version="0">
 																<x>0</x>
 																<y>0</y>
 															</mRotationPositionOffset>
@@ -388,7 +391,7 @@
 														</px>
 													</item>
 													<item>
-														<px class_id="49" class_name="model::EmptyClip" tracking_level="1" version="1" object_id="_29">
+														<px class_id="51" class_name="model::EmptyClip" tracking_level="1" version="1" object_id="_30">
 															<Clip>
 																<mLink>
 																	<ptr>
@@ -402,23 +405,23 @@
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="38" object_id="_30">
+														<px class_id_reference="40" object_id="_31">
 															<ClipInterval>
 																<Clip>
 																	<mLink>
 																		<ptr>
-																			<px class_id_reference="42" object_id="_31">
+																			<px class_id_reference="44" object_id="_32">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
 																							<ptr>
-																								<px class_id_reference="38" object_id_reference="_30"></px>
+																								<px class_id_reference="40" object_id_reference="_31"></px>
 																							</ptr>
 																						</mLink>
 																					</Clip>
 																					<mRender>
-																						<px class_id_reference="44" object_id="_32">
-																							<File object_id="_33">
+																						<px class_id_reference="46" object_id="_33">
+																							<File object_id="_34">
 																								<Node>
 																									<INode></INode>
 																									<parent>
@@ -449,8 +452,8 @@
 																	</mLink>
 																</Clip>
 																<mRender>
-																	<px class_id_reference="45" object_id="_34">
-																		<File object_id="_35">
+																	<px class_id_reference="47" object_id="_35">
+																		<File object_id="_36">
 																			<Node>
 																				<INode></INode>
 																				<parent>
@@ -497,9 +500,9 @@
 														</px>
 													</item>
 													<item>
-														<px class_id="50" class_name="model::video::transition::Bands" tracking_level="1" version="1" object_id="_36">
-															<VideoTransition class_id="51" tracking_level="0" version="1">
-																<Transition class_id="52" tracking_level="1" version="2" object_id="_37">
+														<px class_id="52" class_name="model::video::transition::Bands" tracking_level="1" version="1" object_id="_37">
+															<VideoTransition class_id="53" tracking_level="0" version="1">
+																<Transition class_id="54" tracking_level="1" version="2" object_id="_38">
 																	<Clip>
 																		<mLink>
 																			<ptr>
@@ -507,7 +510,7 @@
 																			</ptr>
 																		</mLink>
 																	</Clip>
-																	<mFramesLeft class_id="53" tracking_level="0" version="0">
+																	<mFramesLeft class_id="55" tracking_level="0" version="0">
 																		<initialized>0</initialized>
 																	</mFramesLeft>
 																	<mFramesRight>
@@ -521,23 +524,23 @@
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="38" object_id="_38">
+														<px class_id_reference="40" object_id="_39">
 															<ClipInterval>
 																<Clip>
 																	<mLink>
 																		<ptr>
-																			<px class_id_reference="42" object_id="_39">
+																			<px class_id_reference="44" object_id="_40">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
 																							<ptr>
-																								<px class_id_reference="38" object_id_reference="_38"></px>
+																								<px class_id_reference="40" object_id_reference="_39"></px>
 																							</ptr>
 																						</mLink>
 																					</Clip>
 																					<mRender>
-																						<px class_id_reference="44" object_id="_40">
-																							<File object_id="_41">
+																						<px class_id_reference="46" object_id="_41">
+																							<File object_id="_42">
 																								<Node>
 																									<INode></INode>
 																									<parent>
@@ -568,8 +571,8 @@
 																	</mLink>
 																</Clip>
 																<mRender>
-																	<px class_id_reference="45" object_id="_42">
-																		<File object_id="_43">
+																	<px class_id_reference="47" object_id="_43">
+																		<File object_id="_44">
 																			<Node>
 																				<INode></INode>
 																				<parent>
@@ -616,9 +619,9 @@
 														</px>
 													</item>
 													<item>
-														<px class_id="54" class_name="model::video::transition::CrossFade" tracking_level="1" version="1" object_id="_44">
+														<px class_id="56" class_name="model::video::transition::CrossFade" tracking_level="1" version="1" object_id="_45">
 															<VideoTransition>
-																<Transition object_id="_45">
+																<Transition object_id="_46">
 																	<Clip>
 																		<mLink>
 																			<ptr>
@@ -640,23 +643,23 @@
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="38" object_id="_46">
+														<px class_id_reference="40" object_id="_47">
 															<ClipInterval>
 																<Clip>
 																	<mLink>
 																		<ptr>
-																			<px class_id_reference="42" object_id="_47">
+																			<px class_id_reference="44" object_id="_48">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
 																							<ptr>
-																								<px class_id_reference="38" object_id_reference="_46"></px>
+																								<px class_id_reference="40" object_id_reference="_47"></px>
 																							</ptr>
 																						</mLink>
 																					</Clip>
 																					<mRender>
-																						<px class_id_reference="44" object_id="_48">
-																							<File object_id="_49">
+																						<px class_id_reference="46" object_id="_49">
+																							<File object_id="_50">
 																								<Node>
 																									<INode></INode>
 																									<parent>
@@ -687,8 +690,8 @@
 																	</mLink>
 																</Clip>
 																<mRender>
-																	<px class_id_reference="45" object_id="_50">
-																		<File object_id="_51">
+																	<px class_id_reference="47" object_id="_51">
+																		<File object_id="_52">
 																			<Node>
 																				<INode></INode>
 																				<parent>
@@ -735,23 +738,23 @@
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="38" object_id="_52">
+														<px class_id_reference="40" object_id="_53">
 															<ClipInterval>
 																<Clip>
 																	<mLink>
 																		<ptr>
-																			<px class_id_reference="42" object_id="_53">
+																			<px class_id_reference="44" object_id="_54">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
 																							<ptr>
-																								<px class_id_reference="38" object_id_reference="_52"></px>
+																								<px class_id_reference="40" object_id_reference="_53"></px>
 																							</ptr>
 																						</mLink>
 																					</Clip>
 																					<mRender>
-																						<px class_id_reference="44" object_id="_54">
-																							<File object_id="_55">
+																						<px class_id_reference="46" object_id="_55">
+																							<File object_id="_56">
 																								<Node>
 																									<INode></INode>
 																									<parent>
@@ -782,8 +785,8 @@
 																	</mLink>
 																</Clip>
 																<mRender>
-																	<px class_id_reference="45" object_id="_56">
-																		<File object_id="_57">
+																	<px class_id_reference="47" object_id="_57">
+																		<File object_id="_58">
 																			<Node>
 																				<INode></INode>
 																				<parent>
@@ -830,23 +833,23 @@
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="38" object_id="_58">
+														<px class_id_reference="40" object_id="_59">
 															<ClipInterval>
 																<Clip>
 																	<mLink>
 																		<ptr>
-																			<px class_id_reference="42" object_id="_59">
+																			<px class_id_reference="44" object_id="_60">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
 																							<ptr>
-																								<px class_id_reference="38" object_id_reference="_58"></px>
+																								<px class_id_reference="40" object_id_reference="_59"></px>
 																							</ptr>
 																						</mLink>
 																					</Clip>
 																					<mRender>
-																						<px class_id_reference="44" object_id="_60">
-																							<File object_id="_61">
+																						<px class_id_reference="46" object_id="_61">
+																							<File object_id="_62">
 																								<Node>
 																									<INode></INode>
 																									<parent>
@@ -877,8 +880,8 @@
 																	</mLink>
 																</Clip>
 																<mRender>
-																	<px class_id_reference="45" object_id="_62">
-																		<File object_id="_63">
+																	<px class_id_reference="47" object_id="_63">
+																		<File object_id="_64">
 																			<Node>
 																				<INode></INode>
 																				<parent>
@@ -925,23 +928,23 @@
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="38" object_id="_64">
+														<px class_id_reference="40" object_id="_65">
 															<ClipInterval>
 																<Clip>
 																	<mLink>
 																		<ptr>
-																			<px class_id_reference="42" object_id="_65">
+																			<px class_id_reference="44" object_id="_66">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
 																							<ptr>
-																								<px class_id_reference="38" object_id_reference="_64"></px>
+																								<px class_id_reference="40" object_id_reference="_65"></px>
 																							</ptr>
 																						</mLink>
 																					</Clip>
 																					<mRender>
-																						<px class_id_reference="44" object_id="_66">
-																							<File object_id="_67">
+																						<px class_id_reference="46" object_id="_67">
+																							<File object_id="_68">
 																								<Node>
 																									<INode></INode>
 																									<parent>
@@ -972,8 +975,8 @@
 																	</mLink>
 																</Clip>
 																<mRender>
-																	<px class_id_reference="45" object_id="_68">
-																		<File object_id="_69">
+																	<px class_id_reference="47" object_id="_69">
+																		<File object_id="_70">
 																			<Node>
 																				<INode></INode>
 																				<parent>
@@ -1020,23 +1023,23 @@
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="38" object_id="_70">
+														<px class_id_reference="40" object_id="_71">
 															<ClipInterval>
 																<Clip>
 																	<mLink>
 																		<ptr>
-																			<px class_id_reference="42" object_id="_71">
+																			<px class_id_reference="44" object_id="_72">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
 																							<ptr>
-																								<px class_id_reference="38" object_id_reference="_70"></px>
+																								<px class_id_reference="40" object_id_reference="_71"></px>
 																							</ptr>
 																						</mLink>
 																					</Clip>
 																					<mRender>
-																						<px class_id_reference="44" object_id="_72">
-																							<File object_id="_73">
+																						<px class_id_reference="46" object_id="_73">
+																							<File object_id="_74">
 																								<Node>
 																									<INode></INode>
 																									<parent>
@@ -1067,8 +1070,8 @@
 																	</mLink>
 																</Clip>
 																<mRender>
-																	<px class_id_reference="45" object_id="_74">
-																		<File object_id="_75">
+																	<px class_id_reference="47" object_id="_75">
+																		<File object_id="_76">
 																			<Node>
 																				<INode></INode>
 																				<parent>
@@ -1115,23 +1118,23 @@
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="38" object_id="_76">
+														<px class_id_reference="40" object_id="_77">
 															<ClipInterval>
 																<Clip>
 																	<mLink>
 																		<ptr>
-																			<px class_id_reference="42" object_id="_77">
+																			<px class_id_reference="44" object_id="_78">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
 																							<ptr>
-																								<px class_id_reference="38" object_id_reference="_76"></px>
+																								<px class_id_reference="40" object_id_reference="_77"></px>
 																							</ptr>
 																						</mLink>
 																					</Clip>
 																					<mRender>
-																						<px class_id_reference="44" object_id="_78">
-																							<File object_id="_79">
+																						<px class_id_reference="46" object_id="_79">
+																							<File object_id="_80">
 																								<Node>
 																									<INode></INode>
 																									<parent>
@@ -1162,8 +1165,8 @@
 																	</mLink>
 																</Clip>
 																<mRender>
-																	<px class_id_reference="45" object_id="_80">
-																		<File object_id="_81">
+																	<px class_id_reference="47" object_id="_81">
+																		<File object_id="_82">
 																			<Node>
 																				<INode></INode>
 																				<parent>
@@ -1210,23 +1213,23 @@
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="38" object_id="_82">
+														<px class_id_reference="40" object_id="_83">
 															<ClipInterval>
 																<Clip>
 																	<mLink>
 																		<ptr>
-																			<px class_id_reference="42" object_id="_83">
+																			<px class_id_reference="44" object_id="_84">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
 																							<ptr>
-																								<px class_id_reference="38" object_id_reference="_82"></px>
+																								<px class_id_reference="40" object_id_reference="_83"></px>
 																							</ptr>
 																						</mLink>
 																					</Clip>
 																					<mRender>
-																						<px class_id_reference="44" object_id="_84">
-																							<File object_id="_85">
+																						<px class_id_reference="46" object_id="_85">
+																							<File object_id="_86">
 																								<Node>
 																									<INode></INode>
 																									<parent>
@@ -1257,8 +1260,8 @@
 																	</mLink>
 																</Clip>
 																<mRender>
-																	<px class_id_reference="45" object_id="_86">
-																		<File object_id="_87">
+																	<px class_id_reference="47" object_id="_87">
+																		<File object_id="_88">
 																			<Node>
 																				<INode></INode>
 																				<parent>
@@ -1305,23 +1308,23 @@
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="38" object_id="_88">
+														<px class_id_reference="40" object_id="_89">
 															<ClipInterval>
 																<Clip>
 																	<mLink>
 																		<ptr>
-																			<px class_id_reference="42" object_id="_89">
+																			<px class_id_reference="44" object_id="_90">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
 																							<ptr>
-																								<px class_id_reference="38" object_id_reference="_88"></px>
+																								<px class_id_reference="40" object_id_reference="_89"></px>
 																							</ptr>
 																						</mLink>
 																					</Clip>
 																					<mRender>
-																						<px class_id_reference="44" object_id="_90">
-																							<File object_id="_91">
+																						<px class_id_reference="46" object_id="_91">
+																							<File object_id="_92">
 																								<Node>
 																									<INode></INode>
 																									<parent>
@@ -1352,8 +1355,8 @@
 																	</mLink>
 																</Clip>
 																<mRender>
-																	<px class_id_reference="45" object_id="_92">
-																		<File object_id="_93">
+																	<px class_id_reference="47" object_id="_93">
+																		<File object_id="_94">
 																			<Node>
 																				<INode></INode>
 																				<parent>
@@ -1400,23 +1403,23 @@
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="38" object_id="_94">
+														<px class_id_reference="40" object_id="_95">
 															<ClipInterval>
 																<Clip>
 																	<mLink>
 																		<ptr>
-																			<px class_id_reference="42" object_id="_95">
+																			<px class_id_reference="44" object_id="_96">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
 																							<ptr>
-																								<px class_id_reference="38" object_id_reference="_94"></px>
+																								<px class_id_reference="40" object_id_reference="_95"></px>
 																							</ptr>
 																						</mLink>
 																					</Clip>
 																					<mRender>
-																						<px class_id_reference="44" object_id="_96">
-																							<File object_id="_97">
+																						<px class_id_reference="46" object_id="_97">
+																							<File object_id="_98">
 																								<Node>
 																									<INode></INode>
 																									<parent>
@@ -1447,8 +1450,8 @@
 																	</mLink>
 																</Clip>
 																<mRender>
-																	<px class_id_reference="45" object_id="_98">
-																		<File object_id="_99">
+																	<px class_id_reference="47" object_id="_99">
+																		<File object_id="_100">
 																			<Node>
 																				<INode></INode>
 																				<parent>
@@ -1495,23 +1498,23 @@
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="38" object_id="_100">
+														<px class_id_reference="40" object_id="_101">
 															<ClipInterval>
 																<Clip>
 																	<mLink>
 																		<ptr>
-																			<px class_id_reference="42" object_id="_101">
+																			<px class_id_reference="44" object_id="_102">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
 																							<ptr>
-																								<px class_id_reference="38" object_id_reference="_100"></px>
+																								<px class_id_reference="40" object_id_reference="_101"></px>
 																							</ptr>
 																						</mLink>
 																					</Clip>
 																					<mRender>
-																						<px class_id_reference="44" object_id="_102">
-																							<File object_id="_103">
+																						<px class_id_reference="46" object_id="_103">
+																							<File object_id="_104">
 																								<Node>
 																									<INode></INode>
 																									<parent>
@@ -1542,8 +1545,8 @@
 																	</mLink>
 																</Clip>
 																<mRender>
-																	<px class_id_reference="45" object_id="_104">
-																		<File object_id="_105">
+																	<px class_id_reference="47" object_id="_105">
+																		<File object_id="_106">
 																			<Node>
 																				<INode></INode>
 																				<parent>
@@ -1590,23 +1593,23 @@
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="38" object_id="_106">
+														<px class_id_reference="40" object_id="_107">
 															<ClipInterval>
 																<Clip>
 																	<mLink>
 																		<ptr>
-																			<px class_id_reference="42" object_id="_107">
+																			<px class_id_reference="44" object_id="_108">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
 																							<ptr>
-																								<px class_id_reference="38" object_id_reference="_106"></px>
+																								<px class_id_reference="40" object_id_reference="_107"></px>
 																							</ptr>
 																						</mLink>
 																					</Clip>
 																					<mRender>
-																						<px class_id_reference="44" object_id="_108">
-																							<File object_id="_109">
+																						<px class_id_reference="46" object_id="_109">
+																							<File object_id="_110">
 																								<Node>
 																									<INode></INode>
 																									<parent>
@@ -1637,8 +1640,8 @@
 																	</mLink>
 																</Clip>
 																<mRender>
-																	<px class_id_reference="45" object_id="_110">
-																		<File object_id="_111">
+																	<px class_id_reference="47" object_id="_111">
+																		<File object_id="_112">
 																			<Node>
 																				<INode></INode>
 																				<parent>
@@ -1685,23 +1688,23 @@
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="38" object_id="_112">
+														<px class_id_reference="40" object_id="_113">
 															<ClipInterval>
 																<Clip>
 																	<mLink>
 																		<ptr>
-																			<px class_id_reference="42" object_id="_113">
+																			<px class_id_reference="44" object_id="_114">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
 																							<ptr>
-																								<px class_id_reference="38" object_id_reference="_112"></px>
+																								<px class_id_reference="40" object_id_reference="_113"></px>
 																							</ptr>
 																						</mLink>
 																					</Clip>
 																					<mRender>
-																						<px class_id_reference="44" object_id="_114">
-																							<File object_id="_115">
+																						<px class_id_reference="46" object_id="_115">
+																							<File object_id="_116">
 																								<Node>
 																									<INode></INode>
 																									<parent>
@@ -1732,8 +1735,8 @@
 																	</mLink>
 																</Clip>
 																<mRender>
-																	<px class_id_reference="45" object_id="_116">
-																		<File object_id="_117">
+																	<px class_id_reference="47" object_id="_117">
+																		<File object_id="_118">
 																			<Node>
 																				<INode></INode>
 																				<parent>
@@ -1780,23 +1783,23 @@
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="38" object_id="_118">
+														<px class_id_reference="40" object_id="_119">
 															<ClipInterval>
 																<Clip>
 																	<mLink>
 																		<ptr>
-																			<px class_id_reference="42" object_id="_119">
+																			<px class_id_reference="44" object_id="_120">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
 																							<ptr>
-																								<px class_id_reference="38" object_id_reference="_118"></px>
+																								<px class_id_reference="40" object_id_reference="_119"></px>
 																							</ptr>
 																						</mLink>
 																					</Clip>
 																					<mRender>
-																						<px class_id_reference="44" object_id="_120">
-																							<File object_id="_121">
+																						<px class_id_reference="46" object_id="_121">
+																							<File object_id="_122">
 																								<Node>
 																									<INode></INode>
 																									<parent>
@@ -1827,8 +1830,8 @@
 																	</mLink>
 																</Clip>
 																<mRender>
-																	<px class_id_reference="45" object_id="_122">
-																		<File object_id="_123">
+																	<px class_id_reference="47" object_id="_123">
+																		<File object_id="_124">
 																			<Node>
 																				<INode></INode>
 																				<parent>
@@ -1875,23 +1878,23 @@
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="38" object_id="_124">
+														<px class_id_reference="40" object_id="_125">
 															<ClipInterval>
 																<Clip>
 																	<mLink>
 																		<ptr>
-																			<px class_id_reference="42" object_id="_125">
+																			<px class_id_reference="44" object_id="_126">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
 																							<ptr>
-																								<px class_id_reference="38" object_id_reference="_124"></px>
+																								<px class_id_reference="40" object_id_reference="_125"></px>
 																							</ptr>
 																						</mLink>
 																					</Clip>
 																					<mRender>
-																						<px class_id_reference="44" object_id="_126">
-																							<File object_id="_127">
+																						<px class_id_reference="46" object_id="_127">
+																							<File object_id="_128">
 																								<Node>
 																									<INode></INode>
 																									<parent>
@@ -1922,8 +1925,8 @@
 																	</mLink>
 																</Clip>
 																<mRender>
-																	<px class_id_reference="45" object_id="_128">
-																		<File object_id="_129">
+																	<px class_id_reference="47" object_id="_129">
+																		<File object_id="_130">
 																			<Node>
 																				<INode></INode>
 																				<parent>
@@ -1970,23 +1973,23 @@
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="38" object_id="_130">
+														<px class_id_reference="40" object_id="_131">
 															<ClipInterval>
 																<Clip>
 																	<mLink>
 																		<ptr>
-																			<px class_id_reference="42" object_id="_131">
+																			<px class_id_reference="44" object_id="_132">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
 																							<ptr>
-																								<px class_id_reference="38" object_id_reference="_130"></px>
+																								<px class_id_reference="40" object_id_reference="_131"></px>
 																							</ptr>
 																						</mLink>
 																					</Clip>
 																					<mRender>
-																						<px class_id_reference="44" object_id="_132">
-																							<File object_id="_133">
+																						<px class_id_reference="46" object_id="_133">
+																							<File object_id="_134">
 																								<Node>
 																									<INode></INode>
 																									<parent>
@@ -2017,8 +2020,8 @@
 																	</mLink>
 																</Clip>
 																<mRender>
-																	<px class_id_reference="45" object_id="_134">
-																		<File object_id="_135">
+																	<px class_id_reference="47" object_id="_135">
+																		<File object_id="_136">
 																			<Node>
 																				<INode></INode>
 																				<parent>
@@ -2065,23 +2068,23 @@
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="38" object_id="_136">
+														<px class_id_reference="40" object_id="_137">
 															<ClipInterval>
 																<Clip>
 																	<mLink>
 																		<ptr>
-																			<px class_id_reference="42" object_id="_137">
+																			<px class_id_reference="44" object_id="_138">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
 																							<ptr>
-																								<px class_id_reference="38" object_id_reference="_136"></px>
+																								<px class_id_reference="40" object_id_reference="_137"></px>
 																							</ptr>
 																						</mLink>
 																					</Clip>
 																					<mRender>
-																						<px class_id_reference="44" object_id="_138">
-																							<File object_id="_139">
+																						<px class_id_reference="46" object_id="_139">
+																							<File object_id="_140">
 																								<Node>
 																									<INode></INode>
 																									<parent>
@@ -2112,8 +2115,8 @@
 																	</mLink>
 																</Clip>
 																<mRender>
-																	<px class_id_reference="45" object_id="_140">
-																		<File object_id="_141">
+																	<px class_id_reference="47" object_id="_141">
+																		<File object_id="_142">
 																			<Node>
 																				<INode></INode>
 																				<parent>
@@ -2160,23 +2163,23 @@
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="38" object_id="_142">
+														<px class_id_reference="40" object_id="_143">
 															<ClipInterval>
 																<Clip>
 																	<mLink>
 																		<ptr>
-																			<px class_id_reference="42" object_id="_143">
+																			<px class_id_reference="44" object_id="_144">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
 																							<ptr>
-																								<px class_id_reference="38" object_id_reference="_142"></px>
+																								<px class_id_reference="40" object_id_reference="_143"></px>
 																							</ptr>
 																						</mLink>
 																					</Clip>
 																					<mRender>
-																						<px class_id_reference="44" object_id="_144">
-																							<File object_id="_145">
+																						<px class_id_reference="46" object_id="_145">
+																							<File object_id="_146">
 																								<Node>
 																									<INode></INode>
 																									<parent>
@@ -2207,8 +2210,8 @@
 																	</mLink>
 																</Clip>
 																<mRender>
-																	<px class_id_reference="45" object_id="_146">
-																		<File object_id="_147">
+																	<px class_id_reference="47" object_id="_147">
+																		<File object_id="_148">
 																			<Node>
 																				<INode></INode>
 																				<parent>
@@ -2255,8 +2258,8 @@
 														</px>
 													</item>
 													<item>
-														<px class_id="55" class_name="model::ImageClip" tracking_level="1" version="1" object_id="_148">
-															<VideoClip object_id="_149">
+														<px class_id="57" class_name="model::ImageClip" tracking_level="1" version="1" object_id="_149">
+															<VideoClip object_id="_150">
 																<ClipInterval>
 																	<Clip>
 																		<mLink>
@@ -2266,9 +2269,9 @@
 																		</mLink>
 																	</Clip>
 																	<mRender>
-																		<px class_id="56" class_name="model::ImageFile" tracking_level="1" version="1" object_id="_150">
-																			<VideoFile object_id="_151">
-																				<File object_id="_152">
+																		<px class_id="58" class_name="model::ImageFile" tracking_level="1" version="1" object_id="_151">
+																			<VideoFile object_id="_152">
+																				<File object_id="_153">
 																					<Node>
 																						<INode></INode>
 																						<parent>
@@ -2327,17 +2330,17 @@
 									<count>1</count>
 									<item_version>1</item_version>
 									<item>
-										<px class_id="57" class_name="model::AudioTrack" tracking_level="1" version="1" object_id="_153">
-											<Track object_id="_154">
+										<px class_id="59" class_name="model::AudioTrack" tracking_level="1" version="1" object_id="_154">
+											<Track object_id="_155">
 												<mIndex>0</mIndex>
 												<mClips>
 													<count>21</count>
 													<item_version>1</item_version>
 													<item>
-														<px class_id_reference="42" object_id_reference="_24"></px>
+														<px class_id_reference="44" object_id_reference="_25"></px>
 													</item>
 													<item>
-														<px class_id_reference="49" object_id="_155">
+														<px class_id_reference="51" object_id="_156">
 															<Clip>
 																<mLink>
 																	<ptr>
@@ -2351,61 +2354,61 @@
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="42" object_id_reference="_31"></px>
+														<px class_id_reference="44" object_id_reference="_32"></px>
 													</item>
 													<item>
-														<px class_id_reference="42" object_id_reference="_39"></px>
+														<px class_id_reference="44" object_id_reference="_40"></px>
 													</item>
 													<item>
-														<px class_id_reference="42" object_id_reference="_47"></px>
+														<px class_id_reference="44" object_id_reference="_48"></px>
 													</item>
 													<item>
-														<px class_id_reference="42" object_id_reference="_53"></px>
+														<px class_id_reference="44" object_id_reference="_54"></px>
 													</item>
 													<item>
-														<px class_id_reference="42" object_id_reference="_59"></px>
+														<px class_id_reference="44" object_id_reference="_60"></px>
 													</item>
 													<item>
-														<px class_id_reference="42" object_id_reference="_65"></px>
+														<px class_id_reference="44" object_id_reference="_66"></px>
 													</item>
 													<item>
-														<px class_id_reference="42" object_id_reference="_71"></px>
+														<px class_id_reference="44" object_id_reference="_72"></px>
 													</item>
 													<item>
-														<px class_id_reference="42" object_id_reference="_77"></px>
+														<px class_id_reference="44" object_id_reference="_78"></px>
 													</item>
 													<item>
-														<px class_id_reference="42" object_id_reference="_83"></px>
+														<px class_id_reference="44" object_id_reference="_84"></px>
 													</item>
 													<item>
-														<px class_id_reference="42" object_id_reference="_89"></px>
+														<px class_id_reference="44" object_id_reference="_90"></px>
 													</item>
 													<item>
-														<px class_id_reference="42" object_id_reference="_95"></px>
+														<px class_id_reference="44" object_id_reference="_96"></px>
 													</item>
 													<item>
-														<px class_id_reference="42" object_id_reference="_101"></px>
+														<px class_id_reference="44" object_id_reference="_102"></px>
 													</item>
 													<item>
-														<px class_id_reference="42" object_id_reference="_107"></px>
+														<px class_id_reference="44" object_id_reference="_108"></px>
 													</item>
 													<item>
-														<px class_id_reference="42" object_id_reference="_113"></px>
+														<px class_id_reference="44" object_id_reference="_114"></px>
 													</item>
 													<item>
-														<px class_id_reference="42" object_id_reference="_119"></px>
+														<px class_id_reference="44" object_id_reference="_120"></px>
 													</item>
 													<item>
-														<px class_id_reference="42" object_id_reference="_125"></px>
+														<px class_id_reference="44" object_id_reference="_126"></px>
 													</item>
 													<item>
-														<px class_id_reference="42" object_id_reference="_131"></px>
+														<px class_id_reference="44" object_id_reference="_132"></px>
 													</item>
 													<item>
-														<px class_id_reference="42" object_id_reference="_137"></px>
+														<px class_id_reference="44" object_id_reference="_138"></px>
 													</item>
 													<item>
-														<px class_id_reference="42" object_id_reference="_143"></px>
+														<px class_id_reference="44" object_id_reference="_144"></px>
 													</item>
 												</mClips>
 												<mHeight>50</mHeight>
@@ -2420,21 +2423,21 @@
 							</px>
 						</item>
 						<item>
-							<px class_id_reference="22" object_id="_156">
+							<px class_id_reference="24" object_id="_157">
 								<Node>
 									<INode></INode>
 									<parent>
-										<px class_id_reference="23" object_id_reference="_9"></px>
+										<px class_id_reference="25" object_id_reference="_10"></px>
 									</parent>
 									<mChildren>
 										<count>1</count>
 										<item_version>1</item_version>
 										<item>
-											<px class_id_reference="29" object_id="_157">
+											<px class_id_reference="31" object_id="_158">
 												<Node>
 													<INode></INode>
 													<parent>
-														<px class_id_reference="22" object_id_reference="_156"></px>
+														<px class_id_reference="24" object_id_reference="_157"></px>
 													</parent>
 													<mChildren>
 														<count>0</count>
@@ -2465,39 +2468,39 @@
 		</px>
 	</mRoot>
 </project>
-<view class_id="58" tracking_level="0" version="1">
-	<window class_id="59" tracking_level="0" version="1">
-		<projectview class_id="60" tracking_level="0" version="1">
-			<mOpenFolders class_id="61" tracking_level="0" version="0">
+<view class_id="60" tracking_level="0" version="1">
+	<window class_id="61" tracking_level="0" version="1">
+		<projectview class_id="62" tracking_level="0" version="1">
+			<mOpenFolders class_id="63" tracking_level="0" version="0">
 				<count>2</count>
 				<item_version>1</item_version>
 				<item>
-					<px class_id_reference="23" object_id_reference="_9"></px>
+					<px class_id_reference="25" object_id_reference="_10"></px>
 				</item>
 				<item>
-					<px class_id_reference="22" object_id_reference="_156"></px>
+					<px class_id_reference="24" object_id_reference="_157"></px>
 				</item>
 			</mOpenFolders>
 		</projectview>
-		<timelinesview class_id="62" tracking_level="0" version="1">
+		<timelinesview class_id="64" tracking_level="0" version="1">
 			<notebookCount>1</notebookCount>
 			<selectedPage>0</selectedPage>
-			<sequence class_id="63" tracking_level="0" version="1">
-				<px class_id_reference="30" object_id_reference="_20"></px>
+			<sequence class_id="65" tracking_level="0" version="1">
+				<px class_id_reference="32" object_id_reference="_21"></px>
 			</sequence>
-			<timeline class_id="64" tracking_level="0" version="2">
-				<zoom class_id="65" tracking_level="0" version="1">
+			<timeline class_id="66" tracking_level="0" version="2">
+				<zoom class_id="67" tracking_level="0" version="1">
 					<mZoom>
 						<numerator>1</numerator>
 						<denominator>1</denominator>
 					</mZoom>
 				</zoom>
-				<intervals class_id="66" tracking_level="0" version="1">
-					<mIntervals class_id="67" tracking_level="0" version="0">
-						<listofpairs class_id="68" tracking_level="0" version="0">
+				<intervals class_id="68" tracking_level="0" version="1">
+					<mIntervals class_id="69" tracking_level="0" version="0">
+						<listofpairs class_id="70" tracking_level="0" version="0">
 							<count>2</count>
 							<item_version>0</item_version>
-							<item class_id="69" tracking_level="0" version="0">
+							<item class_id="71" tracking_level="0" version="0">
 								<first>85</first>
 								<second>265</second>
 							</item>
@@ -2508,13 +2511,13 @@
 						</listofpairs>
 					</mIntervals>
 				</intervals>
-				<scrolling class_id="70" tracking_level="0" version="0">
+				<scrolling class_id="72" tracking_level="0" version="0">
 					<mCenterPts>3487</mCenterPts>
 				</scrolling>
-				<cursor class_id="71" tracking_level="0" version="0">
+				<cursor class_id="73" tracking_level="0" version="0">
 					<mCursorPosition>3487</mCursorPosition>
 				</cursor>
-				<player class_id="72" tracking_level="0" version="0">
+				<player class_id="74" tracking_level="0" version="0">
 					<speed>100</speed>
 				</player>
 			</timeline>

@@ -23,6 +23,7 @@
 #include "DialogNewProject.h"
 #include "File.h"
 #include "IView.h"
+#include "FileMetaDataCache.h"
 #include "ProjectEvent.h"
 #include "Properties.h"
 #include "Root.h"
@@ -38,13 +39,14 @@ const wxString Project::sFileExtension{ "vid" };
 IMPLEMENT_DYNAMIC_CLASS(Project, wxDocument)
 
 Project::Project()
-:   wxDocument()
+: wxDocument()
 // Do not initialize members with actual data here.
 // For loading that is done via serialize - Initializing here for loading is useless (overwritten by serialize) and causes crashes (mProperties instantiated twice)
 // For new documents initializing is done via OnNewDocument
-,   mRoot()
-,   mProperties()
-,   mSaveFolder("")
+, mRoot()
+, mMetaDataCache()
+, mProperties()
+, mSaveFolder("")
 {
     VAR_DEBUG(this);
     ASSERT(!IsModified());
@@ -84,6 +86,7 @@ bool Project::OnNewDocument()
     if (opened)
     {
         mRoot = boost::make_shared<Root>();
+        mMetaDataCache = boost::make_shared<FileMetaDataCache>();
         mProperties = boost::make_shared<Properties>();
 
         if (!gui::DialogNewProject().runWizard())
@@ -364,9 +367,13 @@ void Project::serialize(Archive & ar, const unsigned int version)
 {
     try
     {
-        // Since the properties can be used by other objects, they must be read first.
+        // Since the properties and metadatacache can be used by other objects, they must be read first.
         // An example is the framerate, which is used by 'Convert' which, in turn, is used in openFile() to determine the length of a stream in the file.
         ar & BOOST_SERIALIZATION_NVP(mProperties);
+        if (version > 1)
+        {
+            ar & BOOST_SERIALIZATION_NVP(mMetaDataCache);
+        }
         ar & BOOST_SERIALIZATION_NVP(mRoot);
     }
     catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }

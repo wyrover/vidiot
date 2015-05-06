@@ -22,6 +22,8 @@
 
 namespace model {
 
+class FileMetaDataCache;
+
 /// \class Project
 /// This class is not managed via shared_ptr's since it's construction/destruction
 /// is managed by the wxWidgets document/view framework. Therefore, pointer ownership
@@ -89,6 +91,7 @@ public:
 private:
 
     FolderPtr mRoot;
+    boost::shared_ptr<FileMetaDataCache> mMetaDataCache;
     PropertiesPtr mProperties;
     wxString mSaveFolder;
 
@@ -113,11 +116,7 @@ private:
 
 } // namespace
 
-// Workaround needed to prevent compile-time errors (mpl_assertion_in_line...) with gcc
-//#include  <boost/preprocessor/slot/counter.hpp>
-//#include BOOST____PP_UPDATE_COUNTER()
-//#line BOOST_____PP_COUNTER
-BOOST_CLASS_VERSION(model::Project, 1)
+BOOST_CLASS_VERSION(model::Project, 2)
 BOOST_CLASS_EXPORT_KEY(model::Project)
 
 #endif
