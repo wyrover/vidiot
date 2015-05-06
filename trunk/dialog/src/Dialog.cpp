@@ -36,8 +36,6 @@ namespace gui {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-wxString Dialog::sMediaFileTypes = _T("Supported files|*.avi;*.bmp;*.gif;*.jpg;*.mov;*.mp3;*.mp4;*.png;*.tga;*.tif;*.tiff;*.wav;*.AVI;*.BMP;*.GIF;*.JPG;*.MOV;*.MP3;*.MP4;*.PNG;*.TGA;*.TIF;*.TIFF;*.WAV|Movie clips (*.avi;*.mov;*.mp4)|*.avi;*.mov;*.mp4;*.AVI;*.MOV;*.MP4|Images (*.bmp;*.gif;*.jpg;*.png;*.tga;*.tif;*.tiff)|*.bmp;*.gif;*.jpg;*.png;*.tga;*.tif;*.tiff;*.BMP;*.GIF;*.JPG;*.PNG;*.TGA;*.TIF;*.TIFF|Sound files (*.wav;*.mp3)|*.wav;*.mp3;*.WAV;*.MP3|All files (%s)|%s");
-
 Dialog::Dialog()
     :   mDir(boost::none)
     ,   mFiles(boost::none)
@@ -57,6 +55,24 @@ Dialog::~Dialog()
     ASSERT(!mFiles);
     ASSERT(!mText);
     ASSERT(!mButton);
+}
+
+// static
+wxString Dialog::getMediaFileTypes()
+{
+    static wxString sVideo{ "*.avi;*.mov;*.mp4;*.m2v;*.3gp;*.3g2;*.mkv" };
+    static wxString sAudio{ "*.wav;*.mp3;*.m2a" };
+    static wxString sImage{ "*.bmp;*.gif;*.jpg;*.png;*.tga;*.tif;*.tiff" };
+
+    static wxString sSupported{ sVideo + ";" + sAudio + ";" + sImage };
+
+    static wxString result{
+        _("Supported files") + "|" + sSupported + ";" + sSupported.Upper() + "|" +
+        _("Video files") + " (" + sVideo + ")|" + sVideo + ";" + sVideo.Upper() + "|" +
+        _("Audio files") + " (" + sAudio + ")|" + sAudio + ";" + sAudio.Upper() + "|" +
+        _("Images") + " (" + sImage + ")|" + sImage + ";" + sImage.Upper() + "|" +
+        _("All files") + " (%s)|%s" };
+    return result;
 }
 
 //////////////////////////////////////////////////////////////////////////
