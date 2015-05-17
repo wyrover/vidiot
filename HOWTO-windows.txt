@@ -13,10 +13,15 @@ NOTE: <VIDIOT_DIR> is the dir in which all 'vidiot' work is done.
 * NOTE: Install and set environment variables (vcvars) for cmake
 * NOTE: Enable Tools (for wxwindows)
 * Use regex "^~(:Wh@//.+)~(:Wh@\{:Wh@)~(:Wh@\}:Wh@)~(:Wh@/#).+" in search in files dialog to count lines of code..
-* Install CodeMaid plugin
-  - Disable remove blank lines after opening brace
-  - Disable remove blank lines before closing brace
-* Install CodeAlignment plugin
+* Install plugins 
+  - CodeMaid plugin
+    + Disable remove blank lines after opening brace
+    + Disable remove blank lines before closing brace
+  - Install CodeAlignment plugin
+  - Indent guides
+  - Editor Guidelines
+    + Add to registry HKEY_CURRENT_USER\Software\Microsoft\VisualStudio\xx.0\Text Editor\Guides(string) "RGB(60,60,60), 140"
+* Install 
 * Install <VIDIOT_SRC>/build/VisualStudioAddin
   - Install Microsoft Visual Studio SDK
   - Build VisualStudioAddin
