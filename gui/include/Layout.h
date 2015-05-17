@@ -84,6 +84,7 @@ public:
     const wxBrush ClipDescriptionBrush;
     const wxPen SelectedClipPen;
     const wxBrush SelectedClipBrush;
+    const wxPen AudioPeaksPen;
     const wxPen SnapPen;
     const wxPen IntervalPen;
     const wxBrush IntervalBrush;
