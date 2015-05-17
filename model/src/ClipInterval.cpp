@@ -143,6 +143,7 @@ void ClipInterval::adjustBegin(pts adjustment)
     ASSERT(!hasTrack())(getTrack()); // Otherwise, this action needs an event indicating the change to the track(view). Instead, tracks are updated by replacing clips.
     mOffset += adjustment;
     mLength -= adjustment;
+    ASSERT_MORE_THAN_EQUALS_ZERO(mOffset);
     ASSERT_LESS_THAN_EQUALS(mLength,mRender->getLength() - mOffset)(adjustment)(mLength)(mRender->getLength())(mOffset)(*this);;
     VAR_DEBUG(*this)(adjustment);
 }
