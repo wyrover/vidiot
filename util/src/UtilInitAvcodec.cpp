@@ -114,11 +114,12 @@ void Avcodec::log(void *ptr, int level, const char * msg, va_list ap)
     std::ostringstream osComponent;
     if (ptr)
     {
+        AVClass* info{ *(AVClass**)ptr };
         osComponent
             << "["
-            << (*(AVClass**)ptr)->item_name(ptr)
+            << info->item_name(ptr)
             << ";"
-            << (*(AVClass**)ptr)->class_name
+            << info->class_name
             << "]";
     }
 
