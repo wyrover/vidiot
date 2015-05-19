@@ -140,6 +140,9 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
     memset(&nullPacket,0,sizeof(AVPacket));
 
     AVCodecContext* codec = getCodec();
+ // todo get strange asserts when I add this here - ASSERT_NONZERO(avcodec_is_open(codec)); // Detect threading issues
+    // but why can't I add the assert? without an opened codec, all sorts of mayhem will happen...
+
     ASSERT_ZERO(codec->refcounted_frames); // for new version of avcodec, see avcodec_decode_video2 docs
 
     wxSize codecSize(codec->width,getCodec()->height);
