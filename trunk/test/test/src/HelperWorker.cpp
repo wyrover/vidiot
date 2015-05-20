@@ -19,11 +19,19 @@
 
 namespace test {
 
-ExpectExecutedWork::ExpectExecutedWork(int nWork)
+ExpectExecutedWork::ExpectExecutedWork(int nWork, bool invisibleworker)
     : mWork(nWork)
     , mWaited(false)
+    , mInvisibleWorker(invisibleworker)
 {
-    worker::VisibleWorker::get().setExpectedWork(mWork);
+    if (mInvisibleWorker)
+    {
+        worker::InvisibleWorker::get().setExpectedWork(mWork);
+    }
+    else
+    {
+        worker::VisibleWorker::get().setExpectedWork(mWork);
+    }
 }
 
 ExpectExecutedWork::~ExpectExecutedWork()
@@ -35,7 +43,14 @@ void ExpectExecutedWork::wait()
 {
     ASSERT(!mWaited);
     mWaited = true;
-    worker::VisibleWorker::get().waitForExecutionCount();
+    if (mInvisibleWorker)
+    {
+        worker::InvisibleWorker::get().waitForExecutionCount();
+    }
+    else
+    {
+        worker::VisibleWorker::get().waitForExecutionCount();
+    }
     // Any work done generates at least one event (WorkDoneEvent).
     // Wait until those events have been handled by the main thread.
     WaitForIdle;

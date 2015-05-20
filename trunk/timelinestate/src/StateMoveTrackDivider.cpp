@@ -80,7 +80,7 @@ boost::statechart::result MoveTrackDivider::react( const EvLeftDown& evt )
 boost::statechart::result MoveTrackDivider::react( const EvLeftUp& evt )
 {
     VAR_DEBUG(evt);
-    getViewMap().invalidateThumbnails(); // Redraw thumbnails when move is done
+    getViewMap().invalidateClipPreviews();
     getTimeline().Refresh(false);
     return transit<Idle>();
 }

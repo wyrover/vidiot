@@ -23,6 +23,7 @@ namespace gui {
 
     namespace timeline {
         class AudioView;
+        class ClipPreview;
         class ClipView;
         class Cursor;
         class Details;
@@ -35,7 +36,6 @@ namespace gui {
         class Scrolling;
         class Selection;
         class SequenceView;
-        class ThumbnailView;
         class Timeline;
         class TimelineClipboard;
         class Tooltip;

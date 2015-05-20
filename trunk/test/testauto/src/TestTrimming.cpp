@@ -186,6 +186,53 @@ void TestTrimming::testKeyboardTrimmingDuringPlayback()
     WaitForIdle;
 }
 
+void TestTrimming::testTrimmingUnlinkedClip()
+{
+    StartTestSuite();
+    StartTest("Unlink");
+    Unlink(VideoClip(0, 2));
+    {
+        StartTest("Trim unlinked video clip");
+        TimelineTrimLeft(VideoClip(0, 2), +20, true); // Doesn't work due to the audio clip
+        TimelineTrimRight(VideoClip(0, 2), -20, true); // Doesn't work due to the audio clip
+        ASSERT_EQUALS(VideoClip(0, 2)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0, 2));
+        TimelineTrimLeft(VideoClip(0, 2), +20, false);
+        ASSERT_LESS_THAN(VideoClip(0, 2)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0, 2));
+        Undo();
+        ASSERT_EQUALS(VideoClip(0, 2)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0, 2));
+        TimelineTrimRight(VideoClip(0, 2), -20, false);
+        ASSERT_LESS_THAN(VideoClip(0, 2)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0, 2));
+        Undo();
+    }
+    {
+        StartTest("Trim unlinked audio clip");
+        TimelineTrimLeft(AudioClip(0, 2), +20, true); // Doesn't work due to the video clip
+        TimelineTrimRight(AudioClip(0, 2), -20, true); // Doesn't work due to the video clip
+        ASSERT_EQUALS(AudioClip(0, 2)->getLength(), mProjectFixture.OriginalLengthOfAudioClip(0, 2));
+        TimelineTrimLeft(AudioClip(0, 2), +20, false);
+        ASSERT_LESS_THAN(AudioClip(0, 2)->getLength(), mProjectFixture.OriginalLengthOfAudioClip(0, 2));
+        Undo();
+        ASSERT_EQUALS(AudioClip(0, 2)->getLength(), mProjectFixture.OriginalLengthOfAudioClip(0, 2));
+        TimelineTrimRight(AudioClip(0, 2), -20, false);
+        ASSERT_LESS_THAN(AudioClip(0, 2)->getLength(), mProjectFixture.OriginalLengthOfAudioClip(0, 2));
+        Undo();
+    }
+    {
+        StartTest("Shift trim and extend unlinked video clip");
+        DeleteClip(AudioClip(0,2));
+        TimelineTrimRight(VideoClip(0, 2), +200, true); // Not possible: already at max length
+        ASSERT_EQUALS(VideoClip(0, 2)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0, 2));
+        Undo();
+    }
+    {
+        StartTest("Shift trim and extend unlinked audio clip");
+        DeleteClip(VideoClip(0,2));
+        TimelineTrimRight(AudioClip(0, 2), +200, true); // Not possible: already at max length
+        ASSERT_EQUALS(AudioClip(0, 2)->getLength(), mProjectFixture.OriginalLengthOfAudioClip(0, 2));
+        Undo();
+    }
+}
+
 
 
 } // namespace

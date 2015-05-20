@@ -948,7 +948,7 @@ void DetailsClip::preview()
         }
 
         dc.SelectObject(wxNullBitmap);
-        getPlayer()->show(bmp);
+        getPlayer()->showPreview(bmp);
     }
 }
 

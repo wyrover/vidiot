@@ -646,9 +646,9 @@ void Timeline::readFocusedThumbnails()
 
 void Timeline::readInitialThumbnailsAfterInitialization()
 {
-    for (ThumbnailView* t : getViewMap().getThumbnails())
+    for (ClipPreview* view : getViewMap().getClipPreviews())
     {
-        t->scheduleInitialRendering();
+        view->scheduleInitialRendering();
     }
     mExecuteOnIdle.clear();
     ignoreIdleEvents();

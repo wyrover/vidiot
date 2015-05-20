@@ -55,7 +55,11 @@ ClipView::ClipView(const model::IClipPtr& clip, View* parent)
 
     if (mClip->isA<model::VideoClip>())
     {
-        new ThumbnailView(clip,this);
+        (new ThumbnailView(clip,this));
+    }
+    else if (mClip->isA<model::AudioClip>())
+    {
+        (new AudioPeakView(clip,this));
     }
     mClip->Bind(model::EVENT_DRAG_CLIP,             &ClipView::onClipDragged,           this);
     mClip->Bind(model::EVENT_SELECT_CLIP,           &ClipView::onClipSelected,          this);
@@ -73,7 +77,11 @@ ClipView::~ClipView()
 
     if (mClip->isA<model::VideoClip>())
     {
-        delete getViewMap().getThumbnail(mClip);
+        delete getViewMap().getClipPreview(mClip);
+    }
+    else if (mClip->isA<model::AudioClip>())
+    {
+        delete getViewMap().getClipPreview(mClip);
     }
     getViewMap().unregisterView(mClip);
 }
@@ -105,9 +113,10 @@ pixel ClipView::getH() const
 void ClipView::invalidateRect()
 {
     mBitmap.reset();
-    if (mClip->isA<model::VideoClip>())
+    if (mClip->isA<model::VideoClip>() || mClip->isA<model::AudioClip>())
     {
-        getViewMap().getThumbnail(mClip)->invalidateRect();
+        getViewMap().getClipPreview(mClip)->invalidateRect();
+        //getViewMap().getThumbnail(mClip)->invalidateRect();
     }
 }
 
@@ -126,9 +135,13 @@ void ClipView::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) con
             draw(*mBitmap, !getDrag().isActive(), true);
         }
         getTimeline().copyRect(dc, region, offset, *mBitmap, getRect());
-        if (mClip->isA<model::VideoClip>())
+        if (mClip->isA<model::VideoClip>() || mClip->isA<model::AudioClip>())
+        //{
+        //    getViewMap().getThumbnail(mClip)->draw(dc,region,offset);
+        //}
+        //else if (mClip->isA<model::AudioClip>())
         {
-            getViewMap().getThumbnail(mClip)->draw(dc,region,offset);
+            getViewMap().getClipPreview(mClip)->draw(dc,region,offset);
         }
     }
 }
@@ -437,9 +450,13 @@ void ClipView::drawForDragging(const wxPoint& position, int height, wxDC& dc, wx
         // Don't use DrawBitmap since this gives wrong output when using wxGTK.
         wxMemoryDC dcBmp(b);
         dc.Blit(position, b.GetSize(), &dcBmp, wxPoint(0,0));
-        if (mClip->isA<model::VideoClip>())
+        if (mClip->isA<model::VideoClip>() || mClip->isA<model::VideoClip>())
+        //{
+        //    getViewMap().getThumbnail(mClip)->drawForDragging(position, height, dc);
+        //}
+        //else if (mClip->isA<model::AudioClip>())
         {
-            getViewMap().getThumbnail(mClip)->drawForDragging(position, height, dc);
+            getViewMap().getClipPreview(mClip)->drawForDragging(position, height, dc);
         }
         dcMask.DrawRectangle(position,b.GetSize());
     }

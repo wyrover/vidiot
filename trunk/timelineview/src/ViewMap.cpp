@@ -29,11 +29,11 @@ namespace gui { namespace timeline {
 //////////////////////////////////////////////////////////////////////////
 
 ViewMap::ViewMap(Timeline* timeline)
-:   Part(timeline)
-,   mTracks()
-,   mDividers()
-,   mClips()
-,   mThumbnails()
+    : Part(timeline)
+    , mTracks()
+    , mDividers()
+    , mClips()
+    , mClipPreviews()
 {
     VAR_DEBUG(this);
 }
@@ -44,7 +44,7 @@ ViewMap::~ViewMap()
     ASSERT_ZERO(mTracks.size());
     ASSERT_ZERO(mDividers.size());
     ASSERT_ZERO(mClips.size());
-    ASSERT_ZERO(mThumbnails.size());
+    ASSERT_ZERO(mClipPreviews.size());
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -69,10 +69,10 @@ void ViewMap::registerView(const model::IClipPtr &clip, ClipView* view)
     mClips.insert(std::make_pair(clip, view));
 }
 
-void ViewMap::registerThumbnail(const model::IClipPtr& clip, ThumbnailView* view)
+void ViewMap::registerClipPreview(const model::IClipPtr& clip, ClipPreview* view)
 {
-    ASSERT_MAP_CONTAINS_NOT(mThumbnails,clip);
-    mThumbnails.insert(std::make_pair(clip, view));
+    ASSERT_MAP_CONTAINS_NOT(mClipPreviews,clip);
+    mClipPreviews.insert(std::make_pair(clip, view));
 }
 
 void ViewMap::unregisterView(const model::TrackPtr& track)
@@ -93,10 +93,10 @@ void ViewMap::unregisterView(const model::IClipPtr& clip)
     mClips.erase(clip);
 }
 
-void ViewMap::unregisterThumbnail(const model::IClipPtr& clip)
+void ViewMap::unregisterClipPreview(const model::IClipPtr& clip)
 {
-    ASSERT_MAP_CONTAINS(mThumbnails,clip);
-    mThumbnails.erase(clip);
+    ASSERT_MAP_CONTAINS(mClipPreviews,clip);
+    mClipPreviews.erase(clip);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -124,10 +124,10 @@ ClipView* ViewMap::getView(const model::IClipPtr& clip) const
     return it->second;
 }
 
-ThumbnailView* ViewMap::getThumbnail(const model::IClipPtr& clip) const
+ClipPreview* ViewMap::getClipPreview(const model::IClipPtr& clip) const
 {
-    ThumbnailMap::const_iterator it = mThumbnails.find(clip);
-    ASSERT(it != mThumbnails.end())(clip)(mThumbnails);
+    ClipPreviewMap::const_iterator it = mClipPreviews.find(clip);
+    ASSERT(it != mClipPreviews.end())(clip)(mClipPreviews);
     return it->second;
 }
 
@@ -135,22 +135,22 @@ ThumbnailView* ViewMap::getThumbnail(const model::IClipPtr& clip) const
 // MASS INVALIDATION
 //////////////////////////////////////////////////////////////////////////
 
-void ViewMap::invalidateThumbnails()
+void ViewMap::invalidateClipPreviews()
 {
-    for (auto v : mTracks )
+    for (auto v : mTracks ) // todo why is this here?
     {
         v.second->invalidateRect();
     }
-    for (auto v : mThumbnails )
+    for (auto v : mClipPreviews )
     {
         v.second->invalidateRect();
     }
 }
 
-std::vector<ThumbnailView*> ViewMap::getThumbnails() const
+std::vector<ClipPreview*> ViewMap::getClipPreviews() const
 {
-    std::vector<ThumbnailView*> result;
-    boost::copy(mThumbnails | boost::adaptors::map_values, std::back_inserter(result));
+    std::vector<ClipPreview*> result;
+    boost::copy(mClipPreviews | boost::adaptors::map_values, std::back_inserter(result));
     return result;
 }
 

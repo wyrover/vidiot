@@ -56,6 +56,8 @@ public:
     pts pixelsToPts(int pixels) const;
     int ptsToPixels(pts position) const;
 
+    static int ptsToPixels(pts position, rational zoom);
+
 private:
 
     rational mZoom; ///< Number of pixels per frame

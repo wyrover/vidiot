@@ -48,8 +48,12 @@ void TestSavingAndLoading::testSaveAndLoad()
 
     StartTest("Create saved document");
 
+    ExpectExecutedWork expectation(14, true);
     FixtureProject mProjectFixture(true);
     mProjectFixture.init();
+    // Wait until audio peaks generated. Otherwise, not all save files have the same contents.
+    // The later save files may have more entries in the meta data cache.
+    expectation.wait(); 
 
     StartTest("Add non auto folder to project view");
     model::FolderPtr folder1 = ProjectViewAddFolder( sFolder );
@@ -157,8 +161,12 @@ void TestSavingAndLoading::testBackupBeforeSave()
 {
     StartTestSuite();
 
+    ExpectExecutedWork expectation(14, true);
     FixtureProject mProjectFixture(true);
     mProjectFixture.init();
+    // Wait until audio peaks generated. Otherwise, not all save files have the same contents.
+    // The later save files may have more entries in the meta data cache.
+    expectation.wait(); 
 
     StartTest("Create temp dir and existing file");
     RandomTempDirPtr tempDirProject = RandomTempDir::generate();

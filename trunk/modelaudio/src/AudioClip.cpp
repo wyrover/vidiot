@@ -20,10 +20,12 @@
 #include "AudioClipEvent.h"
 #include "AudioCompositionParameters.h"
 #include "AudioFile.h"
+#include "AudioPeaks.h"
 #include "Constants.h"
 #include "Convert.h"
 #include "EmptyChunk.h"
 #include "Node.h"
+#include "Transition.h"
 #include "UtilLog.h"
 
 namespace model {
@@ -192,6 +194,36 @@ void AudioClip::setVolume(int volume)
 int AudioClip::getVolume() const
 {
     return mVolume;
+}
+
+AudioPeaks AudioClip::getPeaks()
+{
+    pts offset = getOffset();
+    pts length = getLength();
+    if (getInTransition())
+    {
+        boost::optional<pts> left{ getInTransition()->getRight() };
+        ASSERT_NONZERO(left);
+        offset -= *left;
+    }
+    if (getOutTransition())
+    {
+        boost::optional<pts> right{ getOutTransition()->getLeft() };
+        ASSERT_NONZERO(right);
+        length += *right;
+    }
+    if (mVolume == Constants::sDefaultVolume)
+    {
+        return getDataGenerator<AudioFile>()->getPeaks(offset,length);
+    }
+    AudioPeaks result = getDataGenerator<AudioFile>()->getPeaks(offset,length);
+    boost::rational<int> factor{ mVolume, Constants::sDefaultVolume };
+    for (AudioPeak& peak : result)
+    {
+        peak.first = floor(boost::rational<int>(peak.first) * factor);
+        peak.second = floor(boost::rational<int>(peak.second) * factor);
+    }
+    return result;
 }
 
 //////////////////////////////////////////////////////////////////////////

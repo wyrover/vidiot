@@ -27,7 +27,7 @@ class DividerView;
 typedef std::map< model::TrackPtr, TrackView* > TrackMap;
 typedef std::map< model::TrackPtr, DividerView* > DividerMap;
 typedef std::map< model::IClipPtr, ClipView* > ClipMap;
-typedef std::map< model::IClipPtr, ThumbnailView* > ThumbnailMap;
+typedef std::map< model::IClipPtr, ClipPreview* > ClipPreviewMap;
 
 class ViewMap
     :   public Part
@@ -49,13 +49,13 @@ public:
     void registerDivider(const model::TrackPtr& track, DividerView* view);
 
     void registerView(const model::IClipPtr& clip, ClipView* view);
-    void registerThumbnail(const model::IClipPtr& clip, ThumbnailView* view);
+    void registerClipPreview(const model::IClipPtr& clip, ClipPreview* view);
 
     void unregisterView(const model::TrackPtr &track);
     void unregisterDivider(const model::TrackPtr& track);
 
     void unregisterView(const model::IClipPtr& clip);
-    void unregisterThumbnail(const model::IClipPtr& clip);
+    void unregisterClipPreview(const model::IClipPtr& clip);
 
     //////////////////////////////////////////////////////////////////////////
     // CONVERSION
@@ -65,15 +65,15 @@ public:
     virtual TrackView* getView(const model::TrackPtr& track) const;
 
     virtual ClipView* getView(const model::IClipPtr& clip) const;
-    virtual ThumbnailView* getThumbnail(const model::IClipPtr& clip) const;
+    virtual ClipPreview* getClipPreview(const model::IClipPtr& clip) const;
 
     //////////////////////////////////////////////////////////////////////////
     // MASS INVALIDATION
     //////////////////////////////////////////////////////////////////////////
 
-    void invalidateThumbnails();
+    void invalidateClipPreviews();
 
-    std::vector<ThumbnailView*> getThumbnails() const;
+    std::vector<ClipPreview*> getClipPreviews() const;
 
 private:
 
@@ -81,7 +81,7 @@ private:
     DividerMap mDividers;
 
     ClipMap mClips;
-    ThumbnailMap mThumbnails;
+    ClipPreviewMap mClipPreviews;
 };
 
 }} // namespace

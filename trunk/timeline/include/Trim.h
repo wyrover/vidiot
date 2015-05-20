@@ -76,6 +76,8 @@ public:
 
     void drawSnaps(wxDC& dc, const wxRegion& region, const wxPoint& offset) const;
 
+    bool isActive() const;
+
 private:
 
     //////////////////////////////////////////////////////////////////////////
@@ -98,7 +100,8 @@ private:
 
     pts mCursorPositionBefore;      ///< Cursor position before the trim is started.
 
-    boost::shared_ptr<wxBitmap> mAdjacentBitmap;
+    model::VideoClipPtr mVideoClip; ///< Videoclip to be used for showing a preview of the trim operation.
+    wxBitmapPtr mAdjacentBitmap;    ///< Adjacent bitmap to be used for showing a preview of a shift-trim operation.
     wxMemoryDC mDc;
     pts mStartPositionPreview;
     wxBitmapPtr mBitmapSingle;

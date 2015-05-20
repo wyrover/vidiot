@@ -44,6 +44,8 @@ public:
 
     void testKeyboardTrimmingDuringPlayback();
 
+    void testTrimmingUnlinkedClip();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////
