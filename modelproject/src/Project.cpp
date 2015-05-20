@@ -374,6 +374,12 @@ void Project::serialize(Archive & ar, const unsigned int version)
         {
             ar & BOOST_SERIALIZATION_NVP(mMetaDataCache);
         }
+        else
+        {
+            ASSERT(Archive::is_loading::value);
+            ASSERT(mMetaDataCache == nullptr);
+            mMetaDataCache = boost::make_shared<FileMetaDataCache>();
+        }
         ar & BOOST_SERIALIZATION_NVP(mRoot);
     }
     catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }

@@ -45,6 +45,7 @@
 #include "UtilVector.h"
 #include "VideoClip.h"
 #include "VideoFrame.h"
+#include "VideoTrack.h"
 #include "VideoCompositionParameters.h"
 #include "Zoom.h"
 
@@ -55,14 +56,14 @@ namespace gui { namespace timeline {
 //////////////////////////////////////////////////////////////////////////
 
 Trim::Trim(Timeline* timeline)
-    :   Part(timeline)
-    ,   mActive(false)
-    ,   mStartPosition(0,0)
-    ,   mStartPts(0)
-    ,   mFixedPixel(0)
-    ,   mCommand(0)
-    ,   mDc()
-    ,   mSnappingEnabled(true)
+    : Part(timeline)
+    , mActive(false)
+    , mStartPosition(0, 0)
+    , mStartPts(0)
+    , mFixedPixel(0)
+    , mCommand(0)
+    , mDc()
+    , mSnappingEnabled(true)
 {
     VAR_DEBUG(this);
 }
@@ -83,7 +84,9 @@ void Trim::start()
     // Reset first
     mActive = true;
     mSnappingEnabled = true;
-    mStartPosition = getMouse().getPhysicalPosition(); // Do not replace with virtual position since the virtual canvas is changed because of shift trimming and keeping one clip edge aligned.
+    // Do not replace with virtual position since the virtual canvas is
+    // changed because of shift trimming and keeping one clip edge aligned.
+    mStartPosition = getMouse().getPhysicalPosition();
     mStartPts = 0;
     mFixedPixel = 0;
     mSnapPoints.clear();
@@ -96,101 +99,69 @@ void Trim::start()
     model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(info.clip);
     mPosition = info.logicalclipposition;
 
+    bool isBeginTrim = (mPosition == ClipBegin) || (mPosition == TransitionRightClipBegin) || (mPosition == TransitionBegin);
+
+    boost::optional<pts> adjacentPts{ boost::none };
+
     model::IClipPtr originalclip;
-    model::IClipPtr adjacentClip;
-    bool isBeginTrim = true;
+
+    // Below, do not optimize away - using ->getRightPts() and/or ->getLeftPts() - in the calculation.
+    // Since the scrolling is changed and clips are added/removed, that's very volatile information.
     switch (mPosition)
     {
-    case ClipBegin:
+        case ClipBegin:
         {
             ASSERT(!transition);
             ASSERT(!info.clip->isA<model::Transition>());
             originalclip = info.clip;
-            mFixedPts = originalclip->getRightPts(); // Do not optimize away (using ->getRightPts() in the calculation. Since the scrolling is changed and clips are added/removed, that's very volatile information).
+            mFixedPts = originalclip->getRightPts();
             mStartPts = originalclip->getLeftPts();
-            adjacentClip = originalclip->getPrev();
-            if (adjacentClip)
-            {
-                if (adjacentClip->getLength() == 0)
-                {
-                    // Clip is part of a transition, and is 'fully covered' by this transition. Use the transition for the adjacent frame.
-                    adjacentClip = adjacentClip->getPrev();
-                    ASSERT(adjacentClip);
-                    ASSERT(adjacentClip->isA<model::Transition>())(adjacentClip);
-                }
-                adjacentClip->moveTo(adjacentClip->getLength() - 1);
-            }
+            adjacentPts.reset(mStartPts - 1);
             break;
         }
-    case ClipEnd:
+        case ClipEnd:
         {
             ASSERT(!transition);
             ASSERT(!info.clip->isA<model::Transition>());
             originalclip = info.clip;
-            mFixedPts = originalclip->getLeftPts(); // Do not optimize away (using ->getLeftPts() in the calculation. Since the scrolling is changed and clips are added/removed, that's very volatile information).
+            mFixedPts = originalclip->getLeftPts();
             mStartPts = originalclip->getRightPts();
-            adjacentClip = originalclip->getNext();
-            if (adjacentClip)
-            {
-                if (adjacentClip->getLength() == 0)
-                {
-                    // Clip is part of a transition, and is 'fully covered' by this transition. Use the transition for the adjacent frame.
-                    adjacentClip = adjacentClip->getNext();
-                    ASSERT(adjacentClip);
-                    ASSERT(adjacentClip->isA<model::Transition>())(adjacentClip);
-                }
-                adjacentClip->moveTo(0);
-            }
-            isBeginTrim = false;
+            adjacentPts.reset(mStartPts + 1);
             break;
         }
-    case TransitionRightClipBegin:
+        case TransitionRightClipBegin:
         {
             ASSERT(transition);
             ASSERT(transition->getRight());
             ASSERT_MORE_THAN_EQUALS_ZERO(*(transition->getRight()));
             mStartPts = transition->getTouchPosition();
             originalclip = info.getLogicalClip();
-            mFixedPts = originalclip->getRightPts(); // Do not optimize away (using ->getRightPts() in the calculation. Since the scrolling is changed and clips are added/removed, that's very volatile information).
-            boost::optional<pts> left = transition->getLeft();
-            if (left)
+            mFixedPts = originalclip->getRightPts();
+            if (!transition->getLeft() ||
+                *transition->getLeft() == 0)
             {
-                adjacentClip = make_cloned<model::IClip>(transition->getPrev());
-                if (*left > 0)
-                {
-                    ASSERT(adjacentClip);
-                    adjacentClip->adjustBegin(adjacentClip->getLength());
-                    adjacentClip->adjustEnd(*left);
-                }
-                adjacentClip->moveTo(adjacentClip->getLength() - 1);
+                // In-only transition, or in-out transition with a left size of 0 length (total transition to the right of the cut).
+                adjacentPts.reset(mStartPts - 1);
             }
             break;
         }
-    case TransitionLeftClipEnd:
+        case TransitionLeftClipEnd:
         {
             ASSERT(transition);
             ASSERT(transition->getLeft());
             ASSERT_MORE_THAN_EQUALS_ZERO(*(transition->getLeft()));
             mStartPts = transition->getTouchPosition();
             originalclip = info.getLogicalClip();
-            mFixedPts = originalclip->getLeftPts(); // Do not optimize away (using ->getLeftPts() in the calculation. Since the scrolling is changed and clips are added/removed, that's very volatile information).
-            boost::optional<pts> right = transition->getRight();
-            if (right)
+            mFixedPts = originalclip->getLeftPts();
+            if (!transition->getRight() ||
+                *transition->getRight() == 0)
             {
-
-                adjacentClip = make_cloned<model::IClip>(transition->getNext());
-                if (*right > 0)
-                {
-                    ASSERT(adjacentClip);
-                    adjacentClip->adjustEnd(- adjacentClip->getLength());
-                    adjacentClip->adjustBegin(-1 * *right);
-                }
-                adjacentClip->moveTo(0);
+                // In-only transition, or in-out transition with right size of 0 length (total transition to the left of the cut).
+                adjacentPts.reset(mStartPts + 1);
             }
-            isBeginTrim = false;
             break;
         }
-    case TransitionBegin:
+        case TransitionBegin:
         {
             ASSERT(transition);
             originalclip = info.clip;
@@ -198,61 +169,97 @@ void Trim::start()
             transition.reset();
             break;
         }
-    case TransitionEnd:
+        case TransitionEnd:
         {
             ASSERT(transition);
             originalclip = info.clip;
             mStartPts = originalclip->getRightPts();
             transition.reset();
-            isBeginTrim = false;
             break;
         }
-    case ClipInterior:
-    case TransitionLeftClipInterior:
-    case TransitionInterior:
-    case TransitionRightClipInterior:
-    default:
+        case ClipInterior:
+        case TransitionLeftClipInterior:
+        case TransitionInterior:
+        case TransitionRightClipInterior:
+        default:
         FATAL("Illegal clip position");
     }
     ASSERT(originalclip);
 
     mFixedPixel = getScrolling().ptsToPixel(mFixedPts); // See remark above.
-    if (adjacentClip && (adjacentClip->isA<model::IVideo>()))
+
+    // Determine the video clip to be used for previewing.
+    mAdjacentBitmap.reset(); // Do not use bitmap stored for any previous trim operation
+    mVideoClip.reset(); // Default: no video preview
+
+    mVideoClip = boost::dynamic_pointer_cast<model::VideoClip>(originalclip);
+    if (mVideoClip == nullptr)
     {
-        // This applies to both VideoClip and EmptyClip
-        model::IVideoPtr adjacentvideoclip = boost::dynamic_pointer_cast<model::IVideo>(adjacentClip);
-        model::VideoFramePtr adjacentFrame = adjacentvideoclip->getNextVideo(model::VideoCompositionParameters().setBoundingBox(wxSize(getPlayer()->getVideoSize().GetWidth() / 2,  getPlayer()->getVideoSize().GetHeight())));
-        mAdjacentBitmap = adjacentFrame->getBitmap();
-    }
-    else
-    {
-        mAdjacentBitmap.reset(); // Do not use bitmap stored for any previous trim operation
+        // Maybe the trim was started on the audio. Use the linked clip for the preview.
+        mVideoClip = boost::dynamic_pointer_cast<model::VideoClip>(originalclip->getLink());
     }
 
-    // Prepare for previewing
-    model::VideoClipPtr videoclip = boost::dynamic_pointer_cast<model::VideoClip>(originalclip);
-    if (videoclip)
+    if (mVideoClip)
     {
-        model::TransitionPtr inTransition = originalclip->getInTransition();
-        model::TransitionPtr outTransition = originalclip->getOutTransition();
+        // Determine (preview) pts offset position of trimmed clip. -1: required since end is 'one too far'.
+        mStartPositionPreview = isBeginTrim ? mVideoClip->getOffset() : mVideoClip->getOffset() + mVideoClip->getLength() - 1;
 
-        pts originalOffset = videoclip->getOffset();
-        pts originalLength = videoclip->getLength();
-        if (isBeginTrim)
+        // For the first and last frames in the track, there are no adjacent bitmaps
+        if (mStartPts > 0 &&
+            mStartPts < mVideoClip->getTrack()->getLength() - 1)
         {
-            mStartPositionPreview = originalOffset; // Left begin point
-            if (inTransition && inTransition->getRight())
+            model::IVideoPtr adjacentBitmapProvider;
+
+            model::IClipPtr adjacentVideoClip{ isBeginTrim ? mVideoClip->getPrev() : mVideoClip->getNext() };
+            model::TransitionPtr adjacentVideoTransition{ boost::dynamic_pointer_cast<model::Transition>(adjacentVideoClip) };
+
+            model::VideoCompositionParameters parameters{ model::VideoCompositionParameters().
+                setBoundingBox(wxSize(getPlayer()->getVideoSize().GetWidth() / 2, getPlayer()->getVideoSize().GetHeight())) };
+
+            if (adjacentVideoTransition &&
+                adjacentVideoTransition->getLeft() &&
+                *adjacentVideoTransition->getLeft() > 0 &&
+                adjacentVideoTransition->getRight() &&
+                *adjacentVideoTransition->getRight() > 0)
             {
-                mStartPositionPreview -= *(inTransition->getRight()); // Since the trim starts on the position where the two transitioned clips 'touched'
+                // Special case: in case of a in-out transition, do not show the track's frame (which
+                // is a combination of both the trimmed clip and it's adjacent clip. Instead show the
+                // actual frames (for both the trimmed and the adjacent clip) around the 'touch' 
+                // position.
+                if (isBeginTrim)
+                {
+                    adjacentVideoClip = make_cloned<model::IClip>(adjacentVideoTransition->getPrev());
+                    ASSERT(adjacentVideoClip);
+                    adjacentVideoClip->adjustBegin(adjacentVideoClip->getLength()); // Remove 'not-under-the-transition' part.
+                    adjacentVideoClip->adjustEnd(*adjacentVideoTransition->getLeft()); // Remove 'before-the-touch-position'.
+                    adjacentVideoClip->moveTo(adjacentVideoClip->getLength() - 1); // Take clip besides 'touch' position.
+                    mStartPositionPreview -= *adjacentVideoTransition->getRight(); // Updated offset for (preview) of trimmed clip.
+                }
+                else
+                {
+                    adjacentVideoClip = make_cloned<model::IClip>(adjacentVideoTransition->getNext());
+                    ASSERT(adjacentVideoClip);
+                    adjacentVideoClip->adjustEnd(-adjacentVideoClip->getLength()); // Remove 'not-under-the-transition' part.
+                    adjacentVideoClip->adjustBegin(-1 * *adjacentVideoTransition->getRight()); // Remove 'after-the-touch-position' part.
+                    adjacentVideoClip->moveTo(0); // Take clip besides 'touch' position.
+                    mStartPositionPreview += *(adjacentVideoTransition->getLeft()); // Updated offset for (preview) of trimmed clip.
+                }
+
+                adjacentBitmapProvider = boost::dynamic_pointer_cast<model::IVideo>(adjacentVideoClip); // Works for VideoClip and EmptyClip
             }
-        }
-        else
-        {
-            mStartPositionPreview = originalOffset + originalLength - 1; // -1 required since end is 'one too far
-            if (outTransition && outTransition->getLeft())
+            else
             {
-                mStartPositionPreview += *(outTransition->getLeft()); // Since the trim starts on the position where the two transitioned clips 'touched'
+                // Default: get the next/previous video frame in the track
+                model::TrackPtr track{ mVideoClip->getTrack() };
+                model::VideoTrackPtr videotrack{ make_cloned<model::VideoTrack>(boost::dynamic_pointer_cast<model::VideoTrack>(track)) };
+                videotrack->moveTo(mStartPts + (isBeginTrim ? -1 : +1));
+                adjacentBitmapProvider = boost::dynamic_pointer_cast<model::IVideo>(videotrack);
             }
+
+            ASSERT(adjacentBitmapProvider != nullptr);
+            model::VideoFramePtr adjacentFrame{ adjacentBitmapProvider->getNextVideo(parameters) };
+            ASSERT(adjacentFrame != nullptr);
+            mAdjacentBitmap = adjacentFrame->getBitmap();
         }
     }
 
@@ -262,7 +269,7 @@ void Trim::start()
     mDc.SelectObject(*mBitmapSingle);
     mDc.SetBrush(Layout::get().PreviewBackgroundBrush);
     mDc.SetPen(Layout::get().PreviewBackgroundPen);
-    mDc.DrawRectangle(wxPoint(0,0),mDc.GetSize());
+    mDc.DrawRectangle(wxPoint(0, 0), mDc.GetSize());
     if (mAdjacentBitmap)
     {
         mBitmapSideBySide = boost::make_shared<wxBitmap>(playerSize);
@@ -270,11 +277,11 @@ void Trim::start()
         int xAdjacent = (isBeginTrim ? 0 : playerSize.GetWidth() / 2);
 
         wxMemoryDC dcBmp(*mAdjacentBitmap);
-        mDc.Blit(wxPoint(xAdjacent, (playerSize.GetHeight() - mAdjacentBitmap->GetHeight()) / 2),mAdjacentBitmap->GetSize(),&dcBmp,wxPoint(0,0));
+        mDc.Blit(wxPoint(xAdjacent, (playerSize.GetHeight() - mAdjacentBitmap->GetHeight()) / 2), mAdjacentBitmap->GetSize(), &dcBmp, wxPoint(0, 0));
     }
     mDc.SelectObject(wxNullBitmap);
 
-	ASSERT_ZERO(mCommand);
+    ASSERT_ZERO(mCommand);
     getSelection().updateOnTrim(originalclip);
     mCommand = new command::TrimClip(getSequence(), originalclip, transition, mPosition);
     determinePossibleSnapPoints(originalclip);
@@ -290,8 +297,8 @@ void Trim::update()
     VAR_DEBUG(this);
     getTimeline().beginTransaction();
 
-    mCommand->update(determineTrimDiff(),false);
-    getTimeline().getDetails().get<DetailsTrim>()->show( mCommand->getOriginalClip(), mCommand->getNewClip(), mCommand->getOriginalLink(), mCommand->getNewLink());
+    mCommand->update(determineTrimDiff(), false);
+    getTimeline().getDetails().get<DetailsTrim>()->show(mCommand->getOriginalClip(), mCommand->getNewClip(), mCommand->getOriginalLink(), mCommand->getNewLink());
     preview();
 
     if (getKeyboard().getShiftDown() && mCommand->isBeginTrim())
@@ -337,6 +344,7 @@ void Trim::stop()
         getTimeline().Refresh(false);
         getTimeline().Update();
     }
+    mVideoClip.reset();
     mCommand = 0;
 }
 
@@ -356,7 +364,7 @@ void Trim::submit()
         if (shiftBeginTrim)
         {
             // First, try changing the scrollbar such that the fixed pixel stays at the same position
-            pixel remaining = getScrolling().align(mFixedPts,mFixedPixel + getZoom().ptsToPixels(diff));
+            pixel remaining = getScrolling().align(mFixedPts, mFixedPixel + getZoom().ptsToPixels(diff));
 
             // When the sequence before the cursor position is 'shortened', without adaptation, the cursor
             // seems to be moved after the trim is done. Although technically, the cursor is kept in the
@@ -379,7 +387,7 @@ void Trim::submit()
                 static const int NumberOfSteps = AnimationDurationInMs / SleepTimePerStep;
                 for (int step = NumberOfSteps; step > 0; --step) // step > 0: otherwise /0 possible
                 {
-                    int newShift = -1 * model::Convert::doubleToInt(static_cast<double>(remaining) / static_cast<double>(NumberOfSteps) * static_cast<double>(step));
+                    int newShift = -1 * model::Convert::doubleToInt(static_cast<double>(remaining) / static_cast<double>(NumberOfSteps)* static_cast<double>(step));
                     pts cursorDiff = getTimeline().getZoom().pixelsToPts(newShift);
                     getTimeline().setShift(newShift);
                     getTimeline().getCursor().setLogicalPosition(mCursorPositionBefore - diff + cursorDiff);
@@ -398,8 +406,13 @@ void Trim::drawSnaps(wxDC& dc, const wxRegion& region, const wxPoint& offset) co
 {
     if (mActive && mSnap)
     {
-        getTimeline().drawLine(dc,region,offset,*mSnap,Layout::get().SnapPen);
+        getTimeline().drawLine(dc, region, offset, *mSnap, Layout::get().SnapPen);
     }
+}
+
+bool Trim::isActive() const
+{
+    return mActive;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -420,7 +433,7 @@ pts Trim::determineTrimDiff()
         pts ptsmouse = getZoom().pixelsToPts(position.x + getScrolling().getOffset().x);
         pts minimumsnap = Layout::SnapDistance + 1; // To ensure that the first snap will update this
         std::vector<pts>::const_iterator itTimeline = mSnapPoints.begin();
-        while ( itTimeline != mSnapPoints.end() )
+        while (itTimeline != mSnapPoints.end())
         {
             pts pts_timeline = *itTimeline;
             pts diff = ptsmouse - pts_timeline;
@@ -461,7 +474,7 @@ void Trim::determinePossibleSnapPoints(const model::IClipPtr& originalclip)
         std::vector<pts> all;
         UtilVector<pts>(all).addElements(getSequence()->getCuts(exclude));
         // Copy everything between [min,max), discard everything else
-        mSnapPoints.insert(mSnapPoints.begin(),std::lower_bound(all.begin(),all.end(), min), std::upper_bound(all.begin(),all.end(),max));
+        mSnapPoints.insert(mSnapPoints.begin(), std::lower_bound(all.begin(), all.end(), min), std::upper_bound(all.begin(), all.end(), max));
     }
     if (Config::ReadBool(Config::sPathSnapCursor))
     {
@@ -474,16 +487,18 @@ void Trim::determinePossibleSnapPoints(const model::IClipPtr& originalclip)
 
 void Trim::preview()
 {
-    model::VideoClipPtr originalvideoclip = boost::dynamic_pointer_cast<model::VideoClip>(mCommand->getOriginalClip());
-    if (!originalvideoclip) { return; }
+    if (mVideoClip == nullptr)
+    {
+        return;
+    }
 
-    // Always create a new clip. Reusing an existing videoclip leads to decoding errors sometimes.
+    // Always create a new clip. Reusing an existing clip leads to decoding errors sometimes.
     // See [#191]. The decoding errors result in wrong trimming feedback.
-    model::VideoClipPtr preview = make_cloned<model::VideoClip>(originalvideoclip);
+    model::VideoClipPtr preview = mVideoClip ? make_cloned<model::VideoClip>(mVideoClip) : nullptr;
     preview->maximize();
 
     pts diff = mCommand->getDiff();
-    ASSERT_LESS_THAN_EQUALS(mStartPositionPreview + diff,preview->getLength());
+    ASSERT_LESS_THAN_EQUALS(mStartPositionPreview + diff, preview->getLength());
     pts position(mStartPositionPreview + diff);
     wxSize playerSize = getPlayer()->getVideoSize();
     bool isBeginTrim = mCommand->isBeginTrim();
@@ -495,7 +510,7 @@ void Trim::preview()
         ASSERT(isBeginTrim);
         completelyTrimmedAway = true; // Clip has been trimmed away completely. From the beginning.
     }
-    ASSERT_MORE_THAN_EQUALS(position,-1);
+    ASSERT_MORE_THAN_EQUALS(position, -1);
     if (position == -1)
     {
         ASSERT(!isBeginTrim);
@@ -528,11 +543,11 @@ void Trim::preview()
         if (trimmedBmp)
         {
             wxMemoryDC dcBmp(*trimmedBmp);
-            mDc.Blit(wxPoint(x, (h - trimmedBmp->GetHeight()) / 2), trimmedBmp->GetSize(), &dcBmp, wxPoint(0,0));
+            mDc.Blit(wxPoint(x, (h - trimmedBmp->GetHeight()) / 2), trimmedBmp->GetSize(), &dcBmp, wxPoint(0, 0));
         }
     }
     mDc.SelectObject(wxNullBitmap);
-    getPlayer()->show(bitmap);
+    getPlayer()->showPreview(bitmap);
 }
 
 }} // namespace

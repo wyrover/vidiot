@@ -1,4 +1,4 @@
-// Copyright 2013-2015 Eric Raijmakers.
+// Copyright 2015 Eric Raijmakers.
 //
 // This file is part of Vidiot.
 //
@@ -15,15 +15,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TEST_TRIMMING_H
-#define TEST_TRIMMING_H
+#ifndef MODEL_AUDIO_PEAKS_H
+#define MODEL_AUDIO_PEAKS_H
 
-#include "TestAuto.h"
+#include "UtilInt.h"
 
-namespace test
-{
-class TestTrimming : public CxxTest::TestSuite // Must be on same line as class definition. Otherwise 'No tests defined error
-    ,   public SuiteCreator<TestTrimming>
+namespace model {
+
+typedef std::pair<sample,sample> AudioPeak;
+
+class AudioPeaks : public std::vector < AudioPeak >
 {
 public:
 
@@ -31,30 +32,21 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    virtual void setUp();       ///< Called before each test.
-    virtual void tearDown();    ///< Called after each test.
+    AudioPeaks();
+    AudioPeaks(AudioPeaks::const_iterator b, AudioPeaks::const_iterator e);
 
     //////////////////////////////////////////////////////////////////////////
-    // TEST CASES
+    // SERIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    void testSnapping();
-
-    void testKeyboardTrimming();
-
-    void testKeyboardTrimmingDuringPlayback();
-
-    void testTrimmingUnlinkedClip();
-
-private:
-
-    //////////////////////////////////////////////////////////////////////////
-    // MEMBERS
-    //////////////////////////////////////////////////////////////////////////
-
-    FixtureProject mProjectFixture;
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive & ar, const unsigned int version);
 };
-}
-using namespace test;
+
+} // namespace
+
+BOOST_CLASS_VERSION(model::AudioPeaks, 1)
+BOOST_CLASS_EXPORT_KEY(model::AudioPeaks)
 
 #endif

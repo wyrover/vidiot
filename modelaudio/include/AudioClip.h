@@ -23,6 +23,8 @@
 
 namespace model {
 
+class AudioPeaks;
+
 class AudioClip
     :   public ClipInterval
     ,   public IAudio
@@ -66,6 +68,7 @@ public:
 
     void setVolume(int volume);
     int getVolume() const;
+    AudioPeaks getPeaks();
 
 protected:
 

@@ -1,4 +1,4 @@
-// Copyright 2013-2015 Eric Raijmakers.
+// Copyright 2015 Eric Raijmakers.
 //
 // This file is part of Vidiot.
 //
@@ -15,46 +15,44 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TEST_TRIMMING_H
-#define TEST_TRIMMING_H
+#ifndef AUDIO_PEAK_VIEW_H
+#define AUDIO_PEAK_VIEW_H
 
-#include "TestAuto.h"
+#include "ClipPreview.h"
 
-namespace test
-{
-class TestTrimming : public CxxTest::TestSuite // Must be on same line as class definition. Otherwise 'No tests defined error
-    ,   public SuiteCreator<TestTrimming>
+namespace model {
+    class EventChangeAudioClipVolume;
+}
+
+namespace gui { namespace timeline {
+
+class AudioPeakView
+    :   public ClipPreview
 {
 public:
 
     //////////////////////////////////////////////////////////////////////////
-    // INITIALIZATION
+    // INITIALIZATION METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    virtual void setUp();       ///< Called before each test.
-    virtual void tearDown();    ///< Called after each test.
+    AudioPeakView(const model::IClipPtr& clip, View* parent);
+    ~AudioPeakView();
 
     //////////////////////////////////////////////////////////////////////////
-    // TEST CASES
+    // CLIPPREVIEW
     //////////////////////////////////////////////////////////////////////////
 
-    void testSnapping();
-
-    void testKeyboardTrimming();
-
-    void testKeyboardTrimmingDuringPlayback();
-
-    void testTrimmingUnlinkedClip();
-
-private:
+    RenderClipPreviewWorkPtr render() const override;
+    wxSize requiredSize() const override;
 
     //////////////////////////////////////////////////////////////////////////
-    // MEMBERS
+    // AUDIOCLIP EVENTS
     //////////////////////////////////////////////////////////////////////////
 
-    FixtureProject mProjectFixture;
+    void onVolumeChanged(model::EventChangeAudioClipVolume& event);
+
 };
-}
-using namespace test;
+
+}} // namespace
 
 #endif

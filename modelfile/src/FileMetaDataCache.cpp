@@ -17,6 +17,9 @@
 
 #include "FileMetaDataCache.h"
 
+#include "AudioPeaks.h"
+#include <boost/serialization/map.hpp>
+
 namespace model {
 
 //////////////////////////////////////////////////////////////////////////
@@ -36,6 +39,34 @@ FileMetaDataCache::~FileMetaDataCache()
 //////////////////////////////////////////////////////////////////////////
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
+
+// todo store last modified dates/times for all files in the cache, and invalidate when no longer valid.
+// todo watch all these files. or do the check upon each get?
+
+bool FileMetaDataCache::hasPeaks(const wxString& file) const
+{
+    // todo thread safety
+//    ASSERT(wxThread::IsMain()); // To ensure thread safety
+    return mPeaks.find(file) != mPeaks.end();
+}
+
+const AudioPeaks& FileMetaDataCache::getPeaks(const wxString& file) const
+{
+
+    // todo do the scheduling here. If there is no 'data available', schedule the generation and return '0'.
+    // then add event 'meta data updated' for the underlying object (audiofile/clip in this case), and forward that
+    // to the view class?
+    // todo thread safety
+//    ASSERT(wxThread::IsMain()); // To ensure thread safety
+    ASSERT_MAP_CONTAINS(mPeaks, file);
+    return mPeaks.find(file)->second;
+}
+
+void FileMetaDataCache::setPeaks(const wxString& file, const AudioPeaks& peaks)
+{
+    // todo thread safety
+    mPeaks[file] = peaks;
+}
 
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS
@@ -60,6 +91,7 @@ void FileMetaDataCache::serialize(Archive & ar, const unsigned int version)
 {
     try
     {
+        ar & BOOST_SERIALIZATION_NVP(mPeaks);
     }
     catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }

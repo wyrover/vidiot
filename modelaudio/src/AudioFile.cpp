@@ -21,9 +21,11 @@
 #include "AudioCompositionParameters.h"
 #include "Convert.h"
 #include "EmptyChunk.h"
+#include "FileMetaDataCache.h"
 #include "UtilInitAvcodec.h"
 #include "UtilLog.h"
 #include "UtilLogAvcodec.h"
+#include "UtilPath.h"
 
 namespace model
 {
@@ -376,6 +378,56 @@ int AudioFile::getChannels()
 boost::optional<pts> AudioFile::getNewStartPosition() const
 {
     return mNewStartPosition;
+}
+
+AudioPeaks AudioFile::getPeaks(pts offset, pts length)
+{
+    if (!canBeOpened())
+    {
+        return AudioPeaks();
+    }
+
+    wxString key{ util::path::toPath(getPath()) };
+    if (!FileMetaDataCache::get().hasPeaks(key))
+    {
+        // The setPts() & determineChunkSize() below is required for the case where the file has been removed from disk,
+        // and the chunk size is used to initialize a chunk of silence.
+        AudioCompositionParameters parameters{ model::AudioCompositionParameters().setSampleRate(model::Properties::get().getAudioSampleRate()).setNrChannels(1).setPts(0).determineChunkSize() };
+        moveTo(0);
+
+        AudioPeaks allPeaks;
+        AudioPeak current{ 0, 0 };
+        samplecount samplePosition{ 0 };
+        samplecount nextRequiredSample{ 0 };
+        AudioChunkPtr chunk{ getNextAudio(parameters) };
+
+        while (chunk && allPeaks.size() < getLength())
+        {
+            samplecount chunksize = chunk->getUnreadSampleCount();
+            sample* buffer = chunk->getBuffer();
+
+            for (int i = 0; (i < chunksize) && (allPeaks.size() < getLength()); ++i)
+            {
+                current.first = std::min(current.first, *buffer);
+                current.second = std::max(current.second, *buffer);
+                if (samplePosition == nextRequiredSample)
+                {
+                    allPeaks.push_back(current);
+                    current = AudioPeak(0, 0);
+                    nextRequiredSample = Convert::ptsToSamplesPerChannel(parameters.getSampleRate(), allPeaks.size());
+                }
+                ++samplePosition;
+                ++buffer;
+            }
+            chunk = getNextAudio(parameters);
+        }
+        FileMetaDataCache::get().setPeaks(key, allPeaks);
+    }
+
+    std::vector<AudioPeak> allPeaks{ FileMetaDataCache::get().getPeaks(key) };
+    ASSERT_LESS_THAN_EQUALS(offset + length, allPeaks.size());
+    AudioPeaks result(allPeaks.begin() + offset, allPeaks.begin() + offset + length);
+    return result;
 }
 
 //////////////////////////////////////////////////////////////////////////

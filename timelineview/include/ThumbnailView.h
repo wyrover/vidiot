@@ -18,70 +18,26 @@
 #ifndef THUMBNAIL_VIEW_H
 #define THUMBNAIL_VIEW_H
 
-#include "View.h"
-
-namespace worker {
-    class WorkDoneEvent;
-}
+#include "ClipPreview.h"
 
 namespace gui { namespace timeline {
 
 class ThumbnailView
-    :   public View
+    :   public ClipPreview
 {
 public:
-
     //////////////////////////////////////////////////////////////////////////
     // INITIALIZATION METHODS
     //////////////////////////////////////////////////////////////////////////
 
     ThumbnailView(const model::IClipPtr& clip, View* parent);
-    virtual ~ThumbnailView();
-
-    void scheduleInitialRendering();
 
     //////////////////////////////////////////////////////////////////////////
-    // VIEW
+    // CLIPPREVIEW
     //////////////////////////////////////////////////////////////////////////
 
-    pixel getX() const override;
-    pixel getY() const override;
-    pixel getW() const override;
-    pixel getH() const override;
-
-    void invalidateRect() override;
-
-    void draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) const override;
-    void drawForDragging(const wxPoint& position, int height, wxDC& dc) const;
-
-    void onRenderDone(worker::WorkDoneEvent& event);
-
-private:
-
-    struct CompareSize
-    {
-         bool operator()(const wxSize& s1, const wxSize& s2);
-    };
-
-    model::VideoClipPtr mVideoClip;
-    mutable boost::optional<pixel> mW;
-    mutable boost::optional<pixel> mH;
-    mutable boost::optional<pixel> mTrackHeight;
-    typedef std::map<wxSize, worker::WorkPtr, CompareSize> PendingWork;
-    mutable PendingWork mPendingWork;
-    typedef std::map<wxSize, wxBitmapPtr, CompareSize> BitmapCache;
-    mutable BitmapCache mBitmaps;
-
-    //////////////////////////////////////////////////////////////////////////
-    // HELPER METHODS
-    //////////////////////////////////////////////////////////////////////////
-
-    void determineSize() const;
-
-    model::VideoClipPtr getClip() const;
-
-    void scheduleRendering() const;
-    void abortPendingWork() const;
+    RenderClipPreviewWorkPtr render() const override;
+    wxSize requiredSize() const override;
 
 };
 

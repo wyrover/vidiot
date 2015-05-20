@@ -100,7 +100,7 @@ void Zoom::change(int steps)
         VAR_INFO(mZoom);
         model::ProjectModification::trigger();
         getTimeline().beginTransaction();
-        getViewMap().invalidateThumbnails();
+        getViewMap().invalidateClipPreviews();
         getTimeline().resize();
         getScrolling().alignCenterPts();
         if (getDrag().isActive())
@@ -129,7 +129,13 @@ pts Zoom::pixelsToPts(int pixels) const
 
 int Zoom::ptsToPixels(pts position) const
 {
-    return floor(rational(position) * rational(mZoom));
+    return ptsToPixels(position, mZoom);
+}
+
+// static 
+int Zoom::ptsToPixels(pts position, rational zoom)
+{
+    return floor(rational(position) * rational(zoom));
 }
 
 //////////////////////////////////////////////////////////////////////////

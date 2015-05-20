@@ -161,10 +161,7 @@ void Player::play()
 {
     LOG_INFO;
     ASSERT(wxThread::IsMain());
-    if (GetSizer()->IsShown(mEdit))
-    {
-        endEdit();
-    }
+    showPlayer();
     mDisplay->play();
 }
 
@@ -190,20 +187,24 @@ void Player::stop()
 void Player::moveTo(pts position)
 {
     VAR_INFO(this)(position);
-    if (GetSizer()->IsShown(mEdit))
-    {
-        endEdit();
-    }
     mDisplay->moveTo(position);
 }
 
-void Player::show(const boost::shared_ptr<wxBitmap>& bitmap)
+void Player::showPreview(const boost::shared_ptr<wxBitmap>& bitmap)
 {
     if (!GetSizer()->IsShown(mEdit))
     {
         startEdit();
     }
     mEdit->show(bitmap);
+}
+
+void Player::showPlayer()
+{
+    if (GetSizer()->IsShown(mEdit))
+    {
+        endEdit();
+    }
 }
 
 wxSize Player::getVideoSize() const

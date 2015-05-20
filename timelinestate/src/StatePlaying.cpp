@@ -45,6 +45,7 @@ Playing::Playing( my_context ctx ) // entry
 {
     LOG_DEBUG;
     getMouse().set(PointerNormal);
+    getPlayer()->showPlayer();
 }
 
 Playing::~Playing() // exit

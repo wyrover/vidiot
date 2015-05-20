@@ -20,7 +20,11 @@
 
 #include "UtilSingleInstance.h"
 
+#include "UtilInt.h"
+
 namespace model {
+
+class AudioPeaks;
 
 class FileMetaDataCache
     :   public SingleInstance<FileMetaDataCache>
@@ -39,6 +43,10 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
+    bool hasPeaks(const wxString& file) const;
+    const AudioPeaks& getPeaks(const wxString& file) const;
+    void setPeaks(const wxString& file, const AudioPeaks& peaks);
+
 protected:
 
 private:
@@ -46,6 +54,8 @@ private:
     //////////////////////////////////////////////////////////////////////////
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
+
+    std::map<wxString, AudioPeaks> mPeaks;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS

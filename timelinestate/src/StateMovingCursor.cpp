@@ -50,6 +50,7 @@ MovingCursor::MovingCursor( my_context ctx ) // entry
     {
         triggerToggleStart();
     }
+    getPlayer()->showPlayer();
 }
 
 MovingCursor::~MovingCursor() // exit

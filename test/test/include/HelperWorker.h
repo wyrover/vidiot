@@ -30,7 +30,7 @@ namespace test {
 /// executed Work.
 struct ExpectExecutedWork
 {
-    explicit ExpectExecutedWork(int nWork);
+    explicit ExpectExecutedWork(int nWork, bool invisibleworker = false);
     virtual ~ExpectExecutedWork();
 
     /// Block execution until the given amount of Work has been
@@ -41,6 +41,7 @@ private:
 
     int mWork;
     bool mWaited;
+    bool mInvisibleWorker;
 
 };
 

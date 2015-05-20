@@ -51,7 +51,12 @@ public:
     void stop();
     void moveTo(pts position);
 
-    void show(const wxBitmapPtr& bitmap);
+    /// Show a preview of an edit operation
+    /// \param bitmap image to be shown
+    void showPreview(const wxBitmapPtr& bitmap);
+
+    /// Show the video player (and not the preview)
+    void showPlayer();
 
     wxSize getVideoSize() const;
 
