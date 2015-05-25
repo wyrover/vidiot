@@ -42,4 +42,6 @@ template<class Archive> void save(Archive& ar, const wxRegion& region, const uns
 template<class Archive> void load(Archive& ar,       wxRegion& region, const unsigned int version);
 }} // namespace boost::serialization
 
+BOOST_CLASS_VERSION(wxFileName, 2)
+
 #endif

@@ -15,21 +15,19 @@
 			<mAudioChannels>2</mAudioChannels>
 			<mAudioSampleRate>44100</mAudioSampleRate>
 			<mDefaultRender class_id="5" tracking_level="0" version="1">
-				<px class_id="6" tracking_level="1" version="1" object_id="_2">
-					<mFileName class_id="7" tracking_level="0" version="0">
-						<filename class_id="8" tracking_level="0" version="0">
-							<string>\</string>
-						</filename>
-					</mFileName>
-					<mOutputFormat class_id="9" tracking_level="0" version="1">
-						<px class_id="10" tracking_level="1" version="0" object_id="_3">
+				<px class_id="6" tracking_level="1" version="2" object_id="_2">
+					<filename class_id="7" tracking_level="0" version="0">
+						<string></string>
+					</filename>
+					<mOutputFormat class_id="8" tracking_level="0" version="1">
+						<px class_id="9" tracking_level="1" version="0" object_id="_3">
 							<mName>
 								<string>avi</string>
 							</mName>
 							<mLongName>
 								<string>AVI (Audio Video Interleaved)</string>
 							</mLongName>
-							<mExtensions class_id="11" tracking_level="0" version="0">
+							<mExtensions class_id="10" tracking_level="0" version="0">
 								<count>1</count>
 								<item_version>0</item_version>
 								<item>
@@ -38,14 +36,14 @@
 							</mExtensions>
 							<mDefaultAudioCodec>86017</mDefaultAudioCodec>
 							<mDefaultVideoCodec>13</mDefaultVideoCodec>
-							<mAudioCodec class_id="12" tracking_level="0" version="1">
-								<px class_id="13" tracking_level="1" version="1" object_id="_4">
+							<mAudioCodec class_id="11" tracking_level="0" version="1">
+								<px class_id="12" tracking_level="1" version="1" object_id="_4">
 									<mId>86017</mId>
-									<mParameters class_id="14" tracking_level="0" version="0">
+									<mParameters class_id="13" tracking_level="0" version="0">
 										<count>1</count>
 										<item_version>1</item_version>
-										<item class_id="15" tracking_level="0" version="1">
-											<px class_id="16" class_name="model::render::AudioCodecParameterBitrate" tracking_level="1" version="1" object_id="_5">
+										<item class_id="14" tracking_level="0" version="1">
+											<px class_id="15" class_name="model::render::AudioCodecParameterBitrate" tracking_level="1" version="1" object_id="_5">
 												<mId>0</mId>
 												<mDefault>320000</mDefault>
 												<mMinimum>500</mMinimum>
@@ -56,14 +54,14 @@
 									</mParameters>
 								</px>
 							</mAudioCodec>
-							<mVideoCodec class_id="17" tracking_level="0" version="1">
-								<px class_id="18" tracking_level="1" version="1" object_id="_6">
+							<mVideoCodec class_id="16" tracking_level="0" version="1">
+								<px class_id="17" tracking_level="1" version="1" object_id="_6">
 									<mId>13</mId>
 									<mParameters>
 										<count>2</count>
 										<item_version>1</item_version>
 										<item>
-											<px class_id="19" class_name="model::render::VideoCodecParameterBitrate" tracking_level="1" version="1" object_id="_7">
+											<px class_id="18" class_name="model::render::VideoCodecParameterBitrate" tracking_level="1" version="1" object_id="_7">
 												<mId>0</mId>
 												<mDefault>4000000</mDefault>
 												<mMinimum>500</mMinimum>
@@ -72,7 +70,7 @@
 											</px>
 										</item>
 										<item>
-											<px class_id="20" class_name="model::render::VideoCodecParameterGopSize" tracking_level="1" version="1" object_id="_8">
+											<px class_id="19" class_name="model::render::VideoCodecParameterGopSize" tracking_level="1" version="1" object_id="_8">
 												<mId>2</mId>
 												<mDefault>12</mDefault>
 												<mMinimum>0</mMinimum>
@@ -90,14 +88,16 @@
 			</mDefaultRender>
 		</px>
 	</mProperties>
-	<mMetaDataCache class_id="21" tracking_level="0" version="1">
-		<px class_id="22" tracking_level="1" version="1" object_id="_9">
-			<mPeaks class_id="23" tracking_level="0" version="0">
+	<mMetaDataCache class_id="20" tracking_level="0" version="1">
+		<px class_id="21" tracking_level="1" version="1" object_id="_9">
+			<mPeaks class_id="22" tracking_level="0" version="0">
 				<count>7</count>
 				<item_version>0</item_version>
-				<item class_id="24" tracking_level="0" version="0">
-					<first>
-						<string>C:\Vidiot\vidiot_trunk\test\input\00.avi</string>
+				<item class_id="23" tracking_level="0" version="0">
+					<first class_id="24" tracking_level="0" version="2">
+						<filename>
+							<string>..\input\00.avi</string>
+						</filename>
 					</first>
 					<second class_id="25" tracking_level="0" version="1">
 						<nPeaks>173</nPeaks>
@@ -120,7 +120,9 @@ UbQoQQPTVCo=
 				</item>
 				<item>
 					<first>
-						<string>C:\Vidiot\vidiot_trunk\test\input\01.avi</string>
+						<filename>
+							<string>..\input\01.avi</string>
+						</filename>
 					</first>
 					<second>
 						<nPeaks>185</nPeaks>
@@ -143,7 +145,9 @@ p/PUDnr26QnI75IQqfTTCWj0ugpx9VcJBfWhDvP0bAqS9eEMOfc8CQf1FQkS9FQKYOpaEufwYQs=
 				</item>
 				<item>
 					<first>
-						<string>C:\Vidiot\vidiot_trunk\test\input\02.avi</string>
+						<filename>
+							<string>..\input\02.avi</string>
+						</filename>
 					</first>
 					<second>
 						<nPeaks>251</nPeaks>
@@ -171,7 +175,9 @@ Fm7bUhVJ7GkU6eP4EG3UviJQ5tcdgcpyKpav+y4dnr1GEsKuOj/N7klhyicgtp9MMpfK6UoZovc+
 				</item>
 				<item>
 					<first>
-						<string>C:\Vidiot\vidiot_trunk\test\input\03.avi</string>
+						<filename>
+							<string>..\input\03.avi</string>
+						</filename>
 					</first>
 					<second>
 						<nPeaks>239</nPeaks>
@@ -198,7 +204,9 @@ vd1DIh/d3SDz5k4ZdfhKCzn39AtR8D0R/vIwEFT4DQr48tIO4/WRC07y3gs=
 				</item>
 				<item>
 					<first>
-						<string>C:\Vidiot\vidiot_trunk\test\input\04.avi</string>
+						<filename>
+							<string>..\input\04.avi</string>
+						</filename>
 					</first>
 					<second>
 						<nPeaks>739</nPeaks>
@@ -260,7 +268,9 @@ Cbn2cAhO+JUHN/eaBnn3qwh++EUIrfehCJf4VwiQ+GkI3/YgCZv2SQnB9JoIDPjeCQ==
 				</item>
 				<item>
 					<first>
-						<string>C:\Vidiot\vidiot_trunk\test\input\05.avi</string>
+						<filename>
+							<string>..\input\05.avi</string>
+						</filename>
 					</first>
 					<second>
 						<nPeaks>319</nPeaks>
@@ -293,7 +303,9 @@ BA849JILK/WUDjvzXwxF8zgK+PBCCg==
 				</item>
 				<item>
 					<first>
-						<string>C:\Vidiot\vidiot_trunk\test\input\06.avi</string>
+						<filename>
+							<string>..\input\06.avi</string>
+						</filename>
 					</first>
 					<second>
 						<nPeaks>369</nPeaks>

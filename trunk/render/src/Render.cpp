@@ -37,6 +37,7 @@
 #include "UtilLog.h"
 #include "UtilLogAvcodec.h"
 #include "UtilLogWxwidgets.h"
+#include "UtilPath.h"
 #include "UtilSerializeBoost.h"
 #include "UtilSerializeWxwidgets.h"
 #include "VideoCodec.h"
@@ -904,12 +905,38 @@ std::ostream& operator<<(std::ostream& os, const Render& obj)
 // SERIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
+const std::string sFileName("filename");
+
 template<class Archive>
 void Render::serialize(Archive & ar, const unsigned int version)
 {
     try
     {
-        ar & BOOST_SERIALIZATION_NVP(mFileName);
+        if (Archive::is_loading::value)
+        {
+            if (version < 2) // Loading old version.
+            {
+                ar & BOOST_SERIALIZATION_NVP(mFileName);
+            }
+            else
+            {
+                wxString path; // Stored as string, to enable storing absolute path.
+                ar & boost::serialization::make_nvp(sFileName.c_str(), path);
+                mFileName = util::path::fromSaveString(path);
+            }
+        }
+        else
+        {
+            wxFileName path{ mFileName };
+            path.MakeAbsolute();
+            wxString saveString{ util::path::toSaveString(path) };
+            if (!mFileName.HasExt() && !mFileName.HasName())
+            {
+                // Empty (default) filename is saved as empty string (platform independence for test save files).
+                saveString = "";
+            }
+            ar & boost::serialization::make_nvp(sFileName.c_str(), saveString);
+        }
         ar & BOOST_SERIALIZATION_NVP(mOutputFormat);
         ar & BOOST_SERIALIZATION_NVP(mSeparateAtCuts);
     }

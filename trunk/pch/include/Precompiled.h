@@ -38,6 +38,13 @@ extern "C" {
 #pragma warning(default:4244)
 };
 
+#ifdef _MSC_VER
+#define __STDC_LIMIT_MACROS
+#include "inttypes.h"
+#else
+#include <inttypes.h>
+#endif
+
 #include <algorithm>
 #include <atomic>
 #include <climits>
@@ -173,12 +180,6 @@ extern "C" {
 #include <wx/valnum.h>
 #include <wx/window.h>
 #include <wx/wizard.h>
-
-#ifdef _MSC_VER
-#include "inttypes.h"
-#else
-#include <inttypes.h>
-#endif
 
 #include "Pointers.h"
 

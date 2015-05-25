@@ -43,9 +43,9 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    bool hasPeaks(const wxString& file) const;
-    const AudioPeaks& getPeaks(const wxString& file) const;
-    void setPeaks(const wxString& file, const AudioPeaks& peaks);
+    bool hasPeaks(const wxFileName& file) const;
+    const AudioPeaks& getPeaks(const wxFileName& file) const;
+    void setPeaks(const wxFileName& file, const AudioPeaks& peaks);
 
 protected:
 
@@ -55,7 +55,8 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    std::map<wxString, AudioPeaks> mPeaks;
+    std::map<wxFileName, AudioPeaks> mPeaks;
+    mutable boost::mutex mMutex; // todo replace boost threading with std threading
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS

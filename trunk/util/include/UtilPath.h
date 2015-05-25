@@ -35,6 +35,13 @@ wxString toName(const wxFileName& filename );
 /// Convert a wxFileName to a full path. This ends without a trailing slash.
 wxString toPath(const wxFileName& filename );
 
+/// Convert a wxFileName to a string that can be used for saving to disk.
+/// Using this method ensures that saved files are platform independent.
+wxString toSaveString(const wxFileName& filename);
+
+/// Convert a saved file name (as string) back to a file name.
+wxFileName fromSaveString(const wxString& filename);
+
 /// Convert a path to a wxFileName.
 /// This includes proper handling for files vs. directories.
 /// \param path full path to file/folder
