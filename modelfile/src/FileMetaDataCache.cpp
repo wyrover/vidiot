@@ -85,7 +85,6 @@ void FileMetaDataCache::serialize(Archive & ar, const unsigned int version)
 {
     try
     {
-//todo save relative to project.... how?
         ar & BOOST_SERIALIZATION_NVP(mPeaks);
     }
     catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
