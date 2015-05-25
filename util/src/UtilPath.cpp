@@ -62,6 +62,20 @@ wxString toPath(const wxFileName& filename)
     return result;
 }
 
+wxString toSaveString(const wxFileName& filename)
+{
+#ifdef _MSC_VER
+        return filename.GetLongPath();
+#else
+        return filename.GetFullPath(wxPATH_WIN);
+#endif
+}
+
+wxFileName fromSaveString(const wxString& filename)
+{
+    return wxFileName(filename, wxPATH_WIN);
+}
+
 wxFileName toFileName(const wxString& path)
 {
     wxString corrected( path );

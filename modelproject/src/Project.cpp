@@ -338,6 +338,7 @@ wxString Project::getName() const
 
 wxFileName Project::convertPathForSaving(const wxFileName& path) const
 {
+    // todo store all wxFileNames relative to project, and make exceptions for other wxfilename, by saving these as strings
     ASSERT(path.IsAbsolute());
     wxFileName result(path);
     if (Config::ReadLong(Config::sPathSavePathsRelativeToProject))

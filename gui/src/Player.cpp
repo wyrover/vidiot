@@ -181,7 +181,10 @@ void Player::stop()
 {
     LOG_INFO;
     ASSERT(wxThread::IsMain());
-    mDisplay->moveTo(mPosition);
+    if (mDisplay->isPlaying())
+    {
+        mDisplay->moveTo(mPosition);
+    }
 }
 
 void Player::moveTo(pts position)

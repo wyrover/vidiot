@@ -113,7 +113,7 @@ private:
 
 }} // namespace
 
-BOOST_CLASS_VERSION(model::render::Render, 1)
+BOOST_CLASS_VERSION(model::render::Render, 2)
 BOOST_CLASS_EXPORT_KEY(model::render::Render)
 
 #endif

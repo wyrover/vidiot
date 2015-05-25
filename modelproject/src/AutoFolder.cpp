@@ -311,17 +311,7 @@ void AutoFolder::serialize(Archive & ar, const unsigned int version)
     try
     {
         ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Folder);
-        if (Archive::is_loading::value)
-        {
-            wxFileName path;
-            ar & boost::serialization::make_nvp( "mPath", path );
-            mPath = model::Project::get().convertPathAfterLoading(path);
-        }
-        else
-        {
-            wxFileName path = model::Project::get().convertPathForSaving(mPath);
-            ar & boost::serialization::make_nvp( "mPath", path );
-        }
+        ar & boost::serialization::make_nvp("mPath", mPath);
         if (version == 1)
         {
             time_t mLastModified;
