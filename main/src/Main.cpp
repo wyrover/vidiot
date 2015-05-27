@@ -172,11 +172,16 @@ int main(int argc, char *argv[])
         sigaction(signal, &act, 0);
     }
 
+// todo pens and brushes may not be shared between threads. Hence, the layout class may not be used by other threads!!
+
+
     wxApp::SetInstance(new gui::Application());
     wxEntryStart(argc,argv);
     if (wxTheApp->OnInit())
     {
-        previousXErrorHandler = XSetErrorHandler(onXError) ;
+        previousXErrorHandler = XSetErrorHandler(onXError);
+//        Display *tmpDisplay = XOpenDisplay(0);
+//        XSynchronize(tmpDisplay, True);
         wxTheApp->OnRun();
         wxTheApp->OnExit();
     }

@@ -50,9 +50,8 @@ struct RenderThumbnailWork
     {
     }
 
-    wxBitmapPtr createBitmap() override
+    wxImagePtr createBitmap() override
     {
-        wxBitmapPtr result =  boost::make_shared<wxBitmap>(mSize);
         if (!wxThread::IsMain())
         {
             setThreadName("RenderThumbnail");
@@ -95,13 +94,14 @@ struct RenderThumbnailWork
         ASSERT(clone);
         ASSERT(!clone->getTrack()); // NOTE: This is a check to ensure that a clone is used, and not the original is 'moved'
 
+        wxImagePtr result;
         if (clone->getLength() > 0)
         {
             ASSERT_MORE_THAN_EQUALS_ZERO(clone->getOffset())(*clone);
             // The if is required to avoid errors during editing operations.
             clone->moveTo(0);
             model::VideoFramePtr videoFrame = clone->getNextVideo(model::VideoCompositionParameters().setBoundingBox(mSize).setDrawBoundingBox(false));
-            result = videoFrame->getBitmap();
+            result = videoFrame->getImage();
 
             // Ensure that any opened threads are closed again.
             // Avoid opening too much threads in parallel.
