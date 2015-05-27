@@ -42,7 +42,7 @@ wxSize RenderClipPreviewWork::getSize()
     return mSize;
 }
 
-wxBitmapPtr RenderClipPreviewWork::getResult()
+wxImagePtr RenderClipPreviewWork::getResult()
 {
     return mResult;
 }
@@ -72,7 +72,7 @@ ClipPreview::ClipPreview(const model::IClipPtr& clip, View* parent)
 
     getViewMap().registerClipPreview(mClip,this);
 
-    // IMPORTANT: No drawing/lengthy code here. Due to the nature of adding removing clips as part of edit operations, that will severely 
+    // IMPORTANT: No drawing/lengthy code here. Due to the nature of adding removing clips as part of edit operations, that will severely
     //            impact performance and may lead to crashes. As an example, consider the following clip edit operation:
     //            replace clip-transition with smallerclip-transition, then replace with smallerclip-adjustedtransition.
     //            After the first edit (smallerclip-transition) the smallerclip may be too small for the transition.
@@ -156,7 +156,7 @@ void ClipPreview::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) 
         mBitmaps[size] = work->getResult();
     }
 
-    BitmapCache::const_iterator it = mBitmaps.find(size);
+    auto it = mBitmaps.find(size);
     if (it == mBitmaps.end())
     {
         // Bitmap with correct size not rendered yet.
@@ -170,7 +170,9 @@ void ClipPreview::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) 
     }
     else
     {
-        wxBitmapPtr bitmap{ it->second };
+        wxImagePtr image = it->second;
+// todo make cache for bitmaps that is only filled in the main thread...
+        wxBitmapPtr bitmap = boost::make_shared<wxBitmap>(*image, 32);
         getTimeline().copyRect(dc, region, offset, *bitmap, getRect(), bitmap->GetMask() != nullptr);
     }
 }
@@ -179,7 +181,7 @@ void ClipPreview::drawForDragging(const wxPoint& position, int height, wxDC& dc)
 {
     wxSize size(0,0);
     pixel mindiff = std::numeric_limits<pixel>::max();
-    wxBitmapPtr bitmap;
+    wxImagePtr bitmap;
     for ( auto item : mBitmaps )
     {
         pixel diff = abs(height - item.first.GetHeight());
@@ -190,9 +192,10 @@ void ClipPreview::drawForDragging(const wxPoint& position, int height, wxDC& dc)
             bitmap = item.second;
         }
     }
-    if (bitmap)
+    if (bitmap != nullptr)
     {
-        wxMemoryDC dcBmp(*bitmap);
+        wxBitmap bmp(*bitmap, 32);
+        wxMemoryDC dcBmp(bmp);
         dc.Blit(
             position.x + Layout::get().ClipBorderSize,
             position.y + Layout::get().ClipDescriptionBarHeight,

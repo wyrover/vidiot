@@ -34,12 +34,12 @@ public:
 
     explicit RenderClipPreviewWork(const model::IClipPtr& clip, const wxSize& size, rational zoom);
 
-    wxBitmapPtr getResult();
+    wxImagePtr getResult();
     wxSize getSize();
 
 protected:
 
-    virtual wxBitmapPtr createBitmap() = 0;
+    virtual wxImagePtr createBitmap() = 0;
 
     const model::IClipPtr mClip;
     const wxSize mSize;
@@ -47,7 +47,7 @@ protected:
 
 private:
 
-    wxBitmapPtr mResult;
+    wxImagePtr mResult;
 };
 
 typedef boost::shared_ptr<RenderClipPreviewWork> RenderClipPreviewWorkPtr;
@@ -107,7 +107,7 @@ private:
     mutable boost::optional<pixel> mTrackHeight;
     typedef std::map<wxSize, RenderClipPreviewWorkPtr, CompareSize> PendingWork;
     mutable PendingWork mPendingWork;
-    typedef std::map<wxSize, wxBitmapPtr, CompareSize> BitmapCache;
+    typedef std::map<wxSize, wxImagePtr, CompareSize> BitmapCache;
     mutable BitmapCache mBitmaps;
 
     //////////////////////////////////////////////////////////////////////////

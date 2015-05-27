@@ -44,25 +44,24 @@ struct RenderPeaksWork
     {
     }
 
-    wxBitmapPtr createBitmap() override
+    wxImagePtr createBitmap() override
     {
-        wxBitmapPtr result =  boost::make_shared<wxBitmap>(mSize);
         if (!wxThread::IsMain())
         {
             setThreadName("RenderPeaks");
         }
 
-        wxBitmap mask{ mSize, 1 };
-        wxMemoryDC dc(*result);
-        wxMemoryDC dcMask(mask);
-        dc.SetBrush(*wxTRANSPARENT_BRUSH);
-        dc.DrawRectangle(0,0,mSize.GetWidth(),mSize.GetHeight());
+        wxImagePtr result = boost::make_shared<wxImage>(mSize);
+        result->InitAlpha();
+        memset(result->GetAlpha(), 0, mSize.x * mSize.y);
 
-        dc.SetPen(Layout::get().AudioPeaksPen);
-        dcMask.SetBackground(*wxBLACK_BRUSH);
-        dcMask.Clear();
-        dcMask.SetPen(*wxWHITE_PEN);
-        dcMask.SetBrush(*wxWHITE_BRUSH);
+        wxGraphicsContext* gc = wxGraphicsContext::Create(*result);
+        gc->SetInterpolationQuality(wxINTERPOLATION_BEST);
+        gc->SetAntialiasMode(wxANTIALIAS_NONE);
+        gc->SetCompositionMode(wxCOMPOSITION_OVER);
+        wxGCDC dc(gc); // When going out of scope the wxGraphicsContext* is also deleted.
+
+        dc.SetPen(wxPen{ wxColour{ 87, 120, 74 }, 1 });
 
         model::AudioClipPtr clone = make_cloned<model::AudioClip>(boost::dynamic_pointer_cast<model::AudioClip>(mClip));
 
@@ -87,8 +86,8 @@ struct RenderPeaksWork
             // The if is required to avoid errors during editing operations.
 
             int origin{ mSize.y / 2 };
-            dc.DrawLine(wxPoint(0, origin), wxPoint(mSize.x,origin));
-            dcMask.DrawLine(wxPoint(0, origin), wxPoint(mSize.x,origin));
+            dc.DrawLine(wxPoint(0, origin), wxPoint(mSize.x, origin));
+
             model::AudioPeaks peaks = clone->getPeaks();
             int nPeaks = peaks.size();
 
@@ -105,7 +104,7 @@ struct RenderPeaksWork
 
                 for (int x{ 0 }; x < mSize.GetWidth(); ++x)
                 {
-                    // Always computed wrt the total file length. This ensures consistent drawing during trimming operations. 
+                    // Always computed wrt the total file length. This ensures consistent drawing during trimming operations.
                     // Without this, during trimming the displayed images flickers a bit (because of rounding issues).
                     //
                     // Due to this computation, rounding errors sometimes lead to 'too high' values. Hence, the std::min.
@@ -125,17 +124,9 @@ struct RenderPeaksWork
                     }
 
                     dc.DrawLine(wxPoint(x, origin - min), wxPoint(x, origin + max));
-                    dcMask.DrawLine(wxPoint(x, origin - min), wxPoint(x, origin + max));
                 }
             }
-
-            // Ensure that any opened threads are closed again.
-            // Avoid opening too much threads in parallel.
-            clone->clean();
         }
-        dcMask.SelectObject(wxNullBitmap);
-        wxMask* m{ new wxMask(mask) };
-        result->SetMask(m);
         return result;
     }
 };
