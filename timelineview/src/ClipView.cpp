@@ -22,7 +22,6 @@
 #include "Config.h"
 #include "Drag.h"
 #include "EmptyClip.h"
-#include "Layout.h"
 #include "PositionInfo.h"
 #include "Selection.h"
 #include "SequenceView.h"
@@ -41,6 +40,9 @@ namespace gui { namespace timeline {
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
+
+const pixel ClipView::BorderSize{ 2 };
+const pixel ClipView::CursorClipEditDistance{ 6 };
 
 ClipView::ClipView(const model::IClipPtr& clip, View* parent)
     :   View(parent)
@@ -87,6 +89,43 @@ ClipView::~ClipView()
 }
 
 //////////////////////////////////////////////////////////////////////////
+// DRAWING PARAMETERS REUSED
+//////////////////////////////////////////////////////////////////////////
+
+int determineFontHeight(const wxFont& font)
+{
+    wxBitmap tmp(100, 100); // tmp, so size not that important.
+    wxMemoryDC dc(tmp);
+    dc.SetFont(font);
+    return dc.GetCharHeight();
+}
+
+int determineDescriptionHeight()
+{
+    return determineFontHeight(wxFont{ wxSize(0, 11), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL }) + 2;
+}
+
+// static 
+int ClipView::getBorderSize()
+{
+    return 2;
+}
+
+// static 
+int ClipView::getDescriptionHeight()
+{
+    static int result{ determineDescriptionHeight() };
+    return result;
+}
+
+// static 
+int ClipView::getTransitionHeight()
+{
+    static int result{ getDescriptionHeight() + 4 };
+    return result;
+}
+
+//////////////////////////////////////////////////////////////////////////
 // VIEW
 //////////////////////////////////////////////////////////////////////////
 
@@ -107,7 +146,7 @@ pixel ClipView::getW() const
 
 pixel ClipView::getH() const
 {
-    return (mClip->isA<model::Transition>()) ? Layout::TransitionHeight : getParent().getH();
+    return (mClip->isA<model::Transition>()) ? ClipView::getTransitionHeight() : getParent().getH();
 }
 
 void ClipView::invalidateRect()
@@ -227,11 +266,11 @@ void ClipView::getPositionInfo(const wxPoint& position, PointerPositionInfo& inf
         pixel dist_top = position.y - info.trackPosition;
         ASSERT_MORE_THAN_EQUALS_ZERO(dist_top);
 
-        if (dist_top <= Layout::TransitionHeight)
+        if (dist_top <= ClipView::getTransitionHeight())
         {
             info.logicalclipposition =
-                (dist_begin < Layout::CursorClipEditDistance)     ? TransitionBegin :
-                (dist_end < Layout::CursorClipEditDistance)       ? TransitionEnd :
+                (dist_begin < ClipView::CursorClipEditDistance)     ? TransitionBegin :
+                (dist_end < ClipView::CursorClipEditDistance)       ? TransitionEnd :
                 TransitionInterior; // Default
         }
         else // below transition
@@ -244,7 +283,7 @@ void ClipView::getPositionInfo(const wxPoint& position, PointerPositionInfo& inf
             {
                 ASSERT(transition->getLeft());
                 ASSERT_MORE_THAN_ZERO(*(transition->getLeft()));
-                if (dist_cut > -Layout::CursorClipEditDistance)
+                if (dist_cut > -ClipView::CursorClipEditDistance)
                 {
                     info.logicalclipposition = TransitionLeftClipEnd;
                 }
@@ -257,7 +296,7 @@ void ClipView::getPositionInfo(const wxPoint& position, PointerPositionInfo& inf
                     pixel dist_left = position.x - inpoint;
                     ASSERT_MORE_THAN_EQUALS_ZERO(dist_left)(inpoint)(position);
 
-                    if (dist_left < Layout::CursorClipEditDistance)
+                    if (dist_left < ClipView::CursorClipEditDistance)
                     {
                         // Logically, the pointer is hovering 'over' the clip left of the transition
                         info.clip = inClip;
@@ -273,7 +312,7 @@ void ClipView::getPositionInfo(const wxPoint& position, PointerPositionInfo& inf
             {
                 ASSERT(transition->getRight());
                 ASSERT_MORE_THAN_ZERO(*(transition->getRight()));
-                if (dist_cut < Layout::CursorClipEditDistance)
+                if (dist_cut < ClipView::CursorClipEditDistance)
                 {
                     info.logicalclipposition = TransitionRightClipBegin;
                 }
@@ -286,7 +325,7 @@ void ClipView::getPositionInfo(const wxPoint& position, PointerPositionInfo& inf
                     pixel dist_right = outpoint - position.x;
                     ASSERT_MORE_THAN_EQUALS_ZERO(dist_right)(outpoint)(position);
 
-                    if (dist_right < Layout::CursorClipEditDistance)
+                    if (dist_right < ClipView::CursorClipEditDistance)
                     {
                         // Logically, the pointer is hovering 'over' the clip right of the transition
                         info.clip = outClip;
@@ -322,20 +361,20 @@ void ClipView::getPositionInfo(const wxPoint& position, PointerPositionInfo& inf
         model::TransitionPtr prevTransition = boost::dynamic_pointer_cast<model::Transition>(prev);
         model::TransitionPtr nextTransition = boost::dynamic_pointer_cast<model::Transition>(next);
 
-        if ((dist_begin < Layout::CursorClipEditDistance) && (!prev || !prevTransition))
+        if ((dist_begin < ClipView::CursorClipEditDistance) && (!prev || !prevTransition))
         {
             info.logicalclipposition = ClipBegin;
         }
-        else if ((dist_begin < Layout::CursorClipEditDistance) && prevTransition && prevTransition->getRight())
+        else if ((dist_begin < ClipView::CursorClipEditDistance) && prevTransition && prevTransition->getRight())
         {
             info.logicalclipposition = TransitionRightClipBegin;
             info.clip = prevTransition;
         }
-        else if ((dist_end < Layout::CursorClipEditDistance) && (!next || !nextTransition))
+        else if ((dist_end < ClipView::CursorClipEditDistance) && (!next || !nextTransition))
         {
             info.logicalclipposition = ClipEnd;
         }
-        else if ((dist_end < Layout::CursorClipEditDistance) && nextTransition && nextTransition->getLeft())
+        else if ((dist_end < ClipView::CursorClipEditDistance) && nextTransition && nextTransition->getLeft())
         {
             info.logicalclipposition = TransitionLeftClipEnd;
             info.clip = nextTransition;
@@ -367,6 +406,7 @@ void ClipView::draw(wxBitmap& bitmap, bool drawDraggedClips, bool drawNotDragged
     //int r = getRightPixel();
     //int l = getLeftPixel();
 
+
     if (mClip->isA<model::EmptyClip>() ||
         (!drawDraggedClips && getDrag().contains(mClip)) ||
         (!drawNotDraggedClips && !getDrag().contains(mClip)))
@@ -374,47 +414,35 @@ void ClipView::draw(wxBitmap& bitmap, bool drawDraggedClips, bool drawNotDragged
         // For empty clips, the bitmap is empty.
         // Selected clips/transitions that are being dragged should no longer be drawn
         // in the regular tracks as they have become part of 'getDrag()'s bitmap.
-        dc.SetBrush(Layout::get().BackgroundBrush);
-        dc.SetPen(Layout::get().BackgroundPen);
+        dc.SetBrush(wxBrush{ wxColour{ 212, 208, 200 } });
+        dc.SetPen(wxPen{ wxColour{ 212, 208, 200 } });
         dc.DrawRectangle(0,0,bitmap.GetWidth(),bitmap.GetHeight());
     }
     else if (mClip->isA<model::Transition>())
     {
-        if (mClip->getSelected())
-        {
-            dc.SetBrush(Layout::get().TransitionBgSelected);
-        }
-        else
-        {
-            dc.SetBrush(Layout::get().TransitionBgUnselected);
-        }
-        dc.DrawRectangle(0,0,bitmap.GetWidth(),Layout::TransitionHeight);
-        dc.SetPen(Layout::get().TransitionPen);
-        dc.SetBrush(Layout::get().TransitionBrush);
-        dc.DrawRectangle(0,0,bitmap.GetWidth(),Layout::TransitionHeight);
+        dc.SetBrush(wxBrush{ mClip->getSelected() ? wxColour{ 80, 80, 80 } : wxColour{ 123, 123, 123 } });
+        dc.DrawRectangle(0,0,bitmap.GetWidth(), ClipView::getTransitionHeight());
+        wxColour linesColour{ 224, 0, 224 };
+        dc.SetPen(wxPen{ linesColour, 1 });
+        dc.SetBrush(wxBrush{ linesColour, wxBRUSHSTYLE_FDIAGONAL_HATCH });
+        dc.DrawRectangle(0,0,bitmap.GetWidth(), ClipView::getTransitionHeight());
     }
     else
     {
-        if (mClip->getSelected())
-        {
-            dc.SetBrush(Layout::get().SelectedClipBrush);
-            dc.SetPen(Layout::get().SelectedClipPen);
-        }
-        else
-        {
-            dc.SetBrush(Layout::get().ClipBrush);
-            dc.SetPen(Layout::get().ClipPen);
-        }
+        wxColour borderColour{ 32, 32, 32 };
+        dc.SetPen(wxPen{ borderColour, ClipView::BorderSize });
+        dc.SetBrush(wxBrush{ mClip->getSelected() ? wxColour{ 80, 80, 80 } : wxColour{ 160, 160, 160 } });
         dc.DrawRectangle(0,0,bitmap.GetWidth(),bitmap.GetHeight());
 
         // Text at top of clip
-        dc.SetFont(Layout::get().ClipDescriptionFont);
-        dc.SetTextForeground(Layout::get().ClipDescriptionFGColour);
-        dc.SetTextBackground(Layout::get().ClipDescriptionBGColour);
-        dc.SetBrush(Layout::get().ClipDescriptionBrush);
-        dc.SetPen(Layout::get().ClipDescriptionPen);
+        wxFont descriptionFont{ wxSize(0, 11), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL };
+        dc.SetFont(descriptionFont);
+        dc.SetTextForeground(wxColour{ 255, 255, 255 });
+        dc.SetTextBackground(borderColour);
+        dc.SetBrush(wxBrush{ borderColour });
+        dc.SetPen(wxPen{ borderColour, 1 });
         //dc.SetLogicalFunction(wxEQUIV);
-        dc.DrawRectangle(0,0,bitmap.GetWidth(), Layout::ClipDescriptionBarHeight);
+        dc.DrawRectangle(0,0,bitmap.GetWidth(), ClipView::getDescriptionHeight());
         dc.DrawText(mClip->getDescription(), wxPoint(1,1));
     }
 
@@ -422,8 +450,8 @@ void ClipView::draw(wxBitmap& bitmap, bool drawDraggedClips, bool drawNotDragged
     {
         if (!mClip->isA<model::Transition>())
         {
-            dc.SetTextForeground(Layout::get().DebugColour);
-            dc.SetFont(Layout::get().DebugFont);
+            dc.SetTextForeground(wxColour{ 0, 255, 0 });
+            dc.SetFont(wxFont(wxSize(0,11),wxFONTFAMILY_DEFAULT,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL));
             dc.DrawText(wxString::Format("%" PRId64, mClip->getLength()), wxPoint(5,15));
             wxString sPts;
             sPts << '[' << mClip->getLeftPts() << ',' << mClip->getRightPts() << ')';
@@ -443,7 +471,7 @@ void ClipView::drawForDragging(const wxPoint& position, int height, wxDC& dc, wx
             // Do not use a 'too big' bitmap here, since it is blit'ed in its entirety.
             // Using a 'track height' bitmap causes the area under the transition to
             // become black during dragging.
-            height = std::min(height, Layout::TransitionHeight);
+            height = std::min(height, ClipView::getTransitionHeight());
         }
         wxBitmap b(getW(),std::min(height, getH())); 
         draw(b, true, false);

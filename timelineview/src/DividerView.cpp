@@ -17,7 +17,6 @@
 
 #include "DividerView.h"
 
-#include "Layout.h"
 #include "Track.h"
 #include "TrackView.h"
 #include "Sequence.h"
@@ -27,6 +26,10 @@
 #include "SequenceEvent.h"
 
 namespace gui { namespace timeline {
+
+const pixel DividerView::TrackDividerHeight{ 4 };
+const pixel DividerView::AudioVideoDividerHeight{ 6 };
+
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION METHODS
@@ -67,7 +70,7 @@ pixel DividerView::getY() const
         }
         else if (mTrack->isA<model::VideoTrack>())
         {
-            mY.reset(getViewMap().getView(mTrack)->getY() - Layout::TrackDividerHeight);
+            mY.reset(getViewMap().getView(mTrack)->getY() - DividerView::TrackDividerHeight);
         }
         else
         {

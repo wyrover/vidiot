@@ -19,7 +19,6 @@
 
 #include "Config.h"
 #include "Constants.h"
-#include "Layout.h"
 #include "UtilInitAvcodec.h"
 #include "UtilLogBoost.h"
 #include "UtilLogWxwidgets.h"
@@ -175,8 +174,8 @@ void VideoFrame::draw(wxGraphicsContext* gc) const
     wxRect r(mParameters->getRequiredRectangle());
 
     // Areas outside the required rectangle are black
-    gc->SetPen(*wxBLACK_PEN);
-    gc->SetBrush(*wxBLACK_BRUSH);
+    gc->SetPen(wxPen{wxColour{0,0,0}});
+    gc->SetBrush(wxColour{0,0,0});
     gc->DrawRectangle(0,0,r.x,bb.GetHeight());
     gc->DrawRectangle(r.GetRight(), 0, bb.GetWidth() - r.GetRight(), bb.GetHeight());
     gc->DrawRectangle(r.x,0,r.width,r.y);

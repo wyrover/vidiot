@@ -410,7 +410,7 @@ void Player::updateStatus()
 
 void Player::onConfigUpdated(EventConfigUpdated& event)
 {
-    if (!mDisplay->isPlaying() && event.getValue().IsSameAs(Config::sPathShowBoundingBox))
+    if (!mDisplay->isPlaying() && event.getValue().IsSameAs(Config::sPathVideoShowBoundingBox))
     {
         mDisplay->moveTo(mPosition); // Update the bounding box immediately
     }

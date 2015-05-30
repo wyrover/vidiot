@@ -107,7 +107,9 @@ private:
     mutable boost::optional<pixel> mTrackHeight;
     typedef std::map<wxSize, RenderClipPreviewWorkPtr, CompareSize> PendingWork;
     mutable PendingWork mPendingWork;
-    typedef std::map<wxSize, wxImagePtr, CompareSize> BitmapCache;
+    typedef std::map<wxSize, wxImagePtr, CompareSize> ImageCache;
+    mutable ImageCache mImages;
+    typedef std::map<wxSize, wxBitmapPtr, CompareSize> BitmapCache;
     mutable BitmapCache mBitmaps;
 
     //////////////////////////////////////////////////////////////////////////
@@ -118,6 +120,8 @@ private:
 
     void scheduleRendering() const;
     void abortPendingWork() const;
+
+    wxBitmapPtr getCachedBitmap(wxSize size) const;
 };
 
 }} // namespace

@@ -17,7 +17,6 @@
 
 #include "ProjectViewDropSource.h"
 #include "ProjectViewModel.h"
-#include "Layout.h"
 #include "Window.h"
 #include "UtilLog.h"
 #include "ProjectViewDataObject.h"
@@ -102,9 +101,9 @@ bool ProjectViewDropSource::GiveFeedback(wxDragResult effect)
         wxBitmap bitmap(width, height);
         wxMemoryDC dc(bitmap);
 
-        dc.SetPen(*wxBLACK_PEN);
-        dc.SetBrush(*wxTRANSPARENT_BRUSH);
-        dc.SetFont(Layout::get().NormalFont);
+        dc.SetPen(wxPen{wxColour{0,0,0}});
+        dc.SetBrush(wxBrush{wxColour{0,0,0}, wxBRUSHSTYLE_TRANSPARENT});
+        dc.SetFont(wxFont(wxSize(0,12),wxFONTFAMILY_DEFAULT,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL));
         dc.SetTextForeground(*wxWHITE);
         //dc->SetTextBackground(*wxBLUE);
 

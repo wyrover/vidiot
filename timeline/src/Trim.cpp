@@ -26,7 +26,6 @@
 #include "DetailsTrim.h"
 #include "EmptyClip.h"
 #include "Keyboard.h"
-#include "Layout.h"
 #include "Mouse.h"
 #include "Player.h"
 #include "PositionInfo.h"
@@ -267,8 +266,8 @@ void Trim::start()
     wxSize playerSize = getPlayer()->getVideoSize();
     mBitmapSingle = boost::make_shared<wxBitmap>(playerSize);
     mDc.SelectObject(*mBitmapSingle);
-    mDc.SetBrush(Layout::get().PreviewBackgroundBrush);
-    mDc.SetPen(Layout::get().PreviewBackgroundPen);
+    mDc.SetBrush(wxBrush{ wxColour{ 0, 0, 0 } });
+    mDc.SetPen(wxPen{ wxColour{ 0, 0, 0 } });
     mDc.DrawRectangle(wxPoint(0, 0), mDc.GetSize());
     if (mAdjacentBitmap)
     {
@@ -406,7 +405,7 @@ void Trim::drawSnaps(wxDC& dc, const wxRegion& region, const wxPoint& offset) co
 {
     if (mActive && mSnap)
     {
-        getTimeline().drawLine(dc, region, offset, *mSnap, Layout::get().SnapPen);
+        getTimeline().drawLine(dc, region, offset, *mSnap, wxPen{ wxColour{ 164, 164, 164 } });
     }
 }
 
@@ -431,13 +430,13 @@ pts Trim::determineTrimDiff()
     if (mSnappingEnabled)
     {
         pts ptsmouse = getZoom().pixelsToPts(position.x + getScrolling().getOffset().x);
-        pts minimumsnap = Layout::SnapDistance + 1; // To ensure that the first snap will update this
+        pts minimumsnap = Timeline::SnapDistance + 1; // To ensure that the first snap will update this
         std::vector<pts>::const_iterator itTimeline = mSnapPoints.begin();
         while (itTimeline != mSnapPoints.end())
         {
             pts pts_timeline = *itTimeline;
             pts diff = ptsmouse - pts_timeline;
-            if ((abs(diff) <= Layout::SnapDistance) && (abs(diff) < abs(minimumsnap)))
+            if ((abs(diff) <= Timeline::SnapDistance) && (abs(diff) < abs(minimumsnap)))
             {
                 minimumsnap = diff;
                 result = pts_timeline - mStartPts;
@@ -468,7 +467,7 @@ void Trim::determinePossibleSnapPoints(const model::IClipPtr& originalclip)
         max = originalclip->getRightPts() + originalclip->getMaxAdjustEnd();
     }
     mSnapPoints.clear();
-    if (Config::ReadBool(Config::sPathSnapClips))
+    if (Config::ReadBool(Config::sPathTimelineSnapClips))
     {
         std::set<model::IClipPtr> exclude = { originalclip, originalclip->getLink() };
         std::vector<pts> all;
@@ -476,7 +475,7 @@ void Trim::determinePossibleSnapPoints(const model::IClipPtr& originalclip)
         // Copy everything between [min,max), discard everything else
         mSnapPoints.insert(mSnapPoints.begin(), std::lower_bound(all.begin(), all.end(), min), std::upper_bound(all.begin(), all.end(), max));
     }
-    if (Config::ReadBool(Config::sPathSnapCursor))
+    if (Config::ReadBool(Config::sPathTimelineSnapCursor))
     {
         mSnapPoints.push_back(getCursor().getLogicalPosition());
     }
@@ -530,8 +529,8 @@ void Trim::preview()
     mDc.SelectObject(*bitmap);
     if (completelyTrimmedAway)
     {
-        mDc.SetBrush(Layout::get().PreviewBackgroundBrush);
-        mDc.SetPen(Layout::get().PreviewBackgroundPen);
+        mDc.SetBrush(wxBrush{ wxColour{ 0, 0, 0 } });
+        mDc.SetPen(wxPen{ wxColour{ 0, 0, 0 } });
         mDc.DrawRectangle(x, 0, w, h);
     }
     else

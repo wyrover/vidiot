@@ -21,7 +21,6 @@
 #include "Config.h"
 #include "Convert.h"
 #include "Dialog.h"
-#include "Layout.h"
 #include "Properties.h"
 #include "Sequence.h"
 #include "UtilLog.h"
@@ -481,7 +480,7 @@ void VideoDisplay::videoBufferThread()
         model::VideoFramePtr videoFrame = mSequence->getNextVideo(model::VideoCompositionParameters().setBoundingBox(wxSize(mWidth,mHeight)).setSkip(skip));
         if (!skip)
         {
-            videoFrame->getBitmap(); // put in cache (avoid having to draw in GUI thread)
+            videoFrame->getBitmap(); // put in cache (avoid having to draw in GUI thread) -- todo don't do this anymore since this is a gdi object in a separate thread.
             mVideoFrames.push(videoFrame);
         }
         else
@@ -624,8 +623,8 @@ void VideoDisplay::onPaint(wxPaintEvent& event)
     }
     else
     {
-        dc->SetPen(*wxBLACK);
-        dc->SetBrush(*wxBLACK_BRUSH);
+        dc->SetPen(wxPen{wxColour{0,0,0}});
+        dc->SetBrush(wxColour{0,0,0});
         dc->DrawRectangle(0, 0, mWidth, mHeight);
     }
 }

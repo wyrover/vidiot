@@ -18,7 +18,6 @@
 #include "EditDisplay.h"
 
 #include "UtilLog.h"
-#include "Layout.h"
 #include "VideoCompositionParameters.h"
 
 namespace gui {
@@ -100,8 +99,8 @@ void EditDisplay::OnPaint(wxPaintEvent& event)
 {
     wxPaintDC dc(this); // Omit this, and suffer the performance consequences ;-)
 
-    dc.SetPen(Layout::get().PreviewBackgroundPen);
-    dc.SetBrush(Layout::get().PreviewBackgroundBrush);
+    dc.SetPen(wxPen{ wxColour{ 0, 0, 0 } });
+    dc.SetBrush(wxBrush{ wxColour{ 0, 0, 0 } });
     if (mCurrentBitmap)
     {
         if (mCurrentBitmap->GetWidth() < mWidth)

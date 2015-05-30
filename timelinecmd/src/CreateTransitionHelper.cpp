@@ -55,7 +55,7 @@ void createTransition(const model::SequencePtr& sequence, const model::IClipPtr&
         if (leftClip && rightClip &&
             ((type == model::TransitionTypeInOut || type == model::TransitionTypeOutIn)))
         {
-            pts defaultSize = Config::ReadLong(Config::sPathDefaultTransitionLength);
+            pts defaultSize = Config::ReadLong(Config::sPathTimelineDefaultTransitionLength);
 
             // Ensure that the transition can be made by shortening the clips, if required (and, if possible)
             model::TrackPtr track = clip->getTrack();

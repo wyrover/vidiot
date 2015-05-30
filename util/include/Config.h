@@ -58,6 +58,7 @@ public:
     static long     ReadLong  (const wxString& key);
     static double   ReadDouble(const wxString& key);
     static wxString ReadString(const wxString& key);
+    static wxColour ReadColour(const wxString& key);
 
     template <class TYPE>
     static TYPE     ReadEnum  (const wxString& key)
@@ -103,50 +104,50 @@ public:
     // CONFIG PATHS
     //////////////////////////////////////////////////////////////////////////
 
-    static const wxString sPathAutoLoadEnabled;
-    static const wxString sPathBackupBeforeSaveEnabled;
-    static const wxString sPathBackupBeforeSaveMaximum;
-    static const wxString sPathSavePathsRelativeToProject;
-    static const wxString sPathDebugIncludeScreenShot;
+    static const wxString sPathAudioDefaultNumberOfChannels;
+    static const wxString sPathAudioDefaultSampleRate;
+    static const wxString sPathDebugIncludeScreenShotInDump;
+    static const wxString sPathDebugLogLevel;
+    static const wxString sPathDebugLogLevelAvcodec;
     static const wxString sPathDebugLogSequenceOnEdit;
     static const wxString sPathDebugMaxRenderLength;
     static const wxString sPathDebugShowCrashMenu;
+    static const wxString sPathDebugShowDebugInfoOnWidgets;
     static const wxString sPathDebugShowFrameNumbers;
-    static const wxString sPathDefaultAudioChannels;
-    static const wxString sPathDefaultAudioSampleRate;
-    static const wxString sPathDefaultExtension;
-    static const wxString sPathDefaultFrameRate;
-    static const wxString sPathDefaultStillImageLength;
-    static const wxString sPathDefaultTransitionLength;
-    static const wxString sPathDefaultVideoAlignment;
-    static const wxString sPathDefaultVideoHeight;
-    static const wxString sPathDefaultVideoScaling;
-    static const wxString sPathDefaultVideoWidth;
-    static const wxString sPathDefaultNewProjectType;
-    static const wxString sPathLastOpened;
-    static const wxString sPathLogLevel;
-    static const wxString sPathLogLevelAvcodec;
+    static const wxString sPathFileDefaultExtension;
     static const wxString sPathMakeSequenceEmptyClipLength;
     static const wxString sPathMakeSequencePrefixLength;
-    static const wxString sPathMarkerBeginAddition;
-    static const wxString sPathMarkerEndAddition;
-    static const wxString sPathOverruleFourCC; ///< Used to overrule the FourCC for encoding MPEG4 formy Car DVD player (only swallows MPEG4 labeled with XVID)
-    static const wxString sPathShowBoundingBox;
-    static const wxString sPathShowDebugInfoOnWidgets;
-    static const wxString sPathSnapClips;
-    static const wxString sPathSnapCursor;
-    static const wxString sPathStrip;
-    static const wxString sPathTest;
+    static const wxString sPathProjectAutoLoadEnabled; 
+    static const wxString sPathProjectBackupBeforeSaveEnabled;
+    static const wxString sPathProjectBackupBeforeSaveMaximum;
+    static const wxString sPathProjectDefaultNewProjectType;
+    static const wxString sPathProjectLastOpened;
+    static const wxString sPathProjectSavePathsRelativeToProject;
+    static const wxString sPathTestCxxMode;
     static const wxString sPathTestRunCurrent;
     static const wxString sPathTestRunFrom;
     static const wxString sPathTestRunOnly;
-    static const wxString sPathWindowH;
-    static const wxString sPathWindowMaximized;
-    static const wxString sPathWindowW;
-    static const wxString sPathWindowX;
-    static const wxString sPathWindowY;
+    static const wxString sPathTimelineDefaultStillImageLength;
+    static const wxString sPathTimelineDefaultTransitionLength;
+    static const wxString sPathTimelineMarkerBeginAddition;
+    static const wxString sPathTimelineMarkerEndAddition;
+    static const wxString sPathTimelineSnapClips;
+    static const wxString sPathTimelineSnapCursor;
+    static const wxString sPathTimelineStripFromClipNames;
+    static const wxString sPathVideoDefaultAlignment;
+    static const wxString sPathVideoDefaultFrameRate;
+    static const wxString sPathVideoDefaultHeight;
+    static const wxString sPathVideoDefaultScaling;
+    static const wxString sPathVideoDefaultWidth;
+    static const wxString sPathVideoOverruleFourCC; ///< Used to overrule the FourCC for encoding MPEG4 formy Car DVD player (only swallows MPEG4 labeled with XVID)
+    static const wxString sPathVideoShowBoundingBox;
+    static const wxString sPathWorkspaceH;
+    static const wxString sPathWorkspaceMaximized;
     static const wxString sPathWorkspacePerspectiveCurrent;
     static const wxString sPathWorkspacePerspectiveName;
+    static const wxString sPathWorkspaceW;
+    static const wxString sPathWorkspaceX;
+    static const wxString sPathWorkspaceY;
     static const wxString sPathWorkspacePerspectiveSaved;
 
 private:

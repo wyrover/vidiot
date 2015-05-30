@@ -454,7 +454,7 @@ void TestTimeline::testDividers()
     {
         StartTest("Move video track divider down and up again.");
         const pixel originalHeight = VideoTrack(0)->getHeight();
-        const pixel originalDividerPosition = getTimeline().getViewMap().getView(VideoTrack(0))->getY() - gui::Layout::TrackDividerHeight;
+        const pixel originalDividerPosition = getTimeline().getViewMap().getView(VideoTrack(0))->getY() - gui::timeline::DividerView::TrackDividerHeight;
         const pixel adjustedDividerPosition = originalDividerPosition + changeY;
         DragDivider(originalDividerPosition, adjustedDividerPosition);
         TimelineMove(wxPoint(fixedX, 10)); // Was a bug once: the mouse release did not 'release' the move operation, and thus this move back up caused the divider back to its original position.

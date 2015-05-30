@@ -22,7 +22,6 @@
 #include "EventKey.h"
 #include "EventMouse.h"
 #include "EventPart.h"
-#include "Layout.h"
 #include "Mouse.h"
 #include "StateDragging.h"
 #include "StateIdle.h"
@@ -87,7 +86,7 @@ boost::statechart::result StateLeftDown::react( const EvMotion& evt )
 {
     VAR_DEBUG(evt);
     wxPoint diff = mStartPosition - getMouse().getVirtualPosition();
-    if ((abs(diff.x) > Layout::DragThreshold) || (abs(diff.y) > Layout::DragThreshold))
+    if ((abs(diff.x) > Drag::Threshold) || (abs(diff.y) > Drag::Threshold))
     {
         if (!mSelectionEmpty)
         {

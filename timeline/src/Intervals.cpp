@@ -25,7 +25,6 @@
 #include "IClip.h"
 #include "IntervalChange.h"
 #include "IntervalRemoveAll.h"
-#include "Layout.h"
 #include "Menu.h"
 #include "Scrolling.h"
 #include "Sequence.h"
@@ -128,8 +127,8 @@ void Intervals::addBeginMarker()
 {
     pts cursor = determineSnap(getCursor().getLogicalPosition());
     mNewIntervalActive = true;
-    mNewIntervalBegin = cursor + model::Convert::timeToPts(Config::ReadDouble(Config::sPathMarkerBeginAddition) * model::Constants::sSecond);
-    mNewIntervalEnd = cursor + model::Convert::timeToPts(Config::ReadDouble(Config::sPathMarkerEndAddition)   * model::Constants::sSecond);
+    mNewIntervalBegin = cursor + model::Convert::timeToPts(Config::ReadDouble(Config::sPathTimelineMarkerBeginAddition) * model::Constants::sSecond);
+    mNewIntervalEnd = cursor + model::Convert::timeToPts(Config::ReadDouble(Config::sPathTimelineMarkerEndAddition)   * model::Constants::sSecond);
 }
 
 void Intervals::addEndMarker()
@@ -171,7 +170,7 @@ void Intervals::update(pts newCursorPosition)
     VAR_DEBUG(cursor)(getCursor().getLogicalPosition());
     if (mNewIntervalActive)
     {
-        mNewIntervalEnd = cursor +  model::Convert::timeToPts(Config::ReadDouble(Config::sPathMarkerEndAddition) * model::Constants::sSecond);
+        mNewIntervalEnd = cursor +  model::Convert::timeToPts(Config::ReadDouble(Config::sPathTimelineMarkerEndAddition) * model::Constants::sSecond);
         refreshInterval(makeInterval(mNewIntervalBegin,mNewIntervalEnd));
     }
     if (mToggleActive)
@@ -228,8 +227,8 @@ void Intervals::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) co
 
     if (!intervals.empty())
     {
-        dc.SetPen(Layout::get().IntervalPen);
-        dc.SetBrush(Layout::get().IntervalBrush);
+        dc.SetPen(wxPen{ wxColour{ 128, 128, 128 } }); // 128,128,128 ==> wxGREY
+        dc.SetBrush(wxBrush{ wxColour{ 211, 211, 211 }, wxBRUSHSTYLE_CROSSDIAG_HATCH}); // 211,211,211 ==> wxLIGHT_GREY
     }
     for ( PtsInterval i : intervals )
     {
@@ -283,17 +282,17 @@ void Intervals::deleteEmptyClip(const model::IClipPtr& clip)
 
 pts Intervals::determineSnap(pts position) const
 {
-    if (!Config::ReadBool(Config::sPathSnapClips))
+    if (!Config::ReadBool(Config::sPathTimelineSnapClips))
     {
         return position;
     }
 
-    pts snapAdjust = Layout::SnapDistance + 1;
+    pts snapAdjust = Timeline::SnapDistance + 1;
 
     auto adjustSnap = [&snapAdjust,position](pts snappoint)
     {
         pts diff = position - snappoint;
-        if ( (abs(diff)  <= Layout::SnapDistance) && (abs(diff) < abs(snapAdjust)))
+        if ( (abs(diff)  <= Timeline::SnapDistance) && (abs(diff) < abs(snapAdjust)))
         {
             snapAdjust = diff;
         }
@@ -313,7 +312,7 @@ pts Intervals::determineSnap(pts position) const
             adjustSnap(clip->getRightPts());
         }
     }
-    if (snapAdjust != Layout::SnapDistance + 1)
+    if (snapAdjust != Timeline::SnapDistance + 1)
     {
         return position - snapAdjust;
     }

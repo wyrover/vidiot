@@ -17,7 +17,7 @@
 
 #include "AudioView.h"
 
-#include "Layout.h"
+#include "DividerView.h"
 #include "Track.h"
 #include "TrackView.h"
 #include "Sequence.h"
@@ -45,7 +45,7 @@ VideoView::VideoView(View* parent)
     for ( model::TrackPtr track : getSequence()->getVideoTracks() )
     {
         new TrackView(track,this);
-        new DividerView(this, Layout::TrackDividerHeight, track);
+        new DividerView(this, DividerView::TrackDividerHeight, track);
         track->Bind(model::EVENT_HEIGHT_CHANGED, &VideoView::onTrackHeightChanged, this);
     }
 
@@ -94,7 +94,7 @@ pixel VideoView::getH() const
         int height = 0;
         for ( model::TrackPtr track : getSequence()->getVideoTracks() )
         {
-            height += track->getHeight() + Layout::TrackDividerHeight;
+            height += track->getHeight() + DividerView::TrackDividerHeight;
         }
         mHeight.reset(height);
     }
@@ -129,12 +129,12 @@ void VideoView::getPositionInfo(const wxPoint& position, PointerPositionInfo& in
     int y = getSequence()->getDividerPosition();
     for ( model::TrackPtr track : getSequence()->getVideoTracks() )
     {
-        int top = y - (track->getHeight()  + Layout::TrackDividerHeight);
+        int top = y - (track->getHeight()  + DividerView::TrackDividerHeight);
         if (position.y >= top && position.y < y)
         {
             info.track = track;
             info.trackPosition = top;
-            info.onTrackDivider = (position.y - top <= Layout::TrackDividerHeight);
+            info.onTrackDivider = (position.y - top <= DividerView::TrackDividerHeight);
             getViewMap().getView(track)->getPositionInfo(position, info);
             return;
         }
@@ -151,7 +151,7 @@ void VideoView::onVideoTracksAdded(model::EventAddVideoTracks& event )
     for ( model::TrackPtr track : event.getValue().addedTracks )
     {
         new TrackView(track,this);
-        new DividerView(this, Layout::TrackDividerHeight, track);
+        new DividerView(this, DividerView::TrackDividerHeight, track);
         track->Bind(model::EVENT_HEIGHT_CHANGED, &VideoView::onTrackHeightChanged, this);
     }
     getSequenceView().resetDividerPosition(); // Will cause this::invalidateRect() and Timeline::Refresh()

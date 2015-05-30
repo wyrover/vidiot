@@ -28,7 +28,6 @@
 #include "Cursor.h"
 #include "DetailsPanel.h"
 #include "IClip.h"
-#include "Layout.h"
 #include "Player.h"
 #include "Selection.h"
 #include "SelectionEvent.h"
@@ -927,8 +926,8 @@ void DetailsClip::preview()
         wxMemoryDC dc(*bmp);
 
         // Fill with black
-        dc.SetBrush(Layout::get().PreviewBackgroundBrush);
-        dc.SetPen(Layout::get().PreviewBackgroundPen);
+        dc.SetBrush(wxBrush{ wxColour{ 0, 0, 0 } });
+        dc.SetPen(wxPen{ wxColour{ 0, 0, 0 } });
         dc.DrawRectangle(wxPoint(0,0),dc.GetSize());
 
         // Draw preview of operation

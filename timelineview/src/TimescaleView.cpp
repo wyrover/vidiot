@@ -21,7 +21,6 @@
 #include "Constants.h"
 #include "Convert.h"
 #include "Intervals.h"
-#include "Layout.h"
 #include "Sequence.h"
 #include "SequenceView.h"
 #include "Timeline.h"
@@ -29,6 +28,10 @@
 #include "Zoom.h"
 
 namespace gui { namespace timeline {
+
+const pixel TimeScaleMinutesHeight{ 10 };
+const pixel TimeScaleSecondHeight{ 5 };
+const pixel TimescaleView::TimeScaleHeight{ 25 };
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION METHODS
@@ -67,7 +70,7 @@ pixel TimescaleView::getW() const
 
 pixel TimescaleView::getH() const
 {
-    return Layout::TimeScaleHeight;
+    return TimescaleView::TimeScaleHeight;
 }
 
 void TimescaleView::invalidateRect()
@@ -134,13 +137,13 @@ void TimescaleView::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset
         TicksAndNumbers steps = zoomToSteps.find(zoom)->second;
 
         // Draw timescale background
-        dc.SetBrush(Layout::get().TimeScaleBackgroundBrush);
-        dc.SetPen(Layout::get().TimeScaleDividerPen);
+        dc.SetBrush(wxBrush{ wxColour{ 255, 255, 255 } });
+        dc.SetPen(wxPen{ wxColour{ 0, 0, 0 }, 1 });
         dc.DrawRectangle(scrolledAndShiftedPosition,getSize());
 
         // Prepare for drawing times
-        dc.SetFont(Layout::get().TimeScaleFont);
-        dc.SetTextForeground(Layout::get().TimeScaleFontColour);
+        dc.SetFont(wxFont(wxSize(0,11),wxFONTFAMILY_DEFAULT,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL));
+        dc.SetTextForeground(wxColour{ 0, 0, 0 });
 
         // Draw seconds and minutes lines
         while (upd)
@@ -174,12 +177,12 @@ void TimescaleView::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset
                 int position = getZoom().timeToPixels(ms);
                 bool showTime = (ms % steps.NumberStep == 0);
 
-                int lineHeight = showTime ? Layout::TimeScaleMinutesHeight : Layout::TimeScaleSecondHeight;
+                int lineHeight = showTime ? TimeScaleMinutesHeight : TimeScaleSecondHeight;
                 dc.DrawLine(scrolledAndShiftedPosition + wxPoint(position,0), scrolledAndShiftedPosition + wxPoint(position, lineHeight));
 
                 if (ms == 0)
                 {
-                    dc.DrawText( "0", scrolledAndShiftedPosition + wxPoint(5, Layout::TimeScaleMinutesHeight));
+                    dc.DrawText( "0", scrolledAndShiftedPosition + wxPoint(5, TimeScaleMinutesHeight));
                 }
                 else
                 {
@@ -190,7 +193,7 @@ void TimescaleView::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset
                         wxString format = (hours == 0) ? minutesFormat : hoursFormat; // Don't show hours for the first hour
                         wxString s = t.Format(ms / model::Constants::sHour == 0 ? minutesFormat : hoursFormat);
                         wxSize ts = dc.GetTextExtent(s);
-                        dc.DrawText( s, scrolledAndShiftedPosition + wxPoint(position - ts.GetX() / 2, Layout::TimeScaleMinutesHeight));
+                        dc.DrawText( s, scrolledAndShiftedPosition + wxPoint(position - ts.GetX() / 2, TimeScaleMinutesHeight));
                     }
                 }
             }
@@ -199,10 +202,10 @@ void TimescaleView::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset
 
         if (Config::getShowDebugInfo())
         {
-            dc.SetTextForeground(Layout::get().DebugColour);
-            dc.SetFont(Layout::get().DebugFont);
+            dc.SetTextForeground(wxColour{ 0, 255, 0 });
+            dc.SetFont(wxFont(wxSize(0,11),wxFONTFAMILY_DEFAULT,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL));
             wxString s; s << "Zoom:" << zoom.numerator() << "/" << zoom.denominator();
-            dc.DrawText( s, scrolledAndShiftedPosition + wxPoint(25, Layout::TimeScaleSecondHeight - 5));
+            dc.DrawText( s, scrolledAndShiftedPosition + wxPoint(25, TimeScaleSecondHeight - 5));
         }
     }
 }

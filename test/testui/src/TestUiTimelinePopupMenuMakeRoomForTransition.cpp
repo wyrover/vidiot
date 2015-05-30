@@ -42,7 +42,7 @@ void TestUiTimelinePopupMenuMakeRoomForTransition::testMakeRoomForCrossfade()
     StartTestSuite();
     TimelineZoomIn(6);
     ConfigFixture.SnapToClips(false);
-    pts defaultTransitionLength = Config::ReadLong(Config::sPathDefaultTransitionLength);
+    pts defaultTransitionLength = Config::ReadLong(Config::sPathTimelineDefaultTransitionLength);
     {
         StartTest("Left clip - small hidden extension, right clip - none: Crossfade only has half the default length.");
         TimelineShiftTrim(RightCenter(VideoClip(0,0)),RightCenter(VideoClip(0,0)) - wxPoint(getTimeline().getZoom().ptsToPixels(defaultTransitionLength / 2),0)); // Make left clip 'extendable' on its right side, with length 12

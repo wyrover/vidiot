@@ -24,7 +24,6 @@
 #include "EventKey.h"
 #include "EventPart.h"
 #include "EventMouse.h"
-#include "Layout.h"
 #include "Mouse.h"
 #include "PositionInfo.h"
 #include "SequenceView.h"
@@ -95,7 +94,9 @@ boost::statechart::result MoveTrackDivider::react( const EvMotion& evt )
         diff *= -1;
     }
     int height = mOriginalHeight + diff;
-    if (height >= Layout::MinTrackHeight && height <= Layout::MaxTrackHeight)
+    static const pixel MinTrackHeight{ 10 };
+    static const pixel MaxTrackHeight{ 250 };
+    if (height >= MinTrackHeight && height <= MaxTrackHeight)
     {
         VAR_DEBUG(height);
         mTrack->setHeight(height);

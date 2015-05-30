@@ -22,9 +22,9 @@
 #include "Constants.h"
 #include "Convert.h"
 #include "Cursor.h"
+#include "DividerView.h"
 #include "Drag.h"
 #include "Intervals.h"
-#include "Layout.h"
 #include "PositionInfo.h"
 #include "Sequence.h"
 #include "Timeline.h"
@@ -36,6 +36,10 @@
 
 namespace gui { namespace timeline {
 
+const pixel SequenceView::MinimalGreyAboveVideoTracksHeight{ 10 };
+const pixel SequenceView::MinimalGreyBelowAudioTracksHeight{ 10 };
+
+
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
@@ -44,7 +48,7 @@ SequenceView::SequenceView(Timeline* timeline)
 : View(timeline)
 , mTimescaleView(new TimescaleView(this))
 , mVideoView(new VideoView(this))
-, mDividerView(new DividerView(this, Layout::AudioVideoDividerHeight))
+, mDividerView(new DividerView(this, DividerView::AudioVideoDividerHeight))
 , mAudioView(new AudioView(this))
 , mWidth(boost::none)
 , mHeight(boost::none)
@@ -97,12 +101,12 @@ pixel SequenceView::getH() const
         int height =
             std::max(
             getTimeline().GetClientSize().GetHeight(),      // At least the widget size
-            Layout::TimeScaleHeight +
-            Layout::MinimalGreyAboveVideoTracksHeight +
+            TimescaleView::TimeScaleHeight +
+            SequenceView::MinimalGreyAboveVideoTracksHeight +
             mVideoView->getH() +
-            Layout::AudioVideoDividerHeight +
+            DividerView::AudioVideoDividerHeight +
             mAudioView->getH() +
-            Layout::MinimalGreyBelowAudioTracksHeight);     // Height of all combined components
+            SequenceView::MinimalGreyBelowAudioTracksHeight);     // Height of all combined components
         mHeight.reset(height);
     }
     return *mHeight;
@@ -122,8 +126,8 @@ void SequenceView::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset)
 {
     if (getX() > 0)
     {
-        dc.SetPen(Layout::get().BackgroundPen);
-        dc.SetBrush(Layout::get().BackgroundBrush);
+        dc.SetPen(wxPen{ wxColour{ 212, 208, 200 } }); // Background colour
+        dc.SetBrush(wxBrush{ wxColour{ 212, 208, 200 } }); // Background colour
         dc.DrawRectangle(0,0,getX(),getH());
     }
 
@@ -192,7 +196,7 @@ void SequenceView::getPositionInfo(const wxPoint& position, PointerPositionInfo&
 void SequenceView::setDividerPosition(int position)
 {
     invalidateRect();
-    int minimum = Layout::VideoPosition + getVideo().getH();
+    int minimum = TimescaleView::TimeScaleHeight + MinimalGreyAboveVideoTracksHeight + getVideo().getH();
     if (position < minimum)
     {
         position = minimum;

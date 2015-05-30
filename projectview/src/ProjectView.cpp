@@ -22,7 +22,6 @@
 #include "File.h"
 #include "Folder.h"
 #include "ids.h"
-#include "Layout.h"
 #include "Node.h"
 #include "Project.h"
 #include "ProjectEvent.h"

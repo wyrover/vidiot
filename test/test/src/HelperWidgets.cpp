@@ -51,8 +51,11 @@ void GiveKeyboardFocus(wxWindow* widget)
 
 void SetValue(wxSlider* widget, int value)
 {
-    widget->SetValue(value);
-    widget->GetEventHandler()->QueueEvent(new wxCommandEvent(wxEVT_SLIDER));
+    util::thread::RunInMainAndWait([widget,value]
+    {
+        widget->SetValue(value);
+        widget->GetEventHandler()->QueueEvent(new wxCommandEvent(wxEVT_SLIDER));
+    });
     WaitForIdle;
 }
 
@@ -60,22 +63,31 @@ void SetValue(wxSpinCtrl* widget, int value)
 {
     widget->SetValue(value);
     wxSpinEvent* event = new wxSpinEvent(wxEVT_SPINCTRL,0);
-    event->SetValue(value);
-    widget->GetEventHandler()->QueueEvent(event);
+    util::thread::RunInMainAndWait([widget,event,value]
+    {
+        event->SetValue(value);
+        widget->GetEventHandler()->QueueEvent(event);
+    });
     WaitForIdle;
 }
 
 void SetValue(wxSpinCtrlDouble* widget, double value)
 {
-    widget->SetValue(value);
-    widget->GetEventHandler()->QueueEvent(new wxSpinDoubleEvent(wxEVT_SPINCTRLDOUBLE,0,value));
+    util::thread::RunInMainAndWait([widget,value]
+    {
+        widget->SetValue(value);
+        widget->GetEventHandler()->QueueEvent(new wxSpinDoubleEvent(wxEVT_SPINCTRLDOUBLE,0,value));
+    });
     WaitForIdle;
 }
 
 void SetValue(wxCheckBox* widget, bool value)
 {
-    widget->SetValue(value);
-    widget->GetEventHandler()->QueueEvent(new wxCommandEvent(wxEVT_COMMAND_CHECKBOX_CLICKED,0));
+    util::thread::RunInMainAndWait([widget,value]
+    {
+        widget->SetValue(value);
+        widget->GetEventHandler()->QueueEvent(new wxCommandEvent(wxEVT_COMMAND_CHECKBOX_CLICKED,0));
+    });
     WaitForIdle;
 }
 

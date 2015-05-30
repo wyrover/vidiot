@@ -62,7 +62,7 @@ boost::statechart::result StateScrolling::react( const EvRightUp& evt )
     wxPoint down(getMouse().getRightDownPosition());
     wxPoint up(getMouse().getRightUpPosition());
     wxPoint diff = down - up;
-    if (diff.x < Layout::DragThreshold && diff.y < Layout::DragThreshold)
+    if (diff.x < Drag::Threshold && diff.y < Drag::Threshold)
     {
         PointerPositionInfo infoDown = getMouse().getInfo(down);
         PointerPositionInfo infoUp = getMouse().getInfo(up);

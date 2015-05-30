@@ -20,7 +20,6 @@
 #include "Clip.h"
 #include "ClipView.h"
 #include "Convert.h"
-#include "Layout.h"
 #include "Properties.h"
 #include "Transition.h"
 #include "UtilClone.h"
@@ -134,7 +133,7 @@ RenderClipPreviewWorkPtr ThumbnailView::render() const
 
 wxSize ThumbnailView::requiredSize() const
 {
-    wxSize boundingBox{ getParent().getW() - 2 * Layout::ClipBorderSize, getParent().getH() - Layout::ClipBorderSize - Layout::ClipDescriptionBarHeight };
+    wxSize boundingBox{ getParent().getW() - 2 * ClipView::getBorderSize(), getParent().getH() - ClipView::getBorderSize() - ClipView::getDescriptionHeight() };
     return model::Convert::sizeInBoundingBox(model::Properties::get().getVideoSize(), boundingBox);
 }
 

@@ -88,7 +88,7 @@ ClipPreview::~ClipPreview()
 
 void ClipPreview::scheduleInitialRendering()
 {
-    if (mPendingWork.empty() && mBitmaps.empty())
+    if (mPendingWork.empty() && mImages.empty())
     {
         scheduleRendering();
     }
@@ -100,12 +100,12 @@ void ClipPreview::scheduleInitialRendering()
 
 pixel ClipPreview::getX() const
 {
-    return getParent().getX() + Layout::ClipBorderSize;
+    return getParent().getX() + ClipView::BorderSize;
 }
 
 pixel ClipPreview::getY() const
 {
-    return getParent().getY() +  Layout::get().ClipDescriptionBarHeight;
+    return getParent().getY() +  ClipView::getDescriptionHeight();
 }
 
 pixel ClipPreview::getW() const
@@ -147,17 +147,17 @@ void ClipPreview::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) 
     }
 
     if (getTrim().isActive() &&
-        mBitmaps.find(size) == mBitmaps.end())
+        mImages.find(size) == mImages.end())
     {
         // In case of trimming, update the clip preview immediately. Any newly created preview is the direct result of the trimming.
         // Do not schedule the rendering. That would cause a delay in showing the updated image.
         RenderClipPreviewWorkPtr work = render();
         work->execute(false);
-        mBitmaps[size] = work->getResult();
+        mImages[size] = work->getResult();
     }
 
-    auto it = mBitmaps.find(size);
-    if (it == mBitmaps.end())
+    auto itImages = mImages.find(size);
+    if (itImages == mImages.end())
     {
         // Bitmap with correct size not rendered yet.
 
@@ -170,9 +170,7 @@ void ClipPreview::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) 
     }
     else
     {
-        wxImagePtr image = it->second;
-// todo make cache for bitmaps that is only filled in the main thread...
-        wxBitmapPtr bitmap = boost::make_shared<wxBitmap>(*image, 32);
+        wxBitmapPtr bitmap = getCachedBitmap(size);
         getTimeline().copyRect(dc, region, offset, *bitmap, getRect(), bitmap->GetMask() != nullptr);
     }
 }
@@ -181,26 +179,23 @@ void ClipPreview::drawForDragging(const wxPoint& position, int height, wxDC& dc)
 {
     wxSize size(0,0);
     pixel mindiff = std::numeric_limits<pixel>::max();
-    wxImagePtr bitmap;
-    for ( auto item : mBitmaps )
+    for ( auto item : mImages )
     {
         pixel diff = abs(height - item.first.GetHeight());
         if (diff < mindiff)
         {
             mindiff = diff;
             size = item.first;
-            bitmap = item.second;
         }
     }
-    if (bitmap != nullptr)
+    if (size.x != 0 && size.y != 0)
     {
-        wxBitmap bmp(*bitmap, 32);
-        wxMemoryDC dcBmp(bmp);
+        wxMemoryDC dcBmp(*getCachedBitmap(size));
         dc.Blit(
-            position.x + Layout::get().ClipBorderSize,
-            position.y + Layout::get().ClipDescriptionBarHeight,
+            position.x + ClipView::BorderSize,
+            position.y + ClipView::getDescriptionHeight(),
             size.GetWidth(),
-            static_cast<int>(std::max(size.GetHeight(),height - Layout::get().ClipDescriptionBarHeight - Layout::ClipBorderSize )),
+            static_cast<int>(std::max(size.GetHeight(),height - ClipView::getDescriptionHeight() - ClipView::BorderSize )),
             &dcBmp,
             0,
             0,
@@ -214,7 +209,7 @@ void ClipPreview::onRenderDone(worker::WorkDoneEvent& event)
     work->Unbind(worker::EVENT_WORK_DONE, &ClipPreview::onRenderDone, const_cast<ClipPreview*>(this));
     if (work->getResult())
     {
-        mBitmaps[work->getSize()] = work->getResult();
+        mImages[work->getSize()] = work->getResult();
     }
     mPendingWork.erase(work->getSize());
     invalidateRect();
@@ -228,6 +223,7 @@ void ClipPreview::onRenderDone(worker::WorkDoneEvent& event)
 void ClipPreview::invalidateCachedBitmaps()
 {
     abortPendingWork();
+    mImages.clear();
     mBitmaps.clear();
 }
 
@@ -268,6 +264,18 @@ void ClipPreview::abortPendingWork() const
          work->Unbind(worker::EVENT_WORK_DONE, &ClipPreview::onRenderDone, const_cast<ClipPreview*>(this));
     }
     mPendingWork.clear();
+}
+
+wxBitmapPtr ClipPreview::getCachedBitmap(wxSize size) const
+{
+    ASSERT_MAP_CONTAINS(mImages, size);
+    auto itBitmaps = mBitmaps.find(size);
+    if (itBitmaps == mBitmaps.end())
+    {
+        // Bitmaps are GDI objects and hence must be created in the main thread.
+        mBitmaps[size] = boost::make_shared<wxBitmap>(*(mImages.at(size)), 24);
+    }
+    return mBitmaps.at(size);
 }
 
 }} // namespace

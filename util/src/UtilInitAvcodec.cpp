@@ -87,7 +87,7 @@ wxStrings Avcodec::getLogLevels()
 
 void Avcodec::configureLog()
 {
-	sLevel = UtilMap<int,wxString>(mapAvcodecLevels).reverseLookup(Config::ReadString(Config::sPathLogLevelAvcodec),AV_LOG_ERROR);
+	sLevel = UtilMap<int,wxString>(mapAvcodecLevels).reverseLookup(Config::ReadString(Config::sPathDebugLogLevelAvcodec),AV_LOG_ERROR);
     av_log_set_level(sLevel); // Only required for default avcodec log method
     av_log_set_callback(Avcodec::log);
 }

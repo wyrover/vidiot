@@ -57,11 +57,11 @@ VideoClip::VideoClip(const VideoFilePtr& file)
     : ClipInterval(file)
     , mProgress(0)
     , mOpacity(Constants::sOpacityMax)
-    , mScaling(Config::ReadEnum<VideoScaling>(Config::sPathDefaultVideoScaling))
+    , mScaling(Config::ReadEnum<VideoScaling>(Config::sPathVideoDefaultScaling))
     , mScalingFactor(1)
     , mRotation(0)
     , mRotationPositionOffset(0, 0)
-    , mAlignment(Config::ReadEnum<VideoAlignment>(Config::sPathDefaultVideoAlignment))
+    , mAlignment(Config::ReadEnum<VideoAlignment>(Config::sPathVideoDefaultAlignment))
     , mPosition(0, 0)
 {
     VAR_DEBUG(*this);

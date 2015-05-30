@@ -20,7 +20,6 @@
 #include "DetailsClip.h"
 #include "DetailsTrim.h"
 #include "IClip.h"
-#include "Layout.h"
 #include "Sequence.h"
 #include "Trim.h"
 #include "UtilLog.h"
@@ -46,7 +45,7 @@ Details::Details(wxWindow* parent, Timeline* timeline)
 
     wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
     mHeader = new wxStaticText(this,wxID_ANY,"", wxDefaultPosition, wxSize(2000,-1), wxBORDER_THEME | wxST_ELLIPSIZE_MIDDLE | wxALIGN_CENTRE);
-    mHeader->SetBackgroundColour(Layout::get().DetailsViewHeaderColour);
+    mHeader->SetBackgroundColour(wxColour{ 192, 192, 192 });
     sizer->Add(mHeader, wxSizerFlags(0).Center());
     for ( DetailsPanel* details : mDetails )
     {
