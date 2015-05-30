@@ -208,6 +208,6 @@ void FixtureGui::mainThread()
         mBarrierStopped.wait();
     }
 
-    wxEntryCleanup(); // todo gcc crash in test auto when deleting wxStockGDI, wxPen
+    wxEntryCleanup();
 }
 } // namespace

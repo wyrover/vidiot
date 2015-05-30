@@ -480,7 +480,7 @@ void VideoDisplay::videoBufferThread()
         model::VideoFramePtr videoFrame = mSequence->getNextVideo(model::VideoCompositionParameters().setBoundingBox(wxSize(mWidth,mHeight)).setSkip(skip));
         if (!skip)
         {
-            videoFrame->getBitmap(); // put in cache (avoid having to draw in GUI thread) -- todo don't do this anymore since this is a gdi object in a separate thread.
+            // NOT: videoFrame->getBitmap(); // put in cache (avoid having to draw in GUI thread) -- Don't do this anymore since this is a gdi object in a separate thread.
             mVideoFrames.push(videoFrame);
         }
         else
