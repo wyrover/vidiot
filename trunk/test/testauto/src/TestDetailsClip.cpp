@@ -26,8 +26,8 @@ namespace test {
 void TestDetailsClip::setUp()
 {
     if (!HelperTestSuite::get().currentTestIsEnabled()) { return; }
-    ConfigOverruleLong overruleDefaultVideoWidth(Config::sPathDefaultVideoWidth, 720);
-    ConfigOverruleLong overruleDefaultVideoHeight(Config::sPathDefaultVideoHeight, 576);
+    ConfigOverruleLong overruleDefaultVideoWidth(Config::sPathVideoDefaultWidth, 720);
+    ConfigOverruleLong overruleDefaultVideoHeight(Config::sPathVideoDefaultHeight, 576);
     mProjectFixture.init();
 }
 
@@ -231,7 +231,7 @@ void TestDetailsClip::testChangeLengthAfterCreatingTransition()
 {
     StartTestSuite();
     TimelineZoomIn(2);
-    pts defaultTransitionLength = Config::ReadLong(Config::sPathDefaultTransitionLength);
+    pts defaultTransitionLength = Config::ReadLong(Config::sPathTimelineDefaultTransitionLength);
     auto pressLengthButtons = [this] (std::string name, pts minimumsize)
     {
         for ( wxToggleButton* button : DetailsClipView()->getLengthButtons() )

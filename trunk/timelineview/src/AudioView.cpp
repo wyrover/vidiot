@@ -18,7 +18,6 @@
 #include "AudioView.h"
 
 #include "DividerView.h"
-#include "Layout.h"
 #include "PositionInfo.h"
 #include "Sequence.h"
 #include "SequenceEvent.h"
@@ -48,7 +47,7 @@ AudioView::AudioView(View* parent)
     for ( model::TrackPtr track : getSequence()->getAudioTracks() )
     {
         new TrackView(track, this);
-        new DividerView(this, Layout::TrackDividerHeight, track);
+        new DividerView(this, DividerView::TrackDividerHeight, track);
         track->Bind(model::EVENT_HEIGHT_CHANGED, &AudioView::onTrackHeightChanged, this);
 
     }
@@ -83,7 +82,7 @@ pixel AudioView::getX() const
 
 pixel AudioView::getY() const
 {
-    return getSequence()->getDividerPosition() + Layout::AudioVideoDividerHeight;
+    return getSequence()->getDividerPosition() + DividerView::AudioVideoDividerHeight;
 }
 
 pixel AudioView::getW() const
@@ -98,7 +97,7 @@ pixel AudioView::getH() const
         int height = 0;
         for ( model::TrackPtr track : getSequence()->getAudioTracks() )
         {
-            height += track->getHeight() + Layout::TrackDividerHeight;
+            height += track->getHeight() + DividerView::TrackDividerHeight;
         }
         mHeight.reset(height);
     }
@@ -133,12 +132,12 @@ void AudioView::getPositionInfo(const wxPoint& position, PointerPositionInfo& in
     int top = getY();
     for ( model::TrackPtr track : getSequence()->getAudioTracks() )
     {
-        int bottom = top + track->getHeight() + Layout::TrackDividerHeight;
+        int bottom = top + track->getHeight() + DividerView::TrackDividerHeight;
         if (position.y >= top && position.y < bottom)
         {
             info.track = track;
             info.trackPosition = top;
-            info.onTrackDivider = (bottom - position.y <= Layout::TrackDividerHeight);
+            info.onTrackDivider = (bottom - position.y <= DividerView::TrackDividerHeight);
             getViewMap().getView(track)->getPositionInfo(position, info);
             return;
         }
@@ -155,7 +154,7 @@ void AudioView::onAudioTracksAdded(model::EventAddAudioTracks& event )
     for ( model::TrackPtr track : event.getValue().addedTracks)
     {
         new TrackView(track,this);
-        new DividerView(this, Layout::TrackDividerHeight, track);
+        new DividerView(this, DividerView::TrackDividerHeight, track);
         track->Bind(model::EVENT_HEIGHT_CHANGED, &AudioView::onTrackHeightChanged, this);
     }
     getParent().invalidateRect(); // Will cause this::invalidateRect()

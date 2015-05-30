@@ -25,6 +25,7 @@
 #include "ClipView.h"
 #include "Config.h"
 #include "Cursor.h"
+#include "DividerView.h"
 #include "Drag_Shift.h"
 #include "EmptyClip.h"
 #include "ExecuteDrop.h"
@@ -33,7 +34,6 @@
 #include "ExecuteDrop.h"
 #include "File.h"
 #include "Keyboard.h"
-#include "Layout.h"
 #include "Logging.h"
 #include "Mouse.h"
 #include "PositionInfo.h"
@@ -62,6 +62,8 @@
 #include "Zoom.h"
 
 namespace gui { namespace timeline {
+
+const pixel Drag::Threshold{ 2 };
 
 //////////////////////////////////////////////////////////////////////////
 // HELPER CLASSES
@@ -226,7 +228,7 @@ void Drag::move(wxPoint position)
         // linked audio clip to audio track 1 also.
         //
         // Note that horizontal movement still results in drag movement.
-        // Rationale: due to the clipping for the dragged bitmap (not starting with 
+        // Rationale: due to the clipping for the dragged bitmap (not starting with
         //            the maximum virtual size of the timeline but only maximally
         //            2x the client area size of the timeline), moving the hotspot
         //            horizontally can 'move in' part of the dragged clips that are
@@ -383,8 +385,8 @@ pts Drag::getSnapOffset() const
 wxBitmap Drag::getDragBitmap()
 {
     VAR_DEBUG(*this);
-    // X region of the drag bitmap initially contains one time the entire timeline client area 
-    // to the left of the hotspot, and one time the entire timeline client width to the right of 
+    // X region of the drag bitmap initially contains one time the entire timeline client area
+    // to the left of the hotspot, and one time the entire timeline client width to the right of
     // the hotspot x position. In that way, there's just enough to fully drag to the leftmost
     // pixel of the client area or drag to the rightmost pixel of the client area.
     //
@@ -401,23 +403,24 @@ wxBitmap Drag::getDragBitmap()
     wxMemoryDC dc(temp);
     wxMemoryDC dcMask(mask);
 
-    dc.SetBackground(*wxTRANSPARENT_BRUSH);
+    wxBrush transparentBrush{wxColour{0,0,0}, wxBRUSHSTYLE_TRANSPARENT};
+    dc.SetBackground(transparentBrush);
     dc.Clear();
-    dc.SetBrush(*wxTRANSPARENT_BRUSH);
-    dc.SetPen(*wxTRANSPARENT_PEN);
+    dc.SetBrush(transparentBrush);
+    dc.SetPen(wxPen{wxColour{0,0,0}, 1, wxPENSTYLE_TRANSPARENT});
     dc.DrawRectangle(wxPoint(0,0),bitmapSize);
 
-    dcMask.SetBackground(*wxBLACK_BRUSH);
+    dcMask.SetBackground(wxBrush{wxColour{0,0,0}});
     dcMask.Clear();
-    dcMask.SetPen(*wxWHITE_PEN);
-    dcMask.SetBrush(*wxWHITE_BRUSH);
+    dcMask.SetPen(wxPen{wxColour{255,255,255}});
+    dcMask.SetBrush(wxBrush{wxColour{255,255,255}});
 
     // Draw video tracks
     wxPoint position(-dragBitmapOffsetX, getSequenceView().getVideo().getY() - dragBitmapOffsetY);
     model::Tracks videoTracks = getSequence()->getVideoTracks(); // Can't use reverse on temporary inside for loop
     for ( model::TrackPtr track : boost::adaptors::reverse( videoTracks ) )
     {
-        position.y += Layout::TrackDividerHeight;
+        position.y += DividerView::TrackDividerHeight;
         model::TrackPtr draggedTrack = trackOnTopOf(track);
         if (draggedTrack)
         {
@@ -435,7 +438,7 @@ wxBitmap Drag::getDragBitmap()
         {
             getViewMap().getView(draggedTrack)->drawForDragging(position,track->getHeight(),dc,dcMask);
         }
-        position.y += track->getHeight() + Layout::TrackDividerHeight;
+        position.y += track->getHeight() + DividerView::TrackDividerHeight;
     }
 
     pixel roi_x = std::max(dcMask.MinX(),0);
@@ -480,7 +483,7 @@ void Drag::drawSnaps(wxDC& dc, const wxRegion& region, const wxPoint& offset) co
     {
         for ( pts snap : mSnaps )
         {
-            getTimeline().drawLine(dc,region,offset,snap,Layout::get().SnapPen);
+            getTimeline().drawLine(dc, region, offset, snap, wxPen{ wxColour{ 164, 164, 164 } });
         }
     }
 }
@@ -706,7 +709,7 @@ void Drag::determineSnapOffset()
 
     if (mSnappingEnabled)
     {
-        pts minDiff = Layout::SnapDistance + 1; // To ensure that the first found point will change this value
+        pts minDiff = Timeline::SnapDistance + 1; // To ensure that the first found point will change this value
         std::vector<pts>::const_iterator itTimeline = mSnapPoints.begin();
         std::vector<pts>::const_iterator itDrag = mDragPoints.begin();
         ASSERT(itDrag != mDragPoints.end());
@@ -718,7 +721,7 @@ void Drag::determineSnapOffset()
             pts pts_drag = *itDrag + ptsoffset;
 
             pts diff = abs(pts_drag - pts_timeline);
-            if (diff <= Layout::SnapDistance)
+            if (diff <= Timeline::SnapDistance)
             {
                 pts offset = pts_timeline - pts_drag;
                 pts leftMostPointAfterDropping = leftMostDragPoint + offset + getDraggedPtsDistance();
@@ -777,11 +780,11 @@ void Drag::determineSnapOffset()
 void Drag::determinePossibleSnapPoints()
 {
     mSnapPoints.clear();
-    if (mSnappingEnabled && Config::ReadBool(Config::sPathSnapClips))
+    if (mSnappingEnabled && Config::ReadBool(Config::sPathTimelineSnapClips))
     {
         UtilVector<pts>(mSnapPoints).addElements(getSequence()->getCuts(mCommand->getDrags()));
     }
-    if (mSnappingEnabled && Config::ReadBool(Config::sPathSnapCursor))
+    if (mSnappingEnabled && Config::ReadBool(Config::sPathTimelineSnapCursor))
     {
         mSnapPoints.push_back(getCursor().getLogicalPosition());
     }

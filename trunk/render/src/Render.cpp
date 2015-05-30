@@ -406,9 +406,9 @@ void RenderWork::generate()
                 throw EncodingError("Unsupported number of ticks per frame in target codec.");
             }
 
-            if (Config::Exists(Config::sPathOverruleFourCC))
+            if (Config::Exists(Config::sPathVideoOverruleFourCC))
             {
-                wxString sFourCC = Config::ReadString(Config::sPathOverruleFourCC);
+                wxString sFourCC = Config::ReadString(Config::sPathVideoOverruleFourCC);
                 wxCharBuffer chars = sFourCC.mb_str();
                 int fourcc = 0;
                 switch (chars.length())

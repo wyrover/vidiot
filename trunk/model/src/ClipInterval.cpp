@@ -93,7 +93,7 @@ wxString ClipInterval::getDescription() const
         return mDescription;
     }
     mDescription = mRender->getDescription();
-    wxString strip = Config::ReadString(Config::sPathStrip);
+    wxString strip = Config::ReadString(Config::sPathTimelineStripFromClipNames);
 
     wxStringTokenizer t(strip, "|");
     while (t.HasMoreTokens())

@@ -264,7 +264,7 @@ void TestDragAndDrop::testSnapping()
     ConfigFixture.SnapToClips(false).SnapToCursor(true);
     {
         StartTest("No snapping when dragged beyond snap distance");
-        TimelineDrag(From(Center(VideoClip(0,0))).AlignLeft(CursorPosition() + gui::Layout::SnapDistance + 1).DontReleaseMouse());
+        TimelineDrag(From(Center(VideoClip(0,0))).AlignLeft(CursorPosition() + gui::timeline::Timeline::SnapDistance + 1).DontReleaseMouse());
         ASSERT_ZERO(getTimeline().getDrag().getSnapOffset());
         TimelineLeftUp();
         ASSERT_MORE_THAN(VideoClip(0,2)->getRightPts(), getTimeline().getCursor().getLogicalPosition());
@@ -273,7 +273,7 @@ void TestDragAndDrop::testSnapping()
     }
     {
         StartTest("Snap to cursor when inside snap distance");
-        TimelineDrag(From(Center(VideoClip(0,0))).AlignLeft(CursorPosition() + gui::Layout::SnapDistance - 1).DontReleaseMouse());
+        TimelineDrag(From(Center(VideoClip(0,0))).AlignLeft(CursorPosition() + gui::timeline::Timeline::SnapDistance - 1).DontReleaseMouse());
         ASSERT_NONZERO(getTimeline().getDrag().getSnapOffset());
         TimelineLeftUp();
         ASSERT_EQUALS(VideoClip(0,2)->getRightPts(), getTimeline().getCursor().getLogicalPosition()); // due to snapping
@@ -282,7 +282,7 @@ void TestDragAndDrop::testSnapping()
     }
     {
         StartTest("Temporarily disable snapping");
-        TimelineDrag(From(Center(VideoClip(0,0))).AlignLeft(CursorPosition() + gui::Layout::SnapDistance - 1).DontReleaseMouse());
+        TimelineDrag(From(Center(VideoClip(0,0))).AlignLeft(CursorPosition() + gui::timeline::Timeline::SnapDistance - 1).DontReleaseMouse());
         ASSERT_NONZERO(getTimeline().getDrag().getSnapOffset());
         TimelineKeyPress('d'); // disable snapping
         ASSERT_ZERO(getTimeline().getDrag().getSnapOffset());
@@ -300,8 +300,8 @@ void TestDragAndDrop::testSnapping()
 void TestDragAndDrop::testDropAdjacentToTransition()
 {
     StartTestSuite();
-    ConfigOverruleBool overruleSnapToCursor(Config::sPathSnapClips,false);
-    ConfigOverruleBool overruleSnapToClips(Config::sPathSnapCursor,true);
+    ConfigOverruleBool overruleSnapToCursor(Config::sPathTimelineSnapClips,false);
+    ConfigOverruleBool overruleSnapToClips(Config::sPathTimelineSnapCursor,true);
 
     TimelineZoomIn(4);
     {
@@ -372,8 +372,8 @@ void TestDragAndDrop::testDropAdjacentToTransition()
 void TestDragAndDrop::testDragZeroLengthSideOfTransition()
 {
     StartTestSuite();
-    ConfigOverruleBool overruleSnapToCursor(Config::sPathSnapClips,false);
-    ConfigOverruleBool overruleSnapToClips(Config::sPathSnapCursor,false);
+    ConfigOverruleBool overruleSnapToCursor(Config::sPathTimelineSnapClips,false);
+    ConfigOverruleBool overruleSnapToClips(Config::sPathTimelineSnapCursor,false);
     TimelineZoomIn(4);
     TimelinePositionCursor(10);
     MakeInOutTransitionAfterClip preparation(2);
@@ -400,8 +400,8 @@ void TestDragAndDrop::testDragZeroLengthSideOfTransition()
 void TestDragAndDrop::testDropZeroLengthSideOfTransition()
 {
     StartTestSuite();
-    ConfigOverruleBool overruleSnapToCursor(Config::sPathSnapClips,false);
-    ConfigOverruleBool overruleSnapToClips(Config::sPathSnapCursor,false);
+    ConfigOverruleBool overruleSnapToCursor(Config::sPathTimelineSnapClips,false);
+    ConfigOverruleBool overruleSnapToClips(Config::sPathTimelineSnapCursor,false);
     TimelineZoomIn(4);
     TimelinePositionCursor(10);
     MakeInOutTransitionAfterClip preparation(2);

@@ -20,9 +20,9 @@
 #include "Node.h"
 #include "Clip.h"
 #include "ClipView.h"
+#include "DividerView.h"
 #include "Drag.h"
 #include "Drag_Shift.h"
-#include "Layout.h"
 #include "PositionInfo.h"
 #include "Selection.h"
 #include "Track.h"
@@ -105,7 +105,7 @@ pixel TrackView::getY() const
                 {
                     break;
                 }
-                y -= Layout::TrackDividerHeight;
+                y -= DividerView::TrackDividerHeight;
             }
             mY.reset(y);
         }
@@ -118,7 +118,7 @@ pixel TrackView::getY() const
                 {
                     break;
                 }
-                y += track->getHeight() + Layout::TrackDividerHeight;
+                y += track->getHeight() + DividerView::TrackDividerHeight;
             }
             mY.reset(y);
         }

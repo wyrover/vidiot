@@ -31,7 +31,7 @@ void TestNewProject::testEmptyFolder()
     RandomTempDirPtr tempDir = RandomTempDir::generate();
     gui::Dialog::get().setDir(tempDir->getFileName().GetFullPath());
     ASSERT(!util::thread::RunInMainReturning<bool>([] { return gui::Window::get().isProjectOpened(); } ));
-    ConfigOverruleString openwizard(Config::sPathDefaultNewProjectType, model::DefaultNewProjectWizardStart_toString(model::DefaultNewProjectWizardStartFiles));
+    ConfigOverruleString openwizard(Config::sPathProjectDefaultNewProjectType, model::DefaultNewProjectWizardStart_toString(model::DefaultNewProjectWizardStartFiles));
     WindowTriggerMenu(wxID_NEW);
     WaitUntilMainWindowActive(false);
     ASSERT_EQUALS(gui::DialogNewProject::get().GetCurrentPage(), gui::DialogNewProject::get().getPageStart());
@@ -46,7 +46,7 @@ void TestNewProject::testEmptyFolder()
     gui::DialogNewProject::get().pressCancel();
     WaitUntilMainWindowActive(true);
     ASSERT(!util::thread::RunInMainReturning<bool>([] { return gui::Window::get().isProjectOpened(); } ));
-    ASSERT_EQUALS(Config::ReadEnum<model::DefaultNewProjectWizardStart>(Config::sPathDefaultNewProjectType), model::DefaultNewProjectWizardStartFiles);
+    ASSERT_EQUALS(Config::ReadEnum<model::DefaultNewProjectWizardStart>(Config::sPathProjectDefaultNewProjectType), model::DefaultNewProjectWizardStartFiles);
     ASSERT(!gui::TimelinesView::get().hasTimeline());
 }
 
@@ -54,7 +54,7 @@ void TestNewProject::testFolder()
 {
     StartTestSuite();
     ASSERT(!util::thread::RunInMainReturning<bool>([] { return gui::Window::get().isProjectOpened(); } ));
-    ConfigOverruleString openwizard(Config::sPathDefaultNewProjectType, model::DefaultNewProjectWizardStart_toString(model::DefaultNewProjectWizardStartFolder));
+    ConfigOverruleString openwizard(Config::sPathProjectDefaultNewProjectType, model::DefaultNewProjectWizardStart_toString(model::DefaultNewProjectWizardStartFolder));
     auto test = [](wxString foldername, FrameRate expectedFrameRate, int expectedSampleRate, int expectedChannels)
     {
         StartTest(foldername);
@@ -92,14 +92,14 @@ void TestNewProject::testFolder()
     // Framerate set to most common framerate in folder
     test("newproject_folder1", FrameRate::s25p, 44100, 2);
     test("newproject_folder2", FrameRate::s24p, 44100, 1);
-    ASSERT_EQUALS(Config::ReadEnum<model::DefaultNewProjectWizardStart>(Config::sPathDefaultNewProjectType), model::DefaultNewProjectWizardStartFolder);
+    ASSERT_EQUALS(Config::ReadEnum<model::DefaultNewProjectWizardStart>(Config::sPathProjectDefaultNewProjectType), model::DefaultNewProjectWizardStartFolder);
 }
 
 void TestNewProject::testNoUsableFiles()
 {
     StartTestSuite();
     ASSERT(!util::thread::RunInMainReturning<bool>([] { return gui::Window::get().isProjectOpened(); } ));
-    ConfigOverruleString openwizard(Config::sPathDefaultNewProjectType, model::DefaultNewProjectWizardStart_toString(model::DefaultNewProjectWizardStartFolder));
+    ConfigOverruleString openwizard(Config::sPathProjectDefaultNewProjectType, model::DefaultNewProjectWizardStart_toString(model::DefaultNewProjectWizardStartFolder));
     WindowTriggerMenu(wxID_NEW);
     WaitUntilMainWindowActive(false);
     wxStrings files;
@@ -117,14 +117,14 @@ void TestNewProject::testNoUsableFiles()
     WaitUntilMainWindowActive(true);
     ASSERT(!util::thread::RunInMainReturning<bool>([] { return gui::Window::get().isProjectOpened(); } ));
     ASSERT(!gui::TimelinesView::get().hasTimeline());
-    ASSERT_EQUALS(Config::ReadEnum<model::DefaultNewProjectWizardStart>(Config::sPathDefaultNewProjectType), model::DefaultNewProjectWizardStartFolder);
+    ASSERT_EQUALS(Config::ReadEnum<model::DefaultNewProjectWizardStart>(Config::sPathProjectDefaultNewProjectType), model::DefaultNewProjectWizardStartFolder);
 }
 
 void TestNewProject::testFiles()
 {
     StartTestSuite();
     ASSERT(!util::thread::RunInMainReturning<bool>([] { return gui::Window::get().isProjectOpened(); } ));
-    ConfigOverruleString openwizard(Config::sPathDefaultNewProjectType, model::DefaultNewProjectWizardStart_toString(model::DefaultNewProjectWizardStartFiles));
+    ConfigOverruleString openwizard(Config::sPathProjectDefaultNewProjectType, model::DefaultNewProjectWizardStart_toString(model::DefaultNewProjectWizardStartFiles));
     WindowTriggerMenu(wxID_NEW);
     WaitUntilMainWindowActive(false);
     wxStrings files;
@@ -155,14 +155,14 @@ void TestNewProject::testFiles()
     ASSERT_EQUALS(model::Properties::get().getFrameRate(), FrameRate::s24p);
     ASSERT_EQUALS(model::Properties::get().getAudioSampleRate(), 44100);
     ASSERT_EQUALS(model::Properties::get().getAudioNumberOfChannels(), 1);
-    ASSERT_EQUALS(Config::ReadEnum<model::DefaultNewProjectWizardStart>(Config::sPathDefaultNewProjectType), model::DefaultNewProjectWizardStartFiles);
+    ASSERT_EQUALS(Config::ReadEnum<model::DefaultNewProjectWizardStart>(Config::sPathProjectDefaultNewProjectType), model::DefaultNewProjectWizardStartFiles);
 }
 
 void TestNewProject::testBlank()
 {
     StartTestSuite();
     ASSERT(!util::thread::RunInMainReturning<bool>([] { return gui::Window::get().isProjectOpened(); } ));
-    ConfigOverruleString openwizard(Config::sPathDefaultNewProjectType, model::DefaultNewProjectWizardStart_toString(model::DefaultNewProjectWizardStartFolder));
+    ConfigOverruleString openwizard(Config::sPathProjectDefaultNewProjectType, model::DefaultNewProjectWizardStart_toString(model::DefaultNewProjectWizardStartFolder));
     WindowTriggerMenu(wxID_NEW);
     WaitUntilMainWindowActive(false);
     ASSERT_EQUALS(gui::DialogNewProject::get().GetCurrentPage(), gui::DialogNewProject::get().getPageStart());
@@ -177,14 +177,14 @@ void TestNewProject::testBlank()
     WaitUntilMainWindowActive(true);
     ASSERT(util::thread::RunInMainReturning<bool>([] { return gui::Window::get().isProjectOpened(); } ));
     ASSERT(!gui::TimelinesView::get().hasTimeline());
-    ASSERT_EQUALS(Config::ReadEnum<model::DefaultNewProjectWizardStart>(Config::sPathDefaultNewProjectType), model::DefaultNewProjectWizardStartBlank);
+    ASSERT_EQUALS(Config::ReadEnum<model::DefaultNewProjectWizardStart>(Config::sPathProjectDefaultNewProjectType), model::DefaultNewProjectWizardStartBlank);
 }
 
 void TestNewProject::testCancel()
 {
     StartTestSuite();
     ASSERT(!util::thread::RunInMainReturning<bool>([] { return gui::Window::get().isProjectOpened(); } ));
-    ConfigOverruleString openwizard(Config::sPathDefaultNewProjectType, model::DefaultNewProjectWizardStart_toString(model::DefaultNewProjectWizardStartBlank));
+    ConfigOverruleString openwizard(Config::sPathProjectDefaultNewProjectType, model::DefaultNewProjectWizardStart_toString(model::DefaultNewProjectWizardStartBlank));
     WindowTriggerMenu(wxID_NEW);
     WaitUntilMainWindowActive(false);
     ASSERT_EQUALS(gui::DialogNewProject::get().GetCurrentPage(), gui::DialogNewProject::get().getPageStart());
@@ -197,7 +197,7 @@ void TestNewProject::testCancel()
     WaitUntilMainWindowActive(true);
     ASSERT(!util::thread::RunInMainReturning<bool>([] { return gui::Window::get().isProjectOpened(); } ));
     ASSERT(!gui::TimelinesView::get().hasTimeline());
-    ASSERT_EQUALS(Config::ReadEnum<model::DefaultNewProjectWizardStart>(Config::sPathDefaultNewProjectType), model::DefaultNewProjectWizardStartBlank);
+    ASSERT_EQUALS(Config::ReadEnum<model::DefaultNewProjectWizardStart>(Config::sPathProjectDefaultNewProjectType), model::DefaultNewProjectWizardStartBlank);
 }
 
 } // namespace

@@ -78,7 +78,7 @@ bool AClipEdit::Do()
         avoidDanglingLinks();
 
         mReplacements->replace();
-        if (Config::ReadBool(Config::sPathTest))
+        if (Config::ReadBool(Config::sPathTestCxxMode))
         {
             // Only in test mode: verify all links.
             for (model::TrackPtr track : getSequence()->getTracks())

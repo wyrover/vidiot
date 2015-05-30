@@ -24,7 +24,6 @@
 #include "Drag.h"
 #include "Intervals.h"
 #include "Keyboard.h"
-#include "Layout.h"
 #include "Menu.h"
 #include "ModelEvent.h"
 #include "Mouse.h"
@@ -48,6 +47,8 @@
 #include "Zoom.h"
 
 namespace gui { namespace timeline {
+
+const pixel Timeline::SnapDistance{ 50 };
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION METHODS
@@ -86,7 +87,7 @@ Timeline::Timeline(wxWindow *parent, const model::SequencePtr& sequence, bool be
 {
     VAR_DEBUG(this);
 
-    SetBackgroundColour(Layout::get().BackgroundColour);
+    SetBackgroundColour(wxColour{ 212, 208, 200 }); // Background colour
     SetBackgroundStyle(wxBG_STYLE_PAINT); // For the buffered DC in onPaint()
 
     mBufferBitmap.reset( new wxBitmap(getSequenceView().getSize() ) );
@@ -464,8 +465,8 @@ void Timeline::drawDivider(wxDC& dc, wxRegion region, const wxPoint& offset, wxP
     // Region is in screen coordinates.
     // yPosition and height are in logical coordinates (entire timeline)
     wxRect dividerRect(position - offset, wxSize(GetVirtualSize().GetWidth(), height));
-    dc.SetPen(Layout::get().DividerPen);
-    dc.SetBrush(Layout::get().DividerBrush);
+    dc.SetPen(wxPen{ wxColour{ 64, 64, 64 }, 1 });
+    dc.SetBrush(wxBrush{ wxColour{ 132, 132, 132 } });
     dc.DrawRectangle(dividerRect);
 }
 
@@ -479,7 +480,7 @@ void Timeline::copyRect(wxDC& dc, wxRegion region, const wxPoint& offset, const 
     scrolledRoi.y -= offset.y;
     region.Intersect(scrolledRoi);
 
-   wxRegionIterator upd(region); // get the update rect list
+    wxRegionIterator upd(region); // get the update rect list
     if (upd)
     {
         wxMemoryDC dcBmp;
@@ -508,8 +509,8 @@ void Timeline::clearRect(wxDC& dc, wxRegion region, const wxPoint& offset, const
     wxRegionIterator upd(region);
     if (upd)
     {
-        dc.SetBrush(Layout::get().BackgroundBrush);
-        dc.SetPen(Layout::get().BackgroundPen);
+        dc.SetBrush(wxBrush{ wxColour{ 212, 208, 200 } }); // Background colour
+        dc.SetPen(wxPen{ wxColour{ 212, 208, 200 } }); // Background colour
         while (upd)
         {
             dc.DrawRectangle(upd.GetRect());

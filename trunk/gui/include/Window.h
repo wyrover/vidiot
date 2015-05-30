@@ -51,7 +51,6 @@ namespace gui {
     }
 
 class Dialog;
-class Layout;
 class Worker;
 class TimelinesView;
 class Preview;
@@ -219,8 +218,6 @@ private:
 
     worker::VisibleWorker*   mVisibleWorker;
     worker::InvisibleWorker* mInvisibleWorker;
-
-    gui::Layout* mLayout;
 
     Preview*        mPreview;
     DetailsView*    mDetailsView;

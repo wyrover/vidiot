@@ -113,17 +113,17 @@ void TimelineDrag(const DragParams& params)
                     // may be used here. Otherwise, this initial drag will cause 'snapping' to zoomed pts values (for instance, if the zoom
                     // is such that 1 pixel equals 5 pts positions). In case of y-only drag and drops it is important to never move the
                     // mouse in x-direction.
-                    between.x += (from.x > to.x) ? -(gui::Layout::DragThreshold+1) : (gui::Layout::DragThreshold+1); // Should be greater than the tolerance in StateLeftDown (otherwise, the Drag won't be started)
+                    between.x += (from.x > to.x) ? -(gui::timeline::Drag::Threshold+1) : (gui::timeline::Drag::Threshold+1); // Should be greater than the tolerance in StateLeftDown (otherwise, the Drag won't be started)
                 }
                 else
                 {
-                    between.y += (from.y > to.y) ? -(gui::Layout::DragThreshold+1) : (gui::Layout::DragThreshold+1); // Should be greater than the tolerance in StateLeftDown (otherwise, the Drag won't be started)
+                    between.y += (from.y > to.y) ? -(gui::timeline::Drag::Threshold+1) : (gui::timeline::Drag::Threshold+1); // Should be greater than the tolerance in StateLeftDown (otherwise, the Drag won't be started)
                 }
             }
             else
             {
                 //  (params.mAlignLeft || params.mAlignRight)
-                between.x += gui::Layout::DragThreshold + 1; // Should be greater than the tolerance in StateLeftDown (otherwise, the Drag won't be started)
+                between.x += gui::timeline::Drag::Threshold + 1; // Should be greater than the tolerance in StateLeftDown (otherwise, the Drag won't be started)
             }
             TimelineMove(between);
         }

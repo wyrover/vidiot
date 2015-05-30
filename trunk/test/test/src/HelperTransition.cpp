@@ -164,8 +164,8 @@ void MakeTransitionAfterClip::storeVariablesAfterMakingTransition()
 MakeInOutTransitionAfterClip::MakeInOutTransitionAfterClip(int afterclip, bool audio)
     : MakeTransitionAfterClip(afterclip, audio)
 {
-    ConfigOverruleBool overruleSnapToCursor(Config::sPathSnapClips,false);
-    ConfigOverruleBool overruleSnapToClips(Config::sPathSnapCursor,false);
+    ConfigOverruleBool overruleSnapToCursor(Config::sPathTimelineSnapClips,false);
+    ConfigOverruleBool overruleSnapToClips(Config::sPathTimelineSnapCursor,false);
 
     // Reduce size of clips to be able to create transition
     TimelineTrimLeft(GetClip(0,clipNumberAfterTransition),30,true);
@@ -177,7 +177,7 @@ MakeInOutTransitionAfterClip::MakeInOutTransitionAfterClip(int afterclip, bool a
     makeTransition();
 
     ASSERT(GetClip(0,clipNumberAfterTransition)->isA<model::Transition>())(GetClip(0,clipNumberAfterTransition));
-    ASSERT_EQUALS(lengthOfTransition, Config::ReadLong(Config::sPathDefaultTransitionLength));
+    ASSERT_EQUALS(lengthOfTransition, Config::ReadLong(Config::sPathTimelineDefaultTransitionLength));
     ASSERT_EQUALS(lengthOfClipBeforeTransitionAfterTransitionApplied, lengthOfClipBeforeTransitionBeforeTransitionApplied - lengthOfTransition / 2);
     ASSERT_EQUALS(lengthOfClipAfterTransitionAfterTransitionApplied, lengthOfClipAfterTransitionBeforeTransitionApplied - lengthOfTransition / 2);
 }
@@ -205,13 +205,13 @@ void MakeInOutTransitionAfterClip::moveMouseAndCreateTransition(int clipNumber)
 MakeInTransitionAfterClip::MakeInTransitionAfterClip(int afterclip, bool audio)
     : MakeTransitionAfterClip(afterclip, audio)
 {
-    ConfigOverruleBool overruleSnapToCursor(Config::sPathSnapClips,false);
-    ConfigOverruleBool overruleSnapToClips(Config::sPathSnapCursor,false);
+    ConfigOverruleBool overruleSnapToCursor(Config::sPathTimelineSnapClips,false);
+    ConfigOverruleBool overruleSnapToClips(Config::sPathTimelineSnapCursor,false);
 
     makeTransition();
 
     ASSERT(GetClip(0,clipNumberAfterTransition)->isA<model::Transition>())(GetClip(0,clipNumberAfterTransition));
-    ASSERT_EQUALS(lengthOfTransition, Config::ReadLong(Config::sPathDefaultTransitionLength) / 2);
+    ASSERT_EQUALS(lengthOfTransition, Config::ReadLong(Config::sPathTimelineDefaultTransitionLength) / 2);
     ASSERT_EQUALS(lengthOfClipBeforeTransitionAfterTransitionApplied, lengthOfClipBeforeTransitionBeforeTransitionApplied);
     ASSERT_EQUALS(lengthOfClipAfterTransitionAfterTransitionApplied, lengthOfClipAfterTransitionBeforeTransitionApplied - lengthOfTransition);
 }
@@ -235,13 +235,13 @@ void MakeInTransitionAfterClip::moveMouseAndCreateTransition(int clipNumber)
 MakeOutTransitionAfterClip::MakeOutTransitionAfterClip(int afterclip, bool audio)
     : MakeTransitionAfterClip(afterclip, audio)
 {
-    ConfigOverruleBool overruleSnapToCursor(Config::sPathSnapClips,false);
-    ConfigOverruleBool overruleSnapToClips(Config::sPathSnapCursor,false);
+    ConfigOverruleBool overruleSnapToCursor(Config::sPathTimelineSnapClips,false);
+    ConfigOverruleBool overruleSnapToClips(Config::sPathTimelineSnapCursor,false);
 
     makeTransition();
 
     ASSERT(GetClip(0,clipNumberAfterTransition)->isA<model::Transition>())(GetClip(0,clipNumberAfterTransition));
-    ASSERT_EQUALS(lengthOfTransition, Config::ReadLong(Config::sPathDefaultTransitionLength) / 2);
+    ASSERT_EQUALS(lengthOfTransition, Config::ReadLong(Config::sPathTimelineDefaultTransitionLength) / 2);
     ASSERT_EQUALS(lengthOfClipBeforeTransitionAfterTransitionApplied, lengthOfClipBeforeTransitionBeforeTransitionApplied - lengthOfTransition);
     ASSERT_EQUALS(lengthOfClipAfterTransitionAfterTransitionApplied, lengthOfClipAfterTransitionBeforeTransitionApplied);
 }

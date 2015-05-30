@@ -42,7 +42,7 @@ wxString sNoFiles(_("Found no usable media files."));
 
 DialogNewProject::DialogNewProject()
     : wxWizard()
-    , mDefaultType(Config::ReadEnum<model::DefaultNewProjectWizardStart>(Config::sPathDefaultNewProjectType))
+    , mDefaultType(Config::ReadEnum<model::DefaultNewProjectWizardStart>(Config::sPathProjectDefaultNewProjectType))
     , mFolderPath("")
 {
     Create(&Window::get(), wxID_ANY, _("Create new project"), util::window::getBitmap("movie128.png"), wxDefaultPosition, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
@@ -306,7 +306,7 @@ void DialogNewProject::onFinish(wxWizardEvent& event)
         mButtonFolder->GetValue() ? model::DefaultNewProjectWizardStartFolder :
         mButtonFiles->GetValue() ? model::DefaultNewProjectWizardStartFiles :
         model::DefaultNewProjectWizardStartBlank;
-    Config::WriteString(Config::sPathDefaultNewProjectType, model::DefaultNewProjectWizardStart_toString(defaultType));
+    Config::WriteString(Config::sPathProjectDefaultNewProjectType, model::DefaultNewProjectWizardStart_toString(defaultType));
 
     if (mFileAnalyzer)
     {

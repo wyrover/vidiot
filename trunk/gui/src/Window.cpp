@@ -28,7 +28,6 @@
 #include "FileAnalyzer.h"
 #include "Help.h"
 #include "ids.h"
-#include "Layout.h"
 #include "Node.h"
 #include "Preview.h"
 #include "Project.h"
@@ -108,7 +107,6 @@ Window::Window()
     , mDocManager(new wxDocManager())
     , mDocTemplate(new wxDocTemplate(mDocManager, _("Vidiot files"), "*." + model::Project::sFileExtension, "", model::Project::sFileExtension, _("Vidiot Project"), _("Vidiot Project View"), CLASSINFO(model::Project), CLASSINFO(ViewHelper)))
     , mDialog(new Dialog())
-    , mLayout(new gui::Layout())
     , mWatcher(0)
     , mVisibleWorker(0)
     , mInvisibleWorker(0)
@@ -173,12 +171,12 @@ Window::Window()
 
     wxMenu* menuview = new wxMenu();
     menuview->AppendCheckItem(ID_SNAP_CLIPS, _("Snap to clips"), _("Check this item to ensure that operations in the timeline 'snap' to adjacent clip boundaries."));
-    menuview->Check(ID_SNAP_CLIPS, Config::ReadBool(Config::sPathSnapClips));
+    menuview->Check(ID_SNAP_CLIPS, Config::ReadBool(Config::sPathTimelineSnapClips));
     menuview->AppendCheckItem(ID_SNAP_CURSOR, _("Snap to cursor"), _("Check this item to ensure that operations in the timeline 'snap' to the cursor position."));
-    menuview->Check(ID_SNAP_CURSOR, Config::ReadBool(Config::sPathSnapCursor));
+    menuview->Check(ID_SNAP_CURSOR, Config::ReadBool(Config::sPathTimelineSnapCursor));
     menuview->AppendSeparator();
     menuview->AppendCheckItem(ID_SHOW_BOUNDINGBOX, _("Show bounding box"), _("Show the bounding box of the generated video in the preview window."));
-    menuview->Check(ID_SHOW_BOUNDINGBOX, Config::ReadBool(Config::sPathShowBoundingBox));
+    menuview->Check(ID_SHOW_BOUNDINGBOX, Config::ReadBool(Config::sPathVideoShowBoundingBox));
     menuview->AppendSeparator();
     menuview->AppendCheckItem(ID_SHOW_PROJECT, sPaneCaptionProject, _("Show/hide the project view pane."));
     menuview->AppendCheckItem(ID_SHOW_DETAILS, sPaneCaptionDetails, _("Show/hide the timeline details pane."));
@@ -311,7 +309,7 @@ Window::Window()
     mDefaultPerspective = mUiManager.SavePerspective();
 
     wxString previous = Config::ReadString(Config::sPathWorkspacePerspectiveCurrent);
-    if (!Config::ReadBool(Config::sPathTest) && !previous.IsSameAs(""))
+    if (!Config::ReadBool(Config::sPathTestCxxMode) && !previous.IsSameAs(""))
     {
         Config::WriteString(Config::sPathWorkspacePerspectiveCurrent, ""); // If this perspective causes problems, a restart will fix it. Upon closing the current perspective is saved again.
         mUiManager.LoadPerspective(previous);
@@ -374,7 +372,7 @@ Window::Window()
     GetDocumentManager()->FileHistoryUseMenu(mMenuFile);
     GetDocumentManager()->FileHistoryLoad(*wxConfigBase::Get());
 
-    if (Config::ReadBool(Config::sPathTest))
+    if (Config::ReadBool(Config::sPathTestCxxMode))
     {
         wxSize screenSize = wxGetDisplaySize();
         wxSize winSize = GetSize();
@@ -382,11 +380,11 @@ Window::Window()
     }
     else
     {
-        int x = Config::ReadLong(Config::sPathWindowX);
-        int y = Config::ReadLong(Config::sPathWindowY);
-        int w = Config::ReadLong(Config::sPathWindowW);
-        int h = Config::ReadLong(Config::sPathWindowH);
-        bool m = Config::ReadBool(Config::sPathWindowMaximized);
+        int x = Config::ReadLong(Config::sPathWorkspaceX);
+        int y = Config::ReadLong(Config::sPathWorkspaceY);
+        int w = Config::ReadLong(Config::sPathWorkspaceW);
+        int h = Config::ReadLong(Config::sPathWorkspaceH);
+        bool m = Config::ReadBool(Config::sPathWorkspaceMaximized);
 
         if (x != -1 && y != -1 && w != -1 && h != -1)
         {
@@ -416,7 +414,7 @@ void Window::init()
     }
     else
     {
-        if (Config::ReadBool(Config::sPathAutoLoadEnabled))
+        if (Config::ReadBool(Config::sPathProjectAutoLoadEnabled))
         {
             wxFileHistory* history = GetDocumentManager()->GetFileHistory();
             if (history->GetCount() > 0)
@@ -490,7 +488,6 @@ Window::~Window()
     delete mVisibleWorker;
     delete mInvisibleWorker;
     delete mDialog;
-    delete mLayout;
     //NOT: delete mDocTemplate;
     delete mDocManager;
 }
@@ -570,9 +567,9 @@ void Window::onMove(wxMoveEvent& event)
     if (!IsMaximized())
     {
         wxPoint p = GetScreenPosition();
-        Config::WriteBool(Config::sPathWindowMaximized,false);
-        Config::WriteLong(Config::sPathWindowX,p.x); // Don't use event.GetPosition since that results in a slightly
-        Config::WriteLong(Config::sPathWindowY,p.y); // moved window upon the next startup.
+        Config::WriteBool(Config::sPathWorkspaceMaximized,false);
+        Config::WriteLong(Config::sPathWorkspaceX,p.x); // Don't use event.GetPosition since that results in a slightly
+        Config::WriteLong(Config::sPathWorkspaceY,p.y); // moved window upon the next startup.
         Dialog::get().mScreenRect = GetScreenRect();
     }
     event.Skip();
@@ -582,9 +579,9 @@ void Window::onSize(wxSizeEvent& event)
 {
     if (!IsMaximized())
     {
-        Config::WriteBool(Config::sPathWindowMaximized,false);
-        Config::WriteLong(Config::sPathWindowW,event.GetSize().GetWidth());
-        Config::WriteLong(Config::sPathWindowH,event.GetSize().GetHeight());
+        Config::WriteBool(Config::sPathWorkspaceMaximized,false);
+        Config::WriteLong(Config::sPathWorkspaceW,event.GetSize().GetWidth());
+        Config::WriteLong(Config::sPathWorkspaceH,event.GetSize().GetHeight());
         Dialog::get().mScreenRect = GetScreenRect();
     }
     event.Skip();
@@ -592,7 +589,7 @@ void Window::onSize(wxSizeEvent& event)
 
 void Window::onMaximize(wxMaximizeEvent& event)
 {
-    Config::WriteBool(Config::sPathWindowMaximized,true);
+    Config::WriteBool(Config::sPathWorkspaceMaximized,true);
     Dialog::get().mScreenRect = GetScreenRect();
     event.Skip();
 }
@@ -642,19 +639,19 @@ void Window::onExit(wxCommandEvent &event)
 
 void Window::onSnapClips(wxCommandEvent& event)
 {
-    Config::WriteBool(Config::sPathSnapClips, event.IsChecked());
+    Config::WriteBool(Config::sPathTimelineSnapClips, event.IsChecked());
     event.Skip();
 }
 
 void Window::onSnapCursor(wxCommandEvent& event)
 {
-    Config::WriteBool(Config::sPathSnapCursor, event.IsChecked());
+    Config::WriteBool(Config::sPathTimelineSnapCursor, event.IsChecked());
     event.Skip();
 }
 
 void Window::onShowBoundingBox(wxCommandEvent& event)
 {
-    Config::WriteBool(Config::sPathShowBoundingBox, event.IsChecked());
+    Config::WriteBool(Config::sPathVideoShowBoundingBox, event.IsChecked());
     event.Skip();
 }
 

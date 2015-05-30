@@ -42,7 +42,7 @@ void TestUiTimelinePopupMenu::testAddTransitions()
     StartTestSuite();
     TimelineZoomIn(6);
     ConfigFixture.SnapToClips(false);
-    pts defaultTransitionLength = Config::ReadLong(Config::sPathDefaultTransitionLength);
+    pts defaultTransitionLength = Config::ReadLong(Config::sPathTimelineDefaultTransitionLength);
     {
         StartTest("Add fade in");
         TimelineOpenPopupMenuAt(Center(VideoClip(0,1)));
@@ -225,7 +225,7 @@ void TestUiTimelinePopupMenu::testOpenPopupMenuWhenClickingOnTransition()
     StartTestSuite();
     TimelineZoomIn(6);
 
-    pts lengthOfCrossFade =  Config::ReadLong(Config::sPathDefaultTransitionLength);
+    pts lengthOfCrossFade =  Config::ReadLong(Config::sPathTimelineDefaultTransitionLength);
     pts lengthOfFade = lengthOfCrossFade / 2;
 
     {

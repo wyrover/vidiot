@@ -21,7 +21,7 @@
 #include "AudioClipEvent.h"
 #include "AudioFile.h"
 #include "AudioPeaks.h"
-#include "Layout.h"
+#include "ClipView.h"
 #include "Transition.h"
 #include "UtilClone.h"
 #include "UtilInt.h"
@@ -59,9 +59,10 @@ struct RenderPeaksWork
         gc->SetInterpolationQuality(wxINTERPOLATION_BEST);
         gc->SetAntialiasMode(wxANTIALIAS_NONE);
         gc->SetCompositionMode(wxCOMPOSITION_OVER);
-        wxGCDC dc(gc); // When going out of scope the wxGraphicsContext* is also deleted.
 
-        dc.SetPen(wxPen{ wxColour{ 87, 120, 74 }, 1 });
+        gc->SetPen(wxPen{ wxColour{ 87, 120, 74 }, 1 });
+        gc->SetBrush(wxBrush{ wxColour{255, 255, 255}, wxBRUSHSTYLE_TRANSPARENT });
+        gc->DrawRectangle(0,0,mSize.x, mSize.y);
 
         model::AudioClipPtr clone = make_cloned<model::AudioClip>(boost::dynamic_pointer_cast<model::AudioClip>(mClip));
 
@@ -83,10 +84,14 @@ struct RenderPeaksWork
         ASSERT(!clone->getTrack()); // NOTE: This is a check to ensure that a clone is used, and not the original is 'moved'
         if (clone->getLength() > 0)
         {
+            std::vector<wxPoint2DDouble> beginPoints;
+            std::vector<wxPoint2DDouble> endPoints;
+
             // The if is required to avoid errors during editing operations.
 
             int origin{ mSize.y / 2 };
-            dc.DrawLine(wxPoint(0, origin), wxPoint(mSize.x, origin));
+            beginPoints.push_back(wxPoint2DDouble(0,origin));
+            endPoints.push_back(wxPoint2DDouble(mSize.x, origin));
 
             model::AudioPeaks peaks = clone->getPeaks();
             int nPeaks = peaks.size();
@@ -123,10 +128,14 @@ struct RenderPeaksWork
                         max = std::max(max, boost::rational_cast<int>(rational64(mSize.y, 2) * rational64(peak.second, std::numeric_limits<sample>::max())));
                     }
 
-                    dc.DrawLine(wxPoint(x, origin - min), wxPoint(x, origin + max));
+                    beginPoints.push_back(wxPoint2DDouble(x,origin - min));
+                    endPoints.push_back(wxPoint2DDouble(x, origin + max));
                 }
             }
+            gc->StrokeLines(beginPoints.size(), &beginPoints[0], &endPoints[0]);
         }
+        delete gc;
+        result->ConvertAlphaToMask();
         return result;
     }
 };
@@ -160,7 +169,7 @@ RenderClipPreviewWorkPtr AudioPeakView::render() const
 
 wxSize AudioPeakView::requiredSize() const
 {
-    return wxSize( getParent().getW() - 2 * Layout::ClipBorderSize, getParent().getH() - Layout::ClipBorderSize - Layout::ClipDescriptionBarHeight);
+    return wxSize( getParent().getW() - 2 * ClipView::getBorderSize(), getParent().getH() - ClipView::getBorderSize() - ClipView::getDescriptionHeight());
 }
 
 //////////////////////////////////////////////////////////////////////////

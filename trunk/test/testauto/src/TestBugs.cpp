@@ -566,8 +566,8 @@ void TestBugs::testTrimmingWithTransitionOnOneSideOfCut()
 void TestBugs::testSnapClipBeforeBeginOfTimeline()
 {
     StartTestSuite();
-    ConfigOverruleBool overruleSnapToCursor(Config::sPathSnapClips,false);
-    ConfigOverruleBool overruleSnapToClips(Config::sPathSnapCursor,true);
+    ConfigOverruleBool overruleSnapToCursor(Config::sPathTimelineSnapClips,false);
+    ConfigOverruleBool overruleSnapToClips(Config::sPathTimelineSnapCursor,true);
     TimelineZoomIn(5);
     StartTest("Snap to cursor");
     ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip);
@@ -659,8 +659,8 @@ void TestBugs::testEndTrimAtOutTransitionInSavedDocumentEndCausesSnappingProblem
     pts length = getSequence()->getLength();
     ASSERT_EQUALS(length, getSequence()->getLength());
     DirAndFile tempDir_fileName = mProjectFixture.saveAndReload();
-    ConfigOverruleBool overruleSnapToCursor(Config::sPathSnapClips,true);
-    ConfigOverruleBool overruleSnapToClips(Config::sPathSnapCursor,false);
+    ConfigOverruleBool overruleSnapToCursor(Config::sPathTimelineSnapClips,true);
+    ConfigOverruleBool overruleSnapToClips(Config::sPathTimelineSnapCursor,false);
     {
         StartTest("Trim video");
         ASSERT_EQUALS(length, getSequence()->getLength());
@@ -686,8 +686,8 @@ void TestBugs::testEndTrimAtOutTransitionInSavedDocumentEndCausesSnappingProblem
     pts length = getSequence()->getLength();
     ASSERT_EQUALS(length, getSequence()->getLength());
     DirAndFile tempDir_fileName = mProjectFixture.saveAndReload();
-    ConfigOverruleBool overruleSnapToCursor(Config::sPathSnapClips,true);
-    ConfigOverruleBool overruleSnapToClips(Config::sPathSnapCursor,false);
+    ConfigOverruleBool overruleSnapToCursor(Config::sPathTimelineSnapClips,true);
+    ConfigOverruleBool overruleSnapToClips(Config::sPathTimelineSnapCursor,false);
     {
         StartTest("Trim audio");
         ASSERT_EQUALS(length, getSequence()->getLength());

@@ -65,21 +65,21 @@ DialogOptions::DialogOptions(wxWindow* win)
         addbox(_("Startup"));
 
         mLoadLast = new wxCheckBox(mPanel, wxID_ANY, _T(""), wxDefaultPosition, wxDefaultSize);
-        mLoadLast->SetValue(Config::ReadBool(Config::sPathAutoLoadEnabled));
+        mLoadLast->SetValue(Config::ReadBool(Config::sPathProjectAutoLoadEnabled));
         addoption(_("Load last project on startup"), mLoadLast);
 
         addbox(_("Save"));
 
         mBackupBeforeSave = new wxCheckBox(mPanel, wxID_ANY, _T(""), wxDefaultPosition, wxDefaultSize);
-        mBackupBeforeSave->SetValue(Config::ReadBool(Config::sPathBackupBeforeSaveEnabled));
+        mBackupBeforeSave->SetValue(Config::ReadBool(Config::sPathProjectBackupBeforeSaveEnabled));
         addoption(_("Make backup of existing save file when overwriting"), mBackupBeforeSave);
 
-        long maximum = Config::ReadLong(Config::sPathBackupBeforeSaveMaximum);
+        long maximum = Config::ReadLong(Config::sPathProjectBackupBeforeSaveMaximum);
         mBackupBeforeSaveMaximum = new wxSpinCtrl(mPanel, wxID_ANY, wxString::Format("%ld", maximum), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, 0, 10000, maximum);
         addoption(_("Maximum number of generated save files (0 - infinite)"), mBackupBeforeSaveMaximum);
 
         mSaveAbsolute = new wxCheckBox(mPanel, wxID_ANY, _T(""), wxDefaultPosition, wxDefaultSize);
-        mSaveAbsolute->SetValue(Config::ReadBool(Config::sPathSavePathsRelativeToProject));
+        mSaveAbsolute->SetValue(Config::ReadBool(Config::sPathProjectSavePathsRelativeToProject));
         addoption(_("Use absolute path to media files when saving projects"), mSaveAbsolute);
         addnote(_("By using absolute paths, the project file can be moved without moving any media files in the project. Otherwise, project and media files must be moved together."));
     }
@@ -103,7 +103,7 @@ DialogOptions::DialogOptions(wxWindow* win)
 
         wxArrayString choices;
         unsigned int selection = 0;
-        wxString currentFrameRate = Config::ReadString(Config::sPathDefaultFrameRate);
+        wxString currentFrameRate = Config::ReadString(Config::sPathVideoDefaultFrameRate);
         for ( FrameRate fr : FrameRate::getSupported() )
         {
             wxString frs = fr.toString();
@@ -117,18 +117,18 @@ DialogOptions::DialogOptions(wxWindow* win)
         mFrameRate->SetSelection(selection);
         addoption(_("Framerate for new projects"), mFrameRate);
 
-        long initial = Config::ReadLong(Config::sPathDefaultVideoWidth);
+        long initial = Config::ReadLong(Config::sPathVideoDefaultWidth);
         mDefaultVideoWidth = new wxSpinCtrl(mPanel, wxID_ANY, wxString::Format("%ld", initial), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, 20, 10000, initial);
         addoption(_("Default video width"), mDefaultVideoWidth);
 
-        initial = Config::ReadLong(Config::sPathDefaultVideoHeight);
+        initial = Config::ReadLong(Config::sPathVideoDefaultHeight);
         mDefaultVideoHeight = new wxSpinCtrl(mPanel, wxID_ANY, wxString::Format("%ld", initial), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, 20, 10000, initial);
         addoption(_("Default video height"), mDefaultVideoHeight);
 
-        mDefaultVideoScaling = new EnumSelector<model::VideoScaling>(mPanel, model::VideoScalingConverter::mapToHumanReadibleString, model::VideoScalingConverter::readConfigValue(Config::sPathDefaultVideoScaling));
+        mDefaultVideoScaling = new EnumSelector<model::VideoScaling>(mPanel, model::VideoScalingConverter::mapToHumanReadibleString, model::VideoScalingConverter::readConfigValue(Config::sPathVideoDefaultScaling));
         addoption(_("Default video scaling"), mDefaultVideoScaling);
 
-        mDefaultVideoAlignment = new EnumSelector<model::VideoAlignment>(mPanel, model::VideoAlignmentConverter::mapToHumanReadibleString, model::VideoAlignmentConverter::readConfigValue(Config::sPathDefaultVideoAlignment));
+        mDefaultVideoAlignment = new EnumSelector<model::VideoAlignment>(mPanel, model::VideoAlignmentConverter::mapToHumanReadibleString, model::VideoAlignmentConverter::readConfigValue(Config::sPathVideoDefaultAlignment));
         addoption(_("Default video alignment"), mDefaultVideoAlignment);
     }
     {
@@ -139,7 +139,7 @@ DialogOptions::DialogOptions(wxWindow* win)
          wxIntegerValidator<int> lengthValidator;
          lengthValidator.SetMin(1);
          lengthValidator.SetMax(10000);
-         pts initial = Config::ReadLong(Config::sPathDefaultStillImageLength);
+         pts initial = Config::ReadLong(Config::sPathTimelineDefaultStillImageLength);
 
          FrameRate framerate = FrameRate::s25p; // Default
          if (Window::get().GetDocumentManager()->GetCurrentDocument() != 0)
@@ -183,7 +183,7 @@ DialogOptions::DialogOptions(wxWindow* win)
          wxIntegerValidator<int> sampleRateValidator;
          sampleRateValidator.SetMin(1000);
          sampleRateValidator.SetMax(1000);
-         long initial = Config::ReadLong(Config::sPathDefaultAudioSampleRate);
+         long initial = Config::ReadLong(Config::sPathAudioDefaultSampleRate);
          mDefaultAudioSampleRate = new wxComboBox(mPanel, wxID_ANY, wxString::Format("%ld", initial),  wxDefaultPosition, wxDefaultSize, sampleRateChoices, 0, sampleRateValidator);
          addoption(_("Default audio sample rate"), mDefaultAudioSampleRate);
 
@@ -193,7 +193,7 @@ DialogOptions::DialogOptions(wxWindow* win)
          wxArrayString channelChoices;
          channelChoices.Add("1");
          channelChoices.Add("2");
-         initial = Config::ReadLong(Config::sPathDefaultAudioChannels);
+         initial = Config::ReadLong(Config::sPathAudioDefaultNumberOfChannels);
          mDefaultAudioNumberOfChannels = new wxComboBox(mPanel, wxID_ANY, wxString::Format("%ld", initial),  wxDefaultPosition, wxDefaultSize, channelChoices, 0, channelValidator);
          addoption(_("Default number of audio channels"), mDefaultAudioNumberOfChannels);
     }
@@ -202,16 +202,16 @@ DialogOptions::DialogOptions(wxWindow* win)
 
         addbox(_("Marking selection"));
 
-        double initial = Config::ReadDouble(Config::sPathMarkerBeginAddition);
+        double initial = Config::ReadDouble(Config::sPathTimelineMarkerBeginAddition);
         mMarkerBeginAddition = new wxSpinCtrlDouble(mPanel, wxID_ANY, wxString::Format("%1.1f", initial), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, -10, 10, initial, 0.1);
         addoption(_("Begin marker expansion/contraction (s)."), mMarkerBeginAddition);
 
-        initial = Config::ReadDouble(Config::sPathMarkerEndAddition);
+        initial = Config::ReadDouble(Config::sPathTimelineMarkerEndAddition);
         mMarkerEndAddition = new wxSpinCtrlDouble(mPanel, wxID_ANY, wxString::Format("%1.1f", initial), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, -10, 10, initial, 0.1);
         addoption(_("End marker expansion/contraction (s)."), mMarkerEndAddition);
 
         addbox(_("Clips"));
-        mStrip = new wxTextCtrl(mPanel, wxID_ANY, Config::ReadString(Config::sPathStrip));
+        mStrip = new wxTextCtrl(mPanel, wxID_ANY, Config::ReadString(Config::sPathTimelineStripFromClipNames));
         addoption(_("Text to remove from clip names - use '|' for multiple entries \r\n(requires restart)"), mStrip);
     }
     {
@@ -219,14 +219,14 @@ DialogOptions::DialogOptions(wxWindow* win)
 
         addbox(_("Logging"));
 
-        mSelectLogLevel = new EnumSelector<LogLevel>(mPanel, LogLevelConverter::mapToHumanReadibleString, LogLevelConverter::readConfigValue(Config::sPathLogLevel));
+        mSelectLogLevel = new EnumSelector<LogLevel>(mPanel, LogLevelConverter::mapToHumanReadibleString, LogLevelConverter::readConfigValue(Config::sPathDebugLogLevel));
         addoption(_("Log level"), mSelectLogLevel);
 
-        mSelectLogLevelAvcodec = new EnumSelector<int>(mPanel, Avcodec::mapAvcodecLevels, UtilMap<int,wxString>(Avcodec::mapAvcodecLevels).reverseLookup(Config::ReadString(Config::sPathLogLevelAvcodec), Avcodec::getDefaultLogLevel()));
+        mSelectLogLevelAvcodec = new EnumSelector<int>(mPanel, Avcodec::mapAvcodecLevels, UtilMap<int,wxString>(Avcodec::mapAvcodecLevels).reverseLookup(Config::ReadString(Config::sPathDebugLogLevelAvcodec), Avcodec::getDefaultLogLevel()));
         addoption(_("Avcodec log level (requires restart)"), mSelectLogLevelAvcodec);
 
         mShowDebugInfoOnWidgets = new wxCheckBox(mPanel, wxID_ANY, _T(""));
-        mShowDebugInfoOnWidgets->SetValue(Config::ReadBool(Config::sPathShowDebugInfoOnWidgets)); // Do not read cached value, but the last set value
+        mShowDebugInfoOnWidgets->SetValue(Config::ReadBool(Config::sPathDebugShowDebugInfoOnWidgets)); // Do not read cached value, but the last set value
         addoption(_("Show debug info on widgets (requires restart)"), mShowDebugInfoOnWidgets);
 
         mLogSequenceOnEdit = new wxCheckBox(mPanel, wxID_ANY, _T(""));
@@ -239,7 +239,7 @@ DialogOptions::DialogOptions(wxWindow* win)
 
     ASSERT_EQUALS(icons.size(), GetBookCtrl()->GetPageCount()); // Ensure the proper amount of icons
     LayoutDialog();
-    SetSize(wxSize(600, -1));
+    SetSize(wxSize(640, -1));
 
     gui::Window::get().setDialogOpen(true);
 }
@@ -258,31 +258,31 @@ DialogOptions::~DialogOptions()
     if (GetReturnCode() == GetAffirmativeId())
     {
         Config::holdWriteToDisk();
-        Config::WriteBool(      Config::sPathAutoLoadEnabled,             mLoadLast->IsChecked());
-        Config::WriteBool(      Config::sPathBackupBeforeSaveEnabled,     mBackupBeforeSave->IsChecked());
-        Config::WriteLong(      Config::sPathBackupBeforeSaveMaximum,     mBackupBeforeSaveMaximum->GetValue());
-        Config::WriteBool(      Config::sPathSavePathsRelativeToProject,  mSaveAbsolute->IsChecked());
+        Config::WriteBool(      Config::sPathProjectAutoLoadEnabled,             mLoadLast->IsChecked());
+        Config::WriteBool(      Config::sPathProjectBackupBeforeSaveEnabled,     mBackupBeforeSave->IsChecked());
+        Config::WriteLong(      Config::sPathProjectBackupBeforeSaveMaximum,     mBackupBeforeSaveMaximum->GetValue());
+        Config::WriteBool(      Config::sPathProjectSavePathsRelativeToProject,  mSaveAbsolute->IsChecked());
         Config::WriteLong(      Config::sPathMakeSequenceEmptyClipLength, mMakeSequenceEmptyLength->GetValue());
         Config::WriteLong(      Config::sPathMakeSequencePrefixLength,    mMakeSequencePrefixLength->GetValue());
-        Config::WriteString(    Config::sPathLogLevel,                    LogLevel_toString(mSelectLogLevel->getValue()).c_str());
-        Config::WriteString(    Config::sPathLogLevelAvcodec,             Avcodec::mapAvcodecLevels[mSelectLogLevelAvcodec->getValue()]);
-        Config::WriteBool(      Config::sPathShowDebugInfoOnWidgets,      mShowDebugInfoOnWidgets->IsChecked());
+        Config::WriteString(    Config::sPathDebugLogLevel,                    LogLevel_toString(mSelectLogLevel->getValue()).c_str());
+        Config::WriteString(    Config::sPathDebugLogLevelAvcodec,             Avcodec::mapAvcodecLevels[mSelectLogLevelAvcodec->getValue()]);
+        Config::WriteBool(      Config::sPathDebugShowDebugInfoOnWidgets,      mShowDebugInfoOnWidgets->IsChecked());
         Config::WriteBool(      Config::sPathDebugLogSequenceOnEdit,      mLogSequenceOnEdit->IsChecked());
-        Config::WriteString(    Config::sPathDefaultFrameRate,            (FrameRate::getSupported()[mFrameRate->GetSelection()]).toString());
-        Config::WriteLong(      Config::sPathDefaultVideoWidth,           mDefaultVideoWidth->GetValue());
-        Config::WriteLong(      Config::sPathDefaultVideoHeight,          mDefaultVideoHeight->GetValue());
-        Config::WriteString(    Config::sPathDefaultVideoScaling,         model::VideoScaling_toString(mDefaultVideoScaling->getValue()).c_str());
-        Config::WriteString(    Config::sPathDefaultVideoAlignment,       model::VideoAlignment_toString(mDefaultVideoAlignment->getValue()).c_str());
-        Config::WriteLong(      Config::sPathDefaultAudioSampleRate,      toLong(mDefaultAudioSampleRate->GetValue()));
-        Config::WriteLong(      Config::sPathDefaultAudioChannels,        toLong(mDefaultAudioNumberOfChannels->GetValue()));
-        Config::WriteLong(      Config::sPathMarkerBeginAddition,         mMarkerBeginAddition->GetValue());
-        Config::WriteLong(      Config::sPathMarkerEndAddition,           mMarkerEndAddition->GetValue());
-        Config::WriteLong(      Config::sPathDefaultStillImageLength,     toLong(mDefaultStillImageLength->GetValue()));
-        Config::WriteString(    Config::sPathStrip,                       mStrip->GetValue());
+        Config::WriteString(    Config::sPathVideoDefaultFrameRate,            (FrameRate::getSupported()[mFrameRate->GetSelection()]).toString());
+        Config::WriteLong(      Config::sPathVideoDefaultWidth,           mDefaultVideoWidth->GetValue());
+        Config::WriteLong(      Config::sPathVideoDefaultHeight,          mDefaultVideoHeight->GetValue());
+        Config::WriteString(    Config::sPathVideoDefaultScaling,         model::VideoScaling_toString(mDefaultVideoScaling->getValue()).c_str());
+        Config::WriteString(    Config::sPathVideoDefaultAlignment,       model::VideoAlignment_toString(mDefaultVideoAlignment->getValue()).c_str());
+        Config::WriteLong(      Config::sPathAudioDefaultSampleRate,      toLong(mDefaultAudioSampleRate->GetValue()));
+        Config::WriteLong(      Config::sPathAudioDefaultNumberOfChannels,        toLong(mDefaultAudioNumberOfChannels->GetValue()));
+        Config::WriteLong(      Config::sPathTimelineMarkerBeginAddition,         mMarkerBeginAddition->GetValue());
+        Config::WriteLong(      Config::sPathTimelineMarkerEndAddition,           mMarkerEndAddition->GetValue());
+        Config::WriteLong(      Config::sPathTimelineDefaultStillImageLength,     toLong(mDefaultStillImageLength->GetValue()));
+        Config::WriteString(    Config::sPathTimelineStripFromClipNames,                       mStrip->GetValue());
         Config::releaseWriteToDisk();
 
         // Use new values
-        Log::setReportingLevel(LogLevelConverter::readConfigValue(Config::sPathLogLevel));
+        Log::setReportingLevel(LogLevelConverter::readConfigValue(Config::sPathDebugLogLevel));
     }
 
     gui::Window::get().setDialogOpen(false);

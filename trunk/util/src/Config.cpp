@@ -90,6 +90,24 @@ void checkEnumFromMap(const wxString& path, const std::map<int, wxString>& map)
     wxConfigBase::Get()->DeleteEntry(path);
 }
 
+void checkColour(const wxString& path)
+{
+    wxRegEx reColourDecimal { wxT("^([[:digit:]][[:digit:]]?[[:digit:]]?),([[:digit:]][[:digit:]]?[[:digit:]]?),([[:digit:]][[:digit:]]?[[:digit:]]?)$") };
+    ASSERT(reColourDecimal.IsValid());
+    wxString s = wxConfigBase::Get()->Read(path, "");
+    if (reColourDecimal.Matches(s) &&
+        (wxAtoi(reColourDecimal.GetMatch(s, 1)) >= 0) &&
+        (wxAtoi(reColourDecimal.GetMatch(s, 1)) < 256) &&
+        (wxAtoi(reColourDecimal.GetMatch(s, 2)) >= 0) &&
+        (wxAtoi(reColourDecimal.GetMatch(s, 2)) < 256) &&
+        (wxAtoi(reColourDecimal.GetMatch(s, 3)) >= 0) &&
+        (wxAtoi(reColourDecimal.GetMatch(s, 3)) < 256))
+    {
+        return;
+    }
+    wxConfigBase::Get()->DeleteEntry(path);
+}
+
 // static
 void Config::init(const wxString& applicationName, const wxString& vendorName, bool inCxxTestMode)
 {
@@ -97,98 +115,98 @@ void Config::init(const wxString& applicationName, const wxString& vendorName, b
     wxString ConfigFile(util::path::getConfigFilePath().GetFullPath());
     VAR_ERROR(ConfigFile);
     wxConfigBase::Set(new Config(applicationName, vendorName, ConfigFile));
-    wxConfigBase::Get()->Write(Config::sPathTest, inCxxTestMode);
+    wxConfigBase::Get()->Write(Config::sPathTestCxxMode, inCxxTestMode);
 
     // Check values, delete from config if incorrect
     checkLong(Config::sPathMakeSequenceEmptyClipLength, 0, 100000);
     checkLong(Config::sPathMakeSequencePrefixLength, 1, 100);
-    checkBool(Config::sPathAutoLoadEnabled);
-    checkBool(Config::sPathBackupBeforeSaveEnabled);
-    checkLong(Config::sPathBackupBeforeSaveMaximum, 0, 10000);
-    checkBool(Config::sPathSavePathsRelativeToProject);
-    checkLong(Config::sPathDefaultStillImageLength, 1, 10000);
-    checkLong(Config::sPathDefaultTransitionLength, 4, 10000);
-    checkLong(Config::sPathDefaultVideoWidth, 10, 10000);
-    checkLong(Config::sPathDefaultVideoHeight, 10, 10000);
-    checkEnum(Config::sPathDefaultVideoScaling, model::VideoScaling);
-    checkEnum(Config::sPathDefaultVideoAlignment, model::VideoAlignment);
-    checkLong(Config::sPathDefaultAudioSampleRate, 100, 100000);
-    checkLong(Config::sPathDefaultAudioChannels, 1, 2);
-    checkEnum(Config::sPathLogLevel, LogLevel);
-    checkEnum(Config::sPathDefaultNewProjectType, model::DefaultNewProjectWizardStart);
-    checkEnumFromMap(Config::sPathLogLevelAvcodec, Avcodec::mapAvcodecLevels);
-    checkLong(Config::sPathMarkerBeginAddition, 0, 10000);
-    checkLong(Config::sPathMarkerEndAddition, 0, 10000);
-    checkBool(Config::sPathShowDebugInfoOnWidgets);
-    checkBool(Config::sPathSnapClips);
-    checkBool(Config::sPathSnapCursor);
-    checkBool(Config::sPathShowBoundingBox);
+    checkBool(Config::sPathProjectAutoLoadEnabled);
+    checkBool(Config::sPathProjectBackupBeforeSaveEnabled);
+    checkLong(Config::sPathProjectBackupBeforeSaveMaximum, 0, 10000);
+    checkBool(Config::sPathProjectSavePathsRelativeToProject);
+    checkLong(Config::sPathTimelineDefaultStillImageLength, 1, 10000);
+    checkLong(Config::sPathTimelineDefaultTransitionLength, 4, 10000);
+    checkLong(Config::sPathVideoDefaultWidth, 10, 10000);
+    checkLong(Config::sPathVideoDefaultHeight, 10, 10000);
+    checkEnum(Config::sPathVideoDefaultScaling, model::VideoScaling);
+    checkEnum(Config::sPathVideoDefaultAlignment, model::VideoAlignment);
+    checkLong(Config::sPathAudioDefaultSampleRate, 100, 100000);
+    checkLong(Config::sPathAudioDefaultNumberOfChannels, 1, 2);
+    checkEnum(Config::sPathDebugLogLevel, LogLevel);
+    checkEnum(Config::sPathProjectDefaultNewProjectType, model::DefaultNewProjectWizardStart);
+    checkEnumFromMap(Config::sPathDebugLogLevelAvcodec, Avcodec::mapAvcodecLevels);
+    checkLong(Config::sPathTimelineMarkerBeginAddition, 0, 10000);
+    checkLong(Config::sPathTimelineMarkerEndAddition, 0, 10000);
+    checkBool(Config::sPathDebugShowDebugInfoOnWidgets);
+    checkBool(Config::sPathTimelineSnapClips);
+    checkBool(Config::sPathTimelineSnapCursor);
+    checkBool(Config::sPathVideoShowBoundingBox);
     checkLong(Config::sPathDebugMaxRenderLength, 0, 1000000);
     checkBool(Config::sPathDebugShowCrashMenu);
     checkBool(Config::sPathDebugShowFrameNumbers);
-    checkBool(Config::sPathDebugIncludeScreenShot);
+    checkBool(Config::sPathDebugIncludeScreenShotInDump);
     checkBool(Config::sPathDebugLogSequenceOnEdit);
 
     // Set all defaults here
-    setDefault(Config::sPathAutoLoadEnabled, false);
-    setDefault(Config::sPathBackupBeforeSaveEnabled, true);
-    setDefault(Config::sPathBackupBeforeSaveMaximum, 10);
-    setDefault(Config::sPathSavePathsRelativeToProject, true);
-    setDefault(Config::sPathDebugIncludeScreenShot, true);
+    setDefault(Config::sPathProjectAutoLoadEnabled, false);
+    setDefault(Config::sPathProjectBackupBeforeSaveEnabled, true);
+    setDefault(Config::sPathProjectBackupBeforeSaveMaximum, 10);
+    setDefault(Config::sPathProjectSavePathsRelativeToProject, true);
+    setDefault(Config::sPathDebugIncludeScreenShotInDump, true);
     setDefault(Config::sPathDebugLogSequenceOnEdit, false);
     setDefault(Config::sPathDebugMaxRenderLength, 0); // Per default, render all
     setDefault(Config::sPathDebugShowCrashMenu, false);
     setDefault(Config::sPathDebugShowFrameNumbers, false);
-    setDefault(Config::sPathDefaultAudioChannels, 2);
-    setDefault(Config::sPathDefaultAudioSampleRate, 44100);
-    setDefault(Config::sPathDefaultExtension, "avi");
-    setDefault(Config::sPathDefaultStillImageLength, 150);
-    setDefault(Config::sPathDefaultTransitionLength, 20); // Divisible by 4 for automated tests
-    setDefault(Config::sPathDefaultVideoAlignment, model::VideoAlignment_toString(model::VideoAlignmentCenter));
-    setDefault(Config::sPathDefaultVideoHeight, 720);
-    setDefault(Config::sPathDefaultVideoScaling, model::VideoScaling_toString(model::VideoScalingFitToFill));
-    setDefault(Config::sPathDefaultVideoWidth, 1280);
-    setDefault(Config::sPathLastOpened, "");
-    setDefault(Config::sPathLogLevel, LogLevel_toString(LogWarning));
-    setDefault(Config::sPathDefaultNewProjectType, model::DefaultNewProjectWizardStart_toString(model::DefaultNewProjectWizardStartFolder));
-    setDefault(Config::sPathLogLevelAvcodec, Avcodec::getDefaultLogLevelString());
+    setDefault(Config::sPathAudioDefaultNumberOfChannels, 2);
+    setDefault(Config::sPathAudioDefaultSampleRate, 44100);
+    setDefault(Config::sPathFileDefaultExtension, "avi");
+    setDefault(Config::sPathTimelineDefaultStillImageLength, 150);
+    setDefault(Config::sPathTimelineDefaultTransitionLength, 20); // Divisible by 4 for automated tests
+    setDefault(Config::sPathVideoDefaultAlignment, model::VideoAlignment_toString(model::VideoAlignmentCenter));
+    setDefault(Config::sPathVideoDefaultHeight, 720);
+    setDefault(Config::sPathVideoDefaultScaling, model::VideoScaling_toString(model::VideoScalingFitToFill));
+    setDefault(Config::sPathVideoDefaultWidth, 1280);
+    setDefault(Config::sPathProjectLastOpened, "");
+    setDefault(Config::sPathDebugLogLevel, LogLevel_toString(LogWarning));
+    setDefault(Config::sPathProjectDefaultNewProjectType, model::DefaultNewProjectWizardStart_toString(model::DefaultNewProjectWizardStartFolder));
+    setDefault(Config::sPathDebugLogLevelAvcodec, Avcodec::getDefaultLogLevelString());
     setDefault(Config::sPathMakeSequenceEmptyClipLength, 0);
     setDefault(Config::sPathMakeSequencePrefixLength, 14);
-    setDefault(Config::sPathMarkerBeginAddition, 0);
-    setDefault(Config::sPathMarkerEndAddition, 0);
-    setDefault(Config::sPathShowBoundingBox, true);
-    setDefault(Config::sPathShowDebugInfoOnWidgets, false);
-    setDefault(Config::sPathSnapClips, true);
-    setDefault(Config::sPathSnapCursor, true);
-    setDefault(Config::sPathStrip, "scene'2011");
+    setDefault(Config::sPathTimelineMarkerBeginAddition, 0);
+    setDefault(Config::sPathTimelineMarkerEndAddition, 0);
+    setDefault(Config::sPathVideoShowBoundingBox, true);
+    setDefault(Config::sPathDebugShowDebugInfoOnWidgets, false);
+    setDefault(Config::sPathTimelineSnapClips, true);
+    setDefault(Config::sPathTimelineSnapCursor, true);
+    setDefault(Config::sPathTimelineStripFromClipNames, "scene'2011");
     setDefault(Config::sPathTestRunCurrent, "");
     setDefault(Config::sPathTestRunFrom, "");
     setDefault(Config::sPathTestRunOnly, "");
-    setDefault(Config::sPathWindowH, -1);
-    setDefault(Config::sPathWindowMaximized, false);
-    setDefault(Config::sPathWindowW, -1);
-    setDefault(Config::sPathWindowX, -1);
-    setDefault(Config::sPathWindowY, -1);
+    setDefault(Config::sPathWorkspaceH, -1);
+    setDefault(Config::sPathWorkspaceMaximized, false);
+    setDefault(Config::sPathWorkspaceW, -1);
+    setDefault(Config::sPathWorkspaceX, -1);
+    setDefault(Config::sPathWorkspaceY, -1);
     setDefault(Config::sPathWorkspacePerspectiveCurrent,"");
 
     if (inCxxTestMode)
     {
-        WriteString(Config::sPathDefaultNewProjectType, model::DefaultNewProjectWizardStart_toString(model::DefaultNewProjectWizardStartNone));
+        WriteString(Config::sPathProjectDefaultNewProjectType, model::DefaultNewProjectWizardStart_toString(model::DefaultNewProjectWizardStartNone));
     }
 
     // Special cases checking and default handling
-    wxString frameRate = wxConfigBase::Get()->Read(Config::sPathDefaultFrameRate, "");
+    wxString frameRate = wxConfigBase::Get()->Read(Config::sPathVideoDefaultFrameRate, "");
     FrameRate fr(frameRate);
     if (!fr.toString().IsSameAs(frameRate))
     {
-        WriteString(Config::sPathDefaultFrameRate, fr.toString());
+        WriteString(Config::sPathVideoDefaultFrameRate, fr.toString());
     }
 
     wxConfigBase::Get()->Flush();
 
     // Read cached values here
-    Log::setReportingLevel(LogLevelConverter::readConfigValue(Config::sPathLogLevel));
-    sShowDebugInfo = Config::ReadBool(Config::sPathShowDebugInfoOnWidgets);
+    Log::setReportingLevel(LogLevelConverter::readConfigValue(Config::sPathDebugLogLevel));
+    sShowDebugInfo = Config::ReadBool(Config::sPathDebugShowDebugInfoOnWidgets);
 
     Avcodec::configureLog();
 }
@@ -239,6 +257,25 @@ wxString Config::ReadString(const wxString& key)
 {
     boost::mutex::scoped_lock lock(sMutex);
     return readWithoutDefault<wxString>(key);
+}
+
+// static
+wxColour Config::ReadColour(const wxString& key)
+{
+    wxString s{ ReadString(key) };
+    wxRegEx reColourDecimal{ "^([[:digit:]][[:digit:]]?[[:digit:]]?),([[:digit:]][[:digit:]]?[[:digit:]]?),([[:digit:]][[:digit:]]?[[:digit:]]?)$" };
+    ASSERT(reColourDecimal.IsValid());
+    ASSERT(reColourDecimal.Matches(s))(key)(s);
+    int r{ wxAtoi(reColourDecimal.GetMatch(s, 1)) };
+    int g{ wxAtoi(reColourDecimal.GetMatch(s, 2)) };
+    int b{ wxAtoi(reColourDecimal.GetMatch(s, 3)) };
+    ASSERT_MORE_THAN_EQUALS(r,0);
+    ASSERT_LESS_THAN_EQUALS(r,255);
+    ASSERT_MORE_THAN_EQUALS(g,0);
+    ASSERT_LESS_THAN_EQUALS(g,255);
+    ASSERT_MORE_THAN_EQUALS(b,0);
+    ASSERT_LESS_THAN_EQUALS(b,255);
+    return wxColour{ static_cast<unsigned char>(r), static_cast<unsigned char>(g), static_cast<unsigned char>(b) };
 }
 
 // static
@@ -387,48 +424,48 @@ void Config::releaseWriteToDisk()
 // CONFIG PATHS
 //////////////////////////////////////////////////////////////////////////
 
-const wxString Config::sPathAutoLoadEnabled             ("/Project/AutoLoadEnabled");
-const wxString Config::sPathBackupBeforeSaveEnabled     ("/Project/BackupBeforeSaveEnabled");
-const wxString Config::sPathBackupBeforeSaveMaximum     ("/Project/BackupBeforeSaveMaximumFileCount");
-const wxString Config::sPathSavePathsRelativeToProject  ("/Project/SavePathsRelativeToProject");
-const wxString Config::sPathDebugIncludeScreenShot      ("/Debug/Screenshot");
-const wxString Config::sPathDebugLogSequenceOnEdit      ("/Debug/LogSequenceOnEdit");
-const wxString Config::sPathDebugMaxRenderLength        ("/Debug/MaxRenderLength");
-const wxString Config::sPathDebugShowCrashMenu          ("/Debug/ShowCrashMenu");
-const wxString Config::sPathDebugShowFrameNumbers       ("/Debug/ShowFrameNumbers");
-const wxString Config::sPathDefaultAudioChannels        ("/Audio/DefaultNumberOfChannels");
-const wxString Config::sPathDefaultAudioSampleRate      ("/Audio/DefaultSampleRate");
-const wxString Config::sPathDefaultExtension            ("/File/DefaultExtension");
-const wxString Config::sPathDefaultFrameRate            ("/Video/DefaultFrameRate");
-const wxString Config::sPathDefaultStillImageLength     ("/Timeline/DefaultStillImageLength");
-const wxString Config::sPathDefaultTransitionLength     ("/Timeline/DefaultTransitionLength");
-const wxString Config::sPathDefaultVideoAlignment       ("/Video/DefaultVideoAlignment");
-const wxString Config::sPathDefaultVideoHeight          ("/Video/DefaultHeight");
-const wxString Config::sPathDefaultVideoScaling         ("/Video/DefaultVideoScaling");
-const wxString Config::sPathDefaultVideoWidth           ("/Video/DefaultWidth");
-const wxString Config::sPathDefaultNewProjectType       ("/Project/DefaultNewProjectType");
-const wxString Config::sPathLastOpened                  ("/Project/LastOpened");
-const wxString Config::sPathLogLevel                    ("/Debug/LogLevel");
-const wxString Config::sPathLogLevelAvcodec             ("/Debug/LogLevelAvcodec");
-const wxString Config::sPathMakeSequenceEmptyClipLength ("/MakeSequence/EmptyLength");
-const wxString Config::sPathMakeSequencePrefixLength    ("/MakeSequence/PrefixLength");
-const wxString Config::sPathMarkerBeginAddition         ("/Timeline/MarkerBeginAddition");
-const wxString Config::sPathMarkerEndAddition           ("/Timeline/MarkerEndAddition");
-const wxString Config::sPathOverruleFourCC              ("/Video/FourCC");
-const wxString Config::sPathShowBoundingBox             ("/View/BoundingBox");
-const wxString Config::sPathShowDebugInfoOnWidgets      ("/Debug/Show");
-const wxString Config::sPathSnapClips                   ("/View/SnapClips");
-const wxString Config::sPathSnapCursor                  ("/View/SnapCursor");
-const wxString Config::sPathStrip                       ("/Timeline/Strip");
-const wxString Config::sPathTest                        ("/Test/CxxTestMode");
-const wxString Config::sPathTestRunOnly                 ("/Test/RunOnly");
-const wxString Config::sPathTestRunFrom                 ("/Test/RunFrom");
-const wxString Config::sPathTestRunCurrent              ("/Test/RunCurrent");
-const wxString Config::sPathWindowMaximized             ("/Workspace/Maximized");
-const wxString Config::sPathWindowW                     ("/Workspace/W");
-const wxString Config::sPathWindowH                     ("/Workspace/H");
-const wxString Config::sPathWindowX                     ("/Workspace/X");
-const wxString Config::sPathWindowY                     ("/Workspace/Y");
-const wxString Config::sPathWorkspacePerspectiveName    ("/Workspace/PerspectiveName");
-const wxString Config::sPathWorkspacePerspectiveSaved   ("/Workspace/PerspectiveSaved");
-const wxString Config::sPathWorkspacePerspectiveCurrent ("/Workspace/PerspectiveCurrent");
+const wxString Config::sPathAudioDefaultNumberOfChannels("/Audio/DefaultNumberOfChannels");
+const wxString Config::sPathAudioDefaultSampleRate("/Audio/DefaultSampleRate");
+const wxString Config::sPathDebugIncludeScreenShotInDump("/Debug/IncludeScreenshotInDump");
+const wxString Config::sPathDebugLogLevel("/Debug/LogLevel");
+const wxString Config::sPathDebugLogLevelAvcodec("/Debug/LogLevelAvcodec");
+const wxString Config::sPathDebugLogSequenceOnEdit("/Debug/LogSequenceOnEdit");
+const wxString Config::sPathDebugMaxRenderLength("/Debug/MaxRenderLength");
+const wxString Config::sPathDebugShowCrashMenu("/Debug/ShowCrashMenu");
+const wxString Config::sPathDebugShowDebugInfoOnWidgets("/Debug/ShowDebugInfoOnWidgets");
+const wxString Config::sPathDebugShowFrameNumbers("/Debug/ShowFrameNumbers");
+const wxString Config::sPathFileDefaultExtension("/File/DefaultExtension");
+const wxString Config::sPathMakeSequenceEmptyClipLength("/MakeSequence/EmptyClipLength");
+const wxString Config::sPathMakeSequencePrefixLength("/MakeSequence/PrefixLength");
+const wxString Config::sPathProjectAutoLoadEnabled("/Project/AutoLoadEnabled");
+const wxString Config::sPathProjectBackupBeforeSaveEnabled("/Project/BackupBeforeSaveEnabled");
+const wxString Config::sPathProjectBackupBeforeSaveMaximum("/Project/BackupBeforeSaveMaximumFileCount");
+const wxString Config::sPathProjectDefaultNewProjectType("/Project/DefaultNewProjectType");
+const wxString Config::sPathProjectLastOpened("/Project/LastOpened");
+const wxString Config::sPathProjectSavePathsRelativeToProject("/Project/SavePathsRelativeToProject");
+const wxString Config::sPathTestCxxMode("/Test/CxxTestMode");
+const wxString Config::sPathTestRunCurrent("/Test/RunCurrent");
+const wxString Config::sPathTestRunFrom("/Test/RunFrom");
+const wxString Config::sPathTestRunOnly("/Test/RunOnly");
+const wxString Config::sPathTimelineDefaultStillImageLength("/Timeline/DefaultStillImageLength");
+const wxString Config::sPathTimelineDefaultTransitionLength("/Timeline/DefaultTransitionLength");
+const wxString Config::sPathTimelineMarkerBeginAddition("/Timeline/MarkerBeginAddition");
+const wxString Config::sPathTimelineMarkerEndAddition("/Timeline/MarkerEndAddition");
+const wxString Config::sPathTimelineSnapClips("/Timeline/SnapClips");
+const wxString Config::sPathTimelineSnapCursor("/Timeline/SnapCursor");
+const wxString Config::sPathTimelineStripFromClipNames("/Timeline/StripFromClipNames");
+const wxString Config::sPathVideoDefaultAlignment("/Video/DefaultAlignment");
+const wxString Config::sPathVideoDefaultFrameRate("/Video/DefaultFrameRate");
+const wxString Config::sPathVideoDefaultHeight("/Video/DefaultHeight");
+const wxString Config::sPathVideoDefaultScaling("/Video/DefaultScaling");
+const wxString Config::sPathVideoDefaultWidth("/Video/DefaultWidth");
+const wxString Config::sPathVideoOverruleFourCC("/Video/FourCC");
+const wxString Config::sPathVideoShowBoundingBox("/Video/ShowBoundingBox");
+const wxString Config::sPathWorkspaceH("/Workspace/H");
+const wxString Config::sPathWorkspaceMaximized("/Workspace/Maximized");
+const wxString Config::sPathWorkspacePerspectiveName("/Workspace/PerspectiveName");
+const wxString Config::sPathWorkspacePerspectiveSaved("/Workspace/PerspectiveSaved");
+const wxString Config::sPathWorkspaceW("/Workspace/W");
+const wxString Config::sPathWorkspaceX("/Workspace/X");
+const wxString Config::sPathWorkspaceY("/Workspace/Y");
+const wxString Config::sPathWorkspacePerspectiveCurrent("/Workspace/PerspectiveCurrent");

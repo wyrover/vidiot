@@ -279,7 +279,7 @@ wxPoint RightBottom(model::IClipPtr clip)
 wxPoint OnTimescaleAbove(wxPoint position)
 {
     wxPoint result(position);
-    result.y = gui::Layout::TimeScaleHeight - 5;
+    result.y = gui::timeline::TimescaleView::TimeScaleHeight - 5;
     return result;
 }
 
@@ -344,7 +344,7 @@ pixel CursorPosition()
 void TimelinePositionCursor(pixel position)
 {
     VAR_DEBUG(position);
-    TimelineLeftClick(wxPoint(position, gui::Layout::VideoPosition - 4));
+    TimelineLeftClick(wxPoint(position, gui::timeline::TimescaleView::TimeScaleHeight + 2));
 }
 
 void TimelineZoomIn(int level)
@@ -371,13 +371,13 @@ void ToggleInterval(pixel from, pixel to)
     // where the new interval is started is known.
     //
     // beforeShift > tolerance in StateLeftDown (otherwise,  Drag won't be started)
-    pixel beforeShift = gui::Layout::DragThreshold + 1;
+    pixel beforeShift = gui::timeline::Drag::Threshold + 1;
     if (to > from)
     {
         // In case of moving from left to right, then the 'move before shift' must be on the left side
         beforeShift = -1 * beforeShift;
     }
-    static const pixel y = gui::Layout::TimeScaleHeight - 5;
+    static const pixel y = gui::timeline::TimescaleView::TimeScaleHeight - 5;
 
     wxPoint fromPoint(from + beforeShift, y);
     wxPoint betweenPoint(from, y); // Actual point at which the interval creation starts
@@ -405,7 +405,7 @@ void ScrollWithRightMouseButton(pixel distance)
 {
     VAR_DEBUG(distance);
     pixel maxW = getTimeline().GetClientSize().GetWidth() - 20;
-    pixel y = gui::Layout::TimeScaleHeight + 2;
+    pixel y = gui::timeline::TimescaleView::TimeScaleHeight + 2;
     ASSERT_LESS_THAN(distance,maxW);
     TimelineMove(wxPoint(maxW - 10, y));
     TimelineRightDown();

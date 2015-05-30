@@ -35,7 +35,7 @@
 #include <wx/cmdline.h>
 #include <wx/platinfo.h>
 
-//#include <vld.h> // Must be included in at least one cpp file
+// #include <vld.h> // Must be included in at least one cpp file
 
 namespace gui {
 

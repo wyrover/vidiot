@@ -18,7 +18,6 @@
 #include "Cursor.h"
 
 #include "Intervals.h"
-#include "Layout.h"
 #include "Player.h"
 #include "Scrolling.h"
 #include "Sequence.h"
@@ -163,7 +162,7 @@ void Cursor::onPlaybackPosition(pts position)
 
 void Cursor::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) const
 {
-    getTimeline().drawLine(dc,region,offset,mCursorPosition,Layout::get().CursorPen);
+    getTimeline().drawLine(dc, region, offset, mCursorPosition, wxPen{ wxColour{ 255, 0, 0 } });
 }
 
 //////////////////////////////////////////////////////////////////////////

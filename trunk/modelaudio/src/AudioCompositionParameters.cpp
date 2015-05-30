@@ -28,8 +28,8 @@ namespace model {
 //////////////////////////////////////////////////////////////////////////
 
 AudioCompositionParameters::AudioCompositionParameters()
-    : mSampleRate(Config::ReadLong(Config::sPathDefaultAudioSampleRate))
-    , mNrChannels(Config::ReadLong(Config::sPathDefaultAudioChannels))
+    : mSampleRate(Config::ReadLong(Config::sPathAudioDefaultSampleRate))
+    , mNrChannels(Config::ReadLong(Config::sPathAudioDefaultNumberOfChannels))
     , mPts(boost::none)
     , mChunkSize(boost::none)
 {

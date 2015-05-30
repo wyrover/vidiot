@@ -19,7 +19,6 @@
 
 #include "Convert.h"
 #include "Cursor.h"
-#include "Layout.h"
 #include "ProjectModification.h"
 #include "Scrolling.h"
 #include "UtilInt.h"

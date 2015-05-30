@@ -41,7 +41,7 @@ WximageClip::WximageClip(const WximageFilePtr& file)
 
     pts length = getLength();
     pts half = length / 2;
-    pts remainingLength = Config::ReadLong(Config::sPathDefaultStillImageLength);
+    pts remainingLength = Config::ReadLong(Config::sPathTimelineDefaultStillImageLength);
 
     // Move right edge to the left such that the clip can be extended if required
     adjustEnd( - half );

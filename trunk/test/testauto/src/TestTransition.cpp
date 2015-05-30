@@ -1050,7 +1050,7 @@ void TestTransition::testCompletelyTrimmingAwayTransition()
 {
     StartTestSuite();
     TimelineZoomIn(4);
-    pts defaultTransitionLength = Config::ReadLong(Config::sPathDefaultTransitionLength);
+    pts defaultTransitionLength = Config::ReadLong(Config::sPathTimelineDefaultTransitionLength);
     {
         MakeInOutTransitionAfterClip preparation(1);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
@@ -1096,7 +1096,7 @@ void TestTransition::testSplitNearZeroLengthEdgeOfTransition()
     StartTestSuite();
     TimelineZoomIn(5);
     MakeInOutTransitionAfterClip preparation(1);
-    pts defaultTransitionLength = Config::ReadLong(Config::sPathDefaultTransitionLength);
+    pts defaultTransitionLength = Config::ReadLong(Config::sPathTimelineDefaultTransitionLength);
     {
         StartTest("Left size is 0");
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
