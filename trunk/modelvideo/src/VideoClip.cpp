@@ -143,7 +143,7 @@ VideoFramePtr VideoClip::getNextVideo(const VideoCompositionParameters& paramete
 
         if (!generator->canBeOpened())
         {
-            return boost::make_shared<VideoFrame>(parameters, boost::make_shared<VideoFrameLayer>(getErrorImage(getDescription())));
+            videoFrame = boost::make_shared<VideoFrame>(parameters, boost::make_shared<VideoFrameLayer>(getErrorImage(getDescription())));
         }
         else
         {
