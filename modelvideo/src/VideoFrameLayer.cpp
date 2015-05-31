@@ -196,7 +196,7 @@ void VideoFrameLayer::draw(wxGraphicsContext* gc, const VideoCompositionParamete
 
         wxRect r(parameters.getRequiredRectangle());
         gc->DrawBitmap(
-            gc->GetRenderer()->CreateBitmapFromImage(*image),
+            gc->GetRenderer()->CreateBitmapFromImage(*image), // todo get crash in windows in createbitmapfromimage. This was called in the mainline thread. At the same time the worker thread was running renderpeaks (code line "delete gc"), and was callin wxbitmap::converttoimage simultaneously...
             r.x + mPosition.x,
             r.y + mPosition.y,
             image->GetWidth(),

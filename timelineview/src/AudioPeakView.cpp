@@ -134,7 +134,7 @@ struct RenderPeaksWork
             }
             gc->StrokeLines(beginPoints.size(), &beginPoints[0], &endPoints[0]);
         }
-        delete gc;
+        delete gc; // todo get crash in windows in createbitmapfromimage. This was called in the mainline thread. At the same time the worker thread was running renderpeaks (code line "delete gc"), and was callin wxbitmap::converttoimage simultaneously...
         result->ConvertAlphaToMask();
         return result;
     }
