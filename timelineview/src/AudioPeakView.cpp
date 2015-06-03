@@ -46,23 +46,14 @@ struct RenderPeaksWork
 
     wxImagePtr createBitmap() override
     {
+        if (mSize.x < 2 || mSize.y < 10) { return nullptr; } // Avoid drawing over the clip bounds
         if (!wxThread::IsMain())
         {
             setThreadName("RenderPeaks");
         }
 
         wxImagePtr result = boost::make_shared<wxImage>(mSize);
-        result->InitAlpha();
-        memset(result->GetAlpha(), 0, mSize.x * mSize.y);
-
-        wxGraphicsContext* gc = wxGraphicsContext::Create(*result);
-        gc->SetInterpolationQuality(wxINTERPOLATION_BEST);
-        gc->SetAntialiasMode(wxANTIALIAS_NONE);
-        gc->SetCompositionMode(wxCOMPOSITION_OVER);
-
-        gc->SetPen(wxPen{ wxColour{ 87, 120, 74 }, 1 });
-        gc->SetBrush(wxBrush{ wxColour{255, 255, 255}, wxBRUSHSTYLE_TRANSPARENT });
-        gc->DrawRectangle(0,0,mSize.x, mSize.y);
+        memset(result->GetData(), 0, mSize.x * mSize.y * 3); // Default: all black (is the transparent colour)
 
         model::AudioClipPtr clone = make_cloned<model::AudioClip>(boost::dynamic_pointer_cast<model::AudioClip>(mClip));
 
@@ -84,14 +75,13 @@ struct RenderPeaksWork
         ASSERT(!clone->getTrack()); // NOTE: This is a check to ensure that a clone is used, and not the original is 'moved'
         if (clone->getLength() > 0)
         {
-            std::vector<wxPoint2DDouble> beginPoints;
-            std::vector<wxPoint2DDouble> endPoints;
-
             // The if is required to avoid errors during editing operations.
-
             int origin{ mSize.y / 2 };
-            beginPoints.push_back(wxPoint2DDouble(0,origin));
-            endPoints.push_back(wxPoint2DDouble(mSize.x, origin));
+
+            for (int x = 0; x < mSize.x; ++x)
+            {
+                result->SetRGB(wxRect{ 0, origin, mSize.x, 1 }, 87, 120, 74);
+            }
 
             model::AudioPeaks peaks = clone->getPeaks();
             int nPeaks = peaks.size();
@@ -127,15 +117,11 @@ struct RenderPeaksWork
                         min = std::max(min, boost::rational_cast<int>(rational64(mSize.y, 2) * rational64(peak.first, std::numeric_limits<sample>::min())));
                         max = std::max(max, boost::rational_cast<int>(rational64(mSize.y, 2) * rational64(peak.second, std::numeric_limits<sample>::max())));
                     }
-
-                    beginPoints.push_back(wxPoint2DDouble(x,origin - min));
-                    endPoints.push_back(wxPoint2DDouble(x, origin + max));
+                    result->SetRGB(wxRect{ x, origin - min, 1, max + min }, 87, 120, 74);
                 }
             }
-            gc->StrokeLines(beginPoints.size(), &beginPoints[0], &endPoints[0]);
         }
-        delete gc; // todo get crash in windows in createbitmapfromimage. This was called in the mainline thread. At the same time the worker thread was running renderpeaks (code line "delete gc"), and was callin wxbitmap::converttoimage simultaneously...
-        result->ConvertAlphaToMask();
+        result->SetMaskColour(0,0,0);
         return result;
     }
 };
@@ -167,7 +153,8 @@ RenderClipPreviewWorkPtr AudioPeakView::render() const
 
 wxSize AudioPeakView::requiredSize() const
 {
-    return wxSize( getParent().getW() - 2 * ClipView::getBorderSize(), getParent().getH() - ClipView::getBorderSize() - ClipView::getDescriptionHeight());
+    wxSize result{ getParent().getW() - 2 * ClipView::getBorderSize(), getParent().getH() - ClipView::getBorderSize() - ClipView::getDescriptionHeight() };
+    return result;
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -155,7 +155,6 @@ void ClipView::invalidateRect()
     if (mClip->isA<model::VideoClip>() || mClip->isA<model::AudioClip>())
     {
         getViewMap().getClipPreview(mClip)->invalidateRect();
-        //getViewMap().getThumbnail(mClip)->invalidateRect();
     }
 }
 
@@ -175,10 +174,6 @@ void ClipView::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) con
         }
         getTimeline().copyRect(dc, region, offset, *mBitmap, getRect());
         if (mClip->isA<model::VideoClip>() || mClip->isA<model::AudioClip>())
-        //{
-        //    getViewMap().getThumbnail(mClip)->draw(dc,region,offset);
-        //}
-        //else if (mClip->isA<model::AudioClip>())
         {
             getViewMap().getClipPreview(mClip)->draw(dc,region,offset);
         }

@@ -51,6 +51,8 @@ struct RenderThumbnailWork
 
     wxImagePtr createBitmap() override
     {
+        if (mSize.x < 10 || mSize.y < 10) { return nullptr; } // Avoid issues in swscale
+
         if (!wxThread::IsMain())
         {
             setThreadName("RenderThumbnail");
@@ -110,8 +112,6 @@ struct RenderThumbnailWork
         return result;
     }
 };
-
-
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION METHODS

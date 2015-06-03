@@ -137,10 +137,6 @@ ClipPreview* ViewMap::getClipPreview(const model::IClipPtr& clip) const
 
 void ViewMap::invalidateClipPreviews()
 {
-    //for (auto v : mTracks ) // todo why is this here? either for changing zoom or for changing trackdivider
-    //{
-    //    v.second->invalidateRect();
-    //}
     for (auto v : mClipPreviews )
     {
         v.second->invalidateRect();
