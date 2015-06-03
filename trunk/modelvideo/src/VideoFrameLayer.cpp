@@ -21,6 +21,7 @@
 #include "Convert.h"
 #include "Constants.h"
 #include "UtilInitAvcodec.h"
+#include "UtilLogBoost.h"
 #include "UtilLogWxwidgets.h"
 #include "VideoCompositionParameters.h"
 
@@ -196,7 +197,7 @@ void VideoFrameLayer::draw(wxGraphicsContext* gc, const VideoCompositionParamete
 
         wxRect r(parameters.getRequiredRectangle());
         gc->DrawBitmap(
-            gc->GetRenderer()->CreateBitmapFromImage(*image), // todo get crash in windows in createbitmapfromimage. This was called in the mainline thread. At the same time the worker thread was running renderpeaks (code line "delete gc"), and was callin wxbitmap::converttoimage simultaneously...
+            gc->GetRenderer()->CreateBitmapFromImage(*image), // todo avoid all gdi calls in non gui threads.
             r.x + mPosition.x,
             r.y + mPosition.y,
             image->GetWidth(),

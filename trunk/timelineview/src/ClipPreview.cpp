@@ -138,14 +138,6 @@ void ClipPreview::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) 
 {
     wxSize size(getSize());
 
-    if (size.GetWidth() < 10 || size.GetHeight() < 10)
-    {
-        // if too small, then no peaks. Change track length to a very small size to test.
-        // Note: this check also prevents that the peaks are drawn 'outside' the clip's region
-        //       when there's just not enough room.
-        return;
-    }
-
     if (getTrim().isActive() &&
         mImages.find(size) == mImages.end())
     {
@@ -171,7 +163,10 @@ void ClipPreview::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) 
     else
     {
         wxBitmapPtr bitmap = getCachedBitmap(size);
-        getTimeline().copyRect(dc, region, offset, *bitmap, getRect(), bitmap->GetMask() != nullptr);
+        if (bitmap)
+        {
+            getTimeline().copyRect(dc, region, offset, *bitmap, getRect(), bitmap->GetMask() != nullptr);
+        }
     }
 }
 
@@ -190,16 +185,20 @@ void ClipPreview::drawForDragging(const wxPoint& position, int height, wxDC& dc)
     }
     if (size.x != 0 && size.y != 0)
     {
-        wxMemoryDC dcBmp(*getCachedBitmap(size));
-        dc.Blit(
-            position.x + ClipView::BorderSize,
-            position.y + ClipView::getDescriptionHeight(),
-            size.GetWidth(),
-            static_cast<int>(std::max(size.GetHeight(),height - ClipView::getDescriptionHeight() - ClipView::BorderSize )),
-            &dcBmp,
-            0,
-            0,
-            wxCOPY);
+        wxBitmapPtr bitmap{ getCachedBitmap(size) };
+        if (bitmap)
+        {
+            wxMemoryDC dcBmp(*bitmap);
+            dc.Blit(
+                position.x + ClipView::BorderSize,
+                position.y + ClipView::getDescriptionHeight(),
+                size.GetWidth(),
+                static_cast<int>(std::max(size.GetHeight(), height - ClipView::getDescriptionHeight() - ClipView::BorderSize)),
+                &dcBmp,
+                0,
+                0,
+                wxCOPY);
+        }
     }
 }
 
@@ -233,10 +232,9 @@ void ClipPreview::invalidateCachedBitmaps()
 
 void ClipPreview::determineSize() const
 {
-    static const int sMinimumSize = 10; // To avoid scaling issues with swscale
     wxSize size{ requiredSize() };
-    mW.reset(std::max(sMinimumSize, size.x)); // Ensure minimum width of 10 pixels
-    mH.reset(std::max(sMinimumSize, size.y)); // Ensure minimum height of 10 pixels
+    mW.reset(size.x);
+    mH.reset(size.y);
 
     // Stored to detect changes in the track height. This is done to ensure that a mismatch
     // is detected. Consider the example where a thumbnail is rendered, and then the track size
@@ -272,8 +270,16 @@ wxBitmapPtr ClipPreview::getCachedBitmap(wxSize size) const
     auto itBitmaps = mBitmaps.find(size);
     if (itBitmaps == mBitmaps.end())
     {
-        // Bitmaps are GDI objects and hence must be created in the main thread.
-        mBitmaps[size] = boost::make_shared<wxBitmap>(*(mImages.at(size)), 24);
+        wxImagePtr image{ mImages.at(size) };
+        if (image != nullptr)
+        {
+            // Bitmaps are GDI objects and hence must be created in the main thread.
+            mBitmaps[size] = boost::make_shared<wxBitmap>(*image, 24);
+        }
+        else
+        {
+            mBitmaps[size] = nullptr;
+        }
     }
     return mBitmaps.at(size);
 }
