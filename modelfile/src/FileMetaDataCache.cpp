@@ -17,10 +17,29 @@
 
 #include "FileMetaDataCache.h"
 
-#include "AudioPeaks.h"
 #include <boost/serialization/map.hpp>
+#include "UtilLogWxwidgets.h"
+#include "UtilSerializeBoost.h"
+#include "UtilSerializeWxwidgets.h"
 
 namespace model {
+
+struct FileMetaData
+{
+    FileMetaData() {}
+    explicit FileMetaData(wxDateTime lastmodified) : LastModified(lastmodified) {}
+
+    wxDateTime LastModified;
+    boost::optional<AudioPeaks> Peaks = boost::none;
+
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive & ar, const unsigned int version)
+    {
+        ar & BOOST_SERIALIZATION_NVP(LastModified);
+        ar & BOOST_SERIALIZATION_NVP(Peaks);
+    }
+};
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
@@ -43,28 +62,39 @@ FileMetaDataCache::~FileMetaDataCache()
 // todo store last modified dates/times for all files in the cache, and invalidate when no longer valid.
 // todo watch all these files. or do the check upon each get?
 
-bool FileMetaDataCache::hasPeaks(const wxFileName& file) const
+boost::optional<AudioPeaks> FileMetaDataCache::getPeaks(const wxFileName& file)
 {
     boost::mutex::scoped_lock lock(mMutex);
-    return mPeaks.find(file) != mPeaks.end();
-}
-
-const AudioPeaks& FileMetaDataCache::getPeaks(const wxFileName& file) const
-{
-    boost::mutex::scoped_lock lock(mMutex);
-    ASSERT_MAP_CONTAINS(mPeaks, file);
-    return mPeaks.find(file)->second;
+    return getDataForFile(file)->Peaks;
 }
 
 void FileMetaDataCache::setPeaks(const wxFileName& file, const AudioPeaks& peaks)
 {
     boost::mutex::scoped_lock lock(mMutex);
-    mPeaks[file] = peaks;
+    getDataForFile(file)->Peaks.reset(peaks);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
+
+FileMetaDataPtr FileMetaDataCache::getDataForFile(const wxFileName& file)
+{
+    // NOT: boost::mutex::scoped_lock lock(mMutex); -- Lock taken in calling method.
+    auto ret = mMetaData.insert(std::make_pair(file, boost::make_shared<FileMetaData>(file.GetModificationTime()))); // Inserts new item if no entry present yet.
+    FileMetaDataPtr data = ret.first->second;
+    wxDateTime currentFileTime{ file.GetModificationTime() };
+    wxDateTime cachedFileTime{ data->LastModified };
+    currentFileTime.SetMillisecond(0); // Sometimes get 012 milliseconds changes within
+    cachedFileTime.SetMillisecond(0);  // one test case. Ignore changes < 1 second.
+    if (!currentFileTime.IsEqualTo(cachedFileTime))
+    {
+        VAR_INFO(file.GetFullPath())(currentFileTime)(cachedFileTime);
+        mMetaData.erase(ret.first);
+        return getDataForFile(file); // Will cause insert of new empty item.
+    }
+    return data;
+}
 
 //////////////////////////////////////////////////////////////////////////
 // LOGGING
@@ -85,7 +115,7 @@ void FileMetaDataCache::serialize(Archive & ar, const unsigned int version)
 {
     try
     {
-        ar & BOOST_SERIALIZATION_NVP(mPeaks);
+        ar & BOOST_SERIALIZATION_NVP(mMetaData);
     }
     catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
@@ -95,6 +125,9 @@ void FileMetaDataCache::serialize(Archive & ar, const unsigned int version)
 
 template void FileMetaDataCache::serialize<boost::archive::xml_oarchive>(boost::archive::xml_oarchive& ar, const unsigned int archiveVersion);
 template void FileMetaDataCache::serialize<boost::archive::xml_iarchive>(boost::archive::xml_iarchive& ar, const unsigned int archiveVersion);
+
+template void FileMetaData::serialize<boost::archive::xml_oarchive>(boost::archive::xml_oarchive& ar, const unsigned int archiveVersion);
+template void FileMetaData::serialize<boost::archive::xml_iarchive>(boost::archive::xml_iarchive& ar, const unsigned int archiveVersion);
 
 } //namespace
 

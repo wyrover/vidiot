@@ -43,7 +43,8 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     RenderClipPreviewWorkPtr render() const override;
-    wxSize requiredSize() const override;
+    wxSize getRequiredSize() const override;
+    wxSize getMinimumSize() const override;
 
     //////////////////////////////////////////////////////////////////////////
     // AUDIOCLIP EVENTS

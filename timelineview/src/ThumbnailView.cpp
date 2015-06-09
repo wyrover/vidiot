@@ -51,7 +51,9 @@ struct RenderThumbnailWork
 
     wxImagePtr createBitmap() override
     {
-        if (mSize.x < 10 || mSize.y < 10) { return nullptr; } // Avoid issues in swscale
+        // Note: if this would return a nullptr then scheduling would be repeated over and over again, since nothing is generated.
+        ASSERT_MORE_THAN_EQUALS(mSize.x, 10); // Avoid issues in swscale
+        ASSERT_MORE_THAN_EQUALS(mSize.y, 10); 
 
         if (!wxThread::IsMain())
         {
@@ -131,10 +133,15 @@ RenderClipPreviewWorkPtr ThumbnailView::render() const
     return boost::make_shared<RenderThumbnailWork>(mClip, getSize(), getZoom().getCurrent());
 }
 
-wxSize ThumbnailView::requiredSize() const
+wxSize ThumbnailView::getRequiredSize() const
 {
     wxSize boundingBox{ getParent().getW() - 2 * ClipView::getBorderSize(), getParent().getH() - ClipView::getBorderSize() - ClipView::getDescriptionHeight() };
     return model::Convert::sizeInBoundingBox(model::Properties::get().getVideoSize(), boundingBox);
+}
+
+wxSize ThumbnailView::getMinimumSize() const
+{
+    return wxSize(10,10);
 }
 
 }} // namespace

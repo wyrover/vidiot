@@ -21,6 +21,7 @@
 BOOST_SERIALIZATION_SPLIT_FREE(wxString)
 BOOST_SERIALIZATION_SPLIT_FREE(wxFileName)
 BOOST_SERIALIZATION_SPLIT_FREE(wxRegion)
+BOOST_SERIALIZATION_SPLIT_FREE(wxDateTime)
 
 namespace boost { namespace serialization {
 template<class Archive> void save(Archive& ar, const wxString& string, const unsigned int version);
@@ -40,6 +41,10 @@ template<class Archive> void serialize(Archive& ar, wxRect& r, const unsigned in
 
 template<class Archive> void save(Archive& ar, const wxRegion& region, const unsigned int version);
 template<class Archive> void load(Archive& ar,       wxRegion& region, const unsigned int version);
+
+template<class Archive> void save(Archive& ar, const wxDateTime& datetime, const unsigned int version);
+template<class Archive> void load(Archive& ar,       wxDateTime& datetime, const unsigned int version);
+
 }} // namespace boost::serialization
 
 BOOST_CLASS_VERSION(wxFileName, 2)

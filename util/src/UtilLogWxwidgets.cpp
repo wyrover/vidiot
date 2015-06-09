@@ -303,3 +303,9 @@ std::ostream& operator<<(std::ostream& os, const wxArrayString& obj)
     os  << '}';
     return os;
 }
+
+std::ostream& operator<<(std::ostream& os, const wxDateTime& obj)
+{
+    os << obj.FormatISOCombined() << '.' << std::setw(3) << std::setfill('0') << obj.GetMillisecond();
+    return os;
+}

@@ -387,8 +387,9 @@ AudioPeaks AudioFile::getPeaks(pts offset, pts length)
         return AudioPeaks();
     }
 
-    wxString key{ util::path::toPath(getPath()) };
-    if (!FileMetaDataCache::get().hasPeaks(key))
+    boost::optional<AudioPeaks> peaks{ FileMetaDataCache::get().getPeaks(getPath()) };
+    
+    if (!peaks)
     {
         // The setPts() & determineChunkSize() below is required for the case where the file has been removed from disk,
         // and the chunk size is used to initialize a chunk of silence.
@@ -421,10 +422,11 @@ AudioPeaks AudioFile::getPeaks(pts offset, pts length)
             }
             chunk = getNextAudio(parameters);
         }
-        FileMetaDataCache::get().setPeaks(key, allPeaks);
+        FileMetaDataCache::get().setPeaks(getPath(), allPeaks);
+        peaks.reset(allPeaks);
     }
 
-    std::vector<AudioPeak> allPeaks{ FileMetaDataCache::get().getPeaks(key) };
+    const AudioPeaks& allPeaks{ *peaks };
     ASSERT_LESS_THAN_EQUALS(offset + length, allPeaks.size());
     AudioPeaks result(allPeaks.begin() + offset, allPeaks.begin() + offset + length);
     return result;

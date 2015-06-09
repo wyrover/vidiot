@@ -46,7 +46,9 @@ struct RenderPeaksWork
 
     wxImagePtr createBitmap() override
     {
-        if (mSize.x < 2 || mSize.y < 10) { return nullptr; } // Avoid drawing over the clip bounds
+        // Note: if this would return a nullptr then scheduling would be repeated over and over again, since nothing is generated.
+        ASSERT_MORE_THAN_EQUALS(mSize.x, 2); // Avoid drawing over the clip bounds
+        ASSERT_MORE_THAN_EQUALS(mSize.y, 10); 
         if (!wxThread::IsMain())
         {
             setThreadName("RenderPeaks");
@@ -97,7 +99,7 @@ struct RenderPeaksWork
                 int firstPeak = clone->getOffset();
                 int firstPixel = Zoom::ptsToPixels(firstPeak, mZoom);
 
-                for (int x{ 0 }; x < mSize.GetWidth(); ++x)
+                for (int x{ 0 }; x < mSize.GetWidth() && !isAborted(); ++x)
                 {
                     // Always computed wrt the total file length. This ensures consistent drawing during trimming operations.
                     // Without this, during trimming the displayed images flickers a bit (because of rounding issues).
@@ -151,11 +153,17 @@ RenderClipPreviewWorkPtr AudioPeakView::render() const
     return boost::make_shared<RenderPeaksWork>(mClip, getSize(), getZoom().getCurrent());
 }
 
-wxSize AudioPeakView::requiredSize() const
+wxSize AudioPeakView::getRequiredSize() const
 {
     wxSize result{ getParent().getW() - 2 * ClipView::getBorderSize(), getParent().getH() - ClipView::getBorderSize() - ClipView::getDescriptionHeight() };
     return result;
 }
+
+wxSize AudioPeakView::getMinimumSize() const
+{
+    return wxSize(2,10);
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 // AUDIOCLIP EVENTS

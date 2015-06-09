@@ -32,6 +32,8 @@ bool Config::sHold(false);
 
 DEFINE_EVENT(EVENT_CONFIG_UPDATED, EventConfigUpdated, wxString);
 
+// todo cache all values (upon startup and reset upon each change) to avoid threading issues.
+
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
