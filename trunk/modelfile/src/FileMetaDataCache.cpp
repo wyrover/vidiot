@@ -59,9 +59,6 @@ FileMetaDataCache::~FileMetaDataCache()
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-// todo store last modified dates/times for all files in the cache, and invalidate when no longer valid.
-// todo watch all these files. or do the check upon each get?
-
 boost::optional<AudioPeaks> FileMetaDataCache::getPeaks(const wxFileName& file)
 {
     boost::mutex::scoped_lock lock(mMutex);
