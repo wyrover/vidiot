@@ -137,9 +137,12 @@ void ClipPreview::invalidateRect()
 void ClipPreview::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) const
 {
     wxSize size(getSize());
+    wxSize minimumSize(getMinimumSize());
 
     if (getTrim().isActive() &&
-        mImages.find(size) == mImages.end())
+        mImages.find(size) == mImages.end() &&
+        getW() >=  minimumSize.x &&
+        getH() >= minimumSize.y)
     {
         // In case of trimming, update the clip preview immediately. Any newly created preview is the direct result of the trimming.
         // Do not schedule the rendering. That would cause a delay in showing the updated image.
@@ -232,7 +235,7 @@ void ClipPreview::invalidateCachedBitmaps()
 
 void ClipPreview::determineSize() const
 {
-    wxSize size{ requiredSize() };
+    wxSize size{ getRequiredSize() };
     mW.reset(size.x);
     mH.reset(size.y);
 
@@ -244,6 +247,10 @@ void ClipPreview::determineSize() const
 
 void ClipPreview::scheduleRendering() const
 {
+    // Avoid scheduling unused bitmaps. Since these are thrown away, the scheduling will be repetitive, leasing to performance issues.
+    wxSize minimumSize(getMinimumSize());
+    if (getW() < minimumSize.x || getH() < minimumSize.y) { return; } 
+
     if (!getTimeline().renderThumbnails()) { return; }
     abortPendingWork();
 

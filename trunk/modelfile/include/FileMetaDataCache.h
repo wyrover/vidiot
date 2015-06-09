@@ -20,11 +20,15 @@
 
 #include "UtilSingleInstance.h"
 
+#include "AudioPeaks.h"
 #include "UtilInt.h"
 
 namespace model {
 
 class AudioPeaks;
+
+struct FileMetaData;
+typedef boost::shared_ptr<FileMetaData> FileMetaDataPtr;
 
 class FileMetaDataCache
     :   public SingleInstance<FileMetaDataCache>
@@ -43,8 +47,7 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    bool hasPeaks(const wxFileName& file) const;
-    const AudioPeaks& getPeaks(const wxFileName& file) const;
+    boost::optional<AudioPeaks> getPeaks(const wxFileName& file);
     void setPeaks(const wxFileName& file, const AudioPeaks& peaks);
 
 protected:
@@ -55,12 +58,19 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    std::map<wxFileName, AudioPeaks> mPeaks;
+
+    std::map<wxFileName, FileMetaDataPtr> mMetaData;
+
     mutable boost::mutex mMutex; // todo replace boost threading with std threading
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
+
+    /// This method also verifies if the stored data was created for the file
+    /// with the same modification time. If not, then any stored information
+    /// is erased and nullptr is returned.
+    FileMetaDataPtr getDataForFile(const wxFileName& file);
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

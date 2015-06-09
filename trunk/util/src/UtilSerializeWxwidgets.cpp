@@ -211,4 +211,39 @@ void load(Archive & ar, wxRegion & region, const unsigned int version)
 template void save<boost::archive::xml_oarchive>(boost::archive::xml_oarchive& ar, const wxRegion & region, const unsigned int version);
 template void load<boost::archive::xml_iarchive>(boost::archive::xml_iarchive& ar,       wxRegion & region, const unsigned int version);
 
+const std::string sDateTime("datetime");
+const wxString sDateTimeFormat("%Y-%m-%d %H:%M:%S.%l");
+
+template<class Archive>
+void save(Archive & ar, const wxDateTime & datetime, const unsigned int version)
+{
+    try
+    {
+        wxString date{datetime.FormatISOCombined()};
+        ar & boost::serialization::make_nvp(sDateTime.c_str(), date);
+    }
+    catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
+    catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
+    catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
+    catch (...)                                  { LOG_ERROR;                                   throw; }
+}
+
+template<class Archive>
+void load(Archive & ar, wxDateTime & datetime, const unsigned int version)
+{
+    try
+    {
+        wxString s;
+        ar & boost::serialization::make_nvp(sDateTime.c_str(), s);
+        datetime.ParseISOCombined(s);
+    }
+    catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
+    catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
+    catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
+    catch (...)                                  { LOG_ERROR;                                   throw; }
+}
+
+template void save<boost::archive::xml_oarchive>(boost::archive::xml_oarchive& ar, const wxDateTime & datetime, const unsigned int version);
+template void load<boost::archive::xml_iarchive>(boost::archive::xml_iarchive& ar,       wxDateTime & datetime, const unsigned int version);
+
 }} // namespace boost::serialization

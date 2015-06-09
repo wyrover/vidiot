@@ -32,4 +32,6 @@ std::ostream& operator<<(std::ostream& os, const wxInterpolationQuality& obj);
 std::ostream& operator<<(std::ostream& os, const wxAntialiasMode& obj);
 std::ostream& operator<<(std::ostream& os, const wxGraphicsContext& obj);
 std::ostream& operator<<(std::ostream& os, const wxArrayString& obj);
+std::ostream& operator<<(std::ostream& os, const wxDateTime& obj);
+
 #endif

@@ -89,7 +89,9 @@ protected:
     //////////////////////////////////////////////////////////////////////////
 
     virtual RenderClipPreviewWorkPtr render() const = 0;
-    virtual wxSize requiredSize() const = 0;
+
+    virtual wxSize getRequiredSize() const = 0;
+    virtual wxSize getMinimumSize() const = 0;
 
     void invalidateCachedBitmaps();
 
