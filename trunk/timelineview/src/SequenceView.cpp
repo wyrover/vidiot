@@ -98,12 +98,11 @@ pixel SequenceView::getH() const
 {
     if (!mHeight)
     {
+        int timelineHeight{ getTimeline().GetClientSize().GetHeight() };
         int height =
             std::max(
-            getTimeline().GetClientSize().GetHeight(),      // At least the widget size
-            TimescaleView::TimeScaleHeight +
-            SequenceView::MinimalGreyAboveVideoTracksHeight +
-            mVideoView->getH() +
+            timelineHeight,      // At least the widget size
+            getSequence()->getDividerPosition() +
             DividerView::AudioVideoDividerHeight +
             mAudioView->getH() +
             SequenceView::MinimalGreyBelowAudioTracksHeight);     // Height of all combined components
