@@ -30,6 +30,7 @@ struct FileMetaData
     explicit FileMetaData(wxDateTime lastmodified) : LastModified(lastmodified) {}
 
     wxDateTime LastModified;
+    boost::optional<pts> Length = boost::none;
     boost::optional<AudioPeaks> Peaks = boost::none;
 
     friend class boost::serialization::access;
@@ -37,6 +38,7 @@ struct FileMetaData
     void serialize(Archive & ar, const unsigned int version)
     {
         ar & BOOST_SERIALIZATION_NVP(LastModified);
+        ar & BOOST_SERIALIZATION_NVP(Length);
         ar & BOOST_SERIALIZATION_NVP(Peaks);
     }
 };
@@ -59,6 +61,18 @@ FileMetaDataCache::~FileMetaDataCache()
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
+boost::optional<pts> FileMetaDataCache::getLength(const wxFileName& file)
+{
+    boost::mutex::scoped_lock lock(mMutex);
+    return getDataForFile(file)->Length;
+}
+
+void FileMetaDataCache::setLength(const wxFileName& file, const pts& length)
+{
+    boost::mutex::scoped_lock lock(mMutex);
+    getDataForFile(file)->Length.reset(length);
+}
+
 boost::optional<AudioPeaks> FileMetaDataCache::getPeaks(const wxFileName& file)
 {
     boost::mutex::scoped_lock lock(mMutex);
@@ -80,16 +94,21 @@ FileMetaDataPtr FileMetaDataCache::getDataForFile(const wxFileName& file)
     // NOT: boost::mutex::scoped_lock lock(mMutex); -- Lock taken in calling method.
     auto ret = mMetaData.insert(std::make_pair(file, boost::make_shared<FileMetaData>(file.GetModificationTime()))); // Inserts new item if no entry present yet.
     FileMetaDataPtr data = ret.first->second;
-    wxDateTime currentFileTime{ file.GetModificationTime() };
-    wxDateTime cachedFileTime{ data->LastModified };
-    currentFileTime.SetMillisecond(0); // Sometimes get 012 milliseconds changes within
-    cachedFileTime.SetMillisecond(0);  // one test case. Ignore changes < 1 second.
-    if (!currentFileTime.IsEqualTo(cachedFileTime))
+    if (file.Exists())
     {
-        VAR_INFO(file.GetFullPath())(currentFileTime)(cachedFileTime);
-        mMetaData.erase(ret.first);
-        return getDataForFile(file); // Will cause insert of new empty item.
+        wxDateTime currentFileTime{ file.GetModificationTime() };
+        ASSERT(currentFileTime.IsValid())(file);
+        wxDateTime cachedFileTime{ data->LastModified };
+        currentFileTime.SetMillisecond(0); // Sometimes get 012 milliseconds changes within
+        cachedFileTime.SetMillisecond(0);  // one test case. Ignore changes < 1 second.
+        if (!currentFileTime.IsEqualTo(cachedFileTime))
+        {
+            VAR_INFO(file.GetFullPath())(currentFileTime)(cachedFileTime);
+            mMetaData.erase(ret.first);
+            return getDataForFile(file); // Will cause insert of new empty item.
+        }
     }
+    // else: File deleted already return last known values?
     return data;
 }
 

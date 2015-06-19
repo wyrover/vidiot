@@ -47,6 +47,9 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
+    boost::optional<pts> getLength(const wxFileName& file);
+    void setLength(const wxFileName& file, const pts& length);
+
     boost::optional<AudioPeaks> getPeaks(const wxFileName& file);
     void setPeaks(const wxFileName& file, const AudioPeaks& peaks);
 
