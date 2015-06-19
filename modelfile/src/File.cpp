@@ -22,11 +22,13 @@
 #include "Config.h"
 #include "Convert.h"
 #include "Dialog.h"
+#include "FileMetaDataCache.h"
 #include "FilePacket.h"
 #include "Project.h"
 #include "UtilInitAvcodec.h"
 #include "UtilLog.h"
 #include "UtilLogAvcodec.h"
+#include "UtilLogBoost.h"
 #include "UtilLogWxwidgets.h"
 #include "UtilPath.h"
 #include "UtilSerializeBoost.h"
@@ -57,7 +59,7 @@ File::File()
     // Attributes
     , mPath()
     , mName()
-    , mNumberOfFrames(LENGTH_UNDEFINED)
+    , mNumberOfFrames(boost::none)
     , mHasVideo(false)
     , mHasAudio(false)
     // Status of opening
@@ -84,7 +86,7 @@ File::File(const wxFileName& path, int buffersize)
     // Attributes
     , mPath(path)
     , mName()
-    , mNumberOfFrames(LENGTH_UNDEFINED)
+    , mNumberOfFrames(boost::none)
     , mHasVideo(false)
     , mHasAudio(false)
     // Status of opening
@@ -206,15 +208,33 @@ void File::check(bool immediately)
 
 pts File::getLength() const
 {
-    // todo store the metadata in the save file (and use mLastModified to determine if it must be updated).
-    //      now files are read over and over again, only for the metadata, which is a waste of time.
-    //      Make metadatachache...
-    //      then add these asserts again in some way:
-    //ASSERT(mMetaDataKnown); // If not initialized, then all sorts of problems (calculation mistakes) can occur.
-    //ASSERT_DIFFERS(mNumberOfFrames,LENGTH_UNDEFINED); // Must have been initialized
-    // then, finally, remove the  readMetaData() calls in CreateTransition.cpp((111,116).
-    ASSERT_MORE_THAN_ZERO(mNumberOfFrames);
-    return mNumberOfFrames;
+    // Cached locally in mNumberOfFrames to avoid continous locking in the filemetadatacache.
+    if (!mNumberOfFrames)
+    {
+        boost::optional<pts> length{ FileMetaDataCache::get().getLength(getPath()) };
+        if (!length)
+        {
+            File clone(*this);
+            clone.readMetaData();
+            if (clone.canBeOpened())
+            {
+                mNumberOfFrames.reset(clone.getNumberOfFrames());
+                FileMetaDataCache::get().setLength(getPath(), *mNumberOfFrames);
+            }
+            else
+            {
+                VAR_WARNING(*this);
+                mNumberOfFrames.reset(LENGTH_UNDEFINED);
+            }
+        }
+        else
+        {
+            mNumberOfFrames = length; // Cached locally to avoid continous locking in the filemetadatacache.
+        }
+    }
+    ASSERT(mNumberOfFrames);
+    pts result{ *mNumberOfFrames };
+    return *mNumberOfFrames;
 }
 
 void File::moveTo(pts position)
@@ -512,6 +532,13 @@ bool File::getEOF() const
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
+pts File::getNumberOfFrames() const
+{
+    ASSERT(mMetaDataKnown); // If not initialized, then all sorts of problems (calculation mistakes) can occur.
+    ASSERT(mNumberOfFrames);
+    return *mNumberOfFrames;
+}
+
 void File::openFile()
 {
     if (mFileOpened) return;
@@ -527,7 +554,7 @@ void File::openFile()
     if (getType() == FileType_Title && wxImage::CanRead(path))
     {
         // Use wxImage to read from this file
-        mNumberOfFrames = 1;
+        mNumberOfFrames.reset(1);
         mHasVideo = true;
         mHasAudio = false;
         mFileOpenedOk = true;
@@ -608,7 +635,7 @@ void File::openFile()
         return true;
     };
 
-    mNumberOfFrames = LENGTH_UNDEFINED;
+    mNumberOfFrames = boost::none;
     mStreamIndex = STREAMINDEX_UNDEFINED;
     for (unsigned int i=0; i < mFileContext->nb_streams; ++i)
     {
@@ -622,15 +649,17 @@ void File::openFile()
 
             if ( (stream->duration != AV_NOPTS_VALUE) && (stream->duration != 0))
             {
-                mNumberOfFrames = getStreamLength(stream);
-                ASSERT_MORE_THAN_EQUALS_ZERO(mNumberOfFrames);
+                mNumberOfFrames.reset(getStreamLength(stream));
+                ASSERT(mNumberOfFrames);
+                ASSERT_MORE_THAN_EQUALS_ZERO(*mNumberOfFrames);
             }
             else
             {
                 if ( (stream->nb_frames != AV_NOPTS_VALUE) && (stream->nb_frames != 0))
                 {
-                    mNumberOfFrames = stream->nb_frames;
-                    ASSERT_MORE_THAN_EQUALS_ZERO(mNumberOfFrames);
+                    mNumberOfFrames.reset(stream->nb_frames);
+                    ASSERT(mNumberOfFrames);
+                    ASSERT_MORE_THAN_EQUALS_ZERO(*mNumberOfFrames);
                 }
                 else
                 {
@@ -642,7 +671,7 @@ void File::openFile()
                     //}
                     //else
                     //{
-                        mNumberOfFrames = 0;
+                        mNumberOfFrames.reset(0);
                     //}
                     VAR_DEBUG(stream);
                 }
@@ -652,11 +681,12 @@ void File::openFile()
         {
             mHasAudio = true;
 
-            if (mNumberOfFrames == LENGTH_UNDEFINED)
+            if (!mNumberOfFrames)
             {
                 // For files without video, determine the number of 'virtual video frames'.
-                mNumberOfFrames = getStreamLength(stream);
-                ASSERT_MORE_THAN_EQUALS_ZERO(mNumberOfFrames);
+                mNumberOfFrames.reset(getStreamLength(stream));
+                ASSERT(mNumberOfFrames);
+                ASSERT_MORE_THAN_EQUALS_ZERO(*mNumberOfFrames);
             }
         }
         else
@@ -671,13 +701,15 @@ void File::openFile()
         }
     }
 
-    if ((!mHasVideo && !mHasAudio) || (mNumberOfFrames <= 0)) // <= 0: Some files have streams, but with all lengths == 0 (once happened when indexing by mistake ffprobe.exe)
+    if ((!mHasVideo && !mHasAudio) || 
+        (!mNumberOfFrames) || 
+        (*mNumberOfFrames <= 0)) // <= 0: Some files have streams, but with all lengths == 0 (once happened when indexing by mistake ffprobe.exe)
     {
         LOG_WARNING << "No correct stream found " << '(' << (*this) << ')';
         boost::mutex::scoped_lock lock(Avcodec::sMutex);
         avformat_close_input(&mFileContext);
         ASSERT_ZERO(mFileContext);
-        mNumberOfFrames = LENGTH_UNDEFINED;
+        mNumberOfFrames = boost::none;
         return;
     }
     if (mStreamIndex != STREAMINDEX_UNDEFINED)

@@ -402,12 +402,14 @@ AudioPeaks AudioFile::getPeaks(pts offset, pts length)
         samplecount nextRequiredSample{ 0 };
         AudioChunkPtr chunk{ getNextAudio(parameters) };
 
-        while (chunk && allPeaks.size() < getLength())
+        pts length{ getLength() };
+
+        while (chunk && allPeaks.size() < length)
         {
             samplecount chunksize = chunk->getUnreadSampleCount();
             sample* buffer = chunk->getBuffer();
 
-            for (int i = 0; (i < chunksize) && (allPeaks.size() < getLength()); ++i)
+            for (int i = 0; (i < chunksize) && (allPeaks.size() < length); ++i)
             {
                 current.first = std::min(current.first, *buffer);
                 current.second = std::max(current.second, *buffer);

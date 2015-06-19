@@ -750,4 +750,16 @@ void TestBugs::testTrimAndExtendVideoAndAudioClipsThatBothHaveOutTransitions()
 
 }
 
+void TestBugs::testCrashWhenEnlargingUnlinkedAudioClipBeyondFileLength()
+{
+    StartTestSuite();
+    TimelinePositionCursor(5); // Not on clip
+    Unlink(VideoClip(0,2));
+    DeleteClip(VideoClip(0,2));
+    DeleteClip(AudioClip(0,3));
+    DirAndFile tempDir_fileName = mProjectFixture.saveAndReload();
+    TimelineTrimRight(AudioClip(0,2),200); // Should not result in change
+    ASSERT_EQUALS(AudioClip(0, 2)->getLength(), mProjectFixture.OriginalLengthOfAudioClip(0,2));
+}
+
 } // namespace

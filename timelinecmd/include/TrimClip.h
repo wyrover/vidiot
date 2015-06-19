@@ -90,6 +90,12 @@ public:
         }
         pts Min;
         pts Max;
+
+        friend std::ostream& operator<<(std::ostream& os, const TrimLimit& obj)
+        {
+            os << obj.Min << '|' << obj.Max;
+            return os;
+        }
     };
 
     /// Determine boundaries (restrictions) on trimming when trimming the given clips

@@ -163,7 +163,7 @@ private:
     // Attributes
     wxFileName mPath;
     wxString mName;
-    pts mNumberOfFrames;
+    mutable boost::optional<pts> mNumberOfFrames;
     bool mHasVideo;
     bool mHasAudio;
 
@@ -187,6 +187,8 @@ private:
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
+
+    pts getNumberOfFrames() const;
 
     /// If the file is not yet opened, it is opened. Otherwise, this call does nothing.
     ///

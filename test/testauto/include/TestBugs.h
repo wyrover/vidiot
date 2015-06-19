@@ -205,6 +205,12 @@ public:
     /// even though there was enough empty space after both of these transitions.
     void testTrimAndExtendVideoAndAudioClipsThatBothHaveOutTransitions();
 
+    /// See [#209]
+    /// Unlink audio clip from its video counterpart, and delete the video part.
+    /// Then shift-trim to extend the audio clip, enlarging it beyond the file length.
+    /// Caused crash.
+    void testCrashWhenEnlargingUnlinkedAudioClipBeyondFileLength();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////
