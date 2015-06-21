@@ -630,6 +630,37 @@ void TestDetailsClip::testChangeVolume()
     }
 }
 
+void TestDetailsClip::testEditClipDuringPlayback()
+{
+    StartTestSuite();
+    TimelinePositionCursor(HCenter(VideoClip(0,2)));
+    TimelineLeftClick(Center(VideoClip(0, 2)));
+    {
+        StartTest("Edit video clip");
+        WaitForPlayback started(true);
+        WaitForPlayback stopped(false);
+        // NOTE: Don't use WaitForIdle() when the video is playing!!!
+        TimelineKeyPress(WXK_SPACE);
+        started.wait();
+        SetValue(DetailsClipView()->getScalingSlider(), 7000); // Same as presing WXK_PAGEUP
+        pause(400);
+        util::thread::RunInMain([] { getTimeline().getPlayer()->stop(); });
+        stopped.wait();
+    }
+    {
+        StartTest("Edit audio clip");
+        WaitForPlayback started(true);
+        WaitForPlayback stopped(false);
+        // NOTE: Don't use WaitForIdle() when the video is playing!!!
+        TimelineKeyPress(WXK_SPACE);
+        started.wait();
+        SetValue(DetailsClipView()->getVolumeSlider(), 90); // Same as pressing PageUp
+        pause(400);
+        util::thread::RunInMain([] { getTimeline().getPlayer()->stop(); });
+        stopped.wait();
+    }
+}
+
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////

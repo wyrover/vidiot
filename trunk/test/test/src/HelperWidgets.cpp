@@ -54,31 +54,30 @@ void SetValue(wxSlider* widget, int value)
     util::thread::RunInMainAndWait([widget,value]
     {
         widget->SetValue(value);
-        widget->GetEventHandler()->QueueEvent(new wxCommandEvent(wxEVT_SLIDER));
+        wxCommandEvent event{wxEVT_SLIDER};
+        widget->GetEventHandler()->ProcessEvent(event);
     });
-    WaitForIdle;
 }
 
 void SetValue(wxSpinCtrl* widget, int value)
 {
-    widget->SetValue(value);
-    wxSpinEvent* event = new wxSpinEvent(wxEVT_SPINCTRL,0);
-    util::thread::RunInMainAndWait([widget,event,value]
+    util::thread::RunInMainAndWait([widget,value]
     {
-        event->SetValue(value);
-        widget->GetEventHandler()->QueueEvent(event);
+        widget->SetValue(value);
+        wxSpinEvent event{wxEVT_SPINCTRL, 0};
+        event.SetValue(value);
+        widget->GetEventHandler()->ProcessEvent(event);
     });
-    WaitForIdle;
 }
 
 void SetValue(wxSpinCtrlDouble* widget, double value)
 {
     util::thread::RunInMainAndWait([widget,value]
     {
+        wxSpinDoubleEvent event{wxEVT_SPINCTRLDOUBLE, 0, value};
         widget->SetValue(value);
-        widget->GetEventHandler()->QueueEvent(new wxSpinDoubleEvent(wxEVT_SPINCTRLDOUBLE,0,value));
+        widget->GetEventHandler()->ProcessEvent(event);
     });
-    WaitForIdle;
 }
 
 void SetValue(wxCheckBox* widget, bool value)
@@ -86,9 +85,9 @@ void SetValue(wxCheckBox* widget, bool value)
     util::thread::RunInMainAndWait([widget,value]
     {
         widget->SetValue(value);
-        widget->GetEventHandler()->QueueEvent(new wxCommandEvent(wxEVT_COMMAND_CHECKBOX_CLICKED,0));
+        wxCommandEvent event{ wxEVT_COMMAND_CHECKBOX_CLICKED, 0 };
+        widget->GetEventHandler()->ProcessEvent(event);
     });
-    WaitForIdle;
 }
 
 void ButtonTriggerPressed(wxButton* button)

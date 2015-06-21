@@ -64,6 +64,11 @@ public:
 
     void testChangeVolume();
 
+    /// See [#210]
+    /// Select audio clip, then start playback.
+    /// Change clip (via details pane) during playback causes crash.
+    void testEditClipDuringPlayback();
+
 private:
 
     FixtureProject mProjectFixture;

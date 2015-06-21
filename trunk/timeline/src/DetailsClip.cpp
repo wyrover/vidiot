@@ -877,6 +877,7 @@ wxSpinCtrl* DetailsClip::getVolumeSpin() const
 
 void DetailsClip::makeTransformCommand()
 {
+    getPlayer()->stop(); // Stop iteration through the sequence, since the sequence is going to be changed.
     if (!mTransformCommand || mTransformCommand != model::CommandProcessor::get().GetCurrentCommand())
     {
         // - No transform command has been submitted yet, OR
@@ -893,6 +894,7 @@ void DetailsClip::makeTransformCommand()
 
 void DetailsClip::makeChangeVolumeCommand()
 {
+    getPlayer()->stop(); // Stop iteration through the sequence, since the sequence is going to be changed.
     if (!mVolumeCommand || mVolumeCommand != model::CommandProcessor::get().GetCurrentCommand())
     {
         // - No volume command has been submitted yet, OR
