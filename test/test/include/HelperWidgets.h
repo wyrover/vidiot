@@ -53,7 +53,6 @@ void SetValue(EnumSelector<ITEMTYPE>* widget, ITEMTYPE value)
 {
     widget->SetSelection(widget->getIndex(value));
     widget->GetEventHandler()->QueueEvent(new wxCommandEvent(wxEVT_CHOICE));
-    WaitForIdle;
 }
 
 /// Simulate the setting of a check box to the given value.
