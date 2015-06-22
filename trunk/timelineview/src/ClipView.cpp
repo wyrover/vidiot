@@ -468,16 +468,13 @@ void ClipView::drawForDragging(const wxPoint& position, int height, wxDC& dc, wx
             // become black during dragging.
             height = std::min(height, ClipView::getTransitionHeight());
         }
-        wxBitmap b(getW(),std::min(height, getH())); 
+        wxBitmap b(getW(), height); 
         draw(b, true, false);
         // Don't use DrawBitmap since this gives wrong output when using wxGTK.
         wxMemoryDC dcBmp(b);
         dc.Blit(position, b.GetSize(), &dcBmp, wxPoint(0,0));
-        if (mClip->isA<model::VideoClip>() || mClip->isA<model::VideoClip>())
-        //{
-        //    getViewMap().getThumbnail(mClip)->drawForDragging(position, height, dc);
-        //}
-        //else if (mClip->isA<model::AudioClip>())
+        if (mClip->isA<model::VideoClip>() || 
+            mClip->isA<model::AudioClip>())
         {
             getViewMap().getClipPreview(mClip)->drawForDragging(position, height, dc);
         }

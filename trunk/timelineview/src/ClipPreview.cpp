@@ -200,7 +200,8 @@ void ClipPreview::drawForDragging(const wxPoint& position, int height, wxDC& dc)
                 &dcBmp,
                 0,
                 0,
-                wxCOPY);
+                wxCOPY,
+                true);
         }
     }
 }
