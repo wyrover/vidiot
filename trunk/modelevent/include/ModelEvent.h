@@ -24,6 +24,7 @@
 namespace model {
 
 DECLARE_EVENT(EVENT_LENGTH_CHANGED, EventLengthChanged, pts);
+DECLARE_EVENT(EVENT_HEIGHT_CHANGED, EventHeightChanged, int);
 
 } // namespace
 

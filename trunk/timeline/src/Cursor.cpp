@@ -41,15 +41,11 @@ Cursor::Cursor(Timeline* timeline)
     ,   mCursorPosition(0)
 {
     VAR_DEBUG(this);
-
-//    getPlayer()->Bind(EVENT_PLAYBACK_POSITION, &Cursor::onPlaybackPosition, this);
 }
 
 Cursor::~Cursor()
 {
     VAR_DEBUG(this);
-
-//    getPlayer()->Unbind(EVENT_PLAYBACK_POSITION, &Cursor::onPlaybackPosition, this);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -220,13 +216,6 @@ void Cursor::serialize(Archive & ar, const unsigned int version)
     try
     {
         ar & BOOST_SERIALIZATION_NVP(mCursorPosition);
-        if (Archive::is_loading::value)
-        {
-
-            pts pos = mCursorPosition;
-            mCursorPosition = -1; // Ensure that moveTo uses the current value
-            setLogicalPosition(pos);
-        }
     }
     catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
