@@ -26,6 +26,7 @@
 namespace model {
 
 class EventLengthChanged;
+class EventHeightChanged;
 
 /// Sequences must always have one or more video tracks and one or more audio tracks.
 /// That is done to have to check (for instance in timeline::Drag.cpp) whether there
@@ -124,6 +125,7 @@ public:
     bool isEmptyAt(pts position ) const; ///< \return true if the sequence holds only emptyness at the given position
 
     void onTrackLengthChanged(EventLengthChanged& event);
+    void onTrackHeightChanged(EventHeightChanged& event);
 
     //////////////////////////////////////////////////////////////////////////
     // RENDERING

@@ -18,13 +18,13 @@
 #include "AudioView.h"
 
 #include "DividerView.h"
+#include "ModelEvent.h"
 #include "PositionInfo.h"
 #include "Sequence.h"
 #include "SequenceEvent.h"
 #include "SequenceView.h"
 #include "Timeline.h"
 #include "Track.h"
-#include "TrackEvent.h"
 #include "TrackView.h"
 #include "ViewMap.h"
 

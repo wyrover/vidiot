@@ -25,6 +25,7 @@
 #include "DividerView.h"
 #include "Drag.h"
 #include "Intervals.h"
+#include "ModelEvent.h"
 #include "PositionInfo.h"
 #include "Sequence.h"
 #include "Timeline.h"
@@ -50,11 +51,12 @@ SequenceView::SequenceView(Timeline* timeline)
 , mVideoView(new VideoView(this))
 , mDividerView(new DividerView(this, DividerView::AudioVideoDividerHeight))
 , mAudioView(new AudioView(this))
-, mWidth(boost::none)
-, mHeight(boost::none)
 , mMinimumLength(0)
 {
     VAR_DEBUG(this);
+    getSequence()->Bind(model::EVENT_LENGTH_CHANGED, &SequenceView::onSequenceLengthChanged, this);
+    getSequence()->Bind(model::EVENT_HEIGHT_CHANGED, &SequenceView::onSequenceHeightChanged, this);
+
 }
 
 SequenceView::~SequenceView()
@@ -65,6 +67,8 @@ SequenceView::~SequenceView()
     delete mDividerView;    mDividerView = 0;
     delete mVideoView;      mVideoView = 0;
     delete mTimescaleView;  mTimescaleView = 0;
+    getSequence()->Unbind(model::EVENT_LENGTH_CHANGED, &SequenceView::onSequenceLengthChanged, this);
+    getSequence()->Unbind(model::EVENT_HEIGHT_CHANGED, &SequenceView::onSequenceHeightChanged, this);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -83,38 +87,16 @@ pixel SequenceView::getY() const
 
 pixel SequenceView::getW() const
 {
-    if (!mWidth)
-    {
-        pts length = std::max(getDefaultLength(), mMinimumLength); // At least the fixed minimum length
-        mWidth.reset(std::max(
-            getTimeline().GetClientSize().GetWidth(),   // At least the widget size
-            getZoom().ptsToPixels(length)               // At least enough to hold all clips
-            ));                           
-    }
-    return *mWidth;
+    return getTimeline().GetVirtualSize().GetWidth();
 }
 
 pixel SequenceView::getH() const
 {
-    if (!mHeight)
-    {
-        int timelineHeight{ getTimeline().GetClientSize().GetHeight() };
-        int height =
-            std::max(
-            timelineHeight,      // At least the widget size
-            getSequence()->getDividerPosition() +
-            DividerView::AudioVideoDividerHeight +
-            mAudioView->getH() +
-            SequenceView::MinimalGreyBelowAudioTracksHeight);     // Height of all combined components
-        mHeight.reset(height);
-    }
-    return *mHeight;
+    return getTimeline().GetVirtualSize().GetHeight();
 }
 
 void SequenceView::invalidateRect()
 {
-    mWidth.reset();
-    mHeight.reset();
     mTimescaleView->invalidateRect();
     mDividerView->invalidateRect();
     mAudioView->invalidateRect();
@@ -141,6 +123,23 @@ void SequenceView::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset)
     pixel bottom = mAudioView->getY() + mAudioView->getH();
     getTimeline().clearRect(dc, region, offset, wxRect(0, bottom, getW(), getH() - bottom));
 };
+
+//////////////////////////////////////////////////////////////////////////
+// MODEL EVENTS
+//////////////////////////////////////////////////////////////////////////
+
+void SequenceView::onSequenceLengthChanged(model::EventLengthChanged& event)
+{
+    getTimeline().resize();
+    event.Skip();
+}
+
+void SequenceView::onSequenceHeightChanged(model::EventHeightChanged& event)
+{
+
+    getTimeline().resize();
+    event.Skip();
+}
 
 //////////////////////////////////////////////////////////////////////////
 // GET/SET
@@ -219,6 +218,23 @@ void SequenceView::setMinimumLength(pts length)
 {
     mMinimumLength = length;
     getTimeline().resize();
+}
+
+wxSize SequenceView::getDefaultSize() const
+{
+    pts length = std::max(getDefaultLength(), mMinimumLength); // At least the fixed minimum length
+    int w{ std::max(
+        getTimeline().GetClientSize().GetWidth(),   // At least the widget size
+        getZoom().ptsToPixels(length)               // At least enough to hold all clips
+        ) };
+ 
+    int h{ std::max(
+        getTimeline().GetClientSize().GetHeight(),      // At least the widget size
+        getSequence()->getDividerPosition() +
+        DividerView::AudioVideoDividerHeight +
+        mAudioView->getH() +
+        SequenceView::MinimalGreyBelowAudioTracksHeight) };     // Height of all combined components
+    return wxSize{ w, h };
 }
 
 }} // namespace

@@ -194,6 +194,7 @@ void Sequence::addVideoTracks(const Tracks& tracks, const TrackPtr& position)
     for ( model::TrackPtr track : tracks )
     {
          track->Bind(model::EVENT_LENGTH_CHANGED, &Sequence::onTrackLengthChanged, this);
+         track->Bind(model::EVENT_HEIGHT_CHANGED, &Sequence::onTrackHeightChanged, this);
     }
 
     UtilVector<TrackPtr>(mVideoTracks).addElements(tracks,position);
@@ -220,6 +221,7 @@ void Sequence::addAudioTracks(const Tracks& tracks, const TrackPtr& position)
     for ( model::TrackPtr track : tracks )
     {
          track->Bind(model::EVENT_LENGTH_CHANGED, &Sequence::onTrackLengthChanged, this);
+         track->Bind(model::EVENT_HEIGHT_CHANGED, &Sequence::onTrackHeightChanged, this);
     }
 
     UtilVector<TrackPtr>(mAudioTracks).addElements(tracks,position);
@@ -242,6 +244,7 @@ void Sequence::removeVideoTracks(const Tracks& tracks)
     {
         track->clean();
         track->Unbind(model::EVENT_LENGTH_CHANGED, &Sequence::onTrackLengthChanged, this);
+        track->Unbind(model::EVENT_HEIGHT_CHANGED, &Sequence::onTrackHeightChanged, this);
     }
     TrackPtr position = UtilVector<TrackPtr>(mVideoTracks).removeElements(tracks);
 
@@ -262,6 +265,7 @@ void Sequence::removeAudioTracks(const Tracks& tracks)
     {
         track->clean();
         track->Unbind(model::EVENT_LENGTH_CHANGED, &Sequence::onTrackLengthChanged, this);
+        track->Unbind(model::EVENT_HEIGHT_CHANGED, &Sequence::onTrackHeightChanged, this);
     }
     TrackPtr position = UtilVector<TrackPtr>(mAudioTracks).removeElements(tracks);
 
@@ -315,6 +319,8 @@ void Sequence::setDividerPosition(pixel position)
     {
         mDividerPosition = position;
         model::ProjectModification::trigger();
+        EventHeightChanged event(-1);
+        ProcessEvent(event); // Handled immediately
     }
 }
 
@@ -382,6 +388,13 @@ bool Sequence::isEmptyAt(pts position ) const
 void Sequence::onTrackLengthChanged(EventLengthChanged& event)
 {
     updateLength();
+    event.Skip();
+}
+
+
+void Sequence::onTrackHeightChanged(EventHeightChanged& event)
+{
+    ProcessEvent(event); // Handled immediately
     event.Skip();
 }
 
@@ -520,11 +533,13 @@ void Sequence::serialize(Archive & ar, const unsigned int version)
             for ( TrackPtr track : mVideoTracks )
             {
                 track->Bind(model::EVENT_LENGTH_CHANGED, &Sequence::onTrackLengthChanged, this);
+                track->Bind(model::EVENT_HEIGHT_CHANGED, &Sequence::onTrackHeightChanged, this);
                 track->onLoad();
             }
             for ( TrackPtr track : mAudioTracks )
             {
                 track->Bind(model::EVENT_LENGTH_CHANGED, &Sequence::onTrackLengthChanged, this);
+                track->Bind(model::EVENT_HEIGHT_CHANGED, &Sequence::onTrackHeightChanged, this);
                 track->onLoad();
             }
             updateTracks();

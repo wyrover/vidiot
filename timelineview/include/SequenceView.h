@@ -20,6 +20,11 @@
 
 #include "View.h"
 
+namespace model {
+    class EventHeightChanged;
+    class EventLengthChanged;
+}
+
 namespace gui { namespace timeline {
 
 class DividerView;
@@ -58,6 +63,7 @@ public:
     // MODEL EVENTS
     //////////////////////////////////////////////////////////////////////////
 
+    void onSequenceHeightChanged(model::EventHeightChanged& event);
     void onSequenceLengthChanged(model::EventLengthChanged& event);
 
     //////////////////////////////////////////////////////////////////////////
@@ -81,6 +87,8 @@ public:
     pts getDefaultLength() const;
     void setMinimumLength(pts length);
 
+    wxSize getDefaultSize() const;
+
 private:
 
     //////////////////////////////////////////////////////////////////////////
@@ -91,8 +99,6 @@ private:
     VideoView* mVideoView;
     DividerView* mDividerView;
     AudioView*  mAudioView;
-    mutable boost::optional<pixel> mWidth; ///< Can be reset to ensure recalc.
-    mutable boost::optional<pixel> mHeight; ///< Can be reset to ensure recalc.
     pts mMinimumLength;
 };
 

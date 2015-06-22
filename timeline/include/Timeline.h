@@ -20,10 +20,6 @@
 
 #include "UtilInt.h"
 
-namespace model {
-    class EventLengthChanged;
-}
-
 namespace command {
     class RootCommand;
 }
@@ -120,12 +116,6 @@ public:
     void onIdle(wxIdleEvent& event);
     void onSize(wxSizeEvent& event);
     void onEraseBackground(wxEraseEvent& event);
-
-    //////////////////////////////////////////////////////////////////////////
-    // MODEL EVENTS
-    //////////////////////////////////////////////////////////////////////////
-
-    void onSequenceLengthChanged(model::EventLengthChanged& event);
 
     //////////////////////////////////////////////////////////////////////////
     // DRAWING

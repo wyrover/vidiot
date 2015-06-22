@@ -148,7 +148,7 @@ void Drag::start(const wxPoint& hotspot, bool external)
         {
             // Extend sequence view if it is not big enough to hold the dragged data.
             getSequenceView().setMinimumLength(getSequenceView().getDefaultLength() + mVideo.getTempTrack()->getLength());
-            getSequenceView().invalidateRect();
+            getTimeline().resize();
         }
 
         mHotspot.x = getZoom().ptsToPixels(mVideo.getTempTrack()->getLength() / 2);
@@ -338,8 +338,7 @@ void Drag::stop()
     }
     reset();
     getSequenceView().setMinimumLength(0);
-    getSequenceView().invalidateRect();
-    getTimeline().Refresh(false);
+    getTimeline().resize();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -858,7 +857,7 @@ void Drag::determineShift()
     if (shift != mShift)
     {
         mShift = shift;
-        getSequenceView().invalidateRect();
+        getTimeline().resize();
     }
 }
 

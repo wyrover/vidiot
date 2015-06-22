@@ -25,7 +25,6 @@
 #include "Intervals.h"
 #include "Keyboard.h"
 #include "Menu.h"
-#include "ModelEvent.h"
 #include "Mouse.h"
 #include "Player.h"
 #include "Preview.h"
@@ -94,8 +93,6 @@ Timeline::Timeline(wxWindow *parent, const model::SequencePtr& sequence, bool be
 
     mStateMachine->start();
 
-    getSequence()->Bind(model::EVENT_LENGTH_CHANGED, &Timeline::onSequenceLengthChanged, this);
-
     Bind(wxEVT_PAINT,               &Timeline::onPaint,              this);
     Bind(wxEVT_ERASE_BACKGROUND,    &Timeline::onEraseBackground,    this);
     Bind(wxEVT_SIZE,                &Timeline::onSize,               this);
@@ -121,8 +118,6 @@ Timeline::Timeline(wxWindow *parent, const model::SequencePtr& sequence, bool be
 Timeline::~Timeline()
 {
     VAR_DEBUG(this);
-
-    getSequence()->Unbind(model::EVENT_LENGTH_CHANGED, &Timeline::onSequenceLengthChanged, this);
 
     Unbind(wxEVT_PAINT,               &Timeline::onPaint,              this);
     Unbind(wxEVT_ERASE_BACKGROUND,    &Timeline::onEraseBackground,    this);
@@ -370,16 +365,6 @@ void Timeline::onEraseBackground(wxEraseEvent& event)
 }
 
 //////////////////////////////////////////////////////////////////////////
-// MODEL EVENTS
-//////////////////////////////////////////////////////////////////////////
-
-void Timeline::onSequenceLengthChanged(model::EventLengthChanged& event)
-{
-    resize();
-    event.Skip();
-}
-
-//////////////////////////////////////////////////////////////////////////
 // DRAWING
 //////////////////////////////////////////////////////////////////////////
 
@@ -575,7 +560,11 @@ pixel Timeline::getShift() const
 void Timeline::resize()
 {
     getSequenceView().invalidateRect();
-    SetVirtualSize(getSequenceView().getSize());
+
+    wxSize clientSize{ GetClientSize() };
+    wxSize requiredSize{ getSequenceView().getDefaultSize() };
+
+    SetVirtualSize(wxSize{ std::max(clientSize.x, requiredSize.x), std::max(clientSize.y, requiredSize.y) });
 }
 
 bool Timeline::renderThumbnails() const
@@ -627,6 +616,7 @@ void Timeline::alignCenterPtsAfterInitialization()
     SetFocus();
 
     getScrolling().alignCenterPts();
+    getCursor().setLogicalPosition(getCursor().getLogicalPosition()); // Set to the proper position after loading
     mExecuteOnIdle = boost::bind(&Timeline::readFocusedThumbnails, this);
 }
 
