@@ -104,6 +104,8 @@ void TimescaleView::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset
     wxRegion overlap(region);
     overlap.Intersect(wxRect(getPosition()-offset, getSize()));
     wxRegionIterator upd(overlap);
+
+    int timelineWidth{ getTimeline().GetClientSize().GetWidth() };
     if (upd)
     {
         // Determine what to show
@@ -137,9 +139,16 @@ void TimescaleView::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset
         TicksAndNumbers steps = zoomToSteps.find(zoom)->second;
 
         // Draw timescale background
-        dc.SetBrush(wxBrush{ wxColour{ 255, 255, 255 } });
+        // Note: Not use simply DrawRectangle. Given the size of the drawing (width of entire timeline)
+        //       DrawRectangle sometimes fails to draw (particularly when zooming in fully).
+        dc.SetBrush(wxBrush{ wxColour{ 255, 255, 255 } , wxBRUSHSTYLE_SOLID});
+        dc.SetPen(wxPen{ wxColour{ 255, 255, 255 }, 1 });
+        dc.DrawRectangle(wxPoint(0, -offset.y), wxSize(timelineWidth, getH())); // Fill with white, but only the update region
         dc.SetPen(wxPen{ wxColour{ 0, 0, 0 }, 1 });
-        dc.DrawRectangle(scrolledAndShiftedPosition,getSize());
+        dc.DrawLine(wxPoint(0,0 - offset.y), wxPoint(timelineWidth,0 - offset.y));
+        dc.DrawLine(wxPoint(0,getH() - 1 - offset.y), wxPoint(timelineWidth,getH() - 1 - offset.y));
+        dc.DrawLine(wxPoint(0,0) - offset, wxPoint(0,getH()) - offset); // Left line of the bounding box
+        dc.DrawLine(wxPoint(getW() - 1,0)  - offset, wxPoint(getW() - 1,getH()) - offset); // Right line of the bounding box
 
         // Prepare for drawing times
         dc.SetFont(wxFont(wxSize(0,11),wxFONTFAMILY_DEFAULT,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL));
@@ -153,7 +162,7 @@ void TimescaleView::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset
             int rightMostMs = model::Convert::ptsToTime(getZoom().pixelsToPts(r.GetRight() + offset.x - getTimeline().getShift()));
 
             // Besides redrawing 'ticks' the numbers must also be redrawn. Since the
-            // extend of the text is beyond the tick (both to the left and right) the totally 
+            // text is beyond the tick (both to the left and right) the totally
             // redrawn area must be extended to ensure that the time text 'under' the redrawn area
             // is also redrawn. As an example, consder a redraw for a moved timeline. Then, the update
             // region consists only of the 'previous cursor position' and the 'current cursor position'.

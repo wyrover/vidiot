@@ -408,12 +408,14 @@ void MenuHandler::onTriggerPopupMenu(wxCommandEvent& event)
             (new command::UnlinkClips(getSequence(), unlink))->submit();
             break;
         default:
-            ASSERT(clickedOnVideoClip);
-            ASSERT_MORE_THAN_EQUALS(result, ID_POPUP_END); // Selected one of the video transitions
-            ASSERT_MAP_CONTAINS(mapMenuItemToTransitionType, result);
-            ASSERT_MAP_CONTAINS(mapMenuItemToTransitionDescription, result);
-            model::TransitionPtr transition = model::video::VideoTransitionFactory::get().getTransition(mapMenuItemToTransitionDescription[result]);
-            command::createTransition(getSequence(), info.getLogicalClip(), mapMenuItemToTransitionType[result], transition);
+            if (clickedOnVideoClip && result >= ID_POPUP_END)
+            {
+                // Selected one of the video transitions
+                ASSERT_MAP_CONTAINS(mapMenuItemToTransitionType, result);
+                ASSERT_MAP_CONTAINS(mapMenuItemToTransitionDescription, result);
+                model::TransitionPtr transition = model::video::VideoTransitionFactory::get().getTransition(mapMenuItemToTransitionDescription[result]);
+                command::createTransition(getSequence(), info.getLogicalClip(), mapMenuItemToTransitionType[result], transition);
+            }
             break;
         }
     }

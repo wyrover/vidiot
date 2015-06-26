@@ -34,11 +34,11 @@ namespace test {
     mProjectFixture.destroy();
 }
 
-    
+
 //////////////////////////////////////////////////////////////////////////
 // TEST CASES
 //////////////////////////////////////////////////////////////////////////
-    
+
 void TestTitles::testFileTypes()
 {
     StartTestSuite();
@@ -55,9 +55,12 @@ void TestTitles::testFileTypes()
     auto getPixel = [sequence](int x, int y) -> boost::tuple<int, int, int>
     {
         TimelinePositionCursor(0);
-        model::VideoFramePtr referenceFrame = sequence->getNextVideo(model::VideoCompositionParameters().setDrawBoundingBox(false).setBoundingBox(wxSize(model::Properties::get().getVideoSize())));
-        wxImagePtr image = referenceFrame->getImage();
-        return boost::make_tuple(image->GetRed(x, y), image->GetGreen(x, y), image->GetBlue(x, y));
+        return util::thread::RunInMainReturning<boost::tuple<int, int, int>>([sequence, x, y]() -> boost::tuple<int, int, int>
+        {
+            model::VideoFramePtr referenceFrame = sequence->getNextVideo(model::VideoCompositionParameters().setDrawBoundingBox(false).setBoundingBox(wxSize(model::Properties::get().getVideoSize())));
+            wxImagePtr image = referenceFrame->getImage();
+            return boost::make_tuple(image->GetRed(x, y), image->GetGreen(x, y), image->GetBlue(x, y));
+        });
     };
 
     boost::tuple<int, int, int> referencePixel = getPixel(400, 400);
