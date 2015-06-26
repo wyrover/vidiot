@@ -1218,7 +1218,7 @@ void TestTransition::testCreateTransitionAfterLastClip()
     }
 }
 
-void TestTransition::testVideoTransitionTypes() // todo Linux: during the scrubbing the repainting of the cursor shows white lines.
+void TestTransition::testVideoTransitionTypes()
 {
     auto setOpacity = [](model::IClipPtr clip, int opacity)
     {

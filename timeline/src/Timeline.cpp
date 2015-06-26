@@ -447,12 +447,24 @@ void Timeline::drawLine(wxDC& dc, const wxRegion& region, const wxPoint& offset,
 
 void Timeline::drawDivider(wxDC& dc, wxRegion region, const wxPoint& offset, wxPoint position, pixel height) const
 {
+    int timelineWidth{ GetClientSize().GetWidth() };
+
     // Region is in screen coordinates.
-    // yPosition and height are in logical coordinates (entire timeline)
-    wxRect dividerRect(position - offset, wxSize(GetVirtualSize().GetWidth(), height));
-    dc.SetPen(wxPen{ wxColour{ 64, 64, 64 }, 1 });
+    // position and height are in logical coordinates (entire timeline)
+
+    // Note: Not use simply DrawRectangle. Given the size of the drawing (width of entire timeline)
+    //       DrawRectangle sometimes fails to draw (particularly when zooming in fully).
     dc.SetBrush(wxBrush{ wxColour{ 132, 132, 132 } });
-    dc.DrawRectangle(dividerRect);
+    dc.SetPen(wxPen{ wxColour{ 132, 132, 132 }, 1 });
+    dc.DrawRectangle(wxPoint(0, position.y - offset.y), wxSize(timelineWidth, height)); // Draw bg color
+
+    dc.SetPen(wxPen{ wxColour{ 64, 64, 64 }, 1 });
+    int top{ position.y - offset.y};
+    int bottom{ top + height - 1};
+    dc.DrawLine(wxPoint(0, top), wxPoint(timelineWidth, top));
+    dc.DrawLine(wxPoint(0, bottom), wxPoint(timelineWidth, bottom));
+    dc.DrawLine(wxPoint(0, position.y) - offset, wxPoint(0, position.y + height) - offset); // Left line of the bounding box
+    dc.DrawLine(wxPoint(GetVirtualSize().GetWidth() - 1 - offset.x, top), wxPoint(GetVirtualSize().GetWidth() - 1 - offset.x, bottom)); // Right line of the bounding box
 }
 
 void Timeline::copyRect(wxDC& dc, wxRegion region, const wxPoint& offset, const wxBitmap& bitmap, const wxRect& roi, bool mask) const
