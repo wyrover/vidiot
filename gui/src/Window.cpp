@@ -852,7 +852,10 @@ void Window::onDropFiles(wxDropFilesEvent& event)
     {
         filenames.push_back(event.GetFiles()[i]);
     }
+    // Required for some operations (determining file lengths in the file analyzer)
+    model::PropertiesPtr tempProperties = isProjectOpened() ? nullptr : boost::make_shared<model::Properties>();
     boost::shared_ptr<model::FileAnalyzer> analyzer{ boost::make_shared < model::FileAnalyzer > ( filenames, this ) };
+    tempProperties.reset();
 
     if (analyzer->isProjectOnly())
     {
