@@ -24,23 +24,25 @@
 #include "UtilInt.h"
 
 namespace model {
-    class ChangeVideoClipTransform;
-    class ChangeAudioClipVolume;
+    class EventChangeAudioClipVolume;
+    class EventChangeVideoClipAlignment;
+    class EventChangeVideoClipMaxPosition;
+    class EventChangeVideoClipMinPosition;
     class EventChangeVideoClipOpacity;
+    class EventChangeVideoClipPosition;
+    class EventChangeVideoClipRotation;
     class EventChangeVideoClipScaling;
     class EventChangeVideoClipScalingFactor;
-    class EventChangeVideoClipRotation;
-    class EventChangeVideoClipAlignment;
-    class EventChangeVideoClipPosition;
-    class EventChangeVideoClipMinPosition;
-    class EventChangeVideoClipMaxPosition;
-    class EventChangeAudioClipVolume;
+    class EventTransitionParameterChanged;
+    class EventTransitionParameterChanging;
+    class TransitionParameterChangeCommand;
 }
 
 namespace gui { namespace timeline {
     class EventSelectionUpdate;
 
 namespace command {
+    class EditClipDetails;
     class TrimClip;
 }
 
@@ -102,6 +104,8 @@ public:
 
     void onVolumeChanged(model::EventChangeAudioClipVolume& event);
 
+    void onTransitionParameterChanged(model::EventTransitionParameterChanged& event);
+
     //////////////////////////////////////////////////////////////////////////
     // SELECTION EVENTS
     //////////////////////////////////////////////////////////////////////////
@@ -135,10 +139,9 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     model::IClipPtr      mClip;      ///< The clip for which the details view is shown. 0 in case a transition is selected
-    model::VideoClipPtr  mVideoClip;
-    model::AudioClipPtr  mAudioClip;
-    model::TransitionPtr mTransition;
-    model::EmptyClipPtr  mEmptyClip;
+    model::VideoClipPtr  mVideoClipClone;
+    model::AudioClipPtr  mAudioClipClone;
+    model::TransitionPtr mTransitionClone;
 
     wxStaticText* mCurrentLength;
     std::vector<wxToggleButton*> mLengthButtons;
@@ -163,8 +166,7 @@ private:
     wxSpinCtrl* mPositionYSpin;
     wxSlider* mPositionYSlider;
 
-    model::ChangeVideoClipTransform* mTransformCommand;
-    model::ChangeAudioClipVolume* mVolumeCommand;
+    command::EditClipDetails* mEditCommand;
 
     pts mMinimumLengthWhenBeginTrimming;
     pts mMaximumLengthWhenBeginTrimming;
@@ -176,12 +178,13 @@ private:
     wxSpinCtrl* mVolumeSpin;
     wxSlider* mVolumeSlider;
 
+    wxFlexGridSizer* mTransitionBoxSizer;
+
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    void makeTransformCommand();
-    void makeChangeVolumeCommand();
+    void submitEditCommandUponFirstEdit();
 
     void preview();
 

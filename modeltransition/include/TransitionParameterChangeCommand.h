@@ -1,4 +1,4 @@
-// Copyright 2013-2015 Eric Raijmakers.
+// Copyright 2015 Eric Raijmakers.
 //
 // This file is part of Vidiot.
 //
@@ -15,15 +15,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef CHANGE_VIDEO_CLIP_TRANSFORM_H
-#define CHANGE_VIDEO_CLIP_TRANSFORM_H
+#ifndef TRANSITION_PARAMETER_CHANGE_COMMAND_H
+#define TRANSITION_PARAMETER_CHANGE_COMMAND_H
 
 #include "RootCommand.h"
-#include "Enums.h"
 
 namespace model {
 
-class ChangeVideoClipTransform
+class TransitionParameterChangeCommand
     :   public ::command::RootCommand
 {
 public:
@@ -32,14 +31,10 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    explicit ChangeVideoClipTransform(const VideoClipPtr& videoclip);
-    virtual ~ChangeVideoClipTransform();
+    explicit TransitionParameterChangeCommand(const TransitionPtr& transition);
+    virtual ~TransitionParameterChangeCommand();
 
-    void setOpacity(int opacity);
-    void setScaling(const VideoScaling& scaling, const boost::optional< boost::rational< int > >& factor = boost::none);
-    void setRotation(const boost::rational< int >& rotation);
-    void setAlignment(const VideoAlignment& alignment);
-    void setPosition(const wxPoint& position);
+    void setNewParameters();
 
     //////////////////////////////////////////////////////////////////////////
     // WXWIDGETS DO/UNDO INTERFACE
@@ -52,7 +47,7 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    model::VideoClipPtr getVideoClip() const;
+    model::AudioClipPtr getAudioClip() const;
 
 private:
 
@@ -62,30 +57,15 @@ private:
 
     bool mInitialized;
 
-    model::VideoClipPtr mVideoClip;
-
-    int mOldOpacity;
-
-    VideoScaling mOldScaling;
-    boost::rational< int > mOldScalingFactor;
-
-    boost::rational< int > mOldRotation;
-
-    VideoAlignment mOldAlignment;
-    wxPoint mOldPosition;
-
-    boost::optional<int> mNewOpacity;
-    boost::optional<VideoScaling> mNewScaling;
-    boost::optional< boost::rational< int > > mNewScalingFactor;
-    boost::optional< boost::rational< int > > mNewRotation;
-    boost::optional<VideoAlignment> mNewAlignment;
-    boost::optional<wxPoint> mNewPosition;
+    model::TransitionPtr mTransition;
+    std::map<int, TransitionParameterPtr> mOld;
+    boost::optional< std::map<int, TransitionParameterPtr> > mNew;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<(std::ostream& os, const ChangeVideoClipTransform& obj);
+    friend std::ostream& operator<<(std::ostream& os, const TransitionParameterChangeCommand& obj);
 };
 
 } // namespace

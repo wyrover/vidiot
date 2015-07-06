@@ -415,6 +415,8 @@ AudioPeaks AudioFile::getPeaks(pts offset, pts length)
                 current.second = std::max(current.second, *buffer);
                 if (samplePosition == nextRequiredSample)
                 {
+                    ASSERT_LESS_THAN_EQUALS_ZERO(current.first);
+                    ASSERT_MORE_THAN_EQUALS_ZERO(current.second);
                     allPeaks.push_back(current);
                     current = AudioPeak(0, 0);
                     nextRequiredSample = Convert::ptsToSamplesPerChannel(parameters.getSampleRate(), allPeaks.size());

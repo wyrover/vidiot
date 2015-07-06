@@ -35,6 +35,8 @@ public:
 
     ImageFile(const wxFileName& path);
 
+    ImageFile(const wxColour& colour);
+
     virtual ImageFile* clone() const override;
 
     virtual ~ImageFile();
@@ -53,6 +55,13 @@ public:
 
     virtual VideoFramePtr getNextVideo(const VideoCompositionParameters& parameters) override;
 
+    //////////////////////////////////////////////////////////////////////////
+    // GET/SET
+    //////////////////////////////////////////////////////////////////////////
+
+    virtual wxSize getSize() override;
+    virtual bool canBeOpened() override;
+
 protected:
 
     //////////////////////////////////////////////////////////////////////////
@@ -69,6 +78,7 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
+    boost::optional<wxColour> mColor; ///< If set, indicates that this image is a solid color image
     VideoFramePtr mInputFrame;
     VideoFramePtr mOutputFrame;
 
@@ -93,7 +103,7 @@ private:
 
 } // namespace
 
-BOOST_CLASS_VERSION(model::ImageFile, 1)
+BOOST_CLASS_VERSION(model::ImageFile, 2)
 BOOST_CLASS_EXPORT_KEY(model::ImageFile)
 
 #endif

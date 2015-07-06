@@ -17,20 +17,14 @@
 
 #include "AudioTransitionFactory.h"
 
-#include "AudioTransition.h"
 #include "AudioTransition_CrossFade.h"
-#include "Transition.h"
-#include "UtilClone.h"
-#include "UtilLog.h"
-#include "UtilLogStl.h"
 
 namespace model { namespace audio {
 
 AudioTransitionFactory::AudioTransitionFactory()
     : TransitionFactory("Audio")
 {
-    setDefault(boost::make_shared<model::audio::transition::CrossFade>());
-    add(std::make_pair("Cross fade", "Fade"), boost::make_shared<model::audio::transition::CrossFade>());
+    add(boost::make_shared<model::audio::transition::CrossFade>());
 }
 
 }} //namespace

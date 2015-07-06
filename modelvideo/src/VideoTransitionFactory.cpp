@@ -17,22 +17,18 @@
 
 #include "VideoTransitionFactory.h"
 
-#include "Transition.h"
-#include "UtilClone.h"
-#include "UtilLog.h"
-#include "UtilLogStl.h"
-#include "VideoTransition.h"
 #include "VideoTransition_CrossFade.h"
 #include "VideoTransition_Bands.h"
+#include "VideoTransition_FadeToColor.h"
 
 namespace model { namespace video {
 
 VideoTransitionFactory::VideoTransitionFactory()
     : TransitionFactory("Video")
 {
-    setDefault(boost::make_shared<model::video::transition::CrossFade>());
-    add(std::make_pair("Cross fade", "Fade"), boost::make_shared<model::video::transition::CrossFade>());
-    add(std::make_pair("Cross fade", "Bands"), boost::make_shared<model::video::transition::Bands>());
+    add(boost::make_shared<model::video::transition::CrossFade>());
+    add(boost::make_shared<model::video::transition::Bands>());
+    add(boost::make_shared<model::video::transition::FadeToColor>());
 }
 
 }} //namespace

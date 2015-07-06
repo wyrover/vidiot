@@ -22,6 +22,8 @@
 
 namespace model {
 
+enum TransitionType;
+
 /// Class representing transitions in the timeline. Note that the actual transition
 /// is rendered by taking its adjacent clips, cloning these, and adjusting the clones
 /// to provide the correct frames.
@@ -46,7 +48,7 @@ public:
     void init(boost::optional<pts> nFramesLeft, boost::optional<pts> nFramesRight);
 
     ///< Used for making deep copies (clones)
-    virtual Transition* clone() const override;
+    virtual Transition* clone() const override = 0;
 
     virtual ~Transition();
 
@@ -54,6 +56,7 @@ public:
     // ICONTROL
     //////////////////////////////////////////////////////////////////////////
 
+    wxString getDescription() const override;
     pts getLength() const override;
     void moveTo(pts position) override;
     void clean() override;
@@ -92,6 +95,9 @@ public:
     /// \see mFramesRight
     boost::optional<pts> getRight() const;
 
+    std::vector<wxWindow*> makeParameterWidgets(wxWindow* parent);
+    void destroyParameterWidgets();
+
     /// Make the 'in' clip that is to be used for rendering data
     /// This takes the previous clip in the track, clones it, and adjust the
     /// clone such that it has the offset and length as required for the
@@ -99,7 +105,7 @@ public:
     /// If there is no 'in' clip for this transition (out-only transition) then
     /// returns '0'.
     /// \return a clone of the clip to be used for rendering transition data
-    model::IClipPtr makeLeftClip();
+    virtual model::IClipPtr makeLeftClip();
 
     /// Make the 'out' clip that is to be used for rendering data
     /// This takes the previous clip in the track, clones it, and adjust the
@@ -108,7 +114,24 @@ public:
     /// If there is no 'out' clip for this transition (in-only transition) then
     /// returns '0'.
     /// \return a clone of the clip to be used for rendering transition data
-    model::IClipPtr makeRightClip();
+    virtual model::IClipPtr makeRightClip();
+
+    /// \return the name to be used for the transition, given the transition type.
+    virtual wxString getDescription(TransitionType type) const = 0;
+
+    /// \return true if the given type of transition is supported by this transition
+    /// Default implementation supports all types
+    virtual bool supports(TransitionType type) const;
+
+    //////////////////////////////////////////////////////////////////////////
+    // PARAMETERS
+    //////////////////////////////////////////////////////////////////////////
+
+    void addParameter(int index, TransitionParameterPtr parameters);
+    TransitionParameterPtr getParameter(int index) const;
+
+    std::map<int, TransitionParameterPtr> getParameters() const;
+    void setParameters(std::map<int, TransitionParameterPtr> parameters);
 
 protected:
 
@@ -151,6 +174,9 @@ private:
     ///     of view the transition only overlaps with the clip to the left.
     boost::optional<pts> mFramesRight;
 
+    /// All parameters relevant for this transition.
+    std::map<int, TransitionParameterPtr> mParameters;
+
     //////////////////////////////////////////////////////////////////////////
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
@@ -165,9 +191,10 @@ private:
     template<class Archive>
     void serialize(Archive & ar, const unsigned int version);
 };
+
 } // namespace
 
-BOOST_CLASS_VERSION(model::Transition, 2)
+BOOST_CLASS_VERSION(model::Transition, 3)
 BOOST_CLASS_EXPORT_KEY(model::Transition)
 
 #endif

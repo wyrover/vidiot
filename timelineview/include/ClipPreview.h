@@ -82,6 +82,8 @@ public:
 
     void onRenderDone(worker::WorkDoneEvent& event);
 
+    void invalidateCachedBitmaps();
+
 protected:
 
     //////////////////////////////////////////////////////////////////////////
@@ -92,8 +94,6 @@ protected:
 
     virtual wxSize getRequiredSize() const = 0;
     virtual wxSize getMinimumSize() const = 0;
-
-    void invalidateCachedBitmaps();
 
     model::IClipPtr mClip;
 

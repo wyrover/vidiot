@@ -50,7 +50,9 @@ protected:
 
     void requestShow(bool show, const wxString& title = "");
 
-    void addBox(const wxString& name);
+    wxFlexGridSizer* addBox(const wxString& name);
+    void setBox(wxFlexGridSizer* box);
+    void setBoxTitle(const wxString& boxname, const wxString& title);
 
     void showBox(const wxString& name, bool show = true);
 
@@ -60,6 +62,8 @@ protected:
     /// \param widget option that must be shown/hidden
     /// \param show if true then show, otherwise hide
     void showOption(wxWindow* widget, bool show = true);
+
+    wxWindow* getTitle(wxWindow* widget) const;
 
 private:
 
@@ -71,9 +75,9 @@ private:
     wxString mTitle;
 
     wxBoxSizer*      mTopSizer;  ///< sizer for panel
-    wxSizer*         mBoxSizer;  ///< sizer for current box
+    wxFlexGridSizer* mBoxSizer;  ///< sizer for current box
 
-    std::map<wxString, wxSizer*> mBoxes;
+    std::map<wxString, wxStaticBoxSizer*> mBoxes;
 
     std::map<wxWindow*, wxSizer*> mMapWindowToSizer;
     std::map<wxWindow*, wxStaticText*> mMapWindowToTitle;

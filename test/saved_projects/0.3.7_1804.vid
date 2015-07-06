@@ -654,7 +654,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 											<Track class_id="44" tracking_level="1" version="2" object_id="_30">
 												<mIndex>0</mIndex>
 												<mClips class_id="46" tracking_level="0" version="0">
-													<count>24</count>
+													<count>25</count>
 													<item_version>1</item_version>
 													<item class_id="47" tracking_level="0" version="1">
 														<px class_id="48" class_name="model::VideoClip" tracking_level="1" version="3" object_id="_31">
@@ -861,9 +861,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 														</px>
 													</item>
 													<item>
-														<px class_id="60" class_name="model::video::transition::Bands" tracking_level="1" version="1" object_id="_44">
+														<px class_id="60" class_name="model::video::transition::CrossFade" tracking_level="1" version="1" object_id="_44">
 															<VideoTransition class_id="61" tracking_level="0" version="1">
-																<Transition class_id="62" tracking_level="1" version="2" object_id="_45">
+																<Transition class_id="62" tracking_level="0" version="3">
 																	<Clip>
 																		<mLink>
 																			<ptr>
@@ -879,29 +879,33 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																		<item_version>0</item_version>
 																		<value>10</value>
 																	</mFramesRight>
+																	<mParameters class_id="63" tracking_level="0" version="0">
+																		<count>0</count>
+																		<item_version>0</item_version>
+																	</mParameters>
 																</Transition>
 																<IVideo></IVideo>
 															</VideoTransition>
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="48" object_id="_46">
+														<px class_id_reference="48" object_id="_45">
 															<ClipInterval>
 																<Clip>
 																	<mLink>
 																		<ptr>
-																			<px class_id_reference="52" object_id="_47">
+																			<px class_id_reference="52" object_id="_46">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
 																							<ptr>
-																								<px class_id_reference="48" object_id_reference="_46"></px>
+																								<px class_id_reference="48" object_id_reference="_45"></px>
 																							</ptr>
 																						</mLink>
 																					</Clip>
 																					<mRender>
-																						<px class_id_reference="54" object_id="_48">
-																							<File object_id="_49">
+																						<px class_id_reference="54" object_id="_47">
+																							<File object_id="_48">
 																								<Node>
 																									<INode></INode>
 																									<parent>
@@ -932,8 +936,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	</mLink>
 																</Clip>
 																<mRender>
-																	<px class_id_reference="55" object_id="_50">
-																		<File object_id="_51">
+																	<px class_id_reference="55" object_id="_49">
+																		<File object_id="_50">
 																			<Node>
 																				<INode></INode>
 																				<parent>
@@ -980,9 +984,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 														</px>
 													</item>
 													<item>
-														<px class_id="63" class_name="model::video::transition::CrossFade" tracking_level="1" version="1" object_id="_52">
+														<px class_id="64" class_name="model::video::transition::Bands" tracking_level="1" version="1" object_id="_51">
 															<VideoTransition>
-																<Transition object_id="_53">
+																<Transition>
 																	<Clip>
 																		<mLink>
 																			<ptr>
@@ -998,29 +1002,33 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																		<item_version>0</item_version>
 																		<value>10</value>
 																	</mFramesRight>
+																	<mParameters>
+																		<count>0</count>
+																		<item_version>0</item_version>
+																	</mParameters>
 																</Transition>
 																<IVideo></IVideo>
 															</VideoTransition>
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="48" object_id="_54">
+														<px class_id_reference="48" object_id="_52">
 															<ClipInterval>
 																<Clip>
 																	<mLink>
 																		<ptr>
-																			<px class_id_reference="52" object_id="_55">
+																			<px class_id_reference="52" object_id="_53">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
 																							<ptr>
-																								<px class_id_reference="48" object_id_reference="_54"></px>
+																								<px class_id_reference="48" object_id_reference="_52"></px>
 																							</ptr>
 																						</mLink>
 																					</Clip>
 																					<mRender>
-																						<px class_id_reference="54" object_id="_56">
-																							<File object_id="_57">
+																						<px class_id_reference="54" object_id="_54">
+																							<File object_id="_55">
 																								<Node>
 																									<INode></INode>
 																									<parent>
@@ -1051,8 +1059,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	</mLink>
 																</Clip>
 																<mRender>
-																	<px class_id_reference="55" object_id="_58">
-																		<File object_id="_59">
+																	<px class_id_reference="55" object_id="_56">
+																		<File object_id="_57">
 																			<Node>
 																				<INode></INode>
 																				<parent>
@@ -1096,6 +1104,48 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																<x>0</x>
 																<y>0</y>
 															</mPosition>
+														</px>
+													</item>
+													<item>
+														<px class_id="65" class_name="model::video::transition::FadeToColor" tracking_level="1" version="1" object_id="_58">
+															<VideoTransition>
+																<Transition>
+																	<Clip>
+																		<mLink>
+																			<ptr>
+																				<px class_id="-1"></px>
+																			</ptr>
+																		</mLink>
+																	</Clip>
+																	<mFramesLeft>
+																		<initialized>0</initialized>
+																	</mFramesLeft>
+																	<mFramesRight>
+																		<initialized>1</initialized>
+																		<item_version>0</item_version>
+																		<value>10</value>
+																	</mFramesRight>
+																	<mParameters>
+																		<count>1</count>
+																		<item_version>0</item_version>
+																		<item class_id="66" tracking_level="0" version="0">
+																			<first>0</first>
+																			<second class_id="67" tracking_level="0" version="1">
+																				<px class_id="68" class_name="model::TransitionParameterColor" tracking_level="1" version="1" object_id="_59">
+																					<TransitionParameter class_id="69" tracking_level="0" version="1"></TransitionParameter>
+																					<mColor class_id="70" tracking_level="0" version="0">
+																						<r>255</r>
+																						<g>255</g>
+																						<b>255</b>
+																						<a>255</a>
+																					</mColor>
+																				</px>
+																			</second>
+																		</item>
+																	</mParameters>
+																</Transition>
+																<IVideo></IVideo>
+															</VideoTransition>
 														</px>
 													</item>
 													<item>
@@ -1168,8 +1218,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																		<IVideo></IVideo>
 																	</px>
 																</mRender>
-																<mOffset>0</mOffset>
-																<mLength>319</mLength>
+																<mOffset>10</mOffset>
+																<mLength>309</mLength>
 															</ClipInterval>
 															<IVideo></IVideo>
 															<mOpacity>255</mOpacity>
@@ -2619,7 +2669,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 														</px>
 													</item>
 													<item>
-														<px class_id="64" class_name="model::ImageClip" tracking_level="1" version="1" object_id="_156">
+														<px class_id="71" class_name="model::ImageClip" tracking_level="1" version="1" object_id="_156">
 															<VideoClip object_id="_157">
 																<ClipInterval>
 																	<Clip>
@@ -2630,7 +2680,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																		</mLink>
 																	</Clip>
 																	<mRender>
-																		<px class_id="65" class_name="model::ImageFile" tracking_level="1" version="1" object_id="_158">
+																		<px class_id="72" class_name="model::ImageFile" tracking_level="1" version="2" object_id="_158">
 																			<VideoFile object_id="_159">
 																				<File object_id="_160">
 																					<Node>
@@ -2652,6 +2702,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																				</File>
 																				<IVideo></IVideo>
 																			</VideoFile>
+																			<mColor class_id="73" tracking_level="0" version="0">
+																				<initialized>0</initialized>
+																			</mColor>
 																		</px>
 																	</mRender>
 																	<mOffset>345105</mOffset>
@@ -2691,7 +2744,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 									<count>1</count>
 									<item_version>1</item_version>
 									<item>
-										<px class_id="66" class_name="model::AudioTrack" tracking_level="1" version="1" object_id="_161">
+										<px class_id="74" class_name="model::AudioTrack" tracking_level="1" version="1" object_id="_161">
 											<Track object_id="_162">
 												<mIndex>0</mIndex>
 												<mClips>
@@ -2718,10 +2771,10 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 														<px class_id_reference="52" object_id_reference="_39"></px>
 													</item>
 													<item>
-														<px class_id_reference="52" object_id_reference="_47"></px>
+														<px class_id_reference="52" object_id_reference="_46"></px>
 													</item>
 													<item>
-														<px class_id_reference="52" object_id_reference="_55"></px>
+														<px class_id_reference="52" object_id_reference="_53"></px>
 													</item>
 													<item>
 														<px class_id_reference="52" object_id_reference="_61"></px>
@@ -2829,10 +2882,10 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 		</px>
 	</mRoot>
 </project>
-<view class_id="67" tracking_level="0" version="1">
-	<window class_id="68" tracking_level="0" version="1">
-		<projectview class_id="69" tracking_level="0" version="1">
-			<mOpenFolders class_id="70" tracking_level="0" version="0">
+<view class_id="75" tracking_level="0" version="1">
+	<window class_id="76" tracking_level="0" version="1">
+		<projectview class_id="77" tracking_level="0" version="1">
+			<mOpenFolders class_id="78" tracking_level="0" version="0">
 				<count>2</count>
 				<item_version>1</item_version>
 				<item>
@@ -2843,25 +2896,25 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 				</item>
 			</mOpenFolders>
 		</projectview>
-		<timelinesview class_id="71" tracking_level="0" version="1">
+		<timelinesview class_id="79" tracking_level="0" version="1">
 			<notebookCount>1</notebookCount>
 			<selectedPage>0</selectedPage>
-			<sequence class_id="72" tracking_level="0" version="1">
+			<sequence class_id="80" tracking_level="0" version="1">
 				<px class_id_reference="40" object_id_reference="_28"></px>
 			</sequence>
-			<timeline class_id="73" tracking_level="0" version="2">
-				<zoom class_id="74" tracking_level="0" version="1">
+			<timeline class_id="81" tracking_level="0" version="2">
+				<zoom class_id="82" tracking_level="0" version="1">
 					<mZoom>
 						<numerator>1</numerator>
 						<denominator>1</denominator>
 					</mZoom>
 				</zoom>
-				<intervals class_id="75" tracking_level="0" version="1">
-					<mIntervals class_id="76" tracking_level="0" version="0">
-						<listofpairs class_id="77" tracking_level="0" version="0">
+				<intervals class_id="83" tracking_level="0" version="1">
+					<mIntervals class_id="84" tracking_level="0" version="0">
+						<listofpairs class_id="85" tracking_level="0" version="0">
 							<count>2</count>
 							<item_version>0</item_version>
-							<item class_id="78" tracking_level="0" version="0">
+							<item class_id="86" tracking_level="0" version="0">
 								<first>85</first>
 								<second>265</second>
 							</item>
@@ -2872,13 +2925,13 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 						</listofpairs>
 					</mIntervals>
 				</intervals>
-				<scrolling class_id="79" tracking_level="0" version="0">
+				<scrolling class_id="87" tracking_level="0" version="0">
 					<mCenterPts>3487</mCenterPts>
 				</scrolling>
-				<cursor class_id="80" tracking_level="0" version="0">
+				<cursor class_id="88" tracking_level="0" version="0">
 					<mCursorPosition>3487</mCursorPosition>
 				</cursor>
-				<player class_id="81" tracking_level="0" version="0">
+				<player class_id="89" tracking_level="0" version="0">
 					<speed>100</speed>
 				</player>
 			</timeline>

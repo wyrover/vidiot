@@ -19,14 +19,14 @@
 
 #include "AudioClip.h"
 #include "AudioClipEvent.h"
-#include "ChangeAudioClipVolume.h"
-#include "ChangeVideoClipTransform.h"
+#include "ClipPreview.h"
 #include "Combiner.h"
 #include "CommandProcessor.h"
 #include "Constants.h"
 #include "Convert.h"
 #include "Cursor.h"
 #include "DetailsPanel.h"
+#include "EditClipDetails.h"
 #include "IClip.h"
 #include "Player.h"
 #include "Selection.h"
@@ -34,6 +34,7 @@
 #include "Sequence.h"
 #include "StatusBar.h"
 #include "Transition.h"
+#include "TransitionParameter.h"
 #include "Trim.h"
 #include "TrimClip.h"
 #include "UtilClone.h"
@@ -43,9 +44,10 @@
 #include "UtilLogWxwidgets.h"
 #include "VideoClip.h"
 #include "VideoClipEvent.h"
-#include "VideoFrame.h"
 #include "VideoComposition.h"
 #include "VideoCompositionParameters.h"
+#include "VideoFrame.h"
+#include "ViewMap.h"
 
 namespace gui { namespace timeline {
 template <class TARGET>
@@ -76,34 +78,33 @@ const wxString sAudio(_("Audio"));
 const wxString sTransition(_("Transition"));
 
 DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
-    :   DetailsPanel(parent,timeline)
-    ,   mClip()
-    ,   mVideoClip()
-    ,   mAudioClip()
-    ,   mTransition()
-    ,   mCurrentLength()
-    ,   mOpacitySlider(0)
-    ,   mOpacitySpin(0)
-    ,   mSelectScaling(0)
-    ,   mScalingSlider(0)
-    ,   mScalingSpin(0)
-    ,   mRotationSlider(0)
-    ,   mRotationSpin(0)
-    ,   mSelectAlignment(0)
-    ,   mPositionXSpin(0)
-    ,   mPositionXSlider(0)
-    ,   mPositionYSpin(0)
-    ,   mPositionYSlider(0)
-    ,   mTransformCommand(0)
-    ,   mVolumeCommand(0)
-    ,   mMinimumLengthWhenBeginTrimming(0)
-    ,   mMaximumLengthWhenBeginTrimming(0)
-    ,   mMinimumLengthWhenEndTrimming(0)
-    ,   mMaximumLengthWhenEndTrimming(0)
-    ,   mMinimumLengthWhenBothTrimming(0)
-    ,   mMaximumLengthWhenBothTrimming(0)
-    ,   mVolumeSlider(0)
-    ,   mVolumeSpin(0)
+    : DetailsPanel(parent, timeline)
+    , mClip(nullptr)
+    , mVideoClipClone(nullptr)
+    , mAudioClipClone(nullptr)
+    , mTransitionClone(nullptr)
+    , mCurrentLength()
+    , mOpacitySlider(nullptr)
+    , mOpacitySpin(nullptr)
+    , mSelectScaling(nullptr)
+    , mScalingSlider(nullptr)
+    , mScalingSpin(nullptr)
+    , mRotationSlider(nullptr)
+    , mRotationSpin(nullptr)
+    , mSelectAlignment(nullptr)
+    , mPositionXSpin(nullptr)
+    , mPositionXSlider(nullptr)
+    , mPositionYSpin(nullptr)
+    , mPositionYSlider(nullptr)
+    , mEditCommand(nullptr)
+    , mMinimumLengthWhenBeginTrimming(0)
+    , mMaximumLengthWhenBeginTrimming(0)
+    , mMinimumLengthWhenEndTrimming(0)
+    , mMaximumLengthWhenEndTrimming(0)
+    , mMinimumLengthWhenBothTrimming(0)
+    , mMaximumLengthWhenBothTrimming(0)
+    , mVolumeSlider(nullptr)
+    , mVolumeSpin(nullptr)
 {
     VAR_DEBUG(this);
 
@@ -247,7 +248,7 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     mVolumeSlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onVolumeSliderChanged, this);
     mVolumeSpin->Bind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onVolumeSpinChanged, this);
 
-    addBox(sTransition);
+    mTransitionBoxSizer = addBox(sTransition);
 
     Bind(wxEVT_SHOW, &DetailsClip::onShow, this);
 
@@ -315,142 +316,184 @@ void DetailsClip::setClip(const model::IClipPtr& clip)
     if (mClip == clip) return; // Avoid useless updating
     if (mClip)
     {
-        if (mVideoClip)
+        if (mVideoClipClone)
         {
-            mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_OPACITY, &DetailsClip::onOpacityChanged, this);
-            mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_SCALING, &DetailsClip::onScalingChanged, this);
-            mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_SCALINGFACTOR, &DetailsClip::onScalingFactorChanged, this);
-            mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_ROTATION, &DetailsClip::onRotationChanged, this);
-            mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_ALIGNMENT, &DetailsClip::onAlignmentChanged, this);
-            mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_POSITION, &DetailsClip::onPositionChanged, this);
-            mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_MINPOSITION, &DetailsClip::onMinPositionChanged, this);
-            mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_MAXPOSITION, &DetailsClip::onMaxPositionChanged, this);
+            mVideoClipClone->Unbind(model::EVENT_CHANGE_VIDEOCLIP_OPACITY, &DetailsClip::onOpacityChanged, this);
+            mVideoClipClone->Unbind(model::EVENT_CHANGE_VIDEOCLIP_SCALING, &DetailsClip::onScalingChanged, this);
+            mVideoClipClone->Unbind(model::EVENT_CHANGE_VIDEOCLIP_SCALINGFACTOR, &DetailsClip::onScalingFactorChanged, this);
+            mVideoClipClone->Unbind(model::EVENT_CHANGE_VIDEOCLIP_ROTATION, &DetailsClip::onRotationChanged, this);
+            mVideoClipClone->Unbind(model::EVENT_CHANGE_VIDEOCLIP_ALIGNMENT, &DetailsClip::onAlignmentChanged, this);
+            mVideoClipClone->Unbind(model::EVENT_CHANGE_VIDEOCLIP_POSITION, &DetailsClip::onPositionChanged, this);
+            mVideoClipClone->Unbind(model::EVENT_CHANGE_VIDEOCLIP_MINPOSITION, &DetailsClip::onMinPositionChanged, this);
+            mVideoClipClone->Unbind(model::EVENT_CHANGE_VIDEOCLIP_MAXPOSITION, &DetailsClip::onMaxPositionChanged, this);
         }
-        if (mAudioClip)
+        if (mAudioClipClone)
         {
-            mAudioClip->Unbind(model::EVENT_CHANGE_AUDIOCLIP_VOLUME, &DetailsClip::onVolumeChanged, this);
+            mAudioClipClone->Unbind(model::EVENT_CHANGE_AUDIOCLIP_VOLUME, &DetailsClip::onVolumeChanged, this);
         }
-        mVideoClip.reset();
-        mAudioClip.reset();
+        if (mTransitionClone)
+        {
+            while (mTransitionBoxSizer->GetItemCount() > 0)
+            {
+                wxWindow* widget = mTransitionBoxSizer->GetItem(static_cast<size_t>(0))->GetWindow();
+                mTransitionBoxSizer->Detach(0);
+                if (dynamic_cast<wxStaticText*>(widget) != 0)
+                {
+                    // It's a title. Must be removed also.
+                    widget->Destroy();
+                }
+            }
+            for (auto id_and_parameter : mTransitionClone->getParameters())
+            {
+                id_and_parameter.second->Unbind(model::EVENT_TRANSITION_PARAMETER_CHANGED, &DetailsClip::onTransitionParameterChanged, this);
+                id_and_parameter.second->destroyWidget();
+            }
+        }
+        mTransitionClone.reset();
+        mVideoClipClone.reset();
+        mAudioClipClone.reset();
         mClip.reset();
     }
 
-    mClip = clip;
-
-    mTransformCommand = 0; // Ensures that a new command is generated for future edits
-    mVolumeCommand = 0; // Ensures that a new command is generated for future edits
-
-    if (mClip)
+    if (mEditCommand != nullptr)
     {
-        mTransition = getTypedClip<model::Transition>(clip);
-        mVideoClip = getTypedClip<model::VideoClip>(clip);
-        mAudioClip = getTypedClip<model::AudioClip>(clip);
-        mEmptyClip = getTypedClip<model::EmptyClip>(clip);
+        // Previous edit command was not submitted. May be removed.
+        delete mEditCommand;
+        mEditCommand = nullptr;
+    }
 
-        if (mEmptyClip)
+    if (clip && (clip->isA<model::AudioClip>() || clip->isA<model::VideoClip>() || clip->isA<model::Transition>()))
+    {
+        // Clip type for which editing details is supported.
+        mClip = clip;
+
+        // For audio/video clips and transitions, the length can be edited.
+        determineClipSizeBounds();
+        updateLengthButtons();
+
+        model::IClipPtr link = mClip->getLink();
+        pts perceivedLengthClip = mClip->getPerceivedLength();
+        pts perceivedLengthLink = link ? link->getPerceivedLength() : 0;
+        if (link && perceivedLengthLink != perceivedLengthClip)
         {
-            // Can't edit emptyclips
-            mClip.reset();
-            mEmptyClip.reset();
+            mCurrentLength->SetLabel(model::Convert::ptsToHumanReadibleString(perceivedLengthClip) + "/" + model::Convert::ptsToHumanReadibleString(perceivedLengthLink));
         }
         else
         {
-            if (mTransition || mVideoClip || mAudioClip)
+            mCurrentLength->SetLabel(model::Convert::ptsToHumanReadibleString(perceivedLengthClip));
+        }
+
+        // Prepare the edit command which is submitted 
+        mEditCommand = new command::EditClipDetails(getSequence(), mClip);
+
+        if (mClip->isA<model::Transition>())
+        {
+            mTransitionClone = boost::dynamic_pointer_cast<model::Transition>(mEditCommand->getClipClone());
+            ASSERT_NONZERO(mTransitionClone);
+        }
+        else if (mClip->isA<model::VideoClip>())
+        {
+            mVideoClipClone = boost::dynamic_pointer_cast<model::VideoClip>(mEditCommand->getClipClone());
+            mAudioClipClone = boost::dynamic_pointer_cast<model::AudioClip>(mEditCommand->getLinkClone());
+            ASSERT_NONZERO(mVideoClipClone);
+            ASSERT_IMPLIES(mClip->getLink(), mAudioClipClone != nullptr);
+        }
+        else if (mClip->isA<model::AudioClip>())
+        {
+            mVideoClipClone = boost::dynamic_pointer_cast<model::VideoClip>(mEditCommand->getLinkClone());
+            mAudioClipClone = boost::dynamic_pointer_cast<model::AudioClip>(mEditCommand->getClipClone());
+            ASSERT_IMPLIES(mClip->getLink(), mVideoClipClone != nullptr);
+            ASSERT_NONZERO(mAudioClipClone);
+        }
+
+        showBox(sVideo, mVideoClipClone != nullptr);
+        if (mVideoClipClone)
+        {
+            wxSize originalSize = mVideoClipClone->getInputSize();
+            boost::rational< int > factor = mVideoClipClone->getScalingFactor();
+            boost::rational< int > rotation = mVideoClipClone->getRotation();
+            wxPoint position = mVideoClipClone->getPosition();
+            wxPoint maxpos = mVideoClipClone->getMaxPosition();
+            wxPoint minpos = mVideoClipClone->getMinPosition();
+            int opacity = mVideoClipClone->getOpacity();
+            const double sScalingIncrement = 0.01;
+
+            mOpacitySlider->SetValue(opacity);
+            mOpacitySpin->SetValue(opacity);
+
+            mSelectScaling->select(mVideoClipClone->getScaling());
+            double sliderFactor = boost::rational_cast<double>(factor);
+            mScalingSlider->SetValue(boost::rational_cast<int>(factor * model::Constants::sScalingPrecisionFactor));
+            mScalingSpin->SetValue(sliderFactor);
+
+            double angle = boost::rational_cast<double>(rotation);
+            mRotationSlider->SetValue(boost::rational_cast<int>(rotation * model::Constants::sRotationPrecisionFactor));
+            mRotationSpin->SetValue(angle);
+
+            mSelectAlignment->select(mVideoClipClone->getAlignment());
+            mPositionXSlider->SetRange(minpos.x, maxpos.x);
+            mPositionXSlider->SetValue(position.x);
+            mPositionXSpin->SetRange(minpos.x, maxpos.x);
+            mPositionXSpin->SetValue(position.x);
+            mPositionYSlider->SetRange(minpos.y, maxpos.y);
+            mPositionYSlider->SetValue(position.y);
+            mPositionYSpin->SetRange(minpos.y, maxpos.y);
+            mPositionYSpin->SetValue(position.y);
+
+            mVideoClipClone->Bind(model::EVENT_CHANGE_VIDEOCLIP_OPACITY, &DetailsClip::onOpacityChanged, this);
+            mVideoClipClone->Bind(model::EVENT_CHANGE_VIDEOCLIP_SCALING, &DetailsClip::onScalingChanged, this);
+            mVideoClipClone->Bind(model::EVENT_CHANGE_VIDEOCLIP_SCALINGFACTOR, &DetailsClip::onScalingFactorChanged, this);
+            mVideoClipClone->Bind(model::EVENT_CHANGE_VIDEOCLIP_ROTATION, &DetailsClip::onRotationChanged, this);
+            mVideoClipClone->Bind(model::EVENT_CHANGE_VIDEOCLIP_ALIGNMENT, &DetailsClip::onAlignmentChanged, this);
+            mVideoClipClone->Bind(model::EVENT_CHANGE_VIDEOCLIP_POSITION, &DetailsClip::onPositionChanged, this);
+            mVideoClipClone->Bind(model::EVENT_CHANGE_VIDEOCLIP_MINPOSITION, &DetailsClip::onMinPositionChanged, this);
+            mVideoClipClone->Bind(model::EVENT_CHANGE_VIDEOCLIP_MAXPOSITION, &DetailsClip::onMaxPositionChanged, this);
+        }
+
+        showBox(sAudio, mAudioClipClone != nullptr);
+        if (mAudioClipClone)
+        {
+            int volume = mAudioClipClone->getVolume();
+
+            mVolumeSlider->SetValue(volume);
+            mVolumeSpin->SetValue(volume);
+
+            mAudioClipClone->Bind(model::EVENT_CHANGE_AUDIOCLIP_VOLUME, &DetailsClip::onVolumeChanged, this);
+        }
+
+        showBox(sTransition, (mTransitionClone != nullptr) && (mTransitionClone->getParameters().size() > 0));
+        if (mTransitionClone)
+        {
+            setBox(mTransitionBoxSizer);
+            setBoxTitle(sTransition, boost::dynamic_pointer_cast<model::Transition>(clip)->getDescription()); // Use original transition for name, since the position in the track may be required.
+
+            for (auto id_and_parameter : mTransitionClone->getParameters())
             {
-                // For audio and video clips and for transitions, the length can be edited.
-                determineClipSizeBounds();
-                updateLengthButtons();
-
-                model::IClipPtr link = mClip->getLink();
-                pts lClip = mClip->getPerceivedLength();
-                pts lLink = link ? link->getPerceivedLength() : 0;
-                if (link && lLink !=lClip)
-                {
-                    mCurrentLength->SetLabel(model::Convert::ptsToHumanReadibleString(lClip) + "/" + model::Convert::ptsToHumanReadibleString(lLink));
-                }
-                else
-                {
-                    mCurrentLength->SetLabel(model::Convert::ptsToHumanReadibleString(lClip));
-                }
-            }
-
-            showBox(sVideo, mVideoClip != nullptr);
-            showBox(sAudio, mAudioClip != nullptr);
-            // showBox(sTransition, mTransition);
-            showBox(sTransition, false);
-
-            if (mVideoClip)
-            {
-
-                wxSize originalSize = mVideoClip->getInputSize();
-                boost::rational< int > factor = mVideoClip->getScalingFactor();
-                boost::rational< int > rotation = mVideoClip->getRotation();
-                wxPoint position = mVideoClip->getPosition();
-                wxPoint maxpos = mVideoClip->getMaxPosition();
-                wxPoint minpos = mVideoClip->getMinPosition();
-                int opacity = mVideoClip->getOpacity();
-                const double sScalingIncrement = 0.01;
-
-                mOpacitySlider->SetValue(opacity);
-                mOpacitySpin->SetValue(opacity);
-
-                mSelectScaling->select(mVideoClip->getScaling());
-                double sliderFactor = boost::rational_cast<double>(factor);
-                mScalingSlider->SetValue(boost::rational_cast<int>(factor * model::Constants::sScalingPrecisionFactor));
-                mScalingSpin->SetValue(sliderFactor);
-
-                double angle = boost::rational_cast<double>(rotation);
-                mRotationSlider->SetValue(boost::rational_cast<int>(rotation * model::Constants::sRotationPrecisionFactor));
-                mRotationSpin->SetValue(angle);
-
-                mSelectAlignment->select(mVideoClip->getAlignment());
-                mPositionXSlider->SetRange(minpos.x,maxpos.x);
-                mPositionXSlider->SetValue(position.x);
-                mPositionXSpin->SetRange(minpos.x, maxpos.x);
-                mPositionXSpin->SetValue(position.x);
-                mPositionYSlider->SetRange(minpos.y,maxpos.y);
-                mPositionYSlider->SetValue(position.y);
-                mPositionYSpin->SetRange(minpos.y, maxpos.y);
-                mPositionYSpin->SetValue(position.y);
-
-                mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_OPACITY, &DetailsClip::onOpacityChanged, this);
-                mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_SCALING, &DetailsClip::onScalingChanged, this);
-                mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_SCALINGFACTOR, &DetailsClip::onScalingFactorChanged, this);
-                mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_ROTATION, &DetailsClip::onRotationChanged, this);
-                mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_ALIGNMENT, &DetailsClip::onAlignmentChanged, this);
-                mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_POSITION, &DetailsClip::onPositionChanged, this);
-                mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_MINPOSITION, &DetailsClip::onMinPositionChanged, this);
-                mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_MAXPOSITION, &DetailsClip::onMaxPositionChanged, this);
-            }
-            if (mAudioClip)
-            {
-                int volume = mAudioClip->getVolume();
-
-                mVolumeSlider->SetValue(volume);
-                mVolumeSpin->SetValue(volume);
-
-                mAudioClip->Bind(model::EVENT_CHANGE_AUDIOCLIP_VOLUME, &DetailsClip::onVolumeChanged, this);
+                addOption(
+                    id_and_parameter.second->getName(),
+                    id_and_parameter.second->makeWidget(this));
+                id_and_parameter.second->Bind(model::EVENT_TRANSITION_PARAMETER_CHANGED, &DetailsClip::onTransitionParameterChanged, this);
             }
         }
     }
 
     // Note: disabling a control and then enabling it again can cause extra events (value changed).
     // Therefore this has been placed here, to only dis/enable in the minimal number of cases.
-    mOpacitySlider->Enable(mVideoClip != nullptr);
-    mOpacitySpin->Enable(mVideoClip != nullptr);
-    mSelectScaling->Enable(mVideoClip != nullptr);
-    mScalingSlider->Enable(mVideoClip != nullptr);
-    mScalingSpin->Enable(mVideoClip != nullptr);
-    mRotationSlider->Enable(mVideoClip != nullptr);
-    mRotationSpin->Enable(mVideoClip != nullptr);
-    mSelectAlignment->Enable(mVideoClip != nullptr);
-    mPositionXSlider->Enable(mVideoClip != nullptr);
-    mPositionXSpin->Enable(mVideoClip != nullptr);
-    mPositionYSlider->Enable(mVideoClip != nullptr);
-    mPositionYSpin->Enable(mVideoClip != nullptr);
-    mVolumeSlider->Enable(mAudioClip != nullptr);
-    mVolumeSpin->Enable(mAudioClip != nullptr);
-    Layout();
+    mOpacitySlider->Enable(mVideoClipClone != nullptr);
+    mOpacitySpin->Enable(mVideoClipClone != nullptr);
+    mSelectScaling->Enable(mVideoClipClone != nullptr);
+    mScalingSlider->Enable(mVideoClipClone != nullptr);
+    mScalingSpin->Enable(mVideoClipClone != nullptr);
+    mRotationSlider->Enable(mVideoClipClone != nullptr);
+    mRotationSpin->Enable(mVideoClipClone != nullptr);
+    mSelectAlignment->Enable(mVideoClipClone != nullptr);
+    mPositionXSlider->Enable(mVideoClipClone != nullptr);
+    mPositionXSpin->Enable(mVideoClipClone != nullptr);
+    mPositionYSlider->Enable(mVideoClipClone != nullptr);
+    mPositionYSpin->Enable(mVideoClipClone != nullptr);
+    mVolumeSlider->Enable(mAudioClipClone != nullptr);
+    mVolumeSpin->Enable(mAudioClipClone != nullptr);
+    Layout(); // todo after editing the video of a clip the thumbnail is not updated (only done once, since the clip replacement is only done once...)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -473,8 +516,7 @@ void DetailsClip::onLengthButtonPressed(wxCommandEvent& event)
 void DetailsClip::onOpacitySliderChanged(wxCommandEvent& event)
 {
     VAR_INFO(mOpacitySlider->GetValue());
-    makeTransformCommand();
-    mTransformCommand->setOpacity(mOpacitySlider->GetValue());
+    mVideoClipClone->setOpacity(mOpacitySlider->GetValue());
     event.Skip();
 }
 
@@ -482,25 +524,22 @@ void DetailsClip::onOpacitySpinChanged(wxSpinEvent& event)
 {
     int value = mOpacitySpin->GetValue(); // NOT: event.GetValue() -- The event's value may be outside the range boundaries
     VAR_INFO(value);
-    makeTransformCommand();
-    mTransformCommand->setOpacity(value);
+    mVideoClipClone->setOpacity(value);
     event.Skip();
 }
 
 void DetailsClip::onScalingChoiceChanged(wxCommandEvent& event)
 {
     VAR_INFO(mSelectScaling->getValue());
-    makeTransformCommand();
-    mTransformCommand->setScaling(mSelectScaling->getValue(), boost::none);
+    mVideoClipClone->setScaling(mSelectScaling->getValue(), boost::none);
     event.Skip();
 }
 
 void DetailsClip::onScalingSliderChanged(wxCommandEvent& event)
 {
     VAR_INFO(mScalingSlider->GetValue());
-    makeTransformCommand();
     boost::rational<int> r(mScalingSlider->GetValue(), model::Constants::sScalingPrecisionFactor);
-    mTransformCommand->setScaling(model::VideoScalingCustom, boost::optional< boost::rational< int > >(r));
+    mVideoClipClone->setScaling(model::VideoScalingCustom, boost::optional< boost::rational< int > >(r));
     event.Skip();
 }
 
@@ -509,18 +548,16 @@ void DetailsClip::onScalingSpinChanged(wxSpinDoubleEvent& event)
     double value = mScalingSpin->GetValue(); // NOT: event.GetValue() -- The event's value may be outside the range boundaries
     VAR_INFO(value);
     int spinFactor = floor(value * model::Constants::sScalingPrecisionFactor);
-    makeTransformCommand();
     boost::rational<int> r(spinFactor, model::Constants::sScalingPrecisionFactor);
-    mTransformCommand->setScaling(model::VideoScalingCustom, boost::optional< boost::rational< int > >(r));
+    mVideoClipClone->setScaling(model::VideoScalingCustom, boost::optional< boost::rational< int > >(r));
     event.Skip();
 }
 
 void DetailsClip::onRotationSliderChanged(wxCommandEvent& event)
 {
     VAR_INFO(mRotationSlider->GetValue());
-    makeTransformCommand();
     boost::rational<int> r(mRotationSlider->GetValue(), model::Constants::sRotationPrecisionFactor);
-    mTransformCommand->setRotation(r);
+    mVideoClipClone->setRotation(r);
     event.Skip();
 }
 
@@ -529,26 +566,23 @@ void DetailsClip::onRotationSpinChanged(wxSpinDoubleEvent& event)
     double value = mRotationSpin->GetValue(); // NOT: event.GetValue() -- The event's value may be outside the range boundaries
     VAR_INFO(value);
     int spinFactor = floor(value * model::Constants::sRotationPrecisionFactor);
-    makeTransformCommand();
     boost::rational<int> r(spinFactor, model::Constants::sRotationPrecisionFactor);
-    mTransformCommand->setRotation(r);
+    mVideoClipClone->setRotation(r);
     event.Skip();
 }
 
 void DetailsClip::onAlignmentChoiceChanged(wxCommandEvent& event)
 {
     VAR_INFO(mSelectAlignment->getValue());
-    makeTransformCommand();
-    mTransformCommand->setAlignment(mSelectAlignment->getValue());
+    mVideoClipClone->setAlignment(mSelectAlignment->getValue());
     event.Skip();
 }
 
 void DetailsClip::onPositionXSliderChanged(wxCommandEvent& event)
 {
     VAR_INFO(mPositionXSlider->GetValue());
-    makeTransformCommand();
     updateAlignment(true);
-    mTransformCommand->setPosition(wxPoint(mPositionXSlider->GetValue(), mPositionYSlider->GetValue()));
+    mVideoClipClone->setPosition(wxPoint(mPositionXSlider->GetValue(), mPositionYSlider->GetValue()));
     event.Skip();
 }
 
@@ -556,18 +590,16 @@ void DetailsClip::onPositionXSpinChanged(wxSpinEvent& event)
 {
     int value = mPositionXSpin->GetValue(); // NOT: event.GetValue() -- The event's value may be outside the range boundaries
     VAR_INFO(value);
-    makeTransformCommand();
     updateAlignment(true);
-    mTransformCommand->setPosition(wxPoint(value, mPositionYSlider->GetValue()));
+    mVideoClipClone->setPosition(wxPoint(value, mPositionYSlider->GetValue()));
     event.Skip();
 }
 
 void DetailsClip::onPositionYSliderChanged(wxCommandEvent& event)
 {
     VAR_INFO(mPositionYSlider->GetValue());
-    makeTransformCommand();
     updateAlignment(false);
-    mTransformCommand->setPosition(wxPoint(mPositionXSlider->GetValue(), mPositionYSlider->GetValue()));
+    mVideoClipClone->setPosition(wxPoint(mPositionXSlider->GetValue(), mPositionYSlider->GetValue()));
     event.Skip();
 }
 
@@ -575,17 +607,15 @@ void DetailsClip::onPositionYSpinChanged(wxSpinEvent& event)
 {
     int value = mPositionYSpin->GetValue(); // NOT: event.GetValue() -- The event's value may be outside the range boundaries
     VAR_INFO(value);
-    makeTransformCommand();
     updateAlignment(false);
-    mTransformCommand->setPosition(wxPoint(mPositionXSlider->GetValue(), value));
+    mVideoClipClone->setPosition(wxPoint(mPositionXSlider->GetValue(), value));
     event.Skip();
 }
 
 void DetailsClip::onVolumeSliderChanged(wxCommandEvent& event)
 {
     VAR_INFO(mVolumeSlider->GetValue());
-    makeChangeVolumeCommand();
-    mVolumeCommand->setVolume(mVolumeSlider->GetValue());
+    mAudioClipClone->setVolume(mVolumeSlider->GetValue());
     event.Skip();
 }
 
@@ -593,8 +623,7 @@ void DetailsClip::onVolumeSpinChanged(wxSpinEvent& event)
 {
     int value = mVolumeSpin->GetValue(); // NOT: event.GetValue() -- The event's value may be outside the range boundaries
     VAR_INFO(value);
-    makeChangeVolumeCommand();
-    mVolumeCommand->setVolume(value);
+    mAudioClipClone->setVolume(value);
     event.Skip();
 }
 
@@ -613,9 +642,9 @@ void DetailsClip::handleLengthButtonPressed(wxToggleButton* button)
     getTimeline().beginTransaction();
 
     model::IClipPtr clip = mClip;
+    model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(clip);
     pts endtrim = mTrimAtEnd[length];
     pts begintrim = mTrimAtBegin[length];
-    bool transition = clip->isA<model::Transition>();
     bool shift = !transition;
     bool error = false;
 
@@ -624,6 +653,7 @@ void DetailsClip::handleLengthButtonPressed(wxToggleButton* button)
         ::gui::timeline::command::TrimClip* trimCommand = new command::TrimClip(getSequence(), clip, model::TransitionPtr(), transition ? TransitionEnd : ClipEnd);
         trimCommand->update(endtrim, shift);
         clip = trimCommand->getNewClip();
+        transition = boost::dynamic_pointer_cast<model::Transition>(clip);
         command->add(trimCommand);
     }
 
@@ -638,9 +668,9 @@ void DetailsClip::handleLengthButtonPressed(wxToggleButton* button)
             // The differences between the original computation and the result here are particularly related to shifting clips in other tracks and
             // related to having multiple transitions besides the clip.
             command::TrimClip::TrimLimit limitsBeginTrim;
-            if (mTransition)
+            if (transition)
             {
-                limitsBeginTrim = command::TrimClip::determineBoundaries(getSequence(), mTransition, model::IClipPtr(), TransitionBegin, false);
+                limitsBeginTrim = command::TrimClip::determineBoundaries(getSequence(), transition, model::IClipPtr(), TransitionBegin, false);
             }
             else
             {
@@ -686,6 +716,7 @@ void DetailsClip::handleLengthButtonPressed(wxToggleButton* button)
 
 void DetailsClip::onOpacityChanged(model::EventChangeVideoClipOpacity& event)
 {
+    submitEditCommandUponFirstEdit();
     mOpacitySlider->SetValue(event.getValue());
     mOpacitySpin->SetValue(event.getValue());
     preview();
@@ -694,12 +725,14 @@ void DetailsClip::onOpacityChanged(model::EventChangeVideoClipOpacity& event)
 
 void DetailsClip::onScalingChanged(model::EventChangeVideoClipScaling& event)
 {
+    submitEditCommandUponFirstEdit();
     mSelectScaling->select(event.getValue());
     event.Skip();
 }
 
 void DetailsClip::onScalingFactorChanged(model::EventChangeVideoClipScalingFactor& event)
 {
+    submitEditCommandUponFirstEdit();
     mScalingSpin->SetValue(boost::rational_cast<double>(event.getValue()));
     mScalingSlider->SetValue(floor(event.getValue() * model::Constants::sScalingPrecisionFactor));
     preview();
@@ -708,6 +741,7 @@ void DetailsClip::onScalingFactorChanged(model::EventChangeVideoClipScalingFacto
 
 void DetailsClip::onRotationChanged(model::EventChangeVideoClipRotation& event)
 {
+    submitEditCommandUponFirstEdit();
     mRotationSpin->SetValue(boost::rational_cast<double>(event.getValue()));
     mRotationSlider->SetValue(floor(event.getValue() * model::Constants::sRotationPrecisionFactor));
     preview();
@@ -716,6 +750,7 @@ void DetailsClip::onRotationChanged(model::EventChangeVideoClipRotation& event)
 
 void DetailsClip::onAlignmentChanged(model::EventChangeVideoClipAlignment& event)
 {
+    submitEditCommandUponFirstEdit();
     mSelectAlignment->select(event.getValue());
     preview();
     event.Skip();
@@ -723,6 +758,7 @@ void DetailsClip::onAlignmentChanged(model::EventChangeVideoClipAlignment& event
 
 void DetailsClip::onPositionChanged(model::EventChangeVideoClipPosition& event)
 {
+    submitEditCommandUponFirstEdit();
     mPositionXSpin->SetValue(event.getValue().x);
     mPositionXSlider->SetValue(event.getValue().x);
     mPositionYSpin->SetValue(event.getValue().y);
@@ -733,6 +769,7 @@ void DetailsClip::onPositionChanged(model::EventChangeVideoClipPosition& event)
 
 void DetailsClip::onMinPositionChanged(model::EventChangeVideoClipMinPosition& event)
 {
+    submitEditCommandUponFirstEdit();
     mPositionXSpin->SetRange(event.getValue().x,mPositionXSpin->GetMax());
     mPositionYSpin->SetRange(event.getValue().y,mPositionYSpin->GetMax());
     mPositionXSlider->SetRange(event.getValue().x,mPositionXSlider->GetMax());
@@ -742,6 +779,7 @@ void DetailsClip::onMinPositionChanged(model::EventChangeVideoClipMinPosition& e
 
 void DetailsClip::onMaxPositionChanged(model::EventChangeVideoClipMaxPosition& event)
 {
+    submitEditCommandUponFirstEdit();
     mPositionXSpin->SetRange(mPositionXSpin->GetMin(),event.getValue().x);
     mPositionYSpin->SetRange(mPositionYSpin->GetMin(), event.getValue().y);
     mPositionXSlider->SetRange(mPositionXSlider->GetMin(),event.getValue().x);
@@ -751,9 +789,16 @@ void DetailsClip::onMaxPositionChanged(model::EventChangeVideoClipMaxPosition& e
 
 void DetailsClip::onVolumeChanged(model::EventChangeAudioClipVolume& event)
 {
+    submitEditCommandUponFirstEdit();
     mVolumeSlider->SetValue(event.getValue());
     mVolumeSpin->SetValue(event.getValue());
     preview();
+    event.Skip();
+}
+
+void DetailsClip::onTransitionParameterChanged(model::EventTransitionParameterChanged& event)
+{
+    submitEditCommandUponFirstEdit();
     event.Skip();
 }
 
@@ -875,53 +920,49 @@ wxSpinCtrl* DetailsClip::getVolumeSpin() const
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-void DetailsClip::makeTransformCommand()
+void DetailsClip::submitEditCommandUponFirstEdit()
 {
     getPlayer()->stop(); // Stop iteration through the sequence, since the sequence is going to be changed.
-    if (!mTransformCommand || mTransformCommand != model::CommandProcessor::get().GetCurrentCommand())
+    if (mEditCommand != nullptr)
     {
-        // - No transform command has been submitted yet, OR
-        // - A transform command was submitted, but
-        //   * another command was executed afterwards, OR
-        //   * the transform command was undone again.
-        // Insert a new transform command into the Undo chain.
-        ASSERT(mVideoClip);
-        mTransformCommand = new model::ChangeVideoClipTransform(mVideoClip);
-        mTransformCommand->submit();
+        // The submission of the command will result in a newly selected clip: the clone
+        // Storing that clone as the current clip serves two purposes:
+        // - The first 'selectClip' after the submission is ignored (since it's the clone).
+        // - Undo will actually cause mClip to be selected again.
+        mClip = mEditCommand->getClipClone(); 
+
+        // Hand over the command - which replaces the original clip(s) with their changed clones - to the undo system.
+        mEditCommand->submit();
+        mEditCommand = nullptr;
     }
-    ASSERT_NONZERO(mTransformCommand);
+    // In all cases: Update the thumbnail for video (otherwise is not updated, since only one edit command is done).
+    if (mVideoClipClone != nullptr)
+    {
+        ClipPreview* preview{ getViewMap().getClipPreview(mVideoClipClone) };
+        preview->invalidateCachedBitmaps();
+        preview->invalidateRect();
+        getTimeline().repaint(preview->getRect());
+    }
 }
 
-void DetailsClip::makeChangeVolumeCommand()
-{
-    getPlayer()->stop(); // Stop iteration through the sequence, since the sequence is going to be changed.
-    if (!mVolumeCommand || mVolumeCommand != model::CommandProcessor::get().GetCurrentCommand())
-    {
-        // - No volume command has been submitted yet, OR
-        // - A volume command was submitted, but
-        //   * another command was executed afterwards, OR
-        //   * the volume command was undone again.
-        // Insert a new volume command into the Undo chain.
-        ASSERT(mAudioClip);
-        mVolumeCommand = new model::ChangeAudioClipVolume(mAudioClip);
-        mVolumeCommand->submit();
-    }
-}
+// todo make it possible to add a solid color clip to the project view and timeline
 
 void DetailsClip::preview()
 {
-    if (!mVideoClip) { return; }
+    if (!mVideoClipClone) { return; }
+    ASSERT_ZERO(mEditCommand); // The edit command must have been submitted
+    ASSERT_NONZERO(mVideoClipClone->getTrack()); // The edit command must have been submitted
 
     pts position = getCursor().getLogicalPosition(); // By default, show the frame under the cursor (which is already currently shown, typically)
-    if ((position < mVideoClip->getLeftPts()) || (position >= mVideoClip->getRightPts()))
+    if ((position < mVideoClipClone->getLeftPts()) || (position >= mVideoClipClone->getRightPts()))
     {
         // The cursor is not positioned under the clip being adjusted. Move the cursor to the middle frame of that clip
-        position = mVideoClip->getLeftPts() + mVideoClip->getLength() / 2; // Show the middle frame of the clip
+        position = mVideoClipClone->getLeftPts() + mVideoClipClone->getLength() / 2; // Show the middle frame of the clip
         VAR_DEBUG(position);
         getCursor().setLogicalPosition(position); // ...and move the cursor to that position
     }
 
-    if (mVideoClip->getLength() > 0)
+    if (mVideoClipClone->getLength() > 0)
     {
         wxSize s = getPlayer()->getVideoSize();
         boost::shared_ptr<wxBitmap> bmp = boost::make_shared<wxBitmap>(s);
@@ -965,7 +1006,7 @@ void DetailsClip::updateAlignment(bool horizontalchange)
         }
         return mSelectAlignment->getValue();
     };
-    mTransformCommand->setAlignment(getAlignment());
+    mVideoClipClone->setAlignment(getAlignment());
 }
 
 void DetailsClip::determineClipSizeBounds()
@@ -973,13 +1014,14 @@ void DetailsClip::determineClipSizeBounds()
     ASSERT(mClip);
 
     model::IClipPtr link = mClip->getLink();
+    model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(mClip);
 
     command::TrimClip::TrimLimit limitsBeginTrim;
     command::TrimClip::TrimLimit limitsEndTrim;
-    if (mTransition)
+    if (transition)
     {
-        limitsBeginTrim = command::TrimClip::determineBoundaries(getSequence(), mTransition, model::IClipPtr(), TransitionBegin, false);
-        limitsEndTrim = command::TrimClip::determineBoundaries(getSequence(), mTransition, model::IClipPtr(), TransitionEnd, false);
+        limitsBeginTrim = command::TrimClip::determineBoundaries(getSequence(), transition, model::IClipPtr(), TransitionBegin, false);
+        limitsEndTrim = command::TrimClip::determineBoundaries(getSequence(), transition, model::IClipPtr(), TransitionEnd, false);
     }
     else
     {

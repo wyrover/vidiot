@@ -31,13 +31,12 @@ template<class Archive> void save(Archive& ar, const wxFileName& filename, const
 template<class Archive> void load(Archive& ar,       wxFileName& filename, const unsigned int version);
 
 template<class Archive> void serialize(Archive& ar, wxPoint& r, const unsigned int version);
-template<class Archive> void serialize(Archive& ar, wxPoint& r, const unsigned int version);
 
-template<class Archive> void serialize(Archive& ar, wxSize& r, const unsigned int version);
 template<class Archive> void serialize(Archive& ar, wxSize& r, const unsigned int version);
 
 template<class Archive> void serialize(Archive& ar, wxRect& r, const unsigned int version);
-template<class Archive> void serialize(Archive& ar, wxRect& r, const unsigned int version);
+
+template<class Archive> void serialize(Archive& ar, wxColour& region, const unsigned int version);
 
 template<class Archive> void save(Archive& ar, const wxRegion& region, const unsigned int version);
 template<class Archive> void load(Archive& ar,       wxRegion& region, const unsigned int version);

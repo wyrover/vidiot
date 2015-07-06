@@ -39,4 +39,15 @@ std::vector< boost::shared_ptr<T> > make_cloned(const std::vector< boost::shared
     return result;
 }
 
+template <typename INDEX, typename T>
+std::map< INDEX, boost::shared_ptr<T> > make_cloned(const std::map< INDEX, boost::shared_ptr<T> >& elements)
+{
+    std::map< INDEX, boost::shared_ptr<T> > result;
+    for ( auto index_and_element : elements )
+    {
+        result[index_and_element.first] = make_cloned<T>(index_and_element.second);
+    }
+    return result;
+}
+
 #endif

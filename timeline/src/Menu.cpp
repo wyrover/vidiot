@@ -245,35 +245,52 @@ void MenuHandler::onTriggerPopupMenu(wxCommandEvent& event)
 
     bool canPaste = getClipboard().canPaste();
 
-    bool canFadeIn = true;
-    bool canFadeOut = true;
-    bool canFadeToNext = true;
-    bool canFadeFromPrevious = true;
+    std::map<model::TransitionType, bool> isSupported
+    {
+        { model::TransitionTypeFadeIn, true },
+        { model::TransitionTypeFadeOut, true },
+        { model::TransitionTypeFadeInFromPrevious, true },
+        { model::TransitionTypeFadeOutToNext, true }
+    };
+    std::map<model::TransitionType, wxString> transitionMenuEntry
+    {
+        { model::TransitionTypeFadeIn, _("Fade in (more)") },
+        { model::TransitionTypeFadeOut, _("Fade out (more)") },
+        { model::TransitionTypeFadeInFromPrevious, _("Fade from previous (more)") },
+        { model::TransitionTypeFadeOutToNext, _("Fade to next (more)") }
+    };
 
-    if (clickedClip)
+    std::map<model::TransitionType, wxString> transitionMenuDescription
+    {
+        { model::TransitionTypeFadeIn, _("Show all fade in transitions") },
+        { model::TransitionTypeFadeOut, _("Show all fade out transitions") },
+        { model::TransitionTypeFadeInFromPrevious, _("Show all fade from previous transitions") },
+        { model::TransitionTypeFadeOutToNext, _("Show all fade to next transitions") }
+    };
+
     {
         // Check if there's already a transition, disabling the transition menu options
         model::TransitionPtr prevTransition = boost::dynamic_pointer_cast<model::Transition>(clickedClip->getPrev());
         if (prevTransition && prevTransition->getRight())
         {
-            canFadeIn = false;
-            canFadeFromPrevious = false;
+            isSupported[model::TransitionTypeFadeIn] = false;
+            isSupported[model::TransitionTypeFadeInFromPrevious] = false;
         }
         model::TransitionPtr nextTransition = boost::dynamic_pointer_cast<model::Transition>(clickedClip->getNext());
         if (nextTransition && nextTransition->getLeft())
         {
-            canFadeOut = false;
-            canFadeToNext = false;
+            isSupported[model::TransitionTypeFadeOut] = false;
+            isSupported[model::TransitionTypeFadeOutToNext] = false;
         }
 
         // Check if the clicked clip has room for making a crossfade
         if (clickedClip->getMaxAdjustBegin() <= 0)
         {
-            canFadeFromPrevious = false;
+            isSupported[model::TransitionTypeFadeInFromPrevious] = false;
         }
         if (clickedClip->getMinAdjustEnd() >= 0)
         {
-            canFadeToNext = false;
+            isSupported[model::TransitionTypeFadeOutToNext] = false;
         }
 
         // Check if the adjacent clip has room for making a crossfade
@@ -281,13 +298,13 @@ void MenuHandler::onTriggerPopupMenu(wxCommandEvent& event)
             clickedClip->getPrev()->isA<model::EmptyClip>() ||
             clickedClip->getPrev()->getMinAdjustEnd() >= 0)
         {
-            canFadeFromPrevious = false;
+            isSupported[model::TransitionTypeFadeInFromPrevious] = false;
         }
         if (!clickedClip->getNext() ||
             clickedClip->getNext()->isA<model::EmptyClip>() ||
             clickedClip->getNext()->getMaxAdjustBegin() <= 0)
         {
-            canFadeToNext = false;
+            isSupported[model::TransitionTypeFadeOutToNext] = false;
         }
     }
 
@@ -309,49 +326,42 @@ void MenuHandler::onTriggerPopupMenu(wxCommandEvent& event)
 
     if (clickedOnAudioClip || clickedOnVideoClip)
     {
-        add(menu, ID_ADD_INTRANSITION, _("Fade &in"), clickedOnMediaClip, canFadeIn, false);
-        add(menu, ID_ADD_OUTTRANSITION, _("Fade &out"), clickedOnMediaClip, canFadeOut, false);
-        add(menu, ID_ADD_INOUTTRANSITION, _("Cross-fade from &previous"), clickedOnMediaClip, canFadeFromPrevious, false);
-        add(menu, ID_ADD_OUTINTRANSITION, _("Cross-fade to &next"), clickedOnMediaClip, canFadeToNext, false);
+        add(menu, ID_ADD_INTRANSITION, _("Fade &in"), clickedOnMediaClip, isSupported[model::TransitionTypeFadeIn], false);
+        add(menu, ID_ADD_OUTTRANSITION, _("Fade &out"), clickedOnMediaClip, isSupported[model::TransitionTypeFadeOut], false);
+        add(menu, ID_ADD_INOUTTRANSITION, _("Cross-fade from &previous"), clickedOnMediaClip, isSupported[model::TransitionTypeFadeInFromPrevious], false);
+        add(menu, ID_ADD_OUTINTRANSITION, _("Cross-fade to &next"), clickedOnMediaClip, isSupported[model::TransitionTypeFadeOutToNext], false);
     }
     std::map<int, model::TransitionType> mapMenuItemToTransitionType;
-    std::map<int, model::TransitionDescription> mapMenuItemToTransitionDescription;
+    std::map<int, model::TransitionPtr> mapMenuItemToTransition;
     if (clickedOnVideoClip) // For audio clips there is only the crossfade
     {
-        wxMenu* menuFadeIn = new wxMenu; // On heap, destroyed when toplevel menu destroyed
-        wxMenu* menuFadeOut = new wxMenu;
-        wxMenu* menuFadeInOut = new wxMenu;
-        wxMenu* menuFadeOutIn = new wxMenu;
+        std::map<model::TransitionType, wxMenu*> transitionMenus
+        {
+            { model::TransitionTypeFadeIn, new wxMenu },  // On heap, destroyed when toplevel menu destroyed
+            { model::TransitionTypeFadeOut, new wxMenu },
+            { model::TransitionTypeFadeInFromPrevious, new wxMenu },
+            { model::TransitionTypeFadeOutToNext, new wxMenu }
+        };
 
         int id = ID_POPUP_END;
 
-        for (model::TransitionDescription t : model::video::VideoTransitionFactory::get().getAllPossibleTransitions())
-        {
-            add(*menuFadeIn, id, t.second, clickedOnMediaClip, canFadeIn, false);
-            mapMenuItemToTransitionType[id] = model::TransitionTypeIn;
-            mapMenuItemToTransitionDescription[id] = t;
-            id++;
-
-            add(*menuFadeOut, id, t.second, clickedOnMediaClip, canFadeOut, false);
-            mapMenuItemToTransitionType[id] = model::TransitionTypeOut;
-            mapMenuItemToTransitionDescription[id] = t;
-            id++;
-
-            add(*menuFadeInOut, id, t.second, clickedOnMediaClip, canFadeFromPrevious, false);
-            mapMenuItemToTransitionType[id] = model::TransitionTypeInOut;
-            mapMenuItemToTransitionDescription[id] = t;
-            id++;
-
-            add(*menuFadeOutIn, id, t.second, clickedOnMediaClip, canFadeToNext, false);
-            mapMenuItemToTransitionType[id] = model::TransitionTypeOutIn;
-            mapMenuItemToTransitionDescription[id] = t;
-            id++;
-        }
         menu.AppendSeparator();
-        menu.Enable(menu.AppendSubMenu(menuFadeIn,    _("More fade in"),            _("Show fade in transitions"))->GetId(),            canFadeIn);
-        menu.Enable(menu.AppendSubMenu(menuFadeOut,   _("More fade out"),           _("Show fade out transitions"))->GetId(),           canFadeOut);
-        menu.Enable(menu.AppendSubMenu(menuFadeInOut, _("More fade from previous"), _("Show fade from previous transitions"))->GetId(), canFadeFromPrevious);
-        menu.Enable(menu.AppendSubMenu(menuFadeOutIn, _("More fade to next"),       _("Show fade to next transitions"))->GetId(),       canFadeToNext);
+        for (auto type_and_menu : transitionMenus)
+        {
+            model::TransitionType type{type_and_menu.first};
+            for (model::TransitionPtr transition : model::video::VideoTransitionFactory::get().getAllPossibleTransitions())
+            {
+                if (transition->supports(type))
+                {
+                    add(*type_and_menu.second, id, transition->getDescription(type), clickedOnMediaClip, isSupported[type], false);
+                    mapMenuItemToTransitionType[id] = type;
+                    mapMenuItemToTransition[id] = transition;
+                    id++;
+                }
+            }
+            int id{ menu.AppendSubMenu(type_and_menu.second,transitionMenuEntry[type],transitionMenuDescription[type])->GetId() };
+            menu.Enable(id, isSupported[type]);
+        }
     }
 
     add(menu, wxID_CUT, _("Cut"), true, selectedMediaClip, true);
@@ -375,16 +385,16 @@ void MenuHandler::onTriggerPopupMenu(wxCommandEvent& event)
         case wxID_NONE:
             break;
         case ID_ADD_INTRANSITION:
-            command::createTransition(getSequence(), info.getLogicalClip(), model::TransitionTypeIn, defaultTransition);
+            command::createTransition(getSequence(), info.getLogicalClip(), model::TransitionTypeFadeIn, defaultTransition);
             break;
         case ID_ADD_OUTTRANSITION:
-            command::createTransition(getSequence(), info.getLogicalClip(), model::TransitionTypeOut, defaultTransition);
+            command::createTransition(getSequence(), info.getLogicalClip(), model::TransitionTypeFadeOut, defaultTransition);
             break;
         case ID_ADD_INOUTTRANSITION:
-            command::createTransition(getSequence(), info.getLogicalClip(), model::TransitionTypeInOut, defaultTransition);
+            command::createTransition(getSequence(), info.getLogicalClip(), model::TransitionTypeFadeInFromPrevious, defaultTransition);
             break;
         case ID_ADD_OUTINTRANSITION:
-            command::createTransition(getSequence(), info.getLogicalClip(), model::TransitionTypeOutIn, defaultTransition);
+            command::createTransition(getSequence(), info.getLogicalClip(), model::TransitionTypeFadeOutToNext, defaultTransition);
             break;
         case wxID_CUT:
             getClipboard().onCut();
@@ -412,9 +422,8 @@ void MenuHandler::onTriggerPopupMenu(wxCommandEvent& event)
             {
                 // Selected one of the video transitions
                 ASSERT_MAP_CONTAINS(mapMenuItemToTransitionType, result);
-                ASSERT_MAP_CONTAINS(mapMenuItemToTransitionDescription, result);
-                model::TransitionPtr transition = model::video::VideoTransitionFactory::get().getTransition(mapMenuItemToTransitionDescription[result]);
-                command::createTransition(getSequence(), info.getLogicalClip(), mapMenuItemToTransitionType[result], transition);
+                ASSERT_MAP_CONTAINS(mapMenuItemToTransition, result);
+                command::createTransition(getSequence(), info.getLogicalClip(), mapMenuItemToTransitionType[result], mapMenuItemToTransition[result]);
             }
             break;
         }

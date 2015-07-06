@@ -1,4 +1,4 @@
-// Copyright 2013-2015 Eric Raijmakers.
+// Copyright 2015 Eric Raijmakers.
 //
 // This file is part of Vidiot.
 //
@@ -15,15 +15,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef AUDIO_TRANSITION_CROSSFADE_H
-#define AUDIO_TRANSITION_CROSSFADE_H
+#ifndef FADETOCOLOR_H
+#define FADETOCOLOR_H
 
-#include "AudioTransition.h"
+#include "VideoTransitionOpacity.h"
+#include <boost/serialization/export.hpp>
 
-namespace model { namespace audio { namespace transition {
+namespace model { namespace video { namespace transition {
 
-class CrossFade
-    :   public AudioTransition
+class FadeToColor
+    :   public VideoTransitionOpacity
 {
 public:
 
@@ -31,24 +32,31 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    CrossFade();
+    FadeToColor();
 
-    virtual CrossFade* clone() const;
+    virtual FadeToColor* clone() const;
 
-    virtual ~CrossFade();
+    virtual ~FadeToColor();
 
     //////////////////////////////////////////////////////////////////////////
-    // TRANSITION
+    // ICONTROL
     //////////////////////////////////////////////////////////////////////////
+
+    virtual model::IClipPtr makeLeftClip() override;
+    virtual model::IClipPtr makeRightClip() override;
 
     wxString getDescription(TransitionType type) const override;
+    bool supports(TransitionType type) const override;
 
     //////////////////////////////////////////////////////////////////////////
-    // AUDIOTRANSITION
+    // VIDEOTRANSITIONOPACITY
     //////////////////////////////////////////////////////////////////////////
 
-    virtual void reset();
-    virtual AudioChunkPtr getAudio(pts position, const IClipPtr& leftClip, const IClipPtr& rightClip, const AudioCompositionParameters& parameters) override;
+    void handleFullyOpaqueImage(const wxImagePtr& image, const boost::function<float (int, int)>& f) const override;
+    void handleImageWithAlpha(const wxImagePtr& image, const boost::function<float (int, int)>& f) const override;
+
+    boost::function<float (int,int)> getLeftMethod(const wxImagePtr& image, const float& factor) const override;
+    boost::function<float (int,int)> getRightMethod(const wxImagePtr& image, const float& factor) const override;
 
 protected:
 
@@ -58,7 +66,7 @@ protected:
 
     /// Copy constructor. Use make_cloned for making deep copies of objects.
     /// \see make_cloned
-    CrossFade(const CrossFade& other);
+    FadeToColor(const FadeToColor& other);
 
 private:
 
@@ -70,7 +78,7 @@ private:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<(std::ostream& os, const CrossFade& obj);
+    friend std::ostream& operator<<(std::ostream& os, const FadeToColor& obj);
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION
@@ -83,7 +91,7 @@ private:
 
 }}} // namespace
 
-BOOST_CLASS_VERSION(model::audio::transition::CrossFade, 1)
-BOOST_CLASS_EXPORT_KEY(model::audio::transition::CrossFade)
+BOOST_CLASS_VERSION(model::video::transition::FadeToColor, 1)
+BOOST_CLASS_EXPORT_KEY(model::video::transition::FadeToColor)
 
 #endif

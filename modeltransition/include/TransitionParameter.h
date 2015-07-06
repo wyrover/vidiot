@@ -1,4 +1,4 @@
-// Copyright 2013-2015 Eric Raijmakers.
+// Copyright 2015 Eric Raijmakers.
 //
 // This file is part of Vidiot.
 //
@@ -15,15 +15,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef AUDIO_TRANSITION_CROSSFADE_H
-#define AUDIO_TRANSITION_CROSSFADE_H
+#ifndef MODEL_TRANSITION_PARAMETER_H
+#define MODEL_TRANSITION_PARAMETER_H
 
-#include "AudioTransition.h"
+#include "UtilEvent.h"
 
-namespace model { namespace audio { namespace transition {
+namespace model {
 
-class CrossFade
-    :   public AudioTransition
+DECLARE_EVENT(EVENT_TRANSITION_PARAMETER_CHANGING, EventTransitionParameterChanging, void*);
+DECLARE_EVENT(EVENT_TRANSITION_PARAMETER_CHANGED, EventTransitionParameterChanged, void*);
+
+class TransitionParameter
+    :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
 {
 public:
 
@@ -31,24 +34,23 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    CrossFade();
+    /// Constructor for recovery from disk and for creating a new parameter.
+    TransitionParameter();
 
-    virtual CrossFade* clone() const;
+    /// Used for making deep copies (clones)
+    virtual TransitionParameter* clone() const = 0;
+    void onCloned() {};
 
-    virtual ~CrossFade();
-
-    //////////////////////////////////////////////////////////////////////////
-    // TRANSITION
-    //////////////////////////////////////////////////////////////////////////
-
-    wxString getDescription(TransitionType type) const override;
+    virtual ~TransitionParameter();
 
     //////////////////////////////////////////////////////////////////////////
-    // AUDIOTRANSITION
+    // INTERFACE
     //////////////////////////////////////////////////////////////////////////
 
-    virtual void reset();
-    virtual AudioChunkPtr getAudio(pts position, const IClipPtr& leftClip, const IClipPtr& rightClip, const AudioCompositionParameters& parameters) override;
+    virtual wxString getName() = 0;
+
+    virtual wxWindow* makeWidget(wxWindow *parent) = 0;
+    virtual void destroyWidget() = 0;
 
 protected:
 
@@ -58,7 +60,15 @@ protected:
 
     /// Copy constructor. Use make_cloned for making deep copies of objects.
     /// \see make_cloned
-    CrossFade(const CrossFade& other);
+    TransitionParameter(const TransitionParameter& other);
+
+    //////////////////////////////////////////////////////////////////////////
+    // TO BE CALLED WHEN THE DATA CHANGES
+    //////////////////////////////////////////////////////////////////////////
+
+    /// Must be called to set the data.
+    /// This ensure that proper events are generated.
+    void signalUpdate(std::function<void()> update);
 
 private:
 
@@ -70,7 +80,7 @@ private:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<(std::ostream& os, const CrossFade& obj);
+    friend std::ostream& operator<<(std::ostream& os, const TransitionParameter& obj);
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION
@@ -80,10 +90,9 @@ private:
     template<class Archive>
     void serialize(Archive & ar, const unsigned int version);
 };
+} // namespace
 
-}}} // namespace
-
-BOOST_CLASS_VERSION(model::audio::transition::CrossFade, 1)
-BOOST_CLASS_EXPORT_KEY(model::audio::transition::CrossFade)
+BOOST_CLASS_VERSION(model::TransitionParameter, 1)
+BOOST_CLASS_EXPORT_KEY(model::TransitionParameter)
 
 #endif

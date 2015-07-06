@@ -1,4 +1,4 @@
-// Copyright 2013-2015 Eric Raijmakers.
+// Copyright 2015 Eric Raijmakers.
 //
 // This file is part of Vidiot.
 //
@@ -15,15 +15,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef AUDIO_TRANSITION_CROSSFADE_H
-#define AUDIO_TRANSITION_CROSSFADE_H
+#ifndef MODEL_TRANSITION_PARAMETER_COLOR_H
+#define MODEL_TRANSITION_PARAMETER_COLOR_H
 
-#include "AudioTransition.h"
+#include "TransitionParameter.h"
 
-namespace model { namespace audio { namespace transition {
+namespace model {
 
-class CrossFade
-    :   public AudioTransition
+class TransitionParameterColor
+    : public TransitionParameter
 {
 public:
 
@@ -31,24 +31,31 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    CrossFade();
+    /// Constructor for recovery from disk.
+    TransitionParameterColor();
 
-    virtual CrossFade* clone() const;
+    /// Constructor for creating a new parameter.
+    explicit TransitionParameterColor(const wxColour& colour);
 
-    virtual ~CrossFade();
+    /// Used for making deep copies (clones)
+    virtual TransitionParameterColor* clone() const override;
+
+    virtual ~TransitionParameterColor();
 
     //////////////////////////////////////////////////////////////////////////
-    // TRANSITION
+    // TRANSITIONPARAMETER
     //////////////////////////////////////////////////////////////////////////
 
-    wxString getDescription(TransitionType type) const override;
+    wxString getName() override;
+
+    wxWindow* makeWidget(wxWindow *parent) override;
+    void destroyWidget() override;
 
     //////////////////////////////////////////////////////////////////////////
-    // AUDIOTRANSITION
+    // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    virtual void reset();
-    virtual AudioChunkPtr getAudio(pts position, const IClipPtr& leftClip, const IClipPtr& rightClip, const AudioCompositionParameters& parameters) override;
+    wxColour getColor() const;
 
 protected:
 
@@ -58,19 +65,28 @@ protected:
 
     /// Copy constructor. Use make_cloned for making deep copies of objects.
     /// \see make_cloned
-    CrossFade(const CrossFade& other);
+    TransitionParameterColor(const TransitionParameterColor& other);
 
 private:
+
+    //////////////////////////////////////////////////////////////////////////
+    // GUI EVENTS
+    //////////////////////////////////////////////////////////////////////////
+
+    void onColor(wxColourPickerEvent& event);
 
     //////////////////////////////////////////////////////////////////////////
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
+    wxColourPickerCtrl* mControl; 
+    wxColour mColor;
+
     //////////////////////////////////////////////////////////////////////////
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<(std::ostream& os, const CrossFade& obj);
+    friend std::ostream& operator<<(std::ostream& os, const TransitionParameterColor& obj);
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION
@@ -80,10 +96,9 @@ private:
     template<class Archive>
     void serialize(Archive & ar, const unsigned int version);
 };
+} // namespace
 
-}}} // namespace
-
-BOOST_CLASS_VERSION(model::audio::transition::CrossFade, 1)
-BOOST_CLASS_EXPORT_KEY(model::audio::transition::CrossFade)
+BOOST_CLASS_VERSION(model::TransitionParameterColor, 1)
+BOOST_CLASS_EXPORT_KEY(model::TransitionParameterColor)
 
 #endif

@@ -69,16 +69,27 @@ void DetailsPanel::requestShow(bool show, const wxString& title)
     static_cast<Details*>(GetParent())->update();
 }
 
-void DetailsPanel::addBox(const wxString& name)
+wxFlexGridSizer* DetailsPanel::addBox(const wxString& name)
 {
     ASSERT(mTopSizer);
     wxStaticBoxSizer* staticBoxSizer = new wxStaticBoxSizer(wxVERTICAL, this, name);
     mBoxSizer = new wxFlexGridSizer(2,0,0);
-    ((wxFlexGridSizer*)mBoxSizer)->AddGrowableCol(1);
+    mBoxSizer->AddGrowableCol(1);
     staticBoxSizer->Add(mBoxSizer, wxSizerFlags(0).Expand() );
     mTopSizer->Add(staticBoxSizer, wxSizerFlags(0).Expand() );
     mTopSizer->Layout();
     mBoxes[name] = staticBoxSizer;
+    return mBoxSizer;
+}
+
+void DetailsPanel::setBox(wxFlexGridSizer* box)
+{
+    mBoxSizer = box;
+}
+
+void DetailsPanel::setBoxTitle(const wxString& boxname, const wxString& title)
+{
+    mBoxes[boxname]->GetStaticBox()->SetLabel(title);
 }
 
 void DetailsPanel::showBox(const wxString& name, bool show)
@@ -105,5 +116,12 @@ void DetailsPanel::showOption(wxWindow* widget, bool show)
     mMapWindowToSizer[widget]->Show(widget,show);
     mMapWindowToSizer[widget]->Show(mMapWindowToTitle[widget],show);
 }
+
+wxWindow* DetailsPanel::getTitle(wxWindow* widget) const
+{
+    ASSERT_MAP_CONTAINS(mMapWindowToTitle,widget);
+    return mMapWindowToTitle.find(widget)->second;
+}
+
 
 }} // namespace

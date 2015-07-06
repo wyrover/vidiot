@@ -53,7 +53,7 @@ void createTransition(const model::SequencePtr& sequence, const model::IClipPtr&
     if (!model::ProjectModification::submitIfPossible(createTransitionCommand))
     {
         if (leftClip && rightClip &&
-            ((type == model::TransitionTypeInOut || type == model::TransitionTypeOutIn)))
+            ((type == model::TransitionTypeFadeInFromPrevious || type == model::TransitionTypeFadeOutToNext)))
         {
             pts defaultSize = Config::ReadLong(Config::sPathTimelineDefaultTransitionLength);
 
@@ -81,7 +81,7 @@ void createTransition(const model::SequencePtr& sequence, const model::IClipPtr&
                 trimRightCommand->update(extraNeededRight, true);
             }
 
-            command::CreateTransition* createTransitionCommand = new command::CreateTransition(sequence, leftClip, transition, model::TransitionTypeOutIn);
+            command::CreateTransition* createTransitionCommand = new command::CreateTransition(sequence, leftClip, transition, model::TransitionTypeFadeOutToNext);
 
             if (createTransitionCommand->isPossible())
             {

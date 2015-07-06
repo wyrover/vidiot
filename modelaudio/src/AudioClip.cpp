@@ -216,12 +216,18 @@ AudioPeaks AudioClip::getPeaks()
     {
         return getDataGenerator<AudioFile>()->getPeaks(offset,length);
     }
-    AudioPeaks result = getDataGenerator<AudioFile>()->getPeaks(offset,length);
-    boost::rational<int> factor{ mVolume, Constants::sDefaultVolume };
-    for (AudioPeak& peak : result)
+    AudioPeaks result;
+    boost::rational<int32_t> factor{ mVolume, Constants::sDefaultVolume };
+    ASSERT_MORE_THAN_EQUALS_ZERO(factor);
+    for (const AudioPeak& peak : getDataGenerator<AudioFile>()->getPeaks(offset, length))
     {
-        peak.first = floor(boost::rational<int>(peak.first) * factor);
-        peak.second = floor(boost::rational<int>(peak.second) * factor);
+        int32_t negativePeak{ floor(boost::rational<int32_t>(peak.first) * factor) };
+        int32_t positivePeak{ floor(boost::rational<int32_t>(peak.second) * factor) };
+        sample n = (negativePeak > std::numeric_limits<sample>::min()) ? static_cast<sample>(negativePeak) : std::numeric_limits<sample>::min();
+        sample p = (positivePeak < std::numeric_limits<sample>::max()) ? static_cast<sample>(positivePeak) : std::numeric_limits<sample>::max();
+        ASSERT_LESS_THAN_EQUALS_ZERO(n);
+        ASSERT_MORE_THAN_EQUALS_ZERO(p);
+        result.emplace_back(n,p);
     }
     return result;
 }
