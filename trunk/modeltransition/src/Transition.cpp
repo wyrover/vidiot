@@ -18,9 +18,12 @@
 #include "Transition.h"
 
 #include "ClipEvent.h"
+#include "Enums.h"
 #include "Track.h"
+#include "TransitionParameter.h"
 #include "UtilClone.h"
 #include "UtilLog.h"
+#include "UtilLogStl.h"
 #include "UtilLogBoost.h"
 #include "UtilSerializeBoost.h"
 
@@ -31,9 +34,10 @@ namespace model {
 //////////////////////////////////////////////////////////////////////////
 
 Transition::Transition()
-    :   Clip()
-    ,   mFramesLeft(boost::none)
-    ,   mFramesRight(boost::none)
+    : Clip()
+    , mFramesLeft(boost::none)
+    , mFramesRight(boost::none)
+    , mParameters()
 {
     VAR_DEBUG(*this);
 }
@@ -48,16 +52,12 @@ void Transition::init(boost::optional<pts> nFramesLeft, boost::optional<pts> nFr
 }
 
 Transition::Transition(const Transition& other)
-    :   Clip(other)
-    ,   mFramesLeft(other.mFramesLeft)
-    ,   mFramesRight(other.mFramesRight)
+    : Clip(other)
+    , mFramesLeft(other.mFramesLeft)
+    , mFramesRight(other.mFramesRight)
+    , mParameters(make_cloned<int, TransitionParameter>(other.mParameters))
 {
     VAR_DEBUG(*this)(other);
-}
-
-Transition* Transition::clone() const
-{
-    return new Transition(static_cast<const Transition&>(*this));
 }
 
 Transition::~Transition()
@@ -68,6 +68,19 @@ Transition::~Transition()
 //////////////////////////////////////////////////////////////////////////
 // ICONTROL
 //////////////////////////////////////////////////////////////////////////
+
+wxString Transition::getDescription() const
+{
+    if (!mFramesLeft)
+    {
+        return getDescription(TransitionTypeFadeIn);
+    }
+    if (!mFramesRight)
+    {
+        return getDescription(TransitionTypeFadeOut);
+    }
+    return getDescription(TransitionTypeFadeOutToNext);
+}
 
 pts Transition::getLength() const
 {
@@ -234,6 +247,38 @@ model::IClipPtr Transition::makeRightClip()
     return result;
 }
 
+bool Transition::supports(TransitionType type) const
+{
+    return true;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// PARAMETERS
+//////////////////////////////////////////////////////////////////////////
+
+void Transition::addParameter(int index, TransitionParameterPtr parameter)
+{
+    ASSERT_MAP_CONTAINS_NOT(mParameters,index);
+    mParameters[index] = parameter;
+}
+
+TransitionParameterPtr Transition::getParameter(int index) const
+{
+    ASSERT_MAP_CONTAINS(mParameters,index);
+    return mParameters.find(index)->second;
+}
+
+std::map<int, TransitionParameterPtr> Transition::getParameters() const
+{
+    return mParameters;
+}
+    
+void Transition::setParameters(std::map<int, TransitionParameterPtr> parameters)
+{
+    ASSERT_EQUALS(parameters.size(), mParameters.size());
+    mParameters = parameters;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
@@ -243,7 +288,8 @@ std::ostream& operator<<(std::ostream& os, const Transition& obj)
     // Keep order same as Clip for 'dump' method
     os << static_cast<const Clip&>(obj) << '|'
        << std::setw(6) << obj.mFramesLeft << '|'
-       << std::setw(6) << obj.mFramesRight;
+       << std::setw(6) << obj.mFramesRight << '|'
+       << obj.mParameters;
     return os;
 }
 
@@ -284,6 +330,10 @@ void Transition::serialize(Archive & ar, const unsigned int version)
         {
             ar & BOOST_SERIALIZATION_NVP(mFramesLeft);
             ar & BOOST_SERIALIZATION_NVP(mFramesRight);
+        }
+        if (version >= 3)
+        {
+            ar & BOOST_SERIALIZATION_NVP(mParameters);
         }
         ASSERT_MORE_THAN_ZERO(getLength());
         // NOT: mSelected. After loading, nothing is selected.

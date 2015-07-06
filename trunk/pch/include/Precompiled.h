@@ -85,6 +85,7 @@ extern "C" {
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/deque.hpp>
 #include <boost/serialization/export.hpp>
+#include <boost/serialization/map.hpp>
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/optional.hpp>
 #include <boost/serialization/set.hpp>
@@ -116,6 +117,7 @@ extern "C" {
 #include <wx/checkbox.h>
 #include <wx/choice.h>
 #include <wx/clipbrd.h>
+#include <wx/clrpicker.h>
 #include <wx/cmdproc.h>
 #include <wx/colour.h>
 #include <wx/combobox.h>

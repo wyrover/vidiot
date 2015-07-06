@@ -39,10 +39,10 @@ DECLAREENUM(VideoAlignment, \
             VideoAlignmentCustom);
 
 DECLAREENUM(TransitionType, \
-            TransitionTypeIn, \
-            TransitionTypeOut, \
-            TransitionTypeInOut, \
-            TransitionTypeOutIn);
+            TransitionTypeFadeIn, \
+            TransitionTypeFadeOut, \
+            TransitionTypeFadeInFromPrevious, \
+            TransitionTypeFadeOutToNext);
 
 DECLAREENUM(DefaultNewProjectWizardStart, \
             DefaultNewProjectWizardStartNone, \

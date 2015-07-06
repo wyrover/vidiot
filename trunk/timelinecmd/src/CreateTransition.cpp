@@ -54,20 +54,20 @@ CreateTransition::CreateTransition(const model::SequencePtr& sequence, const mod
 
     switch (type)
     {
-    case model::TransitionTypeIn:                               
+    case model::TransitionTypeFadeIn:                               
         ASSERT_ZERO(clip->getInTransition())(clip);
         mRight = clip;              
         break;
-    case model::TransitionTypeOut:   
+    case model::TransitionTypeFadeOut:   
         ASSERT_ZERO(clip->getOutTransition())(clip);
         mLeft = clip;                                          
         break;
-    case model::TransitionTypeInOut: 
+    case model::TransitionTypeFadeInFromPrevious: 
         ASSERT_ZERO(clip->getInTransition())(clip);
         mLeft = clip->getPrev();   
         mRight = clip;              
         break;
-    case model::TransitionTypeOutIn: 
+    case model::TransitionTypeFadeOutToNext: 
         ASSERT_ZERO(clip->getOutTransition())(clip);
         mLeft = clip;              
         mRight = clip->getNext();   
@@ -165,10 +165,10 @@ bool CreateTransition::isPossible()
 {
     switch (mType)
     {
-    case model::TransitionTypeIn:    return !mLeftSize &&  mRightSize && getLength() > 0;
-    case model::TransitionTypeOut:   return  mLeftSize && !mRightSize && getLength() > 0;
-    case model::TransitionTypeInOut: // FALLTHROUGH
-    case model::TransitionTypeOutIn: return  mLeftSize &&  mRightSize && getLength() > 0;
+    case model::TransitionTypeFadeIn:    return !mLeftSize &&  mRightSize && getLength() > 0;
+    case model::TransitionTypeFadeOut:   return  mLeftSize && !mRightSize && getLength() > 0;
+    case model::TransitionTypeFadeInFromPrevious: // FALLTHROUGH
+    case model::TransitionTypeFadeOutToNext: return  mLeftSize &&  mRightSize && getLength() > 0;
     default:
         FATAL("Unexpected transition type.");
     }

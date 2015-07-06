@@ -187,28 +187,28 @@ boost::statechart::result Idle::react( const EvKeyDown& evt)
         case 'I':
         {
             evt.consumed();
-            addTransition(model::TransitionTypeIn);
+            addTransition(model::TransitionTypeFadeIn);
             break;
         }
         case 'n':
         case 'N':
         {
             evt.consumed();
-            addTransition(model::TransitionTypeOutIn);
+            addTransition(model::TransitionTypeFadeOutToNext);
             break;
         }
         case 'o':
         case 'O':
         {
             evt.consumed();
-            addTransition(model::TransitionTypeOut);
+            addTransition(model::TransitionTypeFadeOut);
             break;
         }
         case 'p':
         case 'P':
         {
             evt.consumed();
-            addTransition(model::TransitionTypeInOut);
+            addTransition(model::TransitionTypeFadeInFromPrevious);
             break;
         }
         case 's':
@@ -419,12 +419,12 @@ void Idle::addTransition(model::TransitionType type)
         // Check if there is already a transition at the given position
         switch (type)
         {
-        case model::TransitionTypeIn:
-        case model::TransitionTypeInOut:
+        case model::TransitionTypeFadeIn:
+        case model::TransitionTypeFadeInFromPrevious:
             if (info.clip->getInTransition() != nullptr) { return; }
             break;
-        case model::TransitionTypeOut:
-        case model::TransitionTypeOutIn:
+        case model::TransitionTypeFadeOut:
+        case model::TransitionTypeFadeOutToNext:
             if (info.clip->getOutTransition() != nullptr) { return; }
             break;
         }

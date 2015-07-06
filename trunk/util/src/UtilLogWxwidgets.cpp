@@ -55,6 +55,20 @@ std::ostream& operator<<(std::ostream& os, const wxRect& obj)
     return os;
 }
 
+std::ostream& operator<<(std::ostream& os, const wxColour& obj)
+{
+    os  << '('
+        << obj.Red()
+        << ','
+        << obj.Green()
+        << '|'
+        << obj.Blue()
+        << '|'
+        << obj.Alpha()
+        << ')';
+    return os;
+}
+
 std::ostream& operator<<(std::ostream& os, const wxKeyEvent& obj)
 {
     os  << obj.GetX() << '|'

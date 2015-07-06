@@ -20,10 +20,6 @@
 
 namespace model {
 
-typedef std::pair< wxString, wxString > TransitionDescription; ///< first: name, second: group
-typedef std::vector< TransitionDescription > TransitionDescriptions;
-typedef std::map< TransitionDescription, TransitionPtr > TransitionMap;
-
 class TransitionFactory
 {
 public:
@@ -40,9 +36,8 @@ public:
     // TRANSITIONS
     //////////////////////////////////////////////////////////////////////////
 
-    TransitionDescriptions getAllPossibleTransitions() const;
+    std::vector<model::TransitionPtr> getAllPossibleTransitions() const;
     TransitionPtr getDefault();
-    TransitionPtr getTransition(const TransitionDescription& description) const;
 
 protected:
 
@@ -50,8 +45,7 @@ protected:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    void add(const TransitionDescription& description, const TransitionPtr& transition);
-    void setDefault(const TransitionPtr& transition);
+    void add(const TransitionPtr& transition);
 
 private:
 
@@ -60,8 +54,7 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     std::string mType;
-    TransitionMap mTransitions;
-    TransitionPtr mDefault;
+    std::vector<model::TransitionPtr> mTransitions;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

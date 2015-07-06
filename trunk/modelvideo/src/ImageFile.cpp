@@ -19,6 +19,7 @@
 
 #include "Constants.h"
 #include "Convert.h"
+#include "Properties.h"
 #include "UtilClone.h"
 #include "UtilLog.h"
 #include "VideoCompositionParameters.h"
@@ -32,25 +33,37 @@ namespace model {
 //////////////////////////////////////////////////////////////////////////
 
 ImageFile::ImageFile()
-:	VideoFile()
-,   mInputFrame()
-,   mOutputFrame()
+    : VideoFile{}
+    , mInputFrame{}
+    , mOutputFrame{}
+    , mColor{ boost::none }
 {
     VAR_DEBUG(*this);
 }
 
 ImageFile::ImageFile(const wxFileName& path)
-:	VideoFile(path)
-,   mInputFrame()
-,   mOutputFrame()
+    : VideoFile(path)
+    , mInputFrame{}
+    , mOutputFrame{}
+    , mColor{ boost::none }
+{
+    VAR_DEBUG(*this);
+}
+
+ImageFile::ImageFile(const wxColour& color)
+    : VideoFile()
+    , mInputFrame{}
+    , mOutputFrame{}
+    , mColor{ color }
 {
     VAR_DEBUG(*this);
 }
 
 ImageFile::ImageFile(const ImageFile& other)
-:   VideoFile(other)
-,   mInputFrame()
-,   mOutputFrame()
+    : VideoFile(other)
+    , mInputFrame{}
+    , mOutputFrame{}
+    , mColor{ other.mColor }
 {
     VAR_DEBUG(*this);
 }
@@ -95,7 +108,16 @@ VideoFramePtr ImageFile::getNextVideo(const VideoCompositionParameters& paramete
 {
     if (!mInputFrame)
     {
-        mInputFrame = VideoFile::getNextVideo(VideoCompositionParameters().setBoundingBox(getSize()).setPts(0));
+        if (mColor)
+        {
+            wxImagePtr image = boost::make_shared<wxImage>(getSize());
+            image->SetRGB(wxRect{ wxPoint{ 0, 0 }, getSize() }, mColor->Red(), mColor->Green(), mColor->Blue());
+            mInputFrame = boost::make_shared<VideoFrame>(parameters, boost::make_shared<VideoFrameLayer>(image));
+        }
+        else
+        {
+            mInputFrame = VideoFile::getNextVideo(VideoCompositionParameters().setBoundingBox(getSize()).setPts(0));
+        }
         ASSERT(mInputFrame);
     }
 
@@ -112,6 +134,29 @@ VideoFramePtr ImageFile::getNextVideo(const VideoCompositionParameters& paramete
     // Changing the frame and returning that once more might thus change that previous frame also!
     return make_cloned<VideoFrame>(mOutputFrame);
 }
+
+//////////////////////////////////////////////////////////////////////////
+// GET/SET
+//////////////////////////////////////////////////////////////////////////
+
+wxSize ImageFile::getSize()
+{
+    if (mColor)
+    {
+        return Properties::get().getVideoSize();
+    }
+    return VideoFile::getSize(); // Todo make class that inherits from image file instead?
+}
+
+bool ImageFile::canBeOpened()
+{
+    if (mColor)
+    {
+        return true;
+    }
+    return VideoFile::canBeOpened();
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 // LOGGING
@@ -133,6 +178,10 @@ void ImageFile::serialize(Archive & ar, const unsigned int version)
     try
     {
         ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(VideoFile);
+        if (version >= 2)
+        {
+            ar & BOOST_SERIALIZATION_NVP(mColor);
+        }
     }
     catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }

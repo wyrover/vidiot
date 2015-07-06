@@ -199,7 +199,6 @@ VideoFramePtr VideoClip::getNextVideo(const VideoCompositionParameters& paramete
                 }
             }
         }
-
     }
 
     if (videoFrame)

@@ -30,7 +30,6 @@ namespace model {
 
 TransitionFactory::TransitionFactory(const std::string& type)
     :   mType(type)
-    ,   mDefault()
 {
 }
 
@@ -42,41 +41,29 @@ TransitionFactory::~TransitionFactory()
 // TRANSITIONS
 //////////////////////////////////////////////////////////////////////////
 
-TransitionDescriptions TransitionFactory::getAllPossibleTransitions() const
+std::vector<model::TransitionPtr> TransitionFactory::getAllPossibleTransitions() const
 {
-    TransitionDescriptions result;
-    for ( auto kvp : mTransitions )
+    std::vector<model::TransitionPtr> result;
+    for ( auto t : mTransitions )
     {
-        result.push_back(kvp.first);
+        result.push_back(make_cloned<model::Transition>(t));
     }
     return result;
 }
 
 TransitionPtr TransitionFactory::getDefault()
 {
-    ASSERT_NONZERO(mDefault);
-    return make_cloned<Transition>(mDefault);
-}
-
-TransitionPtr TransitionFactory::getTransition(const TransitionDescription& description) const
-{
-    ASSERT_MAP_CONTAINS(mTransitions,description);
-    return make_cloned<Transition>(mTransitions.find(description)->second);
+    ASSERT_NONZERO(mTransitions.size());
+    return make_cloned<Transition>(mTransitions.front());
 }
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-void TransitionFactory::add(const TransitionDescription& description, const TransitionPtr& transition)
+void TransitionFactory::add(const TransitionPtr& transition)
 {
-    ASSERT_MAP_CONTAINS_NOT(mTransitions,description);
-    mTransitions[description] = transition;
-}
-
-void TransitionFactory::setDefault(const TransitionPtr& transition)
-{
-    mDefault = transition;
+    mTransitions.push_back(transition);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -85,7 +72,7 @@ void TransitionFactory::setDefault(const TransitionPtr& transition)
 
 std::ostream& operator<<(std::ostream& os, const TransitionFactory& obj)
 {
-    os << obj.mType << '|' << obj.mDefault << '|' << obj.mTransitions;
+    os << obj.mType << '|' << obj.mTransitions;
     return os;
 }
 

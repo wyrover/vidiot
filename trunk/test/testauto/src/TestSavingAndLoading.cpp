@@ -69,12 +69,12 @@ void TestSavingAndLoading::testSaveAndLoad()
 
     // Ensure each transition type is saved once
     int number = 3;
-    for ( model::TransitionDescription t : model::video::VideoTransitionFactory::get().getAllPossibleTransitions() )
+    for ( model::TransitionPtr t : model::video::VideoTransitionFactory::get().getAllPossibleTransitions() )
     {
-        StartTest("Add transition (" + t.first + "," + t.second + ") to sequence");
+        StartTest("Add transition (" + t->getDescription() + ") to sequence");
         util::thread::RunInMainAndWait([t,number]()
         {
-            gui::timeline::command::createTransition(getSequence(), VideoClip(0,number),model::TransitionTypeIn, model::video::VideoTransitionFactory::get().getTransition(t));
+            gui::timeline::command::createTransition(getSequence(), VideoClip(0,number),model::TransitionTypeFadeIn, t);
         });
         number += 2; // +2 because the transition was added inbetween
     }
@@ -98,6 +98,8 @@ void TestSavingAndLoading::testSaveAndLoad()
 
     StartTest("Move cursor position");
     TimelinePositionCursor(getTimeline().getZoom().ptsToPixels(getSequence()->getLength() / 2));
+
+    // todo add every type of transition at least once to the save file.
 
     //////////////////////////////////////////////////////////////////////////
 

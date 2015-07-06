@@ -54,6 +54,15 @@ CrossFade::~CrossFade()
 }
 
 //////////////////////////////////////////////////////////////////////////
+// TRANSITION
+//////////////////////////////////////////////////////////////////////////
+
+wxString CrossFade::getDescription(TransitionType type) const
+{
+    return _("Video crossfade");
+}
+
+//////////////////////////////////////////////////////////////////////////
 // VIDEOTRANSITIONOPACITY
 //////////////////////////////////////////////////////////////////////////
 
@@ -69,7 +78,7 @@ void CrossFade::handleImageWithAlpha(const wxImagePtr& image, const boost::funct
 
 boost::function<float (int,int)> CrossFade::getLeftMethod(const wxImagePtr& image, const float& factor) const
 {
-    boost::function<float (int,int)> f = [factor](int x, int y) -> float
+    boost::function<float (int,int)> f = [factor](int x, int y) -> float // todo use std:function iso boost
     {
         return 1.0 - factor;
     };

@@ -91,7 +91,8 @@ struct RenderPeaksWork
             if (nPeaks > 0)
             {
                 int peakIndex{ 0 };
-                model::AudioPeak peak = peaks.front();
+                model::AudioPeak peak = peaks[0];
+                ASSERT_LESS_THAN_EQUALS(peak.first, peak.second);
 
                 int totalPeaks = boost::dynamic_pointer_cast<model::AudioFile>(clone->getFile())->getLength();
                 int totalPixels = Zoom::ptsToPixels(totalPeaks, mZoom);
@@ -109,17 +110,22 @@ struct RenderPeaksWork
 
                     // Do not initialize with '0': that gives problems when zooming in further than 1-on-1.
                     // In that case, the body of the while loop below is never entered.
-                    int min = boost::rational_cast<int>(rational64(mSize.y, 2) * rational64(peak.first, std::numeric_limits<sample>::min()));;
-                    int max = boost::rational_cast<int>(rational64(mSize.y, 2) * rational64(peak.second, std::numeric_limits<sample>::max()));
+                    int negativePeak = boost::rational_cast<int>(rational64(mSize.y, 2) * rational64(peak.first, std::numeric_limits<sample>::min()));; // Note: - * - = +
+                    int positivePeak = boost::rational_cast<int>(rational64(mSize.y, 2) * rational64(peak.second, std::numeric_limits<sample>::max()));
 
                     while (peakIndex < requiredPeakIndex)
                     {
                         peakIndex++;
                         peak = peaks[peakIndex];
-                        min = std::max(min, boost::rational_cast<int>(rational64(mSize.y, 2) * rational64(peak.first, std::numeric_limits<sample>::min())));
-                        max = std::max(max, boost::rational_cast<int>(rational64(mSize.y, 2) * rational64(peak.second, std::numeric_limits<sample>::max())));
+                        negativePeak = std::max(negativePeak, boost::rational_cast<int>(rational64(mSize.y, 2) * rational64(peak.first, std::numeric_limits<sample>::min()))); // Note: - * - = +
+                        positivePeak = std::max(positivePeak, boost::rational_cast<int>(rational64(mSize.y, 2) * rational64(peak.second, std::numeric_limits<sample>::max())));
                     }
-                    result->SetRGB(wxRect{ x, origin - min, 1, max + min }, 87, 120, 74);
+                    ASSERT_MORE_THAN_EQUALS_ZERO(negativePeak);
+                    ASSERT_MORE_THAN_EQUALS_ZERO(positivePeak);
+                    int h{ positivePeak + negativePeak };
+                    ASSERT_MORE_THAN_EQUALS_ZERO(h);
+                    int y{ std::max(0,origin - negativePeak) };
+                    result->SetRGB(wxRect{ x, y, 1, h }, 87, 120, 74); 
                 }
             }
         }

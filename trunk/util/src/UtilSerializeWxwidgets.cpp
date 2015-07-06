@@ -157,6 +157,30 @@ void serialize(Archive & ar, wxRect & r, const unsigned int version)
 template void serialize<boost::archive::xml_oarchive>(boost::archive::xml_oarchive& ar, wxRect & r, const unsigned int version);
 template void serialize<boost::archive::xml_iarchive>(boost::archive::xml_iarchive& ar, wxRect & r, const unsigned int version);
 
+template<class Archive>
+void serialize(Archive & ar, wxColour & c, const unsigned int version)
+{
+    try
+    {
+        unsigned char r{ c.Red() };
+        unsigned char g{ c.Green() }; // todo use this trick in multiple places? always fill from the given
+        unsigned char b{ c.Blue() }; // object, then save, or re-read from archive?
+        unsigned char a{ c.Alpha() };
+        ar & boost::serialization::make_nvp("r", r);
+        ar & boost::serialization::make_nvp("g", g);
+        ar & boost::serialization::make_nvp("b", b);
+        ar & boost::serialization::make_nvp("a", a);
+        c.Set(r,g,b,a);
+    }
+    catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
+    catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
+    catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
+    catch (...)                                  { LOG_ERROR;                                   throw; }
+}
+
+template void serialize<boost::archive::xml_oarchive>(boost::archive::xml_oarchive& ar, wxColour & region, const unsigned int version);
+template void serialize<boost::archive::xml_iarchive>(boost::archive::xml_iarchive& ar, wxColour & region, const unsigned int version);
+
 const std::string sNumberOfRegions("numberOfRegions");
 const std::string sRect("rect");
 

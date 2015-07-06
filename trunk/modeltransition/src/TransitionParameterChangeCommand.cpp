@@ -1,4 +1,4 @@
-// Copyright 2013-2015 Eric Raijmakers.
+// Copyright 2015 Eric Raijmakers.
 //
 // This file is part of Vidiot.
 //
@@ -15,9 +15,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#include "ChangeAudioClipVolume.h"
+#include "TransitionParameterChangeCommand.h"
 
-#include "AudioClip.h"
+#include "Transition.h"
+#include "TransitionParameter.h"
+#include "UtilClone.h"
 #include "UtilLog.h"
 #include "UtilLogBoost.h"
 
@@ -27,77 +29,67 @@ namespace model {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-ChangeAudioClipVolume::ChangeAudioClipVolume(const AudioClipPtr& audioclip)
+TransitionParameterChangeCommand::TransitionParameterChangeCommand(const TransitionPtr& transition)
     :   RootCommand()
     ,   mInitialized(false)
-    ,   mAudioClip(audioclip)
-    ,   mOldVolume(mAudioClip->getVolume())
-    ,   mNewVolume(boost::none)
+    ,   mTransition(transition)
+    ,   mOld(make_cloned<int,TransitionParameter>(transition->getParameters()))
+    ,   mNew(boost::none)
 {
-    mCommandName = _("Adjust volume for ") + audioclip->getDescription();
+    mCommandName = _("Change ") + transition->getDescription();
 }
 
-ChangeAudioClipVolume::~ChangeAudioClipVolume()
+TransitionParameterChangeCommand::~TransitionParameterChangeCommand()
 {
 }
 
-void ChangeAudioClipVolume::setVolume(int volume)
+void TransitionParameterChangeCommand::setNewParameters()
 {
-    mNewVolume = boost::optional<int>(volume);
-    mAudioClip->setVolume(volume);
+    mNew.reset(make_cloned<int,TransitionParameter>(mTransition->getParameters()));
 }
 
 //////////////////////////////////////////////////////////////////////////
 // WXWIDGETS DO/UNDO INTERFACE
 //////////////////////////////////////////////////////////////////////////
 
-bool ChangeAudioClipVolume::Do()
+bool TransitionParameterChangeCommand::Do()
 {
     VAR_INFO(*this)(mInitialized);
 
     if (mInitialized)
     {
         // Only the second time that Do() is called (redo) something actually needs to be done.
-        // The first time is handled by (possibly multiple calls to) setScaling etc.
-        if (mNewVolume)
+        // The first time is handled by the transition parameters themselves.
+        if (mNew)
         {
-            mAudioClip->setVolume(*mNewVolume);
+            mTransition->setParameters(make_cloned<int,TransitionParameter>(*mNew));
         }
     }
     mInitialized = true;
     return true;
 }
 
-bool ChangeAudioClipVolume::Undo()
+bool TransitionParameterChangeCommand::Undo()
 {
     VAR_INFO(*this);
-    if (mNewVolume)
+    if (mNew)
     {
-        mAudioClip->setVolume(mOldVolume);
+        mTransition->setParameters(make_cloned<int,TransitionParameter>(mOld));
     }
     return true;
-}
-
-//////////////////////////////////////////////////////////////////////////
-// GET/SET
-//////////////////////////////////////////////////////////////////////////
-
-model::AudioClipPtr ChangeAudioClipVolume::getAudioClip() const
-{
-    return mAudioClip;
 }
 
 //////////////////////////////////////////////////////////////////////////
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<(std::ostream& os, const ChangeAudioClipVolume& obj)
+std::ostream& operator<<(std::ostream& os, const TransitionParameterChangeCommand& obj)
 {
     os  << &obj << '|'
         << typeid(obj).name()    << '|'
-        << obj.mAudioClip        << '|'
-        << obj.mOldVolume        << '|'
-        << obj.mNewVolume;
+        << obj.mTransition       << '|'
+        << obj.mOld              << '|'
+        << obj.mNew;
     return os;
 }
 

@@ -219,10 +219,6 @@ void ClipPreview::onRenderDone(worker::WorkDoneEvent& event)
     getTimeline().repaint(getRect());
 }
 
-//////////////////////////////////////////////////////////////////////////
-// INTERFACE TO SUBCLASSES
-//////////////////////////////////////////////////////////////////////////
-
 void ClipPreview::invalidateCachedBitmaps()
 {
     abortPendingWork();
