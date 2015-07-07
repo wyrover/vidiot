@@ -21,7 +21,8 @@
 #include "UtilLog.h"
 #include "VideoClip.h"
 #include "VideoCompositionParameters.h"
-#include "VideoFrame.h"
+#include "VideoFrameLayer.h"
+#include "VideoSkipFrame.h"
 
 namespace model {
 
