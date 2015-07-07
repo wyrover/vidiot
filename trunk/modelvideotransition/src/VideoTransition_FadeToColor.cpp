@@ -17,6 +17,9 @@
 
 #include "VideoTransition_FadeToColor.h"
 
+#include "Config.h"
+#include "ImageClip.h"
+#include "ImageFile.h"
 #include "TransitionFactory.h"
 #include "TransitionParameterColor.h"
 #include "UtilEnum.h"
