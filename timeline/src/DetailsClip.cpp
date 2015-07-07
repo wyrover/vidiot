@@ -493,7 +493,7 @@ void DetailsClip::setClip(const model::IClipPtr& clip)
     mPositionYSpin->Enable(mVideoClipClone != nullptr);
     mVolumeSlider->Enable(mAudioClipClone != nullptr);
     mVolumeSpin->Enable(mAudioClipClone != nullptr);
-    Layout(); // todo after editing the video of a clip the thumbnail is not updated (only done once, since the clip replacement is only done once...)
+    Layout();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -946,6 +946,8 @@ void DetailsClip::submitEditCommandUponFirstEdit()
 }
 
 // todo make it possible to add a solid color clip to the project view and timeline
+// todo before installing (make install/deliver) run all tests?
+// todo testrender: sync is off?
 
 void DetailsClip::preview()
 {

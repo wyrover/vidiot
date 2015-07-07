@@ -38,7 +38,7 @@ void TestSavingAndLoading::tearDown()
 // TEST CASES
 //////////////////////////////////////////////////////////////////////////
 
-void TestSavingAndLoading::testSaveAndLoad()
+void TestSavingAndLoading::testSaveAndLoad() // todo separate test project for load old versions?
 {
     StartTestSuite();
 
@@ -62,22 +62,36 @@ void TestSavingAndLoading::testSaveAndLoad()
     ProjectViewAddFiles({ getStillImagePath() }, folder1);
 
     StartTest("Add video clips to sequence");
-    ExtendSequenceWithRepeatedClips(getSequence(), getListOfInputPaths(), 2);
+    ExtendSequenceWithRepeatedClips(getSequence(), getListOfInputPaths(), 1);
+
+    // Ensure each transition type is saved once
+    int number = 4;
+    for ( model::TransitionPtr t : model::video::VideoTransitionFactory::get().getAllPossibleTransitions() )
+    {
+        for (model::TransitionType direction : { model::TransitionTypeFadeIn, model::TransitionTypeFadeInFromPrevious, model::TransitionTypeFadeOut, model::TransitionTypeFadeOutToNext })
+        {
+            if (t->supports(direction))
+            {
+                std::ostringstream os; os  << "Add " << t->getDescription() << " " << model::TransitionType_toString(direction);
+                StartTest(os.str().c_str());
+
+                if (static_cast<int>(AudioTrack(0)->getClips().size()) < number + 2) // Use #clips in audiotrack since the #clips in the videotrack includes the transitions
+                {
+                    // Ensure that the next transition can be positioned
+                    ExtendSequenceWithRepeatedClips(getSequence(), getListOfInputPaths(), 1);
+                }
+
+                util::thread::RunInMainAndWait([t, direction, number]()
+                {
+                    gui::timeline::command::createTransition(getSequence(), VideoClip(0, number), direction, make_cloned<model::Transition>(t));
+                });
+                number += (direction == model::TransitionTypeFadeOutToNext) ? 3 : 2;
+            }
+        }
+    }
 
     StartTest("Add still image to sequence");
     ExtendSequenceWithStillImage(getSequence()); // Ensure that there is a still image in the timeline
-
-    // Ensure each transition type is saved once
-    int number = 3;
-    for ( model::TransitionPtr t : model::video::VideoTransitionFactory::get().getAllPossibleTransitions() )
-    {
-        StartTest("Add transition (" + t->getDescription() + ") to sequence");
-        util::thread::RunInMainAndWait([t,number]()
-        {
-            gui::timeline::command::createTransition(getSequence(), VideoClip(0,number),model::TransitionTypeFadeIn, t);
-        });
-        number += 2; // +2 because the transition was added inbetween
-    }
 
     StartTest("Add intervals to timeline");
     ToggleInterval(HCenter(VideoClip(0,0)), RightPixel(VideoClip(0,2)) - 10);
@@ -99,7 +113,7 @@ void TestSavingAndLoading::testSaveAndLoad()
     StartTest("Move cursor position");
     TimelinePositionCursor(getTimeline().getZoom().ptsToPixels(getSequence()->getLength() / 2));
 
-    // todo add every type of transition at least once to the save file.
+    
 
     //////////////////////////////////////////////////////////////////////////
 

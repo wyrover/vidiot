@@ -18,13 +18,12 @@
 #ifndef FADETOCOLOR_H
 #define FADETOCOLOR_H
 
-#include "VideoTransitionOpacity.h"
-#include <boost/serialization/export.hpp>
+#include "VideoTransition_CrossFade.h"
 
 namespace model { namespace video { namespace transition {
 
 class FadeToColor
-    :   public VideoTransitionOpacity
+    :   public CrossFade
 {
 public:
 
@@ -47,16 +46,6 @@ public:
 
     wxString getDescription(TransitionType type) const override;
     bool supports(TransitionType type) const override;
-
-    //////////////////////////////////////////////////////////////////////////
-    // VIDEOTRANSITIONOPACITY
-    //////////////////////////////////////////////////////////////////////////
-
-    void handleFullyOpaqueImage(const wxImagePtr& image, const boost::function<float (int, int)>& f) const override;
-    void handleImageWithAlpha(const wxImagePtr& image, const boost::function<float (int, int)>& f) const override;
-
-    boost::function<float (int,int)> getLeftMethod(const wxImagePtr& image, const float& factor) const override;
-    boost::function<float (int,int)> getRightMethod(const wxImagePtr& image, const float& factor) const override;
 
 protected:
 
