@@ -43,14 +43,14 @@ std::map<FadeToColorParameters, wxString> FadeToColorParametersConverter::mapToH
 //////////////////////////////////////////////////////////////////////////
 
 FadeToColor::FadeToColor()
-    : VideoTransitionOpacity()
+    : CrossFade()
 {
     VAR_DEBUG(this);
     addParameter(FadeToColorColor, boost::make_shared<TransitionParameterColor>(wxColour{ 255, 255, 255 }));// todo in config a default
 }
 
 FadeToColor::FadeToColor(const FadeToColor& other)
-    : VideoTransitionOpacity(other)
+    : CrossFade(other)
 {
     VAR_DEBUG(*this);
 }
@@ -115,38 +115,6 @@ wxString FadeToColor::getDescription(TransitionType type) const// todo make dir 
 }
 
 //////////////////////////////////////////////////////////////////////////
-// VIDEOTRANSITIONOPACITY
-//////////////////////////////////////////////////////////////////////////
-
-void FadeToColor::handleFullyOpaqueImage(const wxImagePtr& image, const boost::function<float (int, int)>& f) const
-{
-    applyToFirstLineThenCopy(image,f);
-}
-
-void FadeToColor::handleImageWithAlpha(const wxImagePtr& image, const boost::function<float (int, int)>& f) const
-{
-    applyToAllPixels(image,f);
-}
-
-boost::function<float (int,int)> FadeToColor::getLeftMethod(const wxImagePtr& image, const float& factor) const
-{
-    boost::function<float (int,int)> f = [factor](int x, int y) -> float // todo use std:function iso boost
-    {
-        return 1.0 - factor;
-    };
-    return f;
-}
-
-boost::function<float (int,int)> FadeToColor::getRightMethod(const wxImagePtr& image, const float& factor) const
-{
-    boost::function<float (int,int)> f =[factor](int x, int y) -> float
-    {
-        return factor;
-    };
-    return f;
-}
-
-//////////////////////////////////////////////////////////////////////////
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
@@ -165,7 +133,7 @@ void FadeToColor::serialize(Archive & ar, const unsigned int version)
 {
     try
     {
-        ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(VideoTransition);
+        ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CrossFade);
     }
     catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
