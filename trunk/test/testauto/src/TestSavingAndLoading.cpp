@@ -38,7 +38,7 @@ void TestSavingAndLoading::tearDown()
 // TEST CASES
 //////////////////////////////////////////////////////////////////////////
 
-void TestSavingAndLoading::testSaveAndLoad() // todo separate test project for load old versions?
+void TestSavingAndLoading::testSaveAndLoad()
 {
     StartTestSuite();
 

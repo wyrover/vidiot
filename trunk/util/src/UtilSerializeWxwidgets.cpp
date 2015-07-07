@@ -163,8 +163,8 @@ void serialize(Archive & ar, wxColour & c, const unsigned int version)
     try
     {
         unsigned char r{ c.Red() };
-        unsigned char g{ c.Green() }; // todo use this trick in multiple places? always fill from the given
-        unsigned char b{ c.Blue() }; // object, then save, or re-read from archive?
+        unsigned char g{ c.Green() }; 
+        unsigned char b{ c.Blue() };
         unsigned char a{ c.Alpha() };
         ar & boost::serialization::make_nvp("r", r);
         ar & boost::serialization::make_nvp("g", g);
