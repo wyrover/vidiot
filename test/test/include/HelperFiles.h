@@ -20,7 +20,7 @@
 
 namespace test {
 
-void ExecuteOnAllFiles(wxString pathToFiles, boost::function<void()> action);
+void ExecuteOnAllFiles(wxString pathToFiles, boost::function<void()> action, bool wait = false);
 
 } // namespace
 

@@ -54,7 +54,7 @@ private:
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    void executeTest(wxString filetypesDir);
+    void executeTest(wxString filetypesDir, bool wait);
 };
 
 } // namespace

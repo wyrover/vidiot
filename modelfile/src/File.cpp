@@ -628,8 +628,14 @@ void File::openFile()
 
     auto isVideoSupported = [this,path](AVStream* stream) -> bool
     {
+        
         if (stream->codec->codec_type != AVMEDIA_TYPE_VIDEO)
         {
+            return false;
+        }
+        if (stream->disposition & AV_DISPOSITION_ATTACHED_PIC)
+        {
+            // This stream holds a (cover) image embedded in a (for example) mp3 file.
             return false;
         }
         return true;
