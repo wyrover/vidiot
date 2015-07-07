@@ -105,7 +105,7 @@ bool FadeToColor::supports(TransitionType type) const
         type == TransitionTypeFadeOut;
 }
 
-wxString FadeToColor::getDescription(TransitionType type) const// todo make dir modelvideotransition
+wxString FadeToColor::getDescription(TransitionType type) const
 {
     if (type == TransitionTypeFadeIn)
     {

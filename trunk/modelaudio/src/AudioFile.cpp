@@ -188,86 +188,83 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
     // All sizes are in bytes below
     int targetSizeInBytes = 0; // For planar data, size of each plane. For packet data, size of first plane, which contains all channels.
     int nDecodedSamplesPerChannel = 0;
+    bool done = false;
 
-    if (audioPacket)
+    while (!done && audioPacket)
     {
-        bool done = false;
+        uint8_t* sourceData = audioPacket->getPacket()->data;
+        int sourceSize = audioPacket->getPacket()->size;
+        ASSERT_MORE_THAN_ZERO(sourceSize);
 
-        while (!done && audioPacket)
+        while (sourceSize > 0)
         {
-            uint8_t* sourceData = audioPacket->getPacket()->data;
-            int sourceSize = audioPacket->getPacket()->size;
-            ASSERT_MORE_THAN_ZERO(sourceSize);
+            AVPacket packet;
+            memset(&packet, 0, sizeof(packet));
+            packet.data = sourceData;
+            packet.size = sourceSize;
 
-            while (sourceSize > 0)
+            AVFrame* pFrame = av_frame_alloc();
+            ASSERT_NONZERO(pFrame);
+
+            int got_frame = 0;
+            int usedSourceBytes = avcodec_decode_audio4(codec, pFrame, &got_frame, &packet);
+
+            if (usedSourceBytes < 0)
             {
-                AVPacket packet;
-                memset(&packet, 0, sizeof(packet));
-                packet.data = sourceData;
-                packet.size = sourceSize;
-
-                AVFrame* pFrame = av_frame_alloc();
-                ASSERT_NONZERO(pFrame);
-
-                int got_frame = 0;
-                int usedSourceBytes = avcodec_decode_audio4(codec, pFrame, &got_frame, &packet);
-                
-                if (usedSourceBytes < 0)
-                {
-                    audioPacket = getNextPacket();
-                    break; // This frame failed. Can happen after moveTo(); due to seeking the first packets do not contain (enough) header information.
-                }
-                else
-                {
-                    // Some data was decoded.
-                    done = true;
-                }
-
-                if (!got_frame)
-                {
-                    sourceSize = 0;
-                    break;
-                }
-
-                int decodedLineSize(0); // Will contain the number of bytes per plane
-                // decodeBuferInBytes contains the entire required buffer size:
-                // - Contains ALL channel data
-                // - Contains 32 bit alignment for all used data fields (one for packet, multiple for planar)
-                int decodeBufferInBytes = av_samples_get_buffer_size(&decodedLineSize, codec->channels, pFrame->nb_samples, codec->sample_fmt, 1);
-                for (int i = 0; i < mNrPlanes; ++i)
-                {
-                    memcpy(mAudioDecodeBuffer[i] + targetSizeInBytes, pFrame->extended_data[i], decodedLineSize);
-                }
-
-                sourceData += usedSourceBytes;
-                sourceSize -= usedSourceBytes;
-
-                targetSizeInBytes += decodedLineSize;
-                nDecodedSamplesPerChannel += pFrame->nb_samples;
-
-                // Only after the first packet has been decoded, all of the information
-                // required for initializing resampling is available.
-                if (mNeedsResampling && mSoftwareResampleContext == 0)
-                {
-                    // Code taken from ffplay.c
-                    int64_t dec_channel_layout =
-                        (pFrame->channel_layout && av_frame_get_channels(pFrame) == av_get_channel_layout_nb_channels(pFrame->channel_layout)) ?
-                        pFrame->channel_layout : av_get_default_channel_layout(av_frame_get_channels(pFrame));
-
-                    mSoftwareResampleContext = swr_alloc_set_opts(0,
-                        av_get_default_channel_layout(parameters.getNrChannels()), AV_SAMPLE_FMT_S16, parameters.getSampleRate(),
-                        dec_channel_layout, codec->sample_fmt, pFrame->sample_rate, 0, 0);
-                    ASSERT_NONZERO(mSoftwareResampleContext);
-
-                    int result = swr_init(mSoftwareResampleContext);
-                    ASSERT_ZERO(result)(avcodecErrorString(result));
-                }
-
-                av_frame_free(&pFrame);
+                audioPacket = getNextPacket();
+                break; // This frame failed. Can happen after moveTo(); due to seeking the first packets do not contain (enough) header information.
             }
+            else
+            {
+                // Some data was decoded.
+                done = true;
+            }
+
+            if (!got_frame)
+            {
+                sourceSize = 0;
+                break;
+            }
+
+            int decodedLineSize(0); // Will contain the number of bytes per plane
+            // decodeBuferInBytes contains the entire required buffer size:
+            // - Contains ALL channel data
+            // - Contains 32 bit alignment for all used data fields (one for packet, multiple for planar)
+            int decodeBufferInBytes = av_samples_get_buffer_size(&decodedLineSize, codec->channels, pFrame->nb_samples, codec->sample_fmt, 1);
+            for (int i = 0; i < mNrPlanes; ++i)
+            {
+                memcpy(mAudioDecodeBuffer[i] + targetSizeInBytes, pFrame->extended_data[i], decodedLineSize);
+            }
+
+            sourceData += usedSourceBytes;
+            sourceSize -= usedSourceBytes;
+
+            targetSizeInBytes += decodedLineSize;
+            nDecodedSamplesPerChannel += pFrame->nb_samples;
+
+            // Only after the first packet has been decoded, all of the information
+            // required for initializing resampling is available.
+            if (mNeedsResampling && mSoftwareResampleContext == 0)
+            {
+                // Code taken from ffplay.c
+                int64_t dec_channel_layout =
+                    (pFrame->channel_layout && av_frame_get_channels(pFrame) == av_get_channel_layout_nb_channels(pFrame->channel_layout)) ?
+                    pFrame->channel_layout : av_get_default_channel_layout(av_frame_get_channels(pFrame));
+
+                mSoftwareResampleContext = swr_alloc_set_opts(0,
+                    av_get_default_channel_layout(parameters.getNrChannels()), AV_SAMPLE_FMT_S16, parameters.getSampleRate(),
+                    dec_channel_layout, codec->sample_fmt, pFrame->sample_rate, 0, 0);
+                ASSERT_NONZERO(mSoftwareResampleContext);
+
+                int result = swr_init(mSoftwareResampleContext);
+                ASSERT_ZERO(result)(avcodecErrorString(result));
+            }
+
+            av_frame_free(&pFrame);
         }
     }
-    else // !audioPacket: flush with 0 packets until no more data returned
+    
+    if (!done) // audioPacket == nullptr: flush with 0 packets until no more data returned
     {
         AVPacket packet;
         memset(&packet, 0, sizeof(packet));
@@ -424,6 +421,7 @@ AudioPeaks AudioFile::getPeaks(pts offset, pts length)
                 ++samplePosition;
                 ++buffer;
             }
+            VAR_ERROR(chunk);
             chunk = getNextAudio(parameters);
         }
         FileMetaDataCache::get().setPeaks(getPath(), allPeaks);
