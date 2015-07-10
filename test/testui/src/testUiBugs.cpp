@@ -57,4 +57,11 @@ void TestUiBugs::testDragAndDropFileLargerThanTimeline()
     ASSERT_MORE_THAN_EQUALS(AudioClip(0)->getLength(), model::Convert::timeToPts(3 * 60 * 1000 + 27 * 1000));
 }
 
+void TestUiBugs::testCrashWhenRightClickingOutsideAllTracks()
+{
+    StartTestSuite();
+    TimelineRightClick(wxPoint(200, gui::timeline::TimescaleView::TimeScaleHeight + 2));
+    TimelineKeyPress(WXK_ESCAPE);
+}
+
 } // namespace

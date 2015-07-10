@@ -39,6 +39,10 @@ public:
 
     void testDragAndDropFileLargerThanTimeline();
 
+    /// Wrong handling in menu class - did not check for 'no clip selected' -
+    /// caused a crash when accessing the clip's data.
+    void testCrashWhenRightClickingOutsideAllTracks();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////

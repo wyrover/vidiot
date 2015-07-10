@@ -268,6 +268,7 @@ void MenuHandler::onTriggerPopupMenu(wxCommandEvent& event)
         { model::TransitionTypeFadeOutToNext, _("Show all fade to next transitions") }
     };
 
+    if (clickedClip)
     {
         // Check if there's already a transition, disabling the transition menu options
         model::TransitionPtr prevTransition = boost::dynamic_pointer_cast<model::Transition>(clickedClip->getPrev());
