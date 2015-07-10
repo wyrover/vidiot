@@ -330,7 +330,14 @@ int generateDebugReport(bool doexit, bool addcontext, bool screenShot, const wxR
     if ( wxDebugReportPreviewStd().Show(report) )
     {
         report.Process();
-        util::mail::sendDebugReport(_("Vidiot crash report"), _("I'm sorry, but Vidiot crashed.\nBy sending this mail you'll provide me with helpful information for resolving the crash.\nThanks for your help.\n\nEric\n"), boost::optional<wxString>(report.GetCompressedFileName()));
+        wxString original{ report.GetCompressedFileName() };
+        wxFileName copy{ original };
+        copy.SetExt("rpt"); // Sourcefourge doesn't allow zip files...
+        bool copyok = wxCopyFile(original, copy.GetLongPath(), false);
+        if (copyok)
+        {
+            util::mail::sendDebugReport(_("Vidiot crash report"), _("I'm sorry, but Vidiot crashed.\nBy sending this mail you'll provide me with helpful information for resolving the crash.\nThanks for your help.\n\nEric\n"), boost::optional<wxString>(copy.GetLongPath()));
+        }
     }
     if (doexit)
     {
