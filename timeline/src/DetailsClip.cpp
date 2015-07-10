@@ -946,7 +946,6 @@ void DetailsClip::submitEditCommandUponFirstEdit()
 }
 
 // todo make it possible to add a solid color clip to the project view and timeline
-// todo before installing (make install/deliver) run all tests?
 // todo testrender: sync is off?
 
 void DetailsClip::preview()

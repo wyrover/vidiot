@@ -22,7 +22,7 @@
 
 namespace model {
 
-enum TransitionType;
+enum TransitionType : int;
 
 /// Class representing transitions in the timeline. Note that the actual transition
 /// is rendered by taking its adjacent clips, cloning these, and adjusting the clones

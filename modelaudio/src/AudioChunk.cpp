@@ -90,8 +90,8 @@ samplecount AudioChunk::extract(sample* dst, samplecount requested)
 
 void AudioChunk::read(samplecount samples)
 {
+    ASSERT_LESS_THAN_EQUALS(mNrReadSamples + mNrSkippedSamples + samples, mNrSamples)(mNrSamples)(mNrReadSamples)(mNrSkippedSamples)(samples);
     mNrReadSamples += samples;
-    ASSERT_LESS_THAN_EQUALS(mNrReadSamples, mNrSamples);
 }
 
 sample* AudioChunk::getBuffer()
@@ -115,17 +115,20 @@ samplecount AudioChunk::getReadSampleCount() const
 
 samplecount AudioChunk::getUnreadSampleCount() const
 {
+    ASSERT_LESS_THAN_EQUALS(mNrReadSamples + mNrSkippedSamples, mNrSamples)(mNrSamples)(mNrReadSamples)(mNrSkippedSamples);
     samplecount result = mNrSamples - mNrSkippedSamples - mNrReadSamples;
-    ASSERT_MORE_THAN_EQUALS_ZERO(result);
     return result;
 }
 
 void AudioChunk::setAdjustedLength(samplecount adjustedLength)
 {
+    ASSERT_ZERO(mNrSkippedSamples); // Can only set once
+    ASSERT_ZERO(mNrReadSamples); // Can only set when nothing is read yet
     ASSERT_LESS_THAN_EQUALS(adjustedLength,mNrSamples);
     mNrSkippedSamples = mNrSamples - adjustedLength;
     samplecount total = mNrSamples - mNrSkippedSamples - mNrReadSamples;
     ASSERT_ZERO(total % mNrChannels)(mNrSamples)(mNrSkippedSamples)(mNrReadSamples)(mNrChannels);
+    ASSERT_LESS_THAN_EQUALS(mNrReadSamples + mNrSkippedSamples, mNrSamples)(mNrSamples)(mNrReadSamples)(mNrSkippedSamples)(adjustedLength);
 }
 
 pts AudioChunk::getPts() const
