@@ -33,7 +33,9 @@ namespace gui { namespace timeline {
 ////////////////////////////////////////////////////////////////////////
 // WORK OBJECT FOR RENDERING A THUMBNAIL
 //////////////////////////////////////////////////////////////////////////
-
+    //todo when editing with 'b' sometimes after the edit no new peaks are shown, only the 0 line.
+    //todo added audio track that should cause addition of vert scroll bar. scrol bar did not appear.
+    //todo submitted zip files are rejected by sourceforge mail system?
 struct RenderPeaksWork
     : public RenderClipPreviewWork
 {
