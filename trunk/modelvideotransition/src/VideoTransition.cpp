@@ -84,7 +84,7 @@ VideoFramePtr VideoTransition::getNextVideo(const VideoCompositionParameters& pa
         mLeftClip = makeLeftClip();
         if (mLeftClip)
         {
-            mLeftClip->moveTo(mProgress); // todo send crash reports
+            mLeftClip->moveTo(mProgress);
         }
         mRightClip = makeRightClip();
         if (mRightClip)

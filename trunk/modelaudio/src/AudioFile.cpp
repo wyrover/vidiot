@@ -93,14 +93,14 @@ void AudioFile::moveTo(pts position)
 {
     mNewStartPosition.reset(position);
 
-    // position - 1: Ensure that the resulting start position is ALWAYS 
+    // position - 1: Ensure that the resulting start position is ALWAYS
     // before the first required sample. Otherwise, seeking sometimes causes
     // a start point beyond the first required sample. That, in turn, causes
     // slight video-audio offset problems and clicks/pops when making cuts
     // within one clip.
     // Typical cases of clicks/pops: make a crossfade/fade in and the samples
     // used within the transition do not align properly with the first samples
-    // used AFTER the transition. Same thing can happen when making a cut 
+    // used AFTER the transition. Same thing can happen when making a cut
     // directly in a clip without any more adjusting.
     File::moveTo(std::max<pts>(position - 1,0));
 }
@@ -154,7 +154,7 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
             }
             return getFirstSample(packet->pts + 1);
         };
-        while (audioPacket && 
+        while (audioPacket &&
                getFirstSampleOfNextPacket(audioPacket->getPacket()) <= nextSample)
         {
             // The next packet starts also 'before' the required sample. Use that packet.
@@ -179,6 +179,9 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
 
         mNewStartPosition.reset();
     }
+
+    ASSERT_MORE_THAN_EQUALS_ZERO(nSkipSamples);
+    nSkipSamples *= parameters.getNrChannels();
 
     //////////////////////////////////////////////////////////////////////////
     // DECODING
@@ -263,7 +266,7 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
             av_frame_free(&pFrame);
         }
     }
-    
+
     if (!done) // audioPacket == nullptr: flush with 0 packets until no more data returned
     {
         AVPacket packet;
@@ -331,7 +334,7 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
         int nOutputFrames = swr_convert(mSoftwareResampleContext, &out[0], bufferSize, const_cast<const uint8_t**>(mAudioDecodeBuffer), nDecodedSamplesPerChannel);
         ASSERT_MORE_THAN_EQUALS_ZERO(nOutputFrames);
         int nOutputSamples = nOutputFrames * parameters.getNrChannels();
-        
+
         // To check that the buffer was large enough to hold everything produced by swr_convert in one pass.
         ASSERT_LESS_THAN(nOutputSamples, bufferSize);
 
@@ -343,17 +346,14 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
         //       returned samples by swr_convert to differ slightly (order of 1 or 2 samples difference per
         //       decoded packet. So, computing the sum of all returned output samples of a clip split into
         //       parts is not exactly the same as the returned output samples of the large still joined clip.
-
-        if (nSkipSamples > 0)
-        {
-            nSkipSamples = convertInputSampleCountToOutputSampleCount(nSkipSamples);
-        }
+        //
+        // NOTE: The std min is required because sometimes nOutputSamples is slightly smaller than the skipped
+        //       samples.
+        nSkipSamples = std::min<samplecount>(convertInputSampleCountToOutputSampleCount(nSkipSamples), nOutputSamples);
     }
 
-    if (nSkipSamples > 0)
-    {
-        audioChunk->read(nSkipSamples  * parameters.getNrChannels());
-    }
+    ASSERT_MORE_THAN_EQUALS_ZERO(nSkipSamples);
+    audioChunk->read(nSkipSamples);
 
     return audioChunk;
 }
@@ -385,7 +385,7 @@ AudioPeaks AudioFile::getPeaks(pts offset, pts length)
     }
 
     boost::optional<AudioPeaks> peaks{ FileMetaDataCache::get().getPeaks(getPath()) };
-    
+
     if (!peaks)
     {
         // The setPts() & determineChunkSize() below is required for the case where the file has been removed from disk,
@@ -421,7 +421,6 @@ AudioPeaks AudioFile::getPeaks(pts offset, pts length)
                 ++samplePosition;
                 ++buffer;
             }
-            VAR_ERROR(chunk);
             chunk = getNextAudio(parameters);
         }
         FileMetaDataCache::get().setPeaks(getPath(), allPeaks);

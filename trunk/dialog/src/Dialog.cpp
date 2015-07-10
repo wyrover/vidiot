@@ -19,6 +19,7 @@
 
 #include "Config.h"
 #include "UtilLog.h"
+#include "UtilMail.h"
 #include "UtilPath.h"
 #include "UtilThread.h"
 #include "Window.h"
@@ -329,6 +330,7 @@ int generateDebugReport(bool doexit, bool addcontext, bool screenShot, const wxR
     if ( wxDebugReportPreviewStd().Show(report) )
     {
         report.Process();
+        util::mail::sendDebugReport(_("Vidiot crash report"), _("I'm sorry, but Vidiot crashed.\nBy sending this mail you'll provide me with helpful information for resolving the crash.\nThanks for your help.\n\nEric\n"), boost::optional<wxString>(report.GetCompressedFileName()));
     }
     if (doexit)
     {

@@ -54,7 +54,7 @@ void AudioPeaks::serialize(Archive & ar, const unsigned int version)
         }
         else
         {
-            unsigned int s{ size() };
+            unsigned int s{ static_cast<unsigned int>(size()) };
             ar & boost::serialization::make_nvp(sCount.c_str(), s);
             ar & boost::serialization::make_nvp(sPeaks.c_str(), boost::serialization::make_binary_object(data(), s * sizeof(AudioPeak)));
         }

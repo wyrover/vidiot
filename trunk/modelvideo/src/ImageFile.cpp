@@ -145,7 +145,7 @@ wxSize ImageFile::getSize()
     {
         return Properties::get().getVideoSize();
     }
-    return VideoFile::getSize(); // Todo make class that inherits from image file instead?
+    return VideoFile::getSize();
 }
 
 bool ImageFile::canBeOpened()

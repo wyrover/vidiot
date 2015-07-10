@@ -33,13 +33,11 @@
 namespace model { namespace video { namespace transition {
 
 DECLAREENUM(FadeToColorParameters, \
-    FadeToColorColor);
+    FadeToColorColor, FadeToColorDummy);
 IMPLEMENTENUM(FadeToColorParameters);
 std::map<FadeToColorParameters, wxString> FadeToColorParametersConverter::mapToHumanReadibleString = {
     { FadeToColorColor, _("Color") },
 };
-
-
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
@@ -100,8 +98,8 @@ model::IClipPtr FadeToColor::makeRightClip()
 
 bool FadeToColor::supports(TransitionType type) const
 {
-    return 
-        type == TransitionTypeFadeIn || 
+    return
+        type == TransitionTypeFadeIn ||
         type == TransitionTypeFadeOut;
 }
 
