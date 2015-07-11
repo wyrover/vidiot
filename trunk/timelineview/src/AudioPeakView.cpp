@@ -33,8 +33,8 @@ namespace gui { namespace timeline {
 ////////////////////////////////////////////////////////////////////////
 // WORK OBJECT FOR RENDERING A THUMBNAIL
 //////////////////////////////////////////////////////////////////////////
-    //todo when editing with 'b' sometimes after the edit no new peaks are shown, only the 0 line.
-    //todo added audio track that should cause addition of vert scroll bar. scrol bar did not appear.
+
+//todo added audio track that should cause addition of vert scroll bar. scrol bar did not appear.
 
     struct RenderPeaksWork
     : public RenderClipPreviewWork
@@ -44,6 +44,13 @@ namespace gui { namespace timeline {
     explicit RenderPeaksWork(const model::IClipPtr& clip, const wxSize& size, rational zoom)
         : RenderClipPreviewWork(clip,size,zoom)
     {
+        ASSERT(clip->isA<model::AudioClip>())(clip);
+
+        // Can't make the clone in the separate thread, hence this duplication.
+        // Otherwise, the clip may be (partially) opened/opening in the main thread at the moment
+        // the clone is made in the createBitmap method. That resulted in empty peaks views,
+        // because clipclone->fileclone::mFileOpenedOk was not yet initialized.
+        mAudioClipClone = make_cloned<model::AudioClip>(boost::dynamic_pointer_cast<model::AudioClip>(clip));
     }
 
     wxImagePtr createBitmap() override
@@ -59,25 +66,23 @@ namespace gui { namespace timeline {
         wxImagePtr result = boost::make_shared<wxImage>(mSize);
         memset(result->GetData(), 0, mSize.x * mSize.y * 3); // Default: all black (is the transparent colour)
 
-        model::AudioClipPtr clone = make_cloned<model::AudioClip>(boost::dynamic_pointer_cast<model::AudioClip>(mClip));
-
         model::TransitionPtr inTransition{ mClip->getInTransition() };
         if (inTransition != nullptr)
         {
             ASSERT(inTransition->getRight())(inTransition);
             ASSERT_MORE_THAN_EQUALS_ZERO(*inTransition->getRight());
-            clone->adjustBegin(-1 * *inTransition->getRight());
+            mAudioClipClone->adjustBegin(-1 * *inTransition->getRight());
         }
         model::TransitionPtr outTransition{ mClip->getOutTransition() };
         if (outTransition != nullptr)
         {
             ASSERT(outTransition->getLeft())(outTransition);
             ASSERT_MORE_THAN_EQUALS_ZERO(*outTransition->getLeft());
-            clone->adjustEnd(*outTransition->getLeft());
+            mAudioClipClone->adjustEnd(*outTransition->getLeft());
         }
-        ASSERT(clone);
-        ASSERT(!clone->getTrack()); // NOTE: This is a check to ensure that a clone is used, and not the original is 'moved'
-        if (clone->getLength() > 0)
+        ASSERT(mAudioClipClone);
+        ASSERT(!mAudioClipClone->getTrack()); // NOTE: This is a check to ensure that a clone is used, and not the original is 'moved'
+        if (mAudioClipClone->getLength() > 0)
         {
             // The if is required to avoid errors during editing operations.
             int origin{ mSize.y / 2 };
@@ -87,7 +92,7 @@ namespace gui { namespace timeline {
                 result->SetRGB(wxRect{ 0, origin, mSize.x, 1 }, 87, 120, 74);
             }
 
-            model::AudioPeaks peaks = clone->getPeaks();
+            model::AudioPeaks peaks = mAudioClipClone->getPeaks();
             int nPeaks = peaks.size();
 
             if (nPeaks > 0)
@@ -96,10 +101,10 @@ namespace gui { namespace timeline {
                 model::AudioPeak peak = peaks[0];
                 ASSERT_LESS_THAN_EQUALS(peak.first, peak.second);
 
-                int totalPeaks = boost::dynamic_pointer_cast<model::AudioFile>(clone->getFile())->getLength();
+                int totalPeaks = mAudioClipClone->getFile()->getLength();
                 int totalPixels = Zoom::ptsToPixels(totalPeaks, mZoom);
 
-                int firstPeak = clone->getOffset();
+                int firstPeak = mAudioClipClone->getOffset();
                 int firstPixel = Zoom::ptsToPixels(firstPeak, mZoom);
 
                 for (int x{ 0 }; x < mSize.GetWidth() && !isAborted(); ++x)
@@ -134,6 +139,7 @@ namespace gui { namespace timeline {
         result->SetMaskColour(0,0,0);
         return result;
     }
+    model::AudioClipPtr mAudioClipClone = nullptr;
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -143,6 +149,7 @@ namespace gui { namespace timeline {
 AudioPeakView::AudioPeakView(const model::IClipPtr& clip, View* parent)
     : ClipPreview(clip, parent)
 {
+    ASSERT(mClip->isA<model::IAudio>())(mClip);
     mClip->Bind(model::EVENT_CHANGE_AUDIOCLIP_VOLUME, &AudioPeakView::onVolumeChanged, this);
 
 }

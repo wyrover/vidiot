@@ -799,6 +799,7 @@ std::ostream& operator<<(std::ostream& os, const File& obj)
     os  << &obj << '|'
         << obj.mPath << '|'
         << obj.mName << '|'
+        << obj.mMetaDataKnown << '|'
         << obj.mNumberOfFrames << '|'
         << obj.mHasVideo << '|'
         << obj.mHasAudio << '|'

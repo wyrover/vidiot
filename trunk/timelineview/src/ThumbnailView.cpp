@@ -47,21 +47,10 @@ struct RenderThumbnailWork
     explicit RenderThumbnailWork(const model::IClipPtr& clip, const wxSize& size, rational zoom)
         : RenderClipPreviewWork(clip,size,zoom)
     {
-    }
-
-    wxImagePtr createBitmap() override
-    {
-        // Note: if this would return a nullptr then scheduling would be repeated over and over again, since nothing is generated.
-        ASSERT_MORE_THAN_EQUALS(mSize.x, 10); // Avoid issues in swscale
-        ASSERT_MORE_THAN_EQUALS(mSize.y, 10); 
-
-        if (!wxThread::IsMain())
-        {
-            setThreadName("RenderThumbnail");
-        }
-
-        model::VideoClipPtr clone;
-
+        // Can't make the clone in the separate thread, hence this duplication.
+        // Otherwise, the clip may be (partially) opened/opening in the main thread at the moment
+        // the clone is made in the createBitmap method. That resulted in empty peaks views,
+        // because clipclone->fileclone::mFileOpenedOk was not yet initialized.
         model::TransitionPtr inTransition{ mClip->getInTransition() };
         if (inTransition &&
             inTransition->getRight() &&
@@ -71,7 +60,7 @@ struct RenderThumbnailWork
             // - is part of a transition
             // - is the 'out' clip (the right one) of the transition
             // The thumbnail is the first frame after the 'logical cut' under the transitionm.
-            clone = boost::dynamic_pointer_cast<model::VideoClip>(inTransition->makeRightClip());
+            mVideoClipClone = boost::dynamic_pointer_cast<model::VideoClip>(inTransition->makeRightClip());
         }
         else
         {
@@ -86,33 +75,47 @@ struct RenderThumbnailWork
                 // - is the 'out' clip (the left one) of the transition
                 // - is completely under the transition.
                 // With a size 0, getting the thumbnail is impossible (since it has length 0).
-                clone = boost::dynamic_pointer_cast<model::VideoClip>(outTransition->makeLeftClip());
+                mVideoClipClone = boost::dynamic_pointer_cast<model::VideoClip>(outTransition->makeLeftClip());
             }
             else
             {
-                clone = make_cloned<model::VideoClip>(boost::dynamic_pointer_cast<model::VideoClip>(mClip)); // Clone to avoid 'moving' the original clip
+                mVideoClipClone = make_cloned<model::VideoClip>(boost::dynamic_pointer_cast<model::VideoClip>(mClip)); // Clone to avoid 'moving' the original clip
             }
         }
+    }
 
-        ASSERT(clone);
-        ASSERT(!clone->getTrack()); // NOTE: This is a check to ensure that a clone is used, and not the original is 'moved'
+    wxImagePtr createBitmap() override
+    {
+        // Note: if this would return a nullptr then scheduling would be repeated over and over again, since nothing is generated.
+        ASSERT_MORE_THAN_EQUALS(mSize.x, 10); // Avoid issues in swscale
+        ASSERT_MORE_THAN_EQUALS(mSize.y, 10); 
+
+        if (!wxThread::IsMain())
+        {
+            setThreadName("RenderThumbnail");
+        }
+
+        ASSERT(mVideoClipClone);
+        ASSERT(!mVideoClipClone->getTrack()); // NOTE: This is a check to ensure that a clone is used, and not the original is 'moved'
 
         wxImagePtr result;
-        if (clone->getLength() > 0)
+        if (mVideoClipClone->getLength() > 0)
         {
-            ASSERT_MORE_THAN_EQUALS_ZERO(clone->getOffset())(*clone);
+            ASSERT_MORE_THAN_EQUALS_ZERO(mVideoClipClone->getOffset())(*mVideoClipClone);
             // The if is required to avoid errors during editing operations.
-            clone->moveTo(0);
-            model::VideoFramePtr videoFrame = clone->getNextVideo(model::VideoCompositionParameters().setBoundingBox(mSize).setDrawBoundingBox(false));
+            mVideoClipClone->moveTo(0);
+            model::VideoFramePtr videoFrame = mVideoClipClone->getNextVideo(model::VideoCompositionParameters().setBoundingBox(mSize).setDrawBoundingBox(false));
             result = videoFrame->getImage();
 
             // Ensure that any opened threads are closed again.
             // Avoid opening too much threads in parallel.
-            clone->clean();
+            mVideoClipClone->clean();
         }
 
         return result;
     }
+
+    model::VideoClipPtr mVideoClipClone = nullptr;
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -122,6 +125,7 @@ struct RenderThumbnailWork
 ThumbnailView::ThumbnailView(const model::IClipPtr& clip, View* parent)
 :   ClipPreview(clip, parent)
 {
+    ASSERT(mClip->isA<model::IVideo>())(mClip);
 }
 
 //////////////////////////////////////////////////////////////////////////
