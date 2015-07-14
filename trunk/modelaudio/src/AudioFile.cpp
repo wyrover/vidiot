@@ -428,7 +428,9 @@ AudioPeaks AudioFile::getPeaks(pts offset, pts length)
     }
 
     const AudioPeaks& allPeaks{ *peaks };
-    ASSERT_LESS_THAN_EQUALS(offset + length, allPeaks.size());
+    // NOT: ASSERT_LESS_THAN_EQUALS(offset + length, allPeaks.size());
+    // See also  AudioClip::getNextAudio where sometimes extra audio is added, if the audio data length 
+    // in a file is smaller than the audio length.
     AudioPeaks result(allPeaks.begin() + offset, allPeaks.begin() + offset + length);
     return result;
 }
