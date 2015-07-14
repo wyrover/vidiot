@@ -148,7 +148,7 @@ Optional: C/C++ -> Code Generation -> Floating point model = fast
 * Upload
   - Installer
   - Changelog.txt
-  - Filezilla, log in with epra,vidiot@frs.sourceforge.net
+  - Filezilla, log in with (SFTP) epra,vidiot@frs.sourceforge.net
     Then cd to /home/pfs/project/v/vi/vidiot
 
 
