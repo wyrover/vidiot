@@ -428,10 +428,20 @@ AudioPeaks AudioFile::getPeaks(pts offset, pts length)
     }
 
     const AudioPeaks& allPeaks{ *peaks };
-    // NOT: ASSERT_LESS_THAN_EQUALS(offset + length, allPeaks.size());
-    // See also  AudioClip::getNextAudio where sometimes extra audio is added, if the audio data length 
-    // in a file is smaller than the audio length.
-    AudioPeaks result(allPeaks.begin() + offset, allPeaks.begin() + offset + length);
+    ASSERT_LESS_THAN_EQUALS(offset, allPeaks.size())(*this);
+    // NOT: ASSERT_LESS_THAN_EQUALS(offset + length, allPeaks.size())(*this);
+    //
+    // See also  AudioClip::getNextAudio where sometimes extra audio is added, if the audio data length in a file is smaller than the audio length.
+    //
+    // The audio clip may be slightly larger than the audio file data. This can be caused by the clip having (typically) the same length as a linked video clip.
+    // The video data in a file may be slightly longer than the audio data, resulting in such a difference. Instead of truncating the video, the audio is extended
+    // with silence, leaving the truncating (the choice) to the user.
+    AudioPeaks result(allPeaks.begin() + offset, allPeaks.begin() + std::min(static_cast<pts>(allPeaks.size()), offset + length));
+    if (result.size() != length)
+    {
+        // Ensure resulting peaks length equals length of clip. Add 'silence' if required.
+        result.resize(length,std::make_pair(0,0));
+    }
     return result;
 }
 

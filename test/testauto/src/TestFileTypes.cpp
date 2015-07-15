@@ -43,7 +43,7 @@ void TestFileTypes::testFileTypes_audio_1_44100()
     StartTestSuite();
     ConfigOverruleLong overruleChannels(Config::sPathAudioDefaultNumberOfChannels, 1);
     ConfigOverruleLong overruleSampleRate(Config::sPathAudioDefaultSampleRate, 44100);
-    executeTest("filetypes_audio", true);
+    executeTest("filetypes_audio");
 }
 
 void TestFileTypes::testFileTypes_audio_2_48000()
@@ -51,41 +51,41 @@ void TestFileTypes::testFileTypes_audio_2_48000()
     StartTestSuite();
     ConfigOverruleLong overruleChannels(Config::sPathAudioDefaultNumberOfChannels, 2);
     ConfigOverruleLong overruleSampleRate(Config::sPathAudioDefaultSampleRate, 48000);
-    executeTest("filetypes_audio", true);
+    executeTest("filetypes_audio");
 }
 
 void TestFileTypes::testFileTypes_image()
 {
     StartTestSuite();
-    executeTest("filetypes_image", false);
+    executeTest("filetypes_image");
 }
 
 void TestFileTypes::testFileTypes_video_s24p()
 {
     StartTestSuite();
     ConfigOverruleString overruleFrameRate(Config::sPathVideoDefaultFrameRate, FrameRate::s24p.toString());
-    executeTest("filetypes_video", false);
+    executeTest("filetypes_video");
 }
 
 void TestFileTypes::testFileTypes_video_s25p()
 {
     StartTestSuite();
     ConfigOverruleString overruleFrameRate(Config::sPathVideoDefaultFrameRate, FrameRate::s25p.toString());
-    executeTest("filetypes_video", false);
+    executeTest("filetypes_video");
 }
 
 void TestFileTypes::testFileTypes_video_s29p()
 {
     StartTestSuite();
     ConfigOverruleString overruleFrameRate(Config::sPathVideoDefaultFrameRate, FrameRate::s30p.toString());
-    executeTest("filetypes_video", false);
+    executeTest("filetypes_video");
 }
 
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-void TestFileTypes::executeTest(wxString filetypesDir, bool wait)
+void TestFileTypes::executeTest(wxString filetypesDir)
 {
     // Wav files from: http://www-mmsp.ece.mcgill.ca/documents/AudioFormats/WAVE/Samples.html
     // Some files from http://samples.mplayerhq.hu/
@@ -97,7 +97,7 @@ void TestFileTypes::executeTest(wxString filetypesDir, bool wait)
         TimelineKeyPress('v'); // Show the part being played (for longer files)
         Play(HCenter(VideoClip(0,0)), 1000);
 
-    }, wait);
+    }, true);
 }
 
 } // namespace
