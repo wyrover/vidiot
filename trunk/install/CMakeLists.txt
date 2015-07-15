@@ -29,7 +29,7 @@ set (CPACK_RESOURCE_FILE_LICENSE        "${CMAKE_CURRENT_SOURCE_DIR}/../License.
 set (CPACK_PACKAGE_ICON                 "${CMAKE_SOURCE_DIR}\\\\images\\\\movie150x57.bmp") # Installer header icon: 150x57px, 32bit A8R8G8B8, Don't write color space info (GIMP).
 set (CPACK_PACKAGE_VERSION_MAJOR        "0")
 set (CPACK_PACKAGE_VERSION_MINOR        "3")
-set (CPACK_PACKAGE_VERSION_PATCH        "7" )
+set (CPACK_PACKAGE_VERSION_PATCH        "8" )
 
 file (WRITE "${PROJECT_BINARY_DIR}/VidiotVersion.h.txt" "#define VidiotVersion \"${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}\"\n")
 execute_process (COMMAND ${CMAKE_COMMAND} -E copy_if_different "${PROJECT_BINARY_DIR}/VidiotVersion.h.txt" "${PROJECT_BINARY_DIR}/VidiotVersion.h") # Reduces needless rebuilds
