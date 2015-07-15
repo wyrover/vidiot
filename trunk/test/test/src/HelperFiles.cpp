@@ -26,6 +26,12 @@ void ExecuteOnAllFiles(wxString pathToFiles, boost::function<void()> action, boo
     ASSERT(root);
     wxString sSequence( "Sequence" );
     model::SequencePtr sequence = ProjectViewAddSequence( sSequence, root );
+    if (wait)
+    {
+        // Ensure that audio peaks are generated (clip views large enough to hold the preview)
+        TimelineZoomIn(4);
+    }
+
     WindowTriggerMenu(ID_CLOSESEQUENCE);
 
     // Find input files in dir (must be done after creating a project, due to dependencies on project properties for opening/closing files)
@@ -57,10 +63,7 @@ void ExecuteOnAllFiles(wxString pathToFiles, boost::function<void()> action, boo
         {
             // Wait until audio peaks generated. Otherwise, not all save files have the same contents.
             // The later save files may have more entries in the meta data cache.
-
-            // Ensure that audio peaks are generated (clip views large enough to hold the preview)
-            TimelineZoomIn(4);
-
+            //
             // Wait for audio peaks to be generated. For the longer audio files this results in reading through the entire file.
             // For instance, for Dawn_AnotherDay_EmbeddedCoverImage_IncompleteEndPacket.mp3 this caused an error when reading
             // the last packet of the file.
