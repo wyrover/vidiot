@@ -206,13 +206,15 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
             packet.data = sourceData;
             packet.size = sourceSize;
 
-            AVFrame* pFrame = av_frame_alloc();
+            // Ensure memory cleaned up in all possible control flows:
+            boost::shared_ptr<AVFrame> pFrame(av_frame_alloc(), [](AVFrame* frame) { av_frame_free(&frame); });
             ASSERT_NONZERO(pFrame);
+            ASSERT_NONZERO(pFrame.get());
 
             int got_frame = 0;
-            int usedSourceBytes = avcodec_decode_audio4(codec, pFrame, &got_frame, &packet);
+            int usedSourceBytes = avcodec_decode_audio4(codec, pFrame.get(), &got_frame, &packet);
 
-            if (usedSourceBytes < 0)
+            if (usedSourceBytes < 0 || !got_frame)
             {
                 audioPacket = getNextPacket();
                 break; // This frame failed. Can happen after moveTo(); due to seeking the first packets do not contain (enough) header information.
@@ -221,12 +223,6 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
             {
                 // Some data was decoded.
                 done = true;
-            }
-
-            if (!got_frame)
-            {
-                sourceSize = 0;
-                break;
             }
 
             int decodedLineSize(0); // Will contain the number of bytes per plane
@@ -251,8 +247,8 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
             {
                 // Code taken from ffplay.c
                 int64_t dec_channel_layout =
-                    (pFrame->channel_layout && av_frame_get_channels(pFrame) == av_get_channel_layout_nb_channels(pFrame->channel_layout)) ?
-                    pFrame->channel_layout : av_get_default_channel_layout(av_frame_get_channels(pFrame));
+                    (pFrame->channel_layout && av_frame_get_channels(pFrame.get()) == av_get_channel_layout_nb_channels(pFrame->channel_layout)) ?
+                    pFrame->channel_layout : av_get_default_channel_layout(av_frame_get_channels(pFrame.get()));
 
                 mSoftwareResampleContext = swr_alloc_set_opts(0,
                     av_get_default_channel_layout(parameters.getNrChannels()), AV_SAMPLE_FMT_S16, parameters.getSampleRate(),
@@ -262,8 +258,6 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
                 int result = swr_init(mSoftwareResampleContext);
                 ASSERT_ZERO(result)(avcodecErrorString(result));
             }
-
-            av_frame_free(&pFrame);
         }
     }
 

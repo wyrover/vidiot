@@ -1,4 +1,4 @@
-!/bin/sh
-set -e
+#!/bin/sh
+#set -e
 #update-mime-database /usr/share/mime
 #gtk-update-icon-cache /usr/share/icons/hicolor/

@@ -81,6 +81,12 @@ void TestFileTypes::testFileTypes_video_s29p()
     executeTest("filetypes_video");
 }
 
+void TestFileTypes::testFileTypes_formats()
+{
+    StartTestSuite();
+    executeTest("filetypes_formats");
+}
+
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
