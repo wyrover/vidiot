@@ -61,7 +61,7 @@ Dialog::~Dialog()
 // static
 wxString Dialog::getMediaFileTypes()
 {
-    static wxString sVideo{ "*.avi;*.mov;*.mp4;*.mpeg;*.mpg;*.m2v;*.m4v;*.3gp;*.3g2;*.mkv" };
+    static wxString sVideo{ "*.avi;*.mov;*.mp4;*.mpeg;*.mpg;*.m2v;*.m4v;*.3gp;*.3g2;*.mkv;*.ogv" };
     static wxString sAudio{ "*.wav;*.mp3;*.m2a" };
     static wxString sImage{ "*.bmp;*.gif;*.jpg;*.png;*.tga;*.tif;*.tiff" };
 
