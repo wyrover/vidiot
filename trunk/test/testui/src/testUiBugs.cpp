@@ -37,7 +37,27 @@ void TestUiBugs::tearDown()
 // TEST CASES
 //////////////////////////////////////////////////////////////////////////
 
-void TestUiBugs::testDragAndDropFileLargerThanTimeline()
+void TestUiBugs::testDragAndDropVideoFileLargerThanTimeline()
+{
+    StartTestSuite();
+    TimelineZoomIn(2);
+
+    wxFileName file = getTestPath();
+    file.AppendDir("filetypes_special");
+    ASSERT(file.IsDir());
+    ASSERT(file.DirExists());
+    file.SetFullName("long_black_10min.avi"); // long file
+    ASSERT(file.FileExists());
+
+    model::Files files = ProjectViewAddFiles({ file });
+
+    DragFromProjectViewToTimeline(files.front(), getTimeline().GetScreenPosition() + wxPoint(5, VCenter(VideoTrack(0))));
+    ASSERT_EQUALS(NumberOfVideoClipsInTrack(0), 1); // Dropped clip obscured entire track
+    ASSERT_EQUALS(NumberOfAudioClipsInTrack(0), 7);
+    ASSERT_MORE_THAN_EQUALS(VideoClip(0)->getLength(), model::Convert::timeToPts(10 * 60 * 1000));
+}
+
+void TestUiBugs::testDragAndDropAudioFileLargerThanTimeline()
 {
     StartTestSuite();
     TimelineZoomIn(2);

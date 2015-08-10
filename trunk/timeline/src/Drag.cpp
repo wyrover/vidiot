@@ -148,7 +148,6 @@ void Drag::start(const wxPoint& hotspot, bool external)
         {
             // Extend sequence view if it is not big enough to hold the dragged data.
             getSequenceView().setMinimumLength(getSequenceView().getDefaultLength() + mVideo.getTempTrack()->getLength());
-            getTimeline().resize();
         }
 
         mHotspot.x = getZoom().ptsToPixels(mVideo.getTempTrack()->getLength() / 2);
@@ -714,7 +713,7 @@ void Drag::determineSnapOffset()
         ASSERT(itDrag != mDragPoints.end());
         pts leftMostDragPoint = *itDrag;
 
-        while ( itTimeline != mSnapPoints.end() && itDrag != mDragPoints.end() )
+        while (itTimeline != mSnapPoints.end() && itDrag != mDragPoints.end())
         {
             pts pts_timeline = *itTimeline;
             pts pts_drag = *itDrag + ptsoffset;
@@ -750,14 +749,28 @@ void Drag::determineSnapOffset()
         }
     }
 
+    // Always snap to '>=0', since positioning the drop < 0 is not allowed.
+    // This is required for scenarios 
+    // - where snapping is disabled, OR
+    // - where no snaps are found (drag very large file)
+    // (the checks in the loops are never encountered).
+    std::vector<pts>::const_iterator itDrag = mDragPoints.begin();
+    ASSERT(itDrag != mDragPoints.end());
+    pts leftMostDragPoint = *itDrag;
+    pts leftMostPointAfterDropping = leftMostDragPoint + snapOffset + getDraggedPtsDistance();
+    if (leftMostPointAfterDropping < 0) // Avoid dropping 'before' position '0'.
+    {
+        snapOffset -= leftMostPointAfterDropping; // Move leftmost point to '0'.
+    }
+
     VAR_DEBUG(snapPoint)(snapOffset);
     mSnapOffset = snapOffset;
 
     // Now determine all 'snaps' (positions where dragged cuts and timeline cuts are aligned)
     mSnaps.clear();
     std::vector<pts>::const_iterator itTimeline = mSnapPoints.begin();
-    std::vector<pts>::const_iterator itDrag = mDragPoints.begin();
-    while ( itTimeline != mSnapPoints.end() && itDrag != mDragPoints.end() )
+    itDrag = mDragPoints.begin();
+    while (itTimeline != mSnapPoints.end() && itDrag != mDragPoints.end())
     {
         pts pts_timeline = *itTimeline;
         pts pts_drag = *itDrag + ptsoffset + mSnapOffset;
