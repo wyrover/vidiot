@@ -58,13 +58,13 @@ std::ostream& operator<<(std::ostream& os, const wxRect& obj)
 std::ostream& operator<<(std::ostream& os, const wxColour& obj)
 {
     os  << '('
-        << obj.Red()
+        << static_cast<unsigned int>(obj.Red())
         << ','
-        << obj.Green()
-        << '|'
-        << obj.Blue()
-        << '|'
-        << obj.Alpha()
+        << static_cast<unsigned int>(obj.Green())
+        << ','
+        << static_cast<unsigned int>(obj.Blue())
+        << ','
+        << static_cast<unsigned int>(obj.Alpha())
         << ')';
     return os;
 }

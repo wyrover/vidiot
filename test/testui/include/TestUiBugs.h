@@ -37,7 +37,9 @@ public:
     // TEST CASES
     //////////////////////////////////////////////////////////////////////////
 
-    void testDragAndDropFileLargerThanTimeline();
+    void testDragAndDropVideoFileLargerThanTimeline();
+
+    void testDragAndDropAudioFileLargerThanTimeline();
 
     /// Wrong handling in menu class - did not check for 'no clip selected' -
     /// caused a crash when accessing the clip's data.

@@ -36,7 +36,8 @@
 #include "ViewMap.h"
 #include "Zoom.h"
 
-namespace gui { namespace timeline {
+namespace gui {
+namespace timeline {
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
@@ -45,26 +46,26 @@ const pixel ClipView::BorderSize{ 2 };
 const pixel ClipView::CursorClipEditDistance{ 6 };
 
 ClipView::ClipView(const model::IClipPtr& clip, View* parent)
-    :   View(parent)
-    ,   mClip(clip)
-    ,   mBeginAddition(0)
-    ,   mBitmap(boost::none)
+    : View(parent)
+    , mClip(clip)
+    , mBeginAddition(0)
+    , mBitmap(boost::none)
 {
     VAR_DEBUG(this)(mClip);
     ASSERT(mClip);
 
-    getViewMap().registerView(mClip,this);
+    getViewMap().registerView(mClip, this);
 
     if (mClip->isA<model::VideoClip>())
     {
-        (new ThumbnailView(clip,this));
+        (new ThumbnailView(clip, this));
     }
     else if (mClip->isA<model::AudioClip>())
     {
-        (new AudioPeakView(clip,this));
+        (new AudioPeakView(clip, this));
     }
-    mClip->Bind(model::EVENT_DRAG_CLIP,             &ClipView::onClipDragged,           this);
-    mClip->Bind(model::EVENT_SELECT_CLIP,           &ClipView::onClipSelected,          this);
+    mClip->Bind(model::EVENT_DRAG_CLIP, &ClipView::onClipDragged, this);
+    mClip->Bind(model::EVENT_SELECT_CLIP, &ClipView::onClipSelected, this);
 
     // IMPORTANT: No drawing/lengthy code here. Due to the nature of adding removing clips as
     //            part of edit operations, that will severely impact performance.
@@ -74,8 +75,8 @@ ClipView::~ClipView()
 {
     VAR_DEBUG(this);
 
-    mClip->Unbind(model::EVENT_DRAG_CLIP,             &ClipView::onClipDragged,         this);
-    mClip->Unbind(model::EVENT_SELECT_CLIP,           &ClipView::onClipSelected,        this);
+    mClip->Unbind(model::EVENT_DRAG_CLIP, &ClipView::onClipDragged, this);
+    mClip->Unbind(model::EVENT_SELECT_CLIP, &ClipView::onClipSelected, this);
 
     if (mClip->isA<model::VideoClip>())
     {
@@ -162,20 +163,24 @@ void ClipView::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) con
 {
     if (mClip->getDragged())
     {
-        getTimeline().clearRect(dc,region,offset,getRect());
+        getTimeline().clearRect(dc, region, offset, getRect());
     }
     else
     {
         wxSize size(getSize());
-        if (!mBitmap || mBitmap->GetSize() != size)
+        if (size.x > 0 && size.y > 0)
         {
-            mBitmap.reset(wxBitmap(size));
-            draw(*mBitmap, !getDrag().isActive(), true);
-        }
-        getTimeline().copyRect(dc, region, offset, *mBitmap, getRect());
-        if (mClip->isA<model::VideoClip>() || mClip->isA<model::AudioClip>())
-        {
-            getViewMap().getClipPreview(mClip)->draw(dc,region,offset);
+            // During some operations the resulting view may be of '0' size.
+            if (!mBitmap || mBitmap->GetSize() != size)
+            {
+                mBitmap.reset(wxBitmap(size));
+                draw(*mBitmap, !getDrag().isActive(), true);
+            }
+            getTimeline().copyRect(dc, region, offset, *mBitmap, getRect());
+            if (mClip->isA<model::VideoClip>() || mClip->isA<model::AudioClip>())
+            {
+                getViewMap().getClipPreview(mClip)->draw(dc, region, offset);
+            }
         }
     }
 }
@@ -254,7 +259,7 @@ void ClipView::getPositionInfo(const wxPoint& position, PointerPositionInfo& inf
     ASSERT_MORE_THAN_EQUALS_ZERO(dist_end)(mClip);
 
     model::TrackPtr track = mClip->getTrack();
-    ASSERT_EQUALS(track,info.track);
+    ASSERT_EQUALS(track, info.track);
 
     if (mClip->isA<model::Transition>())
     {
@@ -264,8 +269,8 @@ void ClipView::getPositionInfo(const wxPoint& position, PointerPositionInfo& inf
         if (dist_top <= ClipView::getTransitionHeight())
         {
             info.logicalclipposition =
-                (dist_begin < ClipView::CursorClipEditDistance)     ? TransitionBegin :
-                (dist_end < ClipView::CursorClipEditDistance)       ? TransitionEnd :
+                (dist_begin < ClipView::CursorClipEditDistance) ? TransitionBegin :
+                (dist_end < ClipView::CursorClipEditDistance) ? TransitionEnd :
                 TransitionInterior; // Default
         }
         else // below transition
@@ -411,23 +416,23 @@ void ClipView::draw(wxBitmap& bitmap, bool drawDraggedClips, bool drawNotDragged
         // in the regular tracks as they have become part of 'getDrag()'s bitmap.
         dc.SetBrush(wxBrush{ wxColour{ 212, 208, 200 } });
         dc.SetPen(wxPen{ wxColour{ 212, 208, 200 } });
-        dc.DrawRectangle(0,0,bitmap.GetWidth(),bitmap.GetHeight());
+        dc.DrawRectangle(0, 0, bitmap.GetWidth(), bitmap.GetHeight());
     }
     else if (mClip->isA<model::Transition>())
     {
         dc.SetBrush(wxBrush{ mClip->getSelected() ? wxColour{ 80, 80, 80 } : wxColour{ 123, 123, 123 } });
-        dc.DrawRectangle(0,0,bitmap.GetWidth(), ClipView::getTransitionHeight());
+        dc.DrawRectangle(0, 0, bitmap.GetWidth(), ClipView::getTransitionHeight());
         wxColour linesColour{ 224, 0, 224 };
         dc.SetPen(wxPen{ linesColour, 1 });
         dc.SetBrush(wxBrush{ linesColour, wxBRUSHSTYLE_FDIAGONAL_HATCH });
-        dc.DrawRectangle(0,0,bitmap.GetWidth(), ClipView::getTransitionHeight());
+        dc.DrawRectangle(0, 0, bitmap.GetWidth(), ClipView::getTransitionHeight());
     }
     else
     {
         wxColour borderColour{ 32, 32, 32 };
         dc.SetPen(wxPen{ borderColour, ClipView::BorderSize });
         dc.SetBrush(wxBrush{ mClip->getSelected() ? wxColour{ 80, 80, 80 } : wxColour{ 160, 160, 160 } });
-        dc.DrawRectangle(0,0,bitmap.GetWidth(),bitmap.GetHeight());
+        dc.DrawRectangle(0, 0, bitmap.GetWidth(), bitmap.GetHeight());
 
         // Text at top of clip
         wxFont descriptionFont{ wxSize(0, 11), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL };
@@ -437,8 +442,8 @@ void ClipView::draw(wxBitmap& bitmap, bool drawDraggedClips, bool drawNotDragged
         dc.SetBrush(wxBrush{ borderColour });
         dc.SetPen(wxPen{ borderColour, 1 });
         //dc.SetLogicalFunction(wxEQUIV);
-        dc.DrawRectangle(0,0,bitmap.GetWidth(), ClipView::getDescriptionHeight());
-        dc.DrawText(mClip->getDescription(), wxPoint(1,1));
+        dc.DrawRectangle(0, 0, bitmap.GetWidth(), ClipView::getDescriptionHeight());
+        dc.DrawText(mClip->getDescription(), wxPoint(1, 1));
     }
 
     if (Config::getShowDebugInfo())
@@ -446,11 +451,11 @@ void ClipView::draw(wxBitmap& bitmap, bool drawDraggedClips, bool drawNotDragged
         if (!mClip->isA<model::Transition>())
         {
             dc.SetTextForeground(wxColour{ 0, 255, 0 });
-            dc.SetFont(wxFont(wxSize(0,11),wxFONTFAMILY_DEFAULT,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL));
-            dc.DrawText(wxString::Format("%" PRId64, mClip->getLength()), wxPoint(5,15));
+            dc.SetFont(wxFont(wxSize(0, 11), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+            dc.DrawText(wxString::Format("%" PRId64, mClip->getLength()), wxPoint(5, 15));
             wxString sPts;
             sPts << '[' << mClip->getLeftPts() << ',' << mClip->getRightPts() << ')';
-            dc.DrawText(sPts, wxPoint(5,25));
+            dc.DrawText(sPts, wxPoint(5, 25));
         }
     }
 }
@@ -468,17 +473,17 @@ void ClipView::drawForDragging(const wxPoint& position, int height, wxDC& dc, wx
             // become black during dragging.
             height = std::min(height, ClipView::getTransitionHeight());
         }
-        wxBitmap b(getW(), height); 
+        wxBitmap b(getW(), height);
         draw(b, true, false);
         // Don't use DrawBitmap since this gives wrong output when using wxGTK.
         wxMemoryDC dcBmp(b);
-        dc.Blit(position, b.GetSize(), &dcBmp, wxPoint(0,0));
-        if (mClip->isA<model::VideoClip>() || 
+        dc.Blit(position, b.GetSize(), &dcBmp, wxPoint(0, 0));
+        if (mClip->isA<model::VideoClip>() ||
             mClip->isA<model::AudioClip>())
         {
             getViewMap().getClipPreview(mClip)->drawForDragging(position, height, dc);
         }
-        dcMask.DrawRectangle(position,b.GetSize());
+        dcMask.DrawRectangle(position, b.GetSize());
     }
 }
 
@@ -486,17 +491,18 @@ void ClipView::drawForDragging(const wxPoint& position, int height, wxDC& dc, wx
 // MODEL EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void ClipView::onClipDragged(model::EventDragClip& event )
+void ClipView::onClipDragged(model::EventDragClip& event)
 {
     repaint();
     event.Skip();
 }
 
-void ClipView::onClipSelected(model::EventSelectClip& event )
+void ClipView::onClipSelected(model::EventSelectClip& event)
 {
     mBitmap.reset();
     repaint();
     event.Skip();
 }
 
-}} // namespace
+}
+} // namespace
