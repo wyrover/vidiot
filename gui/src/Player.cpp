@@ -82,7 +82,7 @@ Player::Player(wxWindow *parent, model::SequencePtr sequence, wxWindow* focus)
     mStatus = new wxTextCtrl(mStatusPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY | wxTE_CENTRE);
     wxTextAttr textattr(*wxWHITE,*wxBLACK,*wxNORMAL_FONT,wxTEXT_ALIGNMENT_CENTER);
     mStatus->SetDefaultStyle(textattr);
-    mStatusPanelSizer->Add(mStatus, 1, wxEXPAND | wxALIGN_CENTER);
+    mStatusPanelSizer->Add(mStatus, 1, wxEXPAND);
 
     mStatusPanel->SetSizer(mStatusPanelSizer);
 
@@ -112,22 +112,22 @@ Player::Player(wxWindow *parent, model::SequencePtr sequence, wxWindow* focus)
     mEndButton      ->Bind(wxEVT_COMMAND_BUTTON_CLICKED,        &Player::onEnd,      this);
     mSpeedButton    ->Bind(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED,  &Player::onSpeed,    this);
 
-    mButtonsPanelSizer->Add(mHomeButton,        wxSizerFlags(1).Expand().Bottom().Center());
-    mButtonsPanelSizer->Add(mPreviousButton,    wxSizerFlags(1).Expand().Bottom().Center());
-    mButtonsPanelSizer->Add(mPlayButton,        wxSizerFlags(1).Expand().Bottom().Center());
-    mButtonsPanelSizer->Add(mNextButton,        wxSizerFlags(1).Expand().Bottom().Center());
-    mButtonsPanelSizer->Add(mEndButton,         wxSizerFlags(1).Expand().Bottom().Center());
-    mButtonsPanelSizer->Add(mSpeedButton,       wxSizerFlags(1).Expand().Bottom().Center());
+    mButtonsPanelSizer->Add(mHomeButton,        wxSizerFlags(1).Expand());
+    mButtonsPanelSizer->Add(mPreviousButton,    wxSizerFlags(1).Expand());
+    mButtonsPanelSizer->Add(mPlayButton,        wxSizerFlags(1).Expand());
+    mButtonsPanelSizer->Add(mNextButton,        wxSizerFlags(1).Expand());
+    mButtonsPanelSizer->Add(mEndButton,         wxSizerFlags(1).Expand());
+    mButtonsPanelSizer->Add(mSpeedButton,       wxSizerFlags(1).Expand());
 
     mButtonsPanel->SetSizer(mButtonsPanelSizer);
 
     //////////////////////////////////////////////////////////////////////////
 
     wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
-    sizer->Add(mDisplay,        wxSizerFlags(1).Expand().Top().Center());
-    sizer->Add(mEdit,           wxSizerFlags(1).Expand().Top().Center());
-    sizer->Add(mStatusPanel,    wxSizerFlags(0).Expand().Bottom().Center());
-    sizer->Add(mButtonsPanel,   wxSizerFlags(0).Expand().Bottom().Center());
+    sizer->Add(mDisplay,        wxSizerFlags(1).Expand());
+    sizer->Add(mEdit,           wxSizerFlags(1).Expand());
+    sizer->Add(mStatusPanel,    wxSizerFlags(0).Expand());
+    sizer->Add(mButtonsPanel,   wxSizerFlags(0).Expand());
     sizer->Hide(mEdit);
     SetSizerAndFit(sizer);
 
@@ -294,7 +294,7 @@ void Player::onSpeed(wxCommandEvent& event)
 
     mSpeedSlider = new wxSlider(mSpeedSliderFrame, wxID_ANY, mDisplay->getSpeed(), VideoDisplay::sMinimumSpeed, VideoDisplay::sMaximumSpeed, wxDefaultPosition, wxDefaultSize, wxSL_VERTICAL | wxSL_INVERSE);
     sizer->Add(new wxStaticText(mSpeedSliderFrame,wxID_ANY, wxString::Format("%d", VideoDisplay::sMaximumSpeed)), wxSizerFlags(0).Center());
-    sizer->Add(mSpeedSlider, wxSizerFlags(1).Expand().Bottom().Center());
+    sizer->Add(mSpeedSlider, wxSizerFlags(1).Expand());
     sizer->Add(new wxStaticText(mSpeedSliderFrame,wxID_ANY, wxString::Format("%d", VideoDisplay::sMinimumSpeed)), wxSizerFlags(0).Center());
 
     mSpeedSliderFrame->SetSizerAndFit(sizer);

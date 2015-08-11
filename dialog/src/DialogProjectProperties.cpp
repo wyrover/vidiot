@@ -143,7 +143,7 @@ DialogProjectProperties::~DialogProjectProperties()
 void DialogProjectProperties::addbox(const wxString& name)
 {
     mBoxSizer = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, name), wxVERTICAL );
-    GetSizer()->Add(mBoxSizer, 0, wxGROW|wxALIGN_CENTRE|wxALL, 5 );
+    GetSizer()->Add(mBoxSizer, 0, wxGROW|wxALL, 5 );
 }
 
 void DialogProjectProperties::addoption(const wxString& name, wxWindow* widget)

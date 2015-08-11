@@ -144,7 +144,7 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     mOpacitySpin->SetValue(model::Constants::sOpacityMax);
     mOpacitySpin->SetWindowVariant( wxWINDOW_VARIANT_SMALL );
     opacitysizer->Add(mOpacitySlider, wxSizerFlags(1).Expand());
-    opacitysizer->Add(mOpacitySpin, wxSizerFlags(0).Right());
+    opacitysizer->Add(mOpacitySpin, wxSizerFlags(0));
     opacitypanel->SetSizer(opacitysizer);
     addOption(_("Opacity"), opacitypanel);
 
@@ -161,7 +161,7 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
         static_cast<double>(model::Constants::sRotationMax) / static_cast<double>(model::Constants::sRotationPrecisionFactor));
     mRotationSpin->SetIncrement(sRotationIncrement);
     rotationsizer->Add(mRotationSlider, wxSizerFlags(1).Expand());
-    rotationsizer->Add(mRotationSpin, wxSizerFlags(0).Right());
+    rotationsizer->Add(mRotationSpin, wxSizerFlags(0));
     rotationpanel->SetSizer(rotationsizer);
     addOption(_("Rotation"), rotationpanel);
 
@@ -181,7 +181,7 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     mScalingSpin->SetIncrement(sScalingIncrement);
     scalingsizer->Add(mSelectScaling, wxSizerFlags(0).Left());
     scalingsizer->Add(mScalingSlider, wxSizerFlags(1).Expand());
-    scalingsizer->Add(mScalingSpin, wxSizerFlags(0).Right());
+    scalingsizer->Add(mScalingSpin, wxSizerFlags(0));
     scalingpanel->SetSizer(scalingsizer);
     addOption(_("Scaling"), scalingpanel);
 
@@ -204,12 +204,12 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     mPositionYSpin->SetRange(0,1);
     mPositionYSpin->SetValue(0);
     alignmentsizer->Add(mSelectAlignment, wxSizerFlags(0).Expand());
-    alignmentsizer->Add(titleX, wxSizerFlags(0).Expand().Right());
+    alignmentsizer->Add(titleX, wxSizerFlags(0).Expand());
     alignmentsizer->Add(mPositionXSlider, wxSizerFlags(1000).Expand());
-    alignmentsizer->Add(mPositionXSpin, wxSizerFlags(0).Expand().Right());
-    alignmentsizer->Add(titleY, wxSizerFlags(0).Expand().Right());
-    alignmentsizer->Add(mPositionYSlider, wxSizerFlags(1000).Expand());
-    alignmentsizer->Add(mPositionYSpin, wxSizerFlags(0).Expand().Right());
+    alignmentsizer->Add(mPositionXSpin, wxSizerFlags(0).Expand());
+    alignmentsizer->Add(titleY, wxSizerFlags(0).Expand());
+    alignmentsizer->Add(mPositionYSlider, wxSizerFlags(1000));
+    alignmentsizer->Add(mPositionYSpin, wxSizerFlags(0).Expand());
     alignmentpanel->SetSizer(alignmentsizer);
     addOption(_("Position"), alignmentpanel);
 
@@ -241,7 +241,7 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     mVolumeSpin->SetRange(model::Constants::sMinVolume, model::Constants::sMaxVolume);
     mVolumeSpin->SetValue(model::Constants::sMaxVolume);
     volumesizer->Add(mVolumeSlider, wxSizerFlags(1).Expand());
-    volumesizer->Add(mVolumeSpin, wxSizerFlags(0).Right());
+    volumesizer->Add(mVolumeSpin, wxSizerFlags(0));
     volumepanel->SetSizer(volumesizer);
     addOption(_("Volume (%)"), volumepanel);
 

@@ -154,7 +154,7 @@ set BOOST_ROOT=%VIDIOT_DIR%\%BOOSTDIR%
 set BOOST_ROOT=%BOOST_ROOT:\=/%
 
 REM === CREATE SOLUTION ====
-set wxWidgets_ROOT_DIR=%VIDIOT_DIR%\wxwidgets_trunk
+set wxWidgets_ROOT_DIR=%VIDIOT_DIR%\wxwidgets
 
 REM add --trace to a cmake line for more logging 
 

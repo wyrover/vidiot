@@ -53,7 +53,7 @@ void addOption(wxWindow* parent, wxSizer* vSizer, wxString name, wxWindow* optio
     wxst->SetSize(wxSize(120,-1));
     wxBoxSizer* hSizer = new wxBoxSizer(wxHORIZONTAL);
     hSizer->Add(wxst,wxSizerFlags(1));
-    hSizer->Add(option,wxSizerFlags(2).Right());
+    hSizer->Add(option,wxSizerFlags(2));
     vSizer->Add(hSizer,wxSizerFlags().Expand());
 };
 
@@ -121,7 +121,7 @@ DialogRenderSettings::DialogRenderSettings(model::SequencePtr sequence)
     //////// OPTIONS ////////
 
     wxStaticBox* optionsbox = new wxStaticBox(outputbox,wxID_ANY,_("Options"));
-    wxStaticBoxSizer* optionsboxsizer = new wxStaticBoxSizer(optionsbox, wxHORIZONTAL);
+    wxStaticBoxSizer* optionsboxsizer = new wxStaticBoxSizer(optionsbox, wxVERTICAL);
 
     mRenderSeparation = new wxCheckBox(optionsbox, wxID_ANY, "");
     mRenderSeparation->SetValue(mNew->getSeparateAtCuts());
@@ -166,8 +166,8 @@ DialogRenderSettings::DialogRenderSettings(model::SequencePtr sequence)
     outputbox->GetSizer()->Add(optionsboxsizer,wxSizerFlags(0).Expand());
     outputbox->GetSizer()->Add(actionboxsizer,wxSizerFlags(0));
 
-    GetSizer()->Add(outputbox,wxSizerFlags(1).Top().Right().Expand().Border());
-    GetSizer()->Add(buttons,wxSizerFlags(0).Bottom().Right().Border());
+    GetSizer()->Add(outputbox,wxSizerFlags(1).Top().Expand().Border());
+    GetSizer()->Add(buttons,wxSizerFlags(0).Border());
 
     changeAudioCodecInfo(model::render::AudioCodecPtr(), mNew->getOutputFormat()->getAudioCodec());
     changeVideoCodecInfo(model::render::VideoCodecPtr(), mNew->getOutputFormat()->getVideoCodec());

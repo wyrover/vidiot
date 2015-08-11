@@ -140,16 +140,16 @@ WxSetup()
     if [ ! -d ${VIDIOT_DIR} ]; then 
     	return 
     fi
-    export WXDIR=${VIDIOT_DIR}/wxwidgets
+    export WXDIR=${VIDIOT_DIR}/wxWidgets_linuxbuild
     if [ -d ${WXDIR} ]; then
     	rm -rf ${WXDIR}
     fi
     mkdir -p ${WXDIR}/build
     mkdir -p ${WXDIR}/install
     cd ${WXDIR}/build
-    WXSRC_DIR=/media/sf_wxwidgets_trunk 
+    WXSRC_DIR=/media/sf_wxWidgets
     if [ ! -d ${WXSRC_DIR} ]; then
-        WXSRC_DIR=/media/${USER}/System/Vidiot/wxwidgets_trunk
+        WXSRC_DIR=/media/${USER}/System/Vidiot/wxWidgets
     fi
     ${WXSRC_DIR}/configure --enable-debug --enable-debug_info --enable-debug_gdb --prefix=${WXDIR}/install \
         --enable-unicode --disable-shared --disable-compat28 --enable-dataviewctrl
@@ -250,7 +250,7 @@ FixWxLineEndings()
 {
     echo "\n----------------------------------------\nPrepare...\n"
     # Avoid problems with windows line endings
-    cd ${VIDIOT_DIR}/wxwidgets/install/lib/wx/
+    cd ${VIDIOT_DIR}/wxwidgets_linuxbuild/install/lib/wx/
     find . -type f | xargs dos2unix
 
 }
