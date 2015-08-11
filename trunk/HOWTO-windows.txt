@@ -51,6 +51,9 @@ NOTE: <VIDIOT_DIR> is the dir in which all 'vidiot' work is done.
 ================== VERSION CONTROL  ================
 * Install SVN (tortoise) from http://tortoisesvn.net/downloads.html
   NOTE: Also install the command line tools!
+* See https://code.google.com/p/tortoisegit/wiki/SetupHowTo
+  - Install tortoisegit (https://download.tortoisegit.org)
+  - Install git (https://git-scm.com/download/win))
 
 =================== VIDIOT ===================
 * Checkout Vidiot into <VIDIOT_SRC>
@@ -69,7 +72,8 @@ NOTE: <VIDIOT_DIR> is the dir in which all 'vidiot' work is done.
 * Cleanup, remove everything except 'boost' and 'lib32-msvc-12.0'
   
 =================== WXWIDGETS ===================
-* Checkout http://svn.wxwidgets.org/svn/wx/wxWidgets/trunk into <VIDIOT_DIR>\wxwidgets_trunk
+* Windows explorer, go to <VIDIOT_DIR> 
+  - Tortoisegit clone https://github.com/wxWidgets/wxWidgets.git INTO <VIDIOT_DIR>/wxWidgets
 * Copy include/wx/msw/setup0.h to setup.h
 * Clean <VIDIOT_DIR>\wxwidgets_trunk\lib\vc_lib (particularly, remove all setup.h files)
 * Apply dcbufcmn.cpp.patch to src\common\dcbufcmn.cpp
@@ -78,7 +82,7 @@ NOTE: <VIDIOT_DIR> is the dir in which all 'vidiot' work is done.
   (without this patch, the 'shift' handling in Timeline::onPaint becomes awkward - use shift begin trim 'to the right' to see the effect of omitting it.)
 * (MSVC) build solution Release & Debug
 * Remove temporary files from
-  C:\Vidiot\wxwidgets_trunk\build\msw (ipch, vc_mswu, vc_mswud)
+  <VIDIOT_DIR>\wxWidgets\build\msw (ipch, vc_mswu, vc_mswud)
 
 =================== FFMPEG ===================
 * Nothing required: ffmpeg is part of the source tree.

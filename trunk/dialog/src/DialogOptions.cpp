@@ -306,7 +306,7 @@ void DialogOptions::addbox(const wxString& name)
     ASSERT(mPanel);
     ASSERT(mTopSizer);
     mBoxSizer = new wxStaticBoxSizer(new wxStaticBox(mPanel, wxID_ANY, name), wxVERTICAL );
-    mTopSizer->Add(mBoxSizer, 1, wxGROW|wxALIGN_CENTRE|wxALL, 5 );
+    mTopSizer->Add(mBoxSizer, 1, wxGROW|wxALL, 5 );
 }
 
 void DialogOptions::addoption(const wxString& name, wxWindow* widget)
