@@ -103,6 +103,8 @@ void AudioFile::moveTo(pts position)
     // used AFTER the transition. Same thing can happen when making a cut
     // directly in a clip without any more adjusting.
     File::moveTo(std::max<pts>(position - 1,0));
+
+    // todo this seeking must take into account avcodeccontext->delay (see docs)?
 }
 
 void AudioFile::clean()
