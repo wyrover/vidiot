@@ -372,6 +372,18 @@ Window::Window()
     GetDocumentManager()->FileHistoryUseMenu(mMenuFile);
     GetDocumentManager()->FileHistoryLoad(*wxConfigBase::Get());
 
+    for (wxMenuItem* item : mMenuFile->GetMenuItems())
+    {
+        if (item->GetId() == wxID_CLOSE)
+        {
+            // This menu entry does not get an accelerator by default. Add Ctrl-W.
+            wxAcceleratorEntry* accel{ item->GetAccel() };
+            ASSERT_ZERO(accel);
+            accel = new wxAcceleratorEntry(wxACCEL_CTRL, 'W', item->GetId(), item);
+            item->SetAccel(accel);
+        }
+    }
+
     if (Config::ReadBool(Config::sPathTestCxxMode))
     {
         wxSize screenSize = wxGetDisplaySize();
