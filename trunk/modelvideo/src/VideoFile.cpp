@@ -41,10 +41,9 @@ int avcodec_get_buffer(struct AVCodecContext *c, AVFrame *pic)
 {
     ASSERT_NONZERO(c);
     ASSERT_NONZERO(pic);
-    VideoFile* file = static_cast<VideoFile*>(c->opaque);
     int ret = avcodec_default_get_buffer(c, pic);
     int64_t *pts = static_cast<int64_t*>(av_malloc(sizeof(int64_t)));
-    *pts = file->getVideoPacketPts();
+    *pts = static_cast<VideoFile*>(c->opaque)->getVideoPacketPts();
     pic->opaque = pts;
     return ret;
 }
@@ -116,6 +115,8 @@ void VideoFile::moveTo(pts position)
 
     mDeliveredFrame.reset();
 
+    // todo take into account codec->delay???
+
     File::moveTo(position); // NOTE: This uses the pts in 'project' timebase units
 }
 
@@ -167,7 +168,8 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
         bool result = true;
         if (parameters.hasPts())
         {
-            milliseconds requiredTime = Convert::ptsToTime(parameters.getPts());
+            pts requiredPts{ parameters.getPts() };
+            milliseconds requiredTime = Convert::ptsToTime(requiredPts);
             if (stream->start_time != AV_NOPTS_VALUE)
             {
                 // Some streams don't start counting at 0
@@ -253,7 +255,18 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
             {
                 // DEBUG: saveDecodedFrame(codec,pDecodedFrame,size,frameFinished);
 
-                if (nextToBeDecodedPacket->dts != AV_NOPTS_VALUE)
+                // Using the pts value of the first 'sent' packet (instead of dts of latest packet)
+                // works better (audio-video-sync) for codecs with a delay (example: MOV file with h.264)
+                if (pDecodedFrame->opaque != 0)
+                {
+                    // Use PTS value of first packet sent into the decoder for this frame.
+                    int64_t storedPts = *(static_cast<int64_t*>(pDecodedFrame->opaque));
+                    if (storedPts != AV_NOPTS_VALUE)
+                    {
+                        decodedFramePts = storedPts;
+                    }
+                }
+                else if (nextToBeDecodedPacket->dts != AV_NOPTS_VALUE)
                 {
                     // By default: Use DTS of latest packet sent into the decoder for this frame.
                     decodedFramePts = nextToBeDecodedPacket->dts;
