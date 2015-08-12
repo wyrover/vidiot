@@ -43,51 +43,51 @@ void VideoCodecs::initialize()
 
     add(_("MPEG 2 video"),
         VideoCodec(AV_CODEC_ID_MPEG2VIDEO).
-        addParameter(VideoCodecParameterBitrate().setMinimum(500).setMaximum(10000000).setDefault(4000000)).
+        addParameter(VideoCodecParameterBitrate().setMinimum(500).setMaximum(20000000).setDefault(8000000)).
         addParameter(VideoCodecParameterBFrames().setMinimum(0).setMaximum(100).setDefault(0)).
         addParameter(VideoCodecParameterGopSize().setMinimum(0).setMaximum(100).setDefault(12))
         );
 
     add(_("H264 video"),
         VideoCodec(AV_CODEC_ID_H264).
-        addParameter(VideoCodecParameterBitrate().setMinimum(500).setMaximum(10000000).setDefault(4000000)).
+        addParameter(VideoCodecParameterBitrate().setMinimum(500).setMaximum(20000000).setDefault(16000000)).
         addParameter(VideoCodecParameterGopSize().setMinimum(0).setMaximum(100).setDefault(12))
         );
 
     add(_("H265 video"),
         VideoCodec(AV_CODEC_ID_H265).
-        addParameter(VideoCodecParameterBitrate().setMinimum(500).setMaximum(10000000).setDefault(4000000)).
+        addParameter(VideoCodecParameterBitrate().setMinimum(500).setMaximum(20000000).setDefault(8000000)).
         addParameter(VideoCodecParameterGopSize().setMinimum(0).setMaximum(100).setDefault(12))
         );
     
 
     add(_("Motion JPEG"),
         VideoCodec(AV_CODEC_ID_MJPEG).
-        addParameter(VideoCodecParameterBitrate().setMinimum(500).setMaximum(10000000).setDefault(4000000)).
+        addParameter(VideoCodecParameterBitrate().setMinimum(500).setMaximum(20000000).setDefault(8000000)).
         addParameter(VideoCodecParameterGopSize().setMinimum(0).setMaximum(100).setDefault(12))
         );
 
     add(_("MPEG 4"),
         VideoCodec(AV_CODEC_ID_MPEG4).
-        addParameter(VideoCodecParameterBitrate().setMinimum(500).setMaximum(10000000).setDefault(4000000)).
+        addParameter(VideoCodecParameterBitrate().setMinimum(500).setMaximum(20000000).setDefault(8000000)).
         addParameter(VideoCodecParameterGopSize().setMinimum(0).setMaximum(100).setDefault(12))
         );
 
     add(_("MPEG 4 version 3"),
         VideoCodec(AV_CODEC_ID_MSMPEG4V3).
-        addParameter(VideoCodecParameterBitrate().setMinimum(500).setMaximum(10000000).setDefault(4000000)).
+        addParameter(VideoCodecParameterBitrate().setMinimum(500).setMaximum(20000000).setDefault(8000000)).
         addParameter(VideoCodecParameterGopSize().setMinimum(0).setMaximum(100).setDefault(12))
         );
 
     add(_("Theora"),
         VideoCodec(AV_CODEC_ID_THEORA).
-        addParameter(VideoCodecParameterBitrate().setMinimum(500).setMaximum(10000000).setDefault(4000000)).
+        addParameter(VideoCodecParameterBitrate().setMinimum(500).setMaximum(20000000).setDefault(8000000)).
         addParameter(VideoCodecParameterGopSize().setMinimum(0).setMaximum(100).setDefault(12))
         );
 
     add(_("VP8"),
         VideoCodec(AV_CODEC_ID_VP8).
-        addParameter(VideoCodecParameterBitrate().setMinimum(500).setMaximum(10000000).setDefault(4000000)).
+        addParameter(VideoCodecParameterBitrate().setMinimum(500).setMaximum(20000000).setDefault(8000000)).
         addParameter(VideoCodecParameterGopSize().setMinimum(0).setMaximum(100).setDefault(12))
         );
 }
