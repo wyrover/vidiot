@@ -375,6 +375,22 @@ void MenuHandler::onTriggerPopupMenu(wxCommandEvent& event)
 
     if (menu.GetMenuItemCount() > 0)
     {
+        bool enabledEntry = false;
+        for (wxMenuItem* item : menu.GetMenuItems())
+        {
+            if (!item->IsSeparator() && 
+                item->IsEnabled())
+            {
+                enabledEntry = true;
+                break;
+            }
+        }
+        if (!enabledEntry)
+        {
+            // Do not show popup menu if there are no enabled entries.
+            return;
+        }
+
         mPopup = true;
 
         model::TransitionPtr defaultTransition = clickedOnVideoClip ? model::video::VideoTransitionFactory::get().getDefault() : model::audio::AudioTransitionFactory::get().getDefault();
