@@ -63,10 +63,10 @@
 										<item>
 											<px class_id="18" class_name="model::render::VideoCodecParameterBitrate" tracking_level="1" version="1" object_id="_7">
 												<mId>0</mId>
-												<mDefault>4000000</mDefault>
+												<mDefault>8000000</mDefault>
 												<mMinimum>500</mMinimum>
-												<mMaximum>10000000</mMaximum>
-												<mValue>4000000</mValue>
+												<mMaximum>20000000</mMaximum>
+												<mValue>8000000</mValue>
 											</px>
 										</item>
 										<item>
