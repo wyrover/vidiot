@@ -20,28 +20,32 @@
 namespace test {
 
 DragParams::DragParams()
-    :   mFrom(boost::none)
-    ,   mTo(boost::none)
-    ,   mHoldShiftWhileDragging(false)
-    ,   mHoldCtrlBeforeDragStarts(false)
-    ,   mMouseUp(true)
+    : mFrom(boost::none)
+    , mVia(boost::none)
+    , mTo(boost::none)
+    , mHoldShiftWhileDragging(false)
+    , mHoldCtrlBeforeDragStarts(false)
+    , mMouseUp(true)
 {}
 
 DragParams::DragParams(const DragParams& other)
-    :   mFrom(other.mFrom)
-    ,   mTo(other.mTo)
-    ,   mHoldShiftWhileDragging(other.mHoldShiftWhileDragging)
-    ,   mHoldCtrlBeforeDragStarts(other.mHoldCtrlBeforeDragStarts)
-    ,   mMouseUp(other.mMouseUp)
+    : mFrom(other.mFrom)
+    , mVia(other.mVia)
+    , mTo(other.mTo)
+    , mHoldShiftWhileDragging(other.mHoldShiftWhileDragging)
+    , mHoldCtrlBeforeDragStarts(other.mHoldCtrlBeforeDragStarts)
+    , mMouseUp(other.mMouseUp)
 {}
 
 DragParams& DragParams::From(wxPoint from)         { mFrom.reset(from);                return *this; }
+DragParams& DragParams::Via(wxPoint via)           { mVia.reset(via);                  return *this; }
 DragParams& DragParams::To(wxPoint to)             { mTo.reset(to);                    return *this; }
 DragParams& DragParams::HoldShiftWhileDragging()   { mHoldShiftWhileDragging = true;   return *this; }
 DragParams& DragParams::HoldCtrlBeforeDragStarts() { mHoldCtrlBeforeDragStarts = true; return *this; }
 DragParams& DragParams::DontReleaseMouse()         { mMouseUp = false;                 return *this; }
 DragParams& DragParams::AlignLeft(pixel position)  { mAlignLeft.reset(position);       return *this; }
 DragParams& DragParams::AlignRight(pixel position) { mAlignRight.reset(position);      return *this; }
+
 DragParams& DragParams::MoveLeft(pixel position)
 {
     ASSERT(mFrom && !mTo);
@@ -54,14 +58,6 @@ DragParams& DragParams::MoveRight(pixel position)
     mTo.reset(*mFrom + wxPoint(position,0));
     return *this;
 };
-
-boost::optional<wxPoint> mFrom;
-boost::optional<wxPoint> mTo;
-bool mHoldShiftWhileDragging;
-bool mHoldCtrlBeforeDragStarts;
-bool mMouseUp;
-boost::optional<pixel> mAlignLeft;
-boost::optional<pixel> mAlignRight;
 
 std::ostream& operator<<(std::ostream& os, const DragParams& obj)
 {
@@ -88,6 +84,8 @@ void TimelineDrag(const DragParams& params)
     ASSERT_IMPLIES(params.mHoldCtrlBeforeDragStarts, !getTimeline().getDrag().isActive());
     ASSERT_IMPLIES(params.mTo, !params.mAlignLeft && !params.mAlignRight);
     ASSERT(params.mTo || params.mAlignLeft || params.mAlignRight);
+    ASSERT_IMPLIES(params.mAlignLeft, params.mFrom);
+    ASSERT_IMPLIES(params.mAlignRight, params.mFrom);
 
     wxPoint between;
     if (params.mFrom)
@@ -100,38 +98,47 @@ void TimelineDrag(const DragParams& params)
         if (params.mHoldCtrlBeforeDragStarts) { TimelineKeyUp(WXK_CONTROL); }
 
         between = from;
-
+        
         if (!getTimeline().getDrag().isActive())
         {
             // Drag a bit until the drag is started
-            if (params.mTo)
+            if (params.mVia)
             {
-                wxPoint to(*params.mTo);
-                if ( from.x != to.x )
-                {
-                    // Only in case the actually requested drag and drop operation includes a motion in x-direction, the x-direction
-                    // may be used here. Otherwise, this initial drag will cause 'snapping' to zoomed pts values (for instance, if the zoom
-                    // is such that 1 pixel equals 5 pts positions). In case of y-only drag and drops it is important to never move the
-                    // mouse in x-direction.
-                    between.x += (from.x > to.x) ? -(gui::timeline::Drag::Threshold+1) : (gui::timeline::Drag::Threshold+1); // Should be greater than the tolerance in StateLeftDown (otherwise, the Drag won't be started)
-                }
-                else
-                {
-                    between.y += (from.y > to.y) ? -(gui::timeline::Drag::Threshold+1) : (gui::timeline::Drag::Threshold+1); // Should be greater than the tolerance in StateLeftDown (otherwise, the Drag won't be started)
-                }
+                between = *params.mVia;
             }
             else
             {
-                //  (params.mAlignLeft || params.mAlignRight)
-                between.x += gui::timeline::Drag::Threshold + 1; // Should be greater than the tolerance in StateLeftDown (otherwise, the Drag won't be started)
+                // Calculate between point
+                if (params.mTo)
+                {
+                    wxPoint to(*params.mTo);
+                    if (from.x != to.x)
+                    {
+                        // Only in case the actually requested drag and drop operation includes a motion in x-direction, the x-direction
+                        // may be used here. Otherwise, this initial drag will cause 'snapping' to zoomed pts values (for instance, if the zoom
+                        // is such that 1 pixel equals 5 pts positions). In case of y-only drag and drops it is important to never move the
+                        // mouse in x-direction.
+                        between.x += (from.x > to.x) ? -(gui::timeline::Drag::Threshold + 1) : (gui::timeline::Drag::Threshold + 1); // Should be greater than the tolerance in StateLeftDown (otherwise, the Drag won't be started)
+                    }
+                    else
+                    {
+                        between.y += (from.y > to.y) ? -(gui::timeline::Drag::Threshold + 1) : (gui::timeline::Drag::Threshold + 1); // Should be greater than the tolerance in StateLeftDown (otherwise, the Drag won't be started)
+                    }
+                }
+                else
+                {
+                    //  (params.mAlignLeft || params.mAlignRight)
+                    between.x += gui::timeline::Drag::Threshold + 1; // Should be greater than the tolerance in StateLeftDown (otherwise, the Drag won't be started)
+                }
             }
+
             TimelineMove(between);
         }
     }
     else
     {
         // Drag already active. This is either an intermediate move or 'the drop'.
-        between = getTimeline().getMouse().getPhysicalPosition();
+        between = params.mVia ? *params.mVia : getTimeline().getMouse().getPhysicalPosition();
     }
     ASSERT(getTimeline().getDrag().isActive());
 
@@ -142,7 +149,7 @@ void TimelineDrag(const DragParams& params)
         bool left = static_cast<bool>(params.mAlignLeft);
         pixel alignposition = params.mAlignLeft ? LeftPixel(DraggedClips()) : RightPixel(DraggedClips()); // Requires active drag
         pixel position = params.mAlignLeft ? *params.mAlignLeft : *params.mAlignRight;
-        to = between;
+        to = *params.mFrom; // The inital 'drag hotspot' position.
         to.x += (position - alignposition);
     }
     else

@@ -441,7 +441,7 @@ void VideoFile::startDecodingVideo(const VideoCompositionParameters& parameters)
     avctx->flags &= ~CODEC_FLAG_TRUNCATED; // Do not set this, causes bad frames
 
     int result = avcodec_open2(avctx, videoCodec, 0);
-    ASSERT_MORE_THAN_EQUALS_ZERO(result);
+    ASSERT_MORE_THAN_EQUALS_ZERO(result)(avcodecErrorString(result));
 
     FrameRate videoFrameRate = FrameRate(getStream()->r_frame_rate);
     if (videoFrameRate != Properties::get().getFrameRate())

@@ -476,7 +476,7 @@ void AudioFile::startDecodingAudio(const AudioCompositionParameters& parameters)
     boost::mutex::scoped_lock lock(Avcodec::sMutex);
 
     int result = avcodec_open2(codec, audioCodec, 0);
-    ASSERT_MORE_THAN_EQUALS_ZERO(result);
+    ASSERT_MORE_THAN_EQUALS_ZERO(result)(avcodecErrorString(result));
 
     int nBytesPerSample = av_get_bytes_per_sample(codec->sample_fmt);
     if ((parameters.getNrChannels() != codec->channels) ||

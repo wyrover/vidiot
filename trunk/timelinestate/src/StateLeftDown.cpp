@@ -90,9 +90,19 @@ boost::statechart::result StateLeftDown::react( const EvMotion& evt )
     {
         if (!mSelectionEmpty)
         {
-            // If no clip is selecting then starting a drag has no use.
-            getDrag().start(getMouse().getVirtualPosition(), false);
-            return transit<Dragging>();
+            // If no clip is selected then starting a drag has no use.
+
+            PointerPositionInfo info = getMouse().getInfo(mStartPosition);
+            if (info.clip != nullptr &&
+                info.track != nullptr)
+            {
+                // Only if the mouse button was down on a track when pressing the button,
+                // the drag may be started. This check is required to ensure that the Drag
+                // code is able to determine the starting clip and track of the drag.
+                getDrag().start(mStartPosition, false);
+                return transit<Dragging>();
+            }
+
         }
     }
     return forward_event();

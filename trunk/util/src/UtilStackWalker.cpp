@@ -34,7 +34,14 @@ StackWalker::~StackWalker()
 
 std::string StackWalker::show()
 {
-    Walk();
+    try
+    {
+        Walk();
+    }
+    catch (...)
+    {
+        LOG_ERROR;
+    }
     return mOverview.str();
 }
 

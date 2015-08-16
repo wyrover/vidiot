@@ -68,6 +68,12 @@ public:
     /// handling when doing actions exactly along the 0 length side.
     void testDropZeroLengthSideOfTransition();
 
+    /// See [#234]: When starting a drag operation by starting the drag
+    /// near to a divider edge, and then starting the drag by exactly 
+    /// moving the mouse into a divider's region, the drag code is unable
+    /// to determine the starting track of the drag.
+    void testStartDragNearDividerEdge();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////
