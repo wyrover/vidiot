@@ -1,0 +1,29 @@
+From 5138289e0e83dcad8ce789cbe0d6b1fd66bfd771 Mon Sep 17 00:00:00 2001
+From: Eric Raijmakers <ericraijmakers74@gmail.com>
+Date: Sun, 16 Aug 2015 12:07:45 +0200
+Subject: [PATCH] Fix crash in generating stack trace on msw unicode builds
+ when function names are large.
+
+---
+ src/msw/debughlp.cpp | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/src/msw/debughlp.cpp b/src/msw/debughlp.cpp
+index 592595d..509d962 100644
+--- a/src/msw/debughlp.cpp
++++ b/src/msw/debughlp.cpp
+@@ -65,7 +65,11 @@ public:
+         ::ZeroMemory(m_buffer, sizeof(T) + MAX_NAME_LEN);
+ 
+         (*this)->SizeOfStruct = sizeof(T);
++#ifdef UNICODE
++        (*this)->MaxNameLen = MAX_NAME_LEN / 2;
++#else // UNICODE
+         (*this)->MaxNameLen = MAX_NAME_LEN;
++#endif // UNICODE
+     }
+ 
+     operator T*()
+-- 
+1.9.5.msysgit.1
+
