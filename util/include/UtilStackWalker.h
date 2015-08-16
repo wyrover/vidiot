@@ -36,7 +36,7 @@ struct StackWalker
     // THE INTERFACE
     //////////////////////////////////////////////////////////////////////////
 
-    virtual void OnStackFrame(const wxStackFrame &frame);
+    virtual void OnStackFrame(const wxStackFrame &frame) override;
 
 private:
 

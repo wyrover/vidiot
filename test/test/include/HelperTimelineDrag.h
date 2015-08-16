@@ -25,7 +25,16 @@ struct DragParams
     DragParams();
     DragParams(const DragParams& other);
 
-    DragParams& From(wxPoint from);
+    /// Starting point of the drag.
+    DragParams& From(wxPoint from); 
+
+    /// Intermediate point of the drag.
+    /// The drag is started by moving the drag to the 'from' point, then
+    /// pressing the mouse button, and then moving to the 'via' point.
+    /// If not explicitly specified, this point is calculated.
+    DragParams& Via(wxPoint via);
+
+    /// Ending point of the drag.
     DragParams& To(wxPoint to);
 
     /// Hold shift while dragging
@@ -61,6 +70,7 @@ struct DragParams
     DragParams& AlignRight(pixel position);
 
     boost::optional<wxPoint> mFrom;
+    boost::optional<wxPoint> mVia;
     boost::optional<wxPoint> mTo;
     bool mHoldShiftWhileDragging;
     bool mHoldCtrlBeforeDragStarts;

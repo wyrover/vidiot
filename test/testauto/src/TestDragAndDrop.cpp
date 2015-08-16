@@ -443,4 +443,55 @@ void TestDragAndDrop::testDropZeroLengthSideOfTransition()
     }
 }
 
+void TestDragAndDrop::testStartDragNearDividerEdge()
+{
+    StartTestSuite();
+    TimelineZoomIn(4);
+    {
+        StartTest("Video top to video track divider");
+        wxPoint startingPoint{ HCenter(VideoClip(0, 2)), TopPixel(VideoClip(0, 2)) + 1 }; // +1: Otherwise, the begin position is on the bottom of the divider, not on the top of the clip.
+        wxPoint viaPoint{ startingPoint };
+        viaPoint.x += gui::timeline::Drag::Threshold + 10; // Ensure that drag is started by moving enough in the horizontal direction.
+        viaPoint.y -= 2; // Ensure that the mouse pointer 'ends up' inside the top track divider
+        ASSERT(getTimeline().getMouse().getInfo(viaPoint).onTrackDivider);
+        TimelineDrag(From(startingPoint).Via(viaPoint).To(Center(VideoClip(0, 4))));
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(EmptyClip)(VideoClip);
+        Undo();
+    }
+    {
+        StartTest("Video bottom to audio video divider");
+        wxPoint startingPoint{ HCenter(VideoClip(0, 2)), BottomPixel(VideoClip(0, 2)) };
+        wxPoint viaPoint{ startingPoint };
+        viaPoint.x += gui::timeline::Drag::Threshold + 10; // Ensure that drag is started by moving enough in the horizontal direction.
+        viaPoint.y++; // Ensure that the mouse pointer 'ends up' inside the audio-video divider
+        ASSERT(getTimeline().getMouse().getInfo(viaPoint).onAudioVideoDivider);
+        TimelineDrag(From(startingPoint).Via(viaPoint).To(Center(VideoClip(0, 4))));
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(EmptyClip)(VideoClip);
+        Undo();
+    }
+    {
+        StartTest("Audio top to audio video divider");
+        wxPoint startingPoint{ HCenter(AudioClip(0, 2)), TopPixel(AudioClip(0, 2)) + 1 }; // +1: Otherwise, the begin position is on the bottom of the divider, not on the top of the clip.
+        wxPoint viaPoint{ startingPoint };
+        viaPoint.x += gui::timeline::Drag::Threshold + 10; // Ensure that drag is started by moving enough in the horizontal direction.
+        viaPoint.y -= 2; // Ensure that the mouse pointer 'ends up' inside the audio-video divider
+        ASSERT(getTimeline().getMouse().getInfo(viaPoint).onAudioVideoDivider);
+        TimelineDrag(From(startingPoint).Via(viaPoint).To(Center(AudioClip(0, 4))));
+        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(EmptyClip)(AudioClip);
+        Undo();
+    }
+    {
+        StartTest("Audio bottom to audio track divider");
+        wxPoint startingPoint{ HCenter(AudioClip(0, 2)), BottomPixel(AudioClip(0, 2)) };
+        wxPoint viaPoint{ startingPoint };
+        viaPoint.x += gui::timeline::Drag::Threshold + 10; // Ensure that drag is started by moving enough in the horizontal direction.
+        viaPoint.y++; // Ensure that the mouse pointer 'ends up' inside the bottom track divider
+        ASSERT(getTimeline().getMouse().getInfo(viaPoint).onTrackDivider);
+        TimelineDrag(From(startingPoint).Via(viaPoint).To(Center(VideoClip(0, 4))));
+        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(EmptyClip)(AudioClip);
+        Undo();
+    }
+}
+
+
 } // namespace
