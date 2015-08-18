@@ -173,6 +173,32 @@ void TestWatch::testRemoveProjectViewFolderContainingFileOnDisk()
     ASSERT_WATCHED_PATHS_COUNT(0); // Watch for the file must be removed
 }
 
+void TestWatch::testWatchAutoFolderAfterOpenProject()
+{
+    StartTestSuite();
+    ASSERT_WATCHED_PATHS_COUNT(0); // Nothing is being watched
+    model::FolderPtr folder = setup();
+    wxString autofolder = boost::dynamic_pointer_cast<model::AutoFolder>(folder)->getPath().GetLongPath();
+
+    mRoot.reset();
+    folder.reset();
+    std::pair<RandomTempDirPtr, wxFileName> tempDir_fileName = SaveProjectAndClose();
+
+    OpenProject(tempDir_fileName.second.GetLongPath());
+    mRoot = model::Project::get().getRoot();
+    WaitForChildCount(mRoot, 2);
+
+    StartTest("Add file to auto folder");
+    wxFileName filepath1(autofolder, "extra.avi");
+    bool copyok = wxCopyFile( mInputFiles.front()->getPath().GetLongPath(), filepath1.GetLongPath(), false );
+    ASSERT(copyok);
+
+    WaitForChildCount(mRoot, 3);
+    ASSERT_WATCHED_PATHS_COUNT(1); // Folder is being watched
+
+    CloseProjectAndAvoidSaveDialog();
+}
+
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////

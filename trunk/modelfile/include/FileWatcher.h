@@ -88,6 +88,8 @@ private:
     // ADD/REMOVE
     //////////////////////////////////////////////////////////////////////////
 
+    void watchAll(const model::NodePtr& node );
+
     void watch(const model::NodePtr& node );
     void unwatch(const model::NodePtr& node );
 

@@ -25,6 +25,8 @@ model::FolderPtr getRoot();
 
 void SetProjectUnmodified();
 
+void OpenProject(wxString path);
+
 DirAndFile SaveProjectAndClose(boost::optional<RandomTempDirPtr> tempDir = boost::none, wxString filesuffix = "");
 
 DirAndFile SaveProject(boost::optional<RandomTempDirPtr> tempDir = boost::none, wxString filesuffix = "");

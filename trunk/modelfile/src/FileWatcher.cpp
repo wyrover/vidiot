@@ -48,6 +48,7 @@ FileWatcher::FileWatcher()
     gui::Window::get().Bind(model::EVENT_RENAME_NODE,  &FileWatcher::onProjectAssetRenamed,  this);
 
     start();
+    watchAll(Project::get().getRoot());
 }
 
 FileWatcher::~FileWatcher()
@@ -90,8 +91,7 @@ void FileWatcher::onChange(wxFileSystemWatcherEvent& event)
     case wxFSW_EVENT_RENAME:
         break;
     case wxFSW_EVENT_CREATE:
-        // Events can be ignored: A Modify event (of the parent folder) will occur afterwards.
-        break;
+        // Events can not be ignored: A Modify event (of the parent folder) will not occur always afterwards.
     case wxFSW_EVENT_WARNING:
         // Triggered by errors in the wxFileSystemWatcher caused by ReadDirectoryChangesW() buffer overflow
     case wxFSW_EVENT_ERROR:
@@ -194,6 +194,15 @@ boost::optional<wxString> requiredWatchPath(const model::NodePtr& node)
     ASSERT(!result.IsSameAs(""));
     ASSERT(!wxEndsWithPathSeparator(result));
     return boost::optional<wxString>(result);
+}
+
+void FileWatcher::watchAll(const model::NodePtr& node)
+{
+    watch(node);
+    for (NodePtr child : node->getChildren())
+    {
+        watchAll(child);
+    }
 }
 
 void FileWatcher::watch(const model::NodePtr& node)
