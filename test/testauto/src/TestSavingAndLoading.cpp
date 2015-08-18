@@ -223,10 +223,7 @@ void TestSavingAndLoading::testBackupBeforeSave()
 void TestSavingAndLoading::checkDocument(wxString path)
 {
     StartTest("Load document");
-    util::thread::RunInMainAndWait([path]()
-    {
-        gui::Window::get().GetDocumentManager()->CreateDocument(path,wxDOC_SILENT);
-    });
+    OpenProject(path);
 
     // Checks on loaded document
     // Must wait for Idle twice, since the timeline class uses

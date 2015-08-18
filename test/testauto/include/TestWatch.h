@@ -43,6 +43,10 @@ public:
     void testAddAndRemoveFileToWatchedNonAutoFolder();
     void testRemoveProjectViewFolderContainingFileOnDisk();
 
+    /// See [#233]: File watching was not properly initialized when opening
+    /// a project from disk.
+    void testWatchAutoFolderAfterOpenProject();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////

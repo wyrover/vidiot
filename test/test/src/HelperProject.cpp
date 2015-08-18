@@ -42,6 +42,15 @@ model::FolderPtr getRoot()
     return boost::static_pointer_cast<model::Folder>(root);
 }
 
+void OpenProject(wxString path)
+{
+    util::thread::RunInMainAndWait([path]()
+    {
+        gui::Window::get().GetDocumentManager()->CreateDocument(path, wxDOC_SILENT);
+    });
+    WaitForIdle;
+}
+
 DirAndFile SaveProjectAndClose(boost::optional<RandomTempDirPtr> tempDir, wxString filesuffix)
 {
     DirAndFile tempDir_fileName = SaveProject(tempDir,filesuffix);

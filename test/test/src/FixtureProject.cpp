@@ -88,11 +88,7 @@ DirAndFile FixtureProject::saveAndReload()
 {
     destroy(); // Release all references
     DirAndFile tempDir_fileName = SaveProjectAndClose();
-    util::thread::RunInMainAndWait([tempDir_fileName]()
-    {
-        gui::Window::get().GetDocumentManager()->CreateDocument(tempDir_fileName.second.GetFullPath(), wxDOC_SILENT);
-    });
-    WaitForIdle;
+    OpenProject(tempDir_fileName.second.GetFullPath());
     return tempDir_fileName;
 }
 
