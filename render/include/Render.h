@@ -71,6 +71,10 @@ public:
     ///\ return true if the given filename can be used for rendering
     bool checkFileName() const;
 
+    /// \return true if the given filename can be used for rendering
+    /// \param filename filename to be checked
+    static bool checkFileName(const wxFileName& filename);
+
     /// \return a clone of this object with the filename (last part) removed
     /// This returned object can be used in comparisons, where the file name
     /// part is not relevant for the comparison.

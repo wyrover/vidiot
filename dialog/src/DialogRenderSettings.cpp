@@ -233,11 +233,10 @@ void DialogRenderSettings::onFileButtonPressed(wxCommandEvent& event)
 
     if (!selected.IsEmpty())
     {
-        wxFileName oldName = mNew->getFileName();
         wxFileName newName = wxFileName(selected);
-
-        if (newName.IsOk() && newName.HasExt())
+        if (model::render::Render::checkFileName(newName))
         {
+            wxFileName oldName = mNew->getFileName();
             mNew->setFileName(newName);
             if (!newName.GetExt().IsSameAs(oldName.GetExt()))
             {
@@ -515,6 +514,7 @@ bool DialogRenderSettings::check()
 {
     if (!mNew->checkFileName())
     {
+        VAR_ERROR(*mNew);
         gui::Dialog::get().getConfirmation(_("Select output file first."), _("No file selected"));
         return false;
     }
