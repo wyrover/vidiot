@@ -186,11 +186,37 @@ void Render::setSeparateAtCuts(bool separate)
 
 bool Render::checkFileName() const
 {
-    if (!mFileName.IsOk()) { return false; }
-    if (mFileName.IsDir()) { return false; }
-    if (!mFileName.HasExt()) { return false; }
-    if (!mFileName.HasName()) { return false; }
-    if (mFileName.FileExists() && !mFileName.IsFileWritable()) { return false; }
+    return Render::checkFileName(mFileName);
+}
+
+// static
+bool Render::checkFileName(const wxFileName& filename)
+{
+    if (!filename.IsOk()) 
+    {
+        VAR_ERROR(filename);
+        return false; 
+    }
+    if (filename.IsDir()) 
+    { 
+        VAR_ERROR(filename);
+        return false; 
+    }
+    if (!filename.HasExt()) 
+    { 
+        VAR_ERROR(filename);
+        return false; 
+    }
+    if (!filename.HasName()) 
+    { 
+        VAR_ERROR(filename);
+        return false; 
+    }
+    if (filename.FileExists() && !filename.IsFileWritable()) 
+    { 
+        VAR_ERROR(filename);
+        return false; 
+    }
     return true;
 }
 

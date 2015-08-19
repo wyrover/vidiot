@@ -83,6 +83,7 @@ NOTE: <VIDIOT_DIR> is the dir in which all 'vidiot' work is done.
 * Apply 0001-Fix-crash-in-generating-stack-trace-on-msw-unicode-b.patch
   Without this patch, generating stack traces (unicode) for long function names causes stack corruption.
   See 0001-Trigger-error-for-generating-stack-frame-for-unicode.patch for how to test this in the debugrpt sample.
+  http://trac.wxwidgets.org/ticket/17108
 * (MSVC) build solution Release & Debug
 * Remove temporary files from
   <VIDIOT_DIR>\wxWidgets\build\msw (ipch, vc_mswu, vc_mswud)
