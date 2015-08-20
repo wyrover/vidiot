@@ -41,7 +41,7 @@ int avcodec_get_buffer(struct AVCodecContext *c, AVFrame *pic)
 {
     ASSERT_NONZERO(c);
     ASSERT_NONZERO(pic);
-    int ret = avcodec_default_get_buffer(c, pic);
+    int ret = avcodec_default_get_buffer(c, pic); // todo is deprecated
     int64_t *pts = static_cast<int64_t*>(av_malloc(sizeof(int64_t)));
     *pts = static_cast<VideoFile*>(c->opaque)->getVideoPacketPts();
     pic->opaque = pts;
@@ -55,7 +55,7 @@ void avcodec_release_buffer(struct AVCodecContext *c, AVFrame *pic)
     {
         av_freep(&pic->opaque);
     }
-    avcodec_default_release_buffer(c, pic);
+    avcodec_default_release_buffer(c, pic); // todo is deprecated
 }
 
 static int const sMaxBufferSize = 10;
@@ -166,7 +166,8 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
     auto frameTimeOk = [this, parameters, stream, inputTimeBase, ticksPerFrame](pts inputPosition) -> bool
     {
         bool result = true;
-        if (parameters.hasPts())
+        if (parameters.hasPts() &&
+            inputPosition != AV_NOPTS_VALUE)
         {
             pts requiredPts{ parameters.getPts() };
             milliseconds requiredTime = Convert::ptsToTime(requiredPts);
@@ -185,6 +186,7 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
         // else: Just deliver the first found frame.
         //       Typical case: directly after 'moveTo' during thumbnail generation,
         //       timeline cursor move, trim, etc. (basically, anything except playback)
+        //       Other case: could not determine input frame position (AV_NOPTS_VALUE)
         return result;
     };
 
@@ -257,30 +259,22 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
 
                 // Using the pts value of the first 'sent' packet (instead of dts of latest packet)
                 // works better (audio-video-sync) for codecs with a delay (example: MOV file with h.264)
-                if (pDecodedFrame->opaque != 0)
+                int64_t* storedPts = static_cast<int64_t*>(pDecodedFrame->opaque);
+                if (storedPts != 0 && 
+                    *storedPts != AV_NOPTS_VALUE)
                 {
                     // Use PTS value of first packet sent into the decoder for this frame.
-                    int64_t storedPts = *(static_cast<int64_t*>(pDecodedFrame->opaque));
-                    if (storedPts != AV_NOPTS_VALUE)
-                    {
-                        decodedFramePts = storedPts;
-                    }
+                    decodedFramePts = *storedPts;
                 }
                 else if (nextToBeDecodedPacket->dts != AV_NOPTS_VALUE)
                 {
-                    // By default: Use DTS of latest packet sent into the decoder for this frame.
+                    // Use DTS of latest packet sent into the decoder for this frame.
                     decodedFramePts = nextToBeDecodedPacket->dts;
                 }
-                else if (pDecodedFrame->opaque != 0)
+                else
                 {
-                    // Try using PTS value of first packet sent into the decoder for this frame.
-                    int64_t storedPts = *(static_cast<int64_t*>(pDecodedFrame->opaque));
-                    if (storedPts != AV_NOPTS_VALUE)
-                    {
-                        decodedFramePts = storedPts;
-                    }
+                    LOG_WARNING << "Could not deduce pts [" << *this << "]";
                 }
-                ASSERT_DIFFERS(decodedFramePts, AV_NOPTS_VALUE);
 
                 if (!frameTimeOk(decodedFramePts))
                 {
@@ -331,7 +325,7 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
                 size.GetWidth(),
                 size.GetHeight(),
                 AV_PIX_FMT_RGB24,
-                SWS_FAST_BILINEAR | SWS_CPU_CAPS_MMX | SWS_CPU_CAPS_MMX2, 0, 0, 0);
+                SWS_BICUBIC/*SWS_FAST_BILINEAR*/, 0, 0, 0); // todo set SWS_BICUBIC depending on parameters? or make it an option?
             sws_scale(mSwsContext,pDecodedFrame->data,pDecodedFrame->linesize,0,codec->height,pScaledFrame->data,pScaledFrame->linesize);
 
             result =
@@ -413,7 +407,7 @@ void VideoFile::startDecodingVideo(const VideoCompositionParameters& parameters)
 
     AVCodecContext* avctx = getCodec();
     avctx->opaque = this; // Store address to be able to access this object from the avcodec callbacks
-    avctx->get_buffer = avcodec_get_buffer;
+    avctx->get_buffer = avcodec_get_buffer; // todo replace with get_buffer2
     avctx->release_buffer = avcodec_release_buffer;
 
     AVCodec *videoCodec = avcodec_find_decoder(avctx->codec_id);

@@ -192,30 +192,30 @@ bool Render::checkFileName() const
 // static
 bool Render::checkFileName(const wxFileName& filename)
 {
-    if (!filename.IsOk()) 
+    if (!filename.IsOk())
     {
         VAR_ERROR(filename);
-        return false; 
+        return false;
     }
-    if (filename.IsDir()) 
-    { 
+    if (filename.IsDir())
+    {
         VAR_ERROR(filename);
-        return false; 
+        return false;
     }
-    if (!filename.HasExt()) 
-    { 
+    if (!filename.HasExt())
+    {
         VAR_ERROR(filename);
-        return false; 
+        return false;
     }
-    if (!filename.HasName()) 
-    { 
+    if (!filename.HasName())
+    {
         VAR_ERROR(filename);
-        return false; 
+        return false;
     }
-    if (filename.FileExists() && !filename.IsFileWritable()) 
-    { 
+    if (filename.FileExists() && !filename.IsFileWritable())
+    {
         VAR_ERROR(filename);
-        return false; 
+        return false;
     }
     return true;
 }
@@ -579,6 +579,7 @@ void RenderWork::generate()
 
         while (!isAborted())  // write interleaved audio and video frames
         {
+            // todo remove use of pts (deprecated)
             double audioTime = storeAudio ? ((double)audioStream->pts.val) *  (double)audioStream->time_base.num / (double)audioStream->time_base.den : lengthInSeconds;
             double videoTime = storeVideo ? ((double)videoStream->pts.val) * (double)videoStream->time_base.num / (double)videoStream->time_base.den : lengthInSeconds;
 

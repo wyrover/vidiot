@@ -100,7 +100,8 @@ LinuxSetup()
     						yasm \
     						libmp3lame-dev \
     						libopus-dev \
-    						libx264-dev
+    						libx264-dev \
+    						mercurial
     echo "\n----------------------------------------\nboost...\n"
     sudo apt-get -y install python-dev autotools-dev libicu-dev libbz2-dev libzip-dev
 }
@@ -172,15 +173,14 @@ FfmpegSetup()
     fi
     mkdir -p ${FFBUILD}
     mkdir -p ${FFSRC}
-#    # libx264:
-#    cd ${FFSRC}
-#    wget http://download.videolan.org/pub/x264/snapshots/last_x264.tar.bz2
-#    tar xjvf last_x264.tar.bz2
-#    cd x264-snapshot*
-#    ./configure --prefix="${FFBUILD}" --bindir="${FFDIR}/bin" --enable-static
-#    make
-#    make install
-#    make distclean
+    # x265/hevc:
+    cd ${FFSRC}
+	hg clone https://bitbucket.org/multicoreware/x265
+	cd ${FFSRC}/x265/build/linux
+	PATH="$HOME/bin:$PATH" cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="${FFBUILD}" -DENABLE_SHARED:bool=off ../../source
+	make
+	make install
+	make distclean
     # libfdk-aac:
     cd ${FFSRC}
     wget -O fdk-aac.zip https://github.com/mstorsjo/fdk-aac/zipball/master
@@ -193,10 +193,10 @@ FfmpegSetup()
     make distclean
     # libvpx:
     cd ${FFSRC}
-    wget http://webm.googlecode.com/files/libvpx-v1.3.0.tar.bz2
-    tar xjvf libvpx-v1.3.0.tar.bz2
-    cd libvpx-v1.3.0
-    ./configure --prefix="${FFBUILD}" --disable-examples
+    wget http://storage.googleapis.com/downloads.webmproject.org/releases/webm/libvpx-1.4.0.tar.bz2
+    tar xjvf libvpx-1.4.0.tar.bz2
+    cd libvpx-1.4.0
+    ./configure --prefix="${FFBUILD}" --disable-examples  --disable-unit-tests
     make
     make install
     make clean
@@ -207,10 +207,10 @@ FfmpegSetup()
     cd ffmpeg
     PKG_CONFIG_PATH="${FFBUILD}/lib/pkgconfig"
     export PKG_CONFIG_PATH
-    ./configure --prefix="${FFBUILD}" --extra-cflags="-I${FFBUILD}/include" \
-       --extra-ldflags="-L${FFBUILD}/lib" --bindir="${FFDIR}/bin" --extra-libs="-ldl" --enable-gpl \
-       --enable-libass --enable-libfdk-aac --enable-libmp3lame --enable-libopus \
-       --enable-libtheora --enable-libvorbis --enable-libvpx --enable-libx264 --enable-nonfree
+    ./configure --prefix="${FFBUILD}" --pkg-config-flags="--static" --extra-cflags="-I${FFBUILD}/include" \
+       --extra-ldflags="-L${FFBUILD}/lib" --bindir="${FFDIR}/bin" --enable-gpl \
+       --enable-libass --enable-libfdk-aac --enable-libfreetype --enable-libmp3lame --enable-libopus \
+       --enable-libtheora --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-nonfree
     make
     make install
     make distclean
