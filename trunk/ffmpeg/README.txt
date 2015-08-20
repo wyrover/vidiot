@@ -2,16 +2,14 @@ This is a FFmpeg Win32 shared build by Kyle Schwarz.
 
 Zeranoe's FFmpeg Builds Home Page: <http://ffmpeg.zeranoe.com/builds/>
 
-This build was compiled on: Dec 28 2014, at: 15:11:42
-
-FFmpeg version: 2014-12-28 git-750b10f
-  libavutil      54. 15.100 / 54. 15.100
-  libavcodec     56. 19.100 / 56. 19.100
-  libavformat    56. 16.102 / 56. 16.102
-  libavdevice    56.  3.100 / 56.  3.100
-  libavfilter     5.  6.100 /  5.  6.100
+FFmpeg version: 2015-08-20 git-db91e0e
+  libavutil      54. 30.100 / 54. 30.100
+  libavcodec     56. 57.100 / 56. 57.100
+  libavformat    56. 40.101 / 56. 40.101
+  libavdevice    56.  4.100 / 56.  4.100
+  libavfilter     5. 32.100 /  5. 32.100
   libswscale      3.  1.101 /  3.  1.101
-  libswresample   1.  1.100 /  1.  1.100
+  libswresample   1.  2.101 /  1.  2.101
   libpostproc    53.  3.100 / 53.  3.100
 
 This FFmpeg build was configured with:
@@ -30,6 +28,7 @@ This FFmpeg build was configured with:
   --enable-libbluray
   --enable-libbs2b
   --enable-libcaca
+  --enable-libdcadec
   --enable-libfreetype
   --enable-libgme
   --enable-libgsm
@@ -63,15 +62,16 @@ This FFmpeg build was configured with:
 
 This build was compiled with the following external libraries:
   bzip2 1.0.6 <http://bzip.org/>
-  Fontconfig 2.11.91 <http://freedesktop.org/wiki/Software/fontconfig>
+  Fontconfig 2.11.94 <http://freedesktop.org/wiki/Software/fontconfig>
   Frei0r 20130909-git-10d8360 <http://frei0r.dyne.org/>
-  GnuTLS 3.2.20 <http://gnutls.org/>
+  GnuTLS 3.3.16 <http://gnutls.org/>
   libiconv 1.14 <http://gnu.org/software/libiconv/>
-  libass 0.12.0 <http://code.google.com/p/libass/>
-  libbluray 0.6.2 <http://videolan.org/developers/libbluray.html>
+  libass 0.12.2 <http://code.google.com/p/libass/>
+  libbluray 0.8.1 <http://videolan.org/developers/libbluray.html>
   libbs2b 3.1.0 <http://bs2b.sourceforge.net/>
   libcaca 0.99.beta18 <http://caca.zoy.org/wiki/libcaca>
-  FreeType 2.5.4 <http://freetype.sourceforge.net/>
+  dcadec 20150506-git-98fb3b6 <https://github.com/foo86/dcadec>
+  FreeType 2.5.5 <http://freetype.sourceforge.net/>
   Game Music Emu 0.6.0 <http://code.google.com/p/game-music-emu/>
   GSM 1.0.13-4 <http://packages.debian.org/source/squeeze/libgsm>
   iLBC 20141214-git-ef04ebe <https://github.com/dekkers/libilbc/>
@@ -89,21 +89,22 @@ This build was compiled with the following external libraries:
   vid.stab 0.98 <http://public.hronopik.de/vid.stab/>
   VisualOn AAC 0.1.3 <https://github.com/mstorsjo/vo-aacenc>
   VisualOn AMR-WB 0.1.2 <https://github.com/mstorsjo/vo-amrwbenc>
-  Vorbis 1.3.4 <http://vorbis.com/>
-  vpx 1.3.0 <http://webmproject.org/>
-  WavPack 4.70.0 <http://wavpack.com/>
-  WebP 0.4.2 <https://developers.google.com/speed/webp/>
-  x264 20141220-git-40bb568 <http://videolan.org/developers/x264.html>
-  x265 1.4 <http://x265.org/>
+  Vorbis 1.3.5 <http://vorbis.com/>
+  vpx 1.4.0 <http://webmproject.org/>
+  WavPack 4.75.0 <http://wavpack.com/>
+  WebP 0.4.3 <https://developers.google.com/speed/webp/>
+  x264 20150725-git-73ae2d1 <http://videolan.org/developers/x264.html>
+  x265 1.7 <http://x265.org/>
   XAVS svn-r55 <http://xavs.sourceforge.net/>
   Xvid 1.3.3 <http://xvid.org/>
+  XZ Utils 5.2.1 <http://tukaani.org/xz>
   zlib 1.2.8 <http://zlib.net/>
 
 The source code for this FFmpeg build can be found at: <http://ffmpeg.zeranoe.com/builds/source/>
 
-This build was compiled on Debian 8.0 (64-bit): <http://www.debian.org/>
+This build was compiled on Debian 8.1 (64-bit): <http://www.debian.org/>
 
-GCC 4.9.2 was used to compile this FFmpeg build: <http://gcc.gnu.org/>
+GCC 4.9.3 was used to compile this FFmpeg build: <http://gcc.gnu.org/>
 
 This build was compiled using the MinGW-w64 toolchain: <http://mingw-w64.sourceforge.net/>
 
