@@ -97,7 +97,7 @@ public:
     // DRAW
     //////////////////////////////////////////////////////////////////////////
 
-    wxBitmap getDragBitmap();
+    void updateDragBitmap();
     void drawDraggedClips(wxDC& dc, const wxRegion& region, const wxPoint& offset) const;
     void drawSnaps(wxDC& dc, const wxRegion& region, const wxPoint& offset) const;
 
@@ -149,6 +149,9 @@ private:
         /// \param indexOfTrackInTimeline index of a track in the timeline
         /// \param indexOfDraggedTrack index of the track that is currently 'above' the track in the timeline
         void updateOffset(int indexOfTrackInTimeline, int indexOfDraggedTrack);
+
+        /// \return true if the offset is such that an additional track is required to hold the clips.
+        bool requiresAddedTrack() const;
 
         /// \return audio or video track with given index.
         /// Whether it's an audio or a video track returned depends on the scope of this DragInfo object.

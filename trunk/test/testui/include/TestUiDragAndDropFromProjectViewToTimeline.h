@@ -42,6 +42,9 @@ public:
 
     void testDragAndDropStillImageAndUndo();
 
+    void testDragAndDropIntoNewVideoTrack();
+    void testDragAndDropIntoNewAudioTrack();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////

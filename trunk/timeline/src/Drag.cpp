@@ -24,6 +24,8 @@
 #include "Clip.h"
 #include "ClipView.h"
 #include "Config.h"
+#include "CreateAudioTrack.h"
+#include "CreateVideoTrack.h"
 #include "Cursor.h"
 #include "DividerView.h"
 #include "Drag_Shift.h"
@@ -192,7 +194,7 @@ void Drag::show()
 {
     // mHotspotPts must be aligned with pixelsToPts(position)
     mHotspot.x = getZoom().ptsToPixels(mHotspotPts);
-    mBitmap = getDragBitmap();
+    updateDragBitmap();
     move(mHotspot);
 }
 
@@ -238,10 +240,28 @@ void Drag::move(wxPoint position)
     }
     else if (!info.track || info.track == mDropTrack)
     {
-        // Mouse is moved within the current track.
-        // No changes in mDraggedTrack or mDroppedTrack required
+        model::TrackPtr addedTrack = nullptr;
+        if (!info.track && position.y < getSequenceView().getVideo().getRect().GetTop())
+        {
+            // Add a new video track if the mouse pointer is moved 'above' all video tracks.
+            addedTrack = mCommand->onAddTrack(true);
+        }
+        else if (!info.track && position.y > getSequenceView().getAudio().getRect().GetBottom())
+        {
+            // Add a new audio track if the mouse pointer is moved 'below' all audio tracks.
+            addedTrack = mCommand->onAddTrack(false);
+        }
+        if (addedTrack)
+        {
+            updateOffset(addedTrack); // Dragged clip(s) are positioned in the new track.
+            updateDragBitmap(); // New track is added, so the vertical offsets have changed.
+            getTimeline().Refresh(); // Due to adding a video track at the top, all others shift downwards.
+        }
+
+        // Mouse is moved, but stays within the current track.
+        // No changes in mDraggedTrack required
         //
-        // Move the cursor without moving the dragged object (note: vertical only!)
+        // Move the pointer position without moving the dragged object (note: vertical only!)
         mHotspot.y -= mPosition.y - position.y;
     }
     else
@@ -250,7 +270,18 @@ void Drag::move(wxPoint position)
         if (info.track->isA<model::VideoTrack>() == mDraggedTrack->isA<model::VideoTrack>())
         {
             // The pointer moved between video tracks or between audio tracks.
-            updateOffset(info.track);
+            updateOffset(info.track); // Can be updated BEFORE adding/removing tracks, since info.track will always be lower than the added/removed track,
+
+            if (getAssociatedInfo(info.track).requiresAddedTrack())
+            {
+                // Add a track if the required number of tracks (for holding the drag) has become greater than the number of available tracks.
+                mCommand->onAddTrack(info.track->isA<model::VideoTrack>());
+            }
+            else
+            {
+                // If the track created during dragging is no longer required to hold the dragged clips, remove it again.
+                mCommand->onRemoveAddedTrack(info.track->isA<model::VideoTrack>());
+            }
         }
         else
         {
@@ -260,7 +291,7 @@ void Drag::move(wxPoint position)
             updateDraggedTrack(info.track);
         }
         mHotspot.y = position.y;
-        mBitmap = getDragBitmap();
+        updateDragBitmap();
     }
 
     mDropTrack = info.track;
@@ -380,7 +411,7 @@ pts Drag::getSnapOffset() const
 // DRAW
 //////////////////////////////////////////////////////////////////////////
 
-wxBitmap Drag::getDragBitmap()
+void Drag::updateDragBitmap()
 {
     VAR_DEBUG(*this);
     // X region of the drag bitmap initially contains one time the entire timeline client area
@@ -464,7 +495,7 @@ wxBitmap Drag::getDragBitmap()
     // GetSubBitmap is not an obsolete call: the bitmap becomes smaller, although only
     // slightly. Furthermore, dragging to the left doesn't work, if the 'unclipped'
     // bitmap still touches the left edge of the timeline (low scrolling offset) 6.
-    return temp.GetSubBitmap(wxRect(roi_x,roi_y,size_x,size_y));
+    mBitmap =  temp.GetSubBitmap(wxRect(roi_x,roi_y,size_x,size_y));
 }
 
 void Drag::drawDraggedClips(wxDC& dc, const wxRegion& region, const wxPoint& offset) const
@@ -509,9 +540,15 @@ Drag::DragInfo::~DragInfo()
 void Drag::DragInfo::reset()
 {
     mOffset = 0;
-    mMinOffset = 0;
-    mMaxOffset = 0;
 
+    // -1: nTracks is 1-based
+    mMinOffset = -1 * (nTracks() - 1);  
+    
+    // -1: nTracks is 1-based
+    // -1: at least a clip in track 1 is selected so can be used as default.
+    // +1: at most one track can be added automatically
+    mMaxOffset = (nTracks() - 1) -1 + 1; 
+    
     if (mTempTrack)
     {
         // Remove previous track
@@ -526,9 +563,16 @@ void Drag::DragInfo::reset()
         model::TrackPtr track = clip->getTrack();
         if (track->isA<model::VideoTrack>() == mIsVideo)
         {
-            mMinOffset = std::min(mMinOffset, track->getIndex() * -1);
-            mMaxOffset = std::max(mMaxOffset, nTracks() - track->getIndex() - 1); // -1: nTracks is 1-based, getIndex() is 0-based
+            mMinOffset = std::max(mMinOffset, track->getIndex() * -1);
+            mMaxOffset = std::min(mMaxOffset, nTracks() - track->getIndex() - 1); // -1: nTracks is 1-based, getIndex() is 0-based.
         }
+    }
+
+    if (!mTempTrack)
+    {
+        // One track may be added during the drag operation.
+        // This is done for only internal drags since for external drags it leads to confusing behavior.
+        mMaxOffset += 1; // now it works nicely for external drags, including adding the required track.
     }
 }
 
@@ -547,6 +591,11 @@ void Drag::DragInfo::updateOffset(int indexOfTrackInTimeline, int indexOfDragged
         // 'outside' drag
         mOffset = indexOfTrackInTimeline;
     }
+}
+
+bool Drag::DragInfo::requiresAddedTrack() const
+{
+    return mOffset == mMaxOffset;
 }
 
 model::TrackPtr Drag::DragInfo::getTrack(int index)

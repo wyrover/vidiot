@@ -29,6 +29,9 @@ namespace test {
 /// \return the physical position of the active timeline on the screen
 wxPoint TimelinePosition();
 
+int NumberOfVideoTracks();
+int NumberOfAudioTracks();
+
 /// Return the number of clips in a given video track
 /// \param trackindex index position (0-based) of the video track, counting from the divider upwards
 int NumberOfVideoClipsInTrack(int trackindex = 0);
@@ -149,7 +152,11 @@ void ScrollWithRightMouseButton(pixel distance);                        ///< Scr
 gui::timeline::MouseOnClipPosition LogicalPosition(wxPoint position);   ///< \return logical mouse position of the given (pixel) position.
 
 /// Unselect all clips in the timeline
-void DeselectAllClips();
+void DeselectAllClips(); // todo rename to timelinedesclectall
+
+/// Select the given clips by ctrl-clicking all of them.
+/// Selection is made empty beforehand.
+void TimelineSelectClips(model::IClips clips);
 
 /// Delete the given clip from the timeline
 /// \param clip clip to be deleted from the timeline

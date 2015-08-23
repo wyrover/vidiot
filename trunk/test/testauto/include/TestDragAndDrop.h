@@ -74,6 +74,16 @@ public:
     /// to determine the starting track of the drag.
     void testStartDragNearDividerEdge();
 
+    /// When, during dragging, the mouse is moved vertically beyond the
+    /// audio/video tracks, one - at most one - track may be created to
+    /// make room.
+    void testCreateTrackDuringDraggingByMovingMouseOutsideListOfTracks();
+
+    /// When, during dragging, the mouse is moved 'outward' such that one
+    /// of the dragged clips end up 'outside' the current list of audio/video
+    /// tracks, one - at most one - track may be created to make room.
+    void testCreateTrackDuringDraggingByMovingOutwardMaximally();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////

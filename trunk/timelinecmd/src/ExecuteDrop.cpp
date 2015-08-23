@@ -92,7 +92,7 @@ ExecuteDrop::ExecuteDrop(const model::SequencePtr& sequence, bool external)
     , mDrops()
     , mShift()
 {
-    VAR_INFO(this)(sequence)(external);
+    VAR_INFO(*this)(sequence)(external);
     mCommandName = _("Move clips");
 }
 
@@ -102,7 +102,7 @@ ExecuteDrop::~ExecuteDrop()
 
 void ExecuteDrop::onDragStart(const Drags& drags)
 {
-    VAR_INFO(this)(drags);
+    VAR_INFO(*this)(drags);
 
     if (mExternal)
     {
@@ -195,9 +195,44 @@ void ExecuteDrop::onDragStart(const Drags& drags)
     VAR_INFO(mDrags);
 }
 
+model::TrackPtr ExecuteDrop::onAddTrack(bool video)
+{
+    if (video && !mNewVideoTrack)
+    {
+        VAR_INFO(*this)(video);
+        mNewVideoTrack = boost::make_shared<model::VideoTrack>();
+        getSequence()->addVideoTracks({ mNewVideoTrack });
+        return mNewVideoTrack;
+    }
+    else if (!video && !mNewAudioTrack)
+    {
+        VAR_INFO(*this)(video);
+        mNewAudioTrack = boost::make_shared<model::AudioTrack>();
+        getSequence()->addAudioTracks({ mNewAudioTrack }); // todo make parametrized method ?
+        return mNewAudioTrack;
+    }
+    return nullptr;
+}
+
+void ExecuteDrop::onRemoveAddedTrack(bool video)
+{
+    if (video && mNewVideoTrack)
+    {
+        VAR_INFO(*this)(video);
+        getSequence()->removeVideoTracks({ mNewVideoTrack });
+        mNewVideoTrack.reset();
+    }
+    else if (!video && mNewAudioTrack)
+    {
+        VAR_INFO(*this)(video);
+        getSequence()->removeAudioTracks({ mNewAudioTrack });
+        mNewAudioTrack.reset();
+    }
+}
+
 void ExecuteDrop::onDrop(const Drops& drops, const Shift& shift)
 {
-    VAR_INFO(this)(drops)(shift);
+    VAR_INFO(*this)(drops)(shift);
     mDrops = drops;
     mShift = shift;
     for ( model::IClipPtr clip : getDrags() )
@@ -307,6 +342,42 @@ void ExecuteDrop::initialize()
     }
 }
 
+void ExecuteDrop::doExtraBefore()
+{
+    if (mNewVideoTrack)
+    {
+        model::Tracks videoTracks{ getSequence()->getVideoTracks() };
+        if (std::find(videoTracks.begin(), videoTracks.end(), mNewVideoTrack) == videoTracks.end())
+        {
+            // New video track is not yet part of the sequence. Redo operation. Add the track.
+            // For the 'Do' operation, the track is already added during the dragging. See onAddTrack.
+            getSequence()->addVideoTracks({ mNewVideoTrack });
+        }
+    }
+    if (mNewAudioTrack)
+    {
+        model::Tracks audioTracks{ getSequence()->getAudioTracks() };
+        if (std::find(audioTracks.begin(), audioTracks.end(), mNewAudioTrack) == audioTracks.end())
+        {
+            // New audio track is not yet part of the sequence. Redo operation. Add the track.
+            // For the 'Do' operation, the track is already added during the dragging. See onAddTrack.
+            getSequence()->addAudioTracks({ mNewAudioTrack });
+        }
+    }
+}
+
+void ExecuteDrop::undoExtraAfter()
+{
+    if (mNewVideoTrack)
+    {
+        getSequence()->removeVideoTracks({ mNewVideoTrack });
+    }
+    if (mNewAudioTrack)
+    {
+        getSequence()->removeAudioTracks({ mNewAudioTrack });
+    }
+}
+
 //////////////////////////////////////////////////////////////////////////
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
@@ -322,7 +393,12 @@ const Drags& ExecuteDrop::getDrags() const
 
 std::ostream& operator<<(std::ostream& os, const ExecuteDrop& obj)
 {
-    os << static_cast<const AClipEdit&>(obj) << '|' << '|' << obj.mDrags << '|' << obj.mShift;
+    os  << static_cast<const AClipEdit&>(obj) << '|' 
+        << obj.mExternal << '|' 
+        << obj.mDrags << '|' 
+        << obj.mShift << '|'
+        << obj.mNewVideoTrack << '|'
+        << obj.mNewAudioTrack;
     return os;
 }
 }}} // namespace

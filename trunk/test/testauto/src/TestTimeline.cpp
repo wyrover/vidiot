@@ -672,7 +672,7 @@ void TestTimeline::testTrimmingWithOtherTracks()
         TimelineDrag(From(Center(VideoClip(1,1))).To(wxPoint(RightPixel(VideoClip(0,4)),VCenter(VideoTrack(1)))));
         ASSERT(!getTimeline().getKeyboard().getShiftDown());
         ASSERT_VIDEOTRACK1(EmptyClip)(VideoClip);
-        ASSERT_EQUALS(VideoTrack(1)->getClips().size(),2);
+        ASSERT_VIDEOTRACK1SIZE(2);
     }
     {
         StartTest("TimelineShiftTrim: TimelineEndTrim: Shorten: with another track that has a clip on the trim position (no trim possible).");
@@ -703,8 +703,8 @@ void TestTimeline::testTrimmingWithOtherTracks()
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(EmptyClip)(VideoClip);
         ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(EmptyClip)(AudioClip);
         ASSERT_AUDIOTRACK1(EmptyClip)                      (AudioClip)(EmptyClip)(AudioClip)(AudioClip);
-        ASSERT_EQUALS(VideoTrack(0)->getClips().size(), 5); // Check that emptyness at end is removed
-        ASSERT_EQUALS(AudioTrack(0)->getClips().size(), 5); // Check that emptyness at end is removed
+        ASSERT_VIDEOTRACK0SIZE(5); // Check that emptyness at end is removed
+        ASSERT_AUDIOTRACK0SIZE(5); // Check that emptyness at end is removed
         ASSERT_EQUALS(VideoClip(1,1)->getLeftPts(),VideoClip(0,3)->getLeftPts());
         ASSERT_EQUALS(AudioClip(1,1)->getLeftPts(),AudioClip(0,3)->getLeftPts());
         ASSERT_EQUALS(VideoClip(1,3)->getLeftPts(),VideoClip(0,4)->getRightPts());
@@ -720,8 +720,8 @@ void TestTimeline::testTrimmingWithOtherTracks()
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(EmptyClip)(       VideoClip      );
         ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(EmptyClip)(       AudioClip      );
         ASSERT_AUDIOTRACK1(EmptyClip)                   (AudioClip)(EmptyClip)(AudioClip)(EmptyClip)(AudioClip);
-        ASSERT_EQUALS(VideoTrack(0)->getClips().size(), 5); // Check that emptyness at end is removed
-        ASSERT_EQUALS(AudioTrack(0)->getClips().size(), 5); // Check that emptyness at end is removed
+        ASSERT_VIDEOTRACK0SIZE(5); // Check that emptyness at end is removed
+        ASSERT_AUDIOTRACK0SIZE(5); // Check that emptyness at end is removed
     }
     previouslength = VideoClip(0,4)->getLength();
     pts minbegin = VideoClip(0,4)->getMinAdjustBegin();

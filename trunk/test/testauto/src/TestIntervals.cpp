@@ -130,8 +130,8 @@ void TestIntervals::testRemoveEmptyIntervals()
         TimelineLeftClick(Center(VideoClip(0,6)));
         TimelineKeyUp(WXK_CONTROL);
         TimelineKeyPress(WXK_DELETE);
-        ASSERT_EQUALS(VideoTrack(0)->getClips().size(), 5);
-        ASSERT_EQUALS(AudioTrack(0)->getClips().size(), 5);
+        ASSERT_VIDEOTRACK0SIZE(5);
+        ASSERT_AUDIOTRACK0SIZE(5);
         ASSERT_VIDEOTRACK0(EmptyClip)(VideoClip)(     EmptyClip      )(VideoClip)(VideoClip);
         ASSERT_AUDIOTRACK0(EmptyClip)(AudioClip)(     EmptyClip      )(AudioClip)(AudioClip);
         ASSERT_EQUALS(VideoClip(0,0)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,0));
@@ -147,8 +147,8 @@ void TestIntervals::testRemoveEmptyIntervals()
         WindowTriggerMenu(ID_DELETEEMPTY);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip);
         ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip);
-        ASSERT_EQUALS(VideoTrack(0)->getClips().size(), 3);
-        ASSERT_EQUALS(AudioTrack(0)->getClips().size(), 3);
+        ASSERT_VIDEOTRACK0SIZE(3);
+        ASSERT_AUDIOTRACK0SIZE(3);
         ASSERT_EQUALS(VideoClip(0,0)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1));
         ASSERT_EQUALS(VideoClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,4));
         ASSERT_EQUALS(VideoClip(0,2)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,5));
