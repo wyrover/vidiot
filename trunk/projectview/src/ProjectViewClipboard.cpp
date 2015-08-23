@@ -236,6 +236,11 @@ void ProjectViewClipboard::pasteFromClipboard()
                         nodes.push_back(boost::make_shared<model::AutoFolder>(filename));
                     }
                 }
+                if (nodes.empty())
+                {
+                    StatusBar::get().timedInfoText(_("No supported files in clipboard."));
+                    return;
+                }
                 model::ProjectModification::submit(new command::ProjectViewAddAsset(target, nodes));
             }
         }
