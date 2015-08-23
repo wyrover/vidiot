@@ -84,6 +84,13 @@ public:
     /// \post mDrags contains updated list of dragged clips
     void onDragStart(const Drags& drags);
 
+    /// Add a track of the given type to the timeline.
+    /// \param video true if video track must be added, false if audio track must be added.
+    /// \note if a track of the given type already has been added, no new track is added.
+    /// \return newly added track, if any
+    model::TrackPtr onAddTrack(bool video);
+    void onRemoveAddedTrack(bool video);
+
     /// Called when the drop operation was finished. After this call, the command will be
     /// executed on the sequence via 'initialize'.
     void onDrop(const Drops& drops, const Shift& shift = Shift());
@@ -98,6 +105,8 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     void initialize() override;
+    void doExtraBefore() override;
+    void undoExtraAfter() override;
 
     //////////////////////////////////////////////////////////////////////////
     // GET/SET
@@ -121,6 +130,9 @@ private:
     Drops mDrops;
     Drags mDrags; ///< Clips that are removed. Use set to avoid duplicate entries (duplicate entries cause errors since a clip's attributes are changed - removed from a track, for instance - and then the clip is removed 'again' from the now nonexistent track)
     Shift mShift;
+
+    model::TrackPtr mNewVideoTrack = nullptr;
+    model::TrackPtr mNewAudioTrack = nullptr;
 
     ExecuteDrop();
 

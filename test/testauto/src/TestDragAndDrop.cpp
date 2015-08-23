@@ -192,8 +192,13 @@ void TestDragAndDrop::testDndMultipleTracks()
         ASSERT(getTimeline().getDrag().isActive());
         TimelineKeyUp(WXK_CONTROL);
         TimelineDrag(From(Center(VideoClip(0,5))).To(inbetween));
-        ASSERT_VIDEOTRACK1(EmptyClip)                      (VideoClip); // Bug occurred here: VideoClip was moved to track2 (which did not exist)
-        ASSERT_AUDIOTRACK1(EmptyClip)                      (AudioClip);
+        ASSERT_VIDEOTRACK2(EmptyClip)                      (VideoClip); // Bug occurred here: VideoClip was moved to track2, which did not exist
+        ASSERT_AUDIOTRACK1(EmptyClip)                      (AudioClip); // then, because the 'add track during drag' was not implemented then yet.
+        ASSERT_VIDEOTRACKS(3);
+        ASSERT_AUDIOTRACKS(2);
+        ASSERT_VIDEOTRACK2SIZE(2);
+        ASSERT_VIDEOTRACK1SIZE(0);
+        ASSERT_AUDIOTRACK1SIZE(2);
         Undo(2);
     }
     {
@@ -209,8 +214,13 @@ void TestDragAndDrop::testDndMultipleTracks()
         TimelineDrag(From(Center(AudioClip(0,4))).To(Center(AudioClip(0,5))).DontReleaseMouse());
         TimelineKeyUp(WXK_CONTROL);
         TimelineDrag(From(Center(AudioClip(0,5))).To(inbetween));
-        ASSERT_VIDEOTRACK1(EmptyClip)                      (VideoClip);
-        ASSERT_AUDIOTRACK1(EmptyClip)                      (AudioClip); // Bug occurred here: AudioClip was moved to track2 (which did not exist)
+        ASSERT_VIDEOTRACK1(EmptyClip)                      (VideoClip); // Bug occurred here: AudioClip was moved to track2, which did not exist
+        ASSERT_AUDIOTRACK2(EmptyClip)                      (AudioClip); // then, because the 'add track during drag' was not implemented then yet.
+        ASSERT_VIDEOTRACKS(2);
+        ASSERT_AUDIOTRACKS(3);
+        ASSERT_VIDEOTRACK1SIZE(2);
+        ASSERT_AUDIOTRACK1SIZE(0);
+        ASSERT_AUDIOTRACK2SIZE(2);
         Undo(2);
     }
 }
@@ -250,7 +260,7 @@ void TestDragAndDrop::testDndRightMouseScrolling()
         TimelineMove(wxPoint(2, inbetween.y));
         TimelineLeftUp(); // End drag
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip);
-        ASSERT_EQUALS(VideoTrack(0)->getClips().size(), 5);
+        ASSERT_VIDEOTRACK0SIZE(5);
         ASSERT_EQUALS(VideoClip(0, 0)->getLength(), length);
         Undo(1);
     }
@@ -493,5 +503,248 @@ void TestDragAndDrop::testStartDragNearDividerEdge()
     }
 }
 
+void TestDragAndDrop::testCreateTrackDuringDraggingByMovingMouseOutsideListOfTracks()
+{
+    StartTestSuite();
+    ASSERT_VIDEOTRACKS(1);
+    ASSERT_AUDIOTRACKS(1);
+    {
+        StartTest("Add video track");
+        wxPoint start{ Center(VideoClip(0, 2)) };
+        wxPoint to{ start.x, getTimeline().getSequenceView().getVideo().getRect().GetTop() };
+        TimelineDrag(From(start).To(to).DontReleaseMouse());
+        ASSERT_VIDEOTRACKS(1);
+        to.y--;
+        TimelineDrag(To(to).DontReleaseMouse());
+        ASSERT_VIDEOTRACKS(2);
+        ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
+        ASSERT_ZERO(NumberOfVideoClipsInTrack(1)); // They're part of the drag, not of the sequence yet.
+        StartTest("Only one track is added");
+        TimelineDrag(To(to).DontReleaseMouse());
+        ASSERT_VIDEOTRACKS(2);
+        StartTest("Execute the drop");
+        TimelineDrag(To(to));
+        ASSERT_VIDEOTRACKS(2);
+        ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::ExecuteDrop>();
+        ASSERT_VIDEOTRACK1(     EmptyClip      )(VideoClip);
+        StartTest("Undo add video track");
+        Undo();
+        ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
+        ASSERT_VIDEOTRACKS(1);
+        StartTest("Redo add video track");
+        Redo();
+        ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::ExecuteDrop>();
+        ASSERT_VIDEOTRACKS(2);
+        ASSERT_VIDEOTRACK1(     EmptyClip      )(VideoClip);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(EmptyClip)(VideoClip);
+        ASSERT_EQUALS(VideoClip(1, 1)->getLeftPts(), mProjectFixture.OriginalPtsOfVideoClip(0,2));
+        ASSERT_EQUALS(VideoClip(1, 1)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,2));
+        ASSERT_AUDIOTRACKS(1);
+        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(AudioClip)(AudioClip)(AudioClip)(AudioClip);
+        Undo();
+    }
+    {
+        StartTest("Add audio track");
+        wxPoint start{ Center(AudioClip(0, 2)) };
+        wxPoint to{ start.x, getTimeline().getSequenceView().getAudio().getRect().GetBottom() };
+        TimelineDrag(From(start).To(to).DontReleaseMouse());
+        ASSERT_AUDIOTRACKS(1);
+        to.y++;
+        TimelineDrag(To(to).DontReleaseMouse());
+        ASSERT_AUDIOTRACKS(2);
+        ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
+        ASSERT_ZERO(NumberOfAudioClipsInTrack(1)); // They're part of the drag, not of the sequence yet.
+        StartTest("Only one track is added");
+        TimelineDrag(To(to).DontReleaseMouse());
+        ASSERT_AUDIOTRACKS(2);
+        StartTest("Execute the drop");
+        TimelineDrag(To(to));
+        ASSERT_AUDIOTRACKS(2);
+        ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::ExecuteDrop>();
+        ASSERT_AUDIOTRACK1(     EmptyClip      )(AudioClip);
+        StartTest("Undo add audio track");
+        Undo();
+        ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
+        ASSERT_AUDIOTRACKS(1);
+        StartTest("Redo add audio track");
+        Redo();
+        ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::ExecuteDrop>();
+        ASSERT_AUDIOTRACKS(2);
+        ASSERT_AUDIOTRACK1(     EmptyClip      )(AudioClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(EmptyClip)(AudioClip);
+        ASSERT_EQUALS(AudioClip(1, 1)->getLeftPts(), mProjectFixture.OriginalPtsOfAudioClip(0,2));
+        ASSERT_EQUALS(AudioClip(1, 1)->getLength(), mProjectFixture.OriginalLengthOfAudioClip(0,2));
+        ASSERT_VIDEOTRACKS(1);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip);
+        Undo();
+    }
+    ASSERT_VIDEOTRACKS(1);
+    ASSERT_AUDIOTRACKS(1);
+}
+
+void TestDragAndDrop::testCreateTrackDuringDraggingByMovingOutwardMaximally()
+{
+    StartTestSuite();
+    WindowTriggerMenu(ID_ADDVIDEOTRACK);
+    WindowTriggerMenu(ID_ADDAUDIOTRACK);
+    wxPoint p{ Center(VideoClip(0,1)) };
+    TimelineDrag(From(Center(VideoClip(0,1))).To(wxPoint(p.x, VCenter(VideoTrack(1)))));
+    TimelineDrag(From(Center(AudioClip(0,1))).To(wxPoint(p.x, VCenter(AudioTrack(1)))));
+    ASSERT_VIDEOTRACKS(2);
+    ASSERT_VIDEOTRACK1(EmptyClip)(VideoClip);
+    ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip);
+    ASSERT_AUDIOTRACKS(2);
+    ASSERT_AUDIOTRACK0(AudioClip)(EmptyClip)(AudioClip);
+    ASSERT_AUDIOTRACK1(EmptyClip)(AudioClip);
+
+    {
+        StartTest("Video: Drag first clip. First clip in lower track. Check upper bound and add track.");
+        TimelineSelectClips({ VideoClip(0, 0), VideoClip(1, 1) });
+        wxPoint p{ Center(VideoClip(0,0)) };
+        TimelineDrag(From(p).To(wxPoint(p.x, VCenter(VideoTrack(1)))).DontReleaseMouse());
+        ASSERT_VIDEOTRACKS(3);
+        TimelineDrag(To(wxPoint(p.x, getTimeline().getSequenceView().getVideo().getRect().GetTop() - 2)).DontReleaseMouse());
+        ASSERT_VIDEOTRACKS(3); // Verify only one track is added
+        TimelineDrag(To(wxPoint(p.x, VCenter(VideoTrack(0)))).DontReleaseMouse());
+        ASSERT_VIDEOTRACKS(2); // 'Added track' removed when no longer needed
+        TimelineDrag(From(p).To(wxPoint(p.x, VCenter(VideoTrack(1)))));
+        ASSERT_VIDEOTRACKS(3);
+        Undo();
+        ASSERT_VIDEOTRACKS(2);
+        Redo();
+        ASSERT_VIDEOTRACKS(3);
+        ASSERT_VIDEOTRACK2(EmptyClip)(VideoClip);
+        ASSERT_VIDEOTRACK1(VideoClip);
+        ASSERT_VIDEOTRACK0(      EmptyClip      )(VideoClip);
+        ASSERT_VIDEOTRACK2SIZE(2);
+        ASSERT_VIDEOTRACK1SIZE(1);
+        ASSERT_EQUALS(VideoClip(2, 0)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,0));
+        ASSERT_EQUALS(VideoClip(2, 1)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1));
+        ASSERT_EQUALS(VideoClip(1, 0)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,0));
+        ASSERT_EQUALS(VideoClip(0, 1)->getLeftPts(), mProjectFixture.OriginalPtsOfVideoClip(0,2));
+        Undo();
+    }
+    {
+        StartTest("Video: Drag second clip. First clip in lower track. Check lower bound.");
+        TimelineSelectClips({ VideoClip(0, 0), VideoClip(1, 1) });
+        wxPoint p{ Center(VideoClip(1,1)) };
+        TimelineDrag(From(p).To(wxPoint(p.x, VCenter(VideoTrack(0)))));
+        ASSERT_VIDEOTRACKS(2);
+        ASSERT_VIDEOTRACK1(EmptyClip)(VideoClip);
+        ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip);
+    }
+    {
+        StartTest("Video: Drag first clip. Second clip in lower track. Check lower bound.");
+        TimelineSelectClips({ VideoClip(1, 1), VideoClip(0, 2) });
+        wxPoint p{ Center(VideoClip(1,1)) };
+        TimelineDrag(From(p).To(wxPoint(p.x, VCenter(VideoTrack(0)))));
+        ASSERT_VIDEOTRACKS(2);
+        ASSERT_VIDEOTRACK1(EmptyClip)(VideoClip);
+        ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip);
+    }
+    {
+        StartTest("Video: Drag second clip. Second clip in lower track.");
+        TimelineSelectClips({ VideoClip(1, 1), VideoClip(0, 2) });
+        wxPoint p{ Center(VideoClip(0,2)) };
+        TimelineDrag(From(p).To(wxPoint(p.x, VCenter(VideoTrack(1)))).DontReleaseMouse());
+        ASSERT_VIDEOTRACKS(3);
+        TimelineDrag(To(wxPoint(p.x, getTimeline().getSequenceView().getVideo().getRect().GetTop() - 2)).DontReleaseMouse());
+        ASSERT_VIDEOTRACKS(3); // Verify only one track is added
+        TimelineDrag(To(wxPoint(p.x, VCenter(VideoTrack(0)))).DontReleaseMouse());
+        ASSERT_VIDEOTRACKS(2); // 'Added track' removed when no longer needed
+        TimelineDrag(From(p).To(wxPoint(p.x, VCenter(VideoTrack(1)))));
+        ASSERT_VIDEOTRACKS(3);
+        Undo();
+        ASSERT_VIDEOTRACKS(2);
+        Redo();
+        ASSERT_VIDEOTRACKS(3);
+        ASSERT_VIDEOTRACK2(EmptyClip)(VideoClip);
+        ASSERT_VIDEOTRACK1(      EmptyClip     )(VideoClip);
+        ASSERT_VIDEOTRACK0(VideoClip)(       EmptyClip     )(VideoClip);
+        ASSERT_VIDEOTRACK2SIZE(2);
+        ASSERT_VIDEOTRACK1SIZE(2);
+        ASSERT_EQUALS(VideoClip(2, 1)->getLeftPts(), mProjectFixture.OriginalPtsOfVideoClip(0,1));
+        ASSERT_EQUALS(VideoClip(2, 1)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1));
+        ASSERT_EQUALS(VideoClip(1, 1)->getLeftPts(), mProjectFixture.OriginalPtsOfVideoClip(0,2));
+        ASSERT_EQUALS(VideoClip(1, 1)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,2));
+        ASSERT_EQUALS(VideoClip(0, 1)->getLeftPts(), mProjectFixture.OriginalPtsOfVideoClip(0,1));
+        ASSERT_EQUALS(VideoClip(0, 2)->getLeftPts(), mProjectFixture.OriginalPtsOfVideoClip(0,3));
+        Undo();
+    }
+    {
+        StartTest("Audio: Drag first clip. First clip in lower track. Check upper bound and add track.");
+        TimelineSelectClips({ AudioClip(0, 0), AudioClip(1, 1) });
+        wxPoint p{ Center(AudioClip(0,0)) };
+        TimelineDrag(From(p).To(wxPoint(p.x, VCenter(AudioTrack(1)))).DontReleaseMouse());
+        ASSERT_AUDIOTRACKS(3);
+        TimelineDrag(To(wxPoint(p.x, getTimeline().getSequenceView().getAudio().getRect().GetBottom() + 2)).DontReleaseMouse());
+        ASSERT_AUDIOTRACKS(3); // Verify only one track is added
+        TimelineDrag(To(wxPoint(p.x, VCenter(AudioTrack(0)))).DontReleaseMouse());
+        ASSERT_AUDIOTRACKS(2); // 'Added track' removed when no longer needed
+        TimelineDrag(From(p).To(wxPoint(p.x, VCenter(AudioTrack(1)))));
+        ASSERT_AUDIOTRACKS(3);
+        Undo();
+        ASSERT_AUDIOTRACKS(2);
+        Redo();
+        ASSERT_AUDIOTRACKS(3);
+        ASSERT_AUDIOTRACK2(EmptyClip)(AudioClip);
+        ASSERT_AUDIOTRACK1(AudioClip);
+        ASSERT_AUDIOTRACK0(      EmptyClip      )(AudioClip);
+        ASSERT_AUDIOTRACK2SIZE(2);
+        ASSERT_AUDIOTRACK1SIZE(1);
+        ASSERT_EQUALS(AudioClip(2, 0)->getLength(), mProjectFixture.OriginalLengthOfAudioClip(0,0));
+        ASSERT_EQUALS(AudioClip(2, 1)->getLength(), mProjectFixture.OriginalLengthOfAudioClip(0,1));
+        ASSERT_EQUALS(AudioClip(1, 0)->getLength(), mProjectFixture.OriginalLengthOfAudioClip(0,0));
+        ASSERT_EQUALS(AudioClip(0, 1)->getLeftPts(), mProjectFixture.OriginalPtsOfAudioClip(0,2));
+        Undo();
+    }
+    {
+        StartTest("Video: Drag second clip. First clip in lower track. Check lower bound.");
+        TimelineSelectClips({ AudioClip(0, 0), AudioClip(1, 1) });
+        wxPoint p{ Center(AudioClip(1,1)) };
+        TimelineDrag(From(p).To(wxPoint(p.x, VCenter(AudioTrack(0)))));
+        ASSERT_AUDIOTRACKS(2);
+        ASSERT_AUDIOTRACK1(EmptyClip)(AudioClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(EmptyClip)(AudioClip);
+    }
+    {
+        StartTest("Video: Drag first clip. Second clip in lower track. Check lower bound.");
+        TimelineSelectClips({ AudioClip(1, 1), AudioClip(0, 2) });
+        wxPoint p{ Center(AudioClip(1,1)) };
+        TimelineDrag(From(p).To(wxPoint(p.x, VCenter(AudioTrack(0)))));
+        ASSERT_AUDIOTRACKS(2);
+        ASSERT_AUDIOTRACK1(EmptyClip)(AudioClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(EmptyClip)(AudioClip);
+    }
+    {
+        StartTest("Video: Drag second clip. Second clip in lower track.");
+        TimelineSelectClips({ AudioClip(1, 1), AudioClip(0, 2) });
+        wxPoint p{ Center(AudioClip(0,2)) };
+        TimelineDrag(From(p).To(wxPoint(p.x, VCenter(AudioTrack(1)))).DontReleaseMouse());
+        ASSERT_AUDIOTRACKS(3);
+        TimelineDrag(To(wxPoint(p.x, getTimeline().getSequenceView().getAudio().getRect().GetBottom() + 2)).DontReleaseMouse());
+        ASSERT_AUDIOTRACKS(3); // Verify only one track is added
+        TimelineDrag(To(wxPoint(p.x, VCenter(AudioTrack(0)))).DontReleaseMouse());
+        ASSERT_AUDIOTRACKS(2); // 'Added track' removed when no longer needed
+        TimelineDrag(From(p).To(wxPoint(p.x, VCenter(AudioTrack(1)))));
+        ASSERT_AUDIOTRACKS(3);
+        Undo();
+        ASSERT_AUDIOTRACKS(2);
+        Redo();
+        ASSERT_AUDIOTRACKS(3);
+        ASSERT_AUDIOTRACK2(EmptyClip)(AudioClip);
+        ASSERT_AUDIOTRACK1(      EmptyClip     )(AudioClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(       EmptyClip     )(AudioClip);
+        ASSERT_AUDIOTRACK2SIZE(2);
+        ASSERT_AUDIOTRACK1SIZE(2);
+        ASSERT_EQUALS(AudioClip(2, 1)->getLeftPts(), mProjectFixture.OriginalPtsOfAudioClip(0,1));
+        ASSERT_EQUALS(AudioClip(2, 1)->getLength(), mProjectFixture.OriginalLengthOfAudioClip(0,1));
+        ASSERT_EQUALS(AudioClip(1, 1)->getLeftPts(), mProjectFixture.OriginalPtsOfAudioClip(0,2));
+        ASSERT_EQUALS(AudioClip(1, 1)->getLength(), mProjectFixture.OriginalLengthOfAudioClip(0,2));
+        ASSERT_EQUALS(AudioClip(0, 1)->getLeftPts(), mProjectFixture.OriginalPtsOfAudioClip(0,1));
+        ASSERT_EQUALS(AudioClip(0, 2)->getLeftPts(), mProjectFixture.OriginalPtsOfAudioClip(0,3));
+        Undo();
+    }
+}
 
 } // namespace

@@ -24,6 +24,16 @@ wxPoint TimelinePosition()
     return getTimeline().GetScreenPosition();
 }
 
+int NumberOfVideoTracks()
+{
+    return getSequence()->getVideoTracks().size();
+}
+
+int NumberOfAudioTracks()
+{
+    return getSequence()->getAudioTracks().size();
+}
+
 int NumberOfVideoClipsInTrack(int trackindex)
 {
     model::TrackPtr videoTrack = getSequence()->getVideoTrack(trackindex);
@@ -426,6 +436,24 @@ void DeselectAllClips()
         getTimeline().getSelection().unselectAll();
     });
 };
+
+void TimelineSelectClips(model::IClips clips)
+{
+    ASSERT_NONZERO(clips.size());
+    DeselectAllClips();
+    ASSERT_SELECTION_SIZE(0);
+    TimelineLeftClick(Center(clips.front()));
+    clips.erase(clips.begin());
+    if (!clips.empty())
+    {
+        TimelineKeyDown(WXK_CONTROL);
+        for (model::IClipPtr clip : clips)
+        {
+            TimelineLeftClick(Center(clip));
+        }
+        TimelineKeyUp(WXK_CONTROL);
+    }
+}
 
 void DeleteClip(model::IClipPtr clip, bool shift)
 {

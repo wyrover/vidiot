@@ -75,10 +75,22 @@ struct ClipTypeAsserter
 #define CLIPTYPEASSERTER_OP(type, next) CLIPTYPEASSERTER_A.AssertClipType<model::type>().CLIPTYPEASSERTER_ ## next
 #define ASSERT_VIDEOTRACK(TrackNumber,ClipNumber) ClipTypeAsserter(true, TrackNumber,ClipNumber).CLIPTYPEASSERTER_A
 #define ASSERT_AUDIOTRACK(TrackNumber,ClipNumber) ClipTypeAsserter(false,TrackNumber,ClipNumber).CLIPTYPEASSERTER_A
+#define ASSERT_VIDEOTRACK2 ASSERT_VIDEOTRACK(2,0)
 #define ASSERT_VIDEOTRACK1 ASSERT_VIDEOTRACK(1,0)
 #define ASSERT_VIDEOTRACK0 ASSERT_VIDEOTRACK(0,0)
 #define ASSERT_AUDIOTRACK0 ASSERT_AUDIOTRACK(0,0)
 #define ASSERT_AUDIOTRACK1 ASSERT_AUDIOTRACK(1,0)
+#define ASSERT_AUDIOTRACK2 ASSERT_AUDIOTRACK(2,0)
+
+#define ASSERT_VIDEOTRACKS(Count) ASSERT_EQUALS(NumberOfVideoTracks(), Count)
+#define ASSERT_AUDIOTRACKS(Count) ASSERT_EQUALS(NumberOfAudioTracks(), Count)
+
+#define ASSERT_VIDEOTRACK2SIZE(Count) ASSERT_EQUALS(VideoTrack(2)->getClips().size(), Count) 
+#define ASSERT_VIDEOTRACK1SIZE(Count) ASSERT_EQUALS(VideoTrack(1)->getClips().size(), Count) 
+#define ASSERT_VIDEOTRACK0SIZE(Count) ASSERT_EQUALS(VideoTrack(0)->getClips().size(), Count) 
+#define ASSERT_AUDIOTRACK0SIZE(Count) ASSERT_EQUALS(AudioTrack(0)->getClips().size(), Count) 
+#define ASSERT_AUDIOTRACK1SIZE(Count) ASSERT_EQUALS(AudioTrack(1)->getClips().size(), Count) 
+#define ASSERT_AUDIOTRACK2SIZE(Count) ASSERT_EQUALS(AudioTrack(2)->getClips().size(), Count) 
 
 } // namespace
 

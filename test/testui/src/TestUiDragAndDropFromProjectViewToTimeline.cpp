@@ -104,6 +104,34 @@ void TestUiDragAndDropFromProjectViewToTimeline::testDragAndDropStillImageAndUnd
     Scrub(HCenter(VideoClip(0,5)),HCenter(VideoClip(0,5)) + 10);
 }
 
+void TestUiDragAndDropFromProjectViewToTimeline::testDragAndDropIntoNewVideoTrack()
+{
+    StartTestSuite();
+    OpenFolderWithInputFiles();
+    StartTest("Drop a clip from the project view into a newly created video track.");
+    model::NodePtrs fileNodes = mProjectFixture.mRoot->find("02.avi");
+    ASSERT_EQUALS(fileNodes.size(),1);
+    DragFromProjectViewToTimeline(fileNodes.front(), getTimeline().GetScreenPosition() - getTimeline().getScrolling().getOffset() + wxPoint(1, getTimeline().getSequenceView().getVideo().getRect().GetTop() - 2));
+    ASSERT_VIDEOTRACKS(2);
+    ASSERT_VIDEOTRACK1(VideoClip);
+    ASSERT_VIDEOTRACK1SIZE(1);
+    ASSERT_EQUALS(VideoClip(1, 0)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,2));
+}
+    
+void TestUiDragAndDropFromProjectViewToTimeline::testDragAndDropIntoNewAudioTrack()
+{
+    StartTestSuite();
+    OpenFolderWithInputFiles();
+    StartTest("Drop a clip from the project view into a newly created audio track.");
+    model::NodePtrs fileNodes = mProjectFixture.mRoot->find("02.avi");
+    ASSERT_EQUALS(fileNodes.size(),1);
+    DragFromProjectViewToTimeline(fileNodes.front(), getTimeline().GetScreenPosition() - getTimeline().getScrolling().getOffset() + wxPoint(1, getTimeline().getSequenceView().getAudio().getRect().GetBottom() + 2));
+    ASSERT_AUDIOTRACKS(2);
+    ASSERT_AUDIOTRACK1(AudioClip);
+    ASSERT_AUDIOTRACK1SIZE(1);
+    ASSERT_EQUALS(AudioClip(1, 0)->getLength(), mProjectFixture.OriginalLengthOfAudioClip(0,2));
+}
+
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////

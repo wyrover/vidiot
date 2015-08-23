@@ -80,8 +80,8 @@ void TestNewProject::testFolder()
         WaitUntilMainWindowActive(true);
         ASSERT(util::thread::RunInMainReturning<bool>([] { return gui::Window::get().isProjectOpened(); } ));
         ASSERT(gui::TimelinesView::get().hasTimeline());
-        ASSERT_EQUALS(VideoTrack(0)->getClips().size(), paths.size());
-        ASSERT_EQUALS(AudioTrack(0)->getClips().size(), paths.size());
+        ASSERT_VIDEOTRACK0SIZE(paths.size());
+        ASSERT_AUDIOTRACK0SIZE(paths.size());
         ASSERT_EQUALS(model::Properties::get().getFrameRate(), expectedFrameRate);
         ASSERT_EQUALS(model::Properties::get().getAudioSampleRate(), expectedSampleRate);
         ASSERT_EQUALS(model::Properties::get().getAudioNumberOfChannels(), expectedChannels);
@@ -150,8 +150,8 @@ void TestNewProject::testFiles()
     WaitUntilMainWindowActive(true);
     ASSERT(util::thread::RunInMainReturning<bool>([] { return gui::Window::get().isProjectOpened(); } ));
     ASSERT(gui::TimelinesView::get().hasTimeline());
-    ASSERT_EQUALS(VideoTrack(0)->getClips().size(), files.size());
-    ASSERT_EQUALS(AudioTrack(0)->getClips().size(), files.size());
+    ASSERT_VIDEOTRACK0SIZE(files.size());
+    ASSERT_AUDIOTRACK0SIZE(files.size());
     ASSERT_EQUALS(model::Properties::get().getFrameRate(), FrameRate::s24p);
     ASSERT_EQUALS(model::Properties::get().getAudioSampleRate(), 44100);
     ASSERT_EQUALS(model::Properties::get().getAudioNumberOfChannels(), 1);

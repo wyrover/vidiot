@@ -96,8 +96,8 @@ void TestTimelineClipboard::testPasteFromProjectView()
 		StartTest("Paste in timeline");
 		TimelinePositionCursor(RightPixel(VideoTrack(0))); // Also gives focus to timeline
 		WindowTriggerMenu(wxID_PASTE);
-		ASSERT_EQUALS(VideoTrack(0)->getClips().size(), mProjectFixture.InputFiles.size() * 2);
-		ASSERT_EQUALS(AudioTrack(0)->getClips().size(), mProjectFixture.InputFiles.size() * 2);
+		ASSERT_VIDEOTRACK0SIZE(mProjectFixture.InputFiles.size() * 2);
+		ASSERT_AUDIOTRACK0SIZE(mProjectFixture.InputFiles.size() * 2);
 	}
 }
 
@@ -119,8 +119,8 @@ void TestTimelineClipboard::testPasteFromProjectView_IllegalNodes()
 		StartTest("Paste in timeline");
 		TimelinePositionCursor(RightPixel(VideoTrack(0))); // Also gives focus to timeline
 		WindowTriggerMenu(wxID_PASTE);
-		ASSERT_EQUALS(VideoTrack(0)->getClips().size(), mProjectFixture.InputFiles.size());
-		ASSERT_EQUALS(AudioTrack(0)->getClips().size(), mProjectFixture.InputFiles.size());
+		ASSERT_VIDEOTRACK0SIZE(mProjectFixture.InputFiles.size());
+		ASSERT_AUDIOTRACK0SIZE(mProjectFixture.InputFiles.size());
 	}
 }
 
@@ -135,8 +135,8 @@ void TestTimelineClipboard::testPasteFromFileSystem()
 		StartTest("Paste in timeline");
 		TimelinePositionCursor(RightPixel(VideoTrack(0))); // Also gives focus to timeline
 		WindowTriggerMenu(wxID_PASTE);
-		ASSERT_EQUALS(VideoTrack(0)->getClips().size(), mProjectFixture.InputFiles.size() * 2);
-		ASSERT_EQUALS(AudioTrack(0)->getClips().size(), mProjectFixture.InputFiles.size() * 2);
+		ASSERT_VIDEOTRACK0SIZE(mProjectFixture.InputFiles.size() * 2);
+		ASSERT_AUDIOTRACK0SIZE(mProjectFixture.InputFiles.size() * 2);
 	}
 }
 
@@ -153,8 +153,8 @@ void TestTimelineClipboard::testPasteFromFileSystem_IllegalNodes()
 		StartTest("Paste in timeline");
 		TimelinePositionCursor(RightPixel(VideoTrack(0))); // Also gives focus to timeline
 		WindowTriggerMenu(wxID_PASTE);
-		ASSERT_EQUALS(VideoTrack(0)->getClips().size(), mProjectFixture.InputFiles.size());
-		ASSERT_EQUALS(AudioTrack(0)->getClips().size(), mProjectFixture.InputFiles.size());
+		ASSERT_VIDEOTRACK0SIZE(mProjectFixture.InputFiles.size());
+		ASSERT_AUDIOTRACK0SIZE(mProjectFixture.InputFiles.size());
 	}
 }
 
