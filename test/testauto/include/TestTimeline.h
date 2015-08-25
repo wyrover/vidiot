@@ -39,6 +39,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     void testSelection();
+    void testSelectionMultipleTracks();
 
     void testDeletion();
 

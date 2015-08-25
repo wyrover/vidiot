@@ -169,6 +169,58 @@ void TestTimeline::testSelection()
     }
 }
 
+void TestTimeline::testSelectionMultipleTracks()
+{
+    StartTestSuite();
+    WindowTriggerMenu(ID_ADDVIDEOTRACK);
+    WindowTriggerMenu(ID_ADDAUDIOTRACK);
+    TimelineDragToTrack(1, VideoClip(0, 3), AudioClip(0, 3));
+    TimelineDrag(From(Center(VideoClip(1, 1))).AlignLeft(HCenter(VideoClip(0, 1))));
+    TimelineDrag(From(Center(AudioClip(1, 1))).AlignLeft(HCenter(VideoClip(0, 1))));
+    ASSERT_VIDEOTRACK1(EmptyClip)     (VideoClip);
+    ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(EmptyClip)(VideoClip)(VideoClip);
+    ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(EmptyClip)(AudioClip)(AudioClip);
+    ASSERT_AUDIOTRACK1(EmptyClip)     (AudioClip);
+    ASSERT_MORE_THAN(VideoClip(1, 1)->getLeftPts(), VideoClip(0, 1)->getLeftPts());
+    ASSERT_LESS_THAN(VideoClip(1, 1)->getLeftPts(), VideoClip(0, 1)->getRightPts());
+    ASSERT_MORE_THAN(AudioClip(1, 1)->getLeftPts(), AudioClip(0, 1)->getLeftPts());
+    ASSERT_LESS_THAN(AudioClip(1, 1)->getLeftPts(), AudioClip(0, 1)->getRightPts());
+    TimelineDragToTrack(1, VideoClip(0, 5), AudioClip(0, 5));
+    {
+        StartTest("Select all");
+        DeselectAllClips();
+        TimelineKeyDown(WXK_ALT);
+        TimelineLeftClick(Center(VideoClip(0,0)));
+        TimelineKeyUp(WXK_ALT);
+        ASSERT_SELECTION_SIZE(7);
+    }
+    {
+        StartTest("Select before clip - in track 2 - begin");
+        DeselectAllClips();
+        TimelineKeyDown(WXK_ALT);
+        TimelineLeftClick(Center(VideoClip(0,1)));
+        TimelineKeyUp(WXK_ALT);
+        ASSERT_SELECTION_SIZE(6);
+    }
+    {
+        StartTest("Select clip in track 2");
+        DeselectAllClips();
+        TimelineKeyDown(WXK_ALT);
+        TimelineLeftClick(Center(VideoClip(1,1)));
+        TimelineKeyUp(WXK_ALT);
+        ASSERT_SELECTION_SIZE(5);
+    }
+    {
+        StartTest("Select after clip - in track 2 - begin");
+        DeselectAllClips();
+        TimelineKeyDown(WXK_ALT);
+        TimelineLeftClick(Center(VideoClip(0,2)));
+        TimelineKeyUp(WXK_ALT);
+        ASSERT_SELECTION_SIZE(4);
+    }
+}
+
+
 void TestTimeline::testDeletion()
 {
     StartTestSuite();

@@ -87,16 +87,15 @@ void Selection::updateOnLeftDown(const PointerPositionInfo& info)
         if (altPressed)
         {
             // Select until the end
-            model::IClipPtr firstclip;
-            for ( model::IClipPtr c : track->getClips() )
+            pts fromPts = clip->getLeftPts();
+            for (model::TrackPtr track_ : getSequence()->getTracks())
             {
-                if (c == clip)
+                for (model::IClipPtr c : track_->getClips())
                 {
-                    firstclip = c;
-                }
-                if (firstclip)
-                {
-                    selectClipAndLink(c , !mLeftDownWasSelected);
+                    if (c->getLeftPts() >= fromPts)
+                    {
+                        selectClipAndLink(c, !mLeftDownWasSelected);
+                    }
                 }
             }
             setPreviouslyClicked(clip);
@@ -341,6 +340,11 @@ model::IClipPtr Selection::getClip(const PointerPositionInfo& info) const
 
 void Selection::selectClipAndLink(const model::IClipPtr& clip, bool selected)
 {
+    if (clip && clip->isA<model::EmptyClip>())
+    {
+        // Empty clips cannot be selected.
+        return;
+    }
     selectClip(clip,selected);
     model::IClipPtr link = clip->getLink();
     if (link)
