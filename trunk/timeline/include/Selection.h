@@ -82,6 +82,7 @@ private:
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
+    model::IClipPtr getClip(const PointerPositionInfo& info) const;
     void selectClipAndLink(const model::IClipPtr& clip, bool selected);
     void selectClip(const model::IClipPtr& clip, bool selected);
     void setPreviouslyClicked(const model::IClipPtr& clip);

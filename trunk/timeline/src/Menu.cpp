@@ -227,12 +227,10 @@ void MenuHandler::onTriggerPopupMenu(wxCommandEvent& event)
         }
     };
 
-    bool selectedEmptyClip = false;
     bool selectedMediaClip = false;
     std::set< model::IClipPtr > selection = getSequence()->getSelectedClips();
     for (model::IClipPtr selectedClip : selection)
     {
-        if (selectedClip->isA<model::EmptyClip>()) { selectedEmptyClip = true; }
         if (selectedClip->isA<model::VideoClip>()) { selectedMediaClip = true; }
         if (selectedClip->isA<model::AudioClip>()) { selectedMediaClip = true; }
     }
@@ -369,8 +367,8 @@ void MenuHandler::onTriggerPopupMenu(wxCommandEvent& event)
     add(menu, wxID_COPY, _("Copy"), true, selectedMediaClip, false);
     add(menu, wxID_PASTE, _("Paste here"), true, canPaste, false);
     add(menu, ID_REMOVE_EMPTY, _("Remove &empty space"), clickedOnEmptyClip, clickedOnEmptyClip, true);
-    add(menu, ID_DELETE_CLIPS, _("&Delete selected\tDel"), selectedMediaClip, !selectedEmptyClip, true);
-    add(menu, ID_DELETE_TRIM_CLIPS, _("Delete and &Trim selected\tShift+Del"), selectedMediaClip, !selectedEmptyClip, false);
+    add(menu, ID_DELETE_CLIPS, _("&Delete selected\tDel"), selectedMediaClip, true, true);
+    add(menu, ID_DELETE_TRIM_CLIPS, _("Delete and &Trim selected\tShift+Del"), selectedMediaClip, true, false);
     add(menu, ID_UNLINK_CLIPS, _("&Unlink audio and video clips"), selectedMediaClip, enableUnlink, true);
 
     if (menu.GetMenuItemCount() > 0)
