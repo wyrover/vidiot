@@ -75,7 +75,7 @@ void Selection::updateOnLeftDown(const PointerPositionInfo& info)
     }
     
     // Determine the 'logically clicked' clip and track
-    model::IClipPtr clip = info.getLogicalClip();
+    model::IClipPtr clip = getClip(info);
     mLeftDown = clip;
     mLeftDownWasSelected = clip ? clip->getSelected() : false;
 
@@ -182,7 +182,7 @@ void Selection::updateOnLeftUp(const PointerPositionInfo& info)
     bool shiftPressed = getKeyboard().getShiftDown();
     bool altPressed = getKeyboard().getAltDown();
     VAR_DEBUG(info)(shiftPressed)(altPressed);
-    model::IClipPtr clip = info.getLogicalClip();
+    model::IClipPtr clip = getClip(info);
 
     if (clip)
     {
@@ -224,8 +224,7 @@ void Selection::updateOnRightClick(const PointerPositionInfo& info)
     bool ctrlPressed = getKeyboard().getCtrlDown();
     bool shiftPressed = getKeyboard().getShiftDown();
     bool altPressed = getKeyboard().getAltDown();
-
-    model::IClipPtr clip = info.getLogicalClip();
+    model::IClipPtr clip = getClip(info);
 
     VAR_DEBUG(clip)(ctrlPressed)(shiftPressed)(altPressed);
 
@@ -259,6 +258,7 @@ void Selection::updateOnRightClick(const PointerPositionInfo& info)
 void Selection::updateOnTrim(const model::IClipPtr& clip)
 {
     ASSERT(clip);
+    ASSERT(!clip->isA<model::EmptyClip>())(clip);
     deselectAll();
     selectClipAndLink(clip, true);
 }
@@ -326,6 +326,18 @@ void Selection::updateOnEdit()
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
+
+model::IClipPtr Selection::getClip(const PointerPositionInfo& info) const
+{
+    model::IClipPtr result = info.getLogicalClip();
+    if (result && 
+        result->isA<model::EmptyClip>())
+    {
+        // Empty clips cannot be selected.
+        result = nullptr;
+    }
+    return result;
+}
 
 void Selection::selectClipAndLink(const model::IClipPtr& clip, bool selected)
 {

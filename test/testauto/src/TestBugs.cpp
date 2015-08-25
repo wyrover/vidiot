@@ -762,4 +762,25 @@ void TestBugs::testCrashWhenEnlargingUnlinkedAudioClipBeyondFileLength()
     ASSERT_EQUALS(AudioClip(0, 2)->getLength(), mProjectFixture.OriginalLengthOfAudioClip(0,2));
 }
 
+void TestBugs::testCrashAfterSelectingAnEmptyClip()
+{
+    StartTestSuite();
+    DeleteClip(VideoClip(0,1));
+    ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip);
+    TimelineLeftClick(Center(VideoClip(0,1)));
+    ASSERT_NO_DETAILSCLIP();
+    ASSERT_SELECTION_SIZE(0);
+    TimelineLeftClick(Center(VideoClip(0,0)));
+    ASSERT_DETAILSCLIP(VideoClip(0,0));
+    ASSERT_SELECTION_SIZE(1);
+    TimelineLeftClick(Center(VideoClip(0,1)));
+    ASSERT_DETAILSCLIP(VideoClip(0,0));
+    ASSERT_SELECTION_SIZE(1);
+    TimelineKeyDown(WXK_CONTROL);
+    TimelineLeftClick(Center(VideoClip(0,1)));
+    TimelineKeyUp(WXK_CONTROL);
+    ASSERT_DETAILSCLIP(VideoClip(0,0));
+    ASSERT_SELECTION_SIZE(1);
+}
+
 } // namespace

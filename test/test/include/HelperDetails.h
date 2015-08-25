@@ -28,6 +28,7 @@ namespace test {
 
 gui::timeline::DetailsClip* DetailsClipView();
 
+void ASSERT_NO_DETAILSCLIP();
 void ASSERT_DETAILSCLIP(model::IClipPtr clip);
 
 /// Check the properties of the current details view and the given clip

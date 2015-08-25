@@ -211,6 +211,11 @@ public:
     /// Caused crash.
     void testCrashWhenEnlargingUnlinkedAudioClipBeyondFileLength();
 
+    /// Selecting a clip should not be possible (at time of bug anyway).
+    /// By left clicking on an empty clip is was selected. Then, pressing
+    /// a length button in the details view caused a crash.
+    void testCrashAfterSelectingAnEmptyClip();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////
