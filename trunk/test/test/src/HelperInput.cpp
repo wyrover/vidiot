@@ -139,6 +139,7 @@ struct CurrentTimelineInputState
     CurrentTimelineInputState()
         : ControlDown(false)
         , ShiftDown(false)
+        , AltDown(false)
         , LeftDown(false)
         , RightDown(false)
         , Position(0,0)
@@ -156,6 +157,7 @@ struct CurrentTimelineInputState
         wxMouseState state;
         state.SetControlDown(ControlDown);
         state.SetShiftDown(ShiftDown);
+        state.SetAltDown(AltDown);
         state.SetLeftDown(LeftDown);
         state.SetRightDown(RightDown);
         state.SetPosition(Position);
@@ -164,6 +166,7 @@ struct CurrentTimelineInputState
 
     bool ControlDown;
     bool ShiftDown;
+    bool AltDown;
     bool LeftDown;
     bool RightDown;
     wxPoint Position;
@@ -347,6 +350,10 @@ void TimelineKeyDown(int key)
                 ASSERT(!CurrentTimelineInputState::Get().ControlDown);
                 CurrentTimelineInputState::Get().ControlDown = true;
                 break;
+            case WXK_ALT:
+                ASSERT(!CurrentTimelineInputState::Get().AltDown);
+                CurrentTimelineInputState::Get().AltDown = true;
+                break;
             }
             wxMouseState state = CurrentTimelineInputState::Get().getWxMouseState();
             gui::timeline::state::EvKeyDown event(state,key);
@@ -374,6 +381,10 @@ void TimelineKeyUp(int key)
             case WXK_CONTROL:
                 ASSERT(CurrentTimelineInputState::Get().ControlDown);
                 CurrentTimelineInputState::Get().ControlDown = false;
+                break;
+            case WXK_ALT:
+                ASSERT(CurrentTimelineInputState::Get().AltDown);
+                CurrentTimelineInputState::Get().AltDown = false;
                 break;
             }
             wxMouseState state = CurrentTimelineInputState::Get().getWxMouseState();

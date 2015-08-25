@@ -234,7 +234,6 @@ void Machine::handleMiddleDown(EvMiddleDown& event)
     process_event(event);
 }
 
-
 void Machine::onMiddleUp(wxMouseEvent& event)
 {
     EvMiddleUp eventMiddleUp(event);
