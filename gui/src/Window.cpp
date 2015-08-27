@@ -380,6 +380,14 @@ Window::Window()
             item->SetItemLabel(item->GetItemLabelText() + "\tCtrl-W");
         }
     }
+    for (wxMenuItem* item : menuhelp->GetMenuItems())
+    {
+        if (item->GetId() == wxID_HELP)
+        {
+            // This menu entry does not get an accelerator by default. Add Ctrl-H.
+            item->SetItemLabel(item->GetItemLabelText() + "\tCtrl-H");
+        }
+    }
 
     if (Config::ReadBool(Config::sPathTestCxxMode))
     {

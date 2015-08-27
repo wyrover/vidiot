@@ -67,6 +67,8 @@ public:
 
     void toggleSnapping(); ///< Temporarily disable/enable snap-to-whatever
 
+    void toggleTrimLink(); ///< Temporarily disable/enable trimming the linked clip also.
+
     /// Abort a pending trim operation. If changes were made, undo them.
     void stop();
 
@@ -88,7 +90,8 @@ private:
     wxPoint mStartPosition;         ///< Mouse position (in unscrolled coordinates) when the trimming was started
     MouseOnClipPosition mPosition;  ///< Logical positin where the trimming was started
     pts mStartPts;                  ///< Position (in pts values) when the trimming was started
-    bool mSnappingEnabled;          ///< Used to overrule snapping during a drag operation.
+    bool mSnappingEnabled;          ///< Used to overrule snapping during a trim operation.
+    bool mTrimLink;                 ///< Used to overrule trimming the link simultaneously.
 
     command::TrimClip* mCommand;    ///< The command that executes the Trim operation
 

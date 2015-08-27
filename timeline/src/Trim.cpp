@@ -83,6 +83,7 @@ void Trim::start()
     // Reset first
     mActive = true;
     mSnappingEnabled = true;
+    mTrimLink = true;
     // Do not replace with virtual position since the virtual canvas is
     // changed because of shift trimming and keeping one clip edge aligned.
     mStartPosition = getMouse().getPhysicalPosition();
@@ -296,11 +297,11 @@ void Trim::update()
     VAR_DEBUG(this);
     getTimeline().beginTransaction();
 
-    mCommand->update(determineTrimDiff(), false);
+    mCommand->update(determineTrimDiff(), false, mTrimLink);
     getTimeline().getDetails().get<DetailsTrim>()->show(mCommand->getOriginalClip(), mCommand->getNewClip(), mCommand->getOriginalLink(), mCommand->getNewLink());
     preview();
 
-    if (getKeyboard().getShiftDown() && mCommand->isBeginTrim())
+    if (mCommand->isShiftTrim() && mCommand->isBeginTrim())
     {
         // Ensure that the rightmost pts is kept at the same position when shift dragging
         getTimeline().setShift(getZoom().ptsToPixels(mCommand->getDiff()));
@@ -320,6 +321,12 @@ void Trim::update()
 void Trim::toggleSnapping()
 {
     mSnappingEnabled = !mSnappingEnabled;
+    update();
+}
+
+void Trim::toggleTrimLink()
+{
+    mTrimLink = !mTrimLink;
     update();
 }
 
@@ -353,7 +360,7 @@ void Trim::submit()
     mActive = false; // Ensure snaps are no longer shown (typical case: shfit begin trim with snap to cursor)
     if (mCommand->getDiff() != 0)
     {
-        bool shiftBeginTrim = getKeyboard().getShiftDown() && mCommand->isBeginTrim();
+        bool shiftBeginTrim = mCommand->isShiftTrim() && mCommand->isBeginTrim();
         pts diff = mCommand->getDiff();
 
         // Only submit the command if there's an actual diff to be applied
@@ -501,7 +508,7 @@ void Trim::preview()
     pts position(mStartPositionPreview + diff);
     wxSize playerSize = getPlayer()->getVideoSize();
     bool isBeginTrim = mCommand->isBeginTrim();
-    bool drawSideBySide = getKeyboard().getShiftDown() && mAdjacentBitmap;
+    bool drawSideBySide = mCommand->isShiftTrim() && mAdjacentBitmap;
 
     bool completelyTrimmedAway = false;
     if (position == preview->getLength())
