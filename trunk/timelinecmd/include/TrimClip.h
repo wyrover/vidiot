@@ -48,9 +48,8 @@ public:
     /// To be called when the trim value is changed (for instance, when mouse is moved during trimming, or when a 'length' button is pressed in the 'clip details' view).
     /// \param diff amount to enlarge/reduce the clip's size (<0 move to the left, >0 move to the right)
     /// \param shift if true, then a shift trim is enforced. Otherwise, the current keyboard (shift) state is used.
-    /// \param position position when the trim was started.
-    /// \note The position may be changed between differnet updates. Not required for 'normal' (mouse operated) trimming operations, but required for changing a clip's length from the 'clip details' view.
-    void update(pts diff, bool shift);
+    /// \param trimline if true, then the selected clip's linked clip (if any) is trimmed also.
+    void update(pts diff, bool shift, bool trimlink);
 
     /// Set the cursor position to be applied after the trim has been executed.
     /// \param position new cursor position after trimming.
@@ -78,6 +77,7 @@ public:
     static bool isBeginTrim(const MouseOnClipPosition& position);
 
     bool isBeginTrim() const;
+    bool isShiftTrim() const;
 
     pts getDiff() const;
 
@@ -128,6 +128,7 @@ private:
     bool mLinkIsPartOfTransition;           ///< True if mLink is part of a transition (either before or after it). Used to avoid deleting the clip completely (which is prohibited, since a part of the clip must remain for the transition).
     pts mTrim;                              ///< Actual trim adjustment that is applied to mClip
     bool mShift;                            ///< True iff clips in other tracks must be shifted along with the trim operation
+    bool mTrimLink;                         ///< True iff the (trimmed) clip's link must be trimmed also.
     MouseOnClipPosition mPosition;          ///< Logical position where the trim is done
     pts mShiftStart;                        ///< Position at which the shift will start
     model::IClipPtr mReplacementClip;

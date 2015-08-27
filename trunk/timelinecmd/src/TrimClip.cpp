@@ -38,22 +38,23 @@ namespace gui { namespace timeline { namespace command {
 //////////////////////////////////////////////////////////////////////////
 
 TrimClip::TrimClip(const model::SequencePtr& sequence, const model::IClipPtr& clip, const model::TransitionPtr& transition, const MouseOnClipPosition& position)
-    :   AClipEdit(sequence)
-    ,   mOriginalClip(clip)
-    ,   mOriginalLink(mOriginalClip->getLink())
-    ,   mClip()
-    ,   mLink()
-    ,   mNewClip(mOriginalClip)
-    ,   mNewLink(mOriginalLink)
-    ,   mTransition(transition)
-    ,   mLinkTransition()
-    ,   mLinkIsPartOfTransition(false)
-    ,   mClipIsPartOfTransition(false)
-    ,   mTrim(0)
-    ,   mShift(false)
-    ,   mPosition(position)
-    ,   mCursorPositionBefore(0)
-    ,   mCursorPositionAfter(0)
+    : AClipEdit(sequence)
+    , mOriginalClip(clip)
+    , mOriginalLink(mOriginalClip->getLink())
+    , mClip()
+    , mLink()
+    , mNewClip(mOriginalClip)
+    , mNewLink(mOriginalLink)
+    , mTransition(transition)
+    , mLinkTransition()
+    , mLinkIsPartOfTransition(false)
+    , mClipIsPartOfTransition(false)
+    , mTrim(0)
+    , mShift(false)
+    , mTrimLink(true)
+    , mPosition(position)
+    , mCursorPositionBefore(0)
+    , mCursorPositionAfter(0)
 {
     VAR_INFO(this)(mOriginalClip)(mOriginalLink)(mTransition);
     mCommandName = _("Adjust length");
@@ -68,7 +69,7 @@ TrimClip::~TrimClip()
     }
 }
 
-void TrimClip::update(pts diff, bool shift)
+void TrimClip::update(pts diff, bool shift, bool trimlink)
 {
     VAR_DEBUG(diff)(shift);
     mNewClip.reset();
@@ -77,6 +78,8 @@ void TrimClip::update(pts diff, bool shift)
 
     mCursorPositionBefore = getTimeline().getCursor().getLogicalPosition();
     mCursorPositionAfter = mCursorPositionBefore;
+
+    mTrimLink = trimlink;
 
     mCommandName =
         _("Adjust ") +
@@ -91,14 +94,15 @@ void TrimClip::update(pts diff, bool shift)
     }
 
     mShift =
+        !mTrimLink ? false :                                 // When only adjusting one of the two linked clips, shifting is disabled (to simplify implementation, and avoid timeline mess up)
         shift ? true :                                       // Some trim operations are not directly user triggered but a result of - for instance - making room for a transition.
         mOriginalClip->isA<model::Transition>() ? false :    // When trimming a transition, shift does nothing. Reset here to avoid having to deal with that (if-then-else) later on.
-        mShift = getTimeline().getKeyboard().getShiftDown(); // Default: shift trim when shift key is down.
+        getTimeline().getKeyboard().getShiftDown();          // Default: shift trim when shift key is down.
     VAR_INFO(this)(mShift)(diff);
 
     removeTransition();
 
-    TrimLimit limits = determineBoundaries(getSequence(), mClip, mLink, mPosition, mShift);
+    TrimLimit limits = determineBoundaries(getSequence(), mClip, mTrimLink ? mLink : nullptr, mPosition, mShift);
 
     mTrim = diff;
     if (mTrim < limits.Min) { mTrim = limits.Min; }
@@ -200,6 +204,11 @@ bool TrimClip::isBeginTrim(const MouseOnClipPosition& position)
 bool TrimClip::isBeginTrim() const
 {
     return isBeginTrim(mPosition);
+}
+
+bool TrimClip::isShiftTrim() const
+{
+    return mShift;
 }
 
 pts TrimClip::getDiff() const
@@ -440,7 +449,19 @@ void TrimClip::applyTrim()
     };
 
     model::IClips replaceclip = makeTrimmedClone(mClip,mClipIsPartOfTransition);
-    model::IClips replacelink = mLink ? makeTrimmedClone(mLink,mLinkIsPartOfTransition) : model::IClips();
+    model::IClips replacelink = {};
+    if (mLink)
+    {
+        if (mTrimLink)
+        {
+            replacelink = makeTrimmedClone(mLink, mLinkIsPartOfTransition);
+        }
+        else
+        {
+            // Always replace, but in this case with a duplicate clip
+            replacelink = { make_cloned<model::IClip>(mLink) };
+        }
+    }
     mNewClip = (replaceclip.size() > 0) ? replaceclip.front() : model::IClipPtr();
     mNewLink = (replacelink.size() > 0) ? replacelink.front() : model::IClipPtr();
 
@@ -501,7 +522,7 @@ void TrimClip::applyTrim()
                         replacement.insert(replacement.begin(),boost::make_shared<model::EmptyClip>(mTrim)); // Add empty space to keep all clips after the trim in exact the same position
                     };
                     adjustEmptySpace(mClip, replaceclip);
-                    if (mLink) { adjustEmptySpace(mLink, replacelink); }
+                    if (mLink && mTrimLink) { adjustEmptySpace(mLink, replacelink); }
                 }
                 else // (mTrim < 0) // Enlarge: Move clip begin point to the left
                 {
@@ -519,7 +540,7 @@ void TrimClip::applyTrim()
                         adjust(emptyspace, 0, mTrim);
                     };
                     adjustEmptySpace(mClip, replaceclip);
-                    if (mLink) { adjustEmptySpace(mLink, replacelink); }
+                    if (mLink && mTrimLink) { adjustEmptySpace(mLink, replacelink); }
                 }
             }
             else // !mBeginTrim
@@ -538,7 +559,7 @@ void TrimClip::applyTrim()
                         replacement.push_back(boost::make_shared<model::EmptyClip>(-mTrim)); // Add empty space to keep all clips after the trim in exact the same position
                     };
                     adjustEmptySpace(mClip, replaceclip);
-                    if (mLink) { adjustEmptySpace(mLink, replacelink); }
+                    if (mLink && mTrimLink) { adjustEmptySpace(mLink, replacelink); }
                 }
                 else // (mTrim > 0) // Enlarge: Move clip end point to the right
                 {
@@ -559,7 +580,7 @@ void TrimClip::applyTrim()
                         // else: Trimming the last clip in the track (There is not neccessarily an empty clip after it)
                     };
                     adjustEmptySpace(mClip, replaceclip);
-                    if (mLink) { adjustEmptySpace(mLink, replacelink); }
+                    if (mLink && mTrimLink) { adjustEmptySpace(mLink, replacelink); }
                 }
             }
         }

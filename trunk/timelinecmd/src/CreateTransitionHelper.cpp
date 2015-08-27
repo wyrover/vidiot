@@ -68,7 +68,7 @@ void createTransition(const model::SequencePtr& sequence, const model::IClipPtr&
             if (extraNeededLeft < 0)
             {
                 trimLeftCommand = new command::TrimClip(sequence, leftClip, model::TransitionPtr(), ClipEnd);
-                trimLeftCommand->update(extraNeededLeft, true);
+                trimLeftCommand->update(extraNeededLeft, true, true);
             }
 
             leftClip = prevClip ? prevClip->getNext() : track->getClips().front(); // Left clip is changed by the trim left command
@@ -78,7 +78,7 @@ void createTransition(const model::SequencePtr& sequence, const model::IClipPtr&
             if (extraNeededRight > 0)
             {
                 trimRightCommand = new command::TrimClip(sequence, rightClip, model::TransitionPtr(), ClipBegin);
-                trimRightCommand->update(extraNeededRight, true);
+                trimRightCommand->update(extraNeededRight, true, true);
             }
 
             command::CreateTransition* createTransitionCommand = new command::CreateTransition(sequence, leftClip, transition, model::TransitionTypeFadeOutToNext);

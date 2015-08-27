@@ -100,7 +100,7 @@ void SplitAtCursorAndTrim(const model::SequencePtr& sequence, bool backwards)
             pts right = clip->getRightPts(); // Clip will be changed by the trim below, thus store here
 
             pts trim = backwards ? position - left : position - right;
-            cmd->update(trim,true);
+            cmd->update(trim,true,true);
             cmd->setCursorPositionAfter(backwards ? left : position);
             if (cmd->getDiff() != 0)
             {

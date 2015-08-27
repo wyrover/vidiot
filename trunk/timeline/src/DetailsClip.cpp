@@ -651,7 +651,7 @@ void DetailsClip::handleLengthButtonPressed(wxToggleButton* button)
     if (endtrim != 0)
     {
         ::gui::timeline::command::TrimClip* trimCommand = new command::TrimClip(getSequence(), clip, model::TransitionPtr(), transition ? TransitionEnd : ClipEnd);
-        trimCommand->update(endtrim, shift);
+        trimCommand->update(endtrim, shift, true);
         clip = trimCommand->getNewClip();
         transition = boost::dynamic_pointer_cast<model::Transition>(clip);
         command->add(trimCommand);
@@ -681,7 +681,7 @@ void DetailsClip::handleLengthButtonPressed(wxToggleButton* button)
         if (!error)
         {
             ::gui::timeline::command::TrimClip* trimCommand = new command::TrimClip(getSequence(), clip, model::TransitionPtr(), transition ? TransitionBegin : ClipBegin);
-            trimCommand->update(begintrim, shift);
+            trimCommand->update(begintrim, shift, true);
             clip = trimCommand->getNewClip();
             command->add(trimCommand);
         }

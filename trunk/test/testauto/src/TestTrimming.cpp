@@ -233,6 +233,111 @@ void TestTrimming::testTrimmingUnlinkedClip()
     }
 }
 
+void TestTrimming::testTrimmingWithoutTrimmingLink()
+{
+    StartTestSuite();
+    TimelineZoomIn(5);
+    TimelineTrimRight(VideoClip(0,1), -100, false);
+    TimelineTrimLeft(VideoClip(0,1), 100, false);
+    ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(EmptyClip)(VideoClip);
+    ASSERT_AUDIOTRACK0(AudioClip)(EmptyClip)(AudioClip)(EmptyClip)(AudioClip);
+    {
+        StartTest("Video begin enlarge");
+        TimelineTrimLeft(VideoClip(0,2), -50, false, false);
+        TimelineKeyPress('u');
+        TimelineEndTrim(false);
+        ASSERT_LESS_THAN(VideoClip(0, 2)->getLeftPts(), AudioClip(0, 2)->getLeftPts());
+        ASSERT_MORE_THAN(VideoClip(0, 2)->getLength(), AudioClip(0, 2)->getLength());
+        ASSERT_EQUALS(VideoClip(0, 2)->getRightPts(), AudioClip(0, 2)->getRightPts());
+        ASSERT_EQUALS(VideoClip(0, 4)->getLeftPts(), mProjectFixture.OriginalPtsOfVideoClip(0, 2));
+        ASSERT_EQUALS(AudioClip(0, 4)->getLeftPts(), mProjectFixture.OriginalPtsOfAudioClip(0, 2));
+        Undo();
+    }
+    {
+        StartTest("Audio begin enlarge");
+        TimelineTrimLeft(AudioClip(0,2), -50, false, false);
+        TimelineKeyPress('u');
+        TimelineEndTrim(false);
+        ASSERT_LESS_THAN(AudioClip(0, 2)->getLeftPts(), VideoClip(0, 2)->getLeftPts());
+        ASSERT_MORE_THAN(AudioClip(0, 2)->getLength(), VideoClip(0, 2)->getLength());
+        ASSERT_EQUALS(AudioClip(0, 2)->getRightPts(), VideoClip(0, 2)->getRightPts());
+        ASSERT_EQUALS(AudioClip(0, 4)->getLeftPts(), mProjectFixture.OriginalPtsOfAudioClip(0, 2));
+        ASSERT_EQUALS(VideoClip(0, 4)->getLeftPts(), mProjectFixture.OriginalPtsOfVideoClip(0, 2));
+        Undo();
+    }
+    {
+        StartTest("Video begin shrink");
+        TimelineTrimLeft(VideoClip(0,2), 50, false, false);
+        TimelineKeyPress('u');
+        TimelineEndTrim(false);
+        ASSERT_MORE_THAN(VideoClip(0, 2)->getLeftPts(), AudioClip(0, 2)->getLeftPts());
+        ASSERT_LESS_THAN(VideoClip(0, 2)->getLength(), AudioClip(0, 2)->getLength());
+        ASSERT_EQUALS(VideoClip(0, 2)->getRightPts(), AudioClip(0, 2)->getRightPts());
+        ASSERT_EQUALS(VideoClip(0, 4)->getLeftPts(), mProjectFixture.OriginalPtsOfVideoClip(0, 2));
+        ASSERT_EQUALS(AudioClip(0, 4)->getLeftPts(), mProjectFixture.OriginalPtsOfAudioClip(0, 2));
+        Undo();
+    }
+    {
+        StartTest("Audio begin shrink");
+        TimelineTrimLeft(AudioClip(0,2), 50, false, false);
+        TimelineKeyPress('u');
+        TimelineEndTrim(false);
+        ASSERT_MORE_THAN(AudioClip(0, 2)->getLeftPts(), VideoClip(0, 2)->getLeftPts());
+        ASSERT_LESS_THAN(AudioClip(0, 2)->getLength(), VideoClip(0, 2)->getLength());
+        ASSERT_EQUALS(AudioClip(0, 2)->getRightPts(), VideoClip(0, 2)->getRightPts());
+        ASSERT_EQUALS(AudioClip(0, 4)->getLeftPts(), mProjectFixture.OriginalPtsOfAudioClip(0, 2));
+        ASSERT_EQUALS(VideoClip(0, 4)->getLeftPts(), mProjectFixture.OriginalPtsOfVideoClip(0, 2));
+        Undo();
+    }
+    {
+        StartTest("Video end enlarge");
+        TimelineTrimRight(VideoClip(0,2), 50, false, false);
+        TimelineKeyPress('u');
+        TimelineEndTrim(false);
+        ASSERT_MORE_THAN(VideoClip(0, 2)->getRightPts(), AudioClip(0, 2)->getRightPts());
+        ASSERT_MORE_THAN(VideoClip(0, 2)->getLength(), AudioClip(0, 2)->getLength());
+        ASSERT_EQUALS(VideoClip(0, 2)->getLeftPts(), AudioClip(0, 2)->getLeftPts());
+        ASSERT_EQUALS(VideoClip(0, 4)->getLeftPts(), mProjectFixture.OriginalPtsOfVideoClip(0, 2));
+        ASSERT_EQUALS(AudioClip(0, 4)->getLeftPts(), mProjectFixture.OriginalPtsOfAudioClip(0, 2));
+        Undo();
+    }
+    {
+        StartTest("Audio end enlarge");
+        TimelineTrimRight(AudioClip(0,2), 50, false, false);
+        TimelineKeyPress('u');
+        TimelineEndTrim(false);
+        ASSERT_MORE_THAN(AudioClip(0, 2)->getRightPts(), VideoClip(0, 2)->getRightPts());
+        ASSERT_MORE_THAN(AudioClip(0, 2)->getLength(), VideoClip(0, 2)->getLength());
+        ASSERT_EQUALS(AudioClip(0, 2)->getLeftPts(), VideoClip(0, 2)->getLeftPts());
+        ASSERT_EQUALS(AudioClip(0, 4)->getLeftPts(), mProjectFixture.OriginalPtsOfAudioClip(0, 2));
+        ASSERT_EQUALS(VideoClip(0, 4)->getLeftPts(), mProjectFixture.OriginalPtsOfVideoClip(0, 2));
+        Undo();
+    }
+    {
+        StartTest("Video end shrink");
+        TimelineTrimRight(VideoClip(0,2), -50, false, false);
+        TimelineKeyPress('u');
+        TimelineEndTrim(false);
+        ASSERT_LESS_THAN(VideoClip(0, 2)->getRightPts(), AudioClip(0, 2)->getRightPts());
+        ASSERT_LESS_THAN(VideoClip(0, 2)->getLength(), AudioClip(0, 2)->getLength());
+        ASSERT_EQUALS(VideoClip(0, 2)->getLeftPts(), AudioClip(0, 2)->getLeftPts());
+        ASSERT_EQUALS(VideoClip(0, 4)->getLeftPts(), mProjectFixture.OriginalPtsOfVideoClip(0, 2));
+        ASSERT_EQUALS(AudioClip(0, 4)->getLeftPts(), mProjectFixture.OriginalPtsOfAudioClip(0, 2));
+        Undo();
+    }
+    {
+        StartTest("Audio end shrink");
+        TimelineTrimRight(AudioClip(0,2), -50, false, false);
+        TimelineKeyPress('u');
+        TimelineEndTrim(false);
+        ASSERT_LESS_THAN(AudioClip(0, 2)->getRightPts(), VideoClip(0, 2)->getRightPts());
+        ASSERT_LESS_THAN(AudioClip(0, 2)->getLength(), VideoClip(0, 2)->getLength());
+        ASSERT_EQUALS(AudioClip(0, 2)->getLeftPts(), VideoClip(0, 2)->getLeftPts());
+        ASSERT_EQUALS(AudioClip(0, 4)->getLeftPts(), mProjectFixture.OriginalPtsOfAudioClip(0, 2));
+        ASSERT_EQUALS(VideoClip(0, 4)->getLeftPts(), mProjectFixture.OriginalPtsOfVideoClip(0, 2));
+        Undo();
+    }
+}
 
 
 } // namespace

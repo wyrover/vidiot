@@ -39,8 +39,8 @@ const wxString StateTrim::sTooltip = _(
 //////////////////////////////////////////////////////////////////////////
 
 StateTrim::StateTrim( my_context ctx ) // entry
-    :   TimeLineState( ctx )
-    ,   mShiftDown(getKeyboard().getShiftDown())
+    : TimeLineState(ctx)
+    , mShiftDown(getKeyboard().getShiftDown())
 {
     getTrim().start();
 }
@@ -111,6 +111,11 @@ boost::statechart::result StateTrim::react( const EvKeyDown& evt)
         evt.consumed();
         getTrim().toggleSnapping();  
         break;
+    case 'u':
+    case 'U':           
+        evt.consumed();
+        getTrim().toggleTrimLink();
+        getTrim().update();  
     }
     return forward_event();
 }
@@ -132,6 +137,10 @@ boost::statechart::result StateTrim::react( const EvKeyUp& evt)
         break;
     case 'd':
     case 'D':           
+        evt.consumed();
+        break;
+    case 'u':
+    case 'U':           
         evt.consumed();
         break;
     }

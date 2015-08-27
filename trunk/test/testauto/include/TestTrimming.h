@@ -46,6 +46,8 @@ public:
 
     void testTrimmingUnlinkedClip();
 
+    void testTrimmingWithoutTrimmingLink();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////
