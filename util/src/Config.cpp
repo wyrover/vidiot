@@ -176,6 +176,7 @@ void Config::init(const wxString& applicationName, const wxString& vendorName, b
     setDefault(Config::sPathMakeSequencePrefixLength, 14);
     setDefault(Config::sPathTimelineMarkerBeginAddition, 0);
     setDefault(Config::sPathTimelineMarkerEndAddition, 0);
+    setDefault(Config::sPathTimelineLengthButtons, "250,500,1000,1500,2000,2500,3000,5000,10000"); // Keep in sync with defaults in DetailsClip
     setDefault(Config::sPathVideoShowBoundingBox, true);
     setDefault(Config::sPathDebugShowDebugInfoOnWidgets, false);
     setDefault(Config::sPathTimelineSnapClips, true);
@@ -456,6 +457,7 @@ const wxString Config::sPathTimelineMarkerEndAddition("/Timeline/MarkerEndAdditi
 const wxString Config::sPathTimelineSnapClips("/Timeline/SnapClips");
 const wxString Config::sPathTimelineSnapCursor("/Timeline/SnapCursor");
 const wxString Config::sPathTimelineStripFromClipNames("/Timeline/StripFromClipNames");
+const wxString Config::sPathTimelineLengthButtons("/Timeline/LengthButtonsTimesInMilliseconds");
 const wxString Config::sPathVideoDefaultAlignment("/Video/DefaultAlignment");
 const wxString Config::sPathVideoDefaultFrameRate("/Video/DefaultFrameRate");
 const wxString Config::sPathVideoDefaultHeight("/Video/DefaultHeight");

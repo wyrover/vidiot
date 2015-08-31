@@ -22,6 +22,7 @@
 #include "ClipPreview.h"
 #include "Combiner.h"
 #include "CommandProcessor.h"
+#include "Config.h"
 #include "Constants.h"
 #include "Convert.h"
 #include "Cursor.h"
@@ -110,22 +111,48 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
 
     addBox(_("Duration"));
 
+    {
+        // Read lengths from config
+        wxString lengthButtons = wxConfigBase::Get()->Read(Config::sPathTimelineLengthButtons, "");
+        wxStringTokenizer t(lengthButtons, ",", wxTOKEN_STRTOK);
+        while (t.HasMoreTokens() && mLengths.size() < 9) // Keys/Buttons 1-9 may be customized.
+        {
+            wxString token(t.GetNextToken());
+            int length{ wxAtoi(token) };
+            length = std::max(length, 100); // Too small values may cause errors in clip length logic.
+            length = std::min(length, 3600000);
+            mLengths.push_back(length);
+            std::sort(mLengths.begin(), mLengths.end());
+            auto endIt = std::unique(mLengths.begin(), mLengths.end());
+            mLengths.resize( std::distance(mLengths.begin(), endIt) );
+        }
+        if (mLengths.empty())
+        {
+            mLengths = { 250, 500, 1000, 1500, 2000, 2500, 3000, 5000, 10000 }; // Keep in sync with defaults in Config. The defaults in config ensure that after startup the setting is present in the file.
+            wxString configValue;
+            for (int i : mLengths) { configValue << i << ','; }
+            wxConfigBase::Get()->Write(Config::sPathTimelineLengthButtons, configValue);
+            wxConfigBase::Get()->Flush();
+        }
+    }
+
     mCurrentLength = new wxStaticText(this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT | wxST_NO_AUTORESIZE);
     addOption(_("Current length"), mCurrentLength);
 
-    std::vector<int> defaultLengths = { 250, 500, 1000, 1500, 2000, 2500, 3000 };
-    wxStrings labels = { "0.25", "0.5", "1.0", "1.5", "2.0", "2.5", "3.0" };
     wxPanel* lengthbuttonspanel = new wxPanel(this);
     lengthbuttonspanel->SetSizer(new wxBoxSizer(wxHORIZONTAL));
-    auto it = defaultLengths.begin();
-    auto itLabel = labels.begin();
-    for (auto it = defaultLengths.begin(); it != defaultLengths.end(); ++it, ++itLabel)
+    for (unsigned int i = 0; i < mLengths.size(); ++i)
     {
-        int length = *it;
+        std::ostringstream os;
+        os << std::setprecision(3) << std::fixed << static_cast<float>(mLengths[i]) / 1000.0;
+        wxString label(os.str());
+        if (label.EndsWith('0')) { label.RemoveLast(); }
+        if (label.EndsWith('0')) { label.RemoveLast(); }
+
         // Use the integer as id
-        wxToggleButton* button = new wxToggleButton(lengthbuttonspanel, length, *itLabel, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+        wxToggleButton* button = new wxToggleButton(lengthbuttonspanel, i, label, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
         button->SetWindowVariant( wxWINDOW_VARIANT_SMALL );
-        button->SetToolTip(_("Change the length of the clip to this length. Will shift other clips to avoid introducing a black area."));
+        button->SetToolTip(_("Change the length of the clip to this length. Will shift other clips to avoid introducing a black area.") + _(" Shortcut key: ") + "'" + wxString::Format("%d", i + 1) + "'");
         lengthbuttonspanel->GetSizer()->Add(button,wxSizerFlags(1));
         button->Bind( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, &DetailsClip::onLengthButtonPressed, this);
         mLengthButtons.push_back(button);
@@ -496,6 +523,12 @@ void DetailsClip::setClip(const model::IClipPtr& clip)
     Layout();
 }
 
+pts DetailsClip::getLength(wxToggleButton* button) const
+{
+    ASSERT_LESS_THAN(button->GetId(), static_cast<int>(mLengths.size()));
+    return model::Convert::timeToPts(mLengths[button->GetId()]);
+}
+
 //////////////////////////////////////////////////////////////////////////
 // GUI EVENTS
 //////////////////////////////////////////////////////////////////////////
@@ -627,12 +660,38 @@ void DetailsClip::onVolumeSpinChanged(wxSpinEvent& event)
     event.Skip();
 }
 
+void DetailsClip::onTimelineKey(int keycode)
+{
+    switch (keycode)
+    {
+        case '1':
+        case '2':
+        case '3':
+        case '4':
+        case '5':
+        case '6':
+        case '7':
+        case '8':
+        case '9':
+        {
+            unsigned int index = keycode - '1';
+            if (index < mLengthButtons.size())
+            {
+                VAR_DEBUG(index);
+                handleLengthButtonPressed(mLengthButtons[index]);
+            }
+            break;
+        }
+    }
+}
+
+
 void DetailsClip::handleLengthButtonPressed(wxToggleButton* button)
 {
     ASSERT_NONZERO(button);
     ASSERT(wxThread::IsMain());
     if (!button->IsEnabled()) { return; }
-    pts length = model::Convert::timeToPts(button->GetId());
+    pts length = getLength(button);
     VAR_INFO(length);
     ASSERT(mTrimAtEnd.find(length) != mTrimAtEnd.end())(mTrimAtEnd)(length);
     ASSERT(mTrimAtBegin.find(length) != mTrimAtBegin.end())(mTrimAtBegin)(length);
@@ -1074,7 +1133,7 @@ void DetailsClip::determineClipSizeBounds()
     mTrimAtEnd.clear();
     for ( wxToggleButton* button : mLengthButtons )
     {
-        pts length = model::Convert::timeToPts(button->GetId());
+        pts length = getLength(button);
         mTrimAtEnd[length] = 0; // Default: no trim
         mTrimAtBegin[length] = 0; // Default: no trim
         if (length != clipPerceivedLength)
@@ -1095,13 +1154,13 @@ void DetailsClip::determineClipSizeBounds()
                 {
                     // Size reduction
                     mTrimAtEnd[length] = limitsEndTrim.Min;
-                    mTrimAtBegin[length] = (clipPerceivedLength - length) + limitsEndTrim.Min;
+                    mTrimAtBegin[length] = (clipPerceivedLength - length) + limitsEndTrim.Min; // Reduce with the size used for the end trim. Note: limitsEndTrim.Min <= 0! (hence, the '+' before limitsEndTrim)
                 }
                 else
                 {
                     // Size enlargement
                     mTrimAtEnd[length] = limitsEndTrim.Max;
-                    mTrimAtBegin[length] = (clipPerceivedLength - length) - limitsEndTrim.Max;
+                    mTrimAtBegin[length] = (clipPerceivedLength - length) + limitsEndTrim.Max; // Reduce with the size used for the end trim. Note: trim at begin <= 0! (hence, the '+' before limitsEndTrim)
                 }
             }
         }
@@ -1129,7 +1188,7 @@ void DetailsClip::updateLengthButtons()
 
     for ( wxToggleButton* button : mLengthButtons )
     {
-        pts length = model::Convert::timeToPts(button->GetId());
+        pts length = getLength(button);
         button->SetValue(mClip && currentLength == length);
         button->Disable();
 

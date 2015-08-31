@@ -837,8 +837,11 @@ void Window::onConfig(wxCommandEvent& event)
         Dialog::get().getConfirmation(_("Attention"),
             _("Note that changing this file will not update the gui.\n"
             "Changed settings are applied only after restarting the application.\n"
+            "Note that Vidiot, when closing, also updates the file. Therefore, always\n"
+            "close Vidiot first, before editing and saving this file in a text editor.\n"
+            "\n\n"
             "Incorrectly changed settings may cause the application to crash upon startup.\n"
-            "If that happens, delete the file from disk (or make the file empty) and restart.\n"));
+            "If that happens, delete the file from disk (or make the file empty) and restart Vidiot.\n"));
         shown = true;
     }
     if (!wxLaunchDefaultApplication(util::path::getConfigFilePath().GetFullPath()))

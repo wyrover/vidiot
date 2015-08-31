@@ -134,6 +134,7 @@ public:
     static const wxString sPathTimelineSnapClips;
     static const wxString sPathTimelineSnapCursor;
     static const wxString sPathTimelineStripFromClipNames;
+    static const wxString sPathTimelineLengthButtons;
     static const wxString sPathVideoDefaultAlignment;
     static const wxString sPathVideoDefaultFrameRate;
     static const wxString sPathVideoDefaultHeight;

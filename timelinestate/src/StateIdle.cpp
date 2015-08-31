@@ -22,6 +22,8 @@
 #include "ClipView.h"
 #include "CreateTransitionHelper.h"
 #include "Cursor.h"
+#include "Details.h"
+#include "DetailsClip.h"
 #include "Drag.h"
 #include "EmptyClip.h"
 #include "EventClipboard.h"
@@ -157,6 +159,21 @@ boost::statechart::result Idle::react( const EvKeyDown& evt)
         case WXK_F1:
         {
             getTooltip().show(sTooltip);
+            break;
+        }
+        case '1':
+        case '2':
+        case '3':
+        case '4':
+        case '5':
+        case '6':
+        case '7':
+        case '8':
+        case '9':
+        case '0':
+        {
+            getDetails().get<DetailsClip>()->onTimelineKey(evt.KeyCode);
+            evt.consumed();
             break;
         }
         case 'b':

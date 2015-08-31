@@ -36,7 +36,7 @@ namespace gui { namespace timeline {
 
 //todo added audio track that should cause addition of vert scroll bar. scrol bar did not appear.
 
-    struct RenderPeaksWork
+struct RenderPeaksWork
     : public RenderClipPreviewWork
 {
     // Here, all access to folder must be done, not in the worker thread.
