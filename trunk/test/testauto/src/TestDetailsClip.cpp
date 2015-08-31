@@ -44,51 +44,44 @@ void TestDetailsClip::testChangeLength()
 {
     StartTestSuite();
     TimelineZoomIn(2);
-
-    auto ASSERT_ORIGINAL_CLIPPROPERTIES = []
-    {
-        ASSERT_CLIPPROPERTIES(
-            VideoClip(0,3),
-            model::VideoScalingFitToFill,
-            boost::rational<int>(8000,model::Constants::sScalingPrecisionFactor),
-            model::VideoAlignmentCenter,
-            wxPoint(-152,0),
-            0); };
+    WindowTriggerMenu(ID_SHOW_PROJECT);
 
     StartTest("If one clip is selected the details view changes accordingly.");
-    TimelineLeftClick(Center(VideoClip(0,3)));
-    ASSERT_DETAILSCLIP(VideoClip(0,3));
-    ASSERT_ORIGINAL_CLIPPROPERTIES();
+    TimelineLeftClick(Center(VideoClip(0, 3)));
+    ASSERT_DETAILSCLIP(VideoClip(0, 3));
+        ASSERT_CLIPPROPERTIES(
+            VideoClip(0, 3),
+            model::VideoScalingFitToFill,
+            boost::rational<int>(8000, model::Constants::sScalingPrecisionFactor),
+            model::VideoAlignmentCenter,
+            wxPoint(-152, 0),
+            0);
     ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
     ASSERT_SELECTION_SIZE(1); // Clip and link selected
-    pts originalLength = VideoClip(0,3)->getLength();
+    pts originalLength = VideoClip(0, 3)->getLength();
 
-    auto pressLengthButton = [this] (wxToggleButton* button, bool enlarge, bool begin) -> int
+    auto pressLengthButton = [this](wxToggleButton* button, bool enlarge, bool begin) -> int
     {
-        pts oldLength = VideoClip(0,3)->getLength();
+        pts oldLength = VideoClip(0, 3)->getLength();
         std::ostringstream o;
-        o << "LengthButton: " << (enlarge?"Enlarge":"Reduce") << " clip length (on " << (begin?"left":"right") << " side) to " << getLength(button);
+        o << "LengthButton: " << (enlarge ? "Enlarge" : "Reduce") << " clip length (on " << (begin ? "left" : "right") << " side) to " << DetailsClipView()->getLength(button);
         StartTest(o.str().c_str());
         WaitForIdle;
         bool enabled = button->IsEnabled();
-        util::thread::RunInMainAndWait(boost::bind(&gui::timeline::DetailsClip::handleLengthButtonPressed,DetailsClipView(),button));
         ASSERT_SELECTION_SIZE(1); // Clip and link selected
         if (enabled)
         {
+            util::thread::RunInMainAndWait(boost::bind(&gui::timeline::DetailsClip::handleLengthButtonPressed, DetailsClipView(), button));
             ASSERT_CURRENT_COMMAND_TYPE<::command::Combiner>();
-            ASSERT_IMPLIES( enlarge, VideoClip(0,3)->getLength() >= oldLength)(VideoClip(0,3)->getLength())(oldLength);
-            ASSERT_IMPLIES(!enlarge, VideoClip(0,3)->getLength() <= oldLength)(VideoClip(0,3)->getLength())(oldLength);
-            ASSERT(VideoClip(0,3)->getSelected());
-            ASSERT_EQUALS(VideoClip(0,3)->getLength(), getLength(button));
-            ASSERT_EQUALS(AudioClip(0,3)->getLength(), getLength(button));
-            ASSERT_IMPLIES( begin, VideoClip(0,3)->getMaxAdjustEnd() == 0); // Check that the clip was trimmed at the begin
-            ASSERT_IMPLIES( begin, AudioClip(0,3)->getMaxAdjustEnd() == 0); // Check that the clip was trimmed at the begin
-            ASSERT_IMPLIES(!begin, VideoClip(0,3)->getMinAdjustBegin() == 0); // Check that the clip was trimmed at the end
-            ASSERT_IMPLIES(!begin, AudioClip(0,3)->getMinAdjustBegin() == 0); // Check that the clip was trimmed at the end
-        }
-        else
-        {
-            ASSERT_EQUALS(VideoClip(0,3)->getLength(), oldLength);
+            ASSERT_IMPLIES(enlarge, VideoClip(0, 3)->getLength() >= oldLength)(VideoClip(0, 3)->getLength())(oldLength);
+            ASSERT_IMPLIES(!enlarge, VideoClip(0, 3)->getLength() <= oldLength)(VideoClip(0, 3)->getLength())(oldLength);
+            ASSERT(VideoClip(0, 3)->getSelected());
+            ASSERT_EQUALS(VideoClip(0, 3)->getLength(), DetailsClipView()->getLength(button));
+            ASSERT_EQUALS(AudioClip(0, 3)->getLength(), DetailsClipView()->getLength(button));
+            ASSERT_IMPLIES(begin, VideoClip(0, 3)->getMaxAdjustEnd() == 0); // Check that the clip was trimmed at the begin
+            ASSERT_IMPLIES(begin, AudioClip(0, 3)->getMaxAdjustEnd() == 0); // Check that the clip was trimmed at the begin
+            ASSERT_IMPLIES(!begin, VideoClip(0, 3)->getMinAdjustBegin() == 0); // Check that the clip was trimmed at the end
+            ASSERT_IMPLIES(!begin, AudioClip(0, 3)->getMinAdjustBegin() == 0); // Check that the clip was trimmed at the end
         }
         return enabled ? 1 : 0;
     };
@@ -96,49 +89,51 @@ void TestDetailsClip::testChangeLength()
         // Test reducing the length on the right side (the default side)
         std::vector<wxToggleButton*> buttons = DetailsClipView()->getLengthButtons(); // Can't use reverse on temporary inside for loop
         int nChanges = 0;
-        for ( wxToggleButton* button : boost::adaptors::reverse(buttons) )
+        for (wxToggleButton* button : boost::adaptors::reverse(buttons))
         {
-            nChanges += pressLengthButton(button,false,false);
+            nChanges += pressLengthButton(button, false, false);
         }
-        for ( wxToggleButton* button : buttons )
+        for (wxToggleButton* button : buttons)
         {
-            nChanges += pressLengthButton(button,true,false);
+            nChanges += pressLengthButton(button, true, false);
         }
         Undo(nChanges);
-        ASSERT_EQUALS(VideoClip(0,3)->getLength(), originalLength);
-        ASSERT_EQUALS(AudioClip(0,3)->getLength(), originalLength);
+        ASSERT_EQUALS(VideoClip(0, 3)->getLength(), originalLength);
+        ASSERT_EQUALS(AudioClip(0, 3)->getLength(), originalLength);
         ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
     }
 
     {
-        // Test reducing the length on the left side (can be triggered by overlapping the right side with a clip in another track)
+        StartTest("Test reducing the length on the left side (triggered by overlapping right side with clip in another track.");
         WindowTriggerMenu(ID_ADDAUDIOTRACK);
         WindowTriggerMenu(ID_ADDVIDEOTRACK);
-        TimelineDragToTrack(1,VideoClip(0,5),AudioClip(0,5));
-
-        for ( wxToggleButton* button : DetailsClipView()->getLengthButtons() )
+        TimelineDragToTrack(1, VideoClip(0, 5), AudioClip(0, 5));
+        for (int index : { 0, 1, 2, 3, 4, 5, 6, 7 }) // Not all sizes possible (10s too large too 'fill up' on the right side and then trim on the left side - would need a 20s clip for that)
         {
-            TimelineDrag(From(Center(VideoClip(1,1))).AlignLeft(RightPixel(VideoClip(0,3)) - getTimeline().getZoom().ptsToPixels(getLength(button) -1)));
-            TimelineLeftClick(Center(VideoClip(0,3)));
-            for ( wxToggleButton* otherButton : DetailsClipView()->getLengthButtons() )
+            wxToggleButton* button = DetailsClipView()->getLengthButtons()[index];
+            pts length{ DetailsClipView()->getLength(button) };
+            TimelineDrag(From(Center(VideoClip(1, 1))).AlignLeft(RightPixel(VideoClip(0, 3)) - getTimeline().getZoom().ptsToPixels(length)));
+            TimelineLeftClick(Center(VideoClip(0, 3)));
+            ASSERT(button->IsEnabled());
+            for (wxToggleButton* otherButton : DetailsClipView()->getLengthButtons())
             {
-                ASSERT_IMPLIES(getLength(otherButton) >= getLength(button), otherButton->IsEnabled())(getLength(otherButton))(getLength(button));
-                ASSERT_IMPLIES(getLength(otherButton) <  getLength(button),!otherButton->IsEnabled())(getLength(otherButton))(getLength(button));
+                pts otherLength{ DetailsClipView()->getLength(otherButton) };
+                ASSERT_IMPLIES(otherLength < length, !otherButton->IsEnabled())(otherLength)(length);
             }
-            pressLengthButton(button,false,true);
+            pressLengthButton(button, false, true);
             Undo(2); // Undo: adjust length, dragndrop
         }
-        TimelineTrimLeft(VideoClip(0,3),getTimeline().getZoom().ptsToPixels(VideoClip(0,3)->getLength() - 2)); // Smaller length than the 'smallest' button
-        TimelineLeftClick(Center(VideoClip(0,3))); // Exclusively select clip 4, since the shift trim above selects multiple clips
-        for ( wxToggleButton* button : DetailsClipView()->getLengthButtons() )
+        TimelineTrimLeft(VideoClip(0, 3), getTimeline().getZoom().ptsToPixels(VideoClip(0, 3)->getLength() - 2)); // Smaller length than the 'smallest' button
+        TimelineLeftClick(Center(VideoClip(0, 3))); // Exclusively select clip 4, since the shift trim above selects multiple clips
+        for (wxToggleButton* button : DetailsClipView()->getLengthButtons())
         {
             ASSERT(button->IsEnabled());
-            pressLengthButton(button,true,true);
+            pressLengthButton(button, true, true);
             Undo(); // Undo: adjust length. Note: Undoing here also revealed a bug here, when the 'TrimClip::doExtraAfter -> change selection' caused 'no selection changed update'
         }
         Undo(4); // Undo TimelineTrimLeft, ExecuteDrop, Add video track, Add audio track
-        ASSERT_EQUALS(VideoClip(0,3)->getLength(), originalLength);
-        ASSERT_EQUALS(AudioClip(0,3)->getLength(), originalLength);
+        ASSERT_EQUALS(VideoClip(0, 3)->getLength(), originalLength);
+        ASSERT_EQUALS(AudioClip(0, 3)->getLength(), originalLength);
         ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
     }
 }
@@ -147,6 +142,7 @@ void TestDetailsClip::testChangeLengthTooMuch()
 {
     StartTestSuite();
     TimelineZoomIn(5);
+    WindowTriggerMenu(ID_SHOW_PROJECT);
 
     MakeInOutTransitionAfterClip outTransition(1,true);
     ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip);
@@ -156,18 +152,24 @@ void TestDetailsClip::testChangeLengthTooMuch()
     ASSERT_AUDIOTRACK0(AudioClip)(Transition)(AudioClip)(Transition)(AudioClip);
     TimelineLeftClick(Center(AudioClip(0,2))); // Selects both the video and the audio clip
 
-    pts minLength = *(AudioClip(0,2)->getInTransition()->getRight()) + *(AudioClip(0,2)->getOutTransition()->getLeft());
-    for ( wxToggleButton* button : DetailsClipView()->getLengthButtons() )
+    model::IClipPtr clip = AudioClip(0,2);
+    pts minLength = *(clip->getInTransition()->getRight()) + *(clip->getOutTransition()->getLeft());
+    pts maxLength = clip->getLength() + clip->getMinAdjustBegin() + clip->getMaxAdjustEnd();
+
+    for (int index : { 0, 1, 8 })
     {
-        pts buttonlength = getLength(button);
-        ASSERT_EQUALS(buttonlength >= minLength, button->IsEnabled());
-        if (buttonlength >= minLength)
-        {
-            util::thread::RunInMainAndWait(boost::bind(&gui::timeline::DetailsClip::handleLengthButtonPressed,DetailsClipView(),button));
-            ASSERT_CURRENT_COMMAND_TYPE<::command::Combiner>();
-            ASSERT_EQUALS(VideoClip(0,1)->getLength(), buttonlength); // Note: video clip has the same length, audio clip is smaller
-            Undo();
-        }
+        ASSERT(!DetailsClipView()->getLengthButtons()[index]->IsEnabled());
+    }
+
+    for (int index : {2, 3, 4, 5, 6, 7})
+    {
+        wxToggleButton* button = DetailsClipView()->getLengthButtons()[index];
+        pts buttonlength = DetailsClipView()->getLength(button);
+        ASSERT(button->IsEnabled());
+        util::thread::RunInMainAndWait(boost::bind(&gui::timeline::DetailsClip::handleLengthButtonPressed, DetailsClipView(), button));
+        ASSERT_CURRENT_COMMAND_TYPE<::command::Combiner>();
+        ASSERT_EQUALS(VideoClip(0, 1)->getLength(), buttonlength); // Note: video clip has the same length, audio clip is smaller
+        Undo();
     }
 }
 
@@ -175,34 +177,45 @@ void TestDetailsClip::testChangeLengthOfTransition()
 {
     StartTestSuite();
     TimelineZoomIn(6);
-    auto pressLengthButtons = [this] ()
+    WindowTriggerMenu(ID_SHOW_PROJECT);
+
+    auto selectClipAndPressLengthButtons = [this] (std::vector<int> enabledButtons, std::vector<int> disabledButtons)
     {
-        for ( wxToggleButton* button : DetailsClipView()->getLengthButtons() )
+        TimelineLeftClick(VTopQuarterHCenter(VideoClip(0,2))); // Select transition
+        ASSERT_DETAILSCLIP(VideoClip(0,2));
+        ASSERT(VideoClip(0,2)->isA<model::Transition>());
+        ASSERT_EQUALS(getSelectedClipsCount(),1); // Transition
+
+        for (int index : disabledButtons)
         {
-            pts oldLength = VideoClip(0,2)->getLength();
+            ASSERT(!DetailsClipView()->getLengthButtons()[index]->IsEnabled());
+        }
+
+        for (int index : enabledButtons)
+        {
+            wxToggleButton* button = DetailsClipView()->getLengthButtons()[index];
+            pts length = DetailsClipView()->getLength(button);
+            ASSERT(button->IsEnabled());
+            pts oldLength = VideoClip(0, 2)->getLength();
             std::ostringstream o;
-            o << "LengthButton: Change transition length to " << getLength(button);
+            o << "LengthButton: Change transition length to " << length;
             StartTest(o.str().c_str());
-            util::thread::RunInMainAndWait(boost::bind(&gui::timeline::DetailsClip::handleLengthButtonPressed,DetailsClipView(),button));
-            ASSERT_EQUALS(getSelectedClipsCount(),1); // Transition
+            util::thread::RunInMainAndWait(boost::bind(&gui::timeline::DetailsClip::handleLengthButtonPressed, DetailsClipView(), button));
+            ASSERT_EQUALS(getSelectedClipsCount(), 1); // Transition
             ASSERT_CURRENT_COMMAND_TYPE<::command::Combiner>();
-            ASSERT_EQUALS(VideoClip(0,2)->getLength(),getLength(button));
-            ASSERT(VideoClip(0,2)->getSelected());
+            ASSERT_EQUALS(VideoClip(0, 2)->getLength(), length);
+            ASSERT(VideoClip(0, 2)->getSelected());
             Undo(); // Undo: adjust length. Note: Undoing here also revealed a bug here, when the 'TrimClip::doExtraAfter -> change selection' caused 'no selection changed update'
         }
     };
 
     {
         StartTest("InOutTransition: Change length via details view.");
-        TimelineTrimRight(VideoClip(0,1),-100); // Make all lengths available
-        TimelineTrimLeft(VideoClip(0,2),100); // Make all lengths available
+        TimelineTrimRight(VideoClip(0,1),-100); // Make lengths available
+        TimelineTrimLeft(VideoClip(0,2),100); // Make lengths available
         {
             MakeInOutTransitionAfterClip preparation(1);
-            TimelineLeftClick(VTopQuarterHCenter(VideoClip(0,2))); // Select transition
-            ASSERT_DETAILSCLIP(VideoClip(0,2));
-            ASSERT(VideoClip(0,2)->isA<model::Transition>());
-            ASSERT_EQUALS(getSelectedClipsCount(),1); // Transition
-            pressLengthButtons();
+            selectClipAndPressLengthButtons({ 0, 1, 2, 3, 4, 5, 6, 7 }, { 8 }); // 10s button is disabled
         }
         Undo(2);
         DeselectAllClips();
@@ -210,20 +223,12 @@ void TestDetailsClip::testChangeLengthOfTransition()
     {
         StartTest("InTransition: Change length via details view.");
         MakeInTransitionAfterClip preparation(1);
-        TimelineLeftClick(VTopQuarterHCenter(VideoClip(0,2))); // Select transition
-        ASSERT_DETAILSCLIP(VideoClip(0,2));
-        ASSERT(VideoClip(0,2)->isA<model::Transition>());
-        ASSERT_EQUALS(getSelectedClipsCount(),1); // Transition
-        pressLengthButtons();
+        selectClipAndPressLengthButtons({ 0, 1, 2, 3, 4, 5, 6, 7, 8 }, {});
     }
     {
         StartTest("OutTransition: Change length via details view.");
         MakeOutTransitionAfterClip preparation(1);
-        TimelineLeftClick(VTopQuarterHCenter(VideoClip(0,2))); // Select transition
-        ASSERT_DETAILSCLIP(VideoClip(0,2));
-        ASSERT(VideoClip(0,2)->isA<model::Transition>());
-        ASSERT_EQUALS(getSelectedClipsCount(),1); // Transition
-        pressLengthButtons();
+        selectClipAndPressLengthButtons({ 0, 1, 2, 3, 4, 5, 6, 7 }, { 8 }); // 10s button is disabled
     }
 }
 
@@ -231,31 +236,30 @@ void TestDetailsClip::testChangeLengthAfterCreatingTransition()
 {
     StartTestSuite();
     TimelineZoomIn(2);
+    WindowTriggerMenu(ID_SHOW_PROJECT);
+
     pts defaultTransitionLength = Config::ReadLong(Config::sPathTimelineDefaultTransitionLength);
-    auto pressLengthButtons = [this] (std::string name, pts minimumsize)
+    auto pressLengthButtons = [this] (std::string name, std::vector<int> enabledButtons, std::vector<int> disabledButtons)
     {
-        for ( wxToggleButton* button : DetailsClipView()->getLengthButtons() )
+        for (int index : disabledButtons)
         {
+            ASSERT(!DetailsClipView()->getLengthButtons()[index]->IsEnabled());
+        }
+        for (int index : enabledButtons)
+        {
+            wxToggleButton* button = DetailsClipView()->getLengthButtons()[index];
             pts oldLength = VideoClip(0,2)->getPerceivedLength();
-            pts buttonLength = getLength(button);
-            bool buttonEnabled = button->IsEnabled();
+            pts buttonLength = DetailsClipView()->getLength(button);
+            ASSERT(button->IsEnabled());
             std::ostringstream o;
             o << name << ": length = " << buttonLength;
             StartTest(o.str().c_str());
-            ASSERT_EQUALS(buttonEnabled, buttonLength >= minimumsize);
             util::thread::RunInMainAndWait(boost::bind(&gui::timeline::DetailsClip::handleLengthButtonPressed,DetailsClipView(),button));
             ASSERT_EQUALS(getSelectedClipsCount(),2);
             ASSERT(VideoClip(0,2)->getSelected());
-            if (buttonEnabled)
-            {
-                ASSERT_CURRENT_COMMAND_TYPE<::command::Combiner>();
-                ASSERT_EQUALS(VideoClip(0,2)->getPerceivedLength(), getLength(button));
-                Undo(); // Undo: adjust length. Note: Undoing here also revealed a bug here, when the 'TrimClip::doExtraAfter -> change selection' caused 'no selection changed update'
-            }
-            else
-            {
-                ASSERT_EQUALS(VideoClip(0,2)->getPerceivedLength(), oldLength);
-            }
+            ASSERT_CURRENT_COMMAND_TYPE<::command::Combiner>();
+            ASSERT_EQUALS(VideoClip(0,2)->getPerceivedLength(), DetailsClipView()->getLength(button));
+            Undo(); // Undo: adjust length. Note: Undoing here also revealed a bug here, when the 'TrimClip::doExtraAfter -> change selection' caused 'no selection changed update'
         }
     };
     {
@@ -263,7 +267,7 @@ void TestDetailsClip::testChangeLengthAfterCreatingTransition()
         TimelineLeftClick(Center(VideoClip(0,1)));
         TimelineKeyPress('i');
         ASSERT_DETAILSCLIP(VideoClip(0,2));
-        pressLengthButtons("InTransition", defaultTransitionLength / 2);
+        pressLengthButtons("InTransition", { 1, 2, 3, 4, 5, 6, 7 }, { 0, 8 });
         Undo(); // Remove transition
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip);
         ASSERT_CURRENT_COMMAND_TYPE<::command::ProjectViewCreateSequence>();
@@ -273,7 +277,7 @@ void TestDetailsClip::testChangeLengthAfterCreatingTransition()
         TimelineLeftClick(Center(VideoClip(0,2)));
         TimelineKeyPress('o');
         ASSERT_DETAILSCLIP(VideoClip(0,2));
-        pressLengthButtons("OutTransition", defaultTransitionLength / 2);
+        pressLengthButtons("OutTransition", { 1, 2, 3, 4, 5, 6, 7, 8 }, { 0 });
         Undo(); // Remove transition
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip);
         ASSERT_CURRENT_COMMAND_TYPE<::command::ProjectViewCreateSequence>();
@@ -283,7 +287,7 @@ void TestDetailsClip::testChangeLengthAfterCreatingTransition()
         TimelineLeftClick(LeftCenter(VideoClip(0,1)));
         TimelineKeyPress('p');
         ASSERT_DETAILSCLIP(VideoClip(0,2));
-        pressLengthButtons("InOutTransition", defaultTransitionLength / 2);
+        pressLengthButtons("InOutTransition", { 1, 2, 3, 4, 5, 6, 7 }, { 0, 8 });
         Undo(); // Remove transition
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip);
         ASSERT_CURRENT_COMMAND_TYPE<::command::ProjectViewCreateSequence>();
@@ -293,7 +297,7 @@ void TestDetailsClip::testChangeLengthAfterCreatingTransition()
         TimelineLeftClick(RightCenter(VideoClip(0,2)));
         TimelineKeyPress('n');
         ASSERT_DETAILSCLIP(VideoClip(0,2));
-        pressLengthButtons("OutInTransition", defaultTransitionLength / 2);
+        pressLengthButtons("OutInTransition", { 1, 2, 3, 4, 5, 6, 7, 8 }, { 0 });
         Undo(); // Remove transition
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip);
         ASSERT_CURRENT_COMMAND_TYPE<::command::ProjectViewCreateSequence>();
@@ -306,7 +310,7 @@ void TestDetailsClip::testChangeLengthAfterCreatingTransition()
         TimelineKeyPress('p');
         ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip)(Transition);
         ASSERT_DETAILSCLIP(VideoClip(0,2));
-        pressLengthButtons("In+Out Transitions", defaultTransitionLength);
+        pressLengthButtons("In+Out Transitions", { 2, 3, 4, 5, 6, 7 }, { 0, 1, 8 });
         Undo(2); // Remove transitions
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip);
         ASSERT_CURRENT_COMMAND_TYPE<::command::ProjectViewCreateSequence>();
@@ -319,7 +323,7 @@ void TestDetailsClip::testChangeLengthAfterCreatingTransition()
         TimelineKeyPress('p');
         ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip)(Transition);
         ASSERT_DETAILSCLIP(VideoClip(0,2));
-        pressLengthButtons("InOut+OutIn Transitions", defaultTransitionLength);
+        pressLengthButtons("InOut+OutIn Transitions", { 2, 3, 4, 5, 6, 7 }, { 0, 1, 8 });
         Undo(2); // Remove transitions
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip);
         ASSERT_CURRENT_COMMAND_TYPE<::command::ProjectViewCreateSequence>();
@@ -663,14 +667,5 @@ void TestDetailsClip::testEditClipDuringPlayback()
         stopped.wait();
     }
 }
-
-//////////////////////////////////////////////////////////////////////////
-// HELPER METHODS
-//////////////////////////////////////////////////////////////////////////
-
-pts TestDetailsClip::getLength(wxToggleButton* button)
-{
-    return model::Convert::timeToPts(button->GetId());
-};
 
 } // namespace

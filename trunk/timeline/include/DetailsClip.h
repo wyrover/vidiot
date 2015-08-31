@@ -65,6 +65,8 @@ public:
     model::IClipPtr getClip() const;
     void setClip(const model::IClipPtr& clip);
 
+    pts getLength(wxToggleButton* button) const;
+
     //////////////////////////////////////////////////////////////////////////
     // GUI EVENTS
     //////////////////////////////////////////////////////////////////////////
@@ -85,6 +87,9 @@ public:
     void onPositionYSpinChanged(wxSpinEvent& event);
     void onVolumeSliderChanged(wxCommandEvent& event);
     void onVolumeSpinChanged(wxSpinEvent& event);
+
+    // Triggered from a keyboard action in the timeline
+    void onTimelineKey(int keycode);
 
     // Separated for testability: receiving the user action and handling it.
     void handleLengthButtonPressed(wxToggleButton* button);
@@ -144,6 +149,7 @@ private:
     model::TransitionPtr mTransitionClone;
 
     wxStaticText* mCurrentLength;
+    std::vector<pts> mLengths;
     std::vector<wxToggleButton*> mLengthButtons;
     std::map<pts, pts> mTrimAtBegin;
     std::map<pts, pts> mTrimAtEnd;

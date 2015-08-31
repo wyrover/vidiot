@@ -208,7 +208,7 @@ model::TrackPtr ExecuteDrop::onAddTrack(bool video)
     {
         VAR_INFO(*this)(video);
         mNewAudioTrack = boost::make_shared<model::AudioTrack>();
-        getSequence()->addAudioTracks({ mNewAudioTrack }); // todo make parametrized method ?
+        getSequence()->addAudioTracks({ mNewAudioTrack });
         return mNewAudioTrack;
     }
     return nullptr;
