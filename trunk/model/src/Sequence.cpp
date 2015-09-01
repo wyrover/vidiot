@@ -211,6 +211,9 @@ void Sequence::addVideoTracks(const Tracks& tracks, const TrackPtr& position)
     model::EventAddVideoTracks event(TrackChange(tracks, position));
     ProcessEvent(event);
 
+    EventHeightChanged heightEvent(-1);
+    ProcessEvent(heightEvent);
+
     // This may NOT be called before the add/remove event is sent: updateLength() may cause view updates,
     // which cause accesses to the model. By that time, all views must know the proper list of tracks.
     updateLength();
@@ -233,6 +236,9 @@ void Sequence::addAudioTracks(const Tracks& tracks, const TrackPtr& position)
     model::EventAddAudioTracks event(TrackChange(tracks, position));
     ProcessEvent(event);
 
+    EventHeightChanged heightEvent(-1);
+    ProcessEvent(heightEvent);
+
     // This may NOT be called before the add/remove event is sent: updateLength() may cause view updates,
     // which cause accesses to the model. By that time, all views must know the proper list of tracks.
     updateLength();
@@ -249,10 +255,14 @@ void Sequence::removeVideoTracks(const Tracks& tracks)
     TrackPtr position = UtilVector<TrackPtr>(mVideoTracks).removeElements(tracks);
 
     updateTracks();
+
     // ProcessEvent is used. Model events must be processed synchronously to avoid inconsistent states in
     // the receivers of these events (typically, the view classes in the timeline). Example: See addVideoTracks.
     model::EventRemoveVideoTracks event(TrackChange(Tracks(),TrackPtr(),tracks, position));
     ProcessEvent(event);
+
+    EventHeightChanged heightEvent(-1);
+    ProcessEvent(heightEvent);
 
     // This may NOT be called before the add/remove event is sent: updateLength() may cause view updates,
     // which cause accesses to the model. By that time, all views must know the proper list of tracks.
@@ -270,10 +280,14 @@ void Sequence::removeAudioTracks(const Tracks& tracks)
     TrackPtr position = UtilVector<TrackPtr>(mAudioTracks).removeElements(tracks);
 
     updateTracks();
+
     // ProcessEvent is used. Model events must be processed synchronously to avoid inconsistent states in
     // the receivers of these events (typically, the view classes in the timeline). Example: See addVideoTracks.
     model::EventRemoveAudioTracks event(TrackChange(Tracks(),TrackPtr(),tracks, position));
     ProcessEvent(event);
+
+    EventHeightChanged heightEvent(-1);
+    ProcessEvent(heightEvent);
 
     // This may NOT be called before the add/remove event is sent: updateLength() may cause view updates,
     // which cause accesses to the model. By that time, all views must know the proper list of tracks.
