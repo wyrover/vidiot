@@ -111,7 +111,7 @@ Timeline::Timeline(wxWindow *parent, const model::SequencePtr& sequence, bool be
         // Delayed until after first resize event.
         // Otherwise GTK port will call 'alignCenterPts...' before the
         // widget's size is properly initialized.
-        mExecuteOnIdle = boost::bind(&Timeline::alignCenterPtsAfterInitialization, this); // Run this when the whole startup is done.
+        mExecuteOnIdle = std::bind(&Timeline::alignCenterPtsAfterInitialization, this); // Run this when the whole startup is done.
     };
 }
 
@@ -144,7 +144,7 @@ Timeline::~Timeline()
     Window::get().getPreview().closeTimeline(this); // This closes the Player
     mPlayer = 0;
     mBufferBitmap.reset();
-    mExecuteOnIdle.clear();
+    mExecuteOnIdle = nullptr;
 
     mSequence->clean();
 }
@@ -351,7 +351,7 @@ void Timeline::onSize(wxSizeEvent& event)
     if (mExecuteOnSize)
     {
         mExecuteOnSize();
-        mExecuteOnSize.clear();
+        mExecuteOnSize = nullptr;
     }
     wxSize size = GetClientSize();
     mBufferBitmap.reset(new wxBitmap(size));
@@ -629,7 +629,7 @@ void Timeline::alignCenterPtsAfterInitialization()
 
     getScrolling().alignCenterPts();
     getCursor().setLogicalPosition(getCursor().getLogicalPosition()); // Set to the proper position after loading
-    mExecuteOnIdle = boost::bind(&Timeline::readFocusedThumbnails, this);
+    mExecuteOnIdle = std::bind(&Timeline::readFocusedThumbnails, this);
 }
 
 void Timeline::readFocusedThumbnails()
@@ -644,7 +644,7 @@ void Timeline::readFocusedThumbnails()
     Refresh();
 
     // Upon idle all other thumbnails are rendered
-    mExecuteOnIdle = boost::bind(&Timeline::readInitialThumbnailsAfterInitialization, this);
+    mExecuteOnIdle = std::bind(&Timeline::readInitialThumbnailsAfterInitialization, this);
 }
 
 void Timeline::readInitialThumbnailsAfterInitialization()
@@ -653,7 +653,7 @@ void Timeline::readInitialThumbnailsAfterInitialization()
     {
         view->scheduleInitialRendering();
     }
-    mExecuteOnIdle.clear();
+    mExecuteOnIdle = nullptr;
     ignoreIdleEvents();
 }
 

@@ -229,8 +229,8 @@ private:
 
     wxBitmapPtr mBufferBitmap;
 
-    boost::function<void()> mExecuteOnIdle;
-    boost::function<void()> mExecuteOnSize;
+    std::function<void()> mExecuteOnIdle;
+    std::function<void()> mExecuteOnSize;
 
     bool mRenderThumbnails;
 

@@ -59,7 +59,7 @@ class RenderWork : public worker::Work
 {
 public:
     RenderWork(const SequencePtr& sequence, pts from, pts to)
-    :   worker::Work(boost::bind(&RenderWork::generate,this))
+    :   worker::Work(std::bind(&RenderWork::generate,this))
     ,   mSequence(sequence)
     ,   mFrom(from)
     {

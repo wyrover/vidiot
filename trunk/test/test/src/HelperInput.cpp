@@ -34,7 +34,7 @@ struct WaitHelper
         static WaitHelper sInstance;
         return sInstance;
     }
-    static void ExecuteAndWait(boost::function<void()> f)
+    static void ExecuteAndWait(std::function<void()> f)
     {
         f();
         if (WaitHelper::Get().Value)

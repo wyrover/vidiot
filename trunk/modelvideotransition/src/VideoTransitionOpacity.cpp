@@ -77,7 +77,7 @@ VideoFramePtr VideoTransitionOpacity::getVideo(pts position, const IClipPtr& lef
                             float factor = (float)position / (float)getLength();
                             if (image)
                             {
-                                boost::function<float (int,int)> f =
+                                std::function<float (int,int)> f =
                                     left ? getLeftMethod(image, factor) : getRightMethod(image, factor);
                                 if (image->HasAlpha())
                                 {
@@ -104,7 +104,7 @@ VideoFramePtr VideoTransitionOpacity::getVideo(pts position, const IClipPtr& lef
     return result;
 };
 
-void VideoTransitionOpacity::applyToAllPixels(const wxImagePtr& image, const boost::function<float (int, int)>& f) const
+void VideoTransitionOpacity::applyToAllPixels(const wxImagePtr& image, const std::function<float (int, int)>& f) const
 {
     // Each pixel done separately (existing alpha may be != max opacity)
     int opacityLineWidth = image->GetWidth();
@@ -124,7 +124,7 @@ void VideoTransitionOpacity::applyToAllPixels(const wxImagePtr& image, const boo
     }
 }
 
-void VideoTransitionOpacity::applyToFirstLineThenCopy(const wxImagePtr& image, const boost::function<float (int, int)>& f) const
+void VideoTransitionOpacity::applyToFirstLineThenCopy(const wxImagePtr& image, const std::function<float (int, int)>& f) const
 {
     // Optimized for speed. Do one line, then copy that line.
     int opacityLineWidth = image->GetWidth();

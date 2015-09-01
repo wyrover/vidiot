@@ -95,7 +95,7 @@ wxString Dialog::getDir(const wxString& message, const wxString& defaultValue, w
         return result;
     }
     if (!parent) { parent = &Window::get(); }
-    return util::thread::RunInMainReturning<wxString>(boost::bind(&wxDirSelector, message, defaultValue, wxDD_DEFAULT_STYLE, wxDefaultPosition, parent));
+    return util::thread::RunInMainReturning<wxString>(std::bind(&wxDirSelector, message, defaultValue, wxDD_DEFAULT_STYLE, wxDefaultPosition, parent));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -115,7 +115,7 @@ wxString Dialog::getSaveFile(const wxString& message, const wxString& filetypes,
         return result;
     }
     if (!parent) { parent = &Window::get(); }
-    return util::thread::RunInMainReturning<wxString>(boost::bind(&wxFileSelector, message, defaultpath, defaultfilename, defaultextension, filetypes, wxFD_SAVE | wxFD_OVERWRITE_PROMPT, parent, wxDefaultCoord, wxDefaultCoord ));
+    return util::thread::RunInMainReturning<wxString>(std::bind(&wxFileSelector, message, defaultpath, defaultfilename, defaultextension, filetypes, wxFD_SAVE | wxFD_OVERWRITE_PROMPT, parent, wxDefaultCoord, wxDefaultCoord ));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -153,7 +153,7 @@ wxStrings Dialog::getFiles(const wxString& message, const wxString& filetypes, w
         return result;
     }
     if (!parent) { parent = &Window::get(); }
-    return util::thread::RunInMainReturning<wxStrings>(boost::bind(getFilesList, message, filetypes, parent));
+    return util::thread::RunInMainReturning<wxStrings>(std::bind(getFilesList, message, filetypes, parent));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -173,7 +173,7 @@ wxString Dialog::getText(const wxString& title, const wxString& message, const w
         return result;
     }
     if (!parent) { parent = &Window::get(); }
-    return util::thread::RunInMainReturning<wxString>(boost::bind(&wxGetTextFromUser, message, title, defaultValue, parent, wxDefaultCoord, wxDefaultCoord, true));
+    return util::thread::RunInMainReturning<wxString>(std::bind(&wxGetTextFromUser, message, title, defaultValue, parent, wxDefaultCoord, wxDefaultCoord, true));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -206,7 +206,10 @@ wxString Dialog::getComboText(const wxString& title, const wxString& message, co
         }
         ++i;
     }
-    return util::thread::RunInMainReturning<wxString>(boost::bind(&wxGetSingleChoice, message, title, choices, initial, parent));
+    return util::thread::RunInMainReturning<wxString>([message, title, choices, initial, parent]
+    {
+        return wxGetSingleChoice(message, title, choices, initial, parent);
+    });
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -226,7 +229,7 @@ int Dialog::getConfirmation(const wxString& title, const wxString& message, int 
         return result;
     }
     if (!parent) { parent = &Window::get(); }
-    return util::thread::RunInMainReturning<int>(boost::bind(&wxMessageBox, message, title, buttons, parent, wxDefaultCoord, wxDefaultCoord));
+    return util::thread::RunInMainReturning<int>(std::bind(&wxMessageBox, message, title, buttons, parent, wxDefaultCoord, wxDefaultCoord));
 }
 
 //////////////////////////////////////////////////////////////////////////

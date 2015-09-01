@@ -110,7 +110,7 @@ void Worker::schedule(const WorkPtr& work)
     boost::mutex::scoped_lock lock(mMutex);
     if (mThread == nullptr)
     {
-        mThread.reset(new boost::thread(boost::bind(&Worker::thread,this))); // Only start this extra thread if there's actual work. Easier debugging.
+        mThread.reset(new boost::thread(std::bind(&Worker::thread,this))); // Only start this extra thread if there's actual work. Easier debugging.
     }
 }
 

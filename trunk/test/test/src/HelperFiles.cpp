@@ -19,7 +19,7 @@
 
 namespace test {
 
-void ExecuteOnAllFiles(wxString pathToFiles, boost::function<void()> action, bool wait)
+void ExecuteOnAllFiles(wxString pathToFiles, std::function<void()> action, bool wait)
 {
     // Create project (must be done after ConfigOverrule* code)
     model::FolderPtr root = WindowCreateProject();

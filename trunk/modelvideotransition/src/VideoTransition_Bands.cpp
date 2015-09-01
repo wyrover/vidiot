@@ -68,20 +68,20 @@ wxString Bands::getDescription(TransitionType type) const
 // VIDEOTRANSITIONOPACITY
 //////////////////////////////////////////////////////////////////////////
 
-void Bands::handleFullyOpaqueImage(const wxImagePtr& image, const boost::function<float (int, int)>& f) const
+void Bands::handleFullyOpaqueImage(const wxImagePtr& image, const std::function<float (int, int)>& f) const
 {
     applyToFirstLineThenCopy(image,f);
 }
 
-void Bands::handleImageWithAlpha(const wxImagePtr& image, const boost::function<float (int, int)>& f) const
+void Bands::handleImageWithAlpha(const wxImagePtr& image, const std::function<float (int, int)>& f) const
 {
     applyToAllPixels(image,f);
 }
 
-boost::function<float (int,int)> Bands::getLeftMethod(const wxImagePtr& image, const float& factor) const
+std::function<float (int,int)> Bands::getLeftMethod(const wxImagePtr& image, const float& factor) const
 {
     int bandSize = image->GetWidth() / mBands;
-    boost::function<float (int,int)> f = [bandSize,factor](int x, int y) -> float
+    std::function<float (int,int)> f = [bandSize,factor](int x, int y) -> float
     {
         if (x % bandSize >= factor * bandSize)
         {
@@ -92,10 +92,10 @@ boost::function<float (int,int)> Bands::getLeftMethod(const wxImagePtr& image, c
     return f;
 }
 
-boost::function<float (int,int)> Bands::getRightMethod(const wxImagePtr& image, const float& factor) const
+std::function<float (int,int)> Bands::getRightMethod(const wxImagePtr& image, const float& factor) const
 {
     int bandSize = image->GetWidth() / mBands;
-    boost::function<float (int,int)> f =[bandSize,factor](int x, int y) -> float
+    std::function<float (int,int)> f =[bandSize,factor](int x, int y) -> float
     {
         if (x % bandSize <= factor * bandSize)
         {

@@ -53,7 +53,7 @@ bool FixtureGui::setUpWorld()
     mStartTime = time(0);
     try
     {
-        mThread.reset(new boost::thread(boost::bind(&FixtureGui::mainThread,this)));
+        mThread.reset(new boost::thread(std::bind(&FixtureGui::mainThread,this)));
     }
     catch (boost::exception &e)
     {

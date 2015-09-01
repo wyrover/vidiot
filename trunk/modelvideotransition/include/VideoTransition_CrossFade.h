@@ -48,11 +48,11 @@ public:
     // VIDEOTRANSITIONOPACITY
     //////////////////////////////////////////////////////////////////////////
 
-    void handleFullyOpaqueImage(const wxImagePtr& image, const boost::function<float (int, int)>& f) const override;
-    void handleImageWithAlpha(const wxImagePtr& image, const boost::function<float (int, int)>& f) const override;
+    void handleFullyOpaqueImage(const wxImagePtr& image, const std::function<float (int, int)>& f) const override;
+    void handleImageWithAlpha(const wxImagePtr& image, const std::function<float (int, int)>& f) const override;
 
-    boost::function<float (int,int)> getLeftMethod(const wxImagePtr& image, const float& factor) const override;
-    boost::function<float (int,int)> getRightMethod(const wxImagePtr& image, const float& factor) const override;
+    std::function<float (int,int)> getLeftMethod(const wxImagePtr& image, const float& factor) const override;
+    std::function<float (int,int)> getRightMethod(const wxImagePtr& image, const float& factor) const override;
 
 protected:
 
