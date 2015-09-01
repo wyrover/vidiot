@@ -172,7 +172,7 @@ MakeInOutTransitionAfterClip::MakeInOutTransitionAfterClip(int afterclip, bool a
     ASSERT_LESS_THAN_ZERO(GetClip(0,clipNumberAfterTransition)->getMinAdjustBegin())(GetClip(0,clipNumberAfterTransition));
     TimelineTrimRight(GetClip(0,clipNumberBeforeTransition),-30,true);
     ASSERT_MORE_THAN_ZERO(GetClip(0,clipNumberBeforeTransition)->getMaxAdjustEnd())(GetClip(0,clipNumberBeforeTransition));
-    DeselectAllClips();
+    TimelineDeselectAllClips();
 
     makeTransition();
 
@@ -192,7 +192,7 @@ MakeInOutTransitionAfterClip::~MakeInOutTransitionAfterClip()
         Undo(); // Undo TimelineTrimRight
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::TrimClip>();
         Undo(); // Undo TimelineTrimLeft
-        DeselectAllClips(); // Done to avoid 'leaving' selected clips which cause other tests to fail
+        TimelineDeselectAllClips(); // Done to avoid 'leaving' selected clips which cause other tests to fail
     }
 }
 
@@ -222,7 +222,7 @@ MakeInTransitionAfterClip::~MakeInTransitionAfterClip()
     {
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>();
         Undo(); // Undo create transition
-        DeselectAllClips(); // Done to avoid 'leaving' selected clips which cause other tests to fail
+        TimelineDeselectAllClips(); // Done to avoid 'leaving' selected clips which cause other tests to fail
     }
 }
 
@@ -252,7 +252,7 @@ MakeOutTransitionAfterClip::~MakeOutTransitionAfterClip()
     {
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>();
         Undo(); // Undo create transition
-        DeselectAllClips(); // Done to avoid 'leaving' selected clips which cause other tests to fail
+        TimelineDeselectAllClips(); // Done to avoid 'leaving' selected clips which cause other tests to fail
     }
 }
 

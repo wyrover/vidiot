@@ -147,7 +147,7 @@ void TestDragAndDrop::testDnd()
         StartTest("Dragging: With Scrolling Offset: If dragged not close enough to a clip boundary, no snapping is applied.");
         getTimeline().Scroll(80,0);
         ConfigFixture.SnapToClips(true).SnapToCursor(false);
-        DeselectAllClips();
+        TimelineDeselectAllClips();
         TimelineDrag(From(Center(VideoClip(0,2))).AlignLeft(LeftPixel(VideoClip(0,4)) + 25));
         ASSERT_EQUALS(VideoClip(0,5)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,2));
         Undo();
@@ -156,7 +156,7 @@ void TestDragAndDrop::testDnd()
         StartTest("Dragging: With Scrolling Offset: If dragged close enough to a clip boundary, snapping is applied.");
         getTimeline().Scroll(80,0);
         ConfigFixture.SnapToClips(true).SnapToCursor(false);
-        DeselectAllClips();
+        TimelineDeselectAllClips();
         TimelineDrag(From(Center(VideoClip(0,2))).AlignLeft(LeftPixel(VideoClip(0,4)) + 5));
         ASSERT_EQUALS(VideoClip(0,4)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,2));
         Undo();
@@ -165,7 +165,7 @@ void TestDragAndDrop::testDnd()
         StartTest("Dragging: With Scrolling Offset: If dragged close enough to a clip boundary, but snapping is disabled, no snapping is applied.");
         getTimeline().Scroll(80,0);
         ConfigFixture.SnapToClips(false).SnapToCursor(false);
-        DeselectAllClips();
+        TimelineDeselectAllClips();
         TimelineDrag(From(Center(VideoClip(0,2))).AlignLeft(LeftPixel(VideoClip(0,4)) + 5));
         ASSERT_EQUALS(VideoClip(0,5)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,2));
         Undo();
@@ -333,7 +333,7 @@ void TestDragAndDrop::testDropAdjacentToTransition()
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip);
         TimelinePositionCursor(HCenter(VideoClip(0,2))); // try to get one frame from the transition (was not removed when the error occurred)
         Undo();
-        DeselectAllClips();
+        TimelineDeselectAllClips();
     }
     {
         StartTest("InTransition: Drop adjacent to right edge");

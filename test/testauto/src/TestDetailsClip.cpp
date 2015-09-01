@@ -218,7 +218,7 @@ void TestDetailsClip::testChangeLengthOfTransition()
             selectClipAndPressLengthButtons({ 0, 1, 2, 3, 4, 5, 6, 7 }, { 8 }); // 10s button is disabled
         }
         Undo(2);
-        DeselectAllClips();
+        TimelineDeselectAllClips();
     }
     {
         StartTest("InTransition: Change length via details view.");
