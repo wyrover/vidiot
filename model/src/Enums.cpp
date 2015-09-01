@@ -43,4 +43,6 @@ std::map<VideoAlignment, wxString> VideoAlignmentConverter::mapToHumanReadibleSt
     { VideoAlignmentCustom, _("Custom") },
 };
 
+// todo use enum class?
+
 }
