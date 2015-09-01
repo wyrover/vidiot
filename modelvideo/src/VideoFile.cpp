@@ -325,7 +325,7 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
                 size.GetWidth(),
                 size.GetHeight(),
                 AV_PIX_FMT_RGB24,
-                SWS_BICUBIC/*SWS_FAST_BILINEAR*/, 0, 0, 0); // todo set SWS_BICUBIC depending on parameters? or make it an option?
+                SWS_BICUBIC, 0, 0, 0);
             sws_scale(mSwsContext,pDecodedFrame->data,pDecodedFrame->linesize,0,codec->height,pScaledFrame->data,pScaledFrame->linesize);
 
             result =
