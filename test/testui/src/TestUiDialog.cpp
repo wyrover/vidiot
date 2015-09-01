@@ -68,7 +68,7 @@ private:
         {
             try
             {
-                mThread.reset(new boost::thread(boost::bind(&Escape::mainThread,this)));
+                mThread.reset(new boost::thread(std::bind(&Escape::mainThread,this)));
             }
             catch (boost::exception &e)
             {

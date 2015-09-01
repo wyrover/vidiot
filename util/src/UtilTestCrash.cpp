@@ -150,20 +150,20 @@ void triggerPureVirtualCall()
 
 const int FirstId = meID_LAST + 1;
 
-typedef boost::function<void()> Method;
+typedef std::function<void()> Method;
 typedef std::pair<wxString,util::Method> CrashInfo;
 const std::vector< CrashInfo > crashes = {
-    (std::make_pair("Access Violation", boost::bind(&triggerAccessViolation))),
-    (std::make_pair("Assert", boost::bind(&triggerAssertion))),
-    (std::make_pair("Divide by zero exception", boost::bind(&triggerDivideByZeroException))),
+    (std::make_pair("Access Violation", std::bind(&triggerAccessViolation))),
+    (std::make_pair("Assert", std::bind(&triggerAssertion))),
+    (std::make_pair("Divide by zero exception", std::bind(&triggerDivideByZeroException))),
 #ifdef _MSC_VER
-    (std::make_pair("Invalid parameter", boost::bind(&triggerInvalidParameter))),
+    (std::make_pair("Invalid parameter", std::bind(&triggerInvalidParameter))),
 #endif
-    (std::make_pair("Pure virtual call", boost::bind(&triggerPureVirtualCall))),
-    (std::make_pair("Unhandled boost exception", boost::bind(&triggerBoostException))),
-    (std::make_pair("Unhandled std exception", boost::bind(&triggerStdException))),
-    (std::make_pair("Unhandled unknown exception", boost::bind(&triggerUnknownException))),
-    (std::make_pair("WX assert", boost::bind(&triggerWxAssertion))),
+    (std::make_pair("Pure virtual call", std::bind(&triggerPureVirtualCall))),
+    (std::make_pair("Unhandled boost exception", std::bind(&triggerBoostException))),
+    (std::make_pair("Unhandled std exception", std::bind(&triggerStdException))),
+    (std::make_pair("Unhandled unknown exception", std::bind(&triggerUnknownException))),
+    (std::make_pair("WX assert", std::bind(&triggerWxAssertion))),
 };
 
 void TestCrash::onCrashTest(wxCommandEvent& event)
@@ -178,7 +178,7 @@ void TestCrash::onCrashTest(wxCommandEvent& event)
     VAR_ERROR(description)(inThread);
     if (inThread)
     {
-        new boost::thread(boost::bind(method));
+        new boost::thread(std::bind(method));
     }
     else
     {

@@ -53,6 +53,7 @@ extern "C" {
 #include <cstdio>
 #include <ctime>
 #include <fstream>
+#include <functional>
 #include <iomanip>
 #include <iostream>
 #include <istream>
@@ -67,12 +68,10 @@ extern "C" {
 #include <boost/archive/xml_iarchive.hpp>
 #include <boost/archive/xml_oarchive.hpp>
 #include <boost/assert.hpp>
-#include <boost/bind.hpp>
 #include <boost/config.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/exception/all.hpp>
-#include <boost/function.hpp>
 #include <boost/icl/interval_set.hpp>
 #include <boost/limits.hpp>
 #include <boost/make_shared.hpp>

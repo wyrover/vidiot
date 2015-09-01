@@ -43,7 +43,7 @@ struct IndexAutoFolderWork
     // Here, all access to folder must be done, not in the worker thread.
     // Rationale: all access to model objects must be done in the main thread!
     explicit IndexAutoFolderWork(const AutoFolderPtr& folder)
-        : worker::Work(boost::bind(&IndexAutoFolderWork::indexFiles,this))
+        : worker::Work(std::bind(&IndexAutoFolderWork::indexFiles,this))
         , mFolder(folder)
         , mPath(folder->getPath())
     {

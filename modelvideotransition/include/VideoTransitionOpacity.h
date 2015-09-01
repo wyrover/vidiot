@@ -57,26 +57,26 @@ protected:
     /// Apply the given method to all pixels.
     /// \param image on the opacity of this image the given method is applied
     /// \param f given x and y, the opacity of the image is multiplied by the resulting value of this method
-    void applyToAllPixels(const wxImagePtr& image, const boost::function<float (int, int)>& f) const;
+    void applyToAllPixels(const wxImagePtr& image, const std::function<float (int, int)>& f) const;
 
     /// Apply the given method to all pixels in the first line. Then, the first line
     /// is copied onto all subsequent lines. This is faster than applying the method
     /// to the opacity of all pixels.
     /// \param image on the opacity of this image the given method is applied
     /// \param f given x and y, the opacity of the image is multiplied by the resulting value of this method
-    void applyToFirstLineThenCopy(const wxImagePtr& image, const boost::function<float (int, int)>& f) const;
+    void applyToFirstLineThenCopy(const wxImagePtr& image, const std::function<float (int, int)>& f) const;
 
     /// To be implemented by derived classes.
     /// When the image is fully opaque a more efficient implementation than iterating
     /// over all pixels may be possible.
     /// \param image on the opacity of this image the given method is applied
-    virtual void handleFullyOpaqueImage(const wxImagePtr& image, const boost::function<float (int, int)>& f) const = 0;
+    virtual void handleFullyOpaqueImage(const wxImagePtr& image, const std::function<float (int, int)>& f) const = 0;
 
     /// To be implemented by derived classes.
     /// The image contains alpha data. Therefore, an optimized implementation might
     /// not be possible.
     /// \param image on the opacity of this image the given method is applied
-    virtual void handleImageWithAlpha(const wxImagePtr& image, const boost::function<float (int, int)>& f) const = 0;
+    virtual void handleImageWithAlpha(const wxImagePtr& image, const std::function<float (int, int)>& f) const = 0;
 
     /// To be implemented by derived classes.
     /// Resulting factor for pixels of the left image.
@@ -84,7 +84,7 @@ protected:
     /// Input factor of 1 indicates right image fully visible.
     /// \param image on the opacity of this image the given method is applied
     /// \param factor factor that indicates the progress of the transition 0.0 <= factor <= 1.0
-    virtual boost::function<float (int,int)> getLeftMethod(const wxImagePtr& image, const float& factor) const = 0;
+    virtual std::function<float (int,int)> getLeftMethod(const wxImagePtr& image, const float& factor) const = 0;
 
     /// To be implemented by derived classes.
     /// Resulting factor for pixels of the right image.
@@ -92,7 +92,7 @@ protected:
     /// Input factor of 1 indicates right image fully visible.
     /// \param image on the opacity of this image the given method is applied
     /// \param factor factor that indicates the progress of the transition 0.0 <= factor <= 1.0
-    virtual boost::function<float (int,int)> getRightMethod(const wxImagePtr& image, const float& factor) const = 0;
+    virtual std::function<float (int,int)> getRightMethod(const wxImagePtr& image, const float& factor) const = 0;
 };
 
 } // namespace

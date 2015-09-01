@@ -148,8 +148,8 @@ void VideoDisplay::play()
         // Start buffering ASAP
         try
         {
-            mAudioBufferThreadPtr.reset(new boost::thread(boost::bind(&VideoDisplay::audioBufferThread,this)));
-            mVideoBufferThreadPtr.reset(new boost::thread(boost::bind(&VideoDisplay::videoBufferThread,this)));
+            mAudioBufferThreadPtr.reset(new boost::thread(std::bind(&VideoDisplay::audioBufferThread,this)));
+            mVideoBufferThreadPtr.reset(new boost::thread(std::bind(&VideoDisplay::videoBufferThread,this)));
         }
         catch (boost::exception &e)
         {

@@ -37,7 +37,7 @@ class RunInMainThread
 {
 public:
 
-    RunInMainThread(const boost::function<void()>& method, bool wait)
+    RunInMainThread(const std::function<void()>& method, bool wait)
         : mMethod(method)
         , mWait(wait)
         , mDone(false)
@@ -84,7 +84,7 @@ public:
 
 private:
 
-    boost::function<void()> mMethod;
+    std::function<void()> mMethod;
     bool mWait;
 
     boost::condition_variable mCondition;
@@ -92,13 +92,13 @@ private:
     bool mDone;
 };
 
-void RunInMainAndWait(const boost::function<void()>& method)
+void RunInMainAndWait(const std::function<void()>& method)
 {
     RunInMainThreadPtr obj = boost::make_shared<RunInMainThread>(method, true);
     obj->run();
 }
 
-void RunInMain(const boost::function<void()>& method)
+void RunInMain(const std::function<void()>& method)
 {
     RunInMainThreadPtr obj = boost::make_shared<RunInMainThread>(method, false);
     obj->run();

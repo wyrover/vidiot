@@ -71,7 +71,7 @@ void TestDetailsClip::testChangeLength()
         ASSERT_SELECTION_SIZE(1); // Clip and link selected
         if (enabled)
         {
-            util::thread::RunInMainAndWait(boost::bind(&gui::timeline::DetailsClip::handleLengthButtonPressed, DetailsClipView(), button));
+            util::thread::RunInMainAndWait(std::bind(&gui::timeline::DetailsClip::handleLengthButtonPressed, DetailsClipView(), button));
             ASSERT_CURRENT_COMMAND_TYPE<::command::Combiner>();
             ASSERT_IMPLIES(enlarge, VideoClip(0, 3)->getLength() >= oldLength)(VideoClip(0, 3)->getLength())(oldLength);
             ASSERT_IMPLIES(!enlarge, VideoClip(0, 3)->getLength() <= oldLength)(VideoClip(0, 3)->getLength())(oldLength);
@@ -166,7 +166,7 @@ void TestDetailsClip::testChangeLengthTooMuch()
         wxToggleButton* button = DetailsClipView()->getLengthButtons()[index];
         pts buttonlength = DetailsClipView()->getLength(button);
         ASSERT(button->IsEnabled());
-        util::thread::RunInMainAndWait(boost::bind(&gui::timeline::DetailsClip::handleLengthButtonPressed, DetailsClipView(), button));
+        util::thread::RunInMainAndWait(std::bind(&gui::timeline::DetailsClip::handleLengthButtonPressed, DetailsClipView(), button));
         ASSERT_CURRENT_COMMAND_TYPE<::command::Combiner>();
         ASSERT_EQUALS(VideoClip(0, 1)->getLength(), buttonlength); // Note: video clip has the same length, audio clip is smaller
         Undo();
@@ -200,7 +200,7 @@ void TestDetailsClip::testChangeLengthOfTransition()
             std::ostringstream o;
             o << "LengthButton: Change transition length to " << length;
             StartTest(o.str().c_str());
-            util::thread::RunInMainAndWait(boost::bind(&gui::timeline::DetailsClip::handleLengthButtonPressed, DetailsClipView(), button));
+            util::thread::RunInMainAndWait(std::bind(&gui::timeline::DetailsClip::handleLengthButtonPressed, DetailsClipView(), button));
             ASSERT_EQUALS(getSelectedClipsCount(), 1); // Transition
             ASSERT_CURRENT_COMMAND_TYPE<::command::Combiner>();
             ASSERT_EQUALS(VideoClip(0, 2)->getLength(), length);
@@ -254,7 +254,7 @@ void TestDetailsClip::testChangeLengthAfterCreatingTransition()
             std::ostringstream o;
             o << name << ": length = " << buttonLength;
             StartTest(o.str().c_str());
-            util::thread::RunInMainAndWait(boost::bind(&gui::timeline::DetailsClip::handleLengthButtonPressed,DetailsClipView(),button));
+            util::thread::RunInMainAndWait(std::bind(&gui::timeline::DetailsClip::handleLengthButtonPressed,DetailsClipView(),button));
             ASSERT_EQUALS(getSelectedClipsCount(),2);
             ASSERT(VideoClip(0,2)->getSelected());
             ASSERT_CURRENT_COMMAND_TYPE<::command::Combiner>();

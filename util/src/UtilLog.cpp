@@ -87,7 +87,7 @@ public:
             if (result == 0)
             {
                 mEnabled = true;
-                mThread.reset(new boost::thread(boost::bind(&LogWriter::thread,this)));
+                mThread.reset(new boost::thread(std::bind(&LogWriter::thread,this)));
             }
         }
     }

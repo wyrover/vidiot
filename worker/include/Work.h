@@ -22,7 +22,7 @@
 
 namespace worker {
 
-typedef boost::function< void() > Callable;
+typedef std::function< void() > Callable;
 
 class Work
     : public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.

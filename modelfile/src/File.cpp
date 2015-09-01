@@ -423,7 +423,7 @@ void File::startReadingPackets()
     ASSERT(mBufferPacketsThreadPtr == nullptr); // To avoid leaking threads
     try
     {
-        mBufferPacketsThreadPtr.reset(new boost::thread(boost::bind(&File::bufferPacketsThread,this)));
+        mBufferPacketsThreadPtr.reset(new boost::thread(std::bind(&File::bufferPacketsThread,this)));
     }
     catch (boost::exception &e)
     {
