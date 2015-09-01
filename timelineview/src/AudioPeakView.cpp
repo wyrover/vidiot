@@ -34,8 +34,6 @@ namespace gui { namespace timeline {
 // WORK OBJECT FOR RENDERING A THUMBNAIL
 //////////////////////////////////////////////////////////////////////////
 
-//todo added audio track that should cause addition of vert scroll bar. scrol bar did not appear.
-
 struct RenderPeaksWork
     : public RenderClipPreviewWork
 {
