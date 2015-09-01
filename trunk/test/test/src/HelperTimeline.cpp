@@ -428,7 +428,7 @@ gui::timeline::MouseOnClipPosition LogicalPosition(wxPoint position)
     return getTimeline().getMouse().getInfo(position).logicalclipposition;
 }
 
-void DeselectAllClips()
+void TimelineDeselectAllClips()
 {
     LOG_DEBUG;
     util::thread::RunInMainAndWait([]
@@ -440,7 +440,7 @@ void DeselectAllClips()
 void TimelineSelectClips(model::IClips clips)
 {
     ASSERT_NONZERO(clips.size());
-    DeselectAllClips();
+    TimelineDeselectAllClips();
     ASSERT_SELECTION_SIZE(0);
     TimelineLeftClick(Center(clips.front()));
     clips.erase(clips.begin());

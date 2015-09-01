@@ -44,7 +44,7 @@ void TestTimeline::testSelection()
     const model::IClips& clips = getSequence()->getVideoTrack(0)->getClips();
     {
         StartTest("Start application, make sequence, shift click clip five. Only clip five selected!");
-        DeselectAllClips();
+        TimelineDeselectAllClips();
         ASSERT_SELECTION_SIZE(0);
         TimelineKeyDown(WXK_SHIFT);
         TimelineLeftClick(Center(VideoClip(0,4)));
@@ -53,7 +53,7 @@ void TestTimeline::testSelection()
     }
     {
         StartTest("CTRL clicking all clips one by one");
-        DeselectAllClips();
+        TimelineDeselectAllClips();
         TimelineKeyDown(WXK_CONTROL);
         for (model::IClipPtr clip : clips)
         {
@@ -67,7 +67,7 @@ void TestTimeline::testSelection()
     }
     {
         StartTest("SHIFT clicking the entire list");
-        DeselectAllClips();
+        TimelineDeselectAllClips();
         ASSERT_SELECTION_SIZE(0);
         TimelineKeyDown(WXK_SHIFT);
         TimelineLeftClick(Center(clips.front()));
@@ -77,7 +77,7 @@ void TestTimeline::testSelection()
     }
     {
         StartTest("SHIFT clicking only the partial list");
-        DeselectAllClips();
+        TimelineDeselectAllClips();
         ASSERT_SELECTION_SIZE(0);
         TimelineLeftClick(Center(VideoClip(0,2)));
         TimelineKeyDown(WXK_SHIFT);
@@ -98,7 +98,7 @@ void TestTimeline::testSelection()
     }
     {
         StartTest("Select the transition between two clips when shift selecting.");
-        DeselectAllClips();
+        TimelineDeselectAllClips();
         MakeInOutTransitionAfterClip preparation(1);
         ASSERT(VideoClip(0,2)->isA<model::Transition>());
         TimelineLeftClick(Center(VideoClip(0,1)));
@@ -110,62 +110,62 @@ void TestTimeline::testSelection()
     {
         StartTest("Select an in-out-transition.");
         MakeInOutTransitionAfterClip preparation(1);
-        DeselectAllClips();
+        TimelineDeselectAllClips();
         TimelineLeftClick(VTopQuarterHCenter(VideoClip(0,2)));
         ASSERT(!VideoClip(0,1)->getSelected());
         ASSERT(VideoClip(0,2)->getSelected());
         ASSERT(!VideoClip(0,3)->getSelected());
-        DeselectAllClips();
+        TimelineDeselectAllClips();
         TimelineLeftClick(VTopQuarterLeft(VideoClip(0,2)));
         ASSERT(!VideoClip(0,1)->getSelected());
         ASSERT(VideoClip(0,2)->getSelected());
         ASSERT(!VideoClip(0,3)->getSelected());
-        DeselectAllClips();
+        TimelineDeselectAllClips();
         TimelineLeftClick(VTopQuarterRight(VideoClip(0,2)));
         ASSERT(!VideoClip(0,1)->getSelected());
         ASSERT(VideoClip(0,2)->getSelected());
         ASSERT(!VideoClip(0,3)->getSelected());
-        DeselectAllClips();
+        TimelineDeselectAllClips();
     }
     {
         StartTest("Select an out-only-transition.");
         MakeOutTransitionAfterClip preparation(1);
-        DeselectAllClips();
+        TimelineDeselectAllClips();
         TimelineLeftClick(VTopQuarterHCenter(VideoClip(0,2)));
         ASSERT(!VideoClip(0,1)->getSelected());
         ASSERT(VideoClip(0,2)->getSelected());
         ASSERT(!VideoClip(0,3)->getSelected());
-        DeselectAllClips();
+        TimelineDeselectAllClips();
         TimelineLeftClick(VTopQuarterLeft(VideoClip(0,2)));
         ASSERT(!VideoClip(0,1)->getSelected());
         ASSERT(VideoClip(0,2)->getSelected());
         ASSERT(!VideoClip(0,3)->getSelected());
-        DeselectAllClips();
+        TimelineDeselectAllClips();
         TimelineLeftClick(VTopQuarterRight(VideoClip(0,2)));
         ASSERT(!VideoClip(0,1)->getSelected());
         ASSERT(VideoClip(0,2)->getSelected());
         ASSERT(!VideoClip(0,3)->getSelected());
-        DeselectAllClips();
+        TimelineDeselectAllClips();
     }
     {
         StartTest("Select an in-only-transition.");
         MakeInTransitionAfterClip preparation(1);
-        DeselectAllClips();
+        TimelineDeselectAllClips();
         TimelineLeftClick(VTopQuarterHCenter(VideoClip(0,2)));
         ASSERT(!VideoClip(0,1)->getSelected());
         ASSERT(VideoClip(0,2)->getSelected());
         ASSERT(!VideoClip(0,3)->getSelected());
-        DeselectAllClips();
+        TimelineDeselectAllClips();
         TimelineLeftClick(VTopQuarterLeft(VideoClip(0,2)));
         ASSERT(!VideoClip(0,1)->getSelected());
         ASSERT(VideoClip(0,2)->getSelected());
         ASSERT(!VideoClip(0,3)->getSelected());
-        DeselectAllClips();
+        TimelineDeselectAllClips();
         TimelineLeftClick(VTopQuarterRight(VideoClip(0,2)));
         ASSERT(!VideoClip(0,1)->getSelected());
         ASSERT(VideoClip(0,2)->getSelected());
         ASSERT(!VideoClip(0,3)->getSelected());
-        DeselectAllClips();
+        TimelineDeselectAllClips();
     }
 }
 
@@ -188,7 +188,7 @@ void TestTimeline::testSelectionMultipleTracks()
     TimelineDragToTrack(1, VideoClip(0, 5), AudioClip(0, 5));
     {
         StartTest("Select all");
-        DeselectAllClips();
+        TimelineDeselectAllClips();
         TimelineKeyDown(WXK_ALT);
         TimelineLeftClick(Center(VideoClip(0,0)));
         TimelineKeyUp(WXK_ALT);
@@ -196,7 +196,7 @@ void TestTimeline::testSelectionMultipleTracks()
     }
     {
         StartTest("Select before clip - in track 2 - begin");
-        DeselectAllClips();
+        TimelineDeselectAllClips();
         TimelineKeyDown(WXK_ALT);
         TimelineLeftClick(Center(VideoClip(0,1)));
         TimelineKeyUp(WXK_ALT);
@@ -204,7 +204,7 @@ void TestTimeline::testSelectionMultipleTracks()
     }
     {
         StartTest("Select clip in track 2");
-        DeselectAllClips();
+        TimelineDeselectAllClips();
         TimelineKeyDown(WXK_ALT);
         TimelineLeftClick(Center(VideoClip(1,1)));
         TimelineKeyUp(WXK_ALT);
@@ -212,7 +212,7 @@ void TestTimeline::testSelectionMultipleTracks()
     }
     {
         StartTest("Select after clip - in track 2 - begin");
-        DeselectAllClips();
+        TimelineDeselectAllClips();
         TimelineKeyDown(WXK_ALT);
         TimelineLeftClick(Center(VideoClip(0,2)));
         TimelineKeyUp(WXK_ALT);
@@ -228,7 +228,7 @@ void TestTimeline::testDeletion()
         StartTest("When deleting without shift, a clip is replaced with emptyness.");
         pts len = VideoTrack(0)->getLength();
         int num = NumberOfVideoClipsInTrack(0);
-        DeselectAllClips();
+        TimelineDeselectAllClips();
         TimelineLeftClick(Center(VideoClip(0,1)));
         TimelineKeyDown(WXK_CONTROL);
         TimelineLeftClick(Center(VideoClip(0,3)));
@@ -257,7 +257,7 @@ void TestTimeline::testDeletion()
         StartTest("When deleting with shift, a clip is replaced with emptyness and then the emptyness is removed.");
         pts len = VideoTrack(0)->getLength();
         int num = NumberOfVideoClipsInTrack(0);
-        DeselectAllClips();
+        TimelineDeselectAllClips();
         TimelineLeftClick(Center(VideoClip(0,1)));
         TimelineKeyDown(WXK_CONTROL);
         TimelineLeftClick(Center(VideoClip(0,3)));
@@ -284,13 +284,13 @@ void TestTimeline::testDeletion()
         ASSERT_SELECTION_SIZE(1);
         Undo();
         ASSERT_SELECTION_SIZE(2);
-        DeselectAllClips();
+        TimelineDeselectAllClips();
     }
     {
         StartTest("When deleting a clip, an in-only transition must be deleted also.");
         MakeInTransitionAfterClip preparation(1);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
-        DeselectAllClips();
+        TimelineDeselectAllClips();
         TimelineLeftClick(Center(VideoClip(0,3)));
         TimelineKeyPress(WXK_DELETE);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(     EmptyClip       )(VideoClip);
@@ -301,7 +301,7 @@ void TestTimeline::testDeletion()
         StartTest("When deleting a clip, a out-only transition must be deleted also.");
         MakeOutTransitionAfterClip preparation(1);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
-        DeselectAllClips();
+        TimelineDeselectAllClips();
         TimelineLeftClick(Center(VideoClip(0,1)));
         TimelineKeyPress(WXK_DELETE);
         ASSERT_VIDEOTRACK0(VideoClip)(     EmptyClip       )(VideoClip);
@@ -315,7 +315,7 @@ void TestTimeline::testDeletionWithUnlinkedClips()
     StartTestSuite();
     {
         StartTest("AudioClip: When deleting with shift, all tracks must be shifted, even if no clips are selected in them.");
-        DeselectAllClips();
+        TimelineDeselectAllClips();
         Unlink(VideoClip(0,2));
         TimelineLeftClick(Center(VideoClip(0,2)));
         TimelineKeyPress(WXK_DELETE);
@@ -334,7 +334,7 @@ void TestTimeline::testDeletionWithUnlinkedClips()
     }
     {
         StartTest("VideoClip: When deleting with shift, all tracks must be shifted, even if no clips are selected in them.");
-        DeselectAllClips();
+        TimelineDeselectAllClips();
         Unlink(AudioClip(0,2));
         TimelineLeftClick(Center(AudioClip(0,2)));
         TimelineKeyPress(WXK_DELETE);
@@ -353,7 +353,7 @@ void TestTimeline::testDeletionWithUnlinkedClips()
     }
     {
         StartTest("AudioClip: When deleting with shift, and another track has a non selected clip in the to-be-shifted region, do not shift.");
-        DeselectAllClips();
+        TimelineDeselectAllClips();
         Unlink(VideoClip(0,2));
         TimelineLeftClick(Center(VideoClip(0,2)));
         TimelineTrimLeft(VideoClip(0,2), 20, false);
@@ -373,7 +373,7 @@ void TestTimeline::testDeletionWithUnlinkedClips()
     }
     {
         StartTest("VideoClip: When deleting with shift, and another track has a non selected clip in the to-be-shifted region, do not shift.");
-        DeselectAllClips();
+        TimelineDeselectAllClips();
         Unlink(AudioClip(0,2));
         TimelineLeftClick(Center(AudioClip(0,2)));
         TimelineTrimLeft(AudioClip(0,2), 20, false);
@@ -409,7 +409,7 @@ void TestTimeline::testUndo()
     ASSERT_EQUALS(VideoTrack(0)->getLength(),AudioTrack(0)->getLength());
 
     // Move clip 2: the transition must be removed
-    DeselectAllClips();
+    TimelineDeselectAllClips();
     TimelineDrag(From(Center(VideoClip(0,1))).To(Center(VideoClip(0,4))));
     ASSERT(VideoClip(0,1)->isA<model::EmptyClip>());
     ASSERT(!VideoClip(0,2)->isA<model::Transition>());
@@ -419,7 +419,7 @@ void TestTimeline::testUndo()
 
     // Move clip 3: the transition must be removed and the fourth clip becomes the third one (clip+transition removed)
     model::IClipPtr afterclip = VideoClip(0,4);
-    DeselectAllClips();
+    TimelineDeselectAllClips();
     TimelineDrag(From(Center(VideoClip(0,3))).To(Center(VideoClip(0,5))));
     ASSERT_EQUALS(afterclip,VideoClip(0,3));
     ASSERT(VideoClip(0,2)->isA<model::EmptyClip>());
@@ -444,7 +444,7 @@ void TestTimeline::testAbortDrag()
     {
         ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
 
-        DeselectAllClips();
+        TimelineDeselectAllClips();
         TimelineDrag(From(Center(VideoClip(0,5))).To(Center(VideoClip(0,4))).DontReleaseMouse());
         TimelineKeyDown(WXK_SHIFT);
         TimelineMove(Center(VideoClip(0,3)));
