@@ -78,7 +78,7 @@ void CrossFade::handleImageWithAlpha(const wxImagePtr& image, const std::functio
 
 std::function<float (int,int)> CrossFade::getLeftMethod(const wxImagePtr& image, const float& factor) const
 {
-    std::function<float (int,int)> f = [factor](int x, int y) -> float // todo use std:function iso boost
+    std::function<float (int,int)> f = [factor](int x, int y) -> float
     {
         return 1.0 - factor;
     };
