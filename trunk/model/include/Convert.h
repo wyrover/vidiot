@@ -145,6 +145,13 @@ public:
     /// \param nSamples Number of audio samples
     /// \return number of required bytes
     static samplecount audioSamplesToBytes(samplecount nSamples);
+
+    /// Convert a position in a clip/sequence (using originalSpeed) to the same position, but then with the new speed.
+    /// \param position position/length with originalSpeed as base speed.
+    /// \return same position but now using newSpeed as base speed.
+    static pts positionToNewSpeed(pts position, boost::rational<int> newSpeed, boost::rational<int> originalSpeed = 1);
+
+    static int sampleRateToNewSpeed(int samplerate, boost::rational<int> newSpeed, boost::rational<int> originalSpeed = 1);
 };
 } // namespace
 

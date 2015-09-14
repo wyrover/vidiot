@@ -24,6 +24,7 @@
 #include "UtilInt.h"
 
 namespace model {
+    class EventChangeClipSpeed;
     class EventChangeAudioClipVolume;
     class EventChangeVideoClipAlignment;
     class EventChangeVideoClipMaxPosition;
@@ -35,7 +36,6 @@ namespace model {
     class EventChangeVideoClipScalingFactor;
     class EventTransitionParameterChanged;
     class EventTransitionParameterChanging;
-    class TransitionParameterChangeCommand;
 }
 
 namespace gui { namespace timeline {
@@ -45,6 +45,8 @@ namespace command {
     class EditClipDetails;
     class TrimClip;
 }
+
+std::tuple<model::VideoClipPtr, model::AudioClipPtr, model::TransitionPtr> getTypedClips(model::IClipPtr clip); // todo make part of model?
 
 class DetailsClip
 :   public DetailsPanel
@@ -73,6 +75,9 @@ public:
 
     void onShow(wxShowEvent& event);
     void onLengthButtonPressed(wxCommandEvent& event);
+    void onSpeedSliderChanged(wxCommandEvent& event);
+    void onSpeedSpinChanged(wxSpinDoubleEvent& event);
+
     void onOpacitySliderChanged(wxCommandEvent& event);
     void onOpacitySpinChanged(wxSpinEvent& event);
     void onScalingChoiceChanged(wxCommandEvent& event);
@@ -85,6 +90,7 @@ public:
     void onPositionXSpinChanged(wxSpinEvent& event);
     void onPositionYSliderChanged(wxCommandEvent& event);
     void onPositionYSpinChanged(wxSpinEvent& event);
+
     void onVolumeSliderChanged(wxCommandEvent& event);
     void onVolumeSpinChanged(wxSpinEvent& event);
 
@@ -97,6 +103,8 @@ public:
     //////////////////////////////////////////////////////////////////////////
     // PROJECT EVENTS
     //////////////////////////////////////////////////////////////////////////
+
+    void onSpeedChanged(model::EventChangeClipSpeed& event);
 
     void onOpacityChanged(model::EventChangeVideoClipOpacity& event);
     void onScalingChanged(model::EventChangeVideoClipScaling& event);
@@ -122,6 +130,9 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     std::vector<wxToggleButton*> getLengthButtons() const;
+    wxSlider* getSpeedSlider() const;
+    wxSpinCtrlDouble* getSpeedSpin() const;
+
     wxSlider* getOpacitySlider() const;
     wxSpinCtrl* getOpacitySpin() const;
     EnumSelector<model::VideoScaling>* getScalingSelector() const;
@@ -134,6 +145,7 @@ public:
     wxSpinCtrl* getPositionXSpin() const;
     wxSlider* getPositionYSlider() const;
     wxSpinCtrl* getPositionYSpin() const;
+    
     wxSlider* getVolumeSlider() const;
     wxSpinCtrl* getVolumeSpin() const;
 
@@ -143,54 +155,74 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    model::IClipPtr      mClip;      ///< The clip for which the details view is shown. 0 in case a transition is selected
-    model::VideoClipPtr  mVideoClipClone;
-    model::AudioClipPtr  mAudioClipClone;
-    model::TransitionPtr mTransitionClone;
+    struct ClonesContainer
+    {
+        ClonesContainer(const ClonesContainer& other) = delete;
 
-    wxStaticText* mCurrentLength;
+        explicit ClonesContainer(DetailsClip* details, model::IClipPtr clip);
+        virtual ~ClonesContainer();
+
+        DetailsClip* mDetails = nullptr;
+        model::IClipPtr Clip = nullptr;
+        model::IClipPtr Link = nullptr;
+        model::VideoClipPtr Video = nullptr;
+        model::AudioClipPtr Audio = nullptr;
+        model::TransitionPtr Transition = nullptr;
+    };
+
+    model::IClipPtr mClip = nullptr;      ///< The clip for which the details view is shown. 0 in case a transition is selected
+    std::unique_ptr<ClonesContainer> mClones;
+
+    command::EditClipDetails* mEditCommand = nullptr;
+
+    wxPanel* mLengthPanel = nullptr;
     std::vector<pts> mLengths;
     std::vector<wxToggleButton*> mLengthButtons;
     std::map<pts, pts> mTrimAtBegin;
     std::map<pts, pts> mTrimAtEnd;
 
-    wxSpinCtrl* mOpacitySpin;
-    wxSlider* mOpacitySlider;
+    wxPanel*  mSpeedPanel = nullptr;
+    wxSpinCtrlDouble* mSpeedSpin = nullptr;
+    wxSlider* mSpeedSlider = nullptr;
 
-    EnumSelector<model::VideoScaling>* mSelectScaling;
+    wxPanel* mOpacityPanel = nullptr;
+    wxSpinCtrl* mOpacitySpin = nullptr;
+    wxSlider* mOpacitySlider = nullptr;
 
-    wxSpinCtrlDouble* mScalingSpin;
-    wxSlider* mScalingSlider;
+    wxPanel* mRotationPanel = nullptr;
+    wxSpinCtrlDouble* mRotationSpin = nullptr;
+    wxSlider* mRotationSlider = nullptr;
 
-    wxSpinCtrlDouble* mRotationSpin;
-    wxSlider* mRotationSlider;
+    wxPanel* mScalingPanel = nullptr;
+    EnumSelector<model::VideoScaling>* mSelectScaling = nullptr;
+    wxSpinCtrlDouble* mScalingSpin = nullptr;
+    wxSlider* mScalingSlider = nullptr;
 
-    EnumSelector<model::VideoAlignment>* mSelectAlignment;
+    wxPanel* mAlignmentPanel = nullptr;
+    EnumSelector<model::VideoAlignment>* mSelectAlignment = nullptr;
+    wxSpinCtrl* mPositionXSpin = nullptr;
+    wxSlider* mPositionXSlider = nullptr;
+    wxSpinCtrl* mPositionYSpin = nullptr;
+    wxSlider* mPositionYSlider = nullptr;
 
-    wxSpinCtrl* mPositionXSpin;
-    wxSlider* mPositionXSlider;
-    wxSpinCtrl* mPositionYSpin;
-    wxSlider* mPositionYSlider;
+    pts mMinimumLengthWhenBeginTrimming = 0;
+    pts mMaximumLengthWhenBeginTrimming = 0;
+    pts mMinimumLengthWhenEndTrimming = 0;
+    pts mMaximumLengthWhenEndTrimming = 0;
+    pts mMinimumLengthWhenBothTrimming = 0;
+    pts mMaximumLengthWhenBothTrimming = 0;
 
-    command::EditClipDetails* mEditCommand;
+    wxPanel* mVolumePanel = nullptr;
+    wxSpinCtrl* mVolumeSpin = nullptr;
+    wxSlider* mVolumeSlider = nullptr;
 
-    pts mMinimumLengthWhenBeginTrimming;
-    pts mMaximumLengthWhenBeginTrimming;
-    pts mMinimumLengthWhenEndTrimming;
-    pts mMaximumLengthWhenEndTrimming;
-    pts mMinimumLengthWhenBothTrimming;
-    pts mMaximumLengthWhenBothTrimming;
-
-    wxSpinCtrl* mVolumeSpin;
-    wxSlider* mVolumeSlider;
-
-    wxFlexGridSizer* mTransitionBoxSizer;
+    wxFlexGridSizer* mTransitionBoxSizer = nullptr;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    void submitEditCommandUponFirstEdit();
+    void submitEditCommandUponFirstEdit(const wxString& message);
 
     void preview();
 

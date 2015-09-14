@@ -30,6 +30,7 @@ namespace model {
 AudioCompositionParameters::AudioCompositionParameters()
     : mSampleRate(Config::ReadLong(Config::sPathAudioDefaultSampleRate))
     , mNrChannels(Config::ReadLong(Config::sPathAudioDefaultNumberOfChannels))
+    , mSpeed(1)
     , mPts(boost::none)
     , mChunkSize(boost::none)
 {
@@ -38,6 +39,7 @@ AudioCompositionParameters::AudioCompositionParameters()
 AudioCompositionParameters::AudioCompositionParameters(const AudioCompositionParameters& other)
     : mSampleRate(other.mSampleRate)
     , mNrChannels(other.mNrChannels)
+    , mSpeed(other.mSpeed)
     , mPts(other.mPts)
     , mChunkSize(other.mChunkSize)
 {
@@ -67,6 +69,17 @@ AudioCompositionParameters& AudioCompositionParameters::setNrChannels(int nChann
 int AudioCompositionParameters::getNrChannels() const
 {
     return mNrChannels;
+}
+
+AudioCompositionParameters& AudioCompositionParameters::setSpeed(boost::rational<int> speed)
+{
+    mSpeed = speed;
+    return *this;
+}
+ 
+boost::rational<int> AudioCompositionParameters::getSpeed() const
+{
+    return mSpeed;
 }
 
 AudioCompositionParameters& AudioCompositionParameters::setPts(pts position)
@@ -116,7 +129,12 @@ samplecount AudioCompositionParameters::getChunkSize() const
 
 std::ostream& operator<<(std::ostream& os, const AudioCompositionParameters& obj)
 {
-    os << &obj << '|' << obj.mSampleRate << '|' << obj.mNrChannels << '|' << obj.mPts << '|' << obj.mChunkSize;
+    os  << &obj << '|' 
+        << obj.mSampleRate << '|' 
+        << obj.mNrChannels << '|' 
+        << obj.mSpeed << '|'
+        << obj.mPts << '|' 
+        << obj.mChunkSize;
     return os;
 }
 

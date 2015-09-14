@@ -58,6 +58,11 @@ public:
     static const int sRotationPageSize;        ///< 0.1
     static const int sRotationMin;
     static const int sRotationMax;
+    static const int sSpeedPrecision;          ///< Number of digits to be used maximally
+    static const int sSpeedPrecisionFactor;    ///< 10^sRotationPrecision 
+    static const int sSpeedPageSize;           
+    static const int sSpeedMin;
+    static const int sSpeedMax;
     static const int sMinVolume;
     static const int sMaxVolume;
     static const int sDefaultVolume;

@@ -62,7 +62,7 @@ const std::map<int, wxString> Window::sMapMenuIdToPaneName = {
 
 const wxString sPaneCaptionHelp(_("Help"));
 const wxString sPaneCaptionProject(_("Project"));
-const wxString sPaneCaptionDetails(_("Details"));
+const wxString Window::sPaneCaptionDetails(_("Details"));
 const wxString sPaneCaptionPreview(_("Preview"));
 const wxString sPaneCaptionTimelines(_("Timelines"));
 

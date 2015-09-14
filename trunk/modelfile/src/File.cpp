@@ -257,29 +257,39 @@ void File::moveTo(pts position)
     stopReadingPackets();
 
     int64_t timestamp = model::Convert::ptsToMicroseconds(position);
-    ASSERT_LESS_THAN_EQUALS(timestamp, mFileContext->duration)(timestamp)(mFileContext)(position);
-    ASSERT_MORE_THAN_EQUALS_ZERO(timestamp);
-    VAR_DEBUG(timestamp)(mFileContext->duration);
-
-    if (timestamp > 0)
+    if (timestamp >= mFileContext->duration)
     {
-        // Do not seek if == 0, may mess up some files. See remark at top of method.
+        // Can happen when changing a clip's speed.
+        // The preview of the clip is positioned 'in the center' of the clip.
+        // That position may be beyond the file length when the speed factor
+        // is high.
+        mEOF = true;
+    }
+    else
+    {
+        ASSERT_MORE_THAN_EQUALS_ZERO(timestamp);
+        VAR_DEBUG(timestamp)(mFileContext->duration);
 
-        // First, try seeking to a keyframe at the given position.
-        int result = 0;
-        result = avformat_seek_file(mFileContext, -1, 0, timestamp, timestamp, 0);
-        if (result < 0)
+        if (timestamp > 0)
         {
-            // Second, try seeking to a keyframe before the given position.
-            result = avformat_seek_file(mFileContext, -1, 0, timestamp, timestamp, AVSEEK_FLAG_BACKWARD);
+            // Do not seek if == 0, may mess up some files. See remark at top of method.
+
+            // First, try seeking to a keyframe at the given position.
+            int result = 0;
+            result = avformat_seek_file(mFileContext, -1, 0, timestamp, timestamp, 0);
             if (result < 0)
             {
-                // Last resort, any frame will do.
-                result = avformat_seek_file(mFileContext, -1, 0, timestamp, timestamp, AVSEEK_FLAG_BACKWARD | AVSEEK_FLAG_ANY);
-                LOG_WARNING << "Seek resulted in non-keyframe position.";
+                // Second, try seeking to a keyframe before the given position.
+                result = avformat_seek_file(mFileContext, -1, 0, timestamp, timestamp, AVSEEK_FLAG_BACKWARD);
+                if (result < 0)
+                {
+                    // Last resort, any frame will do.
+                    result = avformat_seek_file(mFileContext, -1, 0, timestamp, timestamp, AVSEEK_FLAG_BACKWARD | AVSEEK_FLAG_ANY);
+                    LOG_WARNING << "Seek resulted in non-keyframe position.";
+                }
             }
+            ASSERT_MORE_THAN_EQUALS_ZERO(result)(avcodecErrorString(result))(*this);
         }
-        ASSERT_MORE_THAN_EQUALS_ZERO(result)(avcodecErrorString(result))(*this);
     }
 
     ASSERT_ZERO(mPackets.getSize());

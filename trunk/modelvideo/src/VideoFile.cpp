@@ -170,7 +170,7 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
             inputPosition != AV_NOPTS_VALUE)
         {
             pts requiredPts{ parameters.getPts() };
-            milliseconds requiredTime = Convert::ptsToTime(requiredPts);
+            milliseconds requiredTime = Convert::ptsToTime(Convert::positionToNewSpeed(requiredPts, parameters.getSpeed()));
             if (stream->start_time != AV_NOPTS_VALUE)
             {
                 // Some streams don't start counting at 0

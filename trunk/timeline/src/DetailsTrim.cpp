@@ -39,7 +39,7 @@ DetailsTrim::DetailsTrim(wxWindow* parent, Timeline& timeline)
 {
     VAR_DEBUG(this);
 
-    addBox(_("Resizing"));
+    addBox(boost::optional<wxString>(_("Resizing")));
     mVideo = new wxStaticText(this, wxID_ANY, "");
     mAudio = new wxStaticText(this, wxID_ANY, "");
     mTransition = new wxStaticText(this, wxID_ANY, "");
@@ -47,7 +47,7 @@ DetailsTrim::DetailsTrim(wxWindow* parent, Timeline& timeline)
     addOption(_("Audio size"),mAudio);
     addOption(_("Transition size"),mTransition);
 
-    addBox(sNotes);
+    addBox(boost::optional<wxString>(sNotes));
     mNote = new wxStaticText(this, wxID_ANY, _("Press SHIFT to remove blank areas during the trimming"));
     addOption(_("Shift"), mNote);
 

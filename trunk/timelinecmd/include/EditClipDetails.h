@@ -36,7 +36,13 @@ public:
     /// That must be done upon the first actual change to the clone(s).
     /// \param sequence sequence in which the replacement is done.
     /// \param clip clip that was selected in the details view.
-    explicit EditClipDetails(const model::SequencePtr& sequence, const model::IClipPtr& clip);
+    explicit EditClipDetails(
+        const model::SequencePtr& sequence, 
+        const wxString& message,
+        const model::IClipPtr& clip,
+        const model::IClipPtr& link,
+        const model::IClipPtr& clipClone,
+        const model::IClipPtr& linkClone);
 
     virtual ~EditClipDetails();
 
@@ -53,8 +59,7 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    model::IClipPtr getClipClone() const;
-    model::IClipPtr getLinkClone() const;
+    wxString getMessage() const;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING
@@ -68,6 +73,7 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
+    wxString mMessage;
     model::IClipPtr mClip;
     model::IClipPtr mClipClone;
     model::IClipPtr mLink;
