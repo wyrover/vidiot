@@ -68,9 +68,9 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    wxStaticText* mHeader;
     wxWindow* mCurrent;
     std::vector<DetailsPanel*> mDetails;
+    wxString mLabel;
 
 };
 

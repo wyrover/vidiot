@@ -253,7 +253,9 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
                     pFrame->channel_layout : av_get_default_channel_layout(av_frame_get_channels(pFrame.get()));
 
                 mSoftwareResampleContext = swr_alloc_set_opts(0,
-                    av_get_default_channel_layout(parameters.getNrChannels()), AV_SAMPLE_FMT_S16, parameters.getSampleRate(),
+                    av_get_default_channel_layout(parameters.getNrChannels()), 
+                    AV_SAMPLE_FMT_S16, 
+                    Convert::sampleRateToNewSpeed(parameters.getSampleRate(), parameters.getSpeed()),
                     dec_channel_layout, codec->sample_fmt, pFrame->sample_rate, 0, 0);
                 ASSERT_NONZERO(mSoftwareResampleContext);
 
@@ -315,7 +317,7 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
         typedef boost::rational<int> rational;
         auto convertInputSampleCountToOutputSampleCount = [parameters,codec](samplecount input) -> samplecount
         {
-            return floor64(rational64(input) * rational64(parameters.getSampleRate()) / rational64(codec->sample_rate));
+            return floor64(rational64(input) * rational64(Convert::sampleRateToNewSpeed(parameters.getSampleRate(), parameters.getSpeed())) / rational64(codec->sample_rate));
         };
 
         int nExpectedOutputSamplesPerChannel = convertInputSampleCountToOutputSampleCount(nDecodedSamplesPerChannel);
@@ -412,7 +414,7 @@ AudioPeaks AudioFile::getPeaks(pts offset, pts length)
                     ASSERT_MORE_THAN_EQUALS_ZERO(current.second);
                     allPeaks.push_back(current);
                     current = AudioPeak(0, 0);
-                    nextRequiredSample = Convert::ptsToSamplesPerChannel(parameters.getSampleRate(), allPeaks.size());
+                    nextRequiredSample = Convert::ptsToSamplesPerChannel(Convert::sampleRateToNewSpeed(parameters.getSampleRate(), parameters.getSpeed()), allPeaks.size());
                 }
                 ++samplePosition;
                 ++buffer;

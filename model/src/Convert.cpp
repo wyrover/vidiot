@@ -228,4 +228,16 @@ samplecount Convert::audioSamplesToBytes(samplecount nSamples)
     return nSamples * AudioChunk::sBytesPerSample;
 }
 
+// static 
+pts Convert::positionToNewSpeed(pts position, boost::rational<int> newSpeed, boost::rational<int> originalSpeed )
+{
+     return boost::rational_cast<pts>(newSpeed * position / originalSpeed);
+}
+
+// static 
+int Convert::sampleRateToNewSpeed(int samplerate, boost::rational<int> newSpeed, boost::rational<int> originalSpeed)
+{
+     return boost::rational_cast<int>(newSpeed * samplerate / originalSpeed);
+}
+
 } // namespace

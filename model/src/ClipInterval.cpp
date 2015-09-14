@@ -19,11 +19,13 @@
 
 #include "ClipEvent.h"
 #include "Config.h"
+#include "Convert.h"
 #include "File.h"
 #include "Track.h"
 #include "Transition.h"
 #include "UtilClone.h"
 #include "UtilLog.h"
+#include "UtilLogBoost.h"
 #include "UtilSerializeBoost.h"
 
 namespace model {
@@ -33,32 +35,35 @@ namespace model {
 //////////////////////////////////////////////////////////////////////////
 
 ClipInterval::ClipInterval()
-    :	Clip()
-    ,   mRender()
-    ,   mOffset(0)
-    ,   mLength(-1)
-    ,   mDescription("")
+    : Clip()
+    , mRender()
+    , mSpeed(1)
+    , mOffset(0)
+    , mLength(-1)
+    , mDescription("")
 {
     // NOT: VAR_DEBUG(*this); -- Log in most derived class. Avoids duplicate logging AND avoids pure virtual calls (implemented in most derived class).
 }
 
 ClipInterval::ClipInterval(const IFilePtr& render)
-    :	Clip()
-    ,   mRender(render)
-    ,   mOffset(0)
-    ,   mLength(-1)
-    ,   mDescription("")
+    : Clip()
+    , mRender(render)
+    , mSpeed(1)
+    , mOffset(0)
+    , mLength(-1)
+    , mDescription("")
 {
     mLength = mRender->getLength() - mOffset;
     // NOT: VAR_DEBUG(*this); -- Log in most derived class. Avoids duplicate logging AND avoids pure virtual calls (implemented in most derived class).
 }
 
 ClipInterval::ClipInterval(const ClipInterval& other)
-    :	Clip(other)
-    ,   mRender(make_cloned<IFile>(other.mRender))
-    ,   mOffset(other.mOffset)
-    ,   mLength(other.mLength)
-    ,   mDescription(other.mDescription)
+    : Clip(other)
+    , mRender(make_cloned<IFile>(other.mRender))
+    , mSpeed(other.mSpeed)
+    , mOffset(other.mOffset)
+    , mLength(other.mLength)
+    , mDescription(other.mDescription)
 {
     // NOT: VAR_DEBUG(*this); -- Log in most derived class. Avoids duplicate logging AND avoids pure virtual calls (implemented in most derived class).
 }
@@ -83,7 +88,7 @@ void ClipInterval::moveTo(pts position)
     ASSERT_LESS_THAN(position,mLength);
     ASSERT_MORE_THAN_EQUALS_ZERO(position);
     setNewStartPosition(position);
-    mRender->moveTo(mOffset + position);
+    mRender->moveTo(model::Convert::positionToNewSpeed(mOffset + position, mSpeed));
 }
 
 wxString ClipInterval::getDescription() const
@@ -118,6 +123,23 @@ void ClipInterval::clean()
 //////////////////////////////////////////////////////////////////////////
 // ICLIP
 //////////////////////////////////////////////////////////////////////////
+
+void ClipInterval::setSpeed(const boost::rational<int>& speed)
+{
+    VAR_DEBUG(speed);
+    if (speed != mSpeed)
+    {
+        boost::rational<int> oldSpeed = mSpeed;
+        mSpeed = speed;
+        EventChangeClipSpeed event(speed);
+        ProcessEvent(event);
+    }
+}
+
+boost::rational<int> ClipInterval::getSpeed() const
+{
+    return mSpeed;
+}
 
 pts ClipInterval::getMinAdjustBegin() const
 {

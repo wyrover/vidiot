@@ -59,6 +59,13 @@ public:
     virtual void adjustEnd(pts adjustment) override;
 
     //////////////////////////////////////////////////////////////////////////
+    // SPEED
+    //////////////////////////////////////////////////////////////////////////
+
+    virtual void setSpeed(const boost::rational<int>& speed);
+    virtual boost::rational<int> getSpeed() const;
+
+    //////////////////////////////////////////////////////////////////////////
     // FOR PREVIEWING
     //////////////////////////////////////////////////////////////////////////
 
@@ -100,10 +107,11 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    IFilePtr mRender;       ///< The producer of audiovisual data for this clip
+    IFilePtr mRender;               ///< The producer of audiovisual data for this clip
 
-    pts mOffset;            ///< Offset inside the original media file (start point)
-    pts mLength;            ///< Length of the clip
+    boost::rational<int> mSpeed;    ///< Speed for rendering
+    pts mOffset;                    ///< Offset inside the original media file (start point). Note that the offset does not take speed into account.
+    pts mLength;                    ///< Length of the clip
 
     mutable wxString mDescription;  ///< Stored for performance (cached) and for easier debugging.
 

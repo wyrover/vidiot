@@ -49,6 +49,7 @@ void ASSERT_CLIPPROPERTIES(
 {
     WaitForIdle;
 
+    model::IClipPtr selectedclip = nullptr;
     int widget_scalingdigits = 0;
     double widget_scalingspin = 0.0;
     int widget_xslider = 0;
@@ -59,7 +60,7 @@ void ASSERT_CLIPPROPERTIES(
 
     util::thread::RunInMainAndWait([&]
     {
-        ASSERT_DETAILSCLIP(clip);
+        selectedclip = DetailsClipView()->getClip();
         widget_scalingdigits = DetailsClipView()->getScalingSlider()->GetValue();
         widget_scalingspin = DetailsClipView()->getScalingSpin()->GetValue();
         widget_xslider = DetailsClipView()->getPositionXSlider()->GetValue();
@@ -68,6 +69,7 @@ void ASSERT_CLIPPROPERTIES(
         widget_yspin = DetailsClipView()->getPositionYSpin()->GetValue();
         widget_rotationdigits = DetailsClipView()->getRotationSlider()->GetValue();
     });
+    ASSERT_EQUALS(selectedclip, clip);
 
     int scalingdigits = boost::rational_cast<int>(scalingfactor * model::Constants::sScalingPrecisionFactor);
     ASSERT_EQUALS(widget_scalingdigits, scalingdigits );

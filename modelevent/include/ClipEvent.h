@@ -25,6 +25,7 @@ namespace model {
 
 DECLARE_EVENT(EVENT_DRAG_CLIP,              EventDragClip,              bool);
 DECLARE_EVENT(EVENT_SELECT_CLIP,            EventSelectClip,            bool);
+DECLARE_EVENT(EVENT_CHANGE_CLIP_SPEED,      EventChangeClipSpeed,       boost::rational<int>);
 
 } // namespace
 

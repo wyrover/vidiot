@@ -44,9 +44,6 @@ Details::Details(wxWindow* parent, Timeline* timeline)
     mDetails.push_back(new DetailsClip(this,*timeline));
 
     wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
-    mHeader = new wxStaticText(this,wxID_ANY,"", wxDefaultPosition, wxSize(2000,-1), wxBORDER_THEME | wxST_ELLIPSIZE_MIDDLE | wxALIGN_CENTRE);
-    mHeader->SetBackgroundColour(wxColour{ 192, 192, 192 });
-    sizer->Add(mHeader, wxSizerFlags(0).Center());
     for ( DetailsPanel* details : mDetails )
     {
         sizer->Add(details, wxSizerFlags(1).Expand() );
@@ -80,9 +77,11 @@ void Details::update()
     {
         if (details->requestsToBeShown() && !shown)
         {
-            if (mHeader->GetLabel() != details->getTitle())
+            if (mLabel != details->getTitle())
             {
-                mHeader->SetLabel(details->getTitle());
+                mLabel = details->getTitle();
+                gui::Window::get().getUiManager().GetPane(gui::Window::sPaneNameDetails).Caption( gui::Window::sPaneCaptionDetails  + ": " + mLabel);
+                gui::Window::get().getUiManager().Update();
             }
             if (mCurrent == details)
             {
@@ -100,7 +99,8 @@ void Details::update()
     if (!shown)
     {
         mCurrent = 0;
-        mHeader->SetLabel("");
+        gui::Window::get().getUiManager().GetPane(gui::Window::sPaneNameDetails).Caption(gui::Window::sPaneCaptionDetails);
+        gui::Window::get().getUiManager().Update();
     }
     gui::Window::get().triggerLayout();
 }

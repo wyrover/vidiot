@@ -420,7 +420,7 @@ void TestDetailsClip::testTransform()
         SetValue(DetailsClipView()->getScalingSelector(),model::VideoScalingFitToFill);
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::EditClipDetails>();
         ASSERT_CLIPPROPERTIES(VideoClip(0,3),model::VideoScalingFitToFill,boost::rational<int>(8000,model::Constants::sScalingPrecisionFactor),model::VideoAlignmentCenter,wxPoint(-152,0),oldRotation);
-        Undo();
+        Undo(2);
         ASSERT_ORIGINAL_CLIPPROPERTIES();
     }
     {
@@ -448,7 +448,7 @@ void TestDetailsClip::testTransform()
         ASSERT_CLIPPROPERTIES(VideoClip(0,3),model::VideoScalingFitToFill,oldScalingFactor,model::VideoAlignmentCustom,wxPoint(-142,10),oldRotation);
         SetValue(DetailsClipView()->getAlignmentSelector(),model::VideoAlignmentCenter);
         ASSERT_CLIPPROPERTIES(VideoClip(0,3),model::VideoScalingFitToFill,oldScalingFactor,model::VideoAlignmentCenter,wxPoint(-152,0),oldRotation);
-        Undo();
+        Undo(3);
         ASSERT_ORIGINAL_CLIPPROPERTIES();
     }
     {
@@ -460,7 +460,7 @@ void TestDetailsClip::testTransform()
         ASSERT_CLIPPROPERTIES(VideoClip(0,3),model::VideoScalingFitToFill,oldScalingFactor,model::VideoAlignmentCustom,wxPoint(-142,10),oldRotation);
         SetValue(DetailsClipView()->getAlignmentSelector(),model::VideoAlignmentCenterHorizontal);
         ASSERT_CLIPPROPERTIES(VideoClip(0,3),model::VideoScalingFitToFill,oldScalingFactor,model::VideoAlignmentCenterHorizontal,wxPoint(-152,10),oldRotation);
-        Undo();
+        Undo(3);
         ASSERT_ORIGINAL_CLIPPROPERTIES();
     }
     {
@@ -472,7 +472,7 @@ void TestDetailsClip::testTransform()
         ASSERT_CLIPPROPERTIES(VideoClip(0,3),model::VideoScalingFitToFill,oldScalingFactor,model::VideoAlignmentCustom,wxPoint(-142,10),oldRotation);
         SetValue(DetailsClipView()->getAlignmentSelector(),model::VideoAlignmentCenterVertical);
         ASSERT_CLIPPROPERTIES(VideoClip(0,3),model::VideoScalingFitToFill,oldScalingFactor,model::VideoAlignmentCenterVertical,wxPoint(-142,0),oldRotation);
-        Undo();
+        Undo(3);
         ASSERT_ORIGINAL_CLIPPROPERTIES();
     }
     {
@@ -518,7 +518,7 @@ void TestDetailsClip::testTransform()
         SetValue(DetailsClipView()->getPositionXSlider(), -142); // Same as WXK_PAGEDOWN
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::EditClipDetails>(); // Verify that only one command object was added to the undo history
         ASSERT_EQUALS(CursorPosition(),HCenter(VideoClip(0,3))); // Now the cursor is moved to the center of the adjusted clip (for the preview)
-        Undo();
+        Undo(2);
         ASSERT_ORIGINAL_CLIPPROPERTIES();
     }
     {

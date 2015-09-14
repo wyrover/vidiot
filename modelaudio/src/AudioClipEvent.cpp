@@ -21,6 +21,6 @@
 
 namespace model {
 
-DEFINE_EVENT(EVENT_CHANGE_AUDIOCLIP_VOLUME,       EventChangeAudioClipVolume,       int);
+DEFINE_EVENT(EVENT_CHANGE_AUDIOCLIP_VOLUME, EventChangeAudioClipVolume, int);
 
 } // namespace

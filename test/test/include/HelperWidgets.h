@@ -51,8 +51,11 @@ void SetValue(wxSpinCtrlDouble* widget, double value);
 template <class ITEMTYPE>
 void SetValue(EnumSelector<ITEMTYPE>* widget, ITEMTYPE value)
 {
-    widget->SetSelection(widget->getIndex(value));
-    widget->GetEventHandler()->QueueEvent(new wxCommandEvent(wxEVT_CHOICE));
+    util::thread::RunInMainAndWait([widget, value]
+    {
+        widget->SetSelection(widget->getIndex(value));
+        widget->GetEventHandler()->QueueEvent(new wxCommandEvent(wxEVT_CHOICE));
+    });
 }
 
 /// Simulate the setting of a check box to the given value.

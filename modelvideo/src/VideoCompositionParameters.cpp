@@ -28,20 +28,22 @@ namespace model {
 //////////////////////////////////////////////////////////////////////////
 
 VideoCompositionParameters::VideoCompositionParameters()
-    :   mBoundingBox(0,0)
-    ,   mDrawBoundingBox(Config::ReadBool(Config::sPathVideoShowBoundingBox))
-    ,   mOptimizeForQuality(false)
-    ,   mSkip(false)
-    ,   mPts(boost::none)
+    : mBoundingBox(0, 0)
+    , mDrawBoundingBox(Config::ReadBool(Config::sPathVideoShowBoundingBox))
+    , mSpeed(1)
+    , mOptimizeForQuality(false)
+    , mSkip(false)
+    , mPts(boost::none)
 {
 }
 
 VideoCompositionParameters::VideoCompositionParameters(const VideoCompositionParameters& other)
-    :   mBoundingBox(other.mBoundingBox)
-    ,   mDrawBoundingBox(other.mDrawBoundingBox)
-    ,   mOptimizeForQuality(other.mOptimizeForQuality)
-    ,   mSkip(other.mSkip)
-    ,   mPts(other.mPts)
+    : mBoundingBox(other.mBoundingBox)
+    , mDrawBoundingBox(other.mDrawBoundingBox)
+    , mSpeed(other.mSpeed)
+    , mOptimizeForQuality(other.mOptimizeForQuality)
+    , mSkip(other.mSkip)
+    , mPts(other.mPts)
 {
 }
 
@@ -100,6 +102,17 @@ bool VideoCompositionParameters::getOptimizeForQuality() const
     return mOptimizeForQuality;
 }
 
+VideoCompositionParameters& VideoCompositionParameters::setSpeed(boost::rational<int> speed)
+{
+    mSpeed = speed;
+    return *this;
+}
+
+boost::rational<int> VideoCompositionParameters::getSpeed() const
+{
+    return mSpeed;
+}
+
 VideoCompositionParameters& VideoCompositionParameters::setSkip(bool skip)
 {
     mSkip = skip;
@@ -154,6 +167,7 @@ std::ostream& operator<<(std::ostream& os, const VideoCompositionParameters& obj
     os  << &obj << '|' 
         << obj.mBoundingBox << '|' 
         << obj.mDrawBoundingBox << '|' 
+        << obj.mSpeed << '|'
         << obj.mOptimizeForQuality << '|' 
         << obj.mSkip << '|' 
         << obj.mPts;
