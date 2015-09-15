@@ -108,6 +108,9 @@ public:
     void onMaximize(wxMaximizeEvent& event);
     void onClose(wxCloseEvent& event);
 
+    void onClosePane(wxAuiManagerEvent& event);
+    void onRestorePane(wxAuiManagerEvent& event);
+
     //////////////////////////////////////////////////////////////////////////
     // FILE MENU
     //////////////////////////////////////////////////////////////////////////
@@ -229,8 +232,10 @@ private:
     wxMenuBar*          mMenuBar;        // For enabling/disabling menus
     wxMenu*             mMenuFile;       // For enabling/disabling menus
     wxMenu*             mMenuEdit;       // For associating with do/undo
+    wxMenu*             mMenuView;       // For updating view items when panes are closed.
     wxMenu*             mMenuSequence;   // For determining cleanup of the sequence menu's
     wxMenu*             mMenuWorkspace;
+    wxMenu*             mMenuHelp;       // For updating Help when the pane is closed.
     util::TestCrash*    mTestCrash;
 
     wxAuiManager        mUiManager;
@@ -247,6 +252,7 @@ private:
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
+    void updateViewMenu();
     void updateWorkspaceMenu();
     friend struct ViewHelper;
     void updateTitle();
