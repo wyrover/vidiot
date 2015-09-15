@@ -169,19 +169,19 @@ Window::Window()
 	mMenuEdit->Enable(wxID_COPY,false);
 	mMenuEdit->Enable(wxID_PASTE,false);
 
-    wxMenu* menuview = new wxMenu();
-    menuview->AppendCheckItem(ID_SNAP_CLIPS, _("Snap to clips"), _("Check this item to ensure that operations in the timeline 'snap' to adjacent clip boundaries."));
-    menuview->Check(ID_SNAP_CLIPS, Config::ReadBool(Config::sPathTimelineSnapClips));
-    menuview->AppendCheckItem(ID_SNAP_CURSOR, _("Snap to cursor"), _("Check this item to ensure that operations in the timeline 'snap' to the cursor position."));
-    menuview->Check(ID_SNAP_CURSOR, Config::ReadBool(Config::sPathTimelineSnapCursor));
-    menuview->AppendSeparator();
-    menuview->AppendCheckItem(ID_SHOW_BOUNDINGBOX, _("Show bounding box"), _("Show the bounding box of the generated video in the preview window."));
-    menuview->Check(ID_SHOW_BOUNDINGBOX, Config::ReadBool(Config::sPathVideoShowBoundingBox));
-    menuview->AppendSeparator();
-    menuview->AppendCheckItem(ID_SHOW_PROJECT, sPaneCaptionProject, _("Show/hide the project view pane."));
-    menuview->AppendCheckItem(ID_SHOW_DETAILS, sPaneCaptionDetails, _("Show/hide the timeline details pane."));
-    menuview->AppendCheckItem(ID_SHOW_PREVIEW, sPaneCaptionPreview, _("Show/hide the timeline preview pane."));
-    menuview->AppendCheckItem(ID_SHOW_TIMELINES, sPaneCaptionTimelines, _("Show/hide the timelines pane."));
+    mMenuView = new wxMenu();
+    mMenuView->AppendCheckItem(ID_SNAP_CLIPS, _("Snap to clips"), _("Check this item to ensure that operations in the timeline 'snap' to adjacent clip boundaries."));
+    mMenuView->Check(ID_SNAP_CLIPS, Config::ReadBool(Config::sPathTimelineSnapClips));
+    mMenuView->AppendCheckItem(ID_SNAP_CURSOR, _("Snap to cursor"), _("Check this item to ensure that operations in the timeline 'snap' to the cursor position."));
+    mMenuView->Check(ID_SNAP_CURSOR, Config::ReadBool(Config::sPathTimelineSnapCursor));
+    mMenuView->AppendSeparator();
+    mMenuView->AppendCheckItem(ID_SHOW_BOUNDINGBOX, _("Show bounding box"), _("Show the bounding box of the generated video in the preview window."));
+    mMenuView->Check(ID_SHOW_BOUNDINGBOX, Config::ReadBool(Config::sPathVideoShowBoundingBox));
+    mMenuView->AppendSeparator();
+    mMenuView->AppendCheckItem(ID_SHOW_PROJECT, sPaneCaptionProject, _("Show/hide the project view pane."));
+    mMenuView->AppendCheckItem(ID_SHOW_DETAILS, sPaneCaptionDetails, _("Show/hide the timeline details pane."));
+    mMenuView->AppendCheckItem(ID_SHOW_PREVIEW, sPaneCaptionPreview, _("Show/hide the timeline preview pane."));
+    mMenuView->AppendCheckItem(ID_SHOW_TIMELINES, sPaneCaptionTimelines, _("Show/hide the timelines pane."));
 
     mMenuSequence = new wxMenu();
 
@@ -202,18 +202,18 @@ Window::Window()
     mMenuWorkspace->Append(ID_WORKSPACE_FULLSCREEN, ("Fullscreen\tF11"), _("Toggle between windowed and fullscreen mode."));
     updateWorkspaceMenu();
 
-    wxMenu* menuhelp = new wxMenu();
-    menuhelp->Append(wxID_HELP, _("Help"), _("Open the help.") );
-    menuhelp->AppendSeparator();
-    menuhelp->Append(ID_OPENLOGFILE, _("Open log file"), _("Use the default application associated with .txt files to open the log file."));
-    menuhelp->Append(ID_OPENCONFIGFILE, _("Open config file"), _("Use the default application associated with .ini files to open the config file."));
-    menuhelp->AppendSeparator();
-    menuhelp->Append(wxID_ABOUT, _("&About..."), _("Show the about dialog."));
+    mMenuHelp = new wxMenu();
+    mMenuHelp->AppendCheckItem(wxID_HELP, _("Help"), _("Open the help.") );
+    mMenuHelp->AppendSeparator();
+    mMenuHelp->Append(ID_OPENLOGFILE, _("Open log file"), _("Use the default application associated with .txt files to open the log file."));
+    mMenuHelp->Append(ID_OPENCONFIGFILE, _("Open config file"), _("Use the default application associated with .ini files to open the config file."));
+    mMenuHelp->AppendSeparator();
+    mMenuHelp->Append(wxID_ABOUT, _("&About..."), _("Show the about dialog."));
 
     mMenuBar = new wxMenuBar();
     mMenuBar->Append(mMenuFile,     _("&Project"));
     mMenuBar->Append(mMenuEdit,     _("&Edit"));
-    mMenuBar->Append(menuview,     _("&View"));
+    mMenuBar->Append(mMenuView,     _("&View"));
     mMenuBar->Append(mMenuSequence, _("&Sequence"));
     sSequenceMenuIndex = 3;
     mMenuBar->Append(menutools,    _("&Tools"));
@@ -223,8 +223,7 @@ Window::Window()
         mTestCrash = new util::TestCrash(this);
         mMenuBar->Append(mTestCrash->getMenu(), _("&Crash"));
     }
-
-    mMenuBar->Append(menuhelp,     _("&Help"));
+    mMenuBar->Append(mMenuHelp,     _("&Help"));
 
     SetMenuBar( mMenuBar );
 
@@ -306,6 +305,9 @@ Window::Window()
     mUiManager.GetPane(sPaneNameTimelines).dock_proportion = 200000;
     mUiManager.Update();
 
+    mUiManager.Bind(wxEVT_AUI_PANE_CLOSE, &Window::onClosePane, this);
+    mUiManager.Bind(wxEVT_AUI_PANE_RESTORE, &Window::onRestorePane, this);
+    
     mDefaultPerspective = mUiManager.SavePerspective();
 
     wxString previous = Config::ReadString(Config::sPathWorkspacePerspectiveCurrent);
@@ -316,13 +318,7 @@ Window::Window()
         mUiManager.Update();
     }
 
-    for (auto t : sMapMenuIdToPaneName)
-    {
-        if (t.first == wxID_HELP) { continue; } // Skip help menu
-        wxAuiPaneInfo& pane = mUiManager.GetPane(t.second);
-        ASSERT(pane.IsOk());
-        menuview->Check(t.first, pane.IsShown());
-    }
+    updateViewMenu();
 
     Bind(model::EVENT_OPEN_PROJECT,     &Window::onOpenProject,     this);
     Bind(model::EVENT_CLOSE_PROJECT,    &Window::onCloseProject,    this);
@@ -380,7 +376,7 @@ Window::Window()
             item->SetItemLabel(item->GetItemLabelText() + "\tCtrl-W");
         }
     }
-    for (wxMenuItem* item : menuhelp->GetMenuItems())
+    for (wxMenuItem* item : mMenuHelp->GetMenuItems())
     {
         if (item->GetId() == wxID_HELP)
         {
@@ -444,6 +440,8 @@ void Window::init()
 
 Window::~Window()
 {
+    mUiManager.Unbind(wxEVT_AUI_PANE_CLOSE, &Window::onClosePane, this);
+    mUiManager.Unbind(wxEVT_AUI_PANE_RESTORE, &Window::onRestorePane, this);
     mUiManager.UnInit();
 
     Unbind(model::EVENT_OPEN_PROJECT,     &Window::onOpenProject,   this);
@@ -616,6 +614,44 @@ void Window::onClose(wxCloseEvent& event)
     Config::WriteString(Config::sPathWorkspacePerspectiveCurrent, mUiManager.SavePerspective());
     mVisibleWorker->abort();
     mInvisibleWorker->abort();
+    event.Skip();
+}
+
+void Window::onClosePane(wxAuiManagerEvent& event)
+{
+    for (auto t : sMapMenuIdToPaneName)
+    {
+        if (t.second == event.GetPane()->name)
+        {
+            if (t.first == wxID_HELP) 
+            { 
+                mMenuHelp->Check(t.first, false);
+            }
+            else
+            {
+                mMenuView->Check(t.first, false);
+            }
+        }
+    }
+    event.Skip();
+}
+
+void Window::onRestorePane(wxAuiManagerEvent& event)
+{
+    for (auto t : sMapMenuIdToPaneName)
+    {
+        if (t.second == event.GetPane()->name)
+        {
+            if (t.first == wxID_HELP) 
+            { 
+                mMenuHelp->Check(t.first, true);
+            }
+            else
+            {
+                mMenuView->Check(t.first, true);
+            }
+        }
+    }
     event.Skip();
 }
 
@@ -972,6 +1008,17 @@ bool Window::isProjectOpened() const
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
+
+void Window::updateViewMenu()
+{
+    for (auto t : sMapMenuIdToPaneName)
+    {
+        if (t.first == wxID_HELP) { continue; } // Skip help menu
+        wxAuiPaneInfo& pane = mUiManager.GetPane(t.second);
+        ASSERT(pane.IsOk());
+        mMenuView->Check(t.first, pane.IsShown());
+    }
+}
 
 void Window::updateWorkspaceMenu()
 {
