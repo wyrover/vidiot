@@ -86,10 +86,14 @@ VideoDisplay::VideoDisplay(wxWindow *parent, model::SequencePtr sequence)
     VAR_DEBUG(this);
 
     SetBackgroundStyle(wxBG_STYLE_PAINT); // Required for wxAutoBufferedPaintDC
-    mBufferBitmap.reset(new wxBitmap(GetSize()));
 
     GetClientSize(&mWidth,&mHeight);
     VAR_DEBUG(mWidth)(mHeight);
+
+    if (mWidth > 0 && mHeight > 0) // With wxGTK sometimes w > 0 and h == 0 (during creation)
+    {
+        mBufferBitmap.reset(new wxBitmap(GetSize()));
+    }
 
     Bind(wxEVT_PAINT,               &VideoDisplay::onPaint,              this);
     Bind(wxEVT_ERASE_BACKGROUND,    &VideoDisplay::onEraseBackground,    this);
@@ -603,7 +607,8 @@ void VideoDisplay::onPaint(wxPaintEvent& event)
     // Buffered dc is used, since first the entire area is blanked with drawrectangle,
     // and then overwritten. Without buffering that causes flickering.
     boost::scoped_ptr<wxDC> dc;
-    if (!IsDoubleBuffered())
+    if (!IsDoubleBuffered() && 
+        mBufferBitmap != nullptr)
     {
         // A dedicated buffer bitmap is used. Without it I had conflicts between the buffered
         // bitmap used for VideoDisplay and Timeline: when pressing 'b' (trim begin) during

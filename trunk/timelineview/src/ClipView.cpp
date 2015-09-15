@@ -462,7 +462,8 @@ void ClipView::draw(wxBitmap& bitmap, bool drawDraggedClips, bool drawNotDragged
 
 void ClipView::drawForDragging(const wxPoint& position, int height, wxDC& dc, wxDC& dcMask) const
 {
-    if (getDrag().contains(mClip))
+    if (getDrag().contains(mClip) &&
+        getW() > 0)
     {
         int tmpBitmapHeight = height;
         if (mClip->isA<model::Transition>())

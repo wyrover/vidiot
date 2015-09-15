@@ -89,7 +89,8 @@ Timeline::Timeline(wxWindow *parent, const model::SequencePtr& sequence, bool be
     SetBackgroundColour(wxColour{ 212, 208, 200 }); // Background colour
     SetBackgroundStyle(wxBG_STYLE_PAINT); // For the buffered DC in onPaint()
 
-    mBufferBitmap.reset( new wxBitmap(getSequenceView().getSize() ) );
+    wxSize size = GetClientSize();
+    mBufferBitmap = (size.x > 0 && size.y > 0) ? boost::make_shared<wxBitmap>(size) : nullptr;
 
     mStateMachine->start();
 
@@ -143,7 +144,7 @@ Timeline::~Timeline()
 
     Window::get().getPreview().closeTimeline(this); // This closes the Player
     mPlayer = 0;
-    mBufferBitmap.reset();
+    mBufferBitmap = nullptr;
     mExecuteOnIdle = nullptr;
 
     mSequence->clean();
@@ -354,7 +355,7 @@ void Timeline::onSize(wxSizeEvent& event)
         mExecuteOnSize = nullptr;
     }
     wxSize size = GetClientSize();
-    mBufferBitmap.reset(new wxBitmap(size));
+    mBufferBitmap = (size.x > 0 && size.y > 0) ? boost::make_shared<wxBitmap>(size) : nullptr;
     resize();
     event.Skip();
 }
@@ -376,7 +377,8 @@ void Timeline::onPaint(wxPaintEvent &event)
     }
 
     boost::scoped_ptr<wxDC> dc;
-    if (!IsDoubleBuffered())
+    if (!IsDoubleBuffered() &&
+        mBufferBitmap != nullptr)
     {
         // A dedicated buffer bitmap is used. Without it I had conflicts between the buffered
         // bitmap used for VideoDisplay and Timeline: when pressing 'b' (trim begin) during

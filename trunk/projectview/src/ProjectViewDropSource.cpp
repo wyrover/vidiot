@@ -88,7 +88,7 @@ bool ProjectViewDropSource::GiveFeedback(wxDragResult effect)
 
         int width = 0;
         int height = 0;
-        for ( model::NodePtr asset : assets )
+        for (model::NodePtr asset : assets)
         {
             wxRect rect(mCtrl.GetItemRect(wxDataViewItem(asset->id()), mCtrl.GetColumn(0)));
             if (rect.width > width)
@@ -98,20 +98,22 @@ bool ProjectViewDropSource::GiveFeedback(wxDragResult effect)
             height += rect.height;
         }
 
+        width = std::min(width, 20);
+        height = std::min(height, 20);
         wxBitmap bitmap(width, height);
         wxMemoryDC dc(bitmap);
 
-        dc.SetPen(wxPen{wxColour{0,0,0}});
-        dc.SetBrush(wxBrush{wxColour{0,0,0}, wxBRUSHSTYLE_TRANSPARENT});
-        dc.SetFont(wxFont(wxSize(0,12),wxFONTFAMILY_DEFAULT,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL));
+        dc.SetPen(wxPen{ wxColour{ 0, 0, 0 } });
+        dc.SetBrush(wxBrush{ wxColour{ 0, 0, 0 }, wxBRUSHSTYLE_TRANSPARENT });
+        dc.SetFont(wxFont(wxSize(0, 12), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
         dc.SetTextForeground(*wxWHITE);
         //dc->SetTextBackground(*wxBLUE);
 
         int y = 0;
-        for ( model::NodePtr asset : assets )
+        for (model::NodePtr asset : assets)
         {
             wxRect itemRect(mCtrl.GetItemRect(wxDataViewItem(asset->id()), mCtrl.GetColumn(0)));
-            drawAsset(&dc, wxRect(0,y,width,itemRect.GetHeight()), asset);
+            drawAsset(&dc, wxRect(0, y, width, itemRect.GetHeight()), asset);
             y += itemRect.GetHeight();
         }
         dc.SelectObject(wxNullBitmap);

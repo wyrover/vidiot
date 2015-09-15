@@ -265,6 +265,8 @@ void Trim::start()
 
     // Create preview bitmaps.
     wxSize playerSize = getPlayer()->getVideoSize();
+    playerSize.x = std::min(playerSize.x, 20);
+    playerSize.y = std::min(playerSize.y, 20);
     mBitmapSingle = boost::make_shared<wxBitmap>(playerSize);
     mDc.SelectObject(*mBitmapSingle);
     mDc.SetBrush(wxBrush{ wxColour{ 0, 0, 0 } });
