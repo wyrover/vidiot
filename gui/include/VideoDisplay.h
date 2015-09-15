@@ -132,7 +132,7 @@ private:
 
     int mWidth;
     int mHeight;
-    wxBitmapPtr mBufferBitmap;
+    wxBitmapPtr mBufferBitmap = nullptr;
 
     boost::scoped_ptr<boost::thread> mVideoBufferThreadPtr;
     void videoBufferThread();

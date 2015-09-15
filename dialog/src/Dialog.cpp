@@ -304,12 +304,15 @@ int generateDebugReport(bool doexit, bool addcontext, bool screenShot, const wxR
         screenShotFile.SetExt("png");
         wxScreenDC screen;
         wxMemoryDC memory;
-        wxBitmap screenshot(screenRect.width, screenRect.height);
-        memory.SelectObject (screenshot);
-        memory.Blit (0, 0, screenRect.width, screenRect.height, &screen, screenRect.x, screenRect.y);
-        memory.SelectObject (wxNullBitmap);
-        screenshot.SaveFile (screenShotFile.GetFullPath(), wxBITMAP_TYPE_PNG);
-        report.AddFile(screenShotFile.GetFullPath(), wxT("Screen shot"));
+        if (!screenRect.IsEmpty())
+        {
+            wxBitmap screenshot(screenRect.width, screenRect.height);
+            memory.SelectObject(screenshot);
+            memory.Blit(0, 0, screenRect.width, screenRect.height, &screen, screenRect.x, screenRect.y);
+            memory.SelectObject(wxNullBitmap);
+            screenshot.SaveFile(screenShotFile.GetFullPath(), wxBITMAP_TYPE_PNG);
+            report.AddFile(screenShotFile.GetFullPath(), wxT("Screen shot"));
+        }
     }
 
     if (addcontext)

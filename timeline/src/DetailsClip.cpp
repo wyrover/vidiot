@@ -982,9 +982,11 @@ void DetailsClip::preview()
         getCursor().setLogicalPosition(position); // ...and move the cursor to that position
     }
 
-    if (mClones->Video->getLength() > 0)
+    wxSize s = getPlayer()->getVideoSize();
+    if (mClones->Video->getLength() > 0 &&
+        s.GetWidth() > 0 &&
+        s.GetHeight() > 0)
     {
-        wxSize s = getPlayer()->getVideoSize();
         boost::shared_ptr<wxBitmap> bmp = boost::make_shared<wxBitmap>(s);
         wxMemoryDC dc(*bmp);
 

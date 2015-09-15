@@ -44,6 +44,7 @@ TimelinesView::TimelinesView(Window *parent)
     gui::Window::get().Bind(model::EVENT_REMOVE_NODE,              &TimelinesView::onProjectAssetRemoved,       this);
     gui::Window::get().Bind(model::EVENT_RENAME_NODE,              &TimelinesView::onProjectAssetRenamed,       this);
     mNotebook.Bind(wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED,     &TimelinesView::onPageChanged,               this);
+    Bind(wxEVT_SIZE, &TimelinesView::onSize, this);
 }
 
 TimelinesView::~TimelinesView()
@@ -52,6 +53,7 @@ TimelinesView::~TimelinesView()
     gui::Window::get().Unbind(model::EVENT_REMOVE_NODE,            &TimelinesView::onProjectAssetRemoved,       this);
     gui::Window::get().Unbind(model::EVENT_RENAME_NODE,            &TimelinesView::onProjectAssetRenamed,       this);
     mNotebook.Unbind(wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED,   &TimelinesView::onPageChanged,               this);
+    Unbind(wxEVT_SIZE, &TimelinesView::onSize, this);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -96,6 +98,14 @@ void TimelinesView::onProjectAssetRenamed(model::EventRenameNode &event)
 //////////////////////////////////////////////////////////////////////////
 // GUI EVENTS
 //////////////////////////////////////////////////////////////////////////
+
+void TimelinesView::onSize(wxSizeEvent& event)
+{
+    wxSize s = event.GetSize();
+    // To avoid crashes in wxNotebook when one of the notebook dimensions becomes 0.
+    mNotebook.Show(s.GetHeight() >= 1 || s.GetHeight() >= 1);
+    event.Skip();
+}
 
 void TimelinesView::onPageChanged(wxNotebookEvent& event)
 {

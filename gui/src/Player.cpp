@@ -388,7 +388,7 @@ void Player::endEdit()
     GetSizer()->Hide(mEdit);
     GetSizer()->Show(mDisplay);
     GetSizer()->Layout();
-    mEdit->show(boost::shared_ptr<wxBitmap>());
+    mEdit->show(nullptr);
 }
 
 void Player::updateStatus()
