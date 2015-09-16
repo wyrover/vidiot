@@ -83,7 +83,7 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
 {
     VAR_DEBUG(this);
 
-    addBox(boost::none);
+    addBox(boost::none, 2);
 
     {
         // Read lengths from config
