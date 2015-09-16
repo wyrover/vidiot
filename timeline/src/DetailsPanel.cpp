@@ -69,10 +69,10 @@ void DetailsPanel::requestShow(bool show, const wxString& title)
     static_cast<Details*>(GetParent())->update();
 }
 
-wxFlexGridSizer* DetailsPanel::addBox(boost::optional<wxString> name)
+wxFlexGridSizer* DetailsPanel::addBox(boost::optional<wxString> name, int vgap)
 {
     ASSERT(mTopSizer);
-    mBoxSizer = new wxFlexGridSizer(2, 0, 0);
+    mBoxSizer = new wxFlexGridSizer(2, vgap, 0);
     mBoxSizer->AddGrowableCol(1);
     if (name)
     {

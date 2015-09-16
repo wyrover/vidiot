@@ -317,7 +317,7 @@ Window::Window()
         mUiManager.LoadPerspective(previous);
         mUiManager.Update();
     }
-
+    mUiManager.GetPane(mDetailsView).Caption(sPaneNameDetails); // Ensure that any specific details name (from a previous session) is replaced with the default. 
     updateViewMenu();
 
     Bind(model::EVENT_OPEN_PROJECT,     &Window::onOpenProject,     this);

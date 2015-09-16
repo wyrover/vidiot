@@ -50,7 +50,7 @@ protected:
 
     void requestShow(bool show, const wxString& title = "");
 
-    wxFlexGridSizer* addBox(boost::optional<wxString> name = boost::none);
+    wxFlexGridSizer* addBox(boost::optional<wxString> name = boost::none, int vgap = 0);
     void setBox(wxFlexGridSizer* box);
     void setBoxTitle(const wxString& boxname, const wxString& title);
 
