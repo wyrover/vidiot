@@ -334,6 +334,15 @@ void DetailsClip::setClip(const model::IClipPtr& clip)
 
     if (mClip == clip) return; // Avoid useless updating
 
+    // For some edit operations the preview is shown iso player.
+    // The 'end' of the edit operation is not clear (edit opacity
+    // via the slider starts the operation, and the preview, but 
+    // when does the operation end?).
+    //
+    // However, at some point the preview must be removed again.
+    // That's done here, when another (or no) clip is selected.
+    getTimeline().getPlayer()->showPlayer();
+
     mClip.reset();
     mClones.reset();
     mEditCommand = nullptr;
@@ -812,6 +821,15 @@ void DetailsClip::onTransitionParameterChanged(model::EventTransitionParameterCh
 void DetailsClip::onSelectionChanged(timeline::EventSelectionUpdate& event)
 {
     VAR_DEBUG(this);
+    if (getTrim().isActive())
+    {
+        // At the end of the trim operation, the trim command is initialized.
+        // In AClipEdit::initialize another EventSelectionUpdate is triggered.
+        // Updating the current clip during trimming causes unnecessary 
+        // toggling (flickering between player - via DetailsClip::edit -
+        // and the preview - via the trim preview).
+        return;
+    }
     std::set<model::IClipPtr> selection = getSequence()->getSelectedClips();
     model::IClipPtr selectedclip;
     VAR_DEBUG(selection.size());
@@ -970,7 +988,7 @@ void DetailsClip::submitEditCommandUponFirstEdit(const wxString& message)
 void DetailsClip::preview()
 {
     if (!mClones || !mClones->Video) { return; }
- //   ASSERT_NONZERO(mClones->Video->getTrack()); // The edit command must have been submitted
+    ASSERT_NONZERO(mClones->Video->getTrack()); // The edit command must have been submitted
 
     pts position = getCursor().getLogicalPosition(); // By default, show the frame under the cursor (which is already currently shown, typically)
     if ((position < mClones->Video->getLeftPts()) || 

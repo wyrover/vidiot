@@ -265,8 +265,8 @@ void Trim::start()
 
     // Create preview bitmaps.
     wxSize playerSize = getPlayer()->getVideoSize();
-    playerSize.x = std::min(playerSize.x, 20);
-    playerSize.y = std::min(playerSize.y, 20);
+    if (playerSize.x < 20) { playerSize.x = 20; }
+    if (playerSize.y < 20) { playerSize.y = 20; }
     mBitmapSingle = boost::make_shared<wxBitmap>(playerSize);
     mDc.SelectObject(*mBitmapSingle);
     mDc.SetBrush(wxBrush{ wxColour{ 0, 0, 0 } });
@@ -337,7 +337,7 @@ void Trim::stop()
     VAR_DEBUG(this);
     mActive = false;
     getSequenceView().setMinimumLength(0);
-    getTimeline().getDetails().get<DetailsTrim>()->hide();
+    getDetails().get<DetailsTrim>()->hide();
 
     // Store before destroying mCommand
     model::IClipPtr originalclip = mCommand->getOriginalClip();
@@ -352,6 +352,7 @@ void Trim::stop()
         getTimeline().Refresh(false);
         getTimeline().Update();
     }
+    getPlayer()->showPlayer();
     mVideoClip.reset();
     mCommand = 0;
 }

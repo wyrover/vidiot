@@ -206,6 +206,8 @@ void Player::showPlayer()
 {
     if (GetSizer()->IsShown(mEdit))
     {
+        // Ensure that the proper frame is shown in the player, after editing (and previewing)
+        mDisplay->moveTo(mPosition); 
         endEdit();
     }
 }
