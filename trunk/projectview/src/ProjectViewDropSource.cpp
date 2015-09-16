@@ -98,8 +98,8 @@ bool ProjectViewDropSource::GiveFeedback(wxDragResult effect)
             height += rect.height;
         }
 
-        width = std::min(width, 20);
-        height = std::min(height, 20);
+        if (width < 20) { width = 20; }
+        if (height < 20) { height = 20; }
         wxBitmap bitmap(width, height);
         wxMemoryDC dc(bitmap);
 
