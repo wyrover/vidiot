@@ -46,8 +46,6 @@ namespace command {
     class TrimClip;
 }
 
-std::tuple<model::VideoClipPtr, model::AudioClipPtr, model::TransitionPtr> getTypedClips(model::IClipPtr clip); // todo make part of model?
-
 class DetailsClip
 :   public DetailsPanel
 {

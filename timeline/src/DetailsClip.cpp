@@ -376,7 +376,7 @@ void DetailsClip::setClip(const model::IClipPtr& clip)
 
         if (video || audio)
         {
-            boost::rational< int > speed = boost::dynamic_pointer_cast<model::ClipInterval>(mClip)->getSpeed(); // todo what if transition? then poof
+            boost::rational< int > speed = boost::dynamic_pointer_cast<model::ClipInterval>(mClip)->getSpeed();
             boost::rational<int> maxSpeed = 10; // todo mEditCommand->getMaxVideoSpeed(); // todo only one slider for speed, only enabled for audio-video with same length
             mSpeedSlider->SetValue(boost::rational_cast<int>(speed * model::Constants::sSpeedPrecisionFactor));
             mSpeedSpin->SetValue(boost::rational_cast<double>(speed));
@@ -972,7 +972,7 @@ void DetailsClip::submitEditCommandUponFirstEdit(const wxString& message)
             mClones->Video &&
             mClones->Video->getTrack())
         {
-            ClipPreview* preview{ getViewMap().getClipPreview(mClip) }; // todo what if audio clip is selected???
+            ClipPreview* preview{ getViewMap().getClipPreview(mClip) };
             preview->invalidateCachedBitmaps();
             preview->invalidateRect();
             getTimeline().repaint(preview->getRect());
