@@ -110,26 +110,4 @@ DetailsClip::ClonesContainer::~ClonesContainer()
     Transition.reset();
 };
 
-std::tuple<model::VideoClipPtr, model::AudioClipPtr, model::TransitionPtr> getTypedClips(model::IClipPtr clip) // todo make part of model?
-{
-    model::VideoClipPtr video = nullptr;
-    model::AudioClipPtr audio = nullptr;
-    model::TransitionPtr transition = nullptr;
-    if (clip->isA<model::VideoClip>())
-    {
-        video = boost::dynamic_pointer_cast<model::VideoClip>(clip);
-        audio = boost::dynamic_pointer_cast<model::AudioClip>(clip->getLink());
-    }
-    else if (clip->isA<model::AudioClip>())
-    {
-        audio = boost::dynamic_pointer_cast<model::AudioClip>(clip);
-        video = boost::dynamic_pointer_cast<model::VideoClip>(clip->getLink());
-    }
-    else if (clip->isA<model::Transition>())
-    {
-        transition = boost::dynamic_pointer_cast<model::Transition>(clip);
-    }
-    return std::make_tuple(video, audio, transition);
-}
-
 }} // namespace
