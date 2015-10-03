@@ -1004,7 +1004,7 @@ void TestTransition::testTrimmingTransition()
         StartTest("InTransition: Try enlarging the transition on the left side (known crash in ClipView for finding the correct position)");
         MakeInTransitionAfterClip preparation(1);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
-        DeleteClip(VideoClip(0,1));
+        TimelineDeleteClip(VideoClip(0,1));
         ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(Transition)(VideoClip);
         TimelineTrimTransitionRightClipBegin(VideoClip(0,2),20);
         TimelineTrim(VTopQuarterLeft(VideoClip(0,2)),Center(VideoClip(0,1)));
@@ -1014,7 +1014,7 @@ void TestTransition::testTrimmingTransition()
         StartTest("OutTransition: Try enlarging the transition on the right side (known crash in ClipView for finding the correct position)");
         MakeOutTransitionAfterClip preparation(1);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
-        DeleteClip(VideoClip(0,3));
+        TimelineDeleteClip(VideoClip(0,3));
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::DeleteSelectedClips>();
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(EmptyClip);
         TimelineTrimTransitionLeftClipEnd(VideoClip(0,2),-20);
@@ -1028,7 +1028,7 @@ void TestTransition::testTrimmingTransition()
         StartTest("InTransition: Try enlarging the transition on the left side (known crash in Transition::getMinAdjustBegin)");
         MakeInTransitionAfterClip preparation(1);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
-        DeleteClip(VideoClip(0,1));
+        TimelineDeleteClip(VideoClip(0,1));
         ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(Transition)(VideoClip);
         TimelineTrimTransitionRightClipBegin(VideoClip(0,2),20);
         TimelineTrim(VTopQuarterLeft(VideoClip(0,2)),Center(VideoClip(0,1)));
@@ -1038,7 +1038,7 @@ void TestTransition::testTrimmingTransition()
         StartTest("OutTransition: Try enlarging the transition on the right side (known crash in Transition::getMaxAdjustEnd)");
         MakeOutTransitionAfterClip preparation(1);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
-        DeleteClip(VideoClip(0,3));
+        TimelineDeleteClip(VideoClip(0,3));
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(EmptyClip);
         TimelineTrimTransitionLeftClipEnd(VideoClip(0,2),-20);
         TimelineTrim(VTopQuarterRight(VideoClip(0,2)),Center(VideoClip(0,4)));

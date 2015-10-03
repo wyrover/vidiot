@@ -29,7 +29,7 @@ namespace model {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-TransitionParameterChangeCommand::TransitionParameterChangeCommand(const TransitionPtr& transition)
+TransitionParameterChangeCommand::TransitionParameterChangeCommand(const TransitionPtr& transition) // todo remove this class. never used.
     :   RootCommand()
     ,   mInitialized(false)
     ,   mTransition(transition)

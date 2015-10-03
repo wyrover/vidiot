@@ -64,4 +64,11 @@ void Unlink(model::IClipPtr clip)
     });
 }
 
+void AssertClipSpeed(model::IClipPtr clip, rational speed)
+{
+    model::ClipIntervalPtr interval{ boost::dynamic_pointer_cast<model::ClipInterval>(clip) };
+    ASSERT(interval != nullptr);
+    ASSERT_EQUALS(interval->getSpeed(), speed);
+}
+
 } // namespace

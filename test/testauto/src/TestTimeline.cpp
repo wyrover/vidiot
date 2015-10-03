@@ -520,8 +520,7 @@ void TestTimeline::testTrimming()
 {
     StartTestSuite();
     TimelineZoomIn(2);
-    DeleteClip(VideoClip(0,3));
-    DeleteClip(VideoClip(0,1));
+    TimelineDeleteClips({ VideoClip(0, 3), VideoClip(0, 1) });
     ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(EmptyClip)(VideoClip);
     ASSERT_AUDIOTRACK0(AudioClip)(EmptyClip)(AudioClip)(EmptyClip)(AudioClip);
     {
@@ -588,7 +587,6 @@ void TestTimeline::testTrimming()
         Undo();
         Undo();
     }
-    Undo();
     Undo();
     {
         StartTest("Trim: Left: During the trim, the Trim detailspanel is visible.");

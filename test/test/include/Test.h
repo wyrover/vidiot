@@ -160,6 +160,7 @@ typedef std::pair<RandomTempDirPtr, wxFileName> DirAndFile;
 #include "HelperWindow.h" // Used by HelperTransform
 #include "HelperTransform.h"
 #include "HelperTransition.h"
+#include "HelperVideoFrame.h"
 #include "HelperWatcher.h"
 #include "HelperWidgets.h"
 #include "HelperWorker.h"

@@ -154,42 +154,42 @@ pts Convert::fromProjectFrameRate(pts outputposition, const FrameRate& inputrate
 }
 
 // static
-int Convert::scale(int input, boost::rational<int> factor)
+int Convert::scale(int input, rational factor)
 {
-    return floor(factor * boost::rational<int>(input));
+    return floor(factor * rational(input));
 }
 
 // static
-wxSize Convert::scale(const wxSize& input, boost::rational<int> factor)
+wxSize Convert::scale(const wxSize& input, rational factor)
 {
     return wxSize(scale(input.x,factor),scale(input.y,factor));
 }
 
 // static
-wxPoint Convert::scale(const wxPoint& input, boost::rational<int> factor)
+wxPoint Convert::scale(const wxPoint& input, rational factor)
 {
     return wxPoint(scale(input.x,factor),scale(input.y,factor));
 }
 
 // static
-wxRect Convert::scale(const wxRect& input, boost::rational<int> factor)
+wxRect Convert::scale(const wxRect& input, rational factor)
 {
     return wxRect(scale(input.GetPosition(),factor),scale(input.GetSize(),factor));
 }
 
 // static
-wxSize Convert::sizeInBoundingBox(const wxSize& input, const wxSize& boundingbox, boost::rational<int>& scaling, bool fill)
+wxSize Convert::sizeInBoundingBox(const wxSize& input, const wxSize& boundingbox, rational& scaling, bool fill)
 {
-    boost::rational<int> bbWidth(boundingbox.GetWidth());
-    boost::rational<int> inWidth(input.GetWidth());
-    boost::rational<int> scWidth = bbWidth / inWidth;
+    rational bbWidth(boundingbox.GetWidth());
+    rational inWidth(input.GetWidth());
+    rational scWidth = bbWidth / inWidth;
 
-    boost::rational<int> bbHeight(boundingbox.GetHeight());
-    boost::rational<int> inHeight(input.GetHeight());
-    boost::rational<int> scHeight = bbHeight / inHeight;
+    rational bbHeight(boundingbox.GetHeight());
+    rational inHeight(input.GetHeight());
+    rational scHeight = bbHeight / inHeight;
 
-    ASSERT_LESS_THAN_EQUALS(scWidth  * boost::rational<int>(input.GetWidth()),   boost::rational<int>(boundingbox.GetWidth()));
-    ASSERT_LESS_THAN_EQUALS(scHeight * boost::rational<int>(input.GetHeight()), boost::rational<int>(boundingbox.GetHeight()));
+    ASSERT_LESS_THAN_EQUALS(scWidth  * rational(input.GetWidth()),   rational(boundingbox.GetWidth()));
+    ASSERT_LESS_THAN_EQUALS(scHeight * rational(input.GetHeight()), rational(boundingbox.GetHeight()));
 
     if (fill)
     {
@@ -206,12 +206,12 @@ wxSize Convert::sizeInBoundingBox(const wxSize& input, const wxSize& boundingbox
 // static
 wxSize Convert::sizeInBoundingBox(const wxSize& input, const wxSize& boundingbox)
 {
-    boost::rational<int> dummy;
+    rational dummy;
     return sizeInBoundingBox(input,boundingbox,dummy);
 }
 
 // static
-double Convert::degreesToRadians(boost::rational<int> degrees)
+double Convert::degreesToRadians(rational degrees)
 {
     return -1 * boost::rational_cast<double>(degrees) * boost::math::constants::pi<double>() / 180.0;
 }
@@ -229,15 +229,21 @@ samplecount Convert::audioSamplesToBytes(samplecount nSamples)
 }
 
 // static 
-pts Convert::positionToNewSpeed(pts position, boost::rational<int> newSpeed, boost::rational<int> originalSpeed )
+pts Convert::positionToNewSpeed(pts position, rational newSpeed, rational oldSpeed)
 {
-     return boost::rational_cast<pts>(newSpeed * position / originalSpeed);
+     return boost::rational_cast<pts>(position * oldSpeed / newSpeed);
 }
 
 // static 
-int Convert::sampleRateToNewSpeed(int samplerate, boost::rational<int> newSpeed, boost::rational<int> originalSpeed)
+pts Convert::positionToNormalSpeed(pts position, rational speed)
 {
-     return boost::rational_cast<int>(newSpeed * samplerate / originalSpeed);
+     return boost::rational_cast<pts>(speed * position);
+}
+
+// static 
+int Convert::samplerateToNewSpeed(int samplerate, rational newSpeed, rational oldSpeed)
+{
+     return boost::rational_cast<int>(samplerate * oldSpeed / newSpeed);
 }
 
 } // namespace

@@ -24,7 +24,6 @@
 #include "UtilInt.h"
 
 namespace model {
-    class EventChangeClipSpeed;
     class EventChangeAudioClipVolume;
     class EventChangeVideoClipAlignment;
     class EventChangeVideoClipMaxPosition;
@@ -43,11 +42,12 @@ namespace gui { namespace timeline {
 
 namespace command {
     class EditClipDetails;
+    class EditClipSpeed;
     class TrimClip;
 }
 
 class DetailsClip
-:   public DetailsPanel
+    : public DetailsPanel
 {
 public:
 
@@ -61,6 +61,9 @@ public:
     //////////////////////////////////////////////////////////////////////////
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
+
+    static int speedToSliderValue(rational speed);
+    static rational sliderToSpeedValue(int slidervalue);
 
     model::IClipPtr getClip() const;
     void setClip(const model::IClipPtr& clip);
@@ -102,8 +105,6 @@ public:
     // PROJECT EVENTS
     //////////////////////////////////////////////////////////////////////////
 
-    void onSpeedChanged(model::EventChangeClipSpeed& event);
-
     void onOpacityChanged(model::EventChangeVideoClipOpacity& event);
     void onScalingChanged(model::EventChangeVideoClipScaling& event);
     void onScalingFactorChanged(model::EventChangeVideoClipScalingFactor& event);
@@ -143,7 +144,7 @@ public:
     wxSpinCtrl* getPositionXSpin() const;
     wxSlider* getPositionYSlider() const;
     wxSpinCtrl* getPositionYSpin() const;
-    
+
     wxSlider* getVolumeSlider() const;
     wxSpinCtrl* getVolumeSpin() const;
 
@@ -165,13 +166,14 @@ private:
         model::IClipPtr Link = nullptr;
         model::VideoClipPtr Video = nullptr;
         model::AudioClipPtr Audio = nullptr;
-        model::TransitionPtr Transition = nullptr;
     };
 
     model::IClipPtr mClip = nullptr;      ///< The clip for which the details view is shown. 0 in case a transition is selected
+    model::TransitionPtr mTransitionClone = nullptr; ///< Transition which is currently being edited
     std::unique_ptr<ClonesContainer> mClones;
 
     command::EditClipDetails* mEditCommand = nullptr;
+    command::EditClipSpeed* mEditSpeedCommand = nullptr;
 
     wxPanel* mLengthPanel = nullptr;
     std::vector<pts> mLengths;
@@ -220,7 +222,9 @@ private:
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    void submitEditCommandUponFirstEdit(const wxString& message);
+    void submitEditCommandUponAudioVideoEdit(const wxString& message);
+    void submitEditCommandUponTransitionEdit(const wxString& parameter);
+    void createOrUpdateSpeedCommand(boost::rational<int> speed);
 
     void preview();
 

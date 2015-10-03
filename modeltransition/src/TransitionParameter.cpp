@@ -21,8 +21,7 @@
 
 namespace model {
 
-DEFINE_EVENT(EVENT_TRANSITION_PARAMETER_CHANGING, EventTransitionParameterChanging, void*);
-DEFINE_EVENT(EVENT_TRANSITION_PARAMETER_CHANGED, EventTransitionParameterChanged, void*);
+DEFINE_EVENT(EVENT_TRANSITION_PARAMETER_CHANGED, EventTransitionParameterChanged, wxString);
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
@@ -49,10 +48,8 @@ TransitionParameter::~TransitionParameter()
 
 void TransitionParameter::signalUpdate(std::function<void()> update)
 {
-    EventTransitionParameterChanging changingEvent{ nullptr };
-    ProcessEvent(changingEvent);
     update();
-    EventTransitionParameterChanged changedEvent{ nullptr };
+    EventTransitionParameterChanged changedEvent{ getName() };
     ProcessEvent(changedEvent);
 }
 

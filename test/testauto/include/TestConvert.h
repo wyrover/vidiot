@@ -34,6 +34,7 @@ public:
 
     void testTimeConversions();
     void testIntegerConversions();
+    void testSpeedSliderConversions();
 };
 
 }

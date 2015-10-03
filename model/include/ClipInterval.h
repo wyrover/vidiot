@@ -78,6 +78,12 @@ public:
 
     FilePtr getFile() const override;
 
+    /// \return length of original input adjusted for speed
+    pts getRenderLength() const;
+
+    /// \return length of original input with 1/1 speed
+    pts getRenderSourceLength() const;
+
 protected:
 
     //////////////////////////////////////////////////////////////////////////
@@ -109,9 +115,9 @@ private:
 
     IFilePtr mRender;               ///< The producer of audiovisual data for this clip
 
-    boost::rational<int> mSpeed;    ///< Speed for rendering
-    pts mOffset;                    ///< Offset inside the original media file (start point). Note that the offset does not take speed into account.
-    pts mLength;                    ///< Length of the clip
+    boost::rational<int> mSpeed;    ///< Speed for rendering. A speed != 1 implies that the speed of of frames of mRender is changed with the given speed. Offset and length are applied AFTER applying the speed.
+    pts mOffset;                    ///< Offset in 'sequence' speed and time base; number of frames to skip from the original media file (after applying speed - to skip).
+    pts mLength;                    ///< Length of the clip in 'sequence' speed and time base; number of frames to show from the original media file (after applying speed).
 
     mutable wxString mDescription;  ///< Stored for performance (cached) and for easier debugging.
 
@@ -132,7 +138,7 @@ private:
 
 } // namespace
 
-BOOST_CLASS_VERSION(model::ClipInterval, 1)
+BOOST_CLASS_VERSION(model::ClipInterval, 2)
 BOOST_CLASS_EXPORT_KEY(model::ClipInterval)
 
 #endif

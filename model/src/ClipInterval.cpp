@@ -30,7 +30,7 @@
 
 namespace model {
 
-    //////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
@@ -50,10 +50,9 @@ ClipInterval::ClipInterval(const IFilePtr& render)
     , mRender(render)
     , mSpeed(1)
     , mOffset(0)
-    , mLength(-1)
+    , mLength(mRender->getLength())
     , mDescription("")
 {
-    mLength = mRender->getLength() - mOffset;
     // NOT: VAR_DEBUG(*this); -- Log in most derived class. Avoids duplicate logging AND avoids pure virtual calls (implemented in most derived class).
 }
 
@@ -88,7 +87,7 @@ void ClipInterval::moveTo(pts position)
     ASSERT_LESS_THAN(position,mLength);
     ASSERT_MORE_THAN_EQUALS_ZERO(position);
     setNewStartPosition(position);
-    mRender->moveTo(model::Convert::positionToNewSpeed(mOffset + position, mSpeed));
+    mRender->moveTo(model::Convert::positionToNormalSpeed(mOffset + position, mSpeed));
 }
 
 wxString ClipInterval::getDescription() const
@@ -129,10 +128,26 @@ void ClipInterval::setSpeed(const boost::rational<int>& speed)
     VAR_DEBUG(speed);
     if (speed != mSpeed)
     {
-        boost::rational<int> oldSpeed = mSpeed;
+        rational oldSpeed = mSpeed;
+        pts oldOffset = mOffset;
+        pts oldLength = mLength;
+
         mSpeed = speed;
-        EventChangeClipSpeed event(speed);
-        ProcessEvent(event);
+
+        // Adjust offset (start at same frame/sample)
+        pts newOffset = model::Convert::positionToNewSpeed(oldOffset, speed, oldSpeed);
+        ASSERT_IMPLIES(speed < oldSpeed, newOffset >= mOffset);
+        ASSERT_IMPLIES(speed > oldSpeed, newOffset <= mOffset);
+        mOffset = newOffset;
+
+        // Adjust length (end at same frame/sample)
+        pts newLength = model::Convert::positionToNewSpeed(oldLength /*+ oldOffset*/, speed, oldSpeed);//- newOffset;
+        ASSERT_IMPLIES(speed < oldSpeed, newLength >= mLength);
+        ASSERT_IMPLIES(speed > oldSpeed, newLength <= mLength);
+        mLength = newLength;
+
+        ASSERT_MORE_THAN_EQUALS_ZERO(mOffset);
+        ASSERT_LESS_THAN_EQUALS(mLength, getRenderLength() - mOffset)(mLength)(mRender->getLength())(mSpeed)(getRenderLength())(mOffset)(*this);
     }
 }
 
@@ -166,7 +181,7 @@ void ClipInterval::adjustBegin(pts adjustment)
     mOffset += adjustment;
     mLength -= adjustment;
     ASSERT_MORE_THAN_EQUALS_ZERO(mOffset);
-    ASSERT_LESS_THAN_EQUALS(mLength,mRender->getLength() - mOffset)(adjustment)(mLength)(mRender->getLength())(mOffset)(*this);;
+    ASSERT_LESS_THAN_EQUALS(mLength,getRenderLength() - mOffset)(adjustment)(mLength)(mRender->getLength())(mSpeed)(getRenderLength())(mOffset)(*this);;
     VAR_DEBUG(*this)(adjustment);
 }
 
@@ -184,8 +199,8 @@ pts ClipInterval::getMaxAdjustEnd() const
     ASSERT(hasTrack()); // Do not call when not part of a track: the algorithm doesn't work then (for instance, with clones)
     TransitionPtr outTransition = getOutTransition();
     pts reservedForOutTransition = outTransition ? outTransition->getLength() : 0; // Do not use left part only. The right part (if present) is also using frames from this clip!
-    pts maxAdjustEnd =  mRender->getLength() - mLength - mOffset - reservedForOutTransition;
-    ASSERT_MORE_THAN_EQUALS_ZERO(maxAdjustEnd)(mRender->getLength())(mLength)(mOffset)(reservedForOutTransition)(*this);
+    pts maxAdjustEnd =  getRenderLength() - mLength - mOffset - reservedForOutTransition;
+    ASSERT_MORE_THAN_EQUALS_ZERO(maxAdjustEnd)(getRenderLength())(mLength)(mOffset)(reservedForOutTransition)(*this);
     return maxAdjustEnd;
 }
 
@@ -193,7 +208,7 @@ void ClipInterval::adjustEnd(pts adjustment)
 {
     ASSERT(!hasTrack())(getTrack()); // Otherwise, this action needs an event indicating the change to the track(view). Instead, tracks are updated by replacing clips.
     mLength += adjustment;
-    ASSERT_LESS_THAN_EQUALS(mLength,mRender->getLength() - mOffset)(adjustment)(mLength)(mRender->getLength())(mOffset)(*this);
+    ASSERT_LESS_THAN_EQUALS(mLength,getRenderLength() - mOffset)(adjustment)(mLength)(mRender->getLength())(mSpeed)(getRenderLength())(mOffset)(*this);
     VAR_DEBUG(*this)(adjustment);
 }
 
@@ -210,7 +225,7 @@ void ClipInterval::maximize()
 {
     ASSERT(!hasTrack())(getTrack()); // Otherwise, this action needs an event indicating the change to the track(view). Instead, tracks are updated by replacing clips.
     mOffset = 0;
-    mLength = mRender->getLength();
+    mLength = getRenderLength();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -222,6 +237,16 @@ FilePtr ClipInterval::getFile() const
     return boost::dynamic_pointer_cast<File>(mRender);
 }
 
+pts ClipInterval::getRenderLength() const
+{
+    return model::Convert::positionToNewSpeed(mRender->getLength(), mSpeed, 1);
+}
+
+pts ClipInterval::getRenderSourceLength() const
+{
+    return mRender->getLength();
+}
+
 //////////////////////////////////////////////////////////////////////////
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
@@ -230,6 +255,7 @@ std::ostream& operator<<(std::ostream& os, const ClipInterval& obj)
 {
     // Keep order same as Transition and EmptyClip for 'dump' method
     os  << static_cast<const Clip&>(obj) << '|'
+        << obj.mSpeed << '|'
         << std::setw(6) << obj.mOffset << '|'
         << std::setw(6) << obj.mLength;
     return os;
@@ -246,6 +272,10 @@ void ClipInterval::serialize(Archive & ar, const unsigned int version)
     {
         ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Clip);
         ar & BOOST_SERIALIZATION_NVP(mRender);
+        if (version >= 2)
+        {
+            ar & BOOST_SERIALIZATION_NVP(mSpeed);
+        }
         ar & BOOST_SERIALIZATION_NVP(mOffset);
         ar & BOOST_SERIALIZATION_NVP(mLength);
     }

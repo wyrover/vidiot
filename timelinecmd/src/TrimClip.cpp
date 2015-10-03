@@ -264,7 +264,6 @@ TrimClip::TrimLimit TrimClip::determineBoundaries(const model::SequencePtr& sequ
                 return std::make_pair(
                     clip->getTrack()->getLeftEmptyArea(clip->getInTransition() ? clip->getInTransition() : clip),
                     clip->getTrack()->getRightEmptyArea(clip->getOutTransition() ? clip->getOutTransition() : clip));
-
             }
             return std::make_pair(-1 * std::numeric_limits<pts>::max(), std::numeric_limits<pts>::max());
         };

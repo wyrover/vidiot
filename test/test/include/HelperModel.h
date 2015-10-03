@@ -49,6 +49,9 @@ wxPoint getPosition(model::IClipPtr clip);
 /// \post !clip->getLink() && !originalLink->getLink()
 void Unlink(model::IClipPtr clip);
 
+void AssertClipSpeed(model::IClipPtr clip, rational speed);
+#define ASSERT_CLIP_SPEED(clip, speed) AssertClipSpeed(clip, speed)
+
 } // namespace
 
 #endif

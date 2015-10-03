@@ -49,9 +49,6 @@ public:
     VideoCompositionParameters& setDrawBoundingBox(bool draw);
     bool getDrawBoundingBox() const;
 
-    VideoCompositionParameters& setSpeed(boost::rational<int> speed);
-    boost::rational<int> getSpeed() const;
-
     VideoCompositionParameters& setOptimizeForQuality();
     bool getOptimizeForQuality() const;
 
@@ -73,7 +70,6 @@ private:
 
     wxSize mBoundingBox;
     bool mDrawBoundingBox;
-    boost::rational<int> mSpeed;
     bool mOptimizeForQuality;
     bool mSkip;
     boost::optional<pts> mPts;

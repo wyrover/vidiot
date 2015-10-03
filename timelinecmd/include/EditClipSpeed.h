@@ -15,59 +15,59 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MODEL_TRANSITION_PARAMETER_H
-#define MODEL_TRANSITION_PARAMETER_H
+#ifndef EDIT_CLIP_SPEED_H
+#define EDIT_CLIP_SPEED_H
 
-#include "UtilEvent.h"
+#include "AClipEdit.h"
+#include "PositionInfo.h"
+#include "UtilInt.h"
 
-namespace model {
+namespace gui { namespace timeline { namespace command {
 
-DECLARE_EVENT(EVENT_TRANSITION_PARAMETER_CHANGED, EventTransitionParameterChanged, wxString);
-
-class TransitionParameter
-    :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
+class EditClipSpeed
+    :   public AClipEdit
 {
 public:
+
+    static const rational sMinimumSpeedAllowed;
+    static const rational sMaximumSpeedAllowed;
 
     //////////////////////////////////////////////////////////////////////////
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    /// Constructor for recovery from disk and for creating a new parameter.
-    TransitionParameter();
+    /// \param sequence sequence that is adjusted
+    /// \param clip clip to be changed
+    EditClipSpeed(
+        const model::SequencePtr& sequence, 
+        const model::IClipPtr& clip,
+        const model::IClipPtr& link,
+        const model::IClipPtr& clipClone,
+        const model::IClipPtr& linkClone,
+        rational speed);
 
-    /// Used for making deep copies (clones)
-    virtual TransitionParameter* clone() const = 0;
-    void onCloned() {};
-
-    virtual ~TransitionParameter();
-
-    //////////////////////////////////////////////////////////////////////////
-    // INTERFACE
-    //////////////////////////////////////////////////////////////////////////
-
-    virtual wxString getName() = 0;
-
-    virtual wxWindow* makeWidget(wxWindow *parent) = 0;
-    virtual void destroyWidget() = 0;
-
-protected:
+    virtual ~EditClipSpeed();
 
     //////////////////////////////////////////////////////////////////////////
-    // COPY CONSTRUCTOR
+    // ROOTCOMMAND
     //////////////////////////////////////////////////////////////////////////
 
-    /// Copy constructor. Use make_cloned for making deep copies of objects.
-    /// \see make_cloned
-    TransitionParameter(const TransitionParameter& other);
+    bool isPossible() override;
 
     //////////////////////////////////////////////////////////////////////////
-    // TO BE CALLED WHEN THE DATA CHANGES
+    // ACLIPEDIT INTERFACE
     //////////////////////////////////////////////////////////////////////////
 
-    /// Must be called to set the data.
-    /// This ensure that proper events are generated.
-    void signalUpdate(std::function<void()> update);
+    void initialize() override;
+    void doExtraAfter() override;
+    void undoExtraAfter() override;
+
+    //////////////////////////////////////////////////////////////////////////
+    // GET/SET
+    //////////////////////////////////////////////////////////////////////////
+
+    model::IClipPtr getClip() const;
+    rational getActualSpeed() const;
 
 private:
 
@@ -75,23 +75,29 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
+    model::IClipPtr mClip;
+    model::IClipPtr mClipClone;
+    model::IClipPtr mLink;
+    model::IClipPtr mLinkClone;
+    boost::rational<int> mSpeed;
+    bool mPossible;
+
+    //////////////////////////////////////////////////////////////////////////
+    // HELPER METHODS
+    //////////////////////////////////////////////////////////////////////////
+
+    /// Determine the maximum allowed speed, with the given clip's offset.
+    /// This takes into account room required for any adjacent transitions.
+    /// \param clipInterval clip to be checked.
+    void adjustSpeedForClipBounds(model::IClipPtr clip);
+
     //////////////////////////////////////////////////////////////////////////
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<(std::ostream& os, const TransitionParameter& obj);
-
-    //////////////////////////////////////////////////////////////////////////
-    // SERIALIZATION
-    //////////////////////////////////////////////////////////////////////////
-
-    friend class boost::serialization::access;
-    template<class Archive>
-    void serialize(Archive & ar, const unsigned int version);
+    friend std::ostream& operator<<(std::ostream& os, const EditClipSpeed& obj);
 };
-} // namespace
 
-BOOST_CLASS_VERSION(model::TransitionParameter, 1)
-BOOST_CLASS_EXPORT_KEY(model::TransitionParameter)
+}}} // namespace
 
 #endif

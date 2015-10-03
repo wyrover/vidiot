@@ -160,26 +160,30 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
     rational64 ticksPerFrame = rational64(1) / (inputFrameRate * inputTimeBase);
     ASSERT_MORE_THAN_ZERO(ticksPerFrame);
 
+    auto positionToFrameTime = [this, inputTimeBase](pts inputPosition) -> rational64
+    {
+        return rational64(inputPosition) * inputTimeBase * 1000;
+    };
+
     // 'Resample' the frame timebase
     // Determine which pts value is required. This is required to first determine
     // if the previously returned frame should be returned again
-    auto frameTimeOk = [this, parameters, stream, inputTimeBase, ticksPerFrame](pts inputPosition) -> bool
+    auto frameTimeOk = [this, parameters, stream, inputTimeBase, ticksPerFrame, positionToFrameTime](pts inputPosition) -> bool
     {
         bool result = true;
         if (parameters.hasPts() &&
             inputPosition != AV_NOPTS_VALUE)
         {
             pts requiredPts{ parameters.getPts() };
-            milliseconds requiredTime = Convert::ptsToTime(Convert::positionToNewSpeed(requiredPts, parameters.getSpeed()));
+            milliseconds requiredTime = Convert::ptsToTime(requiredPts); // Compute back to original speed
             if (stream->start_time != AV_NOPTS_VALUE)
             {
                 // Some streams don't start counting at 0
                 // NOTE: alternative might be stream->first_dts
                 inputPosition -= stream->start_time;
             }
-            rational64 currentTime = rational64(inputPosition) * inputTimeBase * 1000;
             rational64 nextTime = rational64(inputPosition + ticksPerFrame) * inputTimeBase * 1000;
-            milliseconds diffCurrent = abs(requiredTime - boost::rational_cast<milliseconds>(currentTime));
+            milliseconds diffCurrent = abs(requiredTime - boost::rational_cast<milliseconds>(positionToFrameTime(inputPosition)));
             milliseconds diffNext = abs(boost::rational_cast<milliseconds>(nextTime) - requiredTime);
             result =  diffCurrent < diffNext;
         }
@@ -197,7 +201,6 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
     pts decodedFramePts = AV_NOPTS_VALUE;
 
     VideoFramePtr result = mDeliveredFrame;
-
     if (!result || !frameTimeOk(result->getPts()))
     {
         // Decode new frame
@@ -260,7 +263,7 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
                 // Using the pts value of the first 'sent' packet (instead of dts of latest packet)
                 // works better (audio-video-sync) for codecs with a delay (example: MOV file with h.264)
                 int64_t* storedPts = static_cast<int64_t*>(pDecodedFrame->opaque);
-                if (storedPts != 0 && 
+                if (storedPts != 0 &&
                     *storedPts != AV_NOPTS_VALUE)
                 {
                     // Use PTS value of first packet sent into the decoder for this frame.
@@ -350,6 +353,10 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
     if (!result->isA<VideoSkipFrame>())
     {
         ASSERT_EQUALS(result->getLayers().size(), 1);
+
+        // Store the 'original time' for reference (testing)
+        result->setTime(positionToFrameTime(result->getPts()));
+
 	    // Clone the used frame. Must be done for multiple reasons.
 	    // 1. See also "Same frame again" above
 	    //    If the same frame is returned multiple times, any modifications on the frame

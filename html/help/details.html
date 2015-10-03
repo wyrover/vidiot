@@ -13,7 +13,12 @@ When a edit operation is in progress (currently: only trimming) the details view
 
 In the clip details view, the following can be edited:
 <ul>
-<li>The length of the clip can be changed to one of the predefined lengths. <br><i>Note that the buttons are customizable via the config file (Help &rarr; Config file, then edit 'LengthButtonsTimesInMilliseconds')<i>
+<li>The length of the clip can be changed to one of the predefined lengths.
+    <br><i>The buttons are customizable via the config file (Help &rarr; Config file, then edit 'LengthButtonsTimesInMilliseconds')</i>
+<li>The speed of a video clip can be changed. Audio clip speed cannot be edited (yet).
+    <br>Video speed can only be edited if there are no clips present in other tracks, in the same timeframe as the to-be-changed video clip.
+    <br><i>The start and end frame of the video are kept 'the same' as much as possible when changing the speed. 
+	However, this is not always possible (particularly, when increasing the speed).</i>
 <li>The opacity of the clip can be changed. For sequences with multiple tracks this means that clips in 'lower' tracks become visible when reducing a clip's opacity.
 <li>The scaling options can be changed. Use any of the predefined scaling methods, or choose 'custom' to set the scaling factor yourselves.
     <ul>
@@ -29,6 +34,7 @@ In the clip details view, the following can be edited:
     <li>Centered vertically<br>The clip is centered on the output video, but only vertically.
     <li>Custom<br>Set the X and Y position yourselves.
     </ul>
+<li>For audio clips, the volume can be changed from 0 to 100.
 </ul>
     
 

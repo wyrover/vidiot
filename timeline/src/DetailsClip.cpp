@@ -29,8 +29,10 @@
 #include "Cursor.h"
 #include "DetailsPanel.h"
 #include "EditClipDetails.h"
+#include "EditClipSpeed.h"
 #include "IClip.h"
 #include "Player.h"
+#include "ProjectModification.h"
 #include "Selection.h"
 #include "SelectionEvent.h"
 #include "Sequence.h"
@@ -77,6 +79,27 @@ const wxString sEditX(_("Edit X position of "));
 const wxString sEditY(_("Edit Y position of "));
 const wxString sEditVolume(_("Edit volume of "));
 
+// Helper methods for slider values. These ensure that 1/1 is in the middle.
+// 100 <-> 9999: 0.01 <-> 0.99 (divide by 100)
+// 10000 : 1
+// 10001 <-> 19900 : 1.01 <-> 100.00
+
+// static
+int DetailsClip::speedToSliderValue(rational speed)
+{
+    if (speed == 1) { return 10000; }
+    if (speed < 1) { return boost::rational_cast<int>(speed * 10000); }
+    return boost::rational_cast<int>(speed * 100 + 9900);
+}
+
+// static
+rational DetailsClip::sliderToSpeedValue(int slidervalue) // todo this also for the scaling slider? (1 in the middle)
+{
+    if (slidervalue < 10000) { return rational(slidervalue, 10000); }
+    if (slidervalue == 10000) { return 1; }
+    int diff = slidervalue - 10000;
+    return rational(diff + 100, 100); // +100 ensures 10001 starts at 1.01. -(diff/100) ensures that 20000 is exactly 100.00 again.
+}
 
 DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     : DetailsPanel(parent, timeline)
@@ -133,15 +156,13 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
 
     mSpeedPanel = new wxPanel(this);
     wxBoxSizer* speedsizer = new wxBoxSizer(wxHORIZONTAL);
-    mSpeedSlider = new wxSlider(mSpeedPanel, wxID_ANY, model::Constants::sSpeedMax, model::Constants::sSpeedMin, model::Constants::sSpeedMax );
+    mSpeedSlider = new wxSlider(mSpeedPanel, wxID_ANY, speedToSliderValue(model::Constants::sSpeedMax), speedToSliderValue(model::Constants::sSpeedMin), speedToSliderValue(model::Constants::sSpeedMax));
     mSpeedSlider->SetPageSize(sSpeedPageSize);
     mSpeedSpin = new wxSpinCtrlDouble(mSpeedPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(55,-1));
     mSpeedSpin->SetWindowVariant( wxWINDOW_VARIANT_SMALL );
     mSpeedSpin->SetDigits(model::Constants::sSpeedPrecision);
     mSpeedSpin->SetValue(1);
-    mSpeedSpin->SetRange(
-        static_cast<double>(model::Constants::sSpeedMin) / static_cast<double>(model::Constants::sSpeedPrecisionFactor),
-        static_cast<double>(model::Constants::sSpeedMax) / static_cast<double>(model::Constants::sSpeedPrecisionFactor));
+    mSpeedSpin->SetRange(boost::rational_cast<double>(model::Constants::sSpeedMin), boost::rational_cast<double>(model::Constants::sSpeedMax));
     mSpeedSpin->SetIncrement(sSpeedIncrement);
     speedsizer->Add(mSpeedSlider, wxSizerFlags(1).Expand());
     speedsizer->Add(mSpeedSpin, wxSizerFlags(0));
@@ -312,9 +333,11 @@ DetailsClip::~DetailsClip()
     mVolumeSlider->Unbind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onVolumeSliderChanged, this);
     mVolumeSpin->Unbind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onVolumeSpinChanged, this);
 
-    mClip.reset();
-    mClones.reset();
+    mClip = nullptr;
+    mClones = nullptr;
+    mTransitionClone = nullptr;
     mEditCommand = nullptr;
+    mEditSpeedCommand = nullptr;
 
     Unbind(wxEVT_SHOW, &DetailsClip::onShow, this);
 }
@@ -336,28 +359,49 @@ void DetailsClip::setClip(const model::IClipPtr& clip)
 
     // For some edit operations the preview is shown iso player.
     // The 'end' of the edit operation is not clear (edit opacity
-    // via the slider starts the operation, and the preview, but 
+    // via the slider starts the operation, and the preview, but
     // when does the operation end?).
     //
     // However, at some point the preview must be removed again.
     // That's done here, when another (or no) clip is selected.
     getTimeline().getPlayer()->showPlayer();
 
-    mClip.reset();
-    mClones.reset();
+    if (mTransitionClone)
+    {
+        while (mTransitionBoxSizer->GetItemCount() > 0)
+        {
+            wxWindow* widget = mTransitionBoxSizer->GetItem(static_cast<size_t>(0))->GetWindow();
+            mTransitionBoxSizer->Detach(0);
+            if (dynamic_cast<wxStaticText*>(widget) != 0)
+            {
+                // It's a title. Must be removed also.
+                widget->Destroy();
+            }
+        }
+        for (auto id_and_parameter : mTransitionClone->getParameters())
+        {
+            id_and_parameter.second->Unbind(model::EVENT_TRANSITION_PARAMETER_CHANGED, &DetailsClip::onTransitionParameterChanged, this);
+            id_and_parameter.second->destroyWidget();
+        }
+    }
+
+    mClip = nullptr;
+    mClones = nullptr;
+    mTransitionClone = nullptr;
     mEditCommand = nullptr;
+    mEditSpeedCommand = nullptr;
 
     model::VideoClipPtr video =
         !clip ? nullptr :
         clip->isA<model::VideoClip>() ? boost::dynamic_pointer_cast<model::VideoClip>(clip) :
         clip->isA<model::AudioClip>() ? boost::dynamic_pointer_cast<model::VideoClip>(clip->getLink()) :
         nullptr;
-    model::AudioClipPtr audio = 
+    model::AudioClipPtr audio =
         !clip ? nullptr :
         clip->isA<model::AudioClip>() ? boost::dynamic_pointer_cast<model::AudioClip>(clip) :
         clip->isA<model::VideoClip>() ? boost::dynamic_pointer_cast<model::AudioClip>(clip->getLink()) :
         nullptr;
-    model::TransitionPtr transition = 
+    model::TransitionPtr transition =
         !clip ? nullptr :
         clip->isA<model::Transition>() ? boost::dynamic_pointer_cast<model::Transition>(clip) :
         nullptr;
@@ -371,19 +415,20 @@ void DetailsClip::setClip(const model::IClipPtr& clip)
 
         // Length/speed
         // For audio/video clips and transitions, the length can be edited.
-        determineClipSizeBounds();
         updateLengthButtons();
 
-        if (video || audio)
+        mSpeedSlider->Enable(video && !audio);
+        mSpeedSpin->Enable(video && !audio);
+
+        if (video && !audio)
         {
-            boost::rational< int > speed = boost::dynamic_pointer_cast<model::ClipInterval>(mClip)->getSpeed();
-            boost::rational<int> maxSpeed = 10; // todo mEditCommand->getMaxVideoSpeed(); // todo only one slider for speed, only enabled for audio-video with same length
-            mSpeedSlider->SetValue(boost::rational_cast<int>(speed * model::Constants::sSpeedPrecisionFactor));
-            mSpeedSpin->SetValue(boost::rational_cast<double>(speed));
-            mSpeedSlider->SetMax(boost::rational_cast<int>(maxSpeed * model::Constants::sSpeedPrecisionFactor));
-            mSpeedSpin->SetRange(
-                static_cast<double>(model::Constants::sSpeedMin) / static_cast<double>(model::Constants::sSpeedPrecisionFactor),
-                boost::rational_cast<double>(maxSpeed));
+            // todo enable changing speed for audio (and for linked audio) also (using soundtouch)
+            if (!audio)
+            {
+                boost::rational< int > speed = boost::dynamic_pointer_cast<model::ClipInterval>(mClip)->getSpeed();
+                mSpeedSlider->SetValue(speedToSliderValue(speed));
+                mSpeedSpin->SetValue(boost::rational_cast<double>(speed));
+            }
         }
 
         if (video)
@@ -426,7 +471,18 @@ void DetailsClip::setClip(const model::IClipPtr& clip)
             mVolumeSpin->SetValue(audio->getVolume());
         }
 
-        // NOT: if (mClones->Transition) -- the transition controls are added dynamically in ClonesContainer
+        if (transition)
+        {
+            mTransitionClone = make_cloned<model::Transition>(transition);
+            setBox(mTransitionBoxSizer);
+            for (auto id_and_parameter : mTransitionClone->getParameters())
+            {
+                addOption(
+                    id_and_parameter.second->getName(),
+                    id_and_parameter.second->makeWidget(this));
+                id_and_parameter.second->Bind(model::EVENT_TRANSITION_PARAMETER_CHANGED, &DetailsClip::onTransitionParameterChanged, this);
+            }
+        }
 
         requestShow(true, mClip->getDescription() + " (" + model::Convert::ptsToHumanReadibleString(mClip->getPerceivedLength()) + "s)");
     }
@@ -460,7 +516,10 @@ pts DetailsClip::getLength(wxToggleButton* button) const
 
 void DetailsClip::onShow(wxShowEvent& event)
 {
-    updateLengthButtons();
+    //if (event.IsShown())
+    //{
+    //    updateLengthButtons();
+    //}
     event.Skip();
 }
 
@@ -474,10 +533,7 @@ void DetailsClip::onLengthButtonPressed(wxCommandEvent& event)
 void DetailsClip::onSpeedSliderChanged(wxCommandEvent& event)
 {
     VAR_INFO(mSpeedSlider->GetValue());
-    //todo
-    //command::EditClipDetails& command = getEditCommand(EditClipAspectClipSpeed);
-    //boost::rational<int> r(mSpeedSlider->GetValue(), model::Constants::sSpeedPrecisionFactor);
-    //command.getVideo()->setSpeed(r);
+    createOrUpdateSpeedCommand(sliderToSpeedValue(mSpeedSlider->GetValue()));
     event.Skip();
 }
 
@@ -486,10 +542,8 @@ void DetailsClip::onSpeedSpinChanged(wxSpinDoubleEvent& event)
     double value = mSpeedSpin->GetValue(); // NOT: event.GetValue() -- The event's value may be outside the range boundaries
     VAR_INFO(value);
     int spinFactor = floor(value * model::Constants::sSpeedPrecisionFactor);
-    // todo
-    //command::EditClipDetails& command = getEditCommand(EditClipAspectClipSpeed); // Use same widget to only update once, regardless of the originating control
-    boost::rational<int> r(spinFactor, model::Constants::sSpeedPrecisionFactor);
-    //command.getVideo()->setSpeed(r);
+    boost::rational<int> s(spinFactor, model::Constants::sSpeedPrecisionFactor);
+    createOrUpdateSpeedCommand(s);
     event.Skip();
 }
 
@@ -497,7 +551,7 @@ void DetailsClip::onOpacitySliderChanged(wxCommandEvent& event)
 {
     VAR_INFO(mOpacitySlider->GetValue());
     VAR_ERROR(mOpacitySlider->GetValue());
-    submitEditCommandUponFirstEdit(sEditOpacity);
+    submitEditCommandUponAudioVideoEdit(sEditOpacity);
     mClones->Video->setOpacity(mOpacitySlider->GetValue());
     event.Skip();
 }
@@ -505,7 +559,7 @@ void DetailsClip::onOpacitySliderChanged(wxCommandEvent& event)
 void DetailsClip::onOpacitySpinChanged(wxSpinEvent& event)
 {
     VAR_INFO(mOpacitySpin->GetValue()); // NOT: event.GetValue() -- The event's value may be outside the range boundaries
-    submitEditCommandUponFirstEdit(sEditOpacity); // Changes same clip aspect as the slider
+    submitEditCommandUponAudioVideoEdit(sEditOpacity); // Changes same clip aspect as the slider
     mClones->Video->setOpacity(mOpacitySpin->GetValue());
     event.Skip();
 }
@@ -513,7 +567,7 @@ void DetailsClip::onOpacitySpinChanged(wxSpinEvent& event)
 void DetailsClip::onScalingChoiceChanged(wxCommandEvent& event)
 {
     VAR_INFO(mSelectScaling->getValue());
-    submitEditCommandUponFirstEdit(sEditScalingType);
+    submitEditCommandUponAudioVideoEdit(sEditScalingType);
     mClones->Video->setScaling(mSelectScaling->getValue(), boost::none);
     event.Skip();
 }
@@ -522,7 +576,7 @@ void DetailsClip::onScalingSliderChanged(wxCommandEvent& event)
 {
     VAR_INFO(mScalingSlider->GetValue());
     boost::rational<int> r(mScalingSlider->GetValue(), model::Constants::sScalingPrecisionFactor);
-    submitEditCommandUponFirstEdit(sEditScaling);
+    submitEditCommandUponAudioVideoEdit(sEditScaling);
     mClones->Video->setScaling(model::VideoScalingCustom, boost::optional< boost::rational< int > >(r));
     event.Skip();
 }
@@ -532,7 +586,7 @@ void DetailsClip::onScalingSpinChanged(wxSpinDoubleEvent& event)
     VAR_INFO(mScalingSpin->GetValue()); // NOT: event.GetValue() -- The event's value may be outside the range boundaries
     int spinFactor = floor(mScalingSpin->GetValue() * model::Constants::sScalingPrecisionFactor);
     boost::rational<int> r(spinFactor, model::Constants::sScalingPrecisionFactor);
-    submitEditCommandUponFirstEdit(sEditScaling); // Changes same clip aspect as the slider
+    submitEditCommandUponAudioVideoEdit(sEditScaling); // Changes same clip aspect as the slider
     mClones->Video->setScaling(model::VideoScalingCustom, boost::optional< boost::rational< int > >(r));
     event.Skip();
 }
@@ -541,7 +595,7 @@ void DetailsClip::onRotationSliderChanged(wxCommandEvent& event)
 {
     VAR_INFO(mRotationSlider->GetValue());
     boost::rational<int> r(mRotationSlider->GetValue(), model::Constants::sRotationPrecisionFactor);
-    submitEditCommandUponFirstEdit(sEditRotation);
+    submitEditCommandUponAudioVideoEdit(sEditRotation);
     mClones->Video->setRotation(r);
     event.Skip();
 }
@@ -551,7 +605,7 @@ void DetailsClip::onRotationSpinChanged(wxSpinDoubleEvent& event)
     VAR_INFO(mRotationSpin->GetValue()); // NOT: event.GetValue() -- The event's value may be outside the range boundaries
     int spinFactor = floor(mRotationSpin->GetValue() * model::Constants::sRotationPrecisionFactor);
     boost::rational<int> r(spinFactor, model::Constants::sRotationPrecisionFactor);
-    submitEditCommandUponFirstEdit(sEditRotation); // Changes same clip aspect as the slider
+    submitEditCommandUponAudioVideoEdit(sEditRotation); // Changes same clip aspect as the slider
     mClones->Video->setRotation(r);
     event.Skip();
 }
@@ -559,7 +613,7 @@ void DetailsClip::onRotationSpinChanged(wxSpinDoubleEvent& event)
 void DetailsClip::onAlignmentChoiceChanged(wxCommandEvent& event)
 {
     VAR_INFO(mSelectAlignment->getValue());
-    submitEditCommandUponFirstEdit(sEditAlignment);
+    submitEditCommandUponAudioVideoEdit(sEditAlignment);
     mClones->Video->setAlignment(mSelectAlignment->getValue());
     event.Skip();
 }
@@ -567,7 +621,7 @@ void DetailsClip::onAlignmentChoiceChanged(wxCommandEvent& event)
 void DetailsClip::onPositionXSliderChanged(wxCommandEvent& event)
 {
     VAR_INFO(mPositionXSlider->GetValue());
-    submitEditCommandUponFirstEdit(sEditX);
+    submitEditCommandUponAudioVideoEdit(sEditX);
     updateAlignment(true);
     mClones->Video->setPosition(wxPoint(mPositionXSlider->GetValue(), mPositionYSlider->GetValue()));
     event.Skip();
@@ -576,7 +630,7 @@ void DetailsClip::onPositionXSliderChanged(wxCommandEvent& event)
 void DetailsClip::onPositionXSpinChanged(wxSpinEvent& event)
 {
     VAR_INFO(mPositionXSpin->GetValue()); // NOT: event.GetValue() -- The event's value may be outside the range boundaries
-    submitEditCommandUponFirstEdit(sEditX); // Changes same clip aspect as the slider
+    submitEditCommandUponAudioVideoEdit(sEditX); // Changes same clip aspect as the slider
     updateAlignment(true);
     mClones->Video->setPosition(wxPoint(mPositionXSpin->GetValue(), mPositionYSlider->GetValue()));
     event.Skip();
@@ -585,7 +639,7 @@ void DetailsClip::onPositionXSpinChanged(wxSpinEvent& event)
 void DetailsClip::onPositionYSliderChanged(wxCommandEvent& event)
 {
     VAR_INFO(mPositionYSlider->GetValue());
-    submitEditCommandUponFirstEdit(sEditY);
+    submitEditCommandUponAudioVideoEdit(sEditY);
     updateAlignment(false);
     mClones->Video->setPosition(wxPoint(mPositionXSlider->GetValue(), mPositionYSlider->GetValue()));
     event.Skip();
@@ -594,7 +648,7 @@ void DetailsClip::onPositionYSliderChanged(wxCommandEvent& event)
 void DetailsClip::onPositionYSpinChanged(wxSpinEvent& event)
 {
     VAR_INFO(mPositionYSpin->GetValue()); // NOT: event.GetValue() -- The event's value may be outside the range boundaries
-    submitEditCommandUponFirstEdit(sEditY); // Changes same clip aspect as the slider
+    submitEditCommandUponAudioVideoEdit(sEditY); // Changes same clip aspect as the slider
     updateAlignment(false);
     mClones->Video->setPosition(wxPoint(mPositionXSlider->GetValue(), mPositionYSpin->GetValue()));
     event.Skip();
@@ -603,7 +657,7 @@ void DetailsClip::onPositionYSpinChanged(wxSpinEvent& event)
 void DetailsClip::onVolumeSliderChanged(wxCommandEvent& event)
 {
     VAR_INFO(mVolumeSlider->GetValue());
-    submitEditCommandUponFirstEdit(sEditVolume);
+    submitEditCommandUponAudioVideoEdit(sEditVolume);
     mClones->Audio->setVolume(mVolumeSlider->GetValue());
     event.Skip();
 }
@@ -611,7 +665,7 @@ void DetailsClip::onVolumeSliderChanged(wxCommandEvent& event)
 void DetailsClip::onVolumeSpinChanged(wxSpinEvent& event)
 {
     VAR_INFO(mVolumeSpin->GetValue()); // NOT: event.GetValue() -- The event's value may be outside the range boundaries
-    submitEditCommandUponFirstEdit(sEditVolume); // Changes same clip aspect as the slider
+    submitEditCommandUponAudioVideoEdit(sEditVolume); // Changes same clip aspect as the slider
     mClones->Audio->setVolume(mVolumeSpin->GetValue());
     event.Skip();
 }
@@ -728,14 +782,6 @@ void DetailsClip::handleLengthButtonPressed(wxToggleButton* button)
 // PROJECT EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void DetailsClip::onSpeedChanged(model::EventChangeClipSpeed& event)
-{
-    mSpeedSpin->SetValue(boost::rational_cast<double>(event.getValue()));
-    mSpeedSlider->SetValue(floor(event.getValue() * model::Constants::sSpeedPrecisionFactor));
-    preview();
-    event.Skip();
-}
-
 void DetailsClip::onOpacityChanged(model::EventChangeVideoClipOpacity& event)
 {
     mOpacitySlider->SetValue(event.getValue());
@@ -810,7 +856,7 @@ void DetailsClip::onVolumeChanged(model::EventChangeAudioClipVolume& event)
 
 void DetailsClip::onTransitionParameterChanged(model::EventTransitionParameterChanged& event)
 {
-    preview();//todotest
+    submitEditCommandUponTransitionEdit(event.getValue());
     event.Skip();
 }
 
@@ -825,7 +871,7 @@ void DetailsClip::onSelectionChanged(timeline::EventSelectionUpdate& event)
     {
         // At the end of the trim operation, the trim command is initialized.
         // In AClipEdit::initialize another EventSelectionUpdate is triggered.
-        // Updating the current clip during trimming causes unnecessary 
+        // Updating the current clip during trimming causes unnecessary
         // toggling (flickering between player - via DetailsClip::edit -
         // and the preview - via the trim preview).
         return;
@@ -857,6 +903,16 @@ void DetailsClip::onSelectionChanged(timeline::EventSelectionUpdate& event)
 std::vector<wxToggleButton*> DetailsClip::getLengthButtons() const
 {
     return mLengthButtons;
+}
+
+wxSlider* DetailsClip::getSpeedSlider() const
+{
+    return mSpeedSlider;
+}
+
+wxSpinCtrlDouble* DetailsClip::getSpeedSpin() const
+{
+    return mSpeedSpin;
 }
 
 wxSlider* DetailsClip::getOpacitySlider() const
@@ -933,17 +989,24 @@ wxSpinCtrl* DetailsClip::getVolumeSpin() const
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-void DetailsClip::submitEditCommandUponFirstEdit(const wxString& message)
+void DetailsClip::submitEditCommandUponAudioVideoEdit(const wxString& message)
 {
     getPlayer()->stop(); // Stop iteration through the sequence, since the sequence is going to be changed.
 
     // todo replace the large expression (make the command processor a single access class) and reuse that
-    if (!mEditCommand || // No command submit yet
+    if (mEditCommand == nullptr || // No command submit yet
         mEditCommand != gui::Window::get().GetDocumentManager()->GetCurrentDocument()->GetCommandProcessor()->GetCurrentCommand() || // If another command was done inbetween
         mEditCommand->getMessage() != message) // Another aspect was changed
     {
         // Use new clones for the new command
-        mClones = std::make_unique<ClonesContainer>(this, mClip);
+        mClones = std::unique_ptr<ClonesContainer>(new ClonesContainer(this, mClip));
+
+        // todo test:
+        // change clip
+        // some other edit
+        // undo 'some other edit'
+        // redo other edit (does it work?)
+        //todo same for editspeedcmd
 
         // Create the command - which replaces the original clip(s) with their changed clones - and add it to the undo system.
         mEditCommand = new command::EditClipDetails(getSequence(), message, mClip, mClip->getLink(), mClones->Clip, mClones->Link);
@@ -952,7 +1015,7 @@ void DetailsClip::submitEditCommandUponFirstEdit(const wxString& message)
         // Storing that clone as the current clip serves two purposes:
         // - The first 'selectClip' after the submission is ignored (since it's the clone).
         // - Undo will actually cause mClip to be selected again.
-        mClip = mClones->Clip; 
+        mClip = mClones->Clip;
 
         mEditCommand->submit();
 
@@ -982,6 +1045,72 @@ void DetailsClip::submitEditCommandUponFirstEdit(const wxString& message)
     preview();
 }
 
+void DetailsClip::submitEditCommandUponTransitionEdit(const wxString& parameter)
+{
+    getPlayer()->stop(); // Stop iteration through the sequence, since the sequence is going to be changed.
+
+    ASSERT_NONZERO(mTransitionClone);
+
+    // todo replace the large expression (make the command processor a single access class) and reuse that
+    if (mEditCommand == nullptr)
+    {
+        // Create the command - which replaces the original clip(s) with their changed clones - and add it to the undo system.
+        mEditCommand = new command::EditClipDetails(getSequence(), _("Change "), mClip, nullptr, mTransitionClone, nullptr);
+
+        // The submission of the command will result in a newly selected clip: the clone
+        // Storing that clone as the current clip serves two purposes:
+        // - The first 'selectClip' after the submission is ignored (since it's the clone).
+        // - Undo will actually cause mClip to be selected again.
+        mClip = mTransitionClone;
+
+        mEditCommand->submit();
+
+        // Do not reset mEditCommand: required for checking subsequent edits.
+        // If a clip aspect is edited twice, simply adjust the clone twice,
+        // but the command may only be submitted once.
+    }
+}
+
+void DetailsClip::createOrUpdateSpeedCommand(boost::rational<int> speed)
+{
+    getPlayer()->stop(); // Stop iteration through the sequence, since the sequence is going to be changed.
+
+    getTimeline().beginTransaction(); // Avoid flickering updates due to undo-ing the command.
+    if (mEditSpeedCommand != nullptr &&
+        mEditSpeedCommand == gui::Window::get().GetDocumentManager()->GetCurrentDocument()->GetCommandProcessor()->GetCurrentCommand())
+    {
+        // Avoid any subsequent setClip to reset the current clip (and reinitialize the controls and members)
+        mClip = mEditSpeedCommand->getClip();
+        gui::Window::get().GetDocumentManager()->GetCurrentDocument()->GetCommandProcessor()->Undo();
+    }
+
+    mClones = std::unique_ptr<ClonesContainer>(new ClonesContainer(this, mClip));
+
+    // Avoid any subsequent setClip to reset the current clip (and reinitialize the controls and members)
+    model::IClipPtr clip{ mClip };
+    mClip = mClones->Clip;
+
+    mEditSpeedCommand = new command::EditClipSpeed(getSequence(), clip, clip->getLink(), mClones->Clip, mClones->Link, speed);
+    ASSERT_NONZERO(mEditSpeedCommand);
+
+    if (model::ProjectModification::submitIfPossible(mEditSpeedCommand))
+    {
+        mSpeedSpin->SetValue(boost::rational_cast<double>(mEditSpeedCommand->getActualSpeed()));
+        mSpeedSlider->SetValue(speedToSliderValue(mEditSpeedCommand->getActualSpeed()));
+    }
+    else
+    {
+        model::ClipIntervalPtr clipInterval{ boost::dynamic_pointer_cast<model::ClipInterval>(clip) };
+        ASSERT_NONZERO(clipInterval);
+        mSpeedSpin->SetValue(boost::rational_cast<double>(clipInterval->getSpeed()));
+        mSpeedSlider->SetValue(speedToSliderValue(clipInterval->getSpeed()));
+        mEditSpeedCommand = nullptr;
+    }
+
+    getTimeline().endTransaction();
+    getTimeline().Update();
+}
+
 // todo make it possible to add a solid color clip to the project view and timeline
 // todo testrender: sync is off?
 
@@ -991,7 +1120,7 @@ void DetailsClip::preview()
     ASSERT_NONZERO(mClones->Video->getTrack()); // The edit command must have been submitted
 
     pts position = getCursor().getLogicalPosition(); // By default, show the frame under the cursor (which is already currently shown, typically)
-    if ((position < mClones->Video->getLeftPts()) || 
+    if ((position < mClones->Video->getLeftPts()) ||
         (position >= mClones->Video->getRightPts()))
     {
         // The cursor is not positioned under the clip being adjusted. Move the cursor to the middle frame of that clip
@@ -1016,7 +1145,7 @@ void DetailsClip::preview()
         // Draw preview of operation
         getSequence()->moveTo(position);
         ASSERT_EQUALS(dc.GetSize(),s);
-        model::VideoCompositionPtr composition = getSequence()->getVideoComposition(model::VideoCompositionParameters().setBoundingBox(dc.GetSize()));
+        model::VideoCompositionPtr composition = getSequence()->getVideoComposition(model::VideoCompositionParameters().setBoundingBox(dc.GetSize()).setPts(position));
         model::VideoFramePtr compositeFrame = composition->generate();
         if (compositeFrame)
         {
@@ -1153,6 +1282,7 @@ void DetailsClip::updateLengthButtons()
     {
         return;
     }
+    determineClipSizeBounds();
     ASSERT(!mClip->isA<model::EmptyClip>());
     for ( wxToggleButton* button : mLengthButtons )
     {

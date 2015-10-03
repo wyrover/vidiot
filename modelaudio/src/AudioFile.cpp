@@ -255,7 +255,7 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
                 mSoftwareResampleContext = swr_alloc_set_opts(0,
                     av_get_default_channel_layout(parameters.getNrChannels()), 
                     AV_SAMPLE_FMT_S16, 
-                    Convert::sampleRateToNewSpeed(parameters.getSampleRate(), parameters.getSpeed()),
+                    Convert::samplerateToNewSpeed(parameters.getSampleRate(), parameters.getSpeed(), 1),
                     dec_channel_layout, codec->sample_fmt, pFrame->sample_rate, 0, 0);
                 ASSERT_NONZERO(mSoftwareResampleContext);
 
@@ -317,7 +317,7 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
         typedef boost::rational<int> rational;
         auto convertInputSampleCountToOutputSampleCount = [parameters,codec](samplecount input) -> samplecount
         {
-            return floor64(rational64(input) * rational64(Convert::sampleRateToNewSpeed(parameters.getSampleRate(), parameters.getSpeed())) / rational64(codec->sample_rate));
+            return floor64(rational64(input) * rational64(Convert::samplerateToNewSpeed(parameters.getSampleRate(), parameters.getSpeed(), 1)) / rational64(codec->sample_rate));
         };
 
         int nExpectedOutputSamplesPerChannel = convertInputSampleCountToOutputSampleCount(nDecodedSamplesPerChannel);
@@ -375,7 +375,7 @@ boost::optional<pts> AudioFile::getNewStartPosition() const
     return mNewStartPosition;
 }
 
-AudioPeaks AudioFile::getPeaks(pts offset, pts length)
+AudioPeaks AudioFile::getPeaks(pts offset, pts length) // todo add speed here!
 {
     if (!canBeOpened())
     {
@@ -414,7 +414,7 @@ AudioPeaks AudioFile::getPeaks(pts offset, pts length)
                     ASSERT_MORE_THAN_EQUALS_ZERO(current.second);
                     allPeaks.push_back(current);
                     current = AudioPeak(0, 0);
-                    nextRequiredSample = Convert::ptsToSamplesPerChannel(Convert::sampleRateToNewSpeed(parameters.getSampleRate(), parameters.getSpeed()), allPeaks.size());
+                    nextRequiredSample = Convert::ptsToSamplesPerChannel(Convert::samplerateToNewSpeed(parameters.getSampleRate(), parameters.getSpeed(), 1), allPeaks.size());
                 }
                 ++samplePosition;
                 ++buffer;
@@ -434,7 +434,7 @@ AudioPeaks AudioFile::getPeaks(pts offset, pts length)
     // The audio clip may be slightly larger than the audio file data. This can be caused by the clip having (typically) the same length as a linked video clip.
     // The video data in a file may be slightly longer than the audio data, resulting in such a difference. Instead of truncating the video, the audio is extended
     // with silence, leaving the truncating (the choice) to the user.
-    AudioPeaks result(allPeaks.begin() + offset, allPeaks.begin() + std::min(static_cast<pts>(allPeaks.size()), offset + length));
+    AudioPeaks result(allPeaks.begin() + offset, allPeaks.begin() + std::min(static_cast<pts>(allPeaks.size()), offset + length)); // todo crash here when reducing speed ... a lot 
     if (result.size() != length)
     {
         // Ensure resulting peaks length equals length of clip. Add 'silence' if required.

@@ -134,7 +134,14 @@ AudioChunkPtr AudioClip::getNextAudio(const AudioCompositionParameters& paramete
             }
             else
             {
-                mInputChunk = getDataGenerator<AudioFile>()->getNextAudio(AudioCompositionParameters(parameters).adjustPts(+getOffset()));
+                AudioCompositionParameters fileparameters(parameters);
+                fileparameters.setSpeed(getSpeed());
+                if (parameters.hasPts())
+                {
+                    pts requiredPts = Convert::positionToNormalSpeed(getOffset() + parameters.getPts(), getSpeed());
+                    fileparameters.setPts(requiredPts);
+                }
+                mInputChunk = getDataGenerator<AudioFile>()->getNextAudio(fileparameters);
 
                 if (!mInputChunk)
                 {
@@ -214,12 +221,12 @@ AudioPeaks AudioClip::getPeaks()
     }
     if (mVolume == Constants::sDefaultVolume)
     {
-        return getDataGenerator<AudioFile>()->getPeaks(offset,length);
+        return getDataGenerator<AudioFile>()->getPeaks(Convert::positionToNormalSpeed(offset, getSpeed()),length);
     }
     AudioPeaks result;
     boost::rational<int32_t> factor{ mVolume, Constants::sDefaultVolume };
     ASSERT_MORE_THAN_EQUALS_ZERO(factor);
-    for (const AudioPeak& peak : getDataGenerator<AudioFile>()->getPeaks(offset, length))
+    for (const AudioPeak& peak : getDataGenerator<AudioFile>()->getPeaks(Convert::positionToNormalSpeed(offset, getSpeed()), length))
     {
         int32_t negativePeak{ floor(boost::rational<int32_t>(peak.first) * factor) };
         int32_t positivePeak{ floor(boost::rational<int32_t>(peak.second) * factor) };
