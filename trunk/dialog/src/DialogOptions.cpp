@@ -213,6 +213,12 @@ DialogOptions::DialogOptions(wxWindow* win)
         addbox(_("Clips"));
         mStrip = new wxTextCtrl(mPanel, wxID_ANY, Config::ReadString(Config::sPathTimelineStripFromClipNames));
         addoption(_("Text to remove from clip names - use '|' for multiple entries \r\n(requires restart)"), mStrip);
+
+        addbox(_("Behaviour"));
+
+        mTimelineEnableAutoAddTracks = new wxCheckBox(mPanel, wxID_ANY, _T(""), wxDefaultPosition, wxDefaultSize);
+        mTimelineEnableAutoAddTracks->SetValue(Config::ReadBool(Config::sPathTimelineAutoAddEmptyTrackWhenDragging));
+        addoption(_("Automatically add audio/video track when dragging beyond existing tracks"), mTimelineEnableAutoAddTracks);
     }
     {
         addtab(_("Debug"));
@@ -258,27 +264,28 @@ DialogOptions::~DialogOptions()
     if (GetReturnCode() == GetAffirmativeId())
     {
         Config::holdWriteToDisk();
-        Config::WriteBool(      Config::sPathProjectAutoLoadEnabled,             mLoadLast->IsChecked());
-        Config::WriteBool(      Config::sPathProjectBackupBeforeSaveEnabled,     mBackupBeforeSave->IsChecked());
-        Config::WriteLong(      Config::sPathProjectBackupBeforeSaveMaximum,     mBackupBeforeSaveMaximum->GetValue());
-        Config::WriteBool(      Config::sPathProjectSavePathsRelativeToProject,  mSaveAbsolute->IsChecked());
-        Config::WriteLong(      Config::sPathMakeSequenceEmptyClipLength, mMakeSequenceEmptyLength->GetValue());
-        Config::WriteLong(      Config::sPathMakeSequencePrefixLength,    mMakeSequencePrefixLength->GetValue());
-        Config::WriteString(    Config::sPathDebugLogLevel,                    LogLevel_toString(mSelectLogLevel->getValue()).c_str());
-        Config::WriteString(    Config::sPathDebugLogLevelAvcodec,             Avcodec::mapAvcodecLevels[mSelectLogLevelAvcodec->getValue()]);
-        Config::WriteBool(      Config::sPathDebugShowDebugInfoOnWidgets,      mShowDebugInfoOnWidgets->IsChecked());
-        Config::WriteBool(      Config::sPathDebugLogSequenceOnEdit,      mLogSequenceOnEdit->IsChecked());
-        Config::WriteString(    Config::sPathVideoDefaultFrameRate,            (FrameRate::getSupported()[mFrameRate->GetSelection()]).toString());
-        Config::WriteLong(      Config::sPathVideoDefaultWidth,           mDefaultVideoWidth->GetValue());
-        Config::WriteLong(      Config::sPathVideoDefaultHeight,          mDefaultVideoHeight->GetValue());
-        Config::WriteString(    Config::sPathVideoDefaultScaling,         model::VideoScaling_toString(mDefaultVideoScaling->getValue()).c_str());
-        Config::WriteString(    Config::sPathVideoDefaultAlignment,       model::VideoAlignment_toString(mDefaultVideoAlignment->getValue()).c_str());
-        Config::WriteLong(      Config::sPathAudioDefaultSampleRate,      toLong(mDefaultAudioSampleRate->GetValue()));
-        Config::WriteLong(      Config::sPathAudioDefaultNumberOfChannels,        toLong(mDefaultAudioNumberOfChannels->GetValue()));
-        Config::WriteLong(      Config::sPathTimelineMarkerBeginAddition,         mMarkerBeginAddition->GetValue());
-        Config::WriteLong(      Config::sPathTimelineMarkerEndAddition,           mMarkerEndAddition->GetValue());
-        Config::WriteLong(      Config::sPathTimelineDefaultStillImageLength,     toLong(mDefaultStillImageLength->GetValue()));
-        Config::WriteString(    Config::sPathTimelineStripFromClipNames,                       mStrip->GetValue());
+        Config::WriteBool(Config::sPathProjectAutoLoadEnabled, mLoadLast->IsChecked());
+        Config::WriteBool(Config::sPathProjectBackupBeforeSaveEnabled, mBackupBeforeSave->IsChecked());
+        Config::WriteLong(Config::sPathProjectBackupBeforeSaveMaximum, mBackupBeforeSaveMaximum->GetValue());
+        Config::WriteBool(Config::sPathProjectSavePathsRelativeToProject, mSaveAbsolute->IsChecked());
+        Config::WriteLong(Config::sPathMakeSequenceEmptyClipLength, mMakeSequenceEmptyLength->GetValue());
+        Config::WriteLong(Config::sPathMakeSequencePrefixLength, mMakeSequencePrefixLength->GetValue());
+        Config::WriteString(Config::sPathDebugLogLevel, LogLevel_toString(mSelectLogLevel->getValue()).c_str());
+        Config::WriteString(Config::sPathDebugLogLevelAvcodec, Avcodec::mapAvcodecLevels[mSelectLogLevelAvcodec->getValue()]);
+        Config::WriteBool(Config::sPathDebugShowDebugInfoOnWidgets, mShowDebugInfoOnWidgets->IsChecked());
+        Config::WriteBool(Config::sPathDebugLogSequenceOnEdit, mLogSequenceOnEdit->IsChecked());
+        Config::WriteString(Config::sPathVideoDefaultFrameRate, (FrameRate::getSupported()[mFrameRate->GetSelection()]).toString());
+        Config::WriteLong(Config::sPathVideoDefaultWidth, mDefaultVideoWidth->GetValue());
+        Config::WriteLong(Config::sPathVideoDefaultHeight, mDefaultVideoHeight->GetValue());
+        Config::WriteString(Config::sPathVideoDefaultScaling, model::VideoScaling_toString(mDefaultVideoScaling->getValue()).c_str());
+        Config::WriteString(Config::sPathVideoDefaultAlignment, model::VideoAlignment_toString(mDefaultVideoAlignment->getValue()).c_str());
+        Config::WriteLong(Config::sPathAudioDefaultSampleRate, toLong(mDefaultAudioSampleRate->GetValue()));
+        Config::WriteLong(Config::sPathAudioDefaultNumberOfChannels, toLong(mDefaultAudioNumberOfChannels->GetValue()));
+        Config::WriteBool(Config::sPathTimelineAutoAddEmptyTrackWhenDragging, mTimelineEnableAutoAddTracks->IsChecked());
+        Config::WriteLong(Config::sPathTimelineMarkerBeginAddition, mMarkerBeginAddition->GetValue());
+        Config::WriteLong(Config::sPathTimelineMarkerEndAddition, mMarkerEndAddition->GetValue());
+        Config::WriteLong(Config::sPathTimelineDefaultStillImageLength, toLong(mDefaultStillImageLength->GetValue()));
+        Config::WriteString(Config::sPathTimelineStripFromClipNames, mStrip->GetValue());
         Config::releaseWriteToDisk();
 
         // Use new values
