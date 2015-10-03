@@ -177,9 +177,12 @@ void ClipView::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) con
                 draw(*mBitmap, !getDrag().isActive(), true);
             }
             getTimeline().copyRect(dc, region, offset, *mBitmap, getRect());
-            if (mClip->isA<model::VideoClip>() || mClip->isA<model::AudioClip>())
+            if (!Config::getShowDebugInfo())
             {
-                getViewMap().getClipPreview(mClip)->draw(dc, region, offset);
+                if (mClip->isA<model::VideoClip>() || mClip->isA<model::AudioClip>())
+                {
+                    getViewMap().getClipPreview(mClip)->draw(dc, region, offset);
+                }
             }
         }
     }
@@ -450,12 +453,16 @@ void ClipView::draw(wxBitmap& bitmap, bool drawDraggedClips, bool drawNotDragged
     {
         if (!mClip->isA<model::Transition>())
         {
-            dc.SetTextForeground(wxColour{ 0, 255, 0 });
+            dc.SetTextForeground(wxColour{ 0, 0, 0 });
             dc.SetFont(wxFont(wxSize(0, 11), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
-            dc.DrawText(wxString::Format("%" PRId64, mClip->getLength()), wxPoint(5, 15));
+            dc.DrawText(wxString::Format("%" PRId64, mClip->getLength()), wxPoint(5, 16));
+            if (mClip->isA<model::ClipInterval>())
+            {
+                dc.DrawText(wxString::Format("%" PRId64, boost::dynamic_pointer_cast<model::ClipInterval>(mClip)->getOffset()), wxPoint(45, 16));
+            }
             wxString sPts;
             sPts << '[' << mClip->getLeftPts() << ',' << mClip->getRightPts() << ')';
-            dc.DrawText(sPts, wxPoint(5, 25));
+            dc.DrawText(sPts, wxPoint(5, 30));
         }
     }
 }

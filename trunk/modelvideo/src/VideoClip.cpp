@@ -169,7 +169,15 @@ VideoFramePtr VideoClip::getNextVideo(const VideoCompositionParameters& paramete
                 // IMPORTANT: When getting video frames 'while' playing the timeline, AND resizing the player in parallel, the returned
                 //            video frame can have a different size than requested!!! This can happen because the previous frame is returned 'again'.
                 //            For this reason, when the videoplayer is resized, playback is stopped.
-                VideoFramePtr fileFrame = generator->getNextVideo(VideoCompositionParameters(parameters).setBoundingBox(requiredVideoSize).adjustPts(+getOffset()));
+
+                VideoCompositionParameters fileparameters(parameters);
+                fileparameters.setBoundingBox(requiredVideoSize);
+                if (parameters.hasPts()) // todo when undo-ing clippreviews not update? (try: trim, then undo)
+                {
+                    pts requiredPts = Convert::positionToNormalSpeed(getOffset() + parameters.getPts(), getSpeed());
+                    fileparameters.setPts(requiredPts);
+                }
+                VideoFramePtr fileFrame = generator->getNextVideo(fileparameters);
                 if (fileFrame)
                 {
                     if (parameters.getSkip()) // No need to apply any transformation, since the returned frame is a skip  frame anyway.
@@ -184,6 +192,7 @@ VideoFramePtr VideoClip::getNextVideo(const VideoCompositionParameters& paramete
                         videoFrame->getLayers().front()->setPosition(Convert::scale(mPosition - mRotationPositionOffset, scaleToBoundingBox));
                         videoFrame->getLayers().front()->setOpacity(mOpacity);
                         videoFrame->getLayers().front()->setRotation(mRotation);
+                        videoFrame->setTime(fileFrame->getTime());
                     }
                 }
                 else

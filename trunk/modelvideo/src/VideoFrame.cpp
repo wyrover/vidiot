@@ -34,6 +34,7 @@ VideoFrame::VideoFrame(const VideoCompositionParameters& parameters)
     : mLayers()
     , mParameters(new VideoCompositionParameters(parameters))
     , mPts(boost::none)
+    , mTime(0)
     , mForceKeyFrame(false)
     , mCachedBitmap(boost::none)
 {
@@ -43,6 +44,7 @@ VideoFrame::VideoFrame(const VideoCompositionParameters& parameters, const Video
     : mLayers()
     , mParameters(new VideoCompositionParameters(parameters))
     , mPts(boost::none)
+    , mTime(0)
     , mForceKeyFrame(false)
     , mCachedBitmap(boost::none)
 {
@@ -53,6 +55,7 @@ VideoFrame::VideoFrame(const VideoCompositionParameters& parameters, const Video
     : mLayers(layers)
     , mParameters(new VideoCompositionParameters(parameters))
     , mPts(boost::none)
+    , mTime(0)
     , mForceKeyFrame(false)
     , mCachedBitmap(boost::none)
 {
@@ -62,6 +65,7 @@ VideoFrame::VideoFrame(const VideoFrame& other)
     : mLayers(make_cloned<VideoFrameLayer>(other.mLayers))
     , mParameters(new VideoCompositionParameters(*other.mParameters))
     , mPts(other.mPts)
+    , mTime(other.mTime)
     , mForceKeyFrame(false)
     , mCachedBitmap(boost::none)
 {
@@ -93,6 +97,16 @@ pts VideoFrame::getPts() const
 void VideoFrame::setPts(pts position)
 {
     mPts.reset(position);
+}
+
+rational64 VideoFrame::getTime() const
+{
+    return mTime;
+}
+
+void VideoFrame::setTime(rational64 time)
+{
+    mTime = time;
 }
 
 void VideoFrame::setForceKeyFrame(bool force)
@@ -199,6 +213,7 @@ std::ostream& operator<<(std::ostream& os, const VideoFrame& obj)
 {
     os  << &obj                     << '|'
         << obj.mPts                 << '|'
+        << obj.mTime                << '|'
         << obj.mParameters          << '|'
         << obj.mForceKeyFrame       << '|'
         << obj.mLayers              << '|'

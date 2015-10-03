@@ -432,7 +432,7 @@ void TestBugs::testCrashOnShiftDeleteWithMultipleTracks()
         StartTest("Second video track empty");
         WindowTriggerMenu(ID_ADDVIDEOTRACK);
         ASSERT_MORE_THAN(VideoClip(0,5)->getLeftPts(), VideoTrack(1)->getLength());
-        ShiftDeleteClip(VideoClip(0,5));
+        TimelineShiftDeleteClip(VideoClip(0,5));
         ASSERT_EQUALS(VideoClip(0,5)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,6));
         Undo();
     }
@@ -441,7 +441,7 @@ void TestBugs::testCrashOnShiftDeleteWithMultipleTracks()
         TimelineDragToTrack(1,VideoClip(0,2),model::IClipPtr());
         ASSERT_VIDEOTRACK1(     EmptyClip      )(VideoClip);
         ASSERT_MORE_THAN(VideoClip(0,5)->getLeftPts(), VideoTrack(1)->getLength());
-        ShiftDeleteClip(VideoClip(0,5));
+        TimelineShiftDeleteClip(VideoClip(0,5));
         ASSERT_EQUALS(VideoClip(0,5)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,6));
         Undo();
     }
@@ -450,7 +450,7 @@ void TestBugs::testCrashOnShiftDeleteWithMultipleTracks()
         StartTest("Second audio track empty");
         WindowTriggerMenu(ID_ADDAUDIOTRACK);
         ASSERT_MORE_THAN(AudioClip(0,5)->getLeftPts(), AudioTrack(1)->getLength());
-        ShiftDeleteClip(AudioClip(0,5));
+        TimelineShiftDeleteClip(AudioClip(0,5));
         ASSERT_EQUALS(AudioClip(0,5)->getLength(), mProjectFixture.OriginalLengthOfAudioClip(0,6));
         Undo();
     }
@@ -459,7 +459,7 @@ void TestBugs::testCrashOnShiftDeleteWithMultipleTracks()
         TimelineDragToTrack(1,model::IClipPtr(),AudioClip(0,2));
         ASSERT_AUDIOTRACK1(     EmptyClip      )(AudioClip);
         ASSERT_MORE_THAN(AudioClip(0,5)->getLeftPts(), AudioTrack(1)->getLength());
-        ShiftDeleteClip(AudioClip(0,5));
+        TimelineShiftDeleteClip(AudioClip(0,5));
         ASSERT_EQUALS(AudioClip(0,5)->getLength(), mProjectFixture.OriginalLengthOfAudioClip(0,6));
         Undo();
     }
@@ -652,7 +652,7 @@ void TestBugs::testEndTrimAtOutTransitionInSavedDocumentEndCausesSnappingProblem
     {
         StartTest("Preparation");
         TimelineTrimRight(VideoClip(0,0), -300);
-        DeleteClip(VideoClip(0,1));
+        TimelineDeleteClip(VideoClip(0,1));
         MakeOutTransitionAfterClip preparationVideo(0);
         preparationVideo.dontUndo();
     }
@@ -679,7 +679,7 @@ void TestBugs::testEndTrimAtOutTransitionInSavedDocumentEndCausesSnappingProblem
     {
         StartTest("Preparation video");
         TimelineTrimRight(VideoClip(0,0), -300);
-        DeleteClip(VideoClip(0,1));
+        TimelineDeleteClip(VideoClip(0,1));
         MakeOutTransitionAfterClip preparationAudio(0, true);
         preparationAudio.dontUndo();
     }
@@ -704,8 +704,7 @@ void TestBugs::testTrimAndExtendVideoAndAudioClipsThatBothHaveOutTransitions()
     StartTestSuite();
     TimelineZoomIn(6);
 
-    DeleteClip(VideoClip(0,0));
-    DeleteClip(VideoClip(0,2));
+    TimelineDeleteClips({ VideoClip(0, 0), VideoClip(0, 2) });
     TimelineTrimRight(VideoClip(0,1), -100);
     TimelineTrimLeft(VideoClip(0,1), 100);
     TimelineDeselectAllClips();
@@ -755,8 +754,7 @@ void TestBugs::testCrashWhenEnlargingUnlinkedAudioClipBeyondFileLength()
     StartTestSuite();
     TimelinePositionCursor(5); // Not on clip
     Unlink(VideoClip(0,2));
-    DeleteClip(VideoClip(0,2));
-    DeleteClip(AudioClip(0,3));
+    TimelineDeleteClips({ VideoClip(0, 2), AudioClip(0, 3) });;
     DirAndFile tempDir_fileName = mProjectFixture.saveAndReload();
     TimelineTrimRight(AudioClip(0,2),200); // Should not result in change
     ASSERT_EQUALS(AudioClip(0, 2)->getLength(), mProjectFixture.OriginalLengthOfAudioClip(0,2));
@@ -765,7 +763,7 @@ void TestBugs::testCrashWhenEnlargingUnlinkedAudioClipBeyondFileLength()
 void TestBugs::testCrashAfterSelectingAnEmptyClip()
 {
     StartTestSuite();
-    DeleteClip(VideoClip(0,1));
+    TimelineDeleteClip(VideoClip(0,1));
     ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip);
     TimelineLeftClick(Center(VideoClip(0,1)));
     ASSERT_NO_DETAILSCLIP();

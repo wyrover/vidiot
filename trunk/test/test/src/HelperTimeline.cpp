@@ -455,24 +455,33 @@ void TimelineSelectClips(model::IClips clips)
     }
 }
 
-void DeleteClip(model::IClipPtr clip, bool shift)
+void triggerDeleteHelper(bool shift)
 {
-    TimelineLeftClick(Center(clip));
-    if (shift)
-    {
-        TimelineKeyDown(WXK_SHIFT);
-        TimelineKeyPress(WXK_DELETE);
-        TimelineKeyUp(WXK_SHIFT);
-    }
-    else
-    {
-        TimelineKeyPress(WXK_DELETE);
-    }
+    if (shift) { TimelineKeyDown(WXK_SHIFT); }
+    TimelineKeyPress(WXK_DELETE);
+    if (shift) { TimelineKeyUp(WXK_SHIFT); }
 }
 
-void ShiftDeleteClip(model::IClipPtr clip)
+void TimelineDeleteClip(model::IClipPtr clip, bool shift)
 {
-    DeleteClip(clip,true);
+    TimelineLeftClick(Center(clip));
+    triggerDeleteHelper(shift);
+}
+
+void TimelineDeleteClips(model::IClips clips, bool shift)
+{
+    TimelineSelectClips(clips);
+    triggerDeleteHelper(shift);
+}
+
+void TimelineShiftDeleteClip(model::IClipPtr clip)
+{
+    TimelineDeleteClip(clip,true);
+}
+
+void TimelineShiftDeleteClips(model::IClips clips)
+{
+    TimelineDeleteClips(clips,true);
 }
 
 void DumpSequence()

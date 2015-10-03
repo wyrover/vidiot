@@ -64,7 +64,7 @@ public:
 
     TransitionPtr getInTransition() const override;
     TransitionPtr getOutTransition() const override;
-    pts getPerceivedLength() const override;
+    virtual pts getPerceivedLength() const override;
 
     bool getSelected() const override;
     void setSelected(bool selected) override;

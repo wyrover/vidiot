@@ -120,10 +120,10 @@ public:
     /// \return the related to be decoded frame number
     static pts fromProjectFrameRate(pts outputposition, const FrameRate& inputrate);
 
-    static int      scale(int input,               boost::rational<int> factor);
-    static wxSize   scale(const wxSize& input,     boost::rational<int> factor);
-    static wxPoint  scale(const wxPoint& input,    boost::rational<int> factor);
-    static wxRect   scale(const wxRect& input,     boost::rational<int> factor);
+    static int      scale(int input,               rational factor);
+    static wxSize   scale(const wxSize& input,     rational factor);
+    static wxPoint  scale(const wxPoint& input,    rational factor);
+    static wxRect   scale(const wxRect& input,     rational factor);
 
     /// Convert an input size to a size fitting entirely in a given bounding
     /// box. Width and height ratio is repected.
@@ -132,13 +132,13 @@ public:
     /// \param fill if true, then tries to fill the bounding box as much as possible (possibly clipping information). If false, then the entire frame is 'fit' inside the bounding box (possibly with black bands).
     /// \param[out] scaling used scaling by the algorithm
     /// \return maximum size fitting in bounding box with given width/height ratio
-    static wxSize sizeInBoundingBox(const wxSize& input, const wxSize& boundingbox, boost::rational<int>& scaling, bool fill = false);
+    static wxSize sizeInBoundingBox(const wxSize& input, const wxSize& boundingbox, rational& scaling, bool fill = false);
     static wxSize sizeInBoundingBox(const wxSize& input, const wxSize &boundingbox);
 
     static double degreesToRadians(boost::rational<int> degrees);
 
     static int doubleToInt(double x);
-    static int factorToDigits(boost::rational<int> number, int nDigits);
+    static int factorToDigits(rational number, int nDigits);
     static boost::rational<int> digitsToFactor(int number, int nDigits);
 
     /// Convert a number of audio samples (data for one speaker) to a number of bytes required to store this
@@ -146,12 +146,19 @@ public:
     /// \return number of required bytes
     static samplecount audioSamplesToBytes(samplecount nSamples);
 
-    /// Convert a position in a clip/sequence (using originalSpeed) to the same position, but then with the new speed.
-    /// \param position position/length with originalSpeed as base speed.
+    /// Convert a position in a clip/sequence (using normal 1/1 speed) to the same position, but then with the new speed.
+    /// \param position position/length with oldSpeed as base speed.
+    /// \param newSpeed new speed to be used for the position
+    /// \param oldSpeed speed in which 'position' is specified
     /// \return same position but now using newSpeed as base speed.
-    static pts positionToNewSpeed(pts position, boost::rational<int> newSpeed, boost::rational<int> originalSpeed = 1);
+    static pts positionToNewSpeed(pts position, rational newSpeed, rational oldSpeed);
 
-    static int sampleRateToNewSpeed(int samplerate, boost::rational<int> newSpeed, boost::rational<int> originalSpeed = 1);
+    /// Convert a position using 'speed' to the same position but then with a 1/1 speed.
+    /// \param position position/length with speed as base speed
+    /// \return same position but now using 1/1 as base speed
+    static pts positionToNormalSpeed(pts position, rational speed);
+
+    static int samplerateToNewSpeed(int samplerate, rational newSpeed, rational oldSpeed);
 };
 } // namespace
 

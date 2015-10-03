@@ -76,6 +76,9 @@ public:
     pts getPts() const;
     void setPts(pts position);
 
+    rational64 getTime() const;
+    void setTime(rational64 time);
+
     void setForceKeyFrame(bool force);
     bool getForceKeyFrame() const;
 
@@ -106,6 +109,7 @@ protected:
     VideoFrameLayers mLayers;
     boost::scoped_ptr<VideoCompositionParameters> mParameters;
     boost::optional<pts> mPts;
+    rational64 mTime;
     bool mForceKeyFrame;
 
 private:

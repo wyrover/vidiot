@@ -35,9 +35,10 @@ DetailsClip::ClonesContainer::ClonesContainer(DetailsClip* details, model::IClip
         Audio = boost::dynamic_pointer_cast<model::AudioClip>(Clip);
         Video = boost::dynamic_pointer_cast<model::VideoClip>(Link);
     }
-    else if (clip->isA<model::Transition>())
+    if (Clip && Link)
     {
-        Transition = boost::dynamic_pointer_cast<model::Transition>(Clip);
+        Clip->setLink(Link);
+        Link->setLink(Clip);
     }
 
     if (Video)
@@ -54,17 +55,6 @@ DetailsClip::ClonesContainer::ClonesContainer(DetailsClip* details, model::IClip
     if (Audio)
     {
         Audio->Bind(model::EVENT_CHANGE_AUDIOCLIP_VOLUME, &DetailsClip::onVolumeChanged, mDetails);
-    }
-    if (Transition)
-    {
-        mDetails->setBox(mDetails->mTransitionBoxSizer);
-        for (auto id_and_parameter : Transition->getParameters())
-        {
-            mDetails->addOption(
-                id_and_parameter.second->getName(),
-                id_and_parameter.second->makeWidget(mDetails));
-            id_and_parameter.second->Bind(model::EVENT_TRANSITION_PARAMETER_CHANGED, &DetailsClip::onTransitionParameterChanged, mDetails);
-        }
     }
 };
     
@@ -85,29 +75,10 @@ DetailsClip::ClonesContainer::~ClonesContainer()
     {
         Audio->Unbind(model::EVENT_CHANGE_AUDIOCLIP_VOLUME, &DetailsClip::onVolumeChanged, mDetails);
     }
-    if (Transition)
-    {
-        while (mDetails->mTransitionBoxSizer->GetItemCount() > 0)
-        {
-            wxWindow* widget = mDetails->mTransitionBoxSizer->GetItem(static_cast<size_t>(0))->GetWindow();
-            mDetails->mTransitionBoxSizer->Detach(0);
-            if (dynamic_cast<wxStaticText*>(widget) != 0)
-            {
-                // It's a title. Must be removed also.
-                widget->Destroy();
-            }
-        }
-        for (auto id_and_parameter : Transition->getParameters())
-        {
-            id_and_parameter.second->Unbind(model::EVENT_TRANSITION_PARAMETER_CHANGED, &DetailsClip::onTransitionParameterChanged, mDetails);
-            id_and_parameter.second->destroyWidget();
-        }
-    }
     Clip.reset();
     Link.reset();
     Video.reset();
     Audio.reset();
-    Transition.reset();
 };
 
 }} // namespace

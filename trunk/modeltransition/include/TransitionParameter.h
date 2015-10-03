@@ -22,8 +22,7 @@
 
 namespace model {
 
-DECLARE_EVENT(EVENT_TRANSITION_PARAMETER_CHANGING, EventTransitionParameterChanging, void*);
-DECLARE_EVENT(EVENT_TRANSITION_PARAMETER_CHANGED, EventTransitionParameterChanged, void*);
+DECLARE_EVENT(EVENT_TRANSITION_PARAMETER_CHANGED, EventTransitionParameterChanged, wxString);
 
 class TransitionParameter
     :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.

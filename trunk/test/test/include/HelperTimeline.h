@@ -154,18 +154,27 @@ gui::timeline::MouseOnClipPosition LogicalPosition(wxPoint position);   ///< \re
 /// Unselect all clips in the timeline
 void TimelineDeselectAllClips();
 
-/// Select the given clips by ctrl-clicking all of them.
+/// Select the given clips (and their links, if any) by ctrl-clicking all of them.
 /// Selection is made empty beforehand.
 void TimelineSelectClips(model::IClips clips);
 
-/// Delete the given clip from the timeline
+/// Delete the given clip (and its link, if any) from the timeline
 /// \param clip clip to be deleted from the timeline
 /// \param shift if true then shift-delete is pressed (shift the other clips into the moved area).
-void DeleteClip(model::IClipPtr clip, bool shift = false);
+void TimelineDeleteClip(model::IClipPtr clip, bool shift = false);
 
-/// Delete the given clip from the timeline via shift-delete
+/// Delete the given clips (and their links, if any) from the timeline
+/// \param clips clips to be deleted from the timeline
+/// \param shift if true then shift-delete is pressed (shift the other clips into the moved area).
+void TimelineDeleteClips(model::IClips clips, bool shift = false);
+
+/// Delete the given clip (and its link, if any) from the timeline via shift-delete
 /// \param clip clip to be deleted from the timeline
-void ShiftDeleteClip(model::IClipPtr clip);
+void TimelineShiftDeleteClip(model::IClipPtr clip);
+
+/// Delete the given clips (and their links, if any) from the timeline via shift-delete
+/// \param clips clips to be deleted from the timeline
+void TimelineShiftDeleteClips(model::IClips clips);
 
 /// Dump the current sequence.
 void DumpSequence();

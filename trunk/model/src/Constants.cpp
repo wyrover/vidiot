@@ -52,10 +52,10 @@ const int Constants::sRotationPageSize = Constants::sRotationPrecisionFactor / 1
 const int Constants::sRotationMin = -180 * sRotationPrecisionFactor;
 const int Constants::sRotationMax = 180 * sRotationPrecisionFactor;
 const int Constants::sSpeedPrecision = 2;
-const int Constants::sSpeedPrecisionFactor = static_cast<int>(pow(10.0,Constants::sRotationPrecision)); ///< 10^sSpeedPrecision
-const int Constants::sSpeedPageSize = Constants::sSpeedPrecisionFactor / 10; // 0.1
-const int Constants::sSpeedMin = 10; // 0.10
-const int Constants::sSpeedMax = 10 * sSpeedPrecisionFactor; // 10.0
+const int Constants::sSpeedPrecisionFactor = static_cast<int>(pow(10.0,Constants::sSpeedPrecision)); ///< 10^sSpeedPrecision
+const int Constants::sSpeedPageSize= Constants::sSpeedPrecision / 10; // 0.1
+const rational Constants::sSpeedMin(1,100); // 0.01
+const rational Constants::sSpeedMax(100,1); // 100
 const int Constants::sMinVolume = 1;
 const int Constants::sMaxVolume = 200;
 const int Constants::sDefaultVolume = 100;

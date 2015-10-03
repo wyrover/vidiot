@@ -54,7 +54,8 @@ void SetValue(EnumSelector<ITEMTYPE>* widget, ITEMTYPE value)
     util::thread::RunInMainAndWait([widget, value]
     {
         widget->SetSelection(widget->getIndex(value));
-        widget->GetEventHandler()->QueueEvent(new wxCommandEvent(wxEVT_CHOICE));
+        wxCommandEvent event(wxEVT_CHOICE);
+        widget->GetEventHandler()->ProcessEvent(event);
     });
 }
 

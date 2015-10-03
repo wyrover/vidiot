@@ -115,16 +115,16 @@ public:
     /// executed.
     bool isInitialized();
 
+    /// Undo all changes done so far, and clear the Do/Undo administration
+    /// Used for edits that already update the model during the edit operation,
+    /// before the command is actually submitted.
+    void Revert(); // todo rename lowercase
+
 protected:
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS FOR SUBCLASSES
     //////////////////////////////////////////////////////////////////////////
-
-    /// Undo all changes done so far, and clear the Do/Undo administration
-    /// Used for edits that already update the model during the edit operation,
-    /// before the command is actually submitted.
-    void Revert();
 
     /// Split the clip at the given (track) position. If there already is a cut at the given
     /// position, then nothing is changed. When the clip is replaced by (two) other clips, then
@@ -175,7 +175,7 @@ protected:
     /// \pre a cut exists at both pts positions 'left' and 'right' (use split() to ensure this).
     /// \return list of clips to be removed and their position (that is, the first non-removed clip after these clips, or a null ptr)
     typedef std::pair<model::IClips, model::IClipPtr> ClipsWithPosition;
-    ClipsWithPosition findClips(const model::TrackPtr& track, pts left, pts right);
+    static ClipsWithPosition findClips(const model::TrackPtr& track, pts left, pts right);
 
     /// Move all clips in all tracks a certain amount.
     /// \param start only clips clips that are on or after this position must be moved
