@@ -241,15 +241,18 @@ void Drag::move(wxPoint position)
     else if (!info.track || info.track == mDropTrack)
     {
         model::TrackPtr addedTrack = nullptr;
-        if (!info.track && position.y < getSequenceView().getVideo().getRect().GetTop())
+        if (Config::ReadBool(Config::sPathTimelineAutoAddEmptyTrackWhenDragging))
         {
-            // Add a new video track if the mouse pointer is moved 'above' all video tracks.
-            addedTrack = mCommand->onAddTrack(true);
-        }
-        else if (!info.track && position.y > getSequenceView().getAudio().getRect().GetBottom())
-        {
-            // Add a new audio track if the mouse pointer is moved 'below' all audio tracks.
-            addedTrack = mCommand->onAddTrack(false);
+            if (!info.track && position.y < getSequenceView().getVideo().getRect().GetTop())
+            {
+                // Add a new video track if the mouse pointer is moved 'above' all video tracks.
+                addedTrack = mCommand->onAddTrack(true);
+            }
+            else if (!info.track && position.y > getSequenceView().getAudio().getRect().GetBottom())
+            {
+                // Add a new audio track if the mouse pointer is moved 'below' all audio tracks.
+                addedTrack = mCommand->onAddTrack(false);
+            }
         }
         if (addedTrack)
         {
@@ -258,7 +261,7 @@ void Drag::move(wxPoint position)
             getTimeline().Refresh(); // Due to adding a video track at the top, all others shift downwards.
         }
 
-        // Mouse is moved, but stays within the current track.
+        // Mouse is moved, but hotspot stays within the current track.
         // No changes in mDraggedTrack required
         //
         // Move the pointer position without moving the dragged object (note: vertical only!)

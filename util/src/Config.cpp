@@ -126,6 +126,7 @@ void Config::init(const wxString& applicationName, const wxString& vendorName, b
     checkBool(Config::sPathProjectBackupBeforeSaveEnabled);
     checkLong(Config::sPathProjectBackupBeforeSaveMaximum, 0, 10000);
     checkBool(Config::sPathProjectSavePathsRelativeToProject);
+    checkBool(Config::sPathTimelineAutoAddEmptyTrackWhenDragging);
     checkLong(Config::sPathTimelineDefaultStillImageLength, 1, 10000);
     checkLong(Config::sPathTimelineDefaultTransitionLength, 4, 10000);
     checkLong(Config::sPathVideoDefaultWidth, 10, 10000);
@@ -162,6 +163,7 @@ void Config::init(const wxString& applicationName, const wxString& vendorName, b
     setDefault(Config::sPathAudioDefaultNumberOfChannels, 2);
     setDefault(Config::sPathAudioDefaultSampleRate, 44100);
     setDefault(Config::sPathFileDefaultExtension, "avi");
+    setDefault(Config::sPathTimelineAutoAddEmptyTrackWhenDragging, true);
     setDefault(Config::sPathTimelineDefaultStillImageLength, 150);
     setDefault(Config::sPathTimelineDefaultTransitionLength, 20); // Divisible by 4 for automated tests
     setDefault(Config::sPathVideoDefaultAlignment, model::VideoAlignment_toString(model::VideoAlignmentCenter));
@@ -450,6 +452,7 @@ const wxString Config::sPathTestCxxMode("/Test/CxxTestMode");
 const wxString Config::sPathTestRunCurrent("/Test/RunCurrent");
 const wxString Config::sPathTestRunFrom("/Test/RunFrom");
 const wxString Config::sPathTestRunOnly("/Test/RunOnly");
+const wxString Config::sPathTimelineAutoAddEmptyTrackWhenDragging("/Timeline/AutoAddEmptyTrackWhenDragging");
 const wxString Config::sPathTimelineDefaultStillImageLength("/Timeline/DefaultStillImageLength");
 const wxString Config::sPathTimelineDefaultTransitionLength("/Timeline/DefaultTransitionLength");
 const wxString Config::sPathTimelineMarkerBeginAddition("/Timeline/MarkerBeginAddition");

@@ -63,6 +63,7 @@ private:
     wxSpinCtrlDouble*       mMarkerBeginAddition;
     wxSpinCtrlDouble*       mMarkerEndAddition;
     wxTextCtrl*             mStrip;
+    wxCheckBox*             mTimelineEnableAutoAddTracks;
 
     EnumSelector<LogLevel>* mSelectLogLevel;
     EnumSelector<int>*      mSelectLogLevelAvcodec;

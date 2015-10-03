@@ -127,6 +127,7 @@ public:
     static const wxString sPathTestRunCurrent;
     static const wxString sPathTestRunFrom;
     static const wxString sPathTestRunOnly;
+    static const wxString sPathTimelineAutoAddEmptyTrackWhenDragging;
     static const wxString sPathTimelineDefaultStillImageLength;
     static const wxString sPathTimelineDefaultTransitionLength;
     static const wxString sPathTimelineMarkerBeginAddition;
