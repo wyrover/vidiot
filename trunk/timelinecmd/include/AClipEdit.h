@@ -118,7 +118,7 @@ public:
     /// Undo all changes done so far, and clear the Do/Undo administration
     /// Used for edits that already update the model during the edit operation,
     /// before the command is actually submitted.
-    void Revert(); // todo rename lowercase
+    void revert();
 
 protected:
 

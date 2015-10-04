@@ -131,7 +131,7 @@ EditClipSpeed::~EditClipSpeed()
 {
     if (!isInitialized())
     {
-        Revert();
+        revert();
     }
 }
 

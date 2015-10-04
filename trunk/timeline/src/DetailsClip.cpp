@@ -993,20 +993,12 @@ void DetailsClip::submitEditCommandUponAudioVideoEdit(const wxString& message)
 {
     getPlayer()->stop(); // Stop iteration through the sequence, since the sequence is going to be changed.
 
-    // todo replace the large expression (make the command processor a single access class) and reuse that
     if (mEditCommand == nullptr || // No command submit yet
-        mEditCommand != gui::Window::get().GetDocumentManager()->GetCurrentDocument()->GetCommandProcessor()->GetCurrentCommand() || // If another command was done inbetween
+        mEditCommand != model::CommandProcessor::get().GetCurrentCommand() || // If another command was done inbetween
         mEditCommand->getMessage() != message) // Another aspect was changed
     {
         // Use new clones for the new command
         mClones = std::unique_ptr<ClonesContainer>(new ClonesContainer(this, mClip));
-
-        // todo test:
-        // change clip
-        // some other edit
-        // undo 'some other edit'
-        // redo other edit (does it work?)
-        //todo same for editspeedcmd
 
         // Create the command - which replaces the original clip(s) with their changed clones - and add it to the undo system.
         mEditCommand = new command::EditClipDetails(getSequence(), message, mClip, mClip->getLink(), mClones->Clip, mClones->Link);
@@ -1051,7 +1043,6 @@ void DetailsClip::submitEditCommandUponTransitionEdit(const wxString& parameter)
 
     ASSERT_NONZERO(mTransitionClone);
 
-    // todo replace the large expression (make the command processor a single access class) and reuse that
     if (mEditCommand == nullptr)
     {
         // Create the command - which replaces the original clip(s) with their changed clones - and add it to the undo system.
@@ -1077,11 +1068,11 @@ void DetailsClip::createOrUpdateSpeedCommand(boost::rational<int> speed)
 
     getTimeline().beginTransaction(); // Avoid flickering updates due to undo-ing the command.
     if (mEditSpeedCommand != nullptr &&
-        mEditSpeedCommand == gui::Window::get().GetDocumentManager()->GetCurrentDocument()->GetCommandProcessor()->GetCurrentCommand())
+        mEditSpeedCommand == model::CommandProcessor::get().GetCurrentCommand())
     {
         // Avoid any subsequent setClip to reset the current clip (and reinitialize the controls and members)
         mClip = mEditSpeedCommand->getClip();
-        gui::Window::get().GetDocumentManager()->GetCurrentDocument()->GetCommandProcessor()->Undo();
+        model::CommandProcessor::get().Undo();
     }
 
     mClones = std::unique_ptr<ClonesContainer>(new ClonesContainer(this, mClip));

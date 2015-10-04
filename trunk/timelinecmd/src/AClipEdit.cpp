@@ -206,7 +206,7 @@ bool AClipEdit::isInitialized()
 // HELPER METHODS FOR SUBCLASSES
 //////////////////////////////////////////////////////////////////////////
 
-void AClipEdit::Revert()
+void AClipEdit::revert()
 {
     VAR_INFO(this);
     Undo();

@@ -19,6 +19,7 @@
 
 #include "AudioTransitionFactory.h"
 #include "CommandLine.h"
+#include "CommandProcessor.h"
 #include "Config.h"
 #include "Dialog.h"
 #include "DialogAbout.h"
@@ -534,8 +535,8 @@ void Window::onOpenProject(model::EventOpenProject &event )
 	mMenuEdit->Enable(wxID_CUT,true);
 	mMenuEdit->Enable(wxID_COPY,true);
 	mMenuEdit->Enable(wxID_PASTE,true);
-    GetDocumentManager()->GetCurrentDocument()->GetCommandProcessor()->SetEditMenu(mMenuEdit); // Set menu for do/undo
-    GetDocumentManager()->GetCurrentDocument()->GetCommandProcessor()->Initialize();
+    model::CommandProcessor::get().SetEditMenu(mMenuEdit); // Set menu for do/undo
+    model::CommandProcessor::get().Initialize();
     GetDocumentManager()->AddFileToHistory(model::Project::get().GetFilename());
     GetDocumentManager()->FileHistorySave(*wxConfigBase::Get());
     wxConfigBase::Get()->Flush();
