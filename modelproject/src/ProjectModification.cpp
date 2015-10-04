@@ -17,6 +17,7 @@
 
 #include "ProjectModification.h"
 
+#include "CommandProcessor.h"
 #include "Project.h"
 #include "RootCommand.h"
 
@@ -36,7 +37,7 @@ void ProjectModification::trigger()
 void ProjectModification::submit(command::RootCommand* c)
 {
     trigger();
-    Project::get().GetCommandProcessor()->Submit(c);
+    model::CommandProcessor::get().Submit(c);
 }
 
 // static 

@@ -126,7 +126,7 @@ void Redo(int steps)
 
 wxCommand* getCurrentCommand()
 {
-    return gui::Window::get().GetDocumentManager()->GetCurrentDocument()->GetCommandProcessor()->GetCurrentCommand();
+    return model::CommandProcessor::get().GetCurrentCommand();
 }
 
 void BREAK()
@@ -142,8 +142,7 @@ void BREAK()
 void LogHistory()
 {
     LOG_DEBUG;
-    wxCommandProcessor* proc = gui::Window::get().GetDocumentManager()->GetCurrentDocument()->GetCommandProcessor();
-    wxList& cmds = proc->GetCommands();
+    wxList& cmds = model::CommandProcessor::get().GetCommands();
     wxList::compatibility_iterator it = cmds.GetFirst();
     while (it != cmds.GetLast())
     {
@@ -152,7 +151,7 @@ void LogHistory()
         VAR_DEBUG(command)(type);
         it = it->GetNext();
     }
-    wxCommand* current = proc->GetCurrentCommand();
+    wxCommand* current = model::CommandProcessor::get().GetCurrentCommand();
     VAR_DEBUG(current);
 }
 

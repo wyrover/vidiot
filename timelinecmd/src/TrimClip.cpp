@@ -65,7 +65,7 @@ TrimClip::~TrimClip()
 {
     if (!isInitialized())
     {
-        Revert();
+        revert();
     }
 }
 
@@ -74,7 +74,7 @@ void TrimClip::update(pts diff, bool shift, bool trimlink)
     VAR_DEBUG(diff)(shift);
     mNewClip.reset();
     mNewLink.reset();
-    Revert();
+    revert();
 
     mCursorPositionBefore = getTimeline().getCursor().getLogicalPosition();
     mCursorPositionAfter = mCursorPositionBefore;
@@ -114,7 +114,7 @@ void TrimClip::update(pts diff, bool shift, bool trimlink)
     {
         mNewClip = mOriginalClip;
         mNewLink = mOriginalLink;
-        Revert(); // Undo any changes
+        revert(); // Undo any changes
     }
     else
     {
