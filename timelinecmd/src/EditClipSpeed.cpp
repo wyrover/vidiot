@@ -55,7 +55,6 @@ EditClipSpeed::EditClipSpeed(
     , mSpeed(speed)
     , mPossible(false)
 {
-    // todo make boost rational with 0 denominator. Assert is caught by exception filter, with strange stack trace. caused by #define wxUSE_EXCEPTIONS    1 where exception rethrown (inwxevtloopmanual:dorun) causes new call stack?
     VAR_INFO(this)(mClip)(mLink)(speed);
     ASSERT_MORE_THAN_ZERO(speed);
     ASSERT_DIFFERS(mClip,mClipClone);
@@ -170,7 +169,6 @@ void EditClipSpeed::undoExtraAfter()
     //    getTimeline().getCursor().setLogicalPosition(mCursorPositionBefore);
     //}
 }
-// todo add minidumps for debugging
 
 //////////////////////////////////////////////////////////////////////////
 // GET/SET
