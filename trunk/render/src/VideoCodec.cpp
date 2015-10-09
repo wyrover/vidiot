@@ -195,7 +195,6 @@ void VideoCodec::serialize(Archive & ar, const unsigned int version)
         ar & BOOST_SERIALIZATION_NVP(mId);
         ar & BOOST_SERIALIZATION_NVP(mParameters);
     }
-    catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
     catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
     catch (...)                                  { LOG_ERROR;                                   throw; }

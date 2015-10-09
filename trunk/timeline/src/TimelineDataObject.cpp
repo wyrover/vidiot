@@ -219,7 +219,6 @@ void TimelineDataObject::deserialize(wxString from)
         boost::archive::xml_iarchive ar(store);
         ar & boost::serialization::make_nvp(sXmlName.c_str(), *this);
     }
-    catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
     catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
     catch (...)                                  { LOG_ERROR;                                   throw; }
@@ -233,7 +232,6 @@ wxString TimelineDataObject::serialize() const
         boost::archive::xml_oarchive ar(store);
         ar & boost::serialization::make_nvp(sXmlName.c_str(), *this);
     }
-    catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
     catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
     catch (...)                                  { LOG_ERROR;                                   throw; }

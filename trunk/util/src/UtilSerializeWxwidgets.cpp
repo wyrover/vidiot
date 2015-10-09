@@ -31,7 +31,6 @@ void save(Archive & ar, const wxString & string, const unsigned int version)
         std::string s = string.ToStdString();
         ar & boost::serialization::make_nvp(sString.c_str(),s);
     }
-    catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
     catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
     catch (...)                                  { LOG_ERROR;                                   throw; }
@@ -47,7 +46,6 @@ void load(Archive & ar, wxString & string, const unsigned int version)
         wxString input(wxSafeConvertMB2WX(s.c_str()));
         string = input;
     }
-    catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
     catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
     catch (...)                                  { LOG_ERROR;                                   throw; }
@@ -73,7 +71,6 @@ void save(Archive & ar, const wxFileName& filename, const unsigned int version)
         wxString saveString{ util::path::toSaveString(path) };
         ar & boost::serialization::make_nvp(sFileName.c_str(), saveString);
     }
-    catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
     catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
     catch (...)                                  { LOG_ERROR;                                   throw; }
@@ -95,7 +92,6 @@ void load(Archive & ar, wxFileName& filename, const unsigned int version)
         filename.Assign(saveString, wxPATH_WIN);
         filename = model::Project::get().convertPathAfterLoading(filename);
     }
-    catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
     catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
     catch (...)                                  { LOG_ERROR;                                   throw; }
@@ -112,7 +108,6 @@ void serialize(Archive & ar, wxPoint & r, const unsigned int version)
         ar & boost::serialization::make_nvp("x",r.x);
         ar & boost::serialization::make_nvp("y",r.y);
     }
-    catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
     catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
     catch (...)                                  { LOG_ERROR;                                   throw; }
@@ -129,7 +124,6 @@ void serialize(Archive & ar, wxSize & r, const unsigned int version)
         ar & boost::serialization::make_nvp("x",r.x);
         ar & boost::serialization::make_nvp("y",r.y);
     }
-    catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
     catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
     catch (...)                                  { LOG_ERROR;                                   throw; }
@@ -148,7 +142,6 @@ void serialize(Archive & ar, wxRect & r, const unsigned int version)
         ar & boost::serialization::make_nvp("width",r.width);
         ar & boost::serialization::make_nvp("height",r.height);
     }
-    catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
     catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
     catch (...)                                  { LOG_ERROR;                                   throw; }
@@ -172,7 +165,6 @@ void serialize(Archive & ar, wxColour & c, const unsigned int version)
         ar & boost::serialization::make_nvp("a", a);
         c.Set(r,g,b,a);
     }
-    catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
     catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
     catch (...)                                  { LOG_ERROR;                                   throw; }
@@ -205,7 +197,6 @@ void save(Archive & ar, const wxRegion & region, const unsigned int version)
             it++;
         }
     }
-    catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
     catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
     catch (...)                                  { LOG_ERROR;                                   throw; }
@@ -226,7 +217,6 @@ void load(Archive & ar, wxRegion & region, const unsigned int version)
             n--;
         }
     }
-    catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
     catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
     catch (...)                                  { LOG_ERROR;                                   throw; }
@@ -246,7 +236,6 @@ void save(Archive & ar, const wxDateTime & datetime, const unsigned int version)
         wxString date{datetime.FormatISOCombined()};
         ar & boost::serialization::make_nvp(sDateTime.c_str(), date);
     }
-    catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
     catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
     catch (...)                                  { LOG_ERROR;                                   throw; }
@@ -261,7 +250,6 @@ void load(Archive & ar, wxDateTime & datetime, const unsigned int version)
         ar & boost::serialization::make_nvp(sDateTime.c_str(), s);
         datetime.ParseISOCombined(s);
     }
-    catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
     catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
     catch (...)                                  { LOG_ERROR;                                   throw; }
