@@ -138,7 +138,6 @@ struct OldFrameRate
         {
             ar & boost::serialization::make_nvp( "rational", boost::serialization::base_object< boost::rational<int> >(*this));
         }
-        catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
         catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
         catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
         catch (...)                                  { LOG_ERROR;                                   throw; }
@@ -176,7 +175,6 @@ void Properties::serialize(Archive & ar, const unsigned int version)
         }
         ar & BOOST_SERIALIZATION_NVP(mDefaultRender);
     }
-    catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
     catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
     catch (...)                                  { LOG_ERROR;                                   throw; }

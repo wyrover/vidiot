@@ -49,7 +49,6 @@ void serialize(Archive& ar, boost::rational<IntType>& r, const unsigned int vers
             r.assign(n,d);
         }
     }
-    catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
     catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
     catch (...)                                  { LOG_ERROR;                                   throw; }
@@ -74,7 +73,6 @@ void serialize(Archive &ar, boost::weak_ptr<TYPE>& p, const unsigned int version
             ar & boost::serialization::make_nvp(sPointer.c_str(), shared);
         }
     }
-    catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
     catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
     catch (...)                                  { LOG_ERROR;                                   throw; }
@@ -109,7 +107,6 @@ void serialize(Archive &ar, boost::icl::interval_set<TYPE>& set, const unsigned 
             ar & boost::serialization::make_nvp(sList.c_str(),list);
         }
     }
-    catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
     catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
     catch (...)                                  { LOG_ERROR;                                   throw; }

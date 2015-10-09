@@ -128,7 +128,6 @@ void VideoTransition::serialize(Archive & ar, const unsigned int version)
         ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Transition);
         ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(IVideo);
     }
-    catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
     catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
     catch (...)                                  { LOG_ERROR;                                   throw; }
