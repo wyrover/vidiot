@@ -43,8 +43,8 @@ TimelinesView::TimelinesView(Window *parent)
     gui::Window::get().Bind(model::EVENT_CLOSE_PROJECT,             &TimelinesView::onCloseProject,            this);
     gui::Window::get().Bind(model::EVENT_REMOVE_NODE,              &TimelinesView::onProjectAssetRemoved,       this);
     gui::Window::get().Bind(model::EVENT_RENAME_NODE,              &TimelinesView::onProjectAssetRenamed,       this);
-    mNotebook.Bind(wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED,     &TimelinesView::onPageChanged,               this);
-    Bind(wxEVT_SIZE, &TimelinesView::onSize, this);
+    BindAndCatchExceptions(mNotebook, wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED,     &TimelinesView::onPageChanged,               this);
+    BindAndCatchExceptions(this, wxEVT_SIZE, &TimelinesView::onSize, this);
 }
 
 TimelinesView::~TimelinesView()

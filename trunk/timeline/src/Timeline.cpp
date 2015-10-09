@@ -94,10 +94,10 @@ Timeline::Timeline(wxWindow *parent, const model::SequencePtr& sequence, bool be
 
     mStateMachine->start();
 
-    Bind(wxEVT_PAINT,               &Timeline::onPaint,              this);
-    Bind(wxEVT_ERASE_BACKGROUND,    &Timeline::onEraseBackground,    this);
-    Bind(wxEVT_SIZE,                &Timeline::onSize,               this);
-    Bind(wxEVT_IDLE,                &Timeline::onIdle,               this);
+    BindAndCatchExceptions(this, wxEVT_PAINT,               &Timeline::onPaint,              this);
+    BindAndCatchExceptions(this, wxEVT_ERASE_BACKGROUND,    &Timeline::onEraseBackground,    this);
+    BindAndCatchExceptions(this, wxEVT_SIZE,                &Timeline::onSize,               this);
+    BindAndCatchExceptions(this, wxEVT_IDLE,                &Timeline::onIdle,               this);
 
     if (beginTransacted)
     {

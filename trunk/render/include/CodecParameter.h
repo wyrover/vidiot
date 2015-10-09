@@ -19,6 +19,7 @@
 #define MODEL_RENDER_CODEC_PARAMETER_H
 
 #include "UtilEnumSelector.h"
+#include "UtilBind.h"
 #include "ICodecParameter.h"
 
 struct AVCodecContext;
@@ -226,7 +227,7 @@ struct CodecParameterInt
         spin->SetValue(this->getValue());
         this->mWindow = spin;
         this->mWindow->Enable(true);
-        spin->Bind(wxEVT_COMMAND_SPINCTRL_UPDATED, &CodecParameterInt::onSpinChanged, this);
+        BindAndCatchExceptions(spin, wxEVT_COMMAND_SPINCTRL_UPDATED, &CodecParameterInt::onSpinChanged, this);
         return this->mWindow;
     }
     void destroyWidget() override
@@ -280,7 +281,7 @@ struct CodecParameterEnum
     {
         this->mChangeListener = listener;
         EnumSelector<int>* selector = new EnumSelector<int>(parent, NAMEMAPPING, this->getDefault());
-        selector->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &CodecParameterEnum::onChoiceChanged, this);
+        BindAndCatchExceptions(selector, wxEVT_COMMAND_CHOICE_SELECTED, &CodecParameterEnum::onChoiceChanged, this);
         this->mWindow = selector;
         this->mWindow->Enable(true);
         return this->mWindow;

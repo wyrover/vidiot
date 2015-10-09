@@ -56,7 +56,7 @@ StatusBar::StatusBar(wxWindow *parent)
     SetFieldsCount(getNumberOfStatusBars());
     mProgress = new wxGauge(this,wxID_ANY,100);
     hideProgressBar();
-    Bind(wxEVT_SIZE, &StatusBar::onSize, this);
+    BindAndCatchExceptions(this, wxEVT_SIZE, &StatusBar::onSize, this);
     worker::VisibleWorker::get().Bind(worker::EVENT_WORKER_QUEUE_SIZE, &StatusBar::onWorkerQueueSize, this);
 }
 

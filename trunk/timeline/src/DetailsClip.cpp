@@ -43,6 +43,7 @@
 #include "TrimClip.h"
 #include "UtilClone.h"
 #include "UtilEnumSelector.h"
+#include "UtilBind.h"
 #include "UtilLog.h"
 #include "UtilLogStl.h"
 #include "UtilLogWxwidgets.h"
@@ -148,7 +149,7 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
         button->SetWindowVariant( wxWINDOW_VARIANT_SMALL );
         button->SetToolTip(_("Change the length of the clip to this length. Will shift other clips to avoid introducing a black area.") + _(" Shortcut key: ") + "'" + wxString::Format("%d", i + 1) + "'");
         mLengthPanel->GetSizer()->Add(button,wxSizerFlags(1));
-        button->Bind( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, &DetailsClip::onLengthButtonPressed, this);
+        BindAndCatchExceptions(button, wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, &DetailsClip::onLengthButtonPressed, this);
         mLengthButtons.push_back(button);
     }
     updateLengthButtons();
@@ -169,8 +170,8 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     mSpeedPanel->SetSizer(speedsizer);
     addOption(_("Speed"), mSpeedPanel);
 
-    mSpeedSlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onSpeedSliderChanged, this);
-    mSpeedSpin->Bind(wxEVT_COMMAND_SPINCTRLDOUBLE_UPDATED, &DetailsClip::onSpeedSpinChanged, this);
+    BindAndCatchExceptions(mSpeedSlider, wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onSpeedSliderChanged, this);
+    BindAndCatchExceptions(mSpeedSpin, wxEVT_COMMAND_SPINCTRLDOUBLE_UPDATED, &DetailsClip::onSpeedSpinChanged, this);
 
     mOpacityPanel = new wxPanel(this);
     wxBoxSizer* opacitysizer = new wxBoxSizer(wxHORIZONTAL);
@@ -254,18 +255,25 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     mSelectAlignment->SetMinSize(wxSize(mSelectScaling->GetSize().x,-1));
     mSelectScaling->SetMinSize(wxSize(mSelectAlignment->GetSize().x,-1));
 
-    mOpacitySlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onOpacitySliderChanged, this);
-    mOpacitySpin->Bind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onOpacitySpinChanged, this);
-    mSelectScaling->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &DetailsClip::onScalingChoiceChanged, this);
-    mScalingSlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onScalingSliderChanged, this);
-    mScalingSpin->Bind(wxEVT_COMMAND_SPINCTRLDOUBLE_UPDATED, &DetailsClip::onScalingSpinChanged, this);
-    mRotationSlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onRotationSliderChanged, this);
-    mRotationSpin->Bind(wxEVT_COMMAND_SPINCTRLDOUBLE_UPDATED, &DetailsClip::onRotationSpinChanged, this);
-    mSelectAlignment->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &DetailsClip::onAlignmentChoiceChanged, this);
-    mPositionXSlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onPositionXSliderChanged, this);
-    mPositionXSpin->Bind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onPositionXSpinChanged, this);
-    mPositionYSlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onPositionYSliderChanged, this);
-    mPositionYSpin->Bind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onPositionYSpinChanged, this);
+
+
+
+
+
+
+
+    BindAndCatchExceptions(mOpacitySlider, wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onOpacitySliderChanged, this);
+    BindAndCatchExceptions(mOpacitySpin, wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onOpacitySpinChanged, this);
+    BindAndCatchExceptions(mSelectScaling, wxEVT_COMMAND_CHOICE_SELECTED, &DetailsClip::onScalingChoiceChanged, this);
+    BindAndCatchExceptions(mScalingSlider, wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onScalingSliderChanged, this);
+    BindAndCatchExceptions(mScalingSpin, wxEVT_COMMAND_SPINCTRLDOUBLE_UPDATED, &DetailsClip::onScalingSpinChanged, this);
+    BindAndCatchExceptions(mRotationSlider, wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onRotationSliderChanged, this);
+    BindAndCatchExceptions(mRotationSpin, wxEVT_COMMAND_SPINCTRLDOUBLE_UPDATED, &DetailsClip::onRotationSpinChanged, this);
+    BindAndCatchExceptions(mSelectAlignment, wxEVT_COMMAND_CHOICE_SELECTED, &DetailsClip::onAlignmentChoiceChanged, this);
+    BindAndCatchExceptions(mPositionXSlider, wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onPositionXSliderChanged, this);
+    BindAndCatchExceptions(mPositionXSpin, wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onPositionXSpinChanged, this);
+    BindAndCatchExceptions(mPositionYSlider, wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onPositionYSliderChanged, this);
+    BindAndCatchExceptions(mPositionYSpin, wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onPositionYSpinChanged, this);
 
     mVolumePanel = new wxPanel(this);
     wxBoxSizer* volumesizer = new wxBoxSizer(wxHORIZONTAL);
@@ -280,8 +288,8 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     mVolumePanel->SetSizer(volumesizer);
     addOption(_("Volume (%)"), mVolumePanel);
 
-    mVolumeSlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onVolumeSliderChanged, this);
-    mVolumeSpin->Bind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onVolumeSpinChanged, this);
+    BindAndCatchExceptions(mVolumeSlider, wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onVolumeSliderChanged, this);
+    BindAndCatchExceptions(mVolumeSpin, wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onVolumeSpinChanged, this);
 
     mTransitionBoxSizer = addBox(boost::none);
 
@@ -315,6 +323,9 @@ DetailsClip::~DetailsClip()
         button->Unbind(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, &DetailsClip::onLengthButtonPressed, this);
     }
     getSelection().Unbind(EVENT_SELECTION_UPDATE, &DetailsClip::onSelectionChanged, this);
+
+
+
 
     mSpeedSlider->Unbind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onSpeedSliderChanged, this);
     mSpeedSpin->Unbind(wxEVT_COMMAND_SPINCTRLDOUBLE_UPDATED, &DetailsClip::onSpeedSpinChanged, this);
@@ -480,7 +491,8 @@ void DetailsClip::setClip(const model::IClipPtr& clip)
                 addOption(
                     id_and_parameter.second->getName(),
                     id_and_parameter.second->makeWidget(this));
-                id_and_parameter.second->Bind(model::EVENT_TRANSITION_PARAMETER_CHANGED, &DetailsClip::onTransitionParameterChanged, this);
+                // todo works?
+                BindAndCatchExceptions(id_and_parameter.second.get(), model::EVENT_TRANSITION_PARAMETER_CHANGED, &DetailsClip::onTransitionParameterChanged, this);
             }
         }
 

@@ -19,6 +19,7 @@
 
 #include "Application.h"
 #include "Config.h"
+#include "UtilBind.h"
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
 #include "UtilPath.h"
@@ -64,8 +65,8 @@ DialogAbout::DialogAbout()
     buttons->Add(mBack);
     GetSizer()->Add(buttons);
 
-    mHtml->Bind(wxEVT_HTML_LINK_CLICKED, &DialogAbout::onLink, this);
-    mBack->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &DialogAbout::onBack, this);
+    BindAndCatchExceptions(mHtml, wxEVT_HTML_LINK_CLICKED, &DialogAbout::onLink, this);
+    BindAndCatchExceptions(mBack, wxEVT_COMMAND_BUTTON_CLICKED, &DialogAbout::onBack, this);
 
     gui::Window::get().setDialogOpen(true);
 }

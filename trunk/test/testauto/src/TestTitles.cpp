@@ -67,11 +67,10 @@ void TestTitles::testFileTypes()
 
     WindowTriggerMenu(ID_ADDVIDEOTRACK);
     model::TrackPtr track = VideoTrack(1);
+    WindowTriggerMenu(ID_CLOSESEQUENCE);
 
     for (model::IPathPtr path : InputFiles)
     {
-        WindowTriggerMenu(ID_CLOSESEQUENCE);
-
         StartTest(path->getPath().GetFullName());
         model::FilePtr file = boost::make_shared<model::File>(path->getPath());
         ExtendTrack(track, { path }); // Note: Not via a command (thus, 'outside' the undo system)
@@ -81,8 +80,8 @@ void TestTitles::testFileTypes()
         ASSERT_EQUALS(getPixel(0, 0), boost::make_tuple(0, 0, 0)); // This pixel is taken from the title
         ASSERT_EQUALS(NumberOfVideoClipsInTrack(1), 1);
         Play(HCenter(VideoClip(0, 0)), 400);
-
         WindowTriggerMenu(ID_CLOSESEQUENCE);
+
         MakeTrackEmpty(track); // Note: Not via a command (thus, 'outside' the undo system)
     }
 }

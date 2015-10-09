@@ -382,7 +382,9 @@ void Project::serialize(Archive & ar, const unsigned int version)
         }
         ar & BOOST_SERIALIZATION_NVP(mRoot);
     }
-    catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
+    // todo boost archive exception already inherits from std exception so can be removed
+    // todo throw a special exception (not derived from std::exception/boost exception) to only throw once and then catch in the main method
+    catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; } // todo make macro that does all this catching, and that logs the stack trace immediately
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
     catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
     catch (...)                                  { LOG_ERROR;                                   throw; }
