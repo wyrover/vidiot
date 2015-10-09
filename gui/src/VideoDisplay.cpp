@@ -95,10 +95,10 @@ VideoDisplay::VideoDisplay(wxWindow *parent, model::SequencePtr sequence)
         mBufferBitmap.reset(new wxBitmap(GetSize()));
     }
 
-    Bind(wxEVT_PAINT,               &VideoDisplay::onPaint,              this);
-    Bind(wxEVT_ERASE_BACKGROUND,    &VideoDisplay::onEraseBackground,    this);
-    Bind(wxEVT_SIZE,                &VideoDisplay::onSize,               this);
-    mVideoTimer.Bind(wxEVT_TIMER,   &VideoDisplay::onTimer,              this);
+    BindAndCatchExceptions(this, wxEVT_PAINT,               &VideoDisplay::onPaint,              this);
+    BindAndCatchExceptions(this, wxEVT_ERASE_BACKGROUND,    &VideoDisplay::onEraseBackground,    this);
+    BindAndCatchExceptions(this, wxEVT_SIZE,                &VideoDisplay::onSize,               this);
+    BindAndCatchExceptions(mVideoTimer, wxEVT_TIMER,   &VideoDisplay::onTimer,              this);
 
     LOG_INFO;
 }

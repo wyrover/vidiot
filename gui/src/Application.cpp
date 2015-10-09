@@ -285,6 +285,7 @@ void Application::OnAssertFailure(const wxChar *file, int Line, const wxChar *fu
     Dialog::get().getDebugReport(true, wxThread::IsMain()); // Adding context fails on secondary thread on Windows.
 }
 
+#if wxUSE_EXCEPTIONS
 bool Application::OnExceptionInMainLoop()
 {
     try
@@ -331,6 +332,7 @@ void Application::OnUnhandledException()
     breakIntoDebugger();
     Dialog::get().getDebugReport();
 }
+#endif
 
 void Application::OnFatalException()
 {

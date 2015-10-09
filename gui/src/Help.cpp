@@ -22,6 +22,7 @@
 #include "ProjectView.h"
 #include "TimelinesView.h"
 #include "Details.h"
+#include "UtilBind.h"
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
 #include "UtilPath.h"
@@ -66,11 +67,11 @@ Help::Help(wxWindow* parent)
     buttons->Add(mForward);
     GetSizer()->Add(buttons);
 
-    mBack->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &Help::onBack, this);
-    mHome->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &Help::onHome, this);
-    mForward->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &Help::onForward, this);
-    mHtml->Bind(wxEVT_COMMAND_HTML_LINK_CLICKED , &Help::onLink, this);
-    Bind(wxEVT_TIMER, &Help::onTimer, this);
+    BindAndCatchExceptions(mBack, wxEVT_COMMAND_BUTTON_CLICKED, &Help::onBack, this);
+    BindAndCatchExceptions(mHome, wxEVT_COMMAND_BUTTON_CLICKED, &Help::onHome, this);
+    BindAndCatchExceptions(mForward, wxEVT_COMMAND_BUTTON_CLICKED, &Help::onForward, this);
+    BindAndCatchExceptions(mHtml, wxEVT_COMMAND_HTML_LINK_CLICKED , &Help::onLink, this);
+    BindAndCatchExceptions(this, wxEVT_TIMER, &Help::onTimer, this);
 
     home();
 }

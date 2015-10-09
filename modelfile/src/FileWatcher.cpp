@@ -22,6 +22,7 @@
 #include "Project.h"
 #include "ProjectEvent.h"
 #include "NodeEvent.h"
+#include "UtilBind.h"
 #include "UtilLog.h"
 #include "UtilLogBoost.h"
 #include "UtilLogStl.h"
@@ -294,7 +295,7 @@ void FileWatcher::start()
 {
     ASSERT(!mWatcher);
     mWatcher = new wxFileSystemWatcher();
-    mWatcher->Bind(wxEVT_FSWATCHER, &FileWatcher::onChange, this);
+    BindAndCatchExceptions(mWatcher, wxEVT_FSWATCHER, &FileWatcher::onChange, this);
     VAR_DEBUG(*this)(mWatches);
     for ( MapFolderToNodes::value_type kv : mWatches )
     {

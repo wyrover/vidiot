@@ -29,6 +29,7 @@
 #include "Render.h"
 #include "Sequence.h"
 #include "UtilClone.h"
+#include "UtilBind.h"
 #include "UtilFifo.h"
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
@@ -92,15 +93,15 @@ DialogRenderSettings::DialogRenderSettings(model::SequencePtr sequence)
     fileselect->SetSizer(new wxBoxSizer(wxHORIZONTAL));
     mFile = new wxTextCtrl(fileselect,wxID_ANY,mNew->getFileName().GetFullPath(),wxDefaultPosition,wxDefaultSize,wxTE_READONLY);
     mFileButton = new wxButton(fileselect,wxID_ANY,_("Select"));
-    mFileButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &DialogRenderSettings::onFileButtonPressed, this);
+    BindAndCatchExceptions(mFileButton, wxEVT_COMMAND_BUTTON_CLICKED, &DialogRenderSettings::onFileButtonPressed, this);
     fileselect->GetSizer()->Add(mFile,wxSizerFlags(1).Expand());
     fileselect->GetSizer()->Add(mFileButton,wxSizerFlags(0));
 
     mVideoCodec = new EnumSelector<int>(formatbox, model::render::VideoCodecs::mapToName, mNew->getOutputFormat()->getVideoCodec()->getId());
-    mVideoCodec->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &DialogRenderSettings::onVideoCodecChanged, this);
+    BindAndCatchExceptions(mVideoCodec, wxEVT_COMMAND_CHOICE_SELECTED, &DialogRenderSettings::onVideoCodecChanged, this);
 
     mAudioCodec = new EnumSelector<int>(formatbox, model::render::AudioCodecs::mapToName, mNew->getOutputFormat()->getAudioCodec()->getId());
-    mAudioCodec->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &DialogRenderSettings::onAudioCodecChanged, this);
+    BindAndCatchExceptions(mAudioCodec, wxEVT_COMMAND_CHOICE_SELECTED, &DialogRenderSettings::onAudioCodecChanged, this);
 
     addOption(formatbox,formatboxsizer,_("Output file"), fileselect);
     addOption(formatbox,formatboxsizer,_("Video codec"), mVideoCodec);
@@ -125,7 +126,7 @@ DialogRenderSettings::DialogRenderSettings(model::SequencePtr sequence)
 
     mRenderSeparation = new wxCheckBox(optionsbox, wxID_ANY, "");
     mRenderSeparation->SetValue(mNew->getSeparateAtCuts());
-    mRenderSeparation->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &DialogRenderSettings::onRenderSeparationChanged, this);
+    BindAndCatchExceptions(mRenderSeparation, wxEVT_COMMAND_CHECKBOX_CLICKED, &DialogRenderSettings::onRenderSeparationChanged, this);
 
     addOption(optionsbox,optionsboxsizer,_("Render separation between cuts"), mRenderSeparation);
 
@@ -135,7 +136,7 @@ DialogRenderSettings::DialogRenderSettings(model::SequencePtr sequence)
     wxStaticBoxSizer* actionboxsizer = new wxStaticBoxSizer(actionbox, wxHORIZONTAL);
 
     mSetDefaultButton = new wxButton(actionbox,wxID_ANY,_("Set as default"));
-    mSetDefaultButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, & DialogRenderSettings::onSetDefaultButtonPressed, this);
+    BindAndCatchExceptions(mSetDefaultButton, wxEVT_COMMAND_BUTTON_CLICKED, & DialogRenderSettings::onSetDefaultButtonPressed, this);
 
     actionboxsizer->Add(mSetDefaultButton,wxSizerFlags().Proportion(0));
 
@@ -148,10 +149,10 @@ DialogRenderSettings::DialogRenderSettings(model::SequencePtr sequence)
     mCancelButton = new wxButton(buttons,wxID_CANCEL,_("Cancel")); // Using wxID_CANCEL ensures that pressing ESC also closes the dialog
     mApplyButton = new wxButton(buttons,wxID_ANY,_("Apply"));
 
-    mRenderButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, & DialogRenderSettings::onRenderButtonPressed, this);
-    mOkButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, & DialogRenderSettings::onOkButtonPressed, this);
-    mCancelButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, & DialogRenderSettings::onCancelButtonPressed, this);
-    mApplyButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, & DialogRenderSettings::onApplyButtonPressed, this);
+    BindAndCatchExceptions(mRenderButton, wxEVT_COMMAND_BUTTON_CLICKED, & DialogRenderSettings::onRenderButtonPressed, this);
+    BindAndCatchExceptions(mOkButton, wxEVT_COMMAND_BUTTON_CLICKED, & DialogRenderSettings::onOkButtonPressed, this);
+    BindAndCatchExceptions(mCancelButton, wxEVT_COMMAND_BUTTON_CLICKED, & DialogRenderSettings::onCancelButtonPressed, this);
+    BindAndCatchExceptions(mApplyButton, wxEVT_COMMAND_BUTTON_CLICKED, & DialogRenderSettings::onApplyButtonPressed, this);
 
     buttons->GetSizer()->Add(mRenderButton);
     buttons->GetSizer()->Add(mOkButton);

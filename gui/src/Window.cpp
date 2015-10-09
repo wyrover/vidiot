@@ -306,8 +306,8 @@ Window::Window()
     mUiManager.GetPane(sPaneNameTimelines).dock_proportion = 200000;
     mUiManager.Update();
 
-    mUiManager.Bind(wxEVT_AUI_PANE_CLOSE, &Window::onClosePane, this);
-    mUiManager.Bind(wxEVT_AUI_PANE_RESTORE, &Window::onRestorePane, this);
+    BindAndCatchExceptions(mUiManager, wxEVT_AUI_PANE_CLOSE, &Window::onClosePane, this);
+    BindAndCatchExceptions(mUiManager, wxEVT_AUI_PANE_RESTORE, &Window::onRestorePane, this);
     
     mDefaultPerspective = mUiManager.SavePerspective();
 
@@ -325,45 +325,45 @@ Window::Window()
     Bind(model::EVENT_CLOSE_PROJECT,    &Window::onCloseProject,    this);
     Bind(model::EVENT_RENAME_PROJECT,   &Window::onRenameProject,   this);
 
-    Bind(wxEVT_MOVE,                    &Window::onMove,                this);
-    Bind(wxEVT_SIZE,                    &Window::onSize,                this);
-    Bind(wxEVT_MAXIMIZE,                &Window::onMaximize,            this);
-    Bind(wxEVT_CLOSE_WINDOW,            &Window::onClose,               this);
+    BindAndCatchExceptions(this, wxEVT_MOVE,                    &Window::onMove,                this);
+    BindAndCatchExceptions(this, wxEVT_SIZE,                    &Window::onSize,                this);
+    BindAndCatchExceptions(this, wxEVT_MAXIMIZE,                &Window::onMaximize,            this);
+    BindAndCatchExceptions(this, wxEVT_CLOSE_WINDOW,            &Window::onClose,               this);
 
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onProperties,          this, wxID_PROPERTIES);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onNewFiles,            this, ID_NEW_FILES);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onNewAutoFolder,       this, ID_NEW_AUTOFOLDER);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onNewSequence,         this, ID_NEW_SEQUENCE);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onExit,                this, wxID_EXIT);
+    BindAndCatchExceptions(this, wxEVT_COMMAND_MENU_SELECTED,   &Window::onProperties,          this, wxID_PROPERTIES);
+    BindAndCatchExceptions(this, wxEVT_COMMAND_MENU_SELECTED,   &Window::onNewFiles,            this, ID_NEW_FILES);
+    BindAndCatchExceptions(this, wxEVT_COMMAND_MENU_SELECTED,   &Window::onNewAutoFolder,       this, ID_NEW_AUTOFOLDER);
+    BindAndCatchExceptions(this, wxEVT_COMMAND_MENU_SELECTED,   &Window::onNewSequence,         this, ID_NEW_SEQUENCE);
+    BindAndCatchExceptions(this, wxEVT_COMMAND_MENU_SELECTED,   &Window::onExit,                this, wxID_EXIT);
 
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnUndo,          GetDocumentManager(), wxID_UNDO);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnRedo,          GetDocumentManager(), wxID_REDO);
+    BindAndCatchExceptions(this, wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnUndo,          GetDocumentManager(), wxID_UNDO);
+    BindAndCatchExceptions(this, wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnRedo,          GetDocumentManager(), wxID_REDO);
 
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onSnapClips,        this, ID_SNAP_CLIPS);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onSnapCursor,       this, ID_SNAP_CURSOR);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onShowBoundingBox,  this, ID_SHOW_BOUNDINGBOX);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onShowProject,      this, ID_SHOW_PROJECT);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onShowDetails,      this, ID_SHOW_DETAILS);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onShowPreview,      this, ID_SHOW_PREVIEW);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onShowTimelines,    this, ID_SHOW_TIMELINES);
+    BindAndCatchExceptions(this, wxEVT_COMMAND_MENU_SELECTED,   &Window::onSnapClips,        this, ID_SNAP_CLIPS);
+    BindAndCatchExceptions(this, wxEVT_COMMAND_MENU_SELECTED,   &Window::onSnapCursor,       this, ID_SNAP_CURSOR);
+    BindAndCatchExceptions(this, wxEVT_COMMAND_MENU_SELECTED,   &Window::onShowBoundingBox,  this, ID_SHOW_BOUNDINGBOX);
+    BindAndCatchExceptions(this, wxEVT_COMMAND_MENU_SELECTED,   &Window::onShowProject,      this, ID_SHOW_PROJECT);
+    BindAndCatchExceptions(this, wxEVT_COMMAND_MENU_SELECTED,   &Window::onShowDetails,      this, ID_SHOW_DETAILS);
+    BindAndCatchExceptions(this, wxEVT_COMMAND_MENU_SELECTED,   &Window::onShowPreview,      this, ID_SHOW_PREVIEW);
+    BindAndCatchExceptions(this, wxEVT_COMMAND_MENU_SELECTED,   &Window::onShowTimelines,    this, ID_SHOW_TIMELINES);
 
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onOptions,          this, wxID_PREFERENCES);
+    BindAndCatchExceptions(this, wxEVT_COMMAND_MENU_SELECTED,   &Window::onOptions,          this, wxID_PREFERENCES);
 
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onShowCaptions,       this, ID_WORKSPACE_SHOW_CAPTIONS);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onWorkspaceSave,      this, ID_WORKSPACE_SAVE);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onWorkspaceLoad,      this, ID_WORKSPACE_LOAD);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onWorkspaceDelete,    this, ID_WORKSPACE_DELETE);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onWorkspaceDeleteAll, this, ID_WORKSPACE_DELETEALL);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onWorkspaceDefault,   this, ID_WORKSPACE_DEFAULT);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onWorkspaceFullscreen,this, ID_WORKSPACE_FULLSCREEN);
+    BindAndCatchExceptions(this, wxEVT_COMMAND_MENU_SELECTED,   &Window::onShowCaptions,       this, ID_WORKSPACE_SHOW_CAPTIONS);
+    BindAndCatchExceptions(this, wxEVT_COMMAND_MENU_SELECTED,   &Window::onWorkspaceSave,      this, ID_WORKSPACE_SAVE);
+    BindAndCatchExceptions(this, wxEVT_COMMAND_MENU_SELECTED,   &Window::onWorkspaceLoad,      this, ID_WORKSPACE_LOAD);
+    BindAndCatchExceptions(this, wxEVT_COMMAND_MENU_SELECTED,   &Window::onWorkspaceDelete,    this, ID_WORKSPACE_DELETE);
+    BindAndCatchExceptions(this, wxEVT_COMMAND_MENU_SELECTED,   &Window::onWorkspaceDeleteAll, this, ID_WORKSPACE_DELETEALL);
+    BindAndCatchExceptions(this, wxEVT_COMMAND_MENU_SELECTED,   &Window::onWorkspaceDefault,   this, ID_WORKSPACE_DEFAULT);
+    BindAndCatchExceptions(this, wxEVT_COMMAND_MENU_SELECTED,   &Window::onWorkspaceFullscreen,this, ID_WORKSPACE_FULLSCREEN);
 
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onHelp,             this, wxID_HELP);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onLog,              this, ID_OPENLOGFILE);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onConfig,           this, ID_OPENCONFIGFILE);
+    BindAndCatchExceptions(this, wxEVT_COMMAND_MENU_SELECTED,   &Window::onHelp,             this, wxID_HELP);
+    BindAndCatchExceptions(this, wxEVT_COMMAND_MENU_SELECTED,   &Window::onLog,              this, ID_OPENLOGFILE);
+    BindAndCatchExceptions(this, wxEVT_COMMAND_MENU_SELECTED,   &Window::onConfig,           this, ID_OPENCONFIGFILE);
 
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onAbout,            this, wxID_ABOUT);
+    BindAndCatchExceptions(this, wxEVT_COMMAND_MENU_SELECTED,   &Window::onAbout,            this, wxID_ABOUT);
 
-    Bind(wxEVT_DROP_FILES,              &Window::onDropFiles,        this);
+    BindAndCatchExceptions(this, wxEVT_DROP_FILES,              &Window::onDropFiles,        this);
 
     GetDocumentManager()->SetMaxDocsOpen(1);
     GetDocumentManager()->FileHistoryUseMenu(mMenuFile);

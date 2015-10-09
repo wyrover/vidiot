@@ -26,6 +26,7 @@
 #include "Sequence.h"
 #include "Timeline.h"
 #include "TimelinesView.h"
+#include "UtilBind.h"
 #include "UtilLog.h"
 #include "VideoDisplay.h"
 #include "VideoDisplayEvent.h"
@@ -66,8 +67,8 @@ Player::Player(wxWindow *parent, model::SequencePtr sequence, wxWindow* focus)
     //////////////////////////////////////////////////////////////////////////
 
     mDisplay = new VideoDisplay(this, sequence);
-    mDisplay->Bind(EVENT_PLAYBACK_ACTIVE, &Player::onPlaybackActive, this);
-    mDisplay->Bind(EVENT_PLAYBACK_POSITION, &Player::onPlaybackPosition, this);
+    BindAndCatchExceptions(mDisplay, EVENT_PLAYBACK_ACTIVE, &Player::onPlaybackActive, this);
+    BindAndCatchExceptions(mDisplay, EVENT_PLAYBACK_POSITION, &Player::onPlaybackPosition, this);
     mDisplay->setSpeed(VideoDisplay::sDefaultSpeed);
 
     //////////////////////////////////////////////////////////////////////////
@@ -105,12 +106,12 @@ Player::Player(wxWindow *parent, model::SequencePtr sequence, wxWindow* focus)
     mNextButton    ->SetBitmap(mBmpNext,        wxTOP);
     mEndButton     ->SetBitmap(mBmpEnd,         wxTOP);
 
-    mHomeButton     ->Bind(wxEVT_COMMAND_BUTTON_CLICKED,        &Player::onHome,     this);
-    mPreviousButton ->Bind(wxEVT_COMMAND_BUTTON_CLICKED,        &Player::onPrevious, this);
-    mPlayButton     ->Bind(wxEVT_COMMAND_BUTTON_CLICKED,        &Player::onPlay,     this);
-    mNextButton     ->Bind(wxEVT_COMMAND_BUTTON_CLICKED,        &Player::onNext,     this);
-    mEndButton      ->Bind(wxEVT_COMMAND_BUTTON_CLICKED,        &Player::onEnd,      this);
-    mSpeedButton    ->Bind(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED,  &Player::onSpeed,    this);
+    BindAndCatchExceptions(mHomeButton, wxEVT_COMMAND_BUTTON_CLICKED,        &Player::onHome,     this);
+    BindAndCatchExceptions(mPreviousButton, wxEVT_COMMAND_BUTTON_CLICKED,        &Player::onPrevious, this);
+    BindAndCatchExceptions(mPlayButton, wxEVT_COMMAND_BUTTON_CLICKED,        &Player::onPlay,     this);
+    BindAndCatchExceptions(mNextButton, wxEVT_COMMAND_BUTTON_CLICKED,        &Player::onNext,     this);
+    BindAndCatchExceptions(mEndButton, wxEVT_COMMAND_BUTTON_CLICKED,        &Player::onEnd,      this);
+    BindAndCatchExceptions(mSpeedButton, wxEVT_COMMAND_TOGGLEBUTTON_CLICKED,  &Player::onSpeed,    this);
 
     mButtonsPanelSizer->Add(mHomeButton,        wxSizerFlags(1).Expand());
     mButtonsPanelSizer->Add(mPreviousButton,    wxSizerFlags(1).Expand());
@@ -318,9 +319,9 @@ void Player::onSpeed(wxCommandEvent& event)
     mSpeedSliderFrame->Show();
 
     mSpeedSlider->SetFocus();
-    mSpeedSlider->Bind(wxEVT_KILL_FOCUS,                &Player::onSpeedSliderFocusKill,     this);
-    mSpeedSlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED,    &Player::onSpeedSliderUpdate,        this);
-    mSpeedButton->Bind(wxEVT_LEFT_DOWN,                 &Player::onLeftDown,                 this);
+    BindAndCatchExceptions(mSpeedSlider, wxEVT_KILL_FOCUS,                &Player::onSpeedSliderFocusKill,     this);
+    BindAndCatchExceptions(mSpeedSlider, wxEVT_COMMAND_SLIDER_UPDATED,    &Player::onSpeedSliderUpdate,        this);
+    BindAndCatchExceptions(mSpeedButton, wxEVT_LEFT_DOWN,                 &Player::onLeftDown,                 this);
 }
 
 

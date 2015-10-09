@@ -95,8 +95,10 @@ public:
     void OnEventLoopEnter(wxEventLoopBase* loop) override;
     int OnExit() override;
     void OnAssertFailure(const wxChar *file, int Line, const wxChar *function, const wxChar *condition, const wxChar *message) override;
+#if wxUSE_EXCEPTIONS
     bool OnExceptionInMainLoop() override;
     void OnUnhandledException() override;
+#endif 
     void OnFatalException() override;
 
     virtual void OnInitCmdLine (wxCmdLineParser &parser) override;

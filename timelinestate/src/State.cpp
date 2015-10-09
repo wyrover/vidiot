@@ -27,6 +27,7 @@
 #include "Scrolling.h"
 #include "StateIdle.h"
 #include "Timeline.h"
+#include "UtilBind.h"
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
 #include "VideoDisplayEvent.h"
@@ -43,26 +44,26 @@ Machine::Machine(Timeline& tl)
 {
     initiate();
 
-    getTimeline().  Bind(wxEVT_MOTION,                  &Machine::onMotion,         this);
-    getTimeline().  Bind(wxEVT_LEFT_DOWN,               &Machine::onLeftDown,       this);
-    getTimeline().  Bind(wxEVT_LEFT_UP,                 &Machine::onLeftUp,         this);
-    getTimeline().  Bind(wxEVT_LEFT_DCLICK,             &Machine::onLeftDouble,     this);
-    getTimeline().  Bind(wxEVT_MIDDLE_DOWN,             &Machine::onMiddleDown,     this);
-    getTimeline().  Bind(wxEVT_MIDDLE_UP,               &Machine::onMiddleUp,       this);
-    getTimeline().  Bind(wxEVT_MIDDLE_DCLICK,           &Machine::onMiddleDouble,   this);
-    getTimeline().  Bind(wxEVT_RIGHT_DOWN,              &Machine::onRightDown,      this);
-    getTimeline().  Bind(wxEVT_RIGHT_UP,                &Machine::onRightUp,        this);
-    getTimeline().  Bind(wxEVT_RIGHT_DCLICK,            &Machine::onRightDouble,    this);
-    getTimeline().  Bind(wxEVT_ENTER_WINDOW,            &Machine::onEnter,          this);
-    getTimeline().  Bind(wxEVT_LEAVE_WINDOW,            &Machine::onLeave,          this);
-    getTimeline().  Bind(wxEVT_MOUSEWHEEL,              &Machine::onWheel,          this);
-    getTimeline().  Bind(wxEVT_KEY_DOWN,                &Machine::onKeyDown,        this);
-    getTimeline().  Bind(wxEVT_KEY_UP,                  &Machine::onKeyUp,          this);
-    getTimeline().  Bind(wxEVT_MOUSE_CAPTURE_LOST,      &Machine::onCaptureLost,    this);
-    getTimeline().  Bind(wxEVT_MOUSE_CAPTURE_CHANGED,   &Machine::onCaptureChanged, this);
+    BindAndCatchExceptions(getTimeline(), wxEVT_MOTION,                  &Machine::onMotion,         this);
+    BindAndCatchExceptions(getTimeline(), wxEVT_LEFT_DOWN,               &Machine::onLeftDown,       this);
+    BindAndCatchExceptions(getTimeline(), wxEVT_LEFT_UP,                 &Machine::onLeftUp,         this);
+    BindAndCatchExceptions(getTimeline(), wxEVT_LEFT_DCLICK,             &Machine::onLeftDouble,     this);
+    BindAndCatchExceptions(getTimeline(), wxEVT_MIDDLE_DOWN,             &Machine::onMiddleDown,     this);
+    BindAndCatchExceptions(getTimeline(), wxEVT_MIDDLE_UP,               &Machine::onMiddleUp,       this);
+    BindAndCatchExceptions(getTimeline(), wxEVT_MIDDLE_DCLICK,           &Machine::onMiddleDouble,   this);
+    BindAndCatchExceptions(getTimeline(), wxEVT_RIGHT_DOWN,              &Machine::onRightDown,      this);
+    BindAndCatchExceptions(getTimeline(), wxEVT_RIGHT_UP,                &Machine::onRightUp,        this);
+    BindAndCatchExceptions(getTimeline(), wxEVT_RIGHT_DCLICK,            &Machine::onRightDouble,    this);
+    BindAndCatchExceptions(getTimeline(), wxEVT_ENTER_WINDOW,            &Machine::onEnter,          this);
+    BindAndCatchExceptions(getTimeline(), wxEVT_LEAVE_WINDOW,            &Machine::onLeave,          this);
+    BindAndCatchExceptions(getTimeline(), wxEVT_MOUSEWHEEL,              &Machine::onWheel,          this);
+    BindAndCatchExceptions(getTimeline(), wxEVT_KEY_DOWN,                &Machine::onKeyDown,        this);
+    BindAndCatchExceptions(getTimeline(), wxEVT_KEY_UP,                  &Machine::onKeyUp,          this);
+    BindAndCatchExceptions(getTimeline(), wxEVT_MOUSE_CAPTURE_LOST,      &Machine::onCaptureLost,    this);
+    BindAndCatchExceptions(getTimeline(), wxEVT_MOUSE_CAPTURE_CHANGED,   &Machine::onCaptureChanged, this);
 
-    getPlayer()->Bind(EVENT_PLAYBACK_ACTIVE, &Machine::onPlaybackActive, this);
-    getPlayer()->Bind(EVENT_PLAYBACK_POSITION, &Machine::onPlaybackPosition, this);
+    BindAndCatchExceptions(getPlayer(), EVENT_PLAYBACK_ACTIVE, &Machine::onPlaybackActive, this);
+    BindAndCatchExceptions(getPlayer(), EVENT_PLAYBACK_POSITION, &Machine::onPlaybackPosition, this);
 
     VAR_DEBUG(this);
 }
@@ -90,7 +91,7 @@ Machine::~Machine()
     getTimeline().  Unbind(wxEVT_MOUSE_CAPTURE_CHANGED, &Machine::onCaptureChanged, this);
 
     getPlayer()->Unbind(EVENT_PLAYBACK_ACTIVE, &Machine::onPlaybackActive, this);
-    getPlayer()->Bind(EVENT_PLAYBACK_POSITION, &Machine::onPlaybackPosition, this);
+    getPlayer()->Unbind(EVENT_PLAYBACK_POSITION, &Machine::onPlaybackPosition, this);
 
 }
 

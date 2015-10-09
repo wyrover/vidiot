@@ -17,6 +17,7 @@
 
 #include "TransitionParameterColor.h"
 
+#include "UtilBind.h"
 #include "UtilLog.h"
 #include "UtilLogStl.h"
 #include "UtilLogWxwidgets.h"
@@ -75,7 +76,7 @@ wxWindow* TransitionParameterColor::makeWidget(wxWindow *parent)
 {
     ASSERT_EQUALS(mControl, 0);
     mControl = new wxColourPickerCtrl(parent, wxID_ANY, mColor, wxDefaultPosition, wxDefaultSize, wxCLRP_USE_TEXTCTRL | wxCLRP_SHOW_LABEL);
-    mControl->Bind(wxEVT_COLOURPICKER_CHANGED, &TransitionParameterColor::onColor, this);
+    BindAndCatchExceptions(mControl, wxEVT_COLOURPICKER_CHANGED, &TransitionParameterColor::onColor, this);
     return mControl;
 }
 void TransitionParameterColor::destroyWidget() 
