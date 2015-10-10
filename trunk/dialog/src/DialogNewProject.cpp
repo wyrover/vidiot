@@ -62,8 +62,8 @@ DialogNewProject::DialogNewProject()
         mTextFolder = new wxStaticText(mPageStart, wxID_ANY, _("Start a new project starting from a folder of files.\nAll files in this folder are added into a new movie sequence."));
         sizerFolder->Add(mButtonFolder, wxSizerFlags(0).Expand().Border(wxRIGHT,5));
         sizerFolder->Add(mTextFolder, wxSizerFlags(1).Center());
-        BindAndCatchExceptions(mButtonFolder, wxEVT_RADIOBUTTON, &DialogNewProject::onChangeType, this);
-        BindAndCatchExceptions(mTextFolder, wxEVT_LEFT_DOWN, &DialogNewProject::onActivateFolderText,this);
+        mButtonFolder->Bind(wxEVT_RADIOBUTTON, &DialogNewProject::onChangeType, this);
+        mTextFolder->Bind(wxEVT_LEFT_DOWN, &DialogNewProject::onActivateFolderText,this);
 
         wxBoxSizer* sizerFiles = new wxBoxSizer(wxHORIZONTAL);
         mButtonFiles = new wxRadioButton(mPageStart, wxID_ANY, "");
@@ -71,16 +71,16 @@ DialogNewProject::DialogNewProject()
         sizerFiles->Add(mButtonFiles, wxSizerFlags(0).Expand().Border(wxRIGHT,5));
         sizerFiles->Add(mTextFiles, wxSizerFlags(1).Center());
         sizerFiles->Fit(mPageStart);
-        BindAndCatchExceptions(mButtonFiles, wxEVT_RADIOBUTTON, &DialogNewProject::onChangeType, this);
-        BindAndCatchExceptions(mTextFiles, wxEVT_LEFT_DOWN, &DialogNewProject::onActivateFilesText,this);
+        mButtonFiles->Bind(wxEVT_RADIOBUTTON, &DialogNewProject::onChangeType, this);
+        mTextFiles->Bind(wxEVT_LEFT_DOWN, &DialogNewProject::onActivateFilesText,this);
 
         wxBoxSizer* sizerBlank = new wxBoxSizer(wxHORIZONTAL);
         mButtonBlank = new wxRadioButton(mPageStart, wxID_ANY, "");
         mTextBlank = new wxStaticText(mPageStart, wxID_ANY, _("Start a new empty project."));
         sizerBlank->Add(mButtonBlank, wxSizerFlags(0).Expand().Border(wxRIGHT,5));
         sizerBlank->Add(mTextBlank, wxSizerFlags(1).Center());
-        BindAndCatchExceptions(mButtonBlank, wxEVT_RADIOBUTTON, &DialogNewProject::onChangeType, this);
-        BindAndCatchExceptions(mTextBlank, wxEVT_LEFT_DOWN, &DialogNewProject::onActivateBlankText,this);
+        mButtonBlank->Bind(wxEVT_RADIOBUTTON, &DialogNewProject::onChangeType, this);
+        mTextBlank->Bind(wxEVT_LEFT_DOWN, &DialogNewProject::onActivateBlankText,this);
 
         sizer->Add(sizerFolder, wxSizerFlags(1));
         sizer->Add(new wxStaticLine(mPageStart), wxSizerFlags(0).Expand());
@@ -151,16 +151,16 @@ DialogNewProject::DialogNewProject()
         minPageSize.IncTo(sizer->CalcMin());
     }
 
-    BindAndCatchExceptions(this, wxEVT_WIZARD_PAGE_CHANGED, &DialogNewProject::onPageChanged, this);
-    BindAndCatchExceptions(this, wxEVT_WIZARD_CANCEL, &DialogNewProject::onCancel, this);
-    BindAndCatchExceptions(this, wxEVT_WIZARD_FINISHED, &DialogNewProject::onFinish, this);
+    Bind(wxEVT_WIZARD_PAGE_CHANGED, &DialogNewProject::onPageChanged, this);
+    Bind(wxEVT_WIZARD_CANCEL, &DialogNewProject::onCancel, this);
+    Bind(wxEVT_WIZARD_FINISHED, &DialogNewProject::onFinish, this);
 
-    BindAndCatchExceptions(mButtonFolder, wxEVT_RADIOBUTTON, &DialogNewProject::onTypeChanged, this);
-    BindAndCatchExceptions(mButtonFiles, wxEVT_RADIOBUTTON, &DialogNewProject::onTypeChanged, this);
-    BindAndCatchExceptions(mButtonBlank, wxEVT_RADIOBUTTON, &DialogNewProject::onTypeChanged, this);
+    mButtonFolder->Bind(wxEVT_RADIOBUTTON, &DialogNewProject::onTypeChanged, this);
+    mButtonFiles->Bind(wxEVT_RADIOBUTTON, &DialogNewProject::onTypeChanged, this);
+    mButtonBlank->Bind(wxEVT_RADIOBUTTON, &DialogNewProject::onTypeChanged, this);
 
-    BindAndCatchExceptions(mButtonBrowseFolder, wxEVT_BUTTON, &DialogNewProject::onBrowseFolder, this);
-    BindAndCatchExceptions(mButtonBrowseFiles, wxEVT_BUTTON, &DialogNewProject::onBrowseFiles, this);
+    mButtonBrowseFolder->Bind(wxEVT_BUTTON, &DialogNewProject::onBrowseFolder, this);
+    mButtonBrowseFiles->Bind(wxEVT_BUTTON, &DialogNewProject::onBrowseFiles, this);
 
     if (sDroppedFiles)
     {

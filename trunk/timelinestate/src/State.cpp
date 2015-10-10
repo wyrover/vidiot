@@ -27,7 +27,7 @@
 #include "Scrolling.h"
 #include "StateIdle.h"
 #include "Timeline.h"
-#include "UtilBind.h"
+#include "UtilException.h"
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
 #include "VideoDisplayEvent.h"
@@ -44,26 +44,26 @@ Machine::Machine(Timeline& tl)
 {
     initiate();
 
-    BindAndCatchExceptions(getTimeline(), wxEVT_MOTION,                  &Machine::onMotion,         this);
-    BindAndCatchExceptions(getTimeline(), wxEVT_LEFT_DOWN,               &Machine::onLeftDown,       this);
-    BindAndCatchExceptions(getTimeline(), wxEVT_LEFT_UP,                 &Machine::onLeftUp,         this);
-    BindAndCatchExceptions(getTimeline(), wxEVT_LEFT_DCLICK,             &Machine::onLeftDouble,     this);
-    BindAndCatchExceptions(getTimeline(), wxEVT_MIDDLE_DOWN,             &Machine::onMiddleDown,     this);
-    BindAndCatchExceptions(getTimeline(), wxEVT_MIDDLE_UP,               &Machine::onMiddleUp,       this);
-    BindAndCatchExceptions(getTimeline(), wxEVT_MIDDLE_DCLICK,           &Machine::onMiddleDouble,   this);
-    BindAndCatchExceptions(getTimeline(), wxEVT_RIGHT_DOWN,              &Machine::onRightDown,      this);
-    BindAndCatchExceptions(getTimeline(), wxEVT_RIGHT_UP,                &Machine::onRightUp,        this);
-    BindAndCatchExceptions(getTimeline(), wxEVT_RIGHT_DCLICK,            &Machine::onRightDouble,    this);
-    BindAndCatchExceptions(getTimeline(), wxEVT_ENTER_WINDOW,            &Machine::onEnter,          this);
-    BindAndCatchExceptions(getTimeline(), wxEVT_LEAVE_WINDOW,            &Machine::onLeave,          this);
-    BindAndCatchExceptions(getTimeline(), wxEVT_MOUSEWHEEL,              &Machine::onWheel,          this);
-    BindAndCatchExceptions(getTimeline(), wxEVT_KEY_DOWN,                &Machine::onKeyDown,        this);
-    BindAndCatchExceptions(getTimeline(), wxEVT_KEY_UP,                  &Machine::onKeyUp,          this);
-    BindAndCatchExceptions(getTimeline(), wxEVT_MOUSE_CAPTURE_LOST,      &Machine::onCaptureLost,    this);
-    BindAndCatchExceptions(getTimeline(), wxEVT_MOUSE_CAPTURE_CHANGED,   &Machine::onCaptureChanged, this);
+    getTimeline().  Bind(wxEVT_MOTION,                  &Machine::onMotion,         this);
+    getTimeline().  Bind(wxEVT_LEFT_DOWN,               &Machine::onLeftDown,       this);
+    getTimeline().  Bind(wxEVT_LEFT_UP,                 &Machine::onLeftUp,         this);
+    getTimeline().  Bind(wxEVT_LEFT_DCLICK,             &Machine::onLeftDouble,     this);
+    getTimeline().  Bind(wxEVT_MIDDLE_DOWN,             &Machine::onMiddleDown,     this);
+    getTimeline().  Bind(wxEVT_MIDDLE_UP,               &Machine::onMiddleUp,       this);
+    getTimeline().  Bind(wxEVT_MIDDLE_DCLICK,           &Machine::onMiddleDouble,   this);
+    getTimeline().  Bind(wxEVT_RIGHT_DOWN,              &Machine::onRightDown,      this);
+    getTimeline().  Bind(wxEVT_RIGHT_UP,                &Machine::onRightUp,        this);
+    getTimeline().  Bind(wxEVT_RIGHT_DCLICK,            &Machine::onRightDouble,    this);
+    getTimeline().  Bind(wxEVT_ENTER_WINDOW,            &Machine::onEnter,          this);
+    getTimeline().  Bind(wxEVT_LEAVE_WINDOW,            &Machine::onLeave,          this);
+    getTimeline().  Bind(wxEVT_MOUSEWHEEL,              &Machine::onWheel,          this);
+    getTimeline().  Bind(wxEVT_KEY_DOWN,                &Machine::onKeyDown,        this);
+    getTimeline().  Bind(wxEVT_KEY_UP,                  &Machine::onKeyUp,          this);
+    getTimeline().  Bind(wxEVT_MOUSE_CAPTURE_LOST,      &Machine::onCaptureLost,    this);
+    getTimeline().  Bind(wxEVT_MOUSE_CAPTURE_CHANGED,   &Machine::onCaptureChanged, this);
 
-    BindAndCatchExceptions(getPlayer(), EVENT_PLAYBACK_ACTIVE, &Machine::onPlaybackActive, this);
-    BindAndCatchExceptions(getPlayer(), EVENT_PLAYBACK_POSITION, &Machine::onPlaybackPosition, this);
+    getPlayer()->Bind(EVENT_PLAYBACK_ACTIVE, &Machine::onPlaybackActive, this);
+    getPlayer()->Bind(EVENT_PLAYBACK_POSITION, &Machine::onPlaybackPosition, this);
 
     VAR_DEBUG(this);
 }
@@ -162,9 +162,12 @@ bool Machine::processWheelEvent(int nSteps)
 
 void Machine::onMotion(wxMouseEvent& event)
 {
-    EvMotion motionEvent(event);
-    handleMotion(motionEvent);
-    event.Skip();
+    CatchExceptions([this, &event]
+    {
+        EvMotion motionEvent(event);
+        handleMotion(motionEvent);
+        event.Skip();
+    });
 }
 
 void Machine::handleMotion(EvMotion& event)
@@ -177,9 +180,12 @@ void Machine::handleMotion(EvMotion& event)
 
 void Machine::onLeftDown(wxMouseEvent& event)
 {
-    EvLeftDown leftDownEvent(event);
-    handleLeftDown(leftDownEvent);
-    event.Skip();
+    CatchExceptions([this, &event]
+    {
+        EvLeftDown leftDownEvent(event);
+        handleLeftDown(leftDownEvent);
+        event.Skip();
+    });
 }
 
 void Machine::handleLeftDown(EvLeftDown& event)
@@ -193,9 +199,12 @@ void Machine::handleLeftDown(EvLeftDown& event)
 
 void Machine::onLeftUp(wxMouseEvent& event)
 {
-    EvLeftUp leftUpEvent(event);
-    handleLeftUp(leftUpEvent);
-    event.Skip();
+    CatchExceptions([this, &event]
+    {
+        EvLeftUp leftUpEvent(event);
+        handleLeftUp(leftUpEvent);
+        event.Skip();
+    });
 }
 
 void Machine::handleLeftUp(EvLeftUp& event)
@@ -208,9 +217,12 @@ void Machine::handleLeftUp(EvLeftUp& event)
 
 void Machine::onLeftDouble(wxMouseEvent& event)
 {
-    EvLeftDouble eventLeftDouble(event);
-    handleLeftDouble(eventLeftDouble);
-    event.Skip();
+    CatchExceptions([this, &event]
+    {
+        EvLeftDouble eventLeftDouble(event);
+        handleLeftDouble(eventLeftDouble);
+        event.Skip();
+    });
 }
 
 void Machine::handleLeftDouble(EvLeftDouble& event)
@@ -223,9 +235,12 @@ void Machine::handleLeftDouble(EvLeftDouble& event)
 
 void Machine::onMiddleDown(wxMouseEvent& event)
 {
-    EvMiddleDown eventMiddleDown(event);
-    handleMiddleDown(eventMiddleDown);
-    event.Skip();
+    CatchExceptions([this, &event]
+    {
+        EvMiddleDown eventMiddleDown(event);
+        handleMiddleDown(eventMiddleDown);
+        event.Skip();
+    });
 }
 
 void Machine::handleMiddleDown(EvMiddleDown& event)
@@ -237,9 +252,12 @@ void Machine::handleMiddleDown(EvMiddleDown& event)
 
 void Machine::onMiddleUp(wxMouseEvent& event)
 {
-    EvMiddleUp eventMiddleUp(event);
-    handleMiddleUp(eventMiddleUp);
-    event.Skip();
+    CatchExceptions([this, &event]
+    {
+        EvMiddleUp eventMiddleUp(event);
+        handleMiddleUp(eventMiddleUp);
+        event.Skip();
+    });
 }
 
 void Machine::handleMiddleUp(EvMiddleUp& event)
@@ -251,9 +269,12 @@ void Machine::handleMiddleUp(EvMiddleUp& event)
 
 void Machine::onMiddleDouble(wxMouseEvent& event)
 {
-    EvMiddleDouble eventMiddleDouble(event);
-    handleMiddleDouble(eventMiddleDouble);
-    event.Skip();
+    CatchExceptions([this, &event]
+    {
+        EvMiddleDouble eventMiddleDouble(event);
+        handleMiddleDouble(eventMiddleDouble);
+        event.Skip();
+    });
 }
 
 void Machine::handleMiddleDouble(EvMiddleDouble& event)
@@ -265,9 +286,12 @@ void Machine::handleMiddleDouble(EvMiddleDouble& event)
 
 void Machine::onRightDown(wxMouseEvent& event)
 {
-    EvRightDown eventRightDown(event);
-    handleRightDown(eventRightDown);
-    event.Skip();
+    CatchExceptions([this, &event]
+    {
+        EvRightDown eventRightDown(event);
+        handleRightDown(eventRightDown);
+        event.Skip();
+    });
 }
 
 void Machine::handleRightDown(EvRightDown& event)
@@ -282,9 +306,12 @@ void Machine::handleRightDown(EvRightDown& event)
 
 void Machine::onRightUp(wxMouseEvent& event)
 {
-    EvRightUp eventRightUp(event);
-    handleRightUp(eventRightUp);
-    event.Skip();
+    CatchExceptions([this, &event]
+    {
+        EvRightUp eventRightUp(event);
+        handleRightUp(eventRightUp);
+        event.Skip();
+    });
 }
 
 void Machine::handleRightUp(EvRightUp& event)
@@ -297,9 +324,12 @@ void Machine::handleRightUp(EvRightUp& event)
 
 void Machine::onRightDouble(wxMouseEvent& event)
 {
-    EvRightDouble eventRightDouble(event);
-    handleRightDouble(eventRightDouble);
-    event.Skip();
+    CatchExceptions([this, &event]
+    {
+        EvRightDouble eventRightDouble(event);
+        handleRightDouble(eventRightDouble);
+        event.Skip();
+    });
 }
 
 void Machine::handleRightDouble(EvRightDouble& event)
@@ -312,9 +342,12 @@ void Machine::handleRightDouble(EvRightDouble& event)
 
 void Machine::onEnter(wxMouseEvent& event)
 {
-    EvEnter eventEnter(event);
-    handleEnter(eventEnter);
-    event.Skip();
+    CatchExceptions([this, &event]
+    {
+        EvEnter eventEnter(event);
+        handleEnter(eventEnter);
+        event.Skip();
+    });
 }
 
 void Machine::handleEnter(EvEnter& event)
@@ -327,9 +360,12 @@ void Machine::handleEnter(EvEnter& event)
 
 void Machine::onLeave(wxMouseEvent& event)
 {
-    EvLeave eventLeave(event);
-    handleLeave(eventLeave);
-    event.Skip();
+    CatchExceptions([this, &event]
+    {
+        EvLeave eventLeave(event);
+        handleLeave(eventLeave);
+        event.Skip();
+    });
 }
 
 void Machine::handleLeave(EvLeave& event)
@@ -343,28 +379,34 @@ void Machine::handleLeave(EvLeave& event)
 
 void Machine::onWheel(wxMouseEvent& event)
 {
-    VAR_DEBUG(event);
-
-    // Zooming/Scrolling can be done in any state
-    int nSteps = event.GetWheelRotation() / event.GetWheelDelta();
-    if (!processWheelEvent(nSteps))
+    CatchExceptions([this, &event]
     {
-        // Only when this event is 'unhandled' here, the original scrolling
-        // behaviour should be done.
-        event.Skip();
-    }
-    // NOT: process_event(EvWheel()); -- Unused
+        VAR_DEBUG(event);
+
+        // Zooming/Scrolling can be done in any state
+        int nSteps = event.GetWheelRotation() / event.GetWheelDelta();
+        if (!processWheelEvent(nSteps))
+        {
+            // Only when this event is 'unhandled' here, the original scrolling
+            // behaviour should be done.
+            event.Skip();
+        }
+        // NOT: process_event(EvWheel()); -- Unused
+    });
 }
 
 void Machine::onKeyDown(wxKeyEvent& event)
 {
-    // By default, the event may propagate upwards.
-    // If handled by the state machine, Skip(false) will be called.
-    // For instance, Don't want the left/down keys to propagate further,
-    // since that causes scrolling by wxScrolledWindow
-    event.Skip();
-    EvKeyDown eventKeyDown(event);
-    handleKeyDown(eventKeyDown);
+    CatchExceptions([this, &event]
+    {
+        // By default, the event may propagate upwards.
+        // If handled by the state machine, Skip(false) will be called.
+        // For instance, Don't want the left/down keys to propagate further,
+        // since that causes scrolling by wxScrolledWindow
+        event.Skip();
+        EvKeyDown eventKeyDown(event);
+        handleKeyDown(eventKeyDown);
+    });
 }
 
 void Machine::handleKeyDown(EvKeyDown& event)
@@ -377,13 +419,16 @@ void Machine::handleKeyDown(EvKeyDown& event)
 
 void Machine::onKeyUp(wxKeyEvent& event)
 {
-    // By default, the event may propagate upwards.
-    // If handled by the state machine, Skip(false) will be called.
-    // For instance, Don't want the left/down keys to propagate further,
-    // since that causes scrolling by wxScrolledWindow
-    event.Skip();
-    EvKeyUp eventKeyUp(event);
-    handleKeyUp(eventKeyUp);
+    CatchExceptions([this, &event]
+    {
+        // By default, the event may propagate upwards.
+        // If handled by the state machine, Skip(false) will be called.
+        // For instance, Don't want the left/down keys to propagate further,
+        // since that causes scrolling by wxScrolledWindow
+        event.Skip();
+        EvKeyUp eventKeyUp(event);
+        handleKeyUp(eventKeyUp);
+    });
 }
 
 void Machine::handleKeyUp(EvKeyUp& event)

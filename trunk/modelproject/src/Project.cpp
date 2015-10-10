@@ -48,13 +48,13 @@ Project::Project()
 , mProperties()
 , mSaveFolder("")
 {
-    VAR_DEBUG(this);
+    VAR_INFO(this);
     ASSERT(!IsModified());
 }
 
 Project::~Project()
 {
-    VAR_DEBUG(this);
+    VAR_INFO(this);
 }
 
 //////////////////////////////////////////////////////////////////////////

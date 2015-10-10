@@ -45,9 +45,9 @@ TimelineClipboard::TimelineClipboard(Timeline* timeline)
     : Part(timeline)
 {
     VAR_DEBUG(this);
-    BindAndCatchExceptions(gui::Window::get(), wxEVT_COMMAND_MENU_SELECTED, &TimelineClipboard::onCutFromMainMenu, this, wxID_CUT);
-    BindAndCatchExceptions(gui::Window::get(), wxEVT_COMMAND_MENU_SELECTED, &TimelineClipboard::onCopyFromMainMenu, this, wxID_COPY);
-    BindAndCatchExceptions(gui::Window::get(), wxEVT_COMMAND_MENU_SELECTED, &TimelineClipboard::onPasteFromMainMenu, this, wxID_PASTE);
+    gui::Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED, &TimelineClipboard::onCutFromMainMenu, this, wxID_CUT);
+    gui::Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED, &TimelineClipboard::onCopyFromMainMenu, this, wxID_COPY);
+    gui::Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED, &TimelineClipboard::onPasteFromMainMenu, this, wxID_PASTE);
 }
 
 TimelineClipboard::~TimelineClipboard()

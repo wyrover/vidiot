@@ -43,7 +43,7 @@
 #include "TrimClip.h"
 #include "UtilClone.h"
 #include "UtilEnumSelector.h"
-#include "UtilBind.h"
+#include "UtilException.h"
 #include "UtilLog.h"
 #include "UtilLogStl.h"
 #include "UtilLogWxwidgets.h"
@@ -149,7 +149,7 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
         button->SetWindowVariant( wxWINDOW_VARIANT_SMALL );
         button->SetToolTip(_("Change the length of the clip to this length. Will shift other clips to avoid introducing a black area.") + _(" Shortcut key: ") + "'" + wxString::Format("%d", i + 1) + "'");
         mLengthPanel->GetSizer()->Add(button,wxSizerFlags(1));
-        BindAndCatchExceptions(button, wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, &DetailsClip::onLengthButtonPressed, this);
+        button->Bind( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, &DetailsClip::onLengthButtonPressed, this);
         mLengthButtons.push_back(button);
     }
     updateLengthButtons();
@@ -170,8 +170,8 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     mSpeedPanel->SetSizer(speedsizer);
     addOption(_("Speed"), mSpeedPanel);
 
-    BindAndCatchExceptions(mSpeedSlider, wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onSpeedSliderChanged, this);
-    BindAndCatchExceptions(mSpeedSpin, wxEVT_COMMAND_SPINCTRLDOUBLE_UPDATED, &DetailsClip::onSpeedSpinChanged, this);
+    mSpeedSlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onSpeedSliderChanged, this);
+    mSpeedSpin->Bind(wxEVT_COMMAND_SPINCTRLDOUBLE_UPDATED, &DetailsClip::onSpeedSpinChanged, this);
 
     mOpacityPanel = new wxPanel(this);
     wxBoxSizer* opacitysizer = new wxBoxSizer(wxHORIZONTAL);
@@ -255,25 +255,18 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     mSelectAlignment->SetMinSize(wxSize(mSelectScaling->GetSize().x,-1));
     mSelectScaling->SetMinSize(wxSize(mSelectAlignment->GetSize().x,-1));
 
-
-
-
-
-
-
-
-    BindAndCatchExceptions(mOpacitySlider, wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onOpacitySliderChanged, this);
-    BindAndCatchExceptions(mOpacitySpin, wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onOpacitySpinChanged, this);
-    BindAndCatchExceptions(mSelectScaling, wxEVT_COMMAND_CHOICE_SELECTED, &DetailsClip::onScalingChoiceChanged, this);
-    BindAndCatchExceptions(mScalingSlider, wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onScalingSliderChanged, this);
-    BindAndCatchExceptions(mScalingSpin, wxEVT_COMMAND_SPINCTRLDOUBLE_UPDATED, &DetailsClip::onScalingSpinChanged, this);
-    BindAndCatchExceptions(mRotationSlider, wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onRotationSliderChanged, this);
-    BindAndCatchExceptions(mRotationSpin, wxEVT_COMMAND_SPINCTRLDOUBLE_UPDATED, &DetailsClip::onRotationSpinChanged, this);
-    BindAndCatchExceptions(mSelectAlignment, wxEVT_COMMAND_CHOICE_SELECTED, &DetailsClip::onAlignmentChoiceChanged, this);
-    BindAndCatchExceptions(mPositionXSlider, wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onPositionXSliderChanged, this);
-    BindAndCatchExceptions(mPositionXSpin, wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onPositionXSpinChanged, this);
-    BindAndCatchExceptions(mPositionYSlider, wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onPositionYSliderChanged, this);
-    BindAndCatchExceptions(mPositionYSpin, wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onPositionYSpinChanged, this);
+    mOpacitySlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onOpacitySliderChanged, this);
+    mOpacitySpin->Bind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onOpacitySpinChanged, this);
+    mSelectScaling->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &DetailsClip::onScalingChoiceChanged, this);
+    mScalingSlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onScalingSliderChanged, this);
+    mScalingSpin->Bind(wxEVT_COMMAND_SPINCTRLDOUBLE_UPDATED, &DetailsClip::onScalingSpinChanged, this);
+    mRotationSlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onRotationSliderChanged, this);
+    mRotationSpin->Bind(wxEVT_COMMAND_SPINCTRLDOUBLE_UPDATED, &DetailsClip::onRotationSpinChanged, this);
+    mSelectAlignment->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &DetailsClip::onAlignmentChoiceChanged, this);
+    mPositionXSlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onPositionXSliderChanged, this);
+    mPositionXSpin->Bind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onPositionXSpinChanged, this);
+    mPositionYSlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onPositionYSliderChanged, this);
+    mPositionYSpin->Bind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onPositionYSpinChanged, this);
 
     mVolumePanel = new wxPanel(this);
     wxBoxSizer* volumesizer = new wxBoxSizer(wxHORIZONTAL);
@@ -288,8 +281,8 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     mVolumePanel->SetSizer(volumesizer);
     addOption(_("Volume (%)"), mVolumePanel);
 
-    BindAndCatchExceptions(mVolumeSlider, wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onVolumeSliderChanged, this);
-    BindAndCatchExceptions(mVolumeSpin, wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onVolumeSpinChanged, this);
+    mVolumeSlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onVolumeSliderChanged, this);
+    mVolumeSpin->Bind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onVolumeSpinChanged, this);
 
     mTransitionBoxSizer = addBox(boost::none);
 
@@ -323,9 +316,6 @@ DetailsClip::~DetailsClip()
         button->Unbind(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, &DetailsClip::onLengthButtonPressed, this);
     }
     getSelection().Unbind(EVENT_SELECTION_UPDATE, &DetailsClip::onSelectionChanged, this);
-
-
-
 
     mSpeedSlider->Unbind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onSpeedSliderChanged, this);
     mSpeedSpin->Unbind(wxEVT_COMMAND_SPINCTRLDOUBLE_UPDATED, &DetailsClip::onSpeedSpinChanged, this);
@@ -491,8 +481,7 @@ void DetailsClip::setClip(const model::IClipPtr& clip)
                 addOption(
                     id_and_parameter.second->getName(),
                     id_and_parameter.second->makeWidget(this));
-                // todo works?
-                BindAndCatchExceptions(id_and_parameter.second.get(), model::EVENT_TRANSITION_PARAMETER_CHANGED, &DetailsClip::onTransitionParameterChanged, this);
+                id_and_parameter.second->Bind(model::EVENT_TRANSITION_PARAMETER_CHANGED, &DetailsClip::onTransitionParameterChanged, this);
             }
         }
 
@@ -538,14 +527,20 @@ void DetailsClip::onShow(wxShowEvent& event)
 void DetailsClip::onLengthButtonPressed(wxCommandEvent& event)
 {
     wxToggleButton* button = dynamic_cast<wxToggleButton*>(event.GetEventObject());
-    handleLengthButtonPressed(button);
+    CatchExceptions([this, button]
+    {
+        handleLengthButtonPressed(button);
+    });
     event.Skip();
 }
 
 void DetailsClip::onSpeedSliderChanged(wxCommandEvent& event)
 {
     VAR_INFO(mSpeedSlider->GetValue());
-    createOrUpdateSpeedCommand(sliderToSpeedValue(mSpeedSlider->GetValue()));
+    CatchExceptions([this]
+    {
+        createOrUpdateSpeedCommand(sliderToSpeedValue(mSpeedSlider->GetValue()));
+    });
     event.Skip();
 }
 
@@ -553,9 +548,12 @@ void DetailsClip::onSpeedSpinChanged(wxSpinDoubleEvent& event)
 {
     double value = mSpeedSpin->GetValue(); // NOT: event.GetValue() -- The event's value may be outside the range boundaries
     VAR_INFO(value);
-    int spinFactor = floor(value * model::Constants::sSpeedPrecisionFactor);
-    boost::rational<int> s(spinFactor, model::Constants::sSpeedPrecisionFactor);
-    createOrUpdateSpeedCommand(s);
+    CatchExceptions([this, value]
+    {
+        int spinFactor = floor(value * model::Constants::sSpeedPrecisionFactor);
+        boost::rational<int> s(spinFactor, model::Constants::sSpeedPrecisionFactor);
+        createOrUpdateSpeedCommand(s);
+    });
     event.Skip();
 }
 
@@ -563,24 +561,33 @@ void DetailsClip::onOpacitySliderChanged(wxCommandEvent& event)
 {
     VAR_INFO(mOpacitySlider->GetValue());
     VAR_ERROR(mOpacitySlider->GetValue());
-    submitEditCommandUponAudioVideoEdit(sEditOpacity);
-    mClones->Video->setOpacity(mOpacitySlider->GetValue());
+    CatchExceptions([this]
+    {
+        submitEditCommandUponAudioVideoEdit(sEditOpacity);
+        mClones->Video->setOpacity(mOpacitySlider->GetValue());
+    });
     event.Skip();
 }
 
 void DetailsClip::onOpacitySpinChanged(wxSpinEvent& event)
 {
     VAR_INFO(mOpacitySpin->GetValue()); // NOT: event.GetValue() -- The event's value may be outside the range boundaries
-    submitEditCommandUponAudioVideoEdit(sEditOpacity); // Changes same clip aspect as the slider
-    mClones->Video->setOpacity(mOpacitySpin->GetValue());
+    CatchExceptions([this]
+    {
+        submitEditCommandUponAudioVideoEdit(sEditOpacity); // Changes same clip aspect as the slider
+        mClones->Video->setOpacity(mOpacitySpin->GetValue());
+    });
     event.Skip();
 }
 
 void DetailsClip::onScalingChoiceChanged(wxCommandEvent& event)
 {
     VAR_INFO(mSelectScaling->getValue());
-    submitEditCommandUponAudioVideoEdit(sEditScalingType);
-    mClones->Video->setScaling(mSelectScaling->getValue(), boost::none);
+    CatchExceptions([this]
+    {
+        submitEditCommandUponAudioVideoEdit(sEditScalingType);
+        mClones->Video->setScaling(mSelectScaling->getValue(), boost::none);
+    });
     event.Skip();
 }
 
@@ -588,8 +595,11 @@ void DetailsClip::onScalingSliderChanged(wxCommandEvent& event)
 {
     VAR_INFO(mScalingSlider->GetValue());
     boost::rational<int> r(mScalingSlider->GetValue(), model::Constants::sScalingPrecisionFactor);
-    submitEditCommandUponAudioVideoEdit(sEditScaling);
-    mClones->Video->setScaling(model::VideoScalingCustom, boost::optional< boost::rational< int > >(r));
+    CatchExceptions([this, r]
+    {
+        submitEditCommandUponAudioVideoEdit(sEditScaling);
+        mClones->Video->setScaling(model::VideoScalingCustom, boost::optional< boost::rational< int > >(r));
+    });
     event.Skip();
 }
 
@@ -598,8 +608,11 @@ void DetailsClip::onScalingSpinChanged(wxSpinDoubleEvent& event)
     VAR_INFO(mScalingSpin->GetValue()); // NOT: event.GetValue() -- The event's value may be outside the range boundaries
     int spinFactor = floor(mScalingSpin->GetValue() * model::Constants::sScalingPrecisionFactor);
     boost::rational<int> r(spinFactor, model::Constants::sScalingPrecisionFactor);
-    submitEditCommandUponAudioVideoEdit(sEditScaling); // Changes same clip aspect as the slider
-    mClones->Video->setScaling(model::VideoScalingCustom, boost::optional< boost::rational< int > >(r));
+    CatchExceptions([this, r]
+    {
+        submitEditCommandUponAudioVideoEdit(sEditScaling); // Changes same clip aspect as the slider
+        mClones->Video->setScaling(model::VideoScalingCustom, boost::optional< boost::rational< int > >(r));
+    });
     event.Skip();
 }
 
@@ -607,8 +620,11 @@ void DetailsClip::onRotationSliderChanged(wxCommandEvent& event)
 {
     VAR_INFO(mRotationSlider->GetValue());
     boost::rational<int> r(mRotationSlider->GetValue(), model::Constants::sRotationPrecisionFactor);
-    submitEditCommandUponAudioVideoEdit(sEditRotation);
-    mClones->Video->setRotation(r);
+    CatchExceptions([this, r]
+    {
+        submitEditCommandUponAudioVideoEdit(sEditRotation);
+        mClones->Video->setRotation(r);
+    });
     event.Skip();
 }
 
@@ -617,94 +633,121 @@ void DetailsClip::onRotationSpinChanged(wxSpinDoubleEvent& event)
     VAR_INFO(mRotationSpin->GetValue()); // NOT: event.GetValue() -- The event's value may be outside the range boundaries
     int spinFactor = floor(mRotationSpin->GetValue() * model::Constants::sRotationPrecisionFactor);
     boost::rational<int> r(spinFactor, model::Constants::sRotationPrecisionFactor);
-    submitEditCommandUponAudioVideoEdit(sEditRotation); // Changes same clip aspect as the slider
-    mClones->Video->setRotation(r);
+    CatchExceptions([this,r]
+    {
+        submitEditCommandUponAudioVideoEdit(sEditRotation); // Changes same clip aspect as the slider
+        mClones->Video->setRotation(r);
+    });
     event.Skip();
 }
 
 void DetailsClip::onAlignmentChoiceChanged(wxCommandEvent& event)
 {
     VAR_INFO(mSelectAlignment->getValue());
-    submitEditCommandUponAudioVideoEdit(sEditAlignment);
-    mClones->Video->setAlignment(mSelectAlignment->getValue());
+    CatchExceptions([this]
+    {
+        submitEditCommandUponAudioVideoEdit(sEditAlignment);
+        mClones->Video->setAlignment(mSelectAlignment->getValue());
+    });
     event.Skip();
 }
 
 void DetailsClip::onPositionXSliderChanged(wxCommandEvent& event)
 {
     VAR_INFO(mPositionXSlider->GetValue());
-    submitEditCommandUponAudioVideoEdit(sEditX);
-    updateAlignment(true);
-    mClones->Video->setPosition(wxPoint(mPositionXSlider->GetValue(), mPositionYSlider->GetValue()));
+    CatchExceptions([this]
+    {
+        submitEditCommandUponAudioVideoEdit(sEditX);
+        updateAlignment(true);
+        mClones->Video->setPosition(wxPoint(mPositionXSlider->GetValue(), mPositionYSlider->GetValue()));
+    });
     event.Skip();
 }
 
 void DetailsClip::onPositionXSpinChanged(wxSpinEvent& event)
 {
     VAR_INFO(mPositionXSpin->GetValue()); // NOT: event.GetValue() -- The event's value may be outside the range boundaries
-    submitEditCommandUponAudioVideoEdit(sEditX); // Changes same clip aspect as the slider
-    updateAlignment(true);
-    mClones->Video->setPosition(wxPoint(mPositionXSpin->GetValue(), mPositionYSlider->GetValue()));
+    CatchExceptions([this]
+    {
+        submitEditCommandUponAudioVideoEdit(sEditX); // Changes same clip aspect as the slider
+        updateAlignment(true);
+        mClones->Video->setPosition(wxPoint(mPositionXSpin->GetValue(), mPositionYSlider->GetValue()));
+    });
     event.Skip();
 }
 
 void DetailsClip::onPositionYSliderChanged(wxCommandEvent& event)
 {
     VAR_INFO(mPositionYSlider->GetValue());
-    submitEditCommandUponAudioVideoEdit(sEditY);
-    updateAlignment(false);
-    mClones->Video->setPosition(wxPoint(mPositionXSlider->GetValue(), mPositionYSlider->GetValue()));
+    CatchExceptions([this]
+    {
+        submitEditCommandUponAudioVideoEdit(sEditY);
+        updateAlignment(false);
+        mClones->Video->setPosition(wxPoint(mPositionXSlider->GetValue(), mPositionYSlider->GetValue()));
+    });
     event.Skip();
 }
 
 void DetailsClip::onPositionYSpinChanged(wxSpinEvent& event)
 {
     VAR_INFO(mPositionYSpin->GetValue()); // NOT: event.GetValue() -- The event's value may be outside the range boundaries
-    submitEditCommandUponAudioVideoEdit(sEditY); // Changes same clip aspect as the slider
-    updateAlignment(false);
-    mClones->Video->setPosition(wxPoint(mPositionXSlider->GetValue(), mPositionYSpin->GetValue()));
+    CatchExceptions([this]
+    {
+        submitEditCommandUponAudioVideoEdit(sEditY); // Changes same clip aspect as the slider
+        updateAlignment(false);
+        mClones->Video->setPosition(wxPoint(mPositionXSlider->GetValue(), mPositionYSpin->GetValue()));
+    });
     event.Skip();
 }
 
 void DetailsClip::onVolumeSliderChanged(wxCommandEvent& event)
 {
     VAR_INFO(mVolumeSlider->GetValue());
-    submitEditCommandUponAudioVideoEdit(sEditVolume);
-    mClones->Audio->setVolume(mVolumeSlider->GetValue());
+    CatchExceptions([this]
+    {
+        submitEditCommandUponAudioVideoEdit(sEditVolume);
+        mClones->Audio->setVolume(mVolumeSlider->GetValue());
+    });
     event.Skip();
 }
 
 void DetailsClip::onVolumeSpinChanged(wxSpinEvent& event)
 {
     VAR_INFO(mVolumeSpin->GetValue()); // NOT: event.GetValue() -- The event's value may be outside the range boundaries
-    submitEditCommandUponAudioVideoEdit(sEditVolume); // Changes same clip aspect as the slider
-    mClones->Audio->setVolume(mVolumeSpin->GetValue());
+    CatchExceptions([this]
+    {
+        submitEditCommandUponAudioVideoEdit(sEditVolume); // Changes same clip aspect as the slider
+        mClones->Audio->setVolume(mVolumeSpin->GetValue());
+    });
     event.Skip();
 }
 
 void DetailsClip::onTimelineKey(int keycode)
 {
-    switch (keycode)
+    CatchExceptions([this, keycode]
     {
-        case '1':
-        case '2':
-        case '3':
-        case '4':
-        case '5':
-        case '6':
-        case '7':
-        case '8':
-        case '9':
+        switch (keycode)
         {
-            unsigned int index = keycode - '1';
-            if (index < mLengthButtons.size())
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
             {
-                VAR_DEBUG(index);
-                handleLengthButtonPressed(mLengthButtons[index]);
+                unsigned int index = keycode - '1';
+                if (index < mLengthButtons.size())
+                {
+                    VAR_DEBUG(index);
+                    handleLengthButtonPressed(mLengthButtons[index]);
+                }
+                break;
             }
-            break;
         }
-    }
+    });
 }
 
 void DetailsClip::handleLengthButtonPressed(wxToggleButton* button)
@@ -879,33 +922,36 @@ void DetailsClip::onTransitionParameterChanged(model::EventTransitionParameterCh
 void DetailsClip::onSelectionChanged(timeline::EventSelectionUpdate& event)
 {
     VAR_DEBUG(this);
-    if (getTrim().isActive())
+    CatchExceptions([this]
     {
-        // At the end of the trim operation, the trim command is initialized.
-        // In AClipEdit::initialize another EventSelectionUpdate is triggered.
-        // Updating the current clip during trimming causes unnecessary
-        // toggling (flickering between player - via DetailsClip::edit -
-        // and the preview - via the trim preview).
-        return;
-    }
-    std::set<model::IClipPtr> selection = getSequence()->getSelectedClips();
-    model::IClipPtr selectedclip;
-    VAR_DEBUG(selection.size());
-    if (selection.size() == 1)
-    {
-        selectedclip = *selection.begin();
-    }
-    else if (selection.size() == 2)
-    {
-        model::IClipPtr a = *selection.begin();
-        model::IClipPtr b = *(++(selection.begin()));
-        if (a->getLink() == b)
+        if (getTrim().isActive())
         {
-            ASSERT_EQUALS(b->getLink(),a);
-            selectedclip = (a->isA<model::VideoClip>()) ? a : b; // Always use the videoclip (avoid problems in automated test as a result of timing differences - sometimes the videoclip is focused first, sometimes the audio clip)
+            // At the end of the trim operation, the trim command is initialized.
+            // In AClipEdit::initialize another EventSelectionUpdate is triggered.
+            // Updating the current clip during trimming causes unnecessary
+            // toggling (flickering between player - via DetailsClip::edit -
+            // and the preview - via the trim preview).
+            return;
         }
-    }
-    setClip(selectedclip);
+        std::set<model::IClipPtr> selection = getSequence()->getSelectedClips();
+        model::IClipPtr selectedclip;
+        VAR_DEBUG(selection.size());
+        if (selection.size() == 1)
+        {
+            selectedclip = *selection.begin();
+        }
+        else if (selection.size() == 2)
+        {
+            model::IClipPtr a = *selection.begin();
+            model::IClipPtr b = *(++(selection.begin()));
+            if (a->getLink() == b)
+            {
+                ASSERT_EQUALS(b->getLink(), a);
+                selectedclip = (a->isA<model::VideoClip>()) ? a : b; // Always use the videoclip (avoid problems in automated test as a result of timing differences - sometimes the videoclip is focused first, sometimes the audio clip)
+            }
+        }
+        setClip(selectedclip);
+    });
 }
 
 //////////////////////////////////////////////////////////////////////////
