@@ -171,7 +171,7 @@ void Config::init(const wxString& applicationName, const wxString& vendorName, b
     setDefault(Config::sPathVideoDefaultScaling, model::VideoScaling_toString(model::VideoScalingFitToFill));
     setDefault(Config::sPathVideoDefaultWidth, 1280);
     setDefault(Config::sPathProjectLastOpened, "");
-    setDefault(Config::sPathDebugLogLevel, LogLevel_toString(LogWarning));
+    setDefault(Config::sPathDebugLogLevel, LogLevel_toString(LogInfo));
     setDefault(Config::sPathProjectDefaultNewProjectType, model::DefaultNewProjectWizardStart_toString(model::DefaultNewProjectWizardStartFolder));
     setDefault(Config::sPathDebugLogLevelAvcodec, Avcodec::getDefaultLogLevelString());
     setDefault(Config::sPathMakeSequenceEmptyClipLength, 0);

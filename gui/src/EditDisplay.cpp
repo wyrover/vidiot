@@ -17,7 +17,6 @@
 
 #include "EditDisplay.h"
 
-#include "UtilBind.h"
 #include "UtilLog.h"
 #include "VideoCompositionParameters.h"
 
@@ -36,9 +35,9 @@ EditDisplay::EditDisplay(wxWindow *parent)
     GetClientSize(&mWidth,&mHeight);
     VAR_DEBUG(this)(mWidth)(mHeight);
 
-    BindAndCatchExceptions(this, wxEVT_PAINT,               &EditDisplay::OnPaint,              this);
-    BindAndCatchExceptions(this, wxEVT_ERASE_BACKGROUND,    &EditDisplay::OnEraseBackground,    this);
-    BindAndCatchExceptions(this, wxEVT_SIZE,                &EditDisplay::OnSize,               this);
+    Bind(wxEVT_PAINT,               &EditDisplay::OnPaint,              this);
+    Bind(wxEVT_ERASE_BACKGROUND,    &EditDisplay::OnEraseBackground,    this);
+    Bind(wxEVT_SIZE,                &EditDisplay::OnSize,               this);
 
     LOG_INFO;
 }

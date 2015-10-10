@@ -42,7 +42,7 @@
 #include "Sequence.h"
 #include "StatusBar.h"
 #include "TimelinesView.h"
-#include "UtilBind.h"
+#include "UtilException.h"
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
 #include "UtilPath.h"
@@ -78,15 +78,15 @@ ProjectView::ProjectView(wxWindow* parent)
     gui::Window::get().Bind(model::EVENT_OPEN_PROJECT,     &ProjectView::onOpenProject,             this);
     gui::Window::get().Bind(model::EVENT_CLOSE_PROJECT,    &ProjectView::onCloseProject,            this);
 
-    BindAndCatchExceptions(this, wxEVT_COMMAND_DATAVIEW_ITEM_START_EDITING,     &ProjectView::onStartEditing,    this);
-    BindAndCatchExceptions(this, wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,      &ProjectView::onContextMenu,     this);
-    BindAndCatchExceptions(this, wxEVT_COMMAND_DATAVIEW_ITEM_DROP_POSSIBLE,     &ProjectView::onDropPossible,    this);
-    BindAndCatchExceptions(this, wxEVT_COMMAND_DATAVIEW_ITEM_DROP,              &ProjectView::onDrop,            this);
-    BindAndCatchExceptions(this, wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,         &ProjectView::onActivated,       this);
-    BindAndCatchExceptions(this, wxEVT_COMMAND_DATAVIEW_ITEM_EXPANDED,          &ProjectView::onExpanded,        this);
-    BindAndCatchExceptions(this, wxEVT_COMMAND_DATAVIEW_ITEM_COLLAPSED,         &ProjectView::onCollapsed,       this);
+    Bind(wxEVT_COMMAND_DATAVIEW_ITEM_START_EDITING,     &ProjectView::onStartEditing,    this);
+    Bind(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,      &ProjectView::onContextMenu,     this);
+    Bind(wxEVT_COMMAND_DATAVIEW_ITEM_DROP_POSSIBLE,     &ProjectView::onDropPossible,    this);
+    Bind(wxEVT_COMMAND_DATAVIEW_ITEM_DROP,              &ProjectView::onDrop,            this);
+    Bind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,         &ProjectView::onActivated,       this);
+    Bind(wxEVT_COMMAND_DATAVIEW_ITEM_EXPANDED,          &ProjectView::onExpanded,        this);
+    Bind(wxEVT_COMMAND_DATAVIEW_ITEM_COLLAPSED,         &ProjectView::onCollapsed,       this);
 
-    BindAndCatchExceptions(mCtrl.GetMainWindow(), wxEVT_MOTION,           &ProjectView::onMotion,          this);
+    mCtrl.GetMainWindow()->Bind(wxEVT_MOTION,           &ProjectView::onMotion,          this);
 
     wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
     sizer->Add( &mCtrl, 1, wxGROW );
@@ -450,293 +450,322 @@ void ProjectView::onOpen()
 
 void ProjectView::onContextMenu(wxDataViewEvent &event)
 {
-    wxDataViewItemArray sel;
-    int nSelected = mCtrl.GetSelections(sel);
-
-    // Mechanism:
-    // Default menu options are hidden and enabled.
-    // If an item is selected for which a menu option makes sense, then the option is shown.
-    // If an item is selected for which a menu option does not make sense, then the option is disabled.
-
-    bool showNew = true;
-    bool showCreateSequence = false;
-    bool showOpenSequence = false;
-    bool showDeleteUnused = false;
-
-    bool enableUpdateAutoFolder = true;
-
-    bool enableNew = (nSelected == 1);
-    bool enableDelete = true;
-    bool enablePaste = (nSelected == 1);
-    bool enableCreateSequence = (nSelected == 1);
-    bool enableOpen = (nSelected == 1);
-    bool enableDeleteUnused = (nSelected == 1);
-
-    for ( wxDataViewItem item : sel )
+    CatchExceptions([this]
     {
-        model::NodePtr node = model::INode::Ptr(static_cast<model::NodeId>(item.GetID()));
+        wxDataViewItemArray sel;
+        int nSelected = mCtrl.GetSelections(sel);
 
-        bool isRoot = (!node->hasParent());
-        bool isFolder = boost::dynamic_pointer_cast<model::Folder>(node) != nullptr;
-        bool isAutoFolder = boost::dynamic_pointer_cast<model::AutoFolder>(node) != nullptr;
-        bool isSequence = boost::dynamic_pointer_cast<model::Sequence>(node) != nullptr;
+        // Mechanism:
+        // Default menu options are hidden and enabled.
+        // If an item is selected for which a menu option makes sense, then the option is shown.
+        // If an item is selected for which a menu option does not make sense, then the option is disabled.
 
-        if (isRoot)
+        bool showNew = true;
+        bool showCreateSequence = false;
+        bool showOpenSequence = false;
+        bool showDeleteUnused = false;
+
+        bool enableUpdateAutoFolder = true;
+
+        bool enableNew = (nSelected == 1);
+        bool enableDelete = true;
+        bool enablePaste = (nSelected == 1);
+        bool enableCreateSequence = (nSelected == 1);
+        bool enableOpen = (nSelected == 1);
+        bool enableDeleteUnused = (nSelected == 1);
+
+        for (wxDataViewItem item : sel)
         {
-            enableDelete = false;
-            showNew = true;
-            enableCreateSequence = false;
+            model::NodePtr node = model::INode::Ptr(static_cast<model::NodeId>(item.GetID()));
+
+            bool isRoot = (!node->hasParent());
+            bool isFolder = boost::dynamic_pointer_cast<model::Folder>(node) != nullptr;
+            bool isAutoFolder = boost::dynamic_pointer_cast<model::AutoFolder>(node) != nullptr;
+            bool isSequence = boost::dynamic_pointer_cast<model::Sequence>(node) != nullptr;
+
+            if (isRoot)
+            {
+                enableDelete = false;
+                showNew = true;
+                enableCreateSequence = false;
+            }
+            else if (isAutoFolder)
+            {
+                // Must be handled before 'folder' since an autofolder is also a folder
+                showCreateSequence = true;
+                showDeleteUnused = true;
+
+                enablePaste = false;
+                enableNew = false;
+            }
+            else if (isFolder)
+            {
+                showNew = true;
+                showCreateSequence = true;
+            }
+            else if (isSequence)
+            {
+                showOpenSequence = true;
+                enablePaste = false;
+                enableNew = false;
+                enableCreateSequence = false;
+            }
+            else
+            {
+                enablePaste = false;
+                enableNew = false;
+                enableCreateSequence = false;
+            }
+
+            if (mModel->isAutomaticallyGenerated(node))
+            {
+                enableDelete = false;
+                enablePaste = false;
+            }
         }
-        else if (isAutoFolder)
+
+        wxMenu menu;
+
+        menu.Append(wxID_CUT, _("Cu&t\tCTRL-x"));
+        menu.Enable(wxID_CUT, enableDelete);
+        menu.Append(wxID_COPY, _("Cop&y\tCTRL-c"));
+        menu.Enable(wxID_COPY, (nSelected > 0));
+        menu.Append(wxID_PASTE, _("&Paste\tCTRL-v"));
+        menu.Enable(wxID_PASTE, enablePaste);
+        menu.AppendSeparator();
+        menu.Append(wxID_DELETE, _("&Delete\tDEL"));
+        menu.Enable(wxID_DELETE, enableDelete);
+        if (showDeleteUnused)
         {
-            // Must be handled before 'folder' since an autofolder is also a folder
-            showCreateSequence = true;
-            showDeleteUnused = true;
-
-            enablePaste = false;
-            enableNew = false;
+            menu.Append(ID_DELETE_UNUSED, _("Delete unused files on disk"));
+            menu.Enable(ID_DELETE_UNUSED, enableDeleteUnused);
         }
-        else if (isFolder)
-        {
-            showNew = true;
-            showCreateSequence = true;
-        }
-        else if (isSequence)
-        {
-            showOpenSequence = true;
-            enablePaste = false;
-            enableNew = false;
-            enableCreateSequence = false;
-        }
-        else
-        {
-            enablePaste = false;
-            enableNew = false;
-            enableCreateSequence = false;
-        }
-
-        if (mModel->isAutomaticallyGenerated(node))
-        {
-            enableDelete = false;
-            enablePaste = false;
-        }
-    }
-
-    wxMenu menu;
-
-    menu.Append( wxID_CUT,   _("Cu&t\tCTRL-x") );
-    menu.Enable( wxID_CUT, enableDelete );
-    menu.Append( wxID_COPY,  _("Cop&y\tCTRL-c") );
-    menu.Enable( wxID_COPY, (nSelected > 0) );
-    menu.Append( wxID_PASTE, _("&Paste\tCTRL-v") );
-    menu.Enable( wxID_PASTE, enablePaste );
-    menu.AppendSeparator();
-    menu.Append( wxID_DELETE,_("&Delete\tDEL") );
-    menu.Enable( wxID_DELETE, enableDelete );
-    if (showDeleteUnused )
-    {
-        menu.Append( ID_DELETE_UNUSED, _("Delete unused files on disk") );
-        menu.Enable( ID_DELETE_UNUSED, enableDeleteUnused );
-    }
-    menu.AppendSeparator();
-
-    if (showCreateSequence)
-    {
-        menu.Append(ID_CREATE_SEQUENCE, _("&Make sequence"), ("Create a new sequence containing all the clips in the folder") );
-        menu.Enable(ID_CREATE_SEQUENCE, enableCreateSequence);
-    }
-    if (showOpenSequence)
-    {
-        menu.Append( wxID_OPEN,_("&Open sequence\to") );
-        menu.Enable( wxID_OPEN, enableOpen );
-    }
-
-    if (showNew && enableNew)
-    {
         menu.AppendSeparator();
 
-		wxMenu* addMenu = new wxMenu();
-		addMenu->Append( ID_NEW_AUTOFOLDER, _("&Folder from disk"), _("Add disk folder and its contents to the project and then monitor for changes.") );
-		addMenu->Append( ID_NEW_FILES,      _("Fi&le(s) from disk"), _("Select file(s) on disk to be added to the project.") );
-		menu.AppendSubMenu(addMenu,_("&Add"));
+        if (showCreateSequence)
+        {
+            menu.Append(ID_CREATE_SEQUENCE, _("&Make sequence"), ("Create a new sequence containing all the clips in the folder"));
+            menu.Enable(ID_CREATE_SEQUENCE, enableCreateSequence);
+        }
+        if (showOpenSequence)
+        {
+            menu.Append(wxID_OPEN, _("&Open sequence\to"));
+            menu.Enable(wxID_OPEN, enableOpen);
+        }
 
-		menu.AppendSeparator();
+        if (showNew && enableNew)
+        {
+            menu.AppendSeparator();
 
-		wxMenu* createMenu = new wxMenu();
-		createMenu->Append( ID_NEW_FOLDER,     _("&Folder"), _("Add a new folder in the project") );
-		createMenu->Append( ID_NEW_SEQUENCE,   _("&Sequence"), _("Create a new (empty) movie sequence") );
-		menu.AppendSubMenu(createMenu,_("&New"));
-    }
+            wxMenu* addMenu = new wxMenu();
+            addMenu->Append(ID_NEW_AUTOFOLDER, _("&Folder from disk"), _("Add disk folder and its contents to the project and then monitor for changes."));
+            addMenu->Append(ID_NEW_FILES, _("Fi&le(s) from disk"), _("Select file(s) on disk to be added to the project."));
+            menu.AppendSubMenu(addMenu, _("&Add"));
 
-    int result = GetPopupMenuSelectionFromUser(menu);
-    switch (result)
-    {
-    case wxID_NONE:                                                      break;
-    case wxID_CUT:              mClipboard->onCut();                     break;
-    case wxID_COPY:             mClipboard->onCopy();                    break;
-    case wxID_PASTE:            mClipboard->onPaste();                   break;
-    case wxID_DELETE:           onDelete();                              break;
-    case ID_DELETE_UNUSED:      onDeleteUnused();                        break;
-    case ID_NEW_FOLDER:         onNewFolder(getSelectedContainer());     break;
-    case ID_NEW_AUTOFOLDER:     onNewAutoFolder(getSelectedContainer()); break;
-    case ID_NEW_SEQUENCE:       onNewSequence(getSelectedContainer());   break;
-    case ID_NEW_FILES:          onNewFile(getSelectedContainer());       break;
-    case ID_CREATE_SEQUENCE:    onCreateSequence();                      break;
-    case wxID_OPEN:             onOpen();                                break;
-    }
+            menu.AppendSeparator();
+
+            wxMenu* createMenu = new wxMenu();
+            createMenu->Append(ID_NEW_FOLDER, _("&Folder"), _("Add a new folder in the project"));
+            createMenu->Append(ID_NEW_SEQUENCE, _("&Sequence"), _("Create a new (empty) movie sequence"));
+            menu.AppendSubMenu(createMenu, _("&New"));
+        }
+
+        int result = GetPopupMenuSelectionFromUser(menu);
+        switch (result)
+        {
+            case wxID_NONE:                                                      break;
+            case wxID_CUT:              mClipboard->onCut();                     break;
+            case wxID_COPY:             mClipboard->onCopy();                    break;
+            case wxID_PASTE:            mClipboard->onPaste();                   break;
+            case wxID_DELETE:           onDelete();                              break;
+            case ID_DELETE_UNUSED:      onDeleteUnused();                        break;
+            case ID_NEW_FOLDER:         onNewFolder(getSelectedContainer());     break;
+            case ID_NEW_AUTOFOLDER:     onNewAutoFolder(getSelectedContainer()); break;
+            case ID_NEW_SEQUENCE:       onNewSequence(getSelectedContainer());   break;
+            case ID_NEW_FILES:          onNewFile(getSelectedContainer());       break;
+            case ID_CREATE_SEQUENCE:    onCreateSequence();                      break;
+            case wxID_OPEN:             onOpen();                                break;
+        }
+    });
 }
 
 void ProjectView::onMotion(wxMouseEvent& event)
 {
-    if (event.Dragging())
+    CatchExceptions([this, &event]
     {
-        if (mDragCount == 0)
+        if (event.Dragging())
         {
-            mDragStart = event.GetPosition();
-            mDragCount++;
-        }
-        else if (mDragCount == 3)
-        {
-            if (event.LeftIsDown())
+            if (mDragCount == 0)
             {
-                wxDataViewItem item;
-                wxDataViewColumn* col;
-                mCtrl.HitTest(mDragStart, item, col );
-                if (item.GetID())
+                mDragStart = event.GetPosition();
+                mDragCount++;
+            }
+            else if (mDragCount == 3)
+            {
+                if (event.LeftIsDown())
                 {
-                    ProjectViewDataObject data(command::ProjectViewCommand::prune(getSelection()));
-                    mDropSource.startDrag(data);
-                    mDragCount = 0;
+                    wxDataViewItem item;
+                    wxDataViewColumn* col;
+                    mCtrl.HitTest(mDragStart, item, col);
+                    if (item.GetID())
+                    {
+                        ProjectViewDataObject data(command::ProjectViewCommand::prune(getSelection()));
+                        mDropSource.startDrag(data);
+                        mDragCount = 0;
+                    }
                 }
+            }
+            else
+            {
+                mDragCount++;
             }
         }
         else
         {
-            mDragCount++;
+            mDragCount = 0;
         }
-    }
-    else
-    {
-        mDragCount = 0;
-    }
-    event.Skip();
+        event.Skip();
+    });
 }
 
 void ProjectView::onDropPossible(wxDataViewEvent &event)
 {
-    // Can only drop relevant type of info
-    if (event.GetDataFormat().GetId() != ProjectViewDataObject::sFormat)
+    CatchExceptions([this, &event]
     {
-        event.Veto();
-        return;
-    }
-
-    // Cannot drop if there's no item
-    if (event.GetItem() == nullptr)
-    {
-        event.Veto();
-        return;
-    }
-
-    // Cannot drop into an autofolder tree
-    model::NodePtr p = model::INode::Ptr(static_cast<model::NodeId>(event.GetItem().GetID()));
-    if (mModel->isAutomaticallyGenerated(p) || !mModel->isFolder(p) || mModel->isAutoFolder(p))
-    {
-        event.Veto();
-        return;
-    }
-
-    // Cannot drop a node into itselves, or one of its children
-    for ( model::NodePtr node : mDropSource.getData().getNodes())
-    {
-        if (p == node || mModel->isDescendantOf(p, node))
+        // Can only drop relevant type of info
+        if (event.GetDataFormat().GetId() != ProjectViewDataObject::sFormat)
         {
             event.Veto();
             return;
         }
 
-        if (mModel->isAutomaticallyGenerated(node))
+        // Cannot drop if there's no item
+        if (event.GetItem() == nullptr)
         {
             event.Veto();
             return;
         }
-    }
+
+        // Cannot drop into an autofolder tree
+        model::NodePtr p = model::INode::Ptr(static_cast<model::NodeId>(event.GetItem().GetID()));
+        if (mModel->isAutomaticallyGenerated(p) || !mModel->isFolder(p) || mModel->isAutoFolder(p))
+        {
+            event.Veto();
+            return;
+        }
+
+        // Cannot drop a node into itselves, or one of its children
+        for (model::NodePtr node : mDropSource.getData().getNodes())
+        {
+            if (p == node || mModel->isDescendantOf(p, node))
+            {
+                event.Veto();
+                return;
+            }
+
+            if (mModel->isAutomaticallyGenerated(node))
+            {
+                event.Veto();
+                return;
+            }
+        }
+        event.Skip();
+    });
 }
 
 void ProjectView::onDrop(wxDataViewEvent &event)
 {
     LOG_INFO;
 
-    if (event.GetDataFormat().GetId() != ProjectViewDataObject::sFormat)
+    CatchExceptions([this, &event]
     {
-        event.Veto();
-        return;
-    }
-    model::NodePtr p = model::INode::Ptr(static_cast<model::NodeId>(event.GetItem().GetID()));
-    if (mModel->isAutomaticallyGenerated(p) || !mModel->isFolder(p) || mModel->isAutoFolder(p))
-    {
-        event.Veto();
-        return;
-    }
-
-    model::FolderPtr folder = boost::dynamic_pointer_cast<model::Folder>(p);
-    ASSERT(folder);
-
-    bool conflictingChildExists = false;
-    for ( model::NodePtr node : mDropSource.getData().getNodes())
-    {
-        if (findConflictingName(folder, node->getName(), NODETYPE_ANY))
+        if (event.GetDataFormat().GetId() != ProjectViewDataObject::sFormat)
         {
             event.Veto();
             return;
         }
-    }
-    if (mDropSource.getData().getNodes().size() > 0)
-    {
-        model::ProjectModification::submit(new command::ProjectViewMoveAsset(mDropSource.getData().getNodes(),p));
-    }
+        model::NodePtr p = model::INode::Ptr(static_cast<model::NodeId>(event.GetItem().GetID()));
+        if (mModel->isAutomaticallyGenerated(p) || !mModel->isFolder(p) || mModel->isAutoFolder(p))
+        {
+            event.Veto();
+            return;
+        }
+
+        model::FolderPtr folder = boost::dynamic_pointer_cast<model::Folder>(p);
+        ASSERT(folder);
+
+        bool conflictingChildExists = false;
+        for (model::NodePtr node : mDropSource.getData().getNodes())
+        {
+            if (findConflictingName(folder, node->getName(), NODETYPE_ANY))
+            {
+                event.Veto();
+                return;
+            }
+        }
+        if (mDropSource.getData().getNodes().size() > 0)
+        {
+            model::ProjectModification::submit(new command::ProjectViewMoveAsset(mDropSource.getData().getNodes(), p));
+        }
+        event.Skip();
+    });
 }
 
 void ProjectView::onActivated(wxDataViewEvent &event)
 {
-    model::NodePtr p = model::INode::Ptr(static_cast<model::NodeId>(event.GetItem().GetID()));
-    model::SequencePtr sequence = boost::dynamic_pointer_cast<model::Sequence>(p);
-    if (!sequence)
+    CatchExceptions([this, &event]
     {
-        event.Veto();
-        return;
-    }
-    Window::get().getTimeLines().Open(sequence);
+        model::NodePtr p = model::INode::Ptr(static_cast<model::NodeId>(event.GetItem().GetID()));
+        model::SequencePtr sequence = boost::dynamic_pointer_cast<model::Sequence>(p);
+        if (!sequence)
+        {
+            event.Veto();
+            return;
+        }
+        Window::get().getTimeLines().Open(sequence);
+        event.Skip();
+    });
 }
 
 void ProjectView::onExpanded(wxDataViewEvent &event)
 {
-    model::NodePtr p = model::INode::Ptr(static_cast<model::NodeId>(event.GetItem().GetID()));
-    model::FolderPtr folder = boost::dynamic_pointer_cast<model::Folder>(p);
-    ASSERT(folder);
-    if(!UtilVector<model::FolderPtr>(mOpenFolders).hasElement(folder))
+    CatchExceptions([this, &event]
     {
-        mOpenFolders.push_back(folder);
-    }
+        model::NodePtr p = model::INode::Ptr(static_cast<model::NodeId>(event.GetItem().GetID()));
+        model::FolderPtr folder = boost::dynamic_pointer_cast<model::Folder>(p);
+        ASSERT(folder);
+        if (!UtilVector<model::FolderPtr>(mOpenFolders).hasElement(folder))
+        {
+            mOpenFolders.push_back(folder);
+        }
+        event.Skip();
+    });
 }
 
 void ProjectView::onCollapsed(wxDataViewEvent &event)
 {
-    model::NodePtr p = model::INode::Ptr(static_cast<model::NodeId>(event.GetItem().GetID()));
-    model::FolderPtr folder = boost::dynamic_pointer_cast<model::Folder>(p);
-    ASSERT(folder);
-    ASSERT(UtilVector<model::FolderPtr>(mOpenFolders).hasElement(folder));
-    UtilVector<model::FolderPtr>(mOpenFolders).removeElements({ folder });
+    CatchExceptions([this, &event]
+    {
+        model::NodePtr p = model::INode::Ptr(static_cast<model::NodeId>(event.GetItem().GetID()));
+        model::FolderPtr folder = boost::dynamic_pointer_cast<model::Folder>(p);
+        ASSERT(folder);
+        ASSERT(UtilVector<model::FolderPtr>(mOpenFolders).hasElement(folder));
+        UtilVector<model::FolderPtr>(mOpenFolders).removeElements({ folder });
+        event.Skip();
+    });
 }
 
 void ProjectView::onStartEditing(wxDataViewEvent &event)
 {
-    model::NodePtr node = model::INode::Ptr(static_cast<model::NodeId>(event.GetItem().GetID()));
-    if (!mModel->canBeRenamed(node))
+    CatchExceptions([this, &event]
     {
-        event.Veto();
-    }
-    event.Skip();
+        model::NodePtr node = model::INode::Ptr(static_cast<model::NodeId>(event.GetItem().GetID()));
+        if (!mModel->canBeRenamed(node))
+        {
+            event.Veto();
+        }
+        event.Skip();
+    });
 }
 
 //////////////////////////////////////////////////////////////////////////
