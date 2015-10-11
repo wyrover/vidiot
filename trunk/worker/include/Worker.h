@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef WORKER_H
-#define WORKER_H
+#pragma once
 
 #include "UtilSingleInstance.h"
 #include "UtilFifo.h"
@@ -106,5 +105,3 @@ public:
 };
 
 } // namespace
-
-#endif

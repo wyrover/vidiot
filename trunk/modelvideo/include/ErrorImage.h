@@ -15,13 +15,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef ERROR_IMAGE_H
-#define ERROR_IMAGE_H
+#pragma once
 
 namespace model {
 
 wxImagePtr getErrorImage(const wxFileName& filename);
 
 } // namespace
-
-#endif

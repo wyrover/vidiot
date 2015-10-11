@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef CREATE_TRANSITION_H
-#define CREATE_TRANSITION_H
+#pragma once
 
 #include "AClipEdit.h"
 #include "Enums.h"
@@ -80,5 +79,3 @@ private:
 };
 
 }}} // namespace
-
-#endif

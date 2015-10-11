@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef POINTERS_H
-#define POINTERS_H
+#pragma once
 
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
@@ -150,5 +149,3 @@ class Work;
 typedef boost::shared_ptr<Work> WorkPtr;
 
 }
-
-#endif

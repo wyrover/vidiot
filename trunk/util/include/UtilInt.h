@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef UTIL_INT_H
-#define UTIL_INT_H
+#pragma once
 
 typedef int pixel;
 typedef int64_t pts;
@@ -50,5 +49,3 @@ TYPE1 removeRemainder(const TYPE2& divisor, const TYPE1& value)
     TYPE1 remainder = value % divisor;
     return value - remainder;
 }
-
-#endif

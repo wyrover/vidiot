@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef AUTO_FOLDER_H
-#define AUTO_FOLDER_H
+#pragma once
 
 #include "Folder.h"
 #include "IPath.h"
@@ -100,5 +99,3 @@ private:
 
 BOOST_CLASS_VERSION(model::AutoFolder, 2)
 BOOST_CLASS_EXPORT_KEY(model::AutoFolder)
-
-#endif

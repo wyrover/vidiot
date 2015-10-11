@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MODEL_VIDEO_TRANSITION_OPACITY_H
-#define MODEL_VIDEO_TRANSITION_OPACITY_H
+#pragma once
 
 #include "VideoTransition.h"
 #include "IVideo.h"
@@ -96,5 +95,3 @@ protected:
 };
 
 } // namespace
-
-#endif

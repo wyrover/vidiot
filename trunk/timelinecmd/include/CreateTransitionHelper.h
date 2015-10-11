@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef CREATE_TRANSITION_HELPER_H
-#define CREATE_TRANSITION_HELPER_H
+#pragma once
 
 #include "Enums.h"
 
@@ -29,5 +28,3 @@ namespace gui { namespace timeline { namespace command {
 void createTransition(const model::SequencePtr& sequence, const model::IClipPtr& clip, const model::TransitionType& type, const model::TransitionPtr& transition);
 
 }}} // namespace
-
-#endif

@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef HELPER_SEQUENCE_H
-#define HELPER_SEQUENCE_H
+#pragma once
 
 namespace test {
 
@@ -35,5 +34,3 @@ void ExtendTrack(model::TrackPtr track, model::IPaths files, int nRepeat = 1);
 void MakeTrackEmpty(model::TrackPtr track);
 
 } // namespace
-
-#endif

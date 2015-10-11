@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef HELPER_INPUT_H
-#define HELPER_INPUT_H
+#pragma once
 
 #include "Test.h"
 
@@ -119,5 +118,3 @@ void TimelineKeyPressN(int count, int key);
 void TimelineRightMouseScroll(pixel length);
 
 } // namespace
-
-#endif

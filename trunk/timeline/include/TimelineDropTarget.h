@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TIMELINE_DROP_TARGET_H
-#define TIMELINE_DROP_TARGET_H
+#pragma once
 
 #include "Part.h"
 
@@ -72,5 +71,3 @@ private:
 };
 
 }} // namespace
-
-#endif

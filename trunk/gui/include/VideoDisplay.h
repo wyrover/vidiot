@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef GUI_VIDEO_DISPLAY_H
-#define GUI_VIDEO_DISPLAY_H
+#pragma once
 
 #include <SoundTouch.h>
 #include "VideoFrame.h"
@@ -153,5 +152,3 @@ private:
 };
 
 } // namespace
-
-#endif

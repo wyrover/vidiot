@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef PROJECT_VIEW_H
-#define PROJECT_VIEW_H
+#pragma once
 
 #include "ProjectViewCtrl.h"
 #include "ProjectViewModel.h"
@@ -164,5 +163,3 @@ private:
 } // namespace
 
 BOOST_CLASS_VERSION(gui::ProjectView, 1)
-
-#endif

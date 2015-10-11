@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MODEL_I_VIEW_H
-#define MODEL_I_VIEW_H
+#pragma once
 
 namespace model {
 
@@ -59,5 +58,3 @@ private:
 
 BOOST_CLASS_VERSION(model::IView, 1)
 BOOST_CLASS_EXPORT_KEY(model::IView)
-
-#endif

@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef UTIL_MAIL_H
-#define UTIL_MAIL_H
+#pragma once
 
 namespace util { namespace mail {
 
@@ -24,5 +23,3 @@ namespace util { namespace mail {
 bool sendDebugReport(wxString subject, wxString body, boost::optional<wxString> file);
 
 }} // namespace
-
-#endif

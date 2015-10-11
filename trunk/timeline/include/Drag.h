@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef DRAG_H
-#define DRAG_H
+#pragma once
 
 #include "Part.h"
 
@@ -272,5 +271,3 @@ private:
 std::ostream& operator<<(std::ostream& os, const Drag& obj);
 std::ostream& operator<<(std::ostream& os, const Drag::DragInfo& obj);
 }} // namespace
-
-#endif

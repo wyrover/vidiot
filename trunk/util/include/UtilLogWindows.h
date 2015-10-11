@@ -15,15 +15,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef UTIL_LOG_WINDOWS_H
-#define UTIL_LOG_WINDOWS_H
+#pragma once
 
 #ifdef _MSC_VER
 
 #include <windows.h>
 
 std::ostream& operator<<(std::ostream& os, const EXCEPTION_POINTERS& obj);
-
-#endif
 
 #endif

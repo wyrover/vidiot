@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef HELPER_DRAG_H
-#define HELPER_DRAG_H
+#pragma once
 
 namespace test {
 
@@ -102,5 +101,3 @@ void TimelineDrag(const DragParams& params = DragParams());
 void TimelineDragToTrack(int newtrackindex, model::IClipPtr videoclip, model::IClipPtr audioclip);
 
 } // namespace
-
-#endif

@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MODEL_TRANSITION_FACTORY_H
-#define MODEL_TRANSITION_FACTORY_H
+#pragma once
 
 namespace model {
 
@@ -64,5 +63,3 @@ private:
 };
 
 } // namespace
-
-#endif

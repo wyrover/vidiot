@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef STATE_MOVE_TRACK_DIVIDER_H
-#define STATE_MOVE_TRACK_DIVIDER_H
+#pragma once
 
 #include "State.h"
 
@@ -76,5 +75,3 @@ private:
 };
 
 }}} // namespace
-
-#endif

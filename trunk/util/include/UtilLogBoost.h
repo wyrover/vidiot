@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef UTIL_LOG_BOOST_H
-#define UTIL_LOG_BOOST_H
+#pragma once
 
 // Strange but true, some boost classes must be defined outside boost namespace
 // (otherwise, got compile error) and some boost classes must be defined inside
@@ -65,5 +64,3 @@ std::ostream& operator<<(std::ostream& os, const scoped_ptr<K>& obj)
     return os;
 }
 }
-
-#endif

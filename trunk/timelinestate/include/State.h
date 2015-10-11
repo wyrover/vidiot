@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TIMELINE_STATE_H
-#define TIMELINE_STATE_H
+#pragma once
 
 #include "EventKey.h"
 #include "EventMouse.h"
@@ -147,5 +146,3 @@ public:
 };
 
 }}} // namespace
-
-#endif

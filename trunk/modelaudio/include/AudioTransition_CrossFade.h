@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef AUDIO_TRANSITION_CROSSFADE_H
-#define AUDIO_TRANSITION_CROSSFADE_H
+#pragma once
 
 #include "AudioTransition.h"
 
@@ -85,5 +84,3 @@ private:
 
 BOOST_CLASS_VERSION(model::audio::transition::CrossFade, 1)
 BOOST_CLASS_EXPORT_KEY(model::audio::transition::CrossFade)
-
-#endif

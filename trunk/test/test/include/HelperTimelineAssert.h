@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef HELPER_TIMELINE_ASSERT_H
-#define HELPER_TIMELINE_ASSERT_H
+#pragma once
 
 namespace test {
 
@@ -93,5 +92,3 @@ struct ClipTypeAsserter
 #define ASSERT_AUDIOTRACK2SIZE(Count) ASSERT_EQUALS(AudioTrack(2)->getClips().size(), Count) 
 
 } // namespace
-
-#endif

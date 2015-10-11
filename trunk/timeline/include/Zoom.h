@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef ZOOM_H
-#define ZOOM_H
+#pragma once
 
 #include "Part.h"
 #include "UtilEvent.h"
@@ -74,5 +73,3 @@ private:
 }} // namespace
 
 BOOST_CLASS_VERSION(gui::timeline::Zoom, 1)
-
-#endif

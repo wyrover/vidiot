@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef UTIL_LOG_AVCODEC_H
-#define UTIL_LOG_AVCODEC_H
+#pragma once
 
 struct AVRational;
 struct AVCodecContext;
@@ -44,5 +43,3 @@ std::ostream& operator<<(std::ostream& os, const AVSampleFormat& obj);
 typedef std::pair<wxString, int> LevelString;
 
 wxString avcodecErrorString(int errorcode);
-
-#endif

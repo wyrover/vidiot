@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef UTIL_MAP_H
-#define UTIL_MAP_H
+#pragma once
 
 template<class KEY, class VALUE>
 class UtilMap
@@ -60,5 +59,3 @@ private:
     ELEMENTS mMap;
 
 };
-
-#endif

@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef POSITION_INFO_H
-#define POSITION_INFO_H
+#pragma once
 
 #include "UtilEnum.h"
 
@@ -107,5 +106,3 @@ struct PointerPositionInfo
 std::ostream& operator<<(std::ostream& os, const PointerPositionInfo& obj);
 
 }} // namespace
-
-#endif

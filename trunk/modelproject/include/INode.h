@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef I_NODE_H
-#define I_NODE_H
+#pragma once
 
 #include "UtilRTTI.h"
 #include "UtilSelf.h"
@@ -129,5 +128,3 @@ private:
 
 BOOST_CLASS_VERSION(model::INode, 1)
 BOOST_CLASS_EXPORT_KEY(model::INode)
-
-#endif

@@ -15,15 +15,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef UTIL_LOG_LINUX_H
-#define UTIL_LOG_LINUX_H
+#pragma once
 
 #ifdef __GNUC__
 
 #include <signal.h>
 
 std::ostream& operator<<(std::ostream& os, siginfo_t* signal);
-
-#endif
 
 #endif

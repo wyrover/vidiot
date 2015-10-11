@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MODEL_AUDIOCLIP_EVENT_H
-#define MODEL_AUDIOCLIP_EVENT_H
+#pragma once
 
 #include "UtilEvent.h"
 
@@ -25,5 +24,3 @@ namespace model {
 DECLARE_EVENT(EVENT_CHANGE_AUDIOCLIP_VOLUME,    EventChangeAudioClipVolume, int);
 
 } // namespace
-
-#endif

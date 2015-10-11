@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef HELPER_RENDER_H
-#define HELPER_RENDER_H
+#pragma once
 
 #include "Test.h"
 
@@ -29,5 +28,3 @@ namespace test
   void RenderAndPlaybackCurrentTimeline(int renderedlengthInS = 2, pixel playbackStart = 2, milliseconds playbackLength = 600);
 
 }
-
-#endif

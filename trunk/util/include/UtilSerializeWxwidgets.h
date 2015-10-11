@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef UTIL_SERIALIZE_WXWIDGETS_H
-#define UTIL_SERIALIZE_WXWIDGETS_H
+#pragma once
 
 BOOST_SERIALIZATION_SPLIT_FREE(wxString)
 BOOST_SERIALIZATION_SPLIT_FREE(wxFileName)
@@ -47,5 +46,3 @@ template<class Archive> void load(Archive& ar,       wxDateTime& datetime, const
 }} // namespace boost::serialization
 
 BOOST_CLASS_VERSION(wxFileName, 2)
-
-#endif

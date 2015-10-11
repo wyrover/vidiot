@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef SELECTION_EVENT_H
-#define SELECTION_EVENT_H
+#pragma once
 
 #include "UtilEvent.h"
 
@@ -25,5 +24,3 @@ namespace gui { namespace timeline {
 DECLARE_EVENT(EVENT_SELECTION_UPDATE, EventSelectionUpdate, int);
 
 }} // namespace
-
-#endif

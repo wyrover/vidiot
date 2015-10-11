@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef FIFO_PACKET_H
-#define FIFO_PACKET_H
+#pragma once
 
 #include "UtilFifo.h"
 
@@ -56,5 +55,3 @@ private:
 typedef Fifo<PacketPtr> FifoPacket;
 
 } // namespace
-
-#endif

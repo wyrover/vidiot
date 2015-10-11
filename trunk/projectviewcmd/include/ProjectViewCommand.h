@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef PROJECT_VIEW_COMMAND_H
-#define PROJECT_VIEW_COMMAND_H
+#pragma once
 
 #include "RootCommand.h"
 
@@ -56,5 +55,3 @@ public:
 };
 
 } // namespace
-
-#endif

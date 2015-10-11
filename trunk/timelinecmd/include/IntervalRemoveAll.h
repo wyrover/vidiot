@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef INTERVAL_REMOVE_ALL_H
-#define INTERVAL_REMOVE_ALL_H
+#pragma once
 
 #include "ATimelineCommand.h"
 #include "UtilInt.h"
@@ -61,5 +60,3 @@ private:
 };
 
 }}} // namespace
-
-#endif

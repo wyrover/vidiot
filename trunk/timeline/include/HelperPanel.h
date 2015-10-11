@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TIMELINEHELPERPANEL_H
-#define TIMELINEHELPERPANEL_H
+#pragma once
 
 #include "UtilLog.h"
 
@@ -120,5 +119,3 @@ private:
 };
 
 }} // namespace
-
-#endif

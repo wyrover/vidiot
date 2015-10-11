@@ -15,11 +15,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
+#pragma once
+
 #include "wx/event.h"
 #include <ostream>
-
-#ifndef UTIL_EVENT_H
-#define UTIL_EVENT_H
 
 /// Implemented with a macro instead of a template, since I wasn't able
 /// to use the event enum. It isn't const at compile time,
@@ -68,5 +67,3 @@
         return os;                                                                      \
     }                                                                                   \
     wxDEFINE_EVENT(enumname, classname);
-
-#endif

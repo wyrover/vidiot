@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef HELPER_MODEL_H
-#define HELPER_MODEL_H
+#pragma once
 
 #include "Enums.h"
 
@@ -53,5 +52,3 @@ void AssertClipSpeed(model::IClipPtr clip, rational speed);
 #define ASSERT_CLIP_SPEED(clip, speed) AssertClipSpeed(clip, speed)
 
 } // namespace
-
-#endif

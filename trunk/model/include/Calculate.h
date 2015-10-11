@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MODEL_CALCULATE_H
-#define MODEL_CALCULATE_H
+#pragma once
 
 #include "UtilInt.h"
 
@@ -25,5 +24,3 @@ namespace model { namespace calculate {
 pts combinedLength(const IClips& clips);
 
 }} // namespace
-
-#endif

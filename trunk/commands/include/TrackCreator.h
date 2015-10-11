@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TRACK_CREATOR_H
-#define TRACK_CREATOR_H
+#pragma once
 
 namespace command {
 
@@ -52,5 +51,3 @@ private:
 };
 
 } // namespace
-
-#endif

@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef VIDEO_FRAME_COMPOSITION_PARAMETERS_H
-#define VIDEO_FRAME_COMPOSITION_PARAMETERS_H
+#pragma once
 
 #include "IVideo.h"
 
@@ -83,5 +82,3 @@ private:
 };
 
 } // namespace
-
-#endif

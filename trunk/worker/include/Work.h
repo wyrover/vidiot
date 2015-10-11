@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef WORK_H
-#define WORK_H
+#pragma once
 
 #include "UtilSelf.h"
 
@@ -83,5 +82,3 @@ private:
 std::ostream& operator<<(std::ostream& os, const WorkPtr& obj);
 
 } // namespace
-
-#endif

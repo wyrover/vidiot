@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef UTIL_RECYCLE_H
-#define UTIL_RECYCLE_H
+#pragma once
 
 namespace util { namespace path {
 
@@ -26,5 +25,3 @@ namespace util { namespace path {
 bool recycle(const wxString& file);
 
 }} // namespace
-
-#endif

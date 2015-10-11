@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef DIALOG_NEW_PROJECT_H
-#define DIALOG_NEW_PROJECT_H
+#pragma once
 
 #include "Enums.h"
 #include "UtilSingleInstance.h"
@@ -145,5 +144,3 @@ private:
 };
 
 } // namespace
-
-#endif

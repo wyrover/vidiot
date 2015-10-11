@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef IDS_H
-#define IDS_H
+#pragma once
 
 /// Made global list to be able to trigger these from the tests
 enum
@@ -65,5 +64,3 @@ enum
     // Should always be the last value!!!
     meID_LAST
 };
-
-#endif

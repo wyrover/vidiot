@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef SEQUENCE_EVENT_H
-#define SEQUENCE_EVENT_H
+#pragma once
 
 #include "UtilEvent.h"
 
@@ -66,5 +65,3 @@ DECLARE_EVENT(EVENT_ADD_AUDIO_TRACK,      EventAddAudioTracks,      TrackChange)
 DECLARE_EVENT(EVENT_REMOVE_AUDIO_TRACK,   EventRemoveAudioTracks,   TrackChange);
 
 } // namespace
-
-#endif

@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef UTIL_LOG_STL_H
-#define UTIL_LOG_STL_H
+#pragma once
 
 template <class T>
 std::ostream& operator<<(std::ostream& os, const std::vector<T>& obj)
@@ -61,5 +60,3 @@ std::ostream& operator<<(std::ostream& os, const std::pair<T,U>& obj)
     os << "("<< obj.first << "," << obj.second << ")";
     return os;
 }
-
-#endif

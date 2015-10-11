@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef UTIL_WINDOW_H
-#define UTIL_WINDOW_H
+#pragma once
 
 namespace util { namespace window {
 
@@ -30,5 +29,3 @@ wxBitmap getBitmap(wxString name);
 wxImage getImage(wxString name);
 
 }}
-
-#endif

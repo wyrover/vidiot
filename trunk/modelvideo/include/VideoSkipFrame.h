@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef VIDEO_SKIP_FRAME_H
-#define VIDEO_SKIP_FRAME_H
+#pragma once
 
 #include "VideoFrame.h"
 
@@ -39,5 +38,3 @@ public:
 };
 
 } // namespace
-
-#endif

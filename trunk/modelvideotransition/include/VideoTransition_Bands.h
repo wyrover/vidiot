@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TRANSITION_BANDS_H
-#define TRANSITION_BANDS_H
+#pragma once
 
 #include "VideoTransitionOpacity.h"
 
@@ -90,5 +89,3 @@ private:
 
 BOOST_CLASS_VERSION(model::video::transition::Bands, 1)
 BOOST_CLASS_EXPORT_KEY(model::video::transition::Bands)
-
-#endif

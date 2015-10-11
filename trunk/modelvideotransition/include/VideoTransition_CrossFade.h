@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef CROSSFADE_H
-#define CROSSFADE_H
+#pragma once
 
 #include "VideoTransitionOpacity.h"
 #include <boost/serialization/export.hpp>
@@ -85,5 +84,3 @@ private:
 
 BOOST_CLASS_VERSION(model::video::transition::CrossFade, 1)
 BOOST_CLASS_EXPORT_KEY(model::video::transition::CrossFade)
-
-#endif

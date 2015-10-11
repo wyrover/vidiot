@@ -15,9 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TESTSYNC_H
-#define TESTSYNC_H
+#pragma once
 
 #include "Test.h"
-
-#endif

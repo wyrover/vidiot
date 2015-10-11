@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TEST_UI_DIALOG_H
-#define TEST_UI_DIALOG_H
+#pragma once
 
 #include "TestUi.h"
 
@@ -44,5 +43,3 @@ public:
 
 }
 using namespace test;
-
-#endif

@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef CONSTANTS_H
-#define CONSTANTS_H
+#pragma once
 
 #include "UtilInt.h"
 
@@ -69,5 +68,3 @@ public:
 };
 
 } // namespace
-
-#endif

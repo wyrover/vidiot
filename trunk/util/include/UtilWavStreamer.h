@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef UTIL_WAV_STREAMER_H
-#define UTIL_WAV_STREAMER_H
+#pragma once
 
 #include "UtilInt.h"
 
@@ -64,6 +63,4 @@ private:
 };
 
 }
-
-#endif
 

@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef UTIL_THREAD_H
-#define UTIL_THREAD_H
+#pragma once
 
 namespace util { namespace thread {
 
@@ -90,5 +89,3 @@ RETURNTYPE RunInMainReturning(const std::function<RETURNTYPE()>& method)
 void setCurrentThreadName(const char* name);
 
 }} // namespace
-
-#endif

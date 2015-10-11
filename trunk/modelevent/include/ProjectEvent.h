@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef PROJECT_EVENT_H
-#define PROJECT_EVENT_H
+#pragma once
 
 #include "UtilEvent.h"
 
@@ -29,5 +28,3 @@ DECLARE_EVENT(EVENT_CLOSE_PROJECT,  EventCloseProject,   model::Project*);
 DECLARE_EVENT(EVENT_RENAME_PROJECT, EventRenameProject,  model::Project*);
 
 } // namespace
-
-#endif

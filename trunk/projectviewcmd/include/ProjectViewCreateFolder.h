@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef PROJECT_VIEW_CREATE_FOLDER_H
-#define PROJECT_VIEW_CREATE_FOLDER_H
+#pragma once
 
 #include "ProjectViewCommand.h"
 #include "Folder.h"
@@ -38,5 +37,3 @@ private:
 };
 
 } // namespace
-
-#endif

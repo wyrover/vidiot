@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MODEL_RENDER_CODEC_PARAMETER_H
-#define MODEL_RENDER_CODEC_PARAMETER_H
+#pragma once
 
 #include "UtilEnumSelector.h"
 #include "ICodecParameter.h"
@@ -311,5 +310,3 @@ private:
 };
 
 }} // namespace
-
-#endif

@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef FADETOCOLOR_H
-#define FADETOCOLOR_H
+#pragma once
 
 #include "VideoTransition_CrossFade.h"
 
@@ -82,5 +81,3 @@ private:
 
 BOOST_CLASS_VERSION(model::video::transition::FadeToColor, 1)
 BOOST_CLASS_EXPORT_KEY(model::video::transition::FadeToColor)
-
-#endif

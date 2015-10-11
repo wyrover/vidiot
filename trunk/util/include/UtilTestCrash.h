@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef UTIL_TEST_CRASH_H
-#define UTIL_TEST_CRASH_H
+#pragma once
 
 namespace util {
 
@@ -52,5 +51,3 @@ private:
 };
 
 } // namespace
-
-#endif

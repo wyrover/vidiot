@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef HELPER_PROJECT_H
-#define HELPER_PROJECT_H
+#pragma once
 
 namespace test {
 
@@ -36,5 +35,3 @@ wxFileName generateSaveFileName(wxFileName dir);
 void CloseProjectAndAvoidSaveDialog();
 
 } // namespace
-
-#endif

@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef GUI_PROJECT_VIEW_MODEL_H
-#define GUI_PROJECT_VIEW_MODEL_H
+#pragma once
 
 #include "UtilEvent.h"
 
@@ -112,5 +111,3 @@ private:
 DECLARE_EVENT(GUI_EVENT_PROJECT_VIEW_AUTO_OPEN_FOLDER, EventAutoFolderOpen, model::FolderPtr);
 
 } // namespace
-
-#endif

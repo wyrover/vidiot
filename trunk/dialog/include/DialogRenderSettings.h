@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef DIALOG_RENDER_SETTINGS_H
-#define DIALOG_RENDER_SETTINGS_H
+#pragma once
 
 #include "AudioCodecParameter.h"
 #include "ICodecParameter.h"
@@ -123,5 +122,3 @@ private:
 };
 
 } // namespace
-
-#endif

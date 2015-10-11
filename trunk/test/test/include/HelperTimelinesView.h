@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef HELPER_TIMELINESVIEW_H
-#define HELPER_TIMELINESVIEW_H
+#pragma once
 
 namespace gui { namespace timeline {
 class Timeline;
@@ -35,5 +34,3 @@ model::render::RenderPtr GetCurrentRenderSettings();
 gui::timeline::Timeline& getTimeline(model::SequencePtr sequence = model::SequencePtr());
 
 } // namespace
-
-#endif

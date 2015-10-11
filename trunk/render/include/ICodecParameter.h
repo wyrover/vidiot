@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MODEL_RENDER_I_CODEC_PARAMETER_H
-#define MODEL_RENDER_I_CODEC_PARAMETER_H
+#pragma once
 
 struct AVCodecContext;
 
@@ -57,5 +56,3 @@ struct ICodecParameter
 
 BOOST_CLASS_VERSION(model::render::ICodecParameter, 1)
 BOOST_CLASS_EXPORT_KEY(model::render::ICodecParameter)
-
-#endif

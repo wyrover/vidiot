@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TIMELINE_EVENT_PART_H
-#define TIMELINE_EVENT_PART_H
+#pragma once
 
 #include "Part.h"
 #include "Zoom.h"
@@ -77,5 +76,3 @@ struct EvPlaybackPositionChanged
 };
 
 }}} // namespace
-
-#endif

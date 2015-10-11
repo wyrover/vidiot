@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef EMPTY_CHUNK_H
-#define EMPTY_CHUNK_H
+#pragma once
 
 #include "AudioChunk.h"
 
@@ -53,5 +52,3 @@ private:
 };
 
 } // namespace
-
-#endif

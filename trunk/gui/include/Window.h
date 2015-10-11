@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef WINDOW_H
-#define WINDOW_H
+#pragma once
 
 #include "IView.h"
 #include "HelperPanel.h"
@@ -270,5 +269,3 @@ private:
 } // namespace
 
 BOOST_CLASS_VERSION(gui::Window, 1)
-
-#endif

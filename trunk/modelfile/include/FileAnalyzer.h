@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MODEL_FILE_ANALYZER_H
-#define MODEL_FILE_ANALYZER_H
+#pragma once
 
 #include "UtilFrameRate.h"
 
@@ -105,5 +104,3 @@ private:
 };
 
 } // namespace
-
-#endif

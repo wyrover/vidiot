@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef FIXTURE_CONFIG_H
-#define FIXTURE_CONFIG_H
+#pragma once
 
 namespace test {
 
@@ -42,5 +41,3 @@ public:
 };
 
 } // namespace
-
-#endif

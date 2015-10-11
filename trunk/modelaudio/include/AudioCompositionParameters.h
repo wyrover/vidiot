@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef AUDIO_FRAME_COMPOSITION_PARAMETERS_H
-#define AUDIO_FRAME_COMPOSITION_PARAMETERS_H
+#pragma once
 
 #include "IAudio.h"
 #include "UtilInt.h"
@@ -76,5 +75,3 @@ private:
 };
 
 } // namespace
-
-#endif

@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MOUSE_POINTER_H
-#define MOUSE_POINTER_H
+#pragma once
 
 #include "EventMouse.h"
 #include "UtilEnum.h"
@@ -106,5 +105,3 @@ private:
 };
 
 }} // namespace
-
-#endif

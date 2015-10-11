@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef PLAYER_H
-#define PLAYER_H
+#pragma once
 
 #include "UtilInt.h"
 
@@ -144,5 +143,3 @@ private:
 };
 
 } // namespace
-
-#endif

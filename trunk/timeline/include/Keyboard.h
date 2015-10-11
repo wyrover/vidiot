@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef KEYBOARD_H
-#define KEYBOARD_H
+#pragma once
 
 #include "EventKey.h"
 #include "Part.h"
@@ -62,5 +61,3 @@ private:
 };
 
 }} // namespace
-
-#endif

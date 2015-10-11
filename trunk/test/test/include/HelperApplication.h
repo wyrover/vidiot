@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef HELPER_APPLICATION_H
-#define HELPER_APPLICATION_H
+#pragma once
 
 namespace test {
 
@@ -30,5 +29,3 @@ void WaitForIdleImpl(const char* p_szFileName, const size_t& p_lLine);
 void pause(int ms = 60000);
 
 } // namespace
-
-#endif

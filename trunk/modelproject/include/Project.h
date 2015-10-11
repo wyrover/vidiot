@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef PROJECT_H
-#define PROJECT_H
+#pragma once
 
 #include "UtilSingleInstance.h"
 
@@ -118,5 +117,3 @@ private:
 
 BOOST_CLASS_VERSION(model::Project, 2)
 BOOST_CLASS_EXPORT_KEY(model::Project)
-
-#endif

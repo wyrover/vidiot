@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef SCROLL_H
-#define SCROLL_H
+#pragma once
 
 #include "EventMouse.h"
 #include "Part.h"
@@ -112,5 +111,3 @@ private:
 };
 
 }} // namespace
-
-#endif

@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef HELPER_PROJECT_VIEW_H
-#define HELPER_PROJECT_VIEW_H
+#pragma once
 
 #include "ProjectView.h"
 
@@ -119,5 +118,3 @@ private:
 };
 
 } // namespace
-
-#endif

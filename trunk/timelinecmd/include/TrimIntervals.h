@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TRIM_INTERVALS_H
-#define TRIM_INTERVALS_H
+#pragma once
 
 #include "AClipEdit.h"
 #include "UtilInt.h"
@@ -67,5 +66,3 @@ private:
     friend std::ostream& operator<<(std::ostream& os, const TrimIntervals& obj);
 };
 }}} // namespace
-
-#endif

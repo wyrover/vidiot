@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef CONFIG_H
-#define CONFIG_H
+#pragma once
 
 #include "UtilEvent.h"
 #include "UtilLog.h"
@@ -163,5 +162,3 @@ private:
 
     static bool sHold;
 };
-
-#endif

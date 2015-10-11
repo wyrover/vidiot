@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MODEL_FILE_H
-#define MODEL_FILE_H
+#pragma once
 
 #include "FilePacket.h"
 #include "IFile.h"
@@ -227,5 +226,3 @@ private:
 
 BOOST_CLASS_VERSION(model::File, 2)
 BOOST_CLASS_EXPORT_KEY(model::File)
-
-#endif

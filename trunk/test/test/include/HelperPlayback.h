@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef HELPER_PLAYBACK_H
-#define HELPER_PLAYBACK_H
+#pragma once
 
 namespace gui {
 class PlaybackActiveEvent;
@@ -87,5 +86,3 @@ void Play(pixel from, int ms);
 void Play(int ms);
 
 } // namespace
-
-#endif

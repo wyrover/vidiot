@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef UTIL_RTTI_H
-#define UTIL_RTTI_H
+#pragma once
 
 /// Needed for checking object types in class hierarchies
 class IRTTI
@@ -41,5 +40,3 @@ public:
         return (derived != 0);
     }
 };
-
-#endif

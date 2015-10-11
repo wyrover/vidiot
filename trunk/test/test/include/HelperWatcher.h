@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef HELPER_WATCHER_H
-#define HELPER_WATCHER_H
+#pragma once
 
 #include "Test.h"
 
@@ -25,5 +24,3 @@ namespace test {
 void ASSERT_WATCHED_PATHS_COUNT(int n);
 
 } // namespace
-
-#endif

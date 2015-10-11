@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MODEL_AUDIO_CLIP_H
-#define MODEL_AUDIO_CLIP_H
+#pragma once
 
 #include "ClipInterval.h"
 #include "IAudio.h"
@@ -110,5 +109,3 @@ private:
 
 BOOST_CLASS_VERSION(model::AudioClip, 2)
 BOOST_CLASS_EXPORT_KEY(model::AudioClip)
-
-#endif

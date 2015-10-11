@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef INTERVAL_CHANGE_H
-#define INTERVAL_CHANGE_H
+#pragma once
 
 #include "ATimelineCommand.h"
 #include "UtilInt.h"
@@ -63,5 +62,3 @@ private:
 };
 
 }}} // namespace
-
-#endif

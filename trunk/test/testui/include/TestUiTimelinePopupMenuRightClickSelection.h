@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TEST_UI_TIMELINE_POPUPMENU_RIGHTCLICKSELECTION_H
-#define TEST_UI_TIMELINE_POPUPMENU_RIGHTCLICKSELECTION_H
+#pragma once
 
 #include "TestUi.h"
 
@@ -50,5 +49,3 @@ private:
 };
 }
 using namespace test;
-
-#endif

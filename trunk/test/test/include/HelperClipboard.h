@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef HELPER_CLIPBOARD_H
-#define HELPER_CLIPBOARD_H
+#pragma once
 
 #include "Test.h"
 
@@ -36,5 +35,3 @@ void FillClipboardWithFiles(wxFileNames files);
 #define ASSERT_CLIPBOARD_CONTAINS_FILES AssertClipboardContains(wxDataFormat(wxDF_FILENAME))
 
 } // namespace
-
-#endif

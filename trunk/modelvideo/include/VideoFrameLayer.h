@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef VIDEO_FRAME_LAYER_H
-#define VIDEO_FRAME_LAYER_H
+#pragma once
 
 #include "UtilFifo.h"
 #include "UtilFrameRate.h"
@@ -94,5 +93,3 @@ private:
 };
 
 } // namespace
-
-#endif

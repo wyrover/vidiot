@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MODEL_TRANSITION_PARAMETER_H
-#define MODEL_TRANSITION_PARAMETER_H
+#pragma once
 
 #include "UtilEvent.h"
 
@@ -93,5 +92,3 @@ private:
 
 BOOST_CLASS_VERSION(model::TransitionParameter, 1)
 BOOST_CLASS_EXPORT_KEY(model::TransitionParameter)
-
-#endif

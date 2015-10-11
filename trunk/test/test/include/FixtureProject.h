@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef FIXTURE_PROJECT_H
-#define FIXTURE_PROJECT_H
+#pragma once
 
 #include "Test.h"
 
@@ -72,5 +71,3 @@ public:
 };
 
 } // namespace
-
-#endif

@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef FRAMERATE_H
-#define FRAMERATE_H
+#pragma once
 
 #include "libavutil/rational.h"
 #include "UtilInt.h"
@@ -75,5 +74,3 @@ inline bool operator<(FrameRate l, const FrameRate& r)
 //#include BOOST____PP_UPDATE_COUNTER()
 //#line BOOST_____PP_COUNTER
 BOOST_CLASS_VERSION(FrameRate, 1)
-
-#endif

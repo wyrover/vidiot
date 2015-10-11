@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef HELPER_TIMELINE_H
-#define HELPER_TIMELINE_H
+#pragma once
 
 #include "Timeline.h"
 
@@ -203,5 +202,3 @@ private:
 };
 
 } // namespace
-
-#endif

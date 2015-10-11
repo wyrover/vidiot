@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef VIDEO_DISPLAY_EVENT_H
-#define VIDEO_DISPLAY_EVENT_H
+#pragma once
 
 #include "UtilEvent.h"
 
@@ -26,5 +25,3 @@ DECLARE_EVENT(EVENT_PLAYBACK_POSITION, PlaybackPositionEvent, pts);
 DECLARE_EVENT(EVENT_PLAYBACK_ACTIVE, PlaybackActiveEvent, bool);
 
 } // namespace
-
-#endif

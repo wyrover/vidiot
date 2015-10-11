@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MODEL_SEQUENCE_H
-#define MODEL_SEQUENCE_H
+#pragma once
 
 #include "IAudio.h"
 #include "IControl.h"
@@ -198,5 +197,3 @@ private:
 
 BOOST_CLASS_VERSION(model::Sequence, 1)
 BOOST_CLASS_EXPORT_KEY(model::Sequence)
-
-#endif
