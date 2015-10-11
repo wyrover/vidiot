@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MODEL_CLIP_INTERVAL_H
-#define MODEL_CLIP_INTERVAL_H
+#pragma once
 
 #include "Clip.h"
 
@@ -140,5 +139,3 @@ private:
 
 BOOST_CLASS_VERSION(model::ClipInterval, 2)
 BOOST_CLASS_EXPORT_KEY(model::ClipInterval)
-
-#endif

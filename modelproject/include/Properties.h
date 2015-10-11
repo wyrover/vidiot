@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef PROPERTIES_H
-#define PROPERTIES_H
+#pragma once
 
 #include "UtilFrameRate.h"
 #include "UtilSingleInstance.h"
@@ -94,5 +93,3 @@ private:
 
 BOOST_CLASS_VERSION(model::Properties, 3)
 BOOST_CLASS_EXPORT_KEY(model::Properties)
-
-#endif

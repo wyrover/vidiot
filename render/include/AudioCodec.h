@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef RENDER_AUDIO_CODEC_H
-#define RENDER_AUDIO_CODEC_H
+#pragma once
 
 namespace model { namespace render {
 
@@ -85,5 +84,3 @@ private:
 
 BOOST_CLASS_VERSION(model::render::AudioCodec, 1)
 BOOST_CLASS_EXPORT_KEY(model::render::AudioCodec)
-
-#endif

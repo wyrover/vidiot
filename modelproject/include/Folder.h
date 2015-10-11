@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef FOLDER_H
-#define FOLDER_H
+#pragma once
 
 #include "Node.h"
 
@@ -71,5 +70,3 @@ private:
 
 BOOST_CLASS_VERSION(model::Folder, 1)
 BOOST_CLASS_EXPORT_KEY(model::Folder)
-
-#endif

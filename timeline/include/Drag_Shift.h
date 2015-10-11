@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef DRAG_SHIFT_H
-#define DRAG_SHIFT_H
+#pragma once
 
 #include "UtilInt.h"
 
@@ -70,5 +69,3 @@ private:
 
 typedef boost::shared_ptr<ShiftParams> Shift;
 }} // namespace
-
-#endif

@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef FIFO_H
-#define FIFO_H
+#pragma once
 
 #define BOOST_HAS_STDINT_H
 
@@ -108,5 +107,3 @@ private:
 
     long mSize;
 };
-
-#endif

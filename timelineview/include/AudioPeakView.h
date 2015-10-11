@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef AUDIO_PEAK_VIEW_H
-#define AUDIO_PEAK_VIEW_H
+#pragma once
 
 #include "ClipPreview.h"
 
@@ -55,5 +54,3 @@ public:
 };
 
 }} // namespace
-
-#endif

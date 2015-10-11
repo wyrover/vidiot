@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef DIALOG_OPTIONS_H
-#define DIALOG_OPTIONS_H
+#pragma once
 
 #include "UtilEnumSelector.h"
 #include "Enums.h"
@@ -88,5 +87,3 @@ private:
 };
 
 } // namespace
-
-#endif

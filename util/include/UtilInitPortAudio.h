@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef UTIL_LOG_PORTAUDIO_H
-#define UTIL_LOG_PORTAUDIO_H
+#pragma once
 
 class PortAudio
 {
@@ -37,5 +36,3 @@ private:
 
     static void log(const char * log);
 };
-
-#endif

@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TEST_H
-#define TEST_H
+#pragma once
 
 #include "Precompiled.h"
 
@@ -167,5 +166,3 @@ typedef std::pair<RandomTempDirPtr, wxFileName> DirAndFile;
 #include "HelperWorker.h"
 #include "HelperFiles.h" // Uses a lot of the other header files
 #include "SuiteCreator.h"
-
-#endif

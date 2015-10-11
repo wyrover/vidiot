@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MODEL_FILE_META_DATA_CACHE_H
-#define MODEL_FILE_META_DATA_CACHE_H
+#pragma once
 
 #include "UtilSingleInstance.h"
 
@@ -94,5 +93,3 @@ private:
 
 BOOST_CLASS_VERSION(model::FileMetaDataCache, 1)
 BOOST_CLASS_EXPORT_KEY(model::FileMetaDataCache)
-
-#endif

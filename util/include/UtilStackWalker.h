@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef UTIL_STACKWALKER_H
-#define UTIL_STACKWALKER_H
+#pragma once
 
 #include <wx/stackwalk.h>
 
@@ -45,5 +44,3 @@ private:
 
 #define LOG_STACKTRACE \
     Log().get("STACK   ") << StackWalker().show();
-
-#endif

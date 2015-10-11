@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef UTIL_SERIALIZE_BOOST_H
-#define UTIL_SERIALIZE_BOOST_H
+#pragma once
 
 // MS compatible compilers support #pragma once
 #if defined(_MSC_VER) && (_MSC_VER >= 1020)
@@ -113,5 +112,3 @@ void serialize(Archive &ar, boost::icl::interval_set<TYPE>& set, const unsigned 
 }
 
 }} // namespace
-
-#endif

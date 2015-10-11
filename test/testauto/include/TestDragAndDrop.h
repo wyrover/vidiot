@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TEST_DRAGANDDROP_H
-#define TEST_DRAGANDDROP_H
+#pragma once
 
 #include "TestAuto.h"
 
@@ -94,5 +93,3 @@ private:
 };
 }
 using namespace test;
-
-#endif

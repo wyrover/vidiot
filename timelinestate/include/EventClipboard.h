@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TIMELINE_EVENT_CLIPBOARD_H
-#define TIMELINE_EVENT_CLIPBOARD_H
+#pragma once
 
 namespace gui { namespace timeline { namespace state {
 
@@ -35,5 +34,3 @@ struct EvCopy : EvClipboard< EvCopy > {};
 struct EvPaste : EvClipboard< EvPaste > {};
 
 }}} // namespace
-
-#endif

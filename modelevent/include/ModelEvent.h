@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MODEL_EVENT_H
-#define MODEL_EVENT_H
+#pragma once
 
 #include "UtilEvent.h"
 #include "UtilInt.h"
@@ -27,5 +26,3 @@ DECLARE_EVENT(EVENT_LENGTH_CHANGED, EventLengthChanged, pts);
 DECLARE_EVENT(EVENT_HEIGHT_CHANGED, EventHeightChanged, int);
 
 } // namespace
-
-#endif

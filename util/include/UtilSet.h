@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef UTIL_SET_H
-#define UTIL_SET_H
+#pragma once
 
 #include "UtilLog.h"
 #include "UtilLogStl.h"
@@ -69,5 +68,3 @@ private:
     ELEMENTS& mSet;
 
 };
-
-#endif

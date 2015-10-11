@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef HELPER_TRIM_H
-#define HELPER_TRIM_H
+#pragma once
 
 namespace test {
 
@@ -47,5 +46,3 @@ void TimelineTrim(wxPoint from, wxPoint to, bool shift = false, bool endtrim = t
 void TimelineShiftTrim(wxPoint from, wxPoint to);
 
 } // namespace
-
-#endif

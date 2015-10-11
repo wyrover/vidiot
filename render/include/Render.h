@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MODEL_RENDER_H
-#define MODEL_RENDER_H
+#pragma once
 
 #include "UtilEvent.h"
 #include "UtilInt.h"
@@ -119,5 +118,3 @@ private:
 
 BOOST_CLASS_VERSION(model::render::Render, 2)
 BOOST_CLASS_EXPORT_KEY(model::render::Render)
-
-#endif

@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MODEL_TRACK_H
-#define MODEL_TRACK_H
+#pragma once
 
 #include "IControl.h"
 #include "UtilLog.h"
@@ -183,5 +182,3 @@ private:
 
 BOOST_CLASS_VERSION(model::Track, 2)
 BOOST_CLASS_EXPORT_KEY(model::Track)
-
-#endif

@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef RENDER_OUTPUT_FORMATS_H
-#define RENDER_OUTPUT_FORMATS_H
+#pragma once
 
 namespace model { namespace render {
 
@@ -39,5 +38,3 @@ private:
 };
 
 }} // namespace
-
-#endif

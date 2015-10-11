@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef HELPER_WORKER_H
-#define HELPER_WORKER_H
+#pragma once
 
 #include "Test.h"
 
@@ -46,5 +45,3 @@ private:
 };
 
 } // namespace
-
-#endif

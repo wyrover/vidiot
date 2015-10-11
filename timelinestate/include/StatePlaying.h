@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef STATE_PLAYING_H
-#define STATE_PLAYING_H
+#pragma once
 
 #include "State.h"
 
@@ -86,5 +85,3 @@ private:
 };
 
 }}} // namespace
-
-#endif

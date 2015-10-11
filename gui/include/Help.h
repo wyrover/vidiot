@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef HELP_H
-#define HELP_H
+#pragma once
 
 namespace gui {
 
@@ -83,5 +82,3 @@ public:
 };
 
 } // namespace
-
-#endif

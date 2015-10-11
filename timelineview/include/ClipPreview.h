@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef CLIP_PREVIEW_H
-#define CLIP_PREVIEW_H
+#pragma once
 
 #include "View.h"
 #include "Work.h"
@@ -127,5 +126,3 @@ private:
 };
 
 }} // namespace
-
-#endif

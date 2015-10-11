@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MENU_HANDLER_H
-#define MENU_HANDLER_H
+#pragma once
 
 #include "Part.h"
 #include "Enums.h"
@@ -96,5 +95,3 @@ private:
 };
 
 }} // namespace
-
-#endif

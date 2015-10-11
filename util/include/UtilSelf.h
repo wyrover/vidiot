@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef UTIL_SELF_H
-#define UTIL_SELF_H
+#pragma once
 
 #include "UtilLog.h"
 
@@ -45,5 +44,3 @@ public:
 
 	virtual ~Self() {}
 };
-
-#endif

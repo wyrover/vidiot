@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef HELPER_CONFIG_H
-#define HELPER_CONFIG_H
+#pragma once
 
 #include "Config.h"
 
@@ -68,5 +67,3 @@ private:
 };
 
 } // namespace
-
-#endif

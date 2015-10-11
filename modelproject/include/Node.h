@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef A_PROJECT_VIEW_NODE
-#define A_PROJECT_VIEW_NODE
+#pragma once
 
 #include "INode.h"
 
@@ -96,5 +95,3 @@ private:
 
 BOOST_CLASS_VERSION(model::Node, 1)
 BOOST_CLASS_EXPORT_KEY(model::Node)
-
-#endif

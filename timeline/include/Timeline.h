@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TIMELINE_H
-#define TIMELINE_H
+#pragma once
 
 #include "UtilInt.h"
 
@@ -283,5 +282,3 @@ private:
 }} // namespace
 
 BOOST_CLASS_VERSION(gui::timeline::Timeline, 2)
-
-#endif

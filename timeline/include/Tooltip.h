@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TOOLTIP_H
-#define TOOLTIP_H
+#pragma once
 
 #include "Part.h"
 
@@ -42,5 +41,3 @@ public:
 };
 
 }} // namespace
-
-#endif

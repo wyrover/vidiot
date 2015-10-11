@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef HELPER_TEST_SUITE_H
-#define HELPER_TEST_SUITE_H
+#pragma once
 
 #include "UtilSingleInstance.h"
 
@@ -103,5 +102,3 @@ private:
 #define StartTest(expr) HelperTestSuite::get().setTest(expr); LOG_WARNING << "Test: " << expr
 
 } // namespace
-
-#endif

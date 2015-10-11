@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef COMBINE_COMMAND_H
-#define COMBINE_COMMAND_H
+#pragma once
 
 #include "RootCommand.h"
 
@@ -66,5 +65,3 @@ protected:
 };
 
 } // namespace
-
-#endif

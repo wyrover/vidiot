@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef CREATE_VIDEO_TRACK_H
-#define CREATE_VIDEO_TRACK_H
+#pragma once
 
 #include "ATimelineCommand.h"
 
@@ -51,5 +50,3 @@ private:
 };
 
 }}} // namespace
-
-#endif

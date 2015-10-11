@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TIMELINE_CLIPBOARD_H
-#define TIMELINE_CLIPBOARD_H
+#pragma once
 
 #include "Part.h"
 
@@ -66,5 +65,3 @@ private:
 };
 
 }} // namespace
-
-#endif

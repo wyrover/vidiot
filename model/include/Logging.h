@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MODEL_DEBUG_H
-#define MODEL_DEBUG_H
+#pragma once
 
 namespace model {
 
@@ -58,5 +57,3 @@ std::string dump(const OBJ& o, int depth = 0)
 #define DUMP(o) std::endl << #o << model::dump(o,1)
 
 } // namespace
-
-#endif

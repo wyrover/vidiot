@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TRACK_EVENT_H
-#define TRACK_EVENT_H
+#pragma once
 
 #include "UtilEvent.h"
 
@@ -81,5 +80,3 @@ std::ostream& operator<<(std::ostream& os, const MoveParameter& obj);
 DECLARE_EVENT(EVENT_CLIPS_REPLACED,     EventClipsReplaced,         MoveParameter);
 
 } // namespace
-
-#endif

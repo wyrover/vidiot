@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef EDIT_CLIP_DETAILS_H
-#define EDIT_CLIP_DETAILS_H
+#pragma once
 
 #include "AClipEdit.h"
 
@@ -81,5 +80,3 @@ private:
 };
 
 }}} // namespace
-
-#endif

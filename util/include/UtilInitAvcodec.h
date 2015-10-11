@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef UTIL_INIT_AVCODEC_H
-#define UTIL_INIT_AVCODEC_H
+#pragma once
 
 #include <cstdarg> // va_list
 
@@ -79,5 +78,3 @@ private:
 
     static void log(void *ptr, int level, const char * msg, va_list ap);
 };
-
-#endif

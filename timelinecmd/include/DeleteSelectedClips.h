@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef DELETE_SELECTED_CLIPS_H
-#define DELETE_SELECTED_CLIPS_H
+#pragma once
 
 #include "AClipEdit.h"
 
@@ -59,5 +58,3 @@ private:
 };
 
 }}} // namespace
-
-#endif

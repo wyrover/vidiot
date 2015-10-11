@@ -15,11 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef UTIL_ASSERT_H
-#define UTIL_ASSERT_H
+#pragma once
 
 /// Windows: Break into debugger when running in debugger.
 /// Linux: Break into debugger when running DEBUG build.
 void breakIntoDebugger();
-
-#endif

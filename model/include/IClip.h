@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MODEL_I_CLIP_H
-#define MODEL_I_CLIP_H
+#pragma once
 
 #include "IControl.h"
 #include "UtilInt.h"
@@ -193,5 +192,3 @@ protected:
 };
 
 } // namespace
-
-#endif

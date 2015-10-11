@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef HELPER_POPUPMENU_H
-#define HELPER_POPUPMENU_H
+#pragma once
 
 namespace test {
 
@@ -28,5 +27,3 @@ void TimelineOpenPopupMenuAt(wxPoint position);
 void TimelineClosePopupMenu();
 
 } // namespace
-
-#endif

@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MODEL_FILE_WATCHER_H
-#define MODEL_FILE_WATCHER_H
+#pragma once
 
 inline bool operator<(wxFileName l, const wxFileName& r) { return l.GetFullPath() < r.GetFullPath(); }
 
@@ -112,5 +111,3 @@ private:
 };
 
 } // namespace
-
-#endif

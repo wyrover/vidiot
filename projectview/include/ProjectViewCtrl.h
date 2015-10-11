@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef GUI_PROJECT_VIEW_CTRL_H
-#define GUI_PROJECT_VIEW_CTRL_H
+#pragma once
 
 #if wxUSE_DATAVIEWCTRL == 0
 #error wxDataViewCtrl not enabled in wxWidgets installation
@@ -38,5 +37,3 @@ public:
 };
 
 } // namespace
-
-#endif

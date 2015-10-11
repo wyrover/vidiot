@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef SINGLE_INSTANCE_H
-#define SINGLE_INSTANCE_H
+#pragma once
 
 #include "UtilLog.h"
 
@@ -50,5 +49,3 @@ private:
 };
 
 template <class INSTANCETYPE> SingleInstance<INSTANCETYPE>* SingleInstance<INSTANCETYPE>::sInstance = 0;
-
-#endif

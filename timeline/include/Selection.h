@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef SELECTION_H
-#define SELECTION_H
+#pragma once
 
 #include "Part.h"
 #include "PositionInfo.h"
@@ -90,5 +89,3 @@ private:
 };
 
 }} // namespace
-
-#endif

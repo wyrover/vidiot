@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef HELPER_DETAILS_H
-#define HELPER_DETAILS_H
+#pragma once
 
 #include "Enums.h"
 
@@ -42,5 +41,3 @@ void ASSERT_CLIPPROPERTIES(
     boost::rational<int> rotation);
 
 } // namespace
-
-#endif

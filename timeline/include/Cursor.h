@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef CURSOR_H
-#define CURSOR_H
+#pragma once
 
 #include "Part.h"
 #include "UtilInt.h"
@@ -98,5 +97,3 @@ private:
 };
 
 }} // namespace
-
-#endif

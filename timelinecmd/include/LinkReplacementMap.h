@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef LINK_REPLACEMENT_MAP_H
-#define LINK_REPLACEMENT_MAP_H
+#pragma once
 
 namespace gui { namespace timeline { namespace command {
 
@@ -111,5 +110,3 @@ private:
 };
 
 }}} // namespace
-
-#endif

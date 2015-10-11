@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef LOG_H__
-#define LOG_H__
+#pragma once
 
 #if _MSC_VER > 1000
 // *this used in base-member initialization; it's ok
@@ -226,5 +225,3 @@ private:
 #define LOGVAR_A(x) LOGVAR_OP(x, B)
 #define LOGVAR_B(x) LOGVAR_OP(x, A)
 #define LOGVAR_OP(x, next) LOGVAR_A.logVar(x, #x).LOGVAR_ ## next
-
-#endif

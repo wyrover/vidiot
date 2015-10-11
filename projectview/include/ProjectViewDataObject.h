@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef PROJECT_VIEW_DATA_OBJECT_H
-#define PROJECT_VIEW_DATA_OBJECT_H
+#pragma once
 
 namespace gui {
 
@@ -75,5 +74,3 @@ private:
 };
 
 } // namespace
-
-#endif

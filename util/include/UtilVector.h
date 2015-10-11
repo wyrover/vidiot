@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef UTIL_VECTOR_H
-#define UTIL_VECTOR_H
+#pragma once
 
 #include "UtilLog.h"
 #include "UtilLogStl.h"
@@ -131,5 +130,3 @@ bool equals(const std::vector< boost::shared_ptr< OBJECT > >& first, const std::
     if ((it != first.end()) || (itOther != second.end())) { return false; }
     return true;
 }
-
-#endif

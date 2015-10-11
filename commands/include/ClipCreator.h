@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef CLIP_CREATOR_H
-#define CLIP_CREATOR_H
+#pragma once
 
 namespace command {
 
@@ -42,5 +41,3 @@ public:
 };
 
 } // namespace
-
-#endif

@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TIMELINE_EVENT_MOUSE_H
-#define TIMELINE_EVENT_MOUSE_H
+#pragma once
 
 namespace gui { namespace timeline { namespace state {
 
@@ -117,5 +116,3 @@ struct EvLeave
 };
 
 }}} // namespace
-
-#endif

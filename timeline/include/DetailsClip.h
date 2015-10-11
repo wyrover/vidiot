@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef DETAILS_CLIP_H
-#define DETAILS_CLIP_H
+#pragma once
 
 #include "DetailsPanel.h"
 #include "Enums.h"
@@ -238,5 +237,3 @@ private:
 };
 
 }} // namespace
-
-#endif

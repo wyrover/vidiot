@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TIMESCALE_VIEW_H
-#define TIMESCALE_VIEW_H
+#pragma once
 
 #include "View.h"
 
@@ -51,5 +50,3 @@ public:
 };
 
 }} // namespace
-
-#endif

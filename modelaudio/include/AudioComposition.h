@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef AUDIO_CHUNK_COMPOSITION_H
-#define AUDIO_CHUNK_COMPOSITION_H
+#pragma once
 
 #include "AudioCompositionParameters.h"
 
@@ -72,5 +71,3 @@ private:
 };
 
 } // namespace
-
-#endif

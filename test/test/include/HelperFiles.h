@@ -15,13 +15,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef HELPER_FILES_H
-#define HELPER_FILES_H
+#pragma once
 
 namespace test {
 
 void ExecuteOnAllFiles(wxString pathToFiles, std::function<void()> action, bool wait = false);
 
 } // namespace
-
-#endif

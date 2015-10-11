@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef VIEW_MAP_H
-#define VIEW_MAP_H
+#pragma once
 
 #include "Part.h"
 
@@ -85,5 +84,3 @@ private:
 };
 
 }} // namespace
-
-#endif

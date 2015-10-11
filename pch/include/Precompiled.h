@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef PRECOMPILED_H
-#define PRECOMPILED_H
+#pragma once
 
 // Required for ensuring that boost asserts are handled via UtilLog
 #define BOOST_ENABLE_ASSERT_HANDLER
@@ -183,5 +182,3 @@ extern "C" {
 #include <wx/wizard.h>
 
 #include "Pointers.h"
-
-#endif

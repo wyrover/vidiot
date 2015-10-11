@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MODEL_VIDEOCLIP_EVENT_H
-#define MODEL_VIDEOCLIP_EVENT_H
+#pragma once
 
 #include "UtilEvent.h"
 #include "Enums.h"
@@ -33,5 +32,3 @@ DECLARE_EVENT(EVENT_CHANGE_VIDEOCLIP_MINPOSITION,   EventChangeVideoClipMinPosit
 DECLARE_EVENT(EVENT_CHANGE_VIDEOCLIP_MAXPOSITION,   EventChangeVideoClipMaxPosition,   wxPoint);
 
 } // namespace
-
-#endif

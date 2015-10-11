@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef REMOVE_EMPTY_TRACKS_H
-#define REMOVE_EMPTY_TRACKS_H
+#pragma once
 
 #include "ATimelineCommand.h"
 #include "SequenceEvent.h"
@@ -63,4 +62,3 @@ private:
 
 }}} // namespace
 
-#endif

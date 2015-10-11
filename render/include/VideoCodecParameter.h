@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MODEL_RENDER_VIDEO_CODEC_PARAMETER_H
-#define MODEL_RENDER_VIDEO_CODEC_PARAMETER_H
+#pragma once
 
 #include "CodecParameter.h"
 
@@ -769,5 +768,3 @@ BOOST_CLASS_EXPORT_KEY(model::render::VideoCodecParameterBFrames)
 BOOST_CLASS_EXPORT_KEY(model::render::VideoCodecParameterGopSize)
 BOOST_CLASS_EXPORT_KEY(model::render::VideoCodecParameterBitrateTolerance)
 BOOST_CLASS_EXPORT_KEY(model::render::VideoCodecParameterMacroBlockDecision)
-
-#endif

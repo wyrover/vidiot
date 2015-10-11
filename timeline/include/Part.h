@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef PART_H
-#define PART_H
+#pragma once
 
 namespace gui {
     class Player;
@@ -132,5 +131,3 @@ private:
 };
 
 }} // namespace
-
-#endif

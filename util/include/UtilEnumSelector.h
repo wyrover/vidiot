@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef UTIL_ENUM_SELECTOR
-#define UTIL_ENUM_SELECTOR
+#pragma once
 
 #include "UtilLog.h"
 
@@ -66,5 +65,3 @@ private:
     std::map<int,ITEMTYPE> mSelectionToItem;
     std::map<ITEMTYPE,int> mItemToSelection;
 };
-
-#endif

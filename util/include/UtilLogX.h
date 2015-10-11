@@ -15,15 +15,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef UTIL_LOG_X_H
-#define UTIL_LOG_X_H
+#pragma once
 
 #ifdef __GNUC__
 
 #include <X11/Xlib.h>
 
 std::ostream& operator<<(std::ostream& os, XErrorEvent* e);
-
-#endif
 
 #endif

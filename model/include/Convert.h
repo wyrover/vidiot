@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef CONVERT_H
-#define CONVERT_H
+#pragma once
 
 #include "UtilInt.h"
 #include "UtilFrameRate.h"
@@ -161,5 +160,3 @@ public:
     static int samplerateToNewSpeed(int samplerate, rational newSpeed, rational oldSpeed);
 };
 } // namespace
-
-#endif

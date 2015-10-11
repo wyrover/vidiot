@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef HELPER_WIDGETS_H
-#define HELPER_WIDGETS_H
+#pragma once
 
 #include "Test.h"
 
@@ -69,5 +68,3 @@ void SetValue(wxCheckBox* widget, bool value);
 void ButtonTriggerPressed(wxButton* button);
 
 } // namespace
-
-#endif

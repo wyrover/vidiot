@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MODEL_TRANSITION_H
-#define MODEL_TRANSITION_H
+#pragma once
 
 #include "Clip.h"
 
@@ -196,5 +195,3 @@ private:
 
 BOOST_CLASS_VERSION(model::Transition, 3)
 BOOST_CLASS_EXPORT_KEY(model::Transition)
-
-#endif

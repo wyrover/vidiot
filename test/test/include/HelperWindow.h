@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef HELPER_WINDOW_H
-#define HELPER_WINDOW_H
+#pragma once
 
 #include "Test.h"
 
@@ -97,5 +96,3 @@ void WaitUntilMainWindowActive(bool active);
 void WaitUntilDialogOpen(bool open);
 
 } // namespace
-
-#endif

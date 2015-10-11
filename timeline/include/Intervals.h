@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef SELECT_INTERVALS_H
-#define SELECT_INTERVALS_H
+#pragma once
 
 #include "Part.h"
 #include "UtilInt.h"
@@ -117,5 +116,3 @@ private:
 }} // namespace
 
 BOOST_CLASS_VERSION(gui::timeline::Intervals, 1)
-
-#endif

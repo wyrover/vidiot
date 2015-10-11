@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef PROJECT_MODIFICATION_H
-#define PROJECT_MODIFICATION_H
+#pragma once
 
 namespace command {
     class RootCommand;
@@ -49,5 +48,3 @@ struct ProjectModification
 };
 
 } // namespace
-
-#endif

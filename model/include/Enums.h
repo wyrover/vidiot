@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef ENUMS_H
-#define ENUMS_H
+#pragma once
 
 #include "UtilEnum.h"
 
@@ -51,5 +50,3 @@ DECLAREENUM(DefaultNewProjectWizardStart, \
             DefaultNewProjectWizardStartBlank);
 
 }
-
-#endif

@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef UTIL_LOG_WXWIDGETS_H
-#define UTIL_LOG_WXWIDGETS_H
+#pragma once
 
 std::ostream& operator<<(std::ostream& os, const wxFileName& obj);
 std::ostream& operator<<(std::ostream& os, const wxPoint& obj);
@@ -34,5 +33,3 @@ std::ostream& operator<<(std::ostream& os, const wxAntialiasMode& obj);
 std::ostream& operator<<(std::ostream& os, const wxGraphicsContext& obj);
 std::ostream& operator<<(std::ostream& os, const wxArrayString& obj);
 std::ostream& operator<<(std::ostream& os, const wxDateTime& obj);
-
-#endif

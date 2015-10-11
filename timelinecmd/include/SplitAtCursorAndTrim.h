@@ -15,13 +15,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef SPLIT_AT_CURSOR_AND_TRIM_H
-#define SPLIT_AT_CURSOR_AND_TRIM_H
+#pragma once
 
 namespace gui { namespace timeline { namespace command {
 
 void SplitAtCursorAndTrim(const model::SequencePtr& sequence, bool backwards);
 
 }}} // namespace
-
-#endif

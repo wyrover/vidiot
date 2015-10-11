@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MODEL_WX_IMAGE_FILE_H
-#define MODEL_WX_IMAGE_FILE_H
+#pragma once
 
 #include "VideoFile.h"
 
@@ -110,5 +109,3 @@ private:
 
 BOOST_CLASS_VERSION(model::WximageFile, 1)
 BOOST_CLASS_EXPORT_KEY(model::WximageFile)
-
-#endif

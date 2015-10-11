@@ -15,8 +15,7 @@
 //// You should have received a copy of the GNU General Public License
 //// along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 //
-//#ifndef MODEL_SOLIDCOLOR_CLIP_H
-//#define MODEL_SOLIDCOLOR_CLIP_H
+//#pragma once
 //
 //#include "VideoClip.h"
 //
@@ -56,5 +55,3 @@
 //
 //BOOST_CLASS_VERSION(model::SolidColorClip, 1)
 //BOOST_CLASS_EXPORT_KEY(model::SolidColorClip)
-//
-//#endif
