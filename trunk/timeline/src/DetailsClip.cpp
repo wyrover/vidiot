@@ -755,6 +755,10 @@ void DetailsClip::handleLengthButtonPressed(wxToggleButton* button)
     ASSERT_NONZERO(button);
     ASSERT(wxThread::IsMain());
     if (!button->IsEnabled()) { return; }
+    // When pressing keys in the timeline no checking is done whether a clip is already selected.
+    // Furthermore, the - no clip selected - has already more than once caused crashes here.
+    // So, if no clip selected, just ignore the request.
+    if (mClip == nullptr) { return; } 
     pts length = getLength(button);
     VAR_INFO(length);
     ASSERT(mTrimAtEnd.find(length) != mTrimAtEnd.end())(mTrimAtEnd)(length);
