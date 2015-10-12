@@ -37,25 +37,15 @@ namespace model {
 // AVCODEC CALLBACKS
 //////////////////////////////////////////////////////////////////////////
 
-int avcodec_get_buffer(struct AVCodecContext *c, AVFrame *pic)
+int avcodec_get_buffer(struct AVCodecContext *c, AVFrame *pic, int flags)
 {
     ASSERT_NONZERO(c);
     ASSERT_NONZERO(pic);
-    int ret = avcodec_default_get_buffer(c, pic); // todo is deprecated
+    int ret = avcodec_default_get_buffer2(c, pic, flags);
     int64_t *pts = static_cast<int64_t*>(av_malloc(sizeof(int64_t)));
     *pts = static_cast<VideoFile*>(c->opaque)->getVideoPacketPts();
     pic->opaque = pts;
     return ret;
-}
-
-void avcodec_release_buffer(struct AVCodecContext *c, AVFrame *pic)
-{
-    ASSERT_NONZERO(c);
-    if(pic)
-    {
-        av_freep(&pic->opaque);
-    }
-    avcodec_default_release_buffer(c, pic); // todo is deprecated
 }
 
 static int const sMaxBufferSize = 10;
@@ -414,8 +404,7 @@ void VideoFile::startDecodingVideo(const VideoCompositionParameters& parameters)
 
     AVCodecContext* avctx = getCodec();
     avctx->opaque = this; // Store address to be able to access this object from the avcodec callbacks
-    avctx->get_buffer = avcodec_get_buffer; // todo replace with get_buffer2
-    avctx->release_buffer = avcodec_release_buffer;
+    avctx->get_buffer2 = avcodec_get_buffer;
 
     AVCodec *videoCodec = avcodec_find_decoder(avctx->codec_id);
     ASSERT_NONZERO(videoCodec);
