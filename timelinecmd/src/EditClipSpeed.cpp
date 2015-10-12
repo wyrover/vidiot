@@ -152,24 +152,6 @@ void EditClipSpeed::initialize()
     // Already done in 'update'. This is called afterwards when the command is submitted.
 }
 
-void EditClipSpeed::doExtraAfter()
-{
-    // todo cursor pos changed to show exact same frame?
-
-    //if (mCursorPositionBefore != mCursorPositionAfter)
-    //{
-    //    getTimeline().getCursor().setLogicalPosition(mCursorPositionAfter);
-    //}
-}
-
-void EditClipSpeed::undoExtraAfter()
-{
-    //if (mCursorPositionBefore != mCursorPositionAfter)
-    //{
-    //    getTimeline().getCursor().setLogicalPosition(mCursorPositionBefore);
-    //}
-}
-
 //////////////////////////////////////////////////////////////////////////
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
