@@ -361,7 +361,7 @@ void AClipEdit::removeClips(const model::IClips& originals)
 }
 
 // static
-AClipEdit::ClipsWithPosition AClipEdit::findClips(const model::TrackPtr& track, pts left, pts right) // todo move this to executedrop as it's very specific to that  (is assumes that there are cuts at left and right in the given track!!!)
+AClipEdit::ClipsWithPosition AClipEdit::findClips(const model::TrackPtr& track, pts left, pts right)
 {
     VAR_DEBUG(track)(left)(right);
     model::IClipPtr to = model::IClipPtr();       // Default: at end
