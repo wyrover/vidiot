@@ -353,6 +353,8 @@ void RenderWork::generate()
 {
     VAR_INFO(this);
     setThreadName("RenderWork::generate");
+    const wxString sInternalError = _("An internal error occurred during rendering.");
+    const wxString sErrorTitle = _("Rendering failed");
     model::SequencePtr sequence = mSequence;
     pts position = mFrom;
     RenderPtr mRender = sequence->getRender();
@@ -647,6 +649,7 @@ void RenderWork::generate()
                     //////////////////////////////////////////////////////////////////////////
 
                     encodeFrame = new AVFrame;
+                    memset(encodeFrame, 0, sizeof(AVFrame));
                     encodeFrame->data[0] = (uint8_t*)samples;
                     encodeFrame->linesize[0] = Convert::audioSamplesToBytes(nRequiredInputSamplesForAllChannels);
                     if (audioSampleFormatResampleContext != 0)
@@ -658,6 +661,7 @@ void RenderWork::generate()
 
                         delete encodeFrame;
                         encodeFrame = new AVFrame();
+                        memset(encodeFrame, 0, sizeof(AVFrame));
 
                         for (int i = 0; i < nAudioPlanes; ++i)
                         {
@@ -673,6 +677,7 @@ void RenderWork::generate()
                 //////////////////////////////////////////////////////////////////////////
 
                 AVPacket* audioPacket = new AVPacket();
+                memset(audioPacket, 0, sizeof(AVPacket));
                 audioPacket->data = 0;
                 audioPacket->size = 0;
                 int gotPacket = 0;
@@ -779,6 +784,7 @@ void RenderWork::generate()
                 // else (videoEnd): no more frames to compress. The codec has a latency of a few frames if using B frames, so we get the last frames by passing 0.
 
                 AVPacket* videoPacket = new AVPacket();
+                memset(videoPacket, 0, sizeof(AVPacket));
                 videoPacket->stream_index = videoStream->index;
                 videoPacket->data = 0;
                 videoPacket->size = 0;
@@ -848,7 +854,22 @@ void RenderWork::generate()
     catch (EncodingError error)
     {
         VAR_ERROR(error);
-        gui::Dialog::get().getConfirmation(_("Rendering failed"), error.message);
+        gui::Dialog::get().getConfirmation(sErrorTitle, error.message);
+    }
+    catch (boost::exception &e)
+    {
+        VAR_ERROR(boost::diagnostic_information(e));
+        gui::Dialog::get().getConfirmation(sErrorTitle, sInternalError);
+    }
+    catch (std::exception& e)                    
+    { 
+        VAR_ERROR(e.what());                         
+        gui::Dialog::get().getConfirmation(sErrorTitle, sInternalError);
+    }
+    catch (...)                                  
+    { 
+        LOG_ERROR << "Unknown exception";
+        gui::Dialog::get().getConfirmation(sErrorTitle, sInternalError);
     }
 
     //////////////////////////////////////////////////////////////////////////

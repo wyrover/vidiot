@@ -124,5 +124,5 @@ void Avcodec::log(void *ptr, int level, const char * msg, va_list ap)
     }
 
     sMostRecentLogLine = sFixedBuffer;
-    Log().get("AVC    ") << osComponent.str() << " [" << sFixedBuffer << "]";
+    Log().get("AVCODEC ") << osComponent.str() << " [" << sFixedBuffer << "]";
 }
