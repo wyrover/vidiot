@@ -141,13 +141,13 @@ void Cursor::onPlaybackPosition(pts position)
 
     pts lastVisibleFrame = getZoom().pixelsToPts(scroll.x + size.x - EDGE_OFFSET);
     if (mCursorPosition > lastVisibleFrame  &&
-        mCursorPosition <= lastVisibleFrame + getZoom().pixelsToPts(2) )
+        mCursorPosition <= lastVisibleFrame + getZoom().pixelsToPts(4) )
     {
         // mCursorPosition > lastVisibleFrame:
         //    ensures automated scrolling starts when the cursor moves 'too far'
         // mCursorPosition <= lastVisibleFrame + getZoom().pixelsToPts(2):
         //    avoids automated scrolling to mess up manual scrolling during playback.
-        //    pixelsToPts(TWO) is used for the maximum zoom level.
+        //    pixelsToPts(4) is used for the maximum zoom level.
         getScrolling().align(mCursorPosition, size.x - EDGE_OFFSET);
     }
 }

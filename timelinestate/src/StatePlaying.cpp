@@ -114,19 +114,32 @@ boost::statechart::result Playing::react( const EvKeyUp& evt)
     VAR_DEBUG(evt);
     switch (evt.KeyCode)
     {
-    case WXK_SHIFT:
-        evt.consumed();
-        triggerEnd();
-        break;
-    case 's':
-    case 'S':
-    case 'b':
-    case 'B':
-        evt.consumed();
-        break;
-    case WXK_SPACE:
-        evt.consumed();
-        break;
+        case WXK_SHIFT:
+        {
+            evt.consumed();
+            triggerEnd();
+            break;
+        }
+        case 's':
+        case 'S':
+        case 'b':
+        case 'B':
+        {
+            evt.consumed();
+            break;
+        }
+        case 'v':
+        case 'V':
+        {
+            evt.consumed();
+            getCursor().focus();
+            break;
+        }
+        case WXK_SPACE:
+        {
+            evt.consumed();
+            break;
+        }
     }
     return forward_event();
 }
