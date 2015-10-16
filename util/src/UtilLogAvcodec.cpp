@@ -754,7 +754,6 @@ wxString avcodecErrorString(int errorcode)
 {
     char buffer[AV_ERROR_MAX_STRING_SIZE];
     int errorDecodeResult = av_strerror(errorcode, buffer, AV_ERROR_MAX_STRING_SIZE);
-    VAR_ERROR(errorDecodeResult);
     if (errorDecodeResult != 0)
     {
         return wxString::Format("Avcodec error code not found (%d)", errorcode);

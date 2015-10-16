@@ -43,6 +43,7 @@ OutputFormat::OutputFormat()
     ,   mVideoCodec(VideoCodecs::getDefault())
 {
     ASSERT(mFormat); // mFormat initialized by boost serialization
+    memset(mFormat, 0, sizeof(AVOutputFormat));
 }
 
 OutputFormat::OutputFormat(const wxString& name, const wxString& longname, const wxStrings& extensions, const AVCodecID& defaultaudiocodec, const AVCodecID& defaultvideocodec)

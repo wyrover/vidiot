@@ -129,9 +129,9 @@ void Machine::unconsumed_event( const boost::statechart::event_base & evt )
 void  Machine::process_event(const boost::statechart::event_base & evt )
 {
     boost::statechart::state_machine< Machine, Starting >::process_event(evt);
-    LOG_INFO <<  "[event="    <<  boost::units::detail::demangle(typeid( evt ).name()).substr(__state_prefix_length)
-             << "][newstate=" << (state_begin() == state_end() ? std::string("???") :  boost::units::detail::demangle(typeid( *state_begin() ).name()).substr(__state_prefix_length))
-             << "]";
+    LOG_DEBUG <<  "[event="    <<  boost::units::detail::demangle(typeid( evt ).name()).substr(__state_prefix_length)
+              << "][newstate=" << (state_begin() == state_end() ? std::string("???") :  boost::units::detail::demangle(typeid( *state_begin() ).name()).substr(__state_prefix_length))
+              << "]";
 }
 
 //////////////////////////////////////////////////////////////////////////
