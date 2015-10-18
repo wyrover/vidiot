@@ -87,7 +87,7 @@ void TestRender::testChangeRenderSettings()
 void TestRender::testRenderingSplit()
 {
     StartTestSuite();
-    ConfigOverruleLong overrule(Config::sPathDebugMaxRenderLength, 1); // Only render 1s
+    ConfigOverrule<long> overrule(Config::sPathDebugMaxRenderLength, 1); // Only render 1s
     {
         StartTest("Render each part of the sequence separately.");
         ExpectExecutedWork expectation(3);
@@ -141,7 +141,7 @@ void TestRender::testRenderingTransformedClip()
     ConfigFixture.SnapToClips(true);
     WindowTriggerMenu(ID_ADDAUDIOTRACK);
     WindowTriggerMenu(ID_ADDVIDEOTRACK);
-    ConfigOverruleLong overrule(Config::sPathDebugMaxRenderLength, 3); // Only render 3s
+    ConfigOverrule<long> overrule(Config::sPathDebugMaxRenderLength, 3); // Only render 3s
     wxFileName path(wxFileName::GetTempDir(), "out", "avi");
     TimelineDragToTrack(1, VideoClip(0,1), AudioClip(0,1));
     TimelineDrag(From(Center(VideoClip(1,1))).To(LeftCenter(VideoClip(1,0)) + wxPoint(5,0)));

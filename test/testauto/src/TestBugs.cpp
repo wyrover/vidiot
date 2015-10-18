@@ -176,10 +176,13 @@ void TestBugs::testPlaybackEmptyClip()
     TimelineLeftClick(Center(VideoClip(0,3)));
     TimelineKeyPress(WXK_DELETE);
     TimelinePositionCursor(HCenter(VideoClip(0,3)));
-    model::VideoFramePtr frame = boost::dynamic_pointer_cast<model::EmptyClip>(VideoClip(0,3))->getNextVideo(model::VideoCompositionParameters().setBoundingBox(wxSize(100,100)));
-    ASSERT_NONZERO(frame);
-    model::AudioChunkPtr chunk = boost::dynamic_pointer_cast<model::EmptyClip>(AudioClip(0,3))->getNextAudio(model::AudioCompositionParameters().setPts(AudioClip(0,3)->getLeftPts()).determineChunkSize());
-    ASSERT_NONZERO(chunk);
+    util::thread::RunInMainAndWait([]
+    {
+        model::VideoFramePtr frame = boost::dynamic_pointer_cast<model::EmptyClip>(VideoClip(0, 3))->getNextVideo(model::VideoCompositionParameters().setBoundingBox(wxSize(100, 100)));
+        ASSERT_NONZERO(frame);
+        model::AudioChunkPtr chunk = boost::dynamic_pointer_cast<model::EmptyClip>(AudioClip(0, 3))->getNextAudio(model::AudioCompositionParameters().setPts(AudioClip(0, 3)->getLeftPts()).determineChunkSize());
+        ASSERT_NONZERO(chunk);
+    });
     // Note: do not pause() or press space at this point. The getNexts above 'mess up' the administration (audioclip is already at end, but the cursor position is not)
     Play(RightPixel(VideoClip(0,3)) - 3,2000);
 }
@@ -566,8 +569,8 @@ void TestBugs::testTrimmingWithTransitionOnOneSideOfCut()
 void TestBugs::testSnapClipBeforeBeginOfTimeline()
 {
     StartTestSuite();
-    ConfigOverruleBool overruleSnapToCursor(Config::sPathTimelineSnapClips,false);
-    ConfigOverruleBool overruleSnapToClips(Config::sPathTimelineSnapCursor,true);
+    ConfigOverrule<bool> overruleSnapToCursor(Config::sPathTimelineSnapClips,false);
+    ConfigOverrule<bool> overruleSnapToClips(Config::sPathTimelineSnapCursor,true);
     TimelineZoomIn(5);
     StartTest("Snap to cursor");
     ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip);
@@ -659,8 +662,8 @@ void TestBugs::testEndTrimAtOutTransitionInSavedDocumentEndCausesSnappingProblem
     pts length = getSequence()->getLength();
     ASSERT_EQUALS(length, getSequence()->getLength());
     DirAndFile tempDir_fileName = mProjectFixture.saveAndReload();
-    ConfigOverruleBool overruleSnapToCursor(Config::sPathTimelineSnapClips,true);
-    ConfigOverruleBool overruleSnapToClips(Config::sPathTimelineSnapCursor,false);
+    ConfigOverrule<bool> overruleSnapToCursor(Config::sPathTimelineSnapClips,true);
+    ConfigOverrule<bool> overruleSnapToClips(Config::sPathTimelineSnapCursor,false);
     {
         StartTest("Trim video");
         ASSERT_EQUALS(length, getSequence()->getLength());
@@ -686,8 +689,8 @@ void TestBugs::testEndTrimAtOutTransitionInSavedDocumentEndCausesSnappingProblem
     pts length = getSequence()->getLength();
     ASSERT_EQUALS(length, getSequence()->getLength());
     DirAndFile tempDir_fileName = mProjectFixture.saveAndReload();
-    ConfigOverruleBool overruleSnapToCursor(Config::sPathTimelineSnapClips,true);
-    ConfigOverruleBool overruleSnapToClips(Config::sPathTimelineSnapCursor,false);
+    ConfigOverrule<bool> overruleSnapToCursor(Config::sPathTimelineSnapClips,true);
+    ConfigOverrule<bool> overruleSnapToClips(Config::sPathTimelineSnapCursor,false);
     {
         StartTest("Trim audio");
         ASSERT_EQUALS(length, getSequence()->getLength());

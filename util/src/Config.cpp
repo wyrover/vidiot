@@ -27,12 +27,9 @@
 #include "UtilPath.h"
 
 bool Config::sShowDebugInfo(false);
-boost::mutex Config::sMutex;
 bool Config::sHold(false);
 
 DEFINE_EVENT(EVENT_CONFIG_UPDATED, EventConfigUpdated, wxString);
-
-// todo cache all values (upon startup and reset upon each change) to avoid threading issues.
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
@@ -239,34 +236,35 @@ bool Config::Exists(const wxString& key)
 // static
 bool Config::ReadBool(const wxString& key)
 {
-    boost::mutex::scoped_lock lock(sMutex);
+    ASSERT(wxThread::IsMain());
     return readWithoutDefault<bool>(key);
 }
 
 // static
 long Config::ReadLong(const wxString& key)
 {
-    boost::mutex::scoped_lock lock(sMutex);
+    ASSERT(wxThread::IsMain());
     return readWithoutDefault<long>(key);
 }
 
 // static
 double Config::ReadDouble(const wxString& key)
 {
-    boost::mutex::scoped_lock lock(sMutex);
+    ASSERT(wxThread::IsMain());
     return readWithoutDefault<double>(key);
 }
 
 // static
 wxString Config::ReadString(const wxString& key)
 {
-    boost::mutex::scoped_lock lock(sMutex);
+    ASSERT(wxThread::IsMain());
     return readWithoutDefault<wxString>(key);
 }
 
 // static
 wxColour Config::ReadColour(const wxString& key)
 {
+    ASSERT(wxThread::IsMain());
     wxString s{ ReadString(key) };
     wxRegEx reColourDecimal{ "^([[:digit:]][[:digit:]]?[[:digit:]]?),([[:digit:]][[:digit:]]?[[:digit:]]?),([[:digit:]][[:digit:]]?[[:digit:]]?)$" };
     ASSERT(reColourDecimal.IsValid());
@@ -286,7 +284,7 @@ wxColour Config::ReadColour(const wxString& key)
 // static
 void Config::WriteBool(const wxString& key, bool value)
 {
-    boost::mutex::scoped_lock lock(sMutex);
+    ASSERT(wxThread::IsMain());
     bool result = wxConfigBase::Get()->Write(key, value);
     ASSERT(result);
     OnWrite(key);
@@ -295,7 +293,7 @@ void Config::WriteBool(const wxString& key, bool value)
 // static
 void Config::WriteLong(const wxString& key, const long& value)
 {
-    boost::mutex::scoped_lock lock(sMutex);
+    ASSERT(wxThread::IsMain());
     bool result = wxConfigBase::Get()->Write(key, value);
     ASSERT(result);
     OnWrite(key);
@@ -304,7 +302,7 @@ void Config::WriteLong(const wxString& key, const long& value)
 // static
 void Config::WriteDouble(const wxString& key, double value)
 {
-    boost::mutex::scoped_lock lock(sMutex);
+    ASSERT(wxThread::IsMain());
     bool result = wxConfigBase::Get()->Write(key, value);
     ASSERT(result);
     OnWrite(key);
@@ -313,7 +311,7 @@ void Config::WriteDouble(const wxString& key, double value)
 // static
 void Config::WriteString(const wxString& key, const wxString& value)
 {
-    boost::mutex::scoped_lock lock(sMutex);
+    ASSERT(wxThread::IsMain());
     bool result = wxConfigBase::Get()->Write(key, value);
     ASSERT(result);
     OnWrite(key);
@@ -322,13 +320,20 @@ void Config::WriteString(const wxString& key, const wxString& value)
 // static
 void Config::OnWrite(const wxString& key)
 {
+    ASSERT(wxThread::IsMain());
     Config* cfg = dynamic_cast<Config*>(wxConfigBase::Get());
     ASSERT_NONZERO(cfg);
     cfg->QueueEvent(new EventConfigUpdated(key));
     if (!sHold)
     {
-        bool result = wxConfigBase::Get()->Flush();
-        ASSERT(result);
+        // Do not check if writing succeeded:
+        // Typical case in which writing the config file may fail:
+        // Open a lot of Vidiot windows, then close all those windows
+        // simultaneously (on Windows, right click on icon and select
+        // 'Close all windows'). Then, all those applications trying
+        // to write the config file conflict. Could try to write again.
+        // However, what version then has the proper - latest - changes???
+        wxConfigBase::Get()->Flush();
     }
 }
 
@@ -350,6 +355,7 @@ void Config::setShowDebugInfo(bool show)
 
 Config::Perspectives Config::WorkspacePerspectives::get()
 {
+    ASSERT(wxThread::IsMain());
     Config::Perspectives result;
     for (int i = 1; i < 100; ++i) // More than 100 not supported
     {
@@ -366,6 +372,7 @@ Config::Perspectives Config::WorkspacePerspectives::get()
 
 void Config::WorkspacePerspectives::add(const wxString& name, const wxString& perspective)
 {
+    ASSERT(wxThread::IsMain());
     Config::Perspectives perspectives = get();
     perspectives[name] = perspective;
     save(perspectives);
@@ -373,6 +380,7 @@ void Config::WorkspacePerspectives::add(const wxString& name, const wxString& pe
 
 void Config::WorkspacePerspectives::remove(const wxString& name)
 {
+    ASSERT(wxThread::IsMain());
     Config::Perspectives perspectives = get();
     perspectives.erase(name);
     save(perspectives);
@@ -380,6 +388,7 @@ void Config::WorkspacePerspectives::remove(const wxString& name)
 
 void Config::WorkspacePerspectives::removeAll()
 {
+    ASSERT(wxThread::IsMain());
     for (int i = 1; i < 100; ++i) // More than 100 not supported
     {
         wxConfigBase::Get()->DeleteEntry(sPathWorkspacePerspectiveName + wxString::Format("%d",i));
@@ -390,6 +399,7 @@ void Config::WorkspacePerspectives::removeAll()
 
 void Config::WorkspacePerspectives::save(const Perspectives& perspectives)
 {
+    ASSERT(wxThread::IsMain());
     removeAll();
     int i = 1;
     for ( Config::Perspectives::value_type name_perspective : perspectives )
@@ -410,7 +420,7 @@ void Config::WorkspacePerspectives::save(const Perspectives& perspectives)
 // static
 void Config::holdWriteToDisk()
 {
-    boost::mutex::scoped_lock lock(sMutex);
+    ASSERT(wxThread::IsMain());
     ASSERT(!sHold);
     sHold = true;
 }
@@ -418,7 +428,7 @@ void Config::holdWriteToDisk()
 // static
 void Config::releaseWriteToDisk()
 {
-    boost::mutex::scoped_lock lock(sMutex);
+    ASSERT(wxThread::IsMain());
     ASSERT(sHold);
     sHold = false;
     bool result = wxConfigBase::Get()->Flush();

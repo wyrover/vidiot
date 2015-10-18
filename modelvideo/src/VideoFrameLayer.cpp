@@ -197,7 +197,7 @@ void VideoFrameLayer::draw(wxGraphicsContext* gc, const VideoCompositionParamete
 
         wxRect r(parameters.getRequiredRectangle());
         gc->DrawBitmap(
-            gc->GetRenderer()->CreateBitmapFromImage(*image), // todo avoid all gdi calls in non gui threads.
+            gc->GetRenderer()->CreateBitmapFromImage(*image),
             r.x + mPosition.x,
             r.y + mPosition.y,
             image->GetWidth(),

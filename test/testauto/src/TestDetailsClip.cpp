@@ -26,8 +26,8 @@ namespace test {
 void TestDetailsClip::setUp()
 {
     if (!HelperTestSuite::get().currentTestIsEnabled()) { return; }
-    ConfigOverruleLong overruleDefaultVideoWidth(Config::sPathVideoDefaultWidth, 720);
-    ConfigOverruleLong overruleDefaultVideoHeight(Config::sPathVideoDefaultHeight, 576);
+    ConfigOverrule<long> overruleDefaultVideoWidth(Config::sPathVideoDefaultWidth, 720);
+    ConfigOverrule<long> overruleDefaultVideoHeight(Config::sPathVideoDefaultHeight, 576);
     mProjectFixture.init();
 }
 
@@ -238,7 +238,6 @@ void TestDetailsClip::testChangeLengthAfterCreatingTransition()
     TimelineZoomIn(2);
     WindowTriggerMenu(ID_SHOW_PROJECT);
 
-    pts defaultTransitionLength = Config::ReadLong(Config::sPathTimelineDefaultTransitionLength);
     auto pressLengthButtons = [this] (std::string name, std::vector<int> enabledButtons, std::vector<int> disabledButtons)
     {
         for (int index : disabledButtons)

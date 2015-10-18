@@ -1050,7 +1050,6 @@ void TestTransition::testCompletelyTrimmingAwayTransition()
 {
     StartTestSuite();
     TimelineZoomIn(4);
-    pts defaultTransitionLength = Config::ReadLong(Config::sPathTimelineDefaultTransitionLength);
     {
         MakeInOutTransitionAfterClip preparation(1);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
@@ -1061,8 +1060,8 @@ void TestTransition::testCompletelyTrimmingAwayTransition()
         from = VTopQuarterRight(VideoClip(0,2));
         TimelineTrim(from,from + wxPoint(-100,0));
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip);
-        ASSERT_EQUALS(VideoClip(0,1)->getLength(), lengthleft + defaultTransitionLength / 2);
-        ASSERT_EQUALS(VideoClip(0,2)->getLength(), lengthright + defaultTransitionLength / 2);
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(), lengthleft + DefaultTransitionLength() / 2);
+        ASSERT_EQUALS(VideoClip(0,2)->getLength(), lengthright + DefaultTransitionLength() / 2);
         Undo(2);
     }
     {
@@ -1074,7 +1073,7 @@ void TestTransition::testCompletelyTrimmingAwayTransition()
         TimelineTrim(from,from + wxPoint(-100,0));
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip);
         ASSERT_EQUALS(VideoClip(0,1)->getLength(), lengthleft);
-        ASSERT_EQUALS(VideoClip(0,2)->getLength(), lengthright + defaultTransitionLength / 2);
+        ASSERT_EQUALS(VideoClip(0,2)->getLength(), lengthright + DefaultTransitionLength() / 2);
         Undo();
     }
     {
@@ -1085,7 +1084,7 @@ void TestTransition::testCompletelyTrimmingAwayTransition()
         wxPoint from = VTopQuarterLeft(VideoClip(0,2));
         TimelineTrim(from,from + wxPoint(100,0));
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip);
-        ASSERT_EQUALS(VideoClip(0,1)->getLength(), lengthleft + defaultTransitionLength / 2);
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(), lengthleft + DefaultTransitionLength() / 2);
         ASSERT_EQUALS(VideoClip(0,2)->getLength(), lengthright);
         Undo();
     }
@@ -1096,7 +1095,6 @@ void TestTransition::testSplitNearZeroLengthEdgeOfTransition()
     StartTestSuite();
     TimelineZoomIn(5);
     MakeInOutTransitionAfterClip preparation(1);
-    pts defaultTransitionLength = Config::ReadLong(Config::sPathTimelineDefaultTransitionLength);
     {
         StartTest("Left size is 0");
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);

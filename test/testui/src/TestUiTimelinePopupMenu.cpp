@@ -42,14 +42,13 @@ void TestUiTimelinePopupMenu::testAddTransitions()
     StartTestSuite();
     TimelineZoomIn(6);
     ConfigFixture.SnapToClips(false);
-    pts defaultTransitionLength = Config::ReadLong(Config::sPathTimelineDefaultTransitionLength);
     {
         StartTest("Add fade in");
         TimelineOpenPopupMenuAt(Center(VideoClip(0,1)));
         TimelineKeyPress('i'); // Fade &in
         ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip)(VideoClip);
         ASSERT_AUDIOTRACK0(AudioClip)(       AudioClip     )(AudioClip);
-        ASSERT_EQUALS(VideoClip(0,1)->getLength(), defaultTransitionLength / 2);
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(), DefaultTransitionLength() / 2);
         ASSERT_EQUALS(VideoClip(0,2)->getRightPts(), AudioClip(0,1)->getRightPts());
         Undo();
     }
@@ -59,7 +58,7 @@ void TestUiTimelinePopupMenu::testAddTransitions()
         TimelineKeyPress('o'); // Fade &out
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
         ASSERT_AUDIOTRACK0(AudioClip)(      AudioClip      )(AudioClip);
-        ASSERT_EQUALS(VideoClip(0,2)->getLength(), defaultTransitionLength / 2);
+        ASSERT_EQUALS(VideoClip(0,2)->getLength(), DefaultTransitionLength() / 2);
         ASSERT_EQUALS(VideoClip(0,2)->getRightPts(), AudioClip(0,1)->getRightPts());
         Undo();
     }
@@ -70,9 +69,9 @@ void TestUiTimelinePopupMenu::testAddTransitions()
         ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip)(VideoClip);
         ASSERT_AUDIOTRACK0(AudioClip      )(      AudioClip)(AudioClip);
         ASSERT_EQUALS(VideoClip(0,2)->getRightPts(), AudioClip(0,1)->getRightPts());
-        ASSERT_EQUALS(VideoClip(0,0)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,0) - defaultTransitionLength);
-        ASSERT_EQUALS(VideoClip(0,1)->getLength(), defaultTransitionLength);
-        ASSERT_EQUALS(VideoClip(0,2)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1) - defaultTransitionLength);
+        ASSERT_EQUALS(VideoClip(0,0)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,0) - DefaultTransitionLength());
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(), DefaultTransitionLength());
+        ASSERT_EQUALS(VideoClip(0,2)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1) - DefaultTransitionLength());
         Undo();
         ASSERT_EQUALS(VideoClip(0,0)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,0)); // To check that the additional trimming is undone also
         ASSERT_EQUALS(VideoClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1));
@@ -85,9 +84,9 @@ void TestUiTimelinePopupMenu::testAddTransitions()
         ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip);
         ASSERT_AUDIOTRACK0(AudioClip      )(      AudioClip);
         ASSERT_EQUALS(VideoClip(0,2)->getRightPts(), AudioClip(0,1)->getRightPts());
-        ASSERT_EQUALS(VideoClip(0,0)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,0) - defaultTransitionLength);
-        ASSERT_EQUALS(VideoClip(0,1)->getLength(), defaultTransitionLength);
-        ASSERT_EQUALS(VideoClip(0,2)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1) - defaultTransitionLength);
+        ASSERT_EQUALS(VideoClip(0,0)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,0) - DefaultTransitionLength());
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(), DefaultTransitionLength());
+        ASSERT_EQUALS(VideoClip(0,2)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1) - DefaultTransitionLength());
         Undo();
         ASSERT_EQUALS(VideoClip(0,0)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,0)); // To check that the additional trimming is undone also
         ASSERT_EQUALS(VideoClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1));
@@ -99,15 +98,15 @@ void TestUiTimelinePopupMenu::testAddTransitions()
         TimelineKeyPress('i'); // Fade &in
         ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip)(VideoClip);
         ASSERT_AUDIOTRACK0(AudioClip)(       AudioClip     )(AudioClip);
-        ASSERT_EQUALS(VideoClip(0,1)->getLength(), defaultTransitionLength / 2);
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(), DefaultTransitionLength() / 2);
         ASSERT_EQUALS(VideoClip(0,2)->getRightPts(), AudioClip(0,1)->getRightPts());
         TimelineMove(Center(VideoClip(0,0)));
         TimelineOpenPopupMenuAt(Center(VideoClip(0,0)));
         TimelineKeyPress('o'); // Fade &out
         ASSERT_VIDEOTRACK0(VideoClip)(Transition)(Transition)(VideoClip);
         ASSERT_AUDIOTRACK0(AudioClip            )(      AudioClip      );
-        ASSERT_EQUALS(VideoClip(0,1)->getLength(), defaultTransitionLength / 2);
-        ASSERT_EQUALS(VideoClip(0,2)->getLength(), defaultTransitionLength / 2);
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(), DefaultTransitionLength() / 2);
+        ASSERT_EQUALS(VideoClip(0,2)->getLength(), DefaultTransitionLength() / 2);
         ASSERT_EQUALS(VideoClip(0,1)->getRightPts(), AudioClip(0,0)->getRightPts());
         ASSERT_EQUALS(VideoClip(0,2)->getLeftPts(), AudioClip(0,0)->getRightPts());
         ASSERT_EQUALS(VideoClip(0,3)->getRightPts(), AudioClip(0,1)->getRightPts());
@@ -225,7 +224,7 @@ void TestUiTimelinePopupMenu::testOpenPopupMenuWhenClickingOnTransition()
     StartTestSuite();
     TimelineZoomIn(6);
 
-    pts lengthOfCrossFade =  Config::ReadLong(Config::sPathTimelineDefaultTransitionLength);
+    pts lengthOfCrossFade =  DefaultTransitionLength();
     pts lengthOfFade = lengthOfCrossFade / 2;
 
     {

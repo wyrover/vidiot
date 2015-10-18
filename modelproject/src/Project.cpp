@@ -301,7 +301,7 @@ bool Project::DoOpenDocument(const wxString& file)
             LOG_ERROR;
             gui::Dialog::get().getConfirmation(_("Open Failed"),_("Could not read the contents of: " + file + ". \nVidiot must be restarted ((known bug that opening a project after this will fail)"));
             Config::WriteBool(Config::sPathProjectAutoLoadEnabled, false); // Ensure that upon next startup not immediately a file is opened, possibly failing again.
-            wxConfigBase::Get()->Flush();
+            Config::get().Flush();
             gui::Window::get().GetEventHandler()->QueueEvent(new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED,wxID_EXIT));
         }
         else

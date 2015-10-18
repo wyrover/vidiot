@@ -19,8 +19,11 @@
 
 #include "Config.h"
 #include "Constants.h"
+#include "UtilClone.h"
+#include "VideoFrameLayer.h"
 #include "UtilInitAvcodec.h"
 #include "UtilLogBoost.h"
+#include "UtilLogStl.h"
 #include "UtilLogWxwidgets.h"
 #include "VideoCompositionParameters.h"
 

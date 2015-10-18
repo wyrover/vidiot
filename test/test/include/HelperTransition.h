@@ -36,11 +36,14 @@ wxPoint TransitionRightClipBegin(model::IClipPtr clip);
 
 pixel TransitionCut(model::IClipPtr clip);
 
+pts DefaultTransitionLength();
+
 /// Base class for reusing several variables
 /// and the creation of the trimmed clips before creating
 /// the transition.
 struct MakeTransitionAfterClip
 {
+
     explicit MakeTransitionAfterClip(int afterclip, bool audio);
     virtual ~MakeTransitionAfterClip();
 
@@ -48,6 +51,7 @@ struct MakeTransitionAfterClip
 
     int clipNumberBeforeTransition;
     int clipNumberAfterTransition;
+
 
     // Before trimming the clips to make room for the transition
     pts leftPositionOfClipBeforeTransitionOriginal;

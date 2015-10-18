@@ -38,12 +38,14 @@ void WindowCheckMenu(int id, bool checked)
 
 void WindowCheckMenu(wxFrame& window, int id, bool checked)
 {
-     // Set with the 'other' value. Required to ensure that the
+    // Set with the 'other' value. Required to ensure that the
     // correct value is received when triggering the event,
     // since the event causes a 'toggle'.
-    window.GetMenuBar()->Check(id,!checked);
-    window.ProcessCommand(id);
-    WaitForIdle;
+    util::thread::RunInMainAndWait([&window, id, checked]
+    {
+        window.GetMenuBar()->Check(id, !checked);
+        window.ProcessCommand(id);
+    });
 }
 
 struct OpenProjectWaiter

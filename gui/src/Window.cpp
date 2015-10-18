@@ -367,7 +367,7 @@ Window::Window()
 
     GetDocumentManager()->SetMaxDocsOpen(1);
     GetDocumentManager()->FileHistoryUseMenu(mMenuFile);
-    GetDocumentManager()->FileHistoryLoad(*wxConfigBase::Get());
+    GetDocumentManager()->FileHistoryLoad(Config::get());
 
     for (wxMenuItem* item : mMenuFile->GetMenuItems())
     {
@@ -538,8 +538,8 @@ void Window::onOpenProject(model::EventOpenProject &event )
     model::CommandProcessor::get().SetEditMenu(mMenuEdit); // Set menu for do/undo
     model::CommandProcessor::get().Initialize();
     GetDocumentManager()->AddFileToHistory(model::Project::get().GetFilename());
-    GetDocumentManager()->FileHistorySave(*wxConfigBase::Get());
-    wxConfigBase::Get()->Flush();
+    GetDocumentManager()->FileHistorySave(Config::get());
+    Config::get().Flush();
     updateTitle();
     mVisibleWorker->start();
     mInvisibleWorker->start();
@@ -569,7 +569,7 @@ void Window::onRenameProject(model::EventRenameProject &event )
 {
     GetDocumentManager()->AddFileToHistory(model::Project::get().GetFilename());
     GetDocumentManager()->FileHistorySave(*wxConfigBase::Get());
-    wxConfigBase::Get()->Flush();
+    Config::get().Flush();
     updateTitle();
     event.Skip();
 }

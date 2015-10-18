@@ -21,6 +21,11 @@
 #include "VideoFrame.h"
 #include "AudioChunk.h"
 
+namespace model {
+    class AudioCompositionParameters;
+    class VideoCompositionParameters;
+}
+
 namespace gui {
 
 class VideoDisplay
@@ -102,12 +107,10 @@ private:
     // AUDIO
     //////////////////////////////////////////////////////////////////////////
 
-    int mNumberOfAudioChannels; ///< Number of audio channels to use for playback
-    int mAudioSampleRate; ///< Audio frame rate to use for playback
-
     model::FifoAudio mAudioChunks;
     model::AudioChunkPtr mCurrentAudioChunk;
 
+    std::unique_ptr<model::AudioCompositionParameters> mAudioParameters;
     boost::scoped_ptr<boost::thread> mAudioBufferThreadPtr;
     void sendToSoundTouch(model::AudioChunkPtr chunk);
     samplecount receiveFromSoundTouch(model::AudioChunkPtr chunk, samplecount nSamples, samplecount nSamplesRequired);
@@ -133,6 +136,7 @@ private:
     int mHeight;
     wxBitmapPtr mBufferBitmap = nullptr;
 
+    std::unique_ptr<model::VideoCompositionParameters> mVideoParameters;
     boost::scoped_ptr<boost::thread> mVideoBufferThreadPtr;
     void videoBufferThread();
 
@@ -148,6 +152,13 @@ private:
     void onPaint(wxPaintEvent& event);
     void onEraseBackground(wxEraseEvent& event);
     void onTimer(wxTimerEvent& event);
+
+    //////////////////////////////////////////////////////////////////////////
+    // HELPER METHODS
+    //////////////////////////////////////////////////////////////////////////
+
+    /// Update the parameters to be used for playback
+    void updateParameters();
 
 };
 

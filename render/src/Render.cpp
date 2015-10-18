@@ -74,6 +74,11 @@ public:
         ASSERT_MORE_THAN_ZERO(mLength);
         ASSERT_LESS_THAN_EQUALS(mFrom,sequence->getLength());
         ASSERT_LESS_THAN_EQUALS(mFrom + mLength,sequence->getLength());
+
+        if (Config::Exists(Config::sPathVideoOverruleFourCC))
+        {
+            mFourCC.reset(Config::ReadString(Config::sPathVideoOverruleFourCC));
+        }
     }
 
     void generate();
@@ -83,6 +88,9 @@ private:
     model::SequencePtr mSequence;
     pts mFrom;
     pts mLength;
+    boost::optional<wxString> mFourCC = boost::none;
+    VideoCompositionParameters mVideoParameters;
+    AudioCompositionParameters mAudioParameters;
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -414,9 +422,6 @@ void RenderWork::generate()
     sampleTimeBase.num = 1;
     sampleTimeBase.den = model::Properties::get().getAudioSampleRate();
 
-    boost::shared_ptr<VideoCompositionParameters> videoParameters = boost::make_shared<VideoCompositionParameters>();
-    boost::shared_ptr<AudioCompositionParameters> audioParameters = boost::make_shared<AudioCompositionParameters>();
-
     try
     {
 
@@ -434,10 +439,9 @@ void RenderWork::generate()
                 throw EncodingError("Unsupported number of ticks per frame in target codec.");
             }
 
-            if (Config::Exists(Config::sPathVideoOverruleFourCC))
+            if (mFourCC)
             {
-                wxString sFourCC = Config::ReadString(Config::sPathVideoOverruleFourCC);
-                wxCharBuffer chars = sFourCC.mb_str();
+                wxCharBuffer chars = mFourCC->mb_str();
                 int fourcc = 0;
                 switch (chars.length())
                 {
@@ -486,7 +490,7 @@ void RenderWork::generate()
                 ASSERT_NONZERO(colorSpaceConversionContext);
             }
 
-            videoParameters->setBoundingBox(wxSize(videoCodec->width, videoCodec->height)).setDrawBoundingBox(false).setOptimizeForQuality();
+            mVideoParameters.setBoundingBox(wxSize(videoCodec->width, videoCodec->height)).setDrawBoundingBox(false).setOptimizeForQuality();
 
             videoOpened = true;
         }
@@ -553,7 +557,7 @@ void RenderWork::generate()
 
             }
 
-            audioParameters->setSampleRate(audioCodec->sample_rate).setNrChannels(audioCodec->channels);
+            mAudioParameters.setSampleRate(audioCodec->sample_rate).setNrChannels(audioCodec->channels);
 
             audioOpened = true;
         }
@@ -577,7 +581,7 @@ void RenderWork::generate()
         // WRITE DATA INTO THE FILE
         //////////////////////////////////////////////////////////////////////////
 
-        AudioChunkPtr currentAudioChunk = storeAudio ? sequence->getNextAudio(*audioParameters) : AudioChunkPtr();
+        AudioChunkPtr currentAudioChunk = storeAudio ? sequence->getNextAudio(mAudioParameters) : AudioChunkPtr();
 
         while (!isAborted())  // write interleaved audio and video frames
         {
@@ -629,7 +633,7 @@ void RenderWork::generate()
 
                             if (currentAudioChunk->getUnreadSampleCount() == 0)
                             {
-                                currentAudioChunk = sequence->getNextAudio(*audioParameters);
+                                currentAudioChunk = sequence->getNextAudio(mAudioParameters);
                                 if (currentAudioChunk &&
                                     currentAudioChunk->getPts() > position &&
                                     (currentAudioChunk->getPts() - mFrom) < mLength) // Avoid showing progress 48 out of 47 frames
@@ -733,7 +737,7 @@ void RenderWork::generate()
 
                 if (!videoEnd)
                 {
-                    VideoFramePtr frame = sequence->getNextVideo(*videoParameters);
+                    VideoFramePtr frame = sequence->getNextVideo(mVideoParameters);
                     if (!frame)
                     {
                         videoEnd = true;

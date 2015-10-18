@@ -19,6 +19,7 @@
 
 #include "Config.h"
 #include "Convert.h"
+#include "Properties.h"
 #include "UtilLogBoost.h"
 
 namespace model {
@@ -28,8 +29,8 @@ namespace model {
 //////////////////////////////////////////////////////////////////////////
 
 AudioCompositionParameters::AudioCompositionParameters()
-    : mSampleRate(Config::ReadLong(Config::sPathAudioDefaultSampleRate))
-    , mNrChannels(Config::ReadLong(Config::sPathAudioDefaultNumberOfChannels))
+    : mSampleRate(Properties::get().getAudioSampleRate())
+    , mNrChannels(Properties::get().getAudioNumberOfChannels())
     , mSpeed(1)
     , mPts(boost::none)
     , mChunkSize(boost::none)
