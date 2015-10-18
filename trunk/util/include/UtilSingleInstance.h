@@ -48,4 +48,4 @@ private:
     static SingleInstance* sInstance;
 };
 
-template <class INSTANCETYPE> SingleInstance<INSTANCETYPE>* SingleInstance<INSTANCETYPE>::sInstance = 0;
+template <class INSTANCETYPE> SingleInstance<INSTANCETYPE>* SingleInstance<INSTANCETYPE>::sInstance = nullptr;

@@ -93,22 +93,25 @@ void MakeSequenceEmpty( model::SequencePtr sequence )
 
 void ExtendTrack(model::TrackPtr track, model::IPaths files, int nRepeat)
 {
-    for (int i = 0; i < nRepeat; ++i)
+    util::thread::RunInMainAndWait([track, files, nRepeat]
     {
-        for (model::IPathPtr path : files)
+        for (int i = 0; i < nRepeat; ++i)
         {
-            model::FilePtr file = boost::make_shared<model::File>(path->getPath());
-            std::pair<model::IClipPtr, model::IClipPtr> videoClip_audioClip = command::ClipCreator::makeClips(file);
-            if (track->isA<model::VideoTrack>())
+            for (model::IPathPtr path : files)
             {
-                track->addClips({ videoClip_audioClip.first });
-            }
-            else
-            {
-                track->addClips({ videoClip_audioClip.second });
+                model::FilePtr file = boost::make_shared<model::File>(path->getPath());
+                std::pair<model::IClipPtr, model::IClipPtr> videoClip_audioClip = command::ClipCreator::makeClips(file);
+                if (track->isA<model::VideoTrack>())
+                {
+                    track->addClips({ videoClip_audioClip.first });
+                }
+                else
+                {
+                    track->addClips({ videoClip_audioClip.second });
+                }
             }
         }
-    }
+    });
 }
 
 void MakeTrackEmpty(model::TrackPtr track)

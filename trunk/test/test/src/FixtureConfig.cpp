@@ -42,15 +42,12 @@ FixtureConfig& FixtureConfig::SetDefaults()
 
 FixtureConfig& FixtureConfig::SnapToClips(bool snap)
 {
-
     WindowCheckMenu(ID_SNAP_CLIPS, snap);
-    WaitForIdle;
     return *this;
 }
 FixtureConfig& FixtureConfig::SnapToCursor(bool snap)
 {
     WindowCheckMenu(ID_SNAP_CURSOR, snap);
-    WaitForIdle;
     return *this;
 }
 

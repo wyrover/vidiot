@@ -184,7 +184,7 @@ if (MSVC)
     add_definitions (/D SOURCE_ROOT="${CMAKE_CURRENT_SOURCE_DIR}") # Used to fix the path to the test input files (part of sources) in the code, via the preprocessor.
   include_directories (AFTER ctypes)
 else ()
-    list (APPEND CMAKE_CXX_FLAGS "-std=c++0x") # Add -H For checking that pch is used
+    list (APPEND CMAKE_CXX_FLAGS "-std=c++14") # Add -H For checking that pch is used
     add_definitions (-DSOURCE_ROOT=${CMAKE_CURRENT_SOURCE_DIR}) # Used to fix the path to the test input files (part of sources) in the code, via the preprocessor.
 endif ()
 

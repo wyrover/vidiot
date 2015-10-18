@@ -29,7 +29,7 @@ namespace model {
 
 VideoCompositionParameters::VideoCompositionParameters()
     : mBoundingBox(0, 0)
-    , mDrawBoundingBox(Config::ReadBool(Config::sPathVideoShowBoundingBox))
+    , mDrawBoundingBox(false)
     , mOptimizeForQuality(false)
     , mSkip(false)
     , mPts(boost::none)

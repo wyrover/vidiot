@@ -47,6 +47,8 @@ struct RenderThumbnailWork
     explicit RenderThumbnailWork(const model::IClipPtr& clip, const wxSize& size, rational zoom)
         : RenderClipPreviewWork(clip,size,zoom)
     {
+        mParameters.setBoundingBox(mSize).setDrawBoundingBox(false);
+
         // Can't make the clone in the separate thread, hence this duplication.
         // Otherwise, the clip may be (partially) opened/opening in the main thread at the moment
         // the clone is made in the createBitmap method. That resulted in empty peaks views,
@@ -104,7 +106,7 @@ struct RenderThumbnailWork
             ASSERT_MORE_THAN_EQUALS_ZERO(mVideoClipClone->getOffset())(*mVideoClipClone);
             // The if is required to avoid errors during editing operations.
             mVideoClipClone->moveTo(0);
-            model::VideoFramePtr videoFrame = mVideoClipClone->getNextVideo(model::VideoCompositionParameters().setBoundingBox(mSize).setDrawBoundingBox(false));
+            model::VideoFramePtr videoFrame = mVideoClipClone->getNextVideo(mParameters);
             result = videoFrame->getImage();
 
             // Ensure that any opened threads are closed again.
@@ -116,6 +118,7 @@ struct RenderThumbnailWork
     }
 
     model::VideoClipPtr mVideoClipClone = nullptr;
+    model::VideoCompositionParameters mParameters;
 };
 
 //////////////////////////////////////////////////////////////////////////

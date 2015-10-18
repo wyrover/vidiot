@@ -76,8 +76,6 @@ VideoDisplay::VideoDisplay(wxWindow *parent, model::SequencePtr sequence)
     , mStartTime(0)
     , mAudioLatency(0)
     , mStartPts(0)
-    , mNumberOfAudioChannels(model::Properties::get().getAudioNumberOfChannels())
-    , mAudioSampleRate(model::Properties::get().getAudioSampleRate())
     , mSkipFrames(0)
     , mSpeed(sDefaultSpeed)
     , mSoundTouchLatency(-1)
@@ -99,6 +97,8 @@ VideoDisplay::VideoDisplay(wxWindow *parent, model::SequencePtr sequence)
     Bind(wxEVT_ERASE_BACKGROUND,    &VideoDisplay::onEraseBackground,    this);
     Bind(wxEVT_SIZE,                &VideoDisplay::onSize,               this);
     mVideoTimer.Bind(wxEVT_TIMER,   &VideoDisplay::onTimer,              this);
+
+    updateParameters();
 
     LOG_INFO;
 }
@@ -131,10 +131,12 @@ void VideoDisplay::play()
         // Ensure that the to-be-started threads do not immediately stop
         mAbortThreads = false;
 
+        updateParameters();
+
         // SoundTouch must be initialized before starting the audio buffer thread
         mSpeedFactor = static_cast<double>(sDefaultSpeed) / static_cast<double>(mSpeed);
-        mSoundTouch.setSampleRate(mAudioSampleRate);
-        mSoundTouch.setChannels(mNumberOfAudioChannels);
+        mSoundTouch.setSampleRate(mAudioParameters->getSampleRate());
+        mSoundTouch.setChannels(mAudioParameters->getNrChannels());
         mSoundTouch.setTempo(1.0);
         mSoundTouch.setTempoChange(mSpeed - sDefaultSpeed);
         mSoundTouch.setRate(1.0);
@@ -168,7 +170,7 @@ void VideoDisplay::play()
         // On Linux (Ubuntu), the default buffer size is around 383.
         // Current implementation locks too much to keep up.
         // todo use less locking and use the default number of frames per buffer for linux also.
-        bufferSize = model::Convert::ptsToSamplesPerChannel(mAudioSampleRate, 2);
+        bufferSize = model::Convert::ptsToSamplesPerChannel(mAudioParameters->getSampleRate(), 2);
 #endif // __GNUC__
 
         auto verify = [this](PaError err, wxString message)
@@ -182,7 +184,7 @@ void VideoDisplay::play()
             return false;
         };
 
-        PaError err = Pa_OpenDefaultStream( &mAudioOutputStream, 0, mNumberOfAudioChannels, paInt16, mAudioSampleRate, bufferSize, portaudio_callback, this );
+        PaError err = Pa_OpenDefaultStream( &mAudioOutputStream, 0, mAudioParameters->getNrChannels(), paInt16, mAudioParameters->getSampleRate(), bufferSize, portaudio_callback, this );
         if (!verify(err, _("Opening audio stream failed:"))) { return; }
 
         mStartTime = Pa_GetStreamTime(mAudioOutputStream);
@@ -277,7 +279,7 @@ void VideoDisplay::moveTo(pts position)
     if (mWidth > 0 && mHeight > 0)
     {
         // Avoid getting bitmaps for empty windows during startup.
-        mCurrentVideoFrame = mSequence->getNextVideo(model::VideoCompositionParameters().setBoundingBox(wxSize(mWidth,mHeight)));
+        mCurrentVideoFrame = mSequence->getNextVideo(mVideoParameters->setBoundingBox(wxSize(mWidth,mHeight)));
     }
     else
     {
@@ -330,7 +332,7 @@ model::SequencePtr VideoDisplay::getSequence() const
 void VideoDisplay::sendToSoundTouch(model::AudioChunkPtr chunk)
 {
 #ifdef SOUNDTOUCH_INTEGER_SAMPLES
-    mSoundTouch.putSamples(reinterpret_cast<const short *>(chunk->getUnreadSamples()), chunk->getUnreadSampleCount() / mNumberOfAudioChannels);
+    mSoundTouch.putSamples(reinterpret_cast<const short *>(chunk->getUnreadSamples()), chunk->getUnreadSampleCount() / mAudioParameters->getNrChannels());
 #else
     float *convertTo = new float[chunk->getUnreadSampleCount()];
     sample* s = chunk->getUnreadSamples();
@@ -340,7 +342,7 @@ void VideoDisplay::sendToSoundTouch(model::AudioChunkPtr chunk)
     {
         *t++ = static_cast<float>(*s++) / M;
     }
-    mSoundTouch.putSamples(convertTo, chunk->getUnreadSampleCount() / mNumberOfAudioChannels);
+    mSoundTouch.putSamples(convertTo, chunk->getUnreadSampleCount() / mAudioParameters->getNrChannels());
     delete[] convertTo;
 #endif
 }
@@ -348,7 +350,7 @@ void VideoDisplay::sendToSoundTouch(model::AudioChunkPtr chunk)
 samplecount VideoDisplay::receiveFromSoundTouch(model::AudioChunkPtr chunk, samplecount offset, samplecount nSamplesRequired)
 {
     int nFramesAvailable = mSoundTouch.numSamples();
-    int nFramesRequired = nSamplesRequired / mNumberOfAudioChannels;
+    int nFramesRequired = nSamplesRequired / mAudioParameters->getNrChannels();
 #ifdef SOUNDTOUCH_INTEGER_SAMPLES
     samplecount nFrames = mSoundTouch.receiveSamples(reinterpret_cast<short*>(chunk->getBuffer()) + offset, nFramesRequired);
     ASSERT_LESS_THAN_EQUALS(nFrames, nFramesAvailable);
@@ -359,7 +361,7 @@ samplecount VideoDisplay::receiveFromSoundTouch(model::AudioChunkPtr chunk, samp
     ASSERT_LESS_THAN_EQUALS(nFrames, nFramesAvailable);
     ASSERT_LESS_THAN_EQUALS(nFrames, nFramesRequired);
 
-    int nSamples = nFrames * mNumberOfAudioChannels;
+    int nSamples = nFrames * mAudioParameters->getNrChannels();
     sample* t = chunk->getBuffer() + offset;
     float* s = convertFrom;
     for (int i = 0; i < nSamples; ++i)
@@ -371,7 +373,7 @@ samplecount VideoDisplay::receiveFromSoundTouch(model::AudioChunkPtr chunk, samp
     }
     delete convertFrom;
 #endif
-    return nFrames * mNumberOfAudioChannels;
+    return nFrames * mAudioParameters->getNrChannels();
 }
 
 void VideoDisplay::audioBufferThread()
@@ -382,7 +384,7 @@ void VideoDisplay::audioBufferThread()
     {
         while (!mAbortThreads)
         {
-            mAudioChunks.push(mSequence->getNextAudio(model::AudioCompositionParameters().setSampleRate(mAudioSampleRate).setNrChannels(mNumberOfAudioChannels))); // No speed change. Just insert chunk.
+            mAudioChunks.push(mSequence->getNextAudio(*mAudioParameters)); // No speed change. Just insert chunk.
         }
     }
     else
@@ -391,8 +393,8 @@ void VideoDisplay::audioBufferThread()
         pts outputPts = mStartPts;
         while (!mAbortThreads)
         {
-            samplecount chunksize = model::AudioCompositionParameters().setSampleRate(mAudioSampleRate).setNrChannels(mNumberOfAudioChannels).setPts(outputPts).determineChunkSize().getChunkSize();
-            model::AudioChunkPtr outputChunk = boost::make_shared<model::AudioChunk>(mNumberOfAudioChannels, chunksize, true, false);
+            samplecount chunksize = mAudioParameters->setPts(outputPts).determineChunkSize().getChunkSize();
+            model::AudioChunkPtr outputChunk = boost::make_shared<model::AudioChunk>(mAudioParameters->getNrChannels(), chunksize, true, false);
             samplecount writtenSamples = 0;
             while (writtenSamples < chunksize)
             {
@@ -407,7 +409,7 @@ void VideoDisplay::audioBufferThread()
                 }
                 else
                 {
-                    model::AudioChunkPtr chunk = mSequence->getNextAudio(model::AudioCompositionParameters().setSampleRate(mAudioSampleRate).setNrChannels(mNumberOfAudioChannels));
+                    model::AudioChunkPtr chunk = mSequence->getNextAudio(*mAudioParameters);
                     atEnd = chunk == nullptr;
                     if (!atEnd)
                     {
@@ -423,7 +425,7 @@ void VideoDisplay::audioBufferThread()
 
 bool VideoDisplay::audioRequested(void *buffer, const unsigned long& frames, double playtime)
 {
-    samplecount remainingSamples = frames * mNumberOfAudioChannels;
+    samplecount remainingSamples = frames * mAudioParameters->getNrChannels();
     sample* out = static_cast<sample*>(buffer);
 
     while (remainingSamples > 0)
@@ -481,7 +483,7 @@ void VideoDisplay::videoBufferThread()
     {
         int nSkip = mSkipFrames.load();
         bool skip = nSkip > 0;
-        model::VideoFramePtr videoFrame = mSequence->getNextVideo(model::VideoCompositionParameters().setBoundingBox(wxSize(mWidth,mHeight)).setSkip(skip));
+        model::VideoFramePtr videoFrame = mSequence->getNextVideo(mVideoParameters->setBoundingBox(wxSize(mWidth,mHeight)).setSkip(skip));
         if (!skip)
         {
             // NOT: videoFrame->getBitmap(); // put in cache (avoid having to draw in GUI thread) -- Don't do this anymore since this is a gdi object in a separate thread.
@@ -607,7 +609,7 @@ void VideoDisplay::onPaint(wxPaintEvent& event)
     // Buffered dc is used, since first the entire area is blanked with drawrectangle,
     // and then overwritten. Without buffering that causes flickering.
     boost::scoped_ptr<wxDC> dc;
-    if (!IsDoubleBuffered() && 
+    if (!IsDoubleBuffered() &&
         mBufferBitmap != nullptr)
     {
         // A dedicated buffer bitmap is used. Without it I had conflicts between the buffered
@@ -637,6 +639,18 @@ void VideoDisplay::onPaint(wxPaintEvent& event)
 void VideoDisplay::onTimer(wxTimerEvent& event)
 {
     showNextFrame();
+}
+
+//////////////////////////////////////////////////////////////////////////
+// HELPER METHODS
+//////////////////////////////////////////////////////////////////////////
+
+void VideoDisplay::updateParameters()
+{
+    ASSERT(wxThread::IsMain());
+    mAudioParameters = std::make_unique<model::AudioCompositionParameters>();
+    mVideoParameters = std::make_unique<model::VideoCompositionParameters>();
+    mVideoParameters->setDrawBoundingBox(Config::ReadBool(Config::sPathVideoShowBoundingBox));
 }
 
 } // namespace

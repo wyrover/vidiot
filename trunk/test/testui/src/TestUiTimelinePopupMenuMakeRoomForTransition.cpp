@@ -42,11 +42,10 @@ void TestUiTimelinePopupMenuMakeRoomForTransition::testMakeRoomForCrossfade()
     StartTestSuite();
     TimelineZoomIn(6);
     ConfigFixture.SnapToClips(false);
-    pts defaultTransitionLength = Config::ReadLong(Config::sPathTimelineDefaultTransitionLength);
     {
         StartTest("Left clip - small hidden extension, right clip - none: Crossfade only has half the default length.");
-        TimelineShiftTrim(RightCenter(VideoClip(0,0)),RightCenter(VideoClip(0,0)) - wxPoint(getTimeline().getZoom().ptsToPixels(defaultTransitionLength / 2),0)); // Make left clip 'extendable' on its right side, with length 12
-        ASSERT_EQUALS(VideoClip(0,0)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,0) - defaultTransitionLength / 2);
+        TimelineShiftTrim(RightCenter(VideoClip(0,0)),RightCenter(VideoClip(0,0)) - wxPoint(getTimeline().getZoom().ptsToPixels(DefaultTransitionLength() / 2),0)); // Make left clip 'extendable' on its right side, with length 12
+        ASSERT_EQUALS(VideoClip(0,0)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,0) - DefaultTransitionLength() / 2);
         pts OriginalLengthOfLeftClip = VideoClip(0,0)->getLength();
         TimelineOpenPopupMenuAt(Center(VideoClip(0,0)));
         TimelineKeyPress('n'); // Cross-fade to &next
@@ -54,8 +53,8 @@ void TestUiTimelinePopupMenuMakeRoomForTransition::testMakeRoomForCrossfade()
         ASSERT_AUDIOTRACK0(      AudioClip      )(AudioClip)(AudioClip);
         ASSERT_EQUALS(VideoClip(0,2)->getRightPts(), AudioClip(0,1)->getRightPts());
         ASSERT_EQUALS(VideoClip(0,0)->getLength(), OriginalLengthOfLeftClip);
-        ASSERT_EQUALS(VideoClip(0,1)->getLength(), defaultTransitionLength / 2);
-        ASSERT_EQUALS(VideoClip(0,2)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1) - defaultTransitionLength / 2);
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(), DefaultTransitionLength() / 2);
+        ASSERT_EQUALS(VideoClip(0,2)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1) - DefaultTransitionLength() / 2);
         Undo(2);
         ASSERT_EQUALS(VideoClip(0,0)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,0)); // To check that the additional trimming is undone also
         ASSERT_EQUALS(VideoClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1));
@@ -71,8 +70,8 @@ void TestUiTimelinePopupMenuMakeRoomForTransition::testMakeRoomForCrossfade()
         ASSERT_AUDIOTRACK0(      AudioClip      )(AudioClip)(AudioClip);
         ASSERT_EQUALS(VideoClip(0,2)->getRightPts(), AudioClip(0,1)->getRightPts());
         ASSERT_EQUALS(VideoClip(0,0)->getLength(), OriginalLengthOfLeftClip);
-        ASSERT_EQUALS(VideoClip(0,1)->getLength(), defaultTransitionLength);
-        ASSERT_EQUALS(VideoClip(0,2)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1) - defaultTransitionLength);
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(), DefaultTransitionLength());
+        ASSERT_EQUALS(VideoClip(0,2)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1) - DefaultTransitionLength());
         Undo(2);
         ASSERT_EQUALS(VideoClip(0,0)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,0)); // To check that the additional trimming is undone also
         ASSERT_EQUALS(VideoClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1));
@@ -80,16 +79,16 @@ void TestUiTimelinePopupMenuMakeRoomForTransition::testMakeRoomForCrossfade()
     }
     {
         StartTest("Right clip - small 'hidden extension', left clip: none: Crossfade is positioned entirely to the left of the cut.");
-        TimelineShiftTrim(LeftCenter(VideoClip(0,1)), LeftCenter(VideoClip(0,1)) + wxPoint(getTimeline().getZoom().ptsToPixels(defaultTransitionLength / 2),0)); // Make right clip 'extendable' on its left side, with length 12
-        ASSERT_EQUALS(VideoClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1) - defaultTransitionLength / 2);
+        TimelineShiftTrim(LeftCenter(VideoClip(0,1)), LeftCenter(VideoClip(0,1)) + wxPoint(getTimeline().getZoom().ptsToPixels(DefaultTransitionLength() / 2),0)); // Make right clip 'extendable' on its left side, with length 12
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1) - DefaultTransitionLength() / 2);
         pts OriginalLengthOfRightClip = VideoClip(0,1)->getLength();
         TimelineOpenPopupMenuAt(Center(VideoClip(0,1)));
         TimelineKeyPress('p'); // Cross-fade from &previous
         ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip)(VideoClip);
         ASSERT_AUDIOTRACK0(AudioClip      )(      AudioClip)(AudioClip);
         ASSERT_EQUALS(VideoClip(0,2)->getRightPts(), AudioClip(0,1)->getRightPts());
-        ASSERT_EQUALS(VideoClip(0,0)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,0) - defaultTransitionLength / 2);
-        ASSERT_EQUALS(VideoClip(0,1)->getLength(), defaultTransitionLength / 2);
+        ASSERT_EQUALS(VideoClip(0,0)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,0) - DefaultTransitionLength() / 2);
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(), DefaultTransitionLength() / 2);
         ASSERT_EQUALS(VideoClip(0,2)->getLength(), OriginalLengthOfRightClip);
         Undo(2);
         ASSERT_EQUALS(VideoClip(0,0)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,0)); // To check that the additional trimming is undone also
@@ -105,8 +104,8 @@ void TestUiTimelinePopupMenuMakeRoomForTransition::testMakeRoomForCrossfade()
         ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip)(VideoClip);
         ASSERT_AUDIOTRACK0(AudioClip      )(      AudioClip)(AudioClip);
         ASSERT_EQUALS(VideoClip(0,2)->getRightPts(), AudioClip(0,1)->getRightPts());
-        ASSERT_EQUALS(VideoClip(0,0)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,0) - defaultTransitionLength);
-        ASSERT_EQUALS(VideoClip(0,1)->getLength(), defaultTransitionLength);
+        ASSERT_EQUALS(VideoClip(0,0)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,0) - DefaultTransitionLength());
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(), DefaultTransitionLength());
         ASSERT_EQUALS(VideoClip(0,2)->getLength(), OriginalLengthOfRightClip);
         Undo(2);
         ASSERT_EQUALS(VideoClip(0,0)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,0)); // To check that the additional trimming is undone also
@@ -116,8 +115,8 @@ void TestUiTimelinePopupMenuMakeRoomForTransition::testMakeRoomForCrossfade()
 
     {
         StartTest("Left clip - small 'hidden extension', right clip - large one: Crossfade positioned to the left of the cut mostly.");
-        TimelineShiftTrim(RightCenter(VideoClip(0,0)),RightCenter(VideoClip(0,0)) - wxPoint(getTimeline().getZoom().ptsToPixels(defaultTransitionLength / 4),0)); // Make left clip 'extendable' on its right side, with length 6
-        ASSERT_EQUALS(VideoClip(0,0)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,0) - defaultTransitionLength / 4);
+        TimelineShiftTrim(RightCenter(VideoClip(0,0)),RightCenter(VideoClip(0,0)) - wxPoint(getTimeline().getZoom().ptsToPixels(DefaultTransitionLength() / 4),0)); // Make left clip 'extendable' on its right side, with length 6
+        ASSERT_EQUALS(VideoClip(0,0)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,0) - DefaultTransitionLength() / 4);
         TimelineShiftTrim(LeftCenter(VideoClip(0,1)),Center(VideoClip(0,1))); // Make right clip 'extendable' (a lot) on its left side
         pts OriginalLengthOfLeftClip = VideoClip(0,0)->getLength();
         pts OriginalLengthOfRightClip = VideoClip(0,1)->getLength();
@@ -126,9 +125,9 @@ void TestUiTimelinePopupMenuMakeRoomForTransition::testMakeRoomForCrossfade()
         ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip)(VideoClip);
         ASSERT_AUDIOTRACK0(      AudioClip      )(AudioClip)(AudioClip);
         ASSERT_EQUALS(VideoClip(0,2)->getRightPts(), AudioClip(0,1)->getRightPts());
-        ASSERT_EQUALS(VideoClip(0,0)->getLength(), OriginalLengthOfLeftClip - 3 * (defaultTransitionLength / 4) ); // 3/4 of the transition is 'to the left'
-        ASSERT_EQUALS(VideoClip(0,1)->getLength(), defaultTransitionLength);
-        ASSERT_EQUALS(VideoClip(0,2)->getLength(), OriginalLengthOfRightClip - defaultTransitionLength / 4); // 1/4 of the transition is 'to the right'
+        ASSERT_EQUALS(VideoClip(0,0)->getLength(), OriginalLengthOfLeftClip - 3 * (DefaultTransitionLength() / 4) ); // 3/4 of the transition is 'to the left'
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(), DefaultTransitionLength());
+        ASSERT_EQUALS(VideoClip(0,2)->getLength(), OriginalLengthOfRightClip - DefaultTransitionLength() / 4); // 1/4 of the transition is 'to the right'
         Undo(3);
         ASSERT_EQUALS(VideoClip(0,0)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,0)); // To check that the additional trimming is undone also
         ASSERT_EQUALS(VideoClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1));
@@ -137,8 +136,8 @@ void TestUiTimelinePopupMenuMakeRoomForTransition::testMakeRoomForCrossfade()
     {
         StartTest("Left clip has large 'hidden extension', right a small one: Crossfade positioned as much to the right of the cut as possible.");
         TimelineShiftTrim(RightCenter(VideoClip(0,0)),Center(VideoClip(0,0))); // Make left clip 'extendable' (a lot) on its right side
-        TimelineShiftTrim(LeftCenter(VideoClip(0,1)), LeftCenter(VideoClip(0,1)) + wxPoint(getTimeline().getZoom().ptsToPixels(defaultTransitionLength / 4),0)); // Make right clip 'extendable' on its left side, with length 6
-        ASSERT_EQUALS(VideoClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1) - defaultTransitionLength / 4);
+        TimelineShiftTrim(LeftCenter(VideoClip(0,1)), LeftCenter(VideoClip(0,1)) + wxPoint(getTimeline().getZoom().ptsToPixels(DefaultTransitionLength() / 4),0)); // Make right clip 'extendable' on its left side, with length 6
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1) - DefaultTransitionLength() / 4);
         pts OriginalLengthOfLeftClip = VideoClip(0,0)->getLength();
         pts OriginalLengthOfRightClip = VideoClip(0,1)->getLength();
         TimelineOpenPopupMenuAt(Center(VideoClip(0,1)));
@@ -146,9 +145,9 @@ void TestUiTimelinePopupMenuMakeRoomForTransition::testMakeRoomForCrossfade()
         ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip)(VideoClip);
         ASSERT_AUDIOTRACK0(      AudioClip      )(AudioClip)(AudioClip);
         ASSERT_EQUALS(VideoClip(0,2)->getRightPts(), AudioClip(0,1)->getRightPts());
-        ASSERT_EQUALS(VideoClip(0,0)->getLength(), OriginalLengthOfLeftClip - defaultTransitionLength / 4); // 1/4 of the transition is 'to the left'
-        ASSERT_EQUALS(VideoClip(0,1)->getLength(), defaultTransitionLength);
-        ASSERT_EQUALS(VideoClip(0,2)->getLength(), OriginalLengthOfRightClip - 3 * (defaultTransitionLength / 4) ); // 3/4 of the transition is 'to the right'
+        ASSERT_EQUALS(VideoClip(0,0)->getLength(), OriginalLengthOfLeftClip - DefaultTransitionLength() / 4); // 1/4 of the transition is 'to the left'
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(), DefaultTransitionLength());
+        ASSERT_EQUALS(VideoClip(0,2)->getLength(), OriginalLengthOfRightClip - 3 * (DefaultTransitionLength() / 4) ); // 3/4 of the transition is 'to the right'
         Undo(3);
         ASSERT_EQUALS(VideoClip(0,0)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,0)); // To check that the additional trimming is undone also
         ASSERT_EQUALS(VideoClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1));
@@ -159,7 +158,7 @@ void TestUiTimelinePopupMenuMakeRoomForTransition::testMakeRoomForCrossfade()
         TimelineOpenPopupMenuAt(Center(VideoClip(0,0)));
         TimelineKeyPress('i'); // fade &in
         ASSERT_VIDEOTRACK0(Transition)(VideoClip)(VideoClip)(VideoClip);
-        ASSERT_EQUALS(VideoClip(0,0)->getLength(), defaultTransitionLength / 2);
+        ASSERT_EQUALS(VideoClip(0,0)->getLength(), DefaultTransitionLength() / 2);
         TimelineShiftTrim(RightCenter(VideoClip(0,1)), Center(VideoClip(0,0)));
         ASSERT_ZERO(VideoClip(0,1)->getLength());
         TimelineOpenPopupMenuAt(Center(VideoClip(0,1)));
@@ -172,7 +171,7 @@ void TestUiTimelinePopupMenuMakeRoomForTransition::testMakeRoomForCrossfade()
         TimelineOpenPopupMenuAt(Center(VideoClip(0,0)));
         TimelineKeyPress('i'); // fade &in
         ASSERT_VIDEOTRACK0(Transition)(VideoClip)(VideoClip)(VideoClip);
-        ASSERT_EQUALS(VideoClip(0,0)->getLength(), defaultTransitionLength / 2);
+        ASSERT_EQUALS(VideoClip(0,0)->getLength(), DefaultTransitionLength() / 2);
         TimelineShiftTrim(RightCenter(VideoClip(0,1)), Center(VideoClip(0,0)));
         ASSERT_ZERO(VideoClip(0,1)->getLength());
         TimelineOpenPopupMenuAt(Center(VideoClip(0,2)));
@@ -185,7 +184,7 @@ void TestUiTimelinePopupMenuMakeRoomForTransition::testMakeRoomForCrossfade()
         TimelineOpenPopupMenuAt(Center(VideoClip(0,1)));
         TimelineKeyPress('o'); // fade &out
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
-        ASSERT_EQUALS(VideoClip(0,2)->getLength(), defaultTransitionLength / 2);
+        ASSERT_EQUALS(VideoClip(0,2)->getLength(), DefaultTransitionLength() / 2);
         TimelineShiftTrim(LeftCenter(VideoClip(0,1)), Center(VideoClip(0,2)));
         ASSERT_ZERO(VideoClip(0,1)->getLength());
         TimelineOpenPopupMenuAt(Center(VideoClip(0,1)));
@@ -198,7 +197,7 @@ void TestUiTimelinePopupMenuMakeRoomForTransition::testMakeRoomForCrossfade()
         TimelineOpenPopupMenuAt(Center(VideoClip(0,1)));
         TimelineKeyPress('o'); // fade &out
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
-        ASSERT_EQUALS(VideoClip(0,2)->getLength(), defaultTransitionLength / 2);
+        ASSERT_EQUALS(VideoClip(0,2)->getLength(), DefaultTransitionLength() / 2);
         TimelineShiftTrim(LeftCenter(VideoClip(0,1)), Center(VideoClip(0,2)));
         ASSERT_ZERO(VideoClip(0,1)->getLength());
         TimelineOpenPopupMenuAt(Center(VideoClip(0,1)));
@@ -215,10 +214,10 @@ void TestUiTimelinePopupMenuMakeRoomForTransition::testMakeRoomForCrossfade()
         TimelineKeyPress('i'); // fade &in
         TimelineShiftTrim(RightCenter(VideoClip(0,1)), LeftCenter(VideoClip(0,1)) - wxPoint(10,0));
         ASSERT_VIDEOTRACK0(Transition)(VideoClip)(VideoClip)(Transition);
-        ASSERT_EQUALS(VideoClip(0,0)->getLength(), defaultTransitionLength / 2);
+        ASSERT_EQUALS(VideoClip(0,0)->getLength(), DefaultTransitionLength() / 2);
         ASSERT_EQUALS(VideoClip(0,1)->getLength(), 0);
         ASSERT_EQUALS(VideoClip(0,2)->getLength(), 0);
-        ASSERT_EQUALS(VideoClip(0,3)->getLength(), defaultTransitionLength / 2);
+        ASSERT_EQUALS(VideoClip(0,3)->getLength(), DefaultTransitionLength() / 2);
         TimelineOpenPopupMenuAt(Center(VideoClip(0,1)));
         TimelineKeyPress('n');
         ASSERT_VIDEOTRACK0(Transition)(VideoClip)(VideoClip)(Transition)(VideoClip); // No transition added

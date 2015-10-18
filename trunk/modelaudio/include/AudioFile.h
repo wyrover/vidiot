@@ -64,7 +64,7 @@ public:
     int getSampleRate();
     int getChannels();
     boost::optional<pts> getNewStartPosition() const;
-    AudioPeaks getPeaks(pts offset, pts length);
+    AudioPeaks getPeaks(const AudioCompositionParameters& parameters, pts offset, pts length);
 
 protected:
 

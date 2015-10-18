@@ -375,7 +375,7 @@ boost::optional<pts> AudioFile::getNewStartPosition() const
     return mNewStartPosition;
 }
 
-AudioPeaks AudioFile::getPeaks(pts offset, pts length) // todo add speed here!
+AudioPeaks AudioFile::getPeaks(const AudioCompositionParameters& parameters, pts offset, pts length) // todo add speed here!
 {
     if (!canBeOpened())
     {
@@ -388,7 +388,6 @@ AudioPeaks AudioFile::getPeaks(pts offset, pts length) // todo add speed here!
     {
         // The setPts() & determineChunkSize() below is required for the case where the file has been removed from disk,
         // and the chunk size is used to initialize a chunk of silence.
-        AudioCompositionParameters parameters{ model::AudioCompositionParameters().setSampleRate(model::Properties::get().getAudioSampleRate()).setNrChannels(1).setPts(0).determineChunkSize() };
         moveTo(0);
 
         AudioPeaks allPeaks;

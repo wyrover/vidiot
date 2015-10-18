@@ -42,9 +42,9 @@ void TestSavingAndLoading::testSaveAndLoad()
 {
     StartTestSuite();
 
-    ConfigOverruleString overruleFrameRate(Config::sPathVideoDefaultFrameRate, FrameRate::s24p.toString());
-    ConfigOverruleLong overruleChannels(Config::sPathAudioDefaultNumberOfChannels, 2);
-    ConfigOverruleLong overruleSampleRate(Config::sPathAudioDefaultSampleRate, 44100);
+    ConfigOverrule<wxString> overruleFrameRate(Config::sPathVideoDefaultFrameRate, FrameRate::s24p.toString());
+    ConfigOverrule<long> overruleChannels(Config::sPathAudioDefaultNumberOfChannels, 2);
+    ConfigOverrule<long> overruleSampleRate(Config::sPathAudioDefaultSampleRate, 44100);
 
     StartTest("Create saved document");
 
@@ -207,7 +207,7 @@ void TestSavingAndLoading::testBackupBeforeSave()
         ASSERT(model::Project::createBackupFileName(existingFile,count).Exists())(count);
         ASSERT_FILE_CREATED(existingFile,count);
 
-        for (int j = 0; j < count - Config::ReadLong(Config::sPathProjectBackupBeforeSaveMaximum); ++j)
+        for (int j = 0; j < count - ConfigRead<long>(Config::sPathProjectBackupBeforeSaveMaximum); ++j)
         {
             ASSERT(!model::Project::createBackupFileName(existingFile,j).Exists())(count)(j)(tempDir_fileName);
         }

@@ -158,7 +158,6 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     static bool sShowDebugInfo;
-    static boost::mutex sMutex;
 
     static bool sHold;
 };

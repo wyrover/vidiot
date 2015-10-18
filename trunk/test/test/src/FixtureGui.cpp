@@ -202,6 +202,7 @@ void FixtureGui::mainThread()
             if (mEnd) break;
         }
         wxTheApp->CallOnInit();
+        ASSERT(wxThread::IsMain());
         wxTheApp->OnRun();
         wxTheApp->OnExit();
         VAR_WARNING(this);

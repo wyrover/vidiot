@@ -27,10 +27,13 @@ model::VideoFramePtr GetFrame(model::IClipPtr clip, pts offset)
     model::VideoClipPtr videoclip{ getVideoClip(clone) };
     ASSERT_NONZERO(videoclip);
     videoclip->moveTo(offset);
-    model::VideoCompositionParameters parameters; parameters.setPts(0).setBoundingBox(wxSize(1280, 720));
-    model::VideoFramePtr result = videoclip->getNextVideo(parameters);
-    ASSERT_NONZERO(result);
-    return result;
+    return util::thread::RunInMainReturning<model::VideoFramePtr>([videoclip]
+    {
+        model::VideoCompositionParameters parameters; parameters.setPts(0).setBoundingBox(wxSize(1280, 720));
+        model::VideoFramePtr result = videoclip->getNextVideo(parameters);
+        ASSERT_NONZERO(result);
+        return result;
+    });
 }
 
 model::VideoFramePtr FirstFrame(model::IClipPtr clip)

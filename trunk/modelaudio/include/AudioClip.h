@@ -67,7 +67,7 @@ public:
 
     void setVolume(int volume);
     int getVolume() const;
-    AudioPeaks getPeaks();
+    AudioPeaks getPeaks(const AudioCompositionParameters& parameters);
 
 protected:
 

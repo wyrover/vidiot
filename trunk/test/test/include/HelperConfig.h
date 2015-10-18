@@ -21,49 +21,61 @@
 
 namespace test {
 
-/// Creating an overrule object temporarily overrules the (bool) value of a Config setting.
+/// Read a config value. Ensures that the proper thread is used for reading the value.
+template <typename TYPE>
+TYPE ConfigRead(wxString key)
+{
+    return util::thread::RunInMainReturning<TYPE>([key]
+    {
+        TYPE result = TYPE();
+        TYPE dummy = TYPE();
+        bool found = wxConfigBase::Get()->Read(key, &result, dummy);
+        ASSERT(found)(key);
+        return result;
+    });
+}
+
+/// Creating an overrule object temporarily overrules the value of a Config setting.
 /// When the object is created, the temporary value is set.
 /// When the object is destroyed, the original value is reset.
 /// \note Changing config settings is done by accessing the application's Config object directly, not via UI actions.
-class ConfigOverruleBool
+template <typename TYPE>
+class ConfigOverrule
 {
 public:
-    ConfigOverruleBool(wxString path, bool temporaryvalue);
-    virtual ~ConfigOverruleBool();
+    ConfigOverrule(wxString path, TYPE temporaryvalue)
+        : mPath(path)
+        , mOriginalValue(ConfigRead<TYPE>(path))
+        , mTemporaryValue(temporaryvalue)
+    {
+        util::thread::RunInMainAndWait([this]
+        {
+            wxConfigBase::Get()->Write(mPath, mTemporaryValue);
+        });
+    }
+
+    ~ConfigOverrule()
+    {
+        util::thread::RunInMainAndWait([this]
+        {
+            wxConfigBase::Get()->Write(mPath, mOriginalValue);
+        });
+    }
 private:
     wxString mPath;
-    bool mOriginalValue;
-    bool mTemporaryValue;
+    TYPE mOriginalValue;
+    TYPE mTemporaryValue;
 };
 
-/// Creating an overrule object temporarily overrules the (Long) value of a Config setting.
-/// When the object is created, the temporary value is set.
-/// When the object is destroyed, the original value is reset.
-/// \note Changing config settings is done by accessing the application's Config object directly, not via UI actions.
-class ConfigOverruleLong
+template <typename ENUM>
+void CheckConfigEnum(wxString key, ENUM expected)
 {
-public:
-    ConfigOverruleLong(wxString path, long temporaryvalue);
-    virtual ~ConfigOverruleLong();
-private:
-    wxString mPath;
-    long mOriginalValue;
-    long mTemporaryValue;
-};
-
-/// Creating an overrule object temporarily overrules the (string) value of a Config setting.
-/// When the object is created, the temporary value is set.
-/// When the object is destroyed, the original value is reset.
-/// \note Changing config settings is done by accessing the application's Config object directly, not via UI actions.
-class ConfigOverruleString
-{
-public:
-    ConfigOverruleString(wxString path, wxString temporaryvalue);
-    virtual ~ConfigOverruleString();
-private:
-    wxString mPath;
-    wxString mOriginalValue;
-    wxString mTemporaryValue;
-};
+    ENUM current = util::thread::RunInMainReturning<ENUM>([key]
+    {
+        return Config::ReadEnum<ENUM>(key);
+    });
+    ASSERT_EQUALS(current, expected)(key);
+}
+#define ASSERT_CONFIG_ENUM(type, key, expected) CheckConfigEnum<type>(key,expected)
 
 } // namespace

@@ -33,7 +33,7 @@ std::pair< RandomTempDirPtr, wxFileName > OpenRenderDialogAndSetFilename()
 
 std::pair< RandomTempDirPtr, wxFileName > RenderTimeline(int lengthInS)
 {
-    ConfigOverruleLong overrule(Config::sPathDebugMaxRenderLength, lengthInS);
+    ConfigOverrule<long> overrule(Config::sPathDebugMaxRenderLength, lengthInS);
     std::pair< RandomTempDirPtr, wxFileName > tempdir_and_filename = OpenRenderDialogAndSetFilename();
     ExpectExecutedWork expectation(1);
     ButtonTriggerPressed(gui::DialogRenderSettings::get().getRenderButton());

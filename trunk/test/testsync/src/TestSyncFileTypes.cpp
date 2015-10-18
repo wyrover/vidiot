@@ -26,27 +26,27 @@ namespace test {
 void TestSyncFileTypes::testSync_s24p_44100()
 {
     StartTestSuite();
-    ConfigOverruleString overruleFrameRate(Config::sPathVideoDefaultFrameRate, FrameRate::s24p.toString());
-    ConfigOverruleLong overruleChannels(Config::sPathAudioDefaultNumberOfChannels, 1);
-    ConfigOverruleLong overruleSampleRate(Config::sPathAudioDefaultSampleRate, 44100);
+    ConfigOverrule<wxString> overruleFrameRate(Config::sPathVideoDefaultFrameRate, FrameRate::s24p.toString());
+    ConfigOverrule<long> overruleChannels(Config::sPathAudioDefaultNumberOfChannels, 1);
+    ConfigOverrule<long> overruleSampleRate(Config::sPathAudioDefaultSampleRate, 44100);
     executeTest();
 }
 
 void TestSyncFileTypes::testSync_s25p_48000()
 {
     StartTestSuite();
-    ConfigOverruleString overruleFrameRate(Config::sPathVideoDefaultFrameRate, FrameRate::s25p.toString());
-    ConfigOverruleLong overruleChannels(Config::sPathAudioDefaultNumberOfChannels, 1);
-    ConfigOverruleLong overruleSampleRate(Config::sPathAudioDefaultSampleRate, 44100);
+    ConfigOverrule<wxString> overruleFrameRate(Config::sPathVideoDefaultFrameRate, FrameRate::s25p.toString());
+    ConfigOverrule<long> overruleChannels(Config::sPathAudioDefaultNumberOfChannels, 1);
+    ConfigOverrule<long> overruleSampleRate(Config::sPathAudioDefaultSampleRate, 44100);
     executeTest();
 }
 
 void TestSyncFileTypes::testSync_s30p_48000()
 {
     StartTestSuite();
-    ConfigOverruleString overruleFrameRate(Config::sPathVideoDefaultFrameRate, FrameRate::s30p.toString());
-    ConfigOverruleLong overruleChannels(Config::sPathAudioDefaultNumberOfChannels, 2);
-    ConfigOverruleLong overruleSampleRate(Config::sPathAudioDefaultSampleRate, 44100);
+    ConfigOverrule<wxString> overruleFrameRate(Config::sPathVideoDefaultFrameRate, FrameRate::s30p.toString());
+    ConfigOverrule<long> overruleChannels(Config::sPathAudioDefaultNumberOfChannels, 2);
+    ConfigOverrule<long> overruleSampleRate(Config::sPathAudioDefaultSampleRate, 44100);
     executeTest();
 }
 

@@ -19,9 +19,11 @@
 
 #include "AudioClip.h"
 #include "AudioClipEvent.h"
+#include "AudioCompositionParameters.h"
 #include "AudioFile.h"
 #include "AudioPeaks.h"
 #include "ClipView.h"
+#include "Properties.h"
 #include "Transition.h"
 #include "UtilClone.h"
 #include "UtilInt.h"
@@ -43,6 +45,8 @@ struct RenderPeaksWork
         : RenderClipPreviewWork(clip,size,zoom)
     {
         ASSERT(clip->isA<model::AudioClip>())(clip);
+
+        mParameters.setSampleRate(model::Properties::get().getAudioSampleRate()).setNrChannels(1).setPts(0).determineChunkSize();
 
         // Can't make the clone in the separate thread, hence this duplication.
         // Otherwise, the clip may be (partially) opened/opening in the main thread at the moment
@@ -90,7 +94,7 @@ struct RenderPeaksWork
                 result->SetRGB(wxRect{ 0, origin, mSize.x, 1 }, 87, 120, 74);
             }
 
-            model::AudioPeaks peaks = mAudioClipClone->getPeaks();
+            model::AudioPeaks peaks = mAudioClipClone->getPeaks(mParameters);
             int nPeaks = peaks.size();
 
             if (nPeaks > 0)
@@ -138,6 +142,7 @@ struct RenderPeaksWork
         return result;
     }
     model::AudioClipPtr mAudioClipClone = nullptr;
+    model::AudioCompositionParameters mParameters;
 };
 
 //////////////////////////////////////////////////////////////////////////
