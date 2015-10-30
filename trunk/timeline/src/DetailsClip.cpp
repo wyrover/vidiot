@@ -71,14 +71,14 @@ const wxString sVideo(_("Video"));
 const wxString sAudio(_("Audio"));
 const wxString sTransition(_("Transition"));
 
-const wxString sEditOpacity(_("Edit opacity of") + " "); // todo use %s notation and wxstring::format in the command
-const wxString sEditScalingType(_("Edit automated scaling of") + " ");
-const wxString sEditScaling(_("Edit scaling of") + " ");
-const wxString sEditRotation(_("Edit rotation of") + " ");
-const wxString sEditAlignment(_("Edit automated alignment of") + " ");
-const wxString sEditX(_("Edit X position of") + " ");
-const wxString sEditY(_("Edit Y position of") + " ");
-const wxString sEditVolume(_("Edit volume of") + " ");
+const wxString sEditOpacity(_("Edit opacity of %s"));
+const wxString sEditScalingType(_("Edit automated scaling of %s"));
+const wxString sEditScaling(_("Edit scaling of %s"));
+const wxString sEditRotation(_("Edit rotation of %s"));
+const wxString sEditAlignment(_("Edit automated alignment of %s"));
+const wxString sEditX(_("Edit X position of %s"));
+const wxString sEditY(_("Edit Y position of %s"));
+const wxString sEditVolume(_("Edit volume of %s"));
 
 // Helper methods for slider values. These ensure that 1/1 is in the middle.
 // 100 <-> 9999: 0.01 <-> 0.99 (divide by 100)

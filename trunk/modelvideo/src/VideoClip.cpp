@@ -172,7 +172,7 @@ VideoFramePtr VideoClip::getNextVideo(const VideoCompositionParameters& paramete
 
                 VideoCompositionParameters fileparameters(parameters);
                 fileparameters.setBoundingBox(requiredVideoSize);
-                if (parameters.hasPts()) // todo when undo-ing clippreviews not update? (try: trim, then undo)
+                if (parameters.hasPts())
                 {
                     pts requiredPts = Convert::positionToNormalSpeed(getOffset() + parameters.getPts(), getSpeed());
                     fileparameters.setPts(requiredPts);
