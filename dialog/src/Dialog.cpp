@@ -282,7 +282,7 @@ wxStrings Dialog::getStringsSelection(const wxString& title, const wxString& mes
 int generateDebugReport(bool doexit, bool addcontext, bool screenShot, const wxRect& screenRect)
 {
     VAR_ERROR(doexit);
-    if (doexit && wxCANCEL == wxMessageBox("A fatal error was encountered. Press OK to generate debug report. Press Cancel to terminate.", "Error", wxOK | wxCANCEL, &Window::get()))
+    if (doexit && wxCANCEL == wxMessageBox(_("A fatal error was encountered. Press OK to generate debug report. Press Cancel to terminate."), "Error", wxOK | wxCANCEL, &Window::get()))
     {
         exit(-1);
         return 0;

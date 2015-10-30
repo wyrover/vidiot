@@ -41,7 +41,7 @@ Tooltip::~Tooltip()
 void Tooltip::show( const wxString& text )
 {
     VAR_INFO(text);
-    if (getTimeline().GetToolTipText().IsSameAs(text) || text.IsSameAs(_("")))
+    if (getTimeline().GetToolTipText().IsSameAs(text) || text.IsSameAs(""))
     {
         getTimeline().UnsetToolTip();
     }

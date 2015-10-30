@@ -87,7 +87,7 @@ MenuHandler::MenuHandler(Timeline* timeline)
     mMenu.Append(ID_ADDAUDIOTRACK,  _("Add audio track"),  _("Add a new audio track to the sequence."));
     mMenu.Append(ID_REMOVE_EMPTY_TRACKS,  _("Remove empty tracks"), _("Remove all empty audio and video tracks in this sequence."));
     mMenu.AppendSeparator();
-    mMenu.Append(ID_SPLIT_AT_CURSOR,   _("Split at cursor"), _("Split clips at the current cursor position."));
+    mMenu.Append(ID_SPLIT_AT_CURSOR,   _("Split at cursor") + "\ts", _("Split clips at the current cursor position."));
     mMenu.AppendSeparator();
     mMenu.Append(ID_DELETEMARKED,   _("Delete marked regions"), _("Delete all marked regions from sequence."));
     mMenu.Append(ID_DELETEUNMARKED, _("Delete unmarked regions"), _("Delete all unmarked regions from sequence."));
@@ -96,7 +96,7 @@ MenuHandler::MenuHandler(Timeline* timeline)
     mMenu.Append(ID_DELETEEMPTY,  _("Remove empty"), _("Remove all empty areas from the sequence."));
     mMenu.AppendSeparator();
     mMenu.Append(ID_RENDERSETTINGS, _("Render settings"), ("Open the dialog containing the settings for generating a movie file from the sequence."));
-    mMenu.Append(ID_RENDERSEQUENCE, _("Render '") + getSequence()->getName() + "'", _("Generate movie file from sequence."));
+    mMenu.Append(ID_RENDERSEQUENCE, _("Render") + " '" + getSequence()->getName() + "'", _("Generate movie file from sequence."));
     mMenu.Append(ID_RENDERSEQUENCE, _("Render all modified sequences"), _("Generate movie files for all sequences in the project."));
     mMenu.AppendSeparator();
     mMenu.Append(ID_CLOSESEQUENCE,  _("Close"), _("Close the sequence. Will not remove sequence from project."));
@@ -184,7 +184,7 @@ wxMenu* MenuHandler::getMenu()
 
 void MenuHandler::updateItems()
 {
-    mMenu.Enable( ID_DELETEMARKED,   !getIntervals().isEmpty() );
+    mMenu.Enable( ID_DELETEMARKED,   !getIntervals().isEmpty() );// todo no hints when hovering over player buttons, and most of the details clip edit controls
     mMenu.Enable( ID_DELETEUNMARKED, !getIntervals().isEmpty() );
     mMenu.Enable( ID_REMOVEMARKERS,  !getIntervals().isEmpty() );
 }
@@ -328,10 +328,10 @@ void MenuHandler::onTriggerPopupMenu(wxCommandEvent& event)
 
         if (clickedOnAudioClip || clickedOnVideoClip)
         {
-            add(menu, ID_ADD_INTRANSITION, _("Fade &in"), clickedOnMediaClip, isSupported[model::TransitionTypeFadeIn], false);
-            add(menu, ID_ADD_OUTTRANSITION, _("Fade &out"), clickedOnMediaClip, isSupported[model::TransitionTypeFadeOut], false);
-            add(menu, ID_ADD_INOUTTRANSITION, _("Cross-fade from &previous"), clickedOnMediaClip, isSupported[model::TransitionTypeFadeInFromPrevious], false);
-            add(menu, ID_ADD_OUTINTRANSITION, _("Cross-fade to &next"), clickedOnMediaClip, isSupported[model::TransitionTypeFadeOutToNext], false);
+            add(menu, ID_ADD_INTRANSITION, _("Fade in") + "\t" + "&i", clickedOnMediaClip, isSupported[model::TransitionTypeFadeIn], false);
+            add(menu, ID_ADD_OUTTRANSITION, _("Fade out") + "\t" + "&o", clickedOnMediaClip, isSupported[model::TransitionTypeFadeOut], false);
+            add(menu, ID_ADD_INOUTTRANSITION, _("Cross-fade from previous") + "\t" + "&p", clickedOnMediaClip, isSupported[model::TransitionTypeFadeInFromPrevious], false);
+            add(menu, ID_ADD_OUTINTRANSITION, _("Cross-fade to next") + "\t" + "&n", clickedOnMediaClip, isSupported[model::TransitionTypeFadeOutToNext], false);
         }
         std::map<int, model::TransitionType> mapMenuItemToTransitionType;
         std::map<int, model::TransitionPtr> mapMenuItemToTransition;
@@ -366,13 +366,14 @@ void MenuHandler::onTriggerPopupMenu(wxCommandEvent& event)
             }
         }
 
-        add(menu, wxID_CUT, _("Cut"), true, selectedMediaClip, true);
-        add(menu, wxID_COPY, _("Copy"), true, selectedMediaClip, false);
-        add(menu, wxID_PASTE, _("Paste here"), true, canPaste, false);
-        add(menu, ID_REMOVE_EMPTY, _("Remove &empty space"), clickedOnEmptyClip, clickedOnEmptyClip, true);
-        add(menu, ID_DELETE_CLIPS, _("&Delete selected\tDel"), selectedMediaClip, true, true);
-        add(menu, ID_DELETE_TRIM_CLIPS, _("Delete and &Trim selected\tShift+Del"), selectedMediaClip, true, false);
-        add(menu, ID_UNLINK_CLIPS, _("&Unlink audio and video clips"), selectedMediaClip, enableUnlink, true);
+        add(menu, wxID_CUT, _("Cut") + "\t" + _("Ctrl") + "-X", true, selectedMediaClip, true);
+        add(menu, wxID_COPY, _("Copy") + "\t" + _("Ctrl") + "-C", true, selectedMediaClip, false);
+        add(menu, wxID_PASTE, _("Paste at cursor") + "\t" + _("Ctrl") + "-V", true, canPaste, false); // todo get strange texts in status bar when using cursor keys to navigate popup menu
+        add(menu, wxID_REPLACE, _("Paste here"), true, canPaste, false);
+        add(menu, ID_REMOVE_EMPTY, _("Remove empty space") + "\t" + "&e", clickedOnEmptyClip, clickedOnEmptyClip, true);
+        add(menu, ID_DELETE_CLIPS, _("Delete selected") + "\t" + _("&Del"), selectedMediaClip, true, true);
+        add(menu, ID_DELETE_TRIM_CLIPS, _("Delete and Trim selected") + "\t" + _("Shif&t") + "-" + _("Del"), selectedMediaClip, true, false);
+        add(menu, ID_UNLINK_CLIPS, _("Unlink audio and video clips") + "\t&u", selectedMediaClip, enableUnlink, true);
 
         if (menu.GetMenuItemCount() > 0)
         {
@@ -421,6 +422,9 @@ void MenuHandler::onTriggerPopupMenu(wxCommandEvent& event)
                 getClipboard().onCopy();
                 break;
                 case wxID_PASTE:
+                getClipboard().onPaste(true);
+                break;
+                case wxID_REPLACE:
                 getClipboard().onPaste(false);
                 break;
                 case ID_REMOVE_EMPTY:

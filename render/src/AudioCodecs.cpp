@@ -44,34 +44,34 @@ void AudioCodecs::initialize()
     //add(_("No audio"),
     //    AudioCodec(AV_CODEC_ID_NONE));
 
-    add(_("MP2"),
+    add("MP2",
         AudioCodec(AV_CODEC_ID_MP2).
         addParameter(AudioCodecParameterBitrate().setMinimum(500).setMaximum(4000000).setDefault(320000)));
 
-    add(_("MP3"),
+    add("MP3",
         AudioCodec(AV_CODEC_ID_MP3).
         addParameter(AudioCodecParameterBitrate().setMinimum(500).setMaximum(4000000).setDefault(320000)));
 
-    add(_("AAC"),
+    add("AAC",
         AudioCodec(AV_CODEC_ID_AAC).
         addParameter(AudioCodecParameterBitrate().setMinimum(500).setMaximum(4000000).setDefault(320000)));
 
-    add(_("AMR NB"),
+    add("AMR NB",
         AudioCodec(AV_CODEC_ID_AMR_NB).
         addParameter(AudioCodecParameterBitrate().setMinimum(500).setMaximum(4000000).setDefault(320000)));
 
-    add(_("FLAC"),
+    add("FLAC",
         AudioCodec(AV_CODEC_ID_FLAC).
         addParameter(AudioCodecParameterBitrate().setMinimum(500).setMaximum(4000000).setDefault(320000)));
 
     //add(AudioCodec(AV_CODEC_ID_PCM_S16BE).
     //addParameter(AudioCodecParameterBitrate().setDefault(10000).setMinimum(500).setMaximum(40000)));
 
-    add(_("PCM 16 bits Little Endian"),
+    add("PCM 16 bits LE",
         AudioCodec(AV_CODEC_ID_PCM_S16LE).
         addParameter(AudioCodecParameterBitrate().setMinimum(500).setMaximum(4000000).setDefault(320000)));
 
-    add(_("Vorbis"),
+    add("Vorbis",
         AudioCodec(AV_CODEC_ID_VORBIS).
         addParameter(AudioCodecParameterBitrate().setMinimum(500).setMaximum(4000000).setDefault(320000)));
 

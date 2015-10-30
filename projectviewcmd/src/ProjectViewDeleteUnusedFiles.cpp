@@ -117,7 +117,7 @@ void ProjectViewDeleteUnusedFiles::recycleFiles()
 
         if (!ok)
         {
-            message = _("Failed to move") + "'" + file + "'" + _(" to the recycle bin.\nThe following files have already been moved:\n") + message + _("\n\nAborting deletion.");
+            message = wxString::Format(_("Failed to move %1$s to the recycle bin.\nThe following files have already been moved:\n%2$s\n\nAborting deletion."), file, message);
             gui::Dialog::get().getConfirmation(_("Move to recycle bin failed"), message);
             return;
         }
@@ -135,7 +135,7 @@ void ProjectViewDeleteUnusedFiles::recycleFiles()
         gui::StatusBar::get().timedInfoText(_("File moved to recycle bin."));
         break;
     default:
-        gui::StatusBar::get().timedInfoText(wxString::Format("%zu",deleted.size()) + _(" files moved to recycle bin."));
+        gui::StatusBar::get().timedInfoText(wxString::Format(_("%zu files moved to recycle bin."), deleted.size()));
         break;
     }
 }

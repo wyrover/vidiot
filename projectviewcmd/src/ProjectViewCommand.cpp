@@ -97,20 +97,19 @@ model::NodePtrs ProjectViewCommand::prune(const model::NodePtrs& children)
 
 bool ProjectViewCommand::addNodes(const ParentAndChildPairs& pairs)
 {
-    static const wxString sTitle = _("File missing");
-    static const wxString sCant = _("Problem: ");
+    static const wxString sCant = _("Problem");
     for ( ParentAndChildPair p : pairs )
     {
         model::IPathPtr path = boost::dynamic_pointer_cast<model::IPath>(p.second);
         if (path && !path->getPath().Exists())
         {
-            gui::Dialog::get().getConfirmation(sTitle, sCant + ": " + path->getPath().GetFullPath() + _(" has been removed from disk."));
+            gui::Dialog::get().getConfirmation(sCant, wxString::Format(_("%s has been removed from disk."), path->getPath().GetFullPath()));
             return false;
         }
         model::FilePtr file = boost::dynamic_pointer_cast<model::File>(p.second);
         if (file && !file->canBeOpened())
         {
-            gui::Dialog::get().getConfirmation(sTitle,sCant + ": " + file->getName() + _(" can not be opened."));
+            gui::Dialog::get().getConfirmation(sCant, wxString::Format(_("%s can not be opened."), file->getName()));
             return false;
         }
     }

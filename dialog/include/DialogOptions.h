@@ -64,6 +64,8 @@ private:
     wxTextCtrl*             mStrip;
     wxCheckBox*             mTimelineEnableAutoAddTracks;
 
+    wxListBox*              mLanguage;
+
     EnumSelector<LogLevel>* mSelectLogLevel;
     EnumSelector<int>*      mSelectLogLevelAvcodec;
     wxChoice*               mLogLevelAvcodec;

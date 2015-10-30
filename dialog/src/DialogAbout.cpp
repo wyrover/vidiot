@@ -19,6 +19,7 @@
 
 #include "Application.h"
 #include "Config.h"
+#include "UtilLocale.h"
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
 #include "UtilPath.h"
@@ -38,7 +39,7 @@ wxString sDebug("");
 #endif
 
 DialogAbout::DialogAbout()
-    :   wxDialog(&Window::get(),wxID_ANY,_("Vidiot: About") + wxString::Format(wxT(" (%s - %d)%s"), Application::getVersion(), Application::getRevision(), sDebug),wxDefaultPosition,wxSize(500,500),wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER,wxDialogNameStr )
+    :   wxDialog(&Window::get(),wxID_ANY, "Vidiot: " + _("About") + wxString::Format(wxT(" (%s - %d)%s"), Application::getVersion(), Application::getRevision(), sDebug),wxDefaultPosition,wxSize(550,550),wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER,wxDialogNameStr )
     ,   mBack(0)
 {
     VAR_DEBUG(this);
@@ -50,12 +51,17 @@ DialogAbout::DialogAbout()
     ////////  ////////
 
     mHtml = new wxHtmlWindow(this);
-    mHtml->LoadPage(util::path::getResource("html/about", "main.html"));
+    wxString main{ util::path::getResource("html/about", "main." + getLanguageCode() + ".html") };
+    if (!wxFile::Exists(main))
+    {
+        main = util::path::getResource("html/about", "main.en.html"); 
+    }
+    mHtml->LoadPage(main);
 
     ////////  ////////
 
     GetSizer()->Add(mHtml, wxSizerFlags(1).Expand());
-
+    
     ////////  ////////
 
     wxSizer* buttons = CreateButtonSizer(wxOK);

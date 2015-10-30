@@ -159,7 +159,7 @@ void Application::WaitForIdleStart(wxString log)
     Bind(EVENT_IDLE_TRIGGER, &Application::triggerIdle, this);
     QueueEvent(new EventIdleTrigger(log));
 
-    static int maxWaitTime = 4000;
+    static int maxWaitTime = 500;
     // timed_wait: To avoid indefinite waits. Not the best solution, but working...for now.
     // This caused problems, particularly with the Play() method of the HelperTimeline class.
     // Playback would continue indefinitely...
@@ -269,6 +269,7 @@ int Application::OnExit()
     boost::mutex::scoped_lock lock(mMutexIdle); // Wait until all idle handling done
     PortAudio::exit();
     Avcodec::exit();
+    Config::exit();
 
     return wxApp::OnExit();
 }

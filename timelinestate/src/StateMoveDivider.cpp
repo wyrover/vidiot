@@ -30,9 +30,7 @@
 
 namespace gui { namespace timeline { namespace state {
 
-const wxString MoveDivider::sTooltip = _(
-    "Move the cursor to 'scrub' over the timeline and see the frames back in the preview.\n"
-    );
+const wxString MoveDivider::sTooltip = "";
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION

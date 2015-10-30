@@ -68,7 +68,7 @@ struct IndexAutoFolderWork
                 mPath.GetDirCount() >= 1 ? mPath.GetDirs().Last() + "/" :
                 mPath.HasVolume() ? mPath.GetVolume() :
                 "";
-            showProgressText(_("Updating '") + pathname + "'");
+            showProgressText(wxString::Format(_("Updating %s"), pathname));
 
             ASSERT(dir.IsOpened());
             wxString nodename;
@@ -89,7 +89,7 @@ struct IndexAutoFolderWork
                 else // New element. Add
                 {
                     wxFileName filename(mPath.GetLongPath(), nodename);
-                    showProgressText(_("Updating '") + pathname + nodename + "'");
+                    showProgressText(wxString::Format(_("Updating %s"), pathname + nodename));
                     model::FilePtr file = boost::make_shared<model::File>(filename);
                     if (file->canBeOpened())
                     {
@@ -237,7 +237,7 @@ void AutoFolder::handleWorkDone(boost::shared_ptr<IndexAutoFolderWork> work, boo
             if (!getParent()->isA<AutoFolder>())
             {
                 getParent()->removeChild(self()); // Do not execute after the dialog (crash can occur then - since the node is removed by another update)
-                gui::Dialog::get().getConfirmation(_("Folder removed"), _("The folder ") + util::path::toName(getPath()) + _(" has been removed from disk. Folder is removed from project also."));
+                gui::Dialog::get().getConfirmation(_("Folder removed"), wxString::Format(_("The folder %s has been removed from disk. It is removed from the project also."), util::path::toName(getPath())));
             }
         }
     }

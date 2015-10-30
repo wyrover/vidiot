@@ -71,14 +71,14 @@ const wxString sVideo(_("Video"));
 const wxString sAudio(_("Audio"));
 const wxString sTransition(_("Transition"));
 
-const wxString sEditOpacity(_("Edit opacity of "));
-const wxString sEditScalingType(_("Edit automated scaling of "));
-const wxString sEditScaling(_("Edit scaling of "));
-const wxString sEditRotation(_("Edit rotation of "));
-const wxString sEditAlignment(_("Edit automated alignment of "));
-const wxString sEditX(_("Edit X position of "));
-const wxString sEditY(_("Edit Y position of "));
-const wxString sEditVolume(_("Edit volume of "));
+const wxString sEditOpacity(_("Edit opacity of") + " "); // todo use %s notation and wxstring::format in the command
+const wxString sEditScalingType(_("Edit automated scaling of") + " ");
+const wxString sEditScaling(_("Edit scaling of") + " ");
+const wxString sEditRotation(_("Edit rotation of") + " ");
+const wxString sEditAlignment(_("Edit automated alignment of") + " ");
+const wxString sEditX(_("Edit X position of") + " ");
+const wxString sEditY(_("Edit Y position of") + " ");
+const wxString sEditVolume(_("Edit volume of") + " ");
 
 // Helper methods for slider values. These ensure that 1/1 is in the middle.
 // 100 <-> 9999: 0.01 <-> 0.99 (divide by 100)
@@ -147,7 +147,7 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
         // Use the integer as id
         wxToggleButton* button = new wxToggleButton(mLengthPanel, i, label, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
         button->SetWindowVariant( wxWINDOW_VARIANT_SMALL );
-        button->SetToolTip(_("Change the length of the clip to this length. Will shift other clips to avoid introducing a black area.") + _(" Shortcut key: ") + "'" + wxString::Format("%d", i + 1) + "'");
+        button->SetToolTip(_("Change the length of the clip to this length. Will shift other clips to avoid introducing a black area.") + " " + _("Shortcut key") + ": '" + wxString::Format("%d", i + 1) + "'");
         mLengthPanel->GetSizer()->Add(button,wxSizerFlags(1));
         button->Bind( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, &DetailsClip::onLengthButtonPressed, this);
         mLengthButtons.push_back(button);
@@ -227,14 +227,14 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     wxBoxSizer* alignmentsizer = new wxBoxSizer(wxHORIZONTAL);
     mSelectAlignment = new EnumSelector<model::VideoAlignment>(mAlignmentPanel, model::VideoAlignmentConverter::mapToHumanReadibleString, model::VideoAlignmentCustom);
     mSelectAlignment->SetWindowVariant( wxWINDOW_VARIANT_SMALL );
-    wxStaticText* titleX = new wxStaticText(mAlignmentPanel, wxID_ANY, _("  X:"), wxDefaultPosition);
+    wxStaticText* titleX = new wxStaticText(mAlignmentPanel, wxID_ANY, "  X:", wxDefaultPosition);
     mPositionXSlider = new wxSlider(mAlignmentPanel, wxID_ANY, 0, 0, 1);
     mPositionXSlider->SetPageSize(sPositionPageSize);
     mPositionXSpin = new wxSpinCtrl(mAlignmentPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(55,-1));
     mPositionXSpin->SetWindowVariant( wxWINDOW_VARIANT_SMALL );
     mPositionXSpin->SetRange(0,1);
     mPositionXSpin->SetValue(0);
-    wxStaticText* titleY = new wxStaticText(mAlignmentPanel, wxID_ANY, _("  Y:"), wxDefaultPosition);
+    wxStaticText* titleY = new wxStaticText(mAlignmentPanel, wxID_ANY, "  Y:", wxDefaultPosition);
     mPositionYSlider = new wxSlider(mAlignmentPanel, wxID_ANY, 0, 0, 1);
     mPositionYSlider->SetPageSize(sPositionPageSize);
     mPositionYSpin = new wxSpinCtrl(mAlignmentPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(55,-1));

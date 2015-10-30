@@ -122,7 +122,7 @@ EditClipSpeed::EditClipSpeed(
         replaceClip(clipInOtherTrackAtBegin, { boost::make_shared<model::EmptyClip>(clipInOtherTrackAtBegin->getLength() - diff) });
     }
 
-    mCommandName = _("Adjust speed of ")  + mClip->getDescription();
+    mCommandName = wxString::Format(_("Adjust speed of %s"), mClip->getDescription());
     mPossible = true;
 }
 
@@ -208,7 +208,7 @@ void EditClipSpeed::adjustSpeedForClipBounds(model::IClipPtr clip)
         rational maxSpeed{ rational(begin, inTransition->getLength()) };
         if (mSpeed > maxSpeed)
         {
-            message = _("Can't scale beyond " + toString(maxSpeed) + " (no room for left transition).");
+            message = wxString::Format(_("Can't scale beyond %s"), toString(maxSpeed)) + " " + _("(no room for left transition).");
             mSpeed = maxSpeed;
         }
     }
@@ -232,7 +232,7 @@ void EditClipSpeed::adjustSpeedForClipBounds(model::IClipPtr clip)
         rational maxSpeed{ rational(clipInterval->getRenderSourceLength() - end, outTransition->getLength()) }; // todo replace speed with rational<int64>?
         if (mSpeed > maxSpeed)
         {
-            message = _("Can't scale beyond " + toString(maxSpeed) + " (no room for right transition).");
+            message = wxString::Format(_("Can't scale beyond %s"), toString(maxSpeed)) + " " + _("(no room for right transition).");
             mSpeed = maxSpeed;
         }
     }
@@ -242,7 +242,7 @@ void EditClipSpeed::adjustSpeedForClipBounds(model::IClipPtr clip)
     rational maxSpeed{ rational(end - 1 - begin, 1) };
     if (mSpeed > maxSpeed)
     {
-        message = _("Can't scale beyond " + toString(maxSpeed) + " (no clip remains).");
+        message = wxString::Format(_("Can't scale beyond %s"), toString(maxSpeed)) + " " + _("(no clip remains).");
         mSpeed = maxSpeed;
     }
     

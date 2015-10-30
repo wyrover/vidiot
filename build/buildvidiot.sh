@@ -25,6 +25,10 @@ export BUILD_DEBUG=${BUILD}/debug
 export BUILD_RELEASE=${BUILD}/release
 
 export BOOSTROOT=${VIDIOT_DIR}/boost/install
+export WXSRC_DIR=/media/sf_wxWidgets
+if [ ! -d ${WXSRC_DIR} ]; then
+    export WXSRC_DIR=/media/${USER}/System/Vidiot/wxWidgets
+fi
 
 LinuxSetup()
 {
@@ -57,6 +61,7 @@ LinuxSetup()
     						nautilus-open-terminal \
     						unity-tweak-tool \
     						subversion \
+    						apt-file \
     						sublime-text-installer \
     						openjdk-7-jdk \
     						libsaxon* \
@@ -71,7 +76,7 @@ LinuxSetup()
     # wxwidgets - dos2unix required since windows checkout of wxwidgets gives the wx-config utility dos line endings, making it fail to run.
 #    sudo add-apt-repository -y 'http://repos.codelite.org/wx3.0.2/ubuntu/ universe'	
 #    sudo apt-get -y update
-    sudo apt-get -y install libgtk2.0-dev dos2unix 
+    sudo apt-get -y install libgtk2.0-dev dos2unix gettext poedit
 #    sudo apt-get install libwxbase3.0-0-unofficial \
 #		                 libwxbase3.0-dev \#
 #		                 libwxgtk3.0-0-unofficial \
@@ -148,13 +153,13 @@ WxSetup()
     mkdir -p ${WXDIR}/build
     mkdir -p ${WXDIR}/install
     cd ${WXDIR}/build
-    WXSRC_DIR=/media/sf_wxWidgets
-    if [ ! -d ${WXSRC_DIR} ]; then
-        WXSRC_DIR=/media/${USER}/System/Vidiot/wxWidgets
-    fi
     ${WXSRC_DIR}/configure --enable-debug --enable-debug_info --enable-debug_gdb --prefix=${WXDIR}/install \
         --enable-unicode --disable-shared --disable-compat28 --enable-dataviewctrl
     make
+    cd ${WXSRC_DIR}
+    make allmo
+    cd -
+    cd ${WXDIR}/build
     make install
 }
 
@@ -252,7 +257,46 @@ FixWxLineEndings()
     # Avoid problems with windows line endings
     cd ${VIDIOT_DIR}/wxwidgets_linuxbuild/install/lib/wx/
     find . -type f | xargs dos2unix
+}
 
+UpdateLanguageFiles()
+{
+    languages_root=${SOURCE}/lang
+    find -L ${SOURCE} -name *.cpp -o -name *.h > /tmp/files
+	echo Updating template lang/vidiot.pot
+	xgettext -f /tmp/files --output=${languages_root}/vidiot.pot --keyword=_
+
+    for subdir in `ls -d ${languages_root}/*/`; do
+    	language=`basename ${subdir}`
+    	languagedir=${languages_root}/${language}
+        languageonly=`echo ${language} | cut -c1,2`
+    	echo
+        echo Language: ${language} \(${languageonly}\)
+
+		if [ -f ${languagedir}/vidiot.po ]; then
+
+            echo Updating lang/${language}/vidiot.po from template
+            msgmerge -U ${languagedir}/vidiot.po ${languages_root}/vidiot.pot
+
+	        echo Compiling lang/${language}/vidiot.po
+	        msgfmt ${languagedir}/vidiot.po --output-file=${languagedir}/vidiot.mo
+
+            wxlang=${WXSRC_DIR}/locale/${language}.po
+            if [ ! -f ${wxlang} ]; then
+                # from nl_NL take 'nl'
+                wxlang=${WXSRC_DIR}/locale/${languageonly}.po
+            fi
+
+	        if [ -f ${wxlang} ]; then
+
+	            echo Updating lang/${language}/vidotwx.po
+	            cp ${wxlang} ${languagedir}/vidiotwx.po
+
+	            echo Compiling lang/${language}/vidotwx.po
+	            msgfmt ${wxlang} --output-file=${languagedir}/vidiotwx.mo
+	        fi
+		fi
+   	done
 }
 
 MakeDirs()
@@ -320,6 +364,7 @@ Rebuild()
 	Clean 
 	FixWxLineEndings
 	MakeDirs
+	UpdateLanguageFiles
 	MakeChangelog
 	RunCMake
 }
@@ -377,15 +422,16 @@ if [ "$action" = "" ] || [ "$action" = "Menu" ]; then
           --title="Select action" \
           --text="Select action to be executed" \
           --column="Action" --column="Description" \
-            LINUXSETUP    "Setup linux (folders, tools, icons)" \
-            BOOSTSETUP    "Rebuild boost" \
-            WXSETUP       "Rebuild wxwidgets" \
-            FFMPEGSETUP   "Rebuild ffmpeg" \
-            \             "" \
-            REBUILD       "Clean & Prepare & CMake" \
-            RUNCMAKE      "CMake only" \
-            BUILDPACKAGE  "Build package" \
-            DELIVER       "Rebuild & Install" | cut -f 1 -d '|'`
+            LINUXSETUP      "Setup linux (folders, tools, icons)" \
+            BOOSTSETUP      "Rebuild boost" \
+            WXSETUP         "Rebuild wxwidgets" \
+            FFMPEGSETUP     "Rebuild ffmpeg" \
+            \               "" \
+            UPDATELANGUAGE  "Update language files" \
+            RUNCMAKE        "CMake only" \
+            BUILDPACKAGE    "Build package" \
+            REBUILD         "Rebuild" \
+            DELIVER         "Rebuild & Install" | cut -f 1 -d '|'`
 fi
 
 case ${action} in
@@ -395,6 +441,7 @@ FULLSETUP)      Exec LinuxSetup ; Exec Icons ; Exec BoostSetup ; Exec WxSetup ; 
 BOOSTSETUP)     Exec BoostSetup ;;
 WXSETUP)        Exec WxSetup ;;
 FFMPEGSETUP)    Exec FfmpegSetup ;;
+UPDATELANGUAGE) Exec UpdateLanguageFiles ;;
 RUNCMAKE)       Exec RunCMake ;;
 REBUILD)        Exec Rebuild ;;
 BUILDPACKAGE)   Exec BuildPackage ;;

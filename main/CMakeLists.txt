@@ -53,3 +53,4 @@ add_custom_command (TARGET main DEPENDS vidiot)
 
 copy_html_files_to_target (main)
 copy_images_to_target (main)
+copy_lang_files_to_target (main)

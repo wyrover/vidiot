@@ -302,27 +302,28 @@ bool ProjectView::findConflictingName(const model::FolderPtr& parent, const wxSt
         if (child->getName().IsSameAs(name))
         {
             bool isSameType = true;
-            wxString prefix = _("Name");
+            wxString prefix;
+            wxString nodetype;
             switch (type)
             {
             case NODETYPE_FILE:
                 isSameType = (child->isA<model::File>());
-                prefix = _("A file with name");
+                nodetype = _("file");
                 break;
             case NODETYPE_FOLDER:
                 isSameType = (child->isA<model::Folder>());
-                prefix = _("A folder with name");
+                nodetype = _("folder");
                 break;
             case NODETYPE_SEQUENCE:
                 isSameType = (child->isA<model::Sequence>());
-                prefix = _("A sequence with name");
+                nodetype = _("sequence");
                 break;
             default:
                 break;
             }
             if (isSameType)
             {
-                gui::Dialog::get().getConfirmation(_("Duplicate exists"), prefix + _(" '") + name + _("' already exists"));
+                gui::Dialog::get().getConfirmation(_("Duplicate exists"), wxString::Format(_("A %1$s with name %2$s already exists"), nodetype, name));
                 return true;
             }
         }

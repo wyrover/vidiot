@@ -28,7 +28,7 @@ ProjectViewRenameAsset::ProjectViewRenameAsset(const model::NodePtr& node, const
 ,   mOldName(node->getName())
 {
     VAR_INFO(this)(mNode)(mNewName);
-    mCommandName = _("Rename ") + _("\"") + mOldName + _("\" to \"") + mNewName + _("\"");
+    mCommandName = wxString::Format(_("Rename %1$s to %2$s"), mOldName, mNewName);
 }
 
 ProjectViewRenameAsset::~ProjectViewRenameAsset()

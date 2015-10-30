@@ -24,6 +24,7 @@
 #include "Properties.h"
 #include "UtilFrameRate.h"
 #include "UtilInitAvcodec.h"
+#include "UtilLocale.h"
 #include "UtilLog.h"
 #include "UtilMap.h"
 #include "UtilWindow.h"
@@ -50,12 +51,15 @@ DialogOptions::DialogOptions(wxWindow* win)
         { "picture.png" },
         { "music-beam.png" },
         { "film.png" },
+        { "application.png" },
         { "bug.png" },
     };
     for (wxString icon : icons)
     {
         mIcons.Add(util::window::getIcon(icon));
     }
+
+    wxString sRestart{ " " + _("(requires restart)") };
 
     Create(win, wxID_ANY, _("Options"), wxDefaultPosition, wxSize(1000, -1), wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     GetBookCtrl()->SetImageList(&mIcons);
@@ -212,13 +216,34 @@ DialogOptions::DialogOptions(wxWindow* win)
 
         addbox(_("Clips"));
         mStrip = new wxTextCtrl(mPanel, wxID_ANY, Config::ReadString(Config::sPathTimelineStripFromClipNames));
-        addoption(_("Text to remove from clip names - use '|' for multiple entries \r\n(requires restart)"), mStrip);
+        addoption(_("Text to remove from clip names - use '|' for multiple entries") + "\n" + sRestart, mStrip);
 
         addbox(_("Behaviour"));
 
         mTimelineEnableAutoAddTracks = new wxCheckBox(mPanel, wxID_ANY, _T(""), wxDefaultPosition, wxDefaultSize);
         mTimelineEnableAutoAddTracks->SetValue(Config::ReadBool(Config::sPathTimelineAutoAddEmptyTrackWhenDragging));
         addoption(_("Automatically add audio/video track when dragging beyond existing tracks"), mTimelineEnableAutoAddTracks);
+    }
+    {
+        addtab(_("Application"));
+
+        addbox(_("Language"));
+
+        mLanguage = new wxListBox (mPanel, wxID_ANY, wxDefaultPosition, wxSize(200, -1), 0, nullptr, wxLB_SINGLE | wxLB_NEEDED_SB | wxLB_SORT, wxDefaultValidator, wxListBoxNameStr);
+
+        wxString currentLanguage{ Config::ReadString(Config::sPathWorkspaceLanguage) };
+
+        int count{ 0 };
+        for (auto lang : getSupportedLanguages())
+        {
+            mLanguage->Append(lang.first);
+            if (currentLanguage == lang.second)
+            {
+                mLanguage->SetStringSelection(lang.first);
+            }
+        }
+
+        addoption(_("Language") + sRestart, mLanguage);
     }
     {
         addtab(_("Debug"));
@@ -229,11 +254,11 @@ DialogOptions::DialogOptions(wxWindow* win)
         addoption(_("Log level"), mSelectLogLevel);
 
         mSelectLogLevelAvcodec = new EnumSelector<int>(mPanel, Avcodec::mapAvcodecLevels, UtilMap<int,wxString>(Avcodec::mapAvcodecLevels).reverseLookup(Config::ReadString(Config::sPathDebugLogLevelAvcodec), Avcodec::getDefaultLogLevel()));
-        addoption(_("Avcodec log level (requires restart)"), mSelectLogLevelAvcodec);
+        addoption(_("Avcodec log level") + sRestart, mSelectLogLevelAvcodec);
 
         mShowDebugInfoOnWidgets = new wxCheckBox(mPanel, wxID_ANY, _T(""));
         mShowDebugInfoOnWidgets->SetValue(Config::ReadBool(Config::sPathDebugShowDebugInfoOnWidgets)); // Do not read cached value, but the last set value
-        addoption(_("Show debug info on widgets (requires restart)"), mShowDebugInfoOnWidgets);
+        addoption(_("Show debug info on widgets") + sRestart, mShowDebugInfoOnWidgets);
 
         mLogSequenceOnEdit = new wxCheckBox(mPanel, wxID_ANY, _T(""));
         mLogSequenceOnEdit->SetValue(Config::ReadBool(Config::sPathDebugLogSequenceOnEdit));
@@ -245,7 +270,7 @@ DialogOptions::DialogOptions(wxWindow* win)
 
     ASSERT_EQUALS(icons.size(), GetBookCtrl()->GetPageCount()); // Ensure the proper amount of icons
     LayoutDialog();
-    SetSize(wxSize(640, -1));
+    SetSize(wxSize(700, -1));
 
     gui::Window::get().setDialogOpen(true);
 }
@@ -286,6 +311,19 @@ DialogOptions::~DialogOptions()
         Config::WriteLong(Config::sPathTimelineMarkerEndAddition, mMarkerEndAddition->GetValue());
         Config::WriteLong(Config::sPathTimelineDefaultStillImageLength, toLong(mDefaultStillImageLength->GetValue()));
         Config::WriteString(Config::sPathTimelineStripFromClipNames, mStrip->GetValue());
+
+        wxString languageCode(Config::ReadString(Config::sPathWorkspaceLanguage));
+        for (auto lang : getSupportedLanguages())
+        {
+            if (lang.first == mLanguage->GetStringSelection())
+            {
+                languageCode = lang.second;
+                break;
+            }
+            mLanguage->Append(lang.first);
+        }
+        Config::WriteString(Config::sPathWorkspaceLanguage, languageCode);
+
         Config::releaseWriteToDisk();
 
         // Use new values

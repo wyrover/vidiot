@@ -316,12 +316,7 @@ void FileAnalyzer::updateProgressDialog()
     if (mDialog)
     {
         wxString progress;
-        progress << _("Found ") << mNumberOfMediaFiles << " files";
-        if (mFolders > 1)
-        {
-            progress << _(" in ") << mFolders << _(" folders");
-        }
-        progress << '.';
+        progress << wxString::Format(_("Found %d file(s)"), mNumberOfMediaFiles);
         mDialog->Pulse(progress);
     }
 }

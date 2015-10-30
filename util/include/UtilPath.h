@@ -83,4 +83,7 @@ wxFileName getResourcesPath();
 /// \return the path where the config (ini) file resides
 wxFileName getConfigFilePath();
 
+/// \return the path where the localized strings databases reside
+wxFileName getLanguagesPath();
+
 }} // namespace

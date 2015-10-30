@@ -56,7 +56,7 @@ bool ProjectViewCreateFile::Do()
         }
         if (mPairs.size() == 1)
         {
-            mCommandName = _("Add file") + _(" \"")   + mPairs.front().second->getName()  + _("\"");
+            mCommandName = wxString::Format(_("Add file %s"), mPairs.front().second->getName());
         }
     }
     return addNodes(mPairs);

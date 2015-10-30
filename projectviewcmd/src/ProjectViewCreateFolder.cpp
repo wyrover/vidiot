@@ -28,7 +28,7 @@ ProjectViewCreateFolder::ProjectViewCreateFolder(const model::FolderPtr& parent,
 ,   mName(name)
 {
     VAR_INFO(this)(mParent)(name);
-    mCommandName = _("Add folder \"") + mName + _("\"");
+    mCommandName = wxString::Format(_("Add folder %s"), mName);
 }
 
 ProjectViewCreateFolder::~ProjectViewCreateFolder()

@@ -257,16 +257,26 @@ wxFileName getResourcesPath()
         test.RemoveLastDir();
         test.AppendDir("html");
         test.AppendDir("about");
-        test.SetFullName("main.html");
+        test.SetFullName("main.en.html");
         if (!test.FileExists()) { continue; }
         test.RemoveLastDir();
         test.AppendDir("help");
+        test.AppendDir("en");
         test.SetFullName("index.html");
+        if (!test.FileExists()) { continue; }
+        test.RemoveLastDir();
+        test.RemoveLastDir();
+        test.RemoveLastDir();
+        test.AppendDir("lang");
+        test.AppendDir("nl_NL");
+        test.SetFullName("vidiot.mo");
+        if (!test.DirExists()) { continue; }
+        test.SetFullName("vidiotwx.mo");
         if (!test.FileExists()) { continue; }
         return path;
     }
 
-    wxString error{_("Could not locate resources (images/html files) in the following folders:\n")};
+    wxString error{_("Could not locate resources (images/translations/html files) in the following folders:") + "\n"};
     for ( wxFileName path : paths )
     {
         error += path.GetFullPath() + "\n";
@@ -289,6 +299,13 @@ wxFileName getConfigFilePath()
 #endif
     }
     result.SetExt("ini");
+    return result;
+}
+
+wxFileName getLanguagesPath()
+{
+    wxFileName result{ util::path::getResourcesPath() };
+    result.AppendDir("lang");
     return result;
 }
 

@@ -95,7 +95,7 @@ DialogProjectProperties::DialogProjectProperties(wxWindow* win)
     {
         mBoxSizer = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, _("Note:")), wxVERTICAL );
         GetSizer()->Add(mBoxSizer, 0, wxALIGN_CENTRE|wxALL, 5 );
-        wxStaticText* note = new wxStaticText(this, wxID_ANY, "Some options cannot be changed because the project already contains sequences.", wxDefaultPosition,wxDefaultSize, wxST_NO_AUTORESIZE|wxALIGN_LEFT);
+        wxStaticText* note = new wxStaticText(this, wxID_ANY, _("Some options cannot be changed because the project already contains sequences."), wxDefaultPosition,wxDefaultSize, wxST_NO_AUTORESIZE|wxALIGN_LEFT);
         note->SetFont(note->GetFont().MakeItalic());
         note->Wrap(300);
         wxBoxSizer* hSizer = new wxBoxSizer( wxHORIZONTAL );

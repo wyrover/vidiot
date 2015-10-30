@@ -144,15 +144,15 @@ bool AudioCodec::open(AVCodecContext* context) const
     auto showError = [context,codec](wxString msg) -> bool
     {
         gui::Dialog::get().getConfirmation( _("Error in audio codec"),
-            _("There was an error when opening the audio codec.\n") +
-            _("Rendering will be aborted.\n") +
+            _("There was an error when opening the audio codec.") + "\n" +
+            _("Rendering will be aborted.") + "\n" +
             msg + "\n");
         VAR_ERROR(codec)(context);
         return false;
     };
     if (context->sample_fmt == AV_SAMPLE_FMT_NONE)
     {
-        return showError(_("Could not deduce required sample format for audio.\n"));
+        return showError(_("Could not deduce required sample format for audio.") + "\n");
     }
     int result = 0; // To avoid showing error dialog while 'having' the lock
     {
@@ -161,7 +161,7 @@ bool AudioCodec::open(AVCodecContext* context) const
     }
     if (result < 0)
     {
-        return showError(_("Detailed information:\n") + Avcodec::getMostRecentLogLine());
+        return showError(_("Details") + ":\n" + Avcodec::getMostRecentLogLine());
     }
     return true;
 }
