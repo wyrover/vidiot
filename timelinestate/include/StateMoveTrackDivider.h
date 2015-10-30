@@ -70,8 +70,6 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     boost::statechart::result abort();
-
-    static const wxString sTooltip;
 };
 
 }}} // namespace

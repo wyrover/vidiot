@@ -23,13 +23,9 @@
 #include "Mouse.h"
 #include "PositionInfo.h"
 #include "StateIdle.h"
-#include "Tooltip.h"
 #include "UtilLog.h"
 
 namespace gui { namespace timeline { namespace state {
-
-// todo remove tooltips
-const wxString StateScrolling::sTooltip = _("Drag mouse left/right to move the view.");
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
@@ -83,12 +79,6 @@ boost::statechart::result StateScrolling::react( const EvLeave& evt )
 boost::statechart::result StateScrolling::react( const EvKeyDown& evt )
 {
     VAR_DEBUG(evt);
-
-    switch (evt.KeyCode)
-    {
-    case WXK_F1:        
-        getTooltip().show(sTooltip); break;
-    }
     return forward_event();
 }
 

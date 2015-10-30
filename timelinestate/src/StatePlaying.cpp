@@ -25,12 +25,9 @@
 #include "Mouse.h"
 #include "Player.h"
 #include "StateIdle.h"
-#include "Tooltip.h"
 #include "UtilLog.h"
 
 namespace gui { namespace timeline { namespace state {
-
-const wxString Playing::sTooltip = "";
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
@@ -87,9 +84,6 @@ boost::statechart::result Playing::react( const EvKeyDown& evt)
     case WXK_SHIFT:
         evt.consumed();
         triggerBegin();
-        break;
-    case WXK_F1:
-        getTooltip().show(sTooltip);
         break;
     case 's':
     case 'S':

@@ -25,13 +25,10 @@
 #include "Mouse.h"
 #include "StateDragging.h"
 #include "StateIdle.h"
-#include "Tooltip.h"
 
 #include "UtilLog.h"
 
 namespace gui { namespace timeline { namespace state {
-
-const wxString StateLeftDown::sTooltip = "";
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
@@ -117,9 +114,6 @@ boost::statechart::result StateLeftDown::react( const EvKeyDown& evt)
     VAR_DEBUG(evt);
     switch (evt.KeyCode)
     {
-    case WXK_F1:        
-        getTooltip().show(sTooltip); 
-        break;
     case WXK_ESCAPE:    
         evt.consumed();
         return transit<Idle>();

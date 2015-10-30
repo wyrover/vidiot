@@ -25,12 +25,9 @@
 #include "Mouse.h"
 #include "SequenceView.h"
 #include "StateIdle.h"
-#include "Tooltip.h"
 #include "UtilLog.h"
 
 namespace gui { namespace timeline { namespace state {
-
-const wxString MoveDivider::sTooltip = "";
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
@@ -79,9 +76,6 @@ boost::statechart::result MoveDivider::react( const EvKeyDown& evt)
     case WXK_ESCAPE:    
         evt.consumed();
         return abort();
-    case WXK_F1:        
-        getTooltip().show(sTooltip); 
-        break;
     }
     return forward_event();
 }

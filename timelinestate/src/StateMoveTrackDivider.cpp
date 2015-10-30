@@ -29,7 +29,6 @@
 #include "SequenceView.h"
 #include "StateIdle.h"
 #include "ThumbnailView.h"
-#include "Tooltip.h"
 #include "Track.h"
 
 #include "UtilLog.h"
@@ -37,10 +36,6 @@
 #include "ViewMap.h"
 
 namespace gui { namespace timeline { namespace state {
-
-const wxString MoveTrackDivider::sTooltip = _(
-    "Move the cursor to 'scrub' over the timeline and see the frames back in the preview."
-    );
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
@@ -119,9 +114,6 @@ boost::statechart::result MoveTrackDivider::react( const EvKeyDown& evt)
     case WXK_ESCAPE:    
         evt.consumed();
         return abort();
-    case WXK_F1:        
-        getTooltip().show(sTooltip); 
-        break;
     }
     return forward_event();
 }

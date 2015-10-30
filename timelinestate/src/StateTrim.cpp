@@ -24,13 +24,10 @@
 #include "Keyboard.h"
 #include "Mouse.h"
 #include "StateIdle.h"
-#include "Tooltip.h"
 #include "UtilLog.h"
 #include "Trim.h"
 
 namespace gui { namespace timeline { namespace state {
-
-const wxString StateTrim::sTooltip = "";
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
@@ -90,9 +87,6 @@ boost::statechart::result StateTrim::react( const EvKeyDown& evt)
     VAR_DEBUG(evt);
     switch (evt.KeyCode)
     {
-    case WXK_F1:        
-        getTooltip().show(sTooltip); 
-        break;
     case WXK_ESCAPE:    
         evt.consumed();
         return transit<Idle>();

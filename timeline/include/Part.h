@@ -37,7 +37,6 @@ namespace gui {
         class SequenceView;
         class Timeline;
         class TimelineClipboard;
-        class Tooltip;
         class TrackView;
         class Trim;
         class VideoView;
@@ -103,9 +102,6 @@ public:
 
     Drag& getDrag();
     const Drag& getDrag() const;
-
-    Tooltip& getTooltip();
-    const Tooltip& getTooltip() const;
 
     Trim& getTrim();
     const Trim& getTrim() const;

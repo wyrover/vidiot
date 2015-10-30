@@ -178,7 +178,6 @@ extern "C" {
 #include <wx/tglbtn.h>
 #include <wx/thread.h>
 #include <wx/tokenzr.h>
-#include <wx/tooltip.h>
 #include <wx/utils.h>
 #include <wx/valnum.h>
 #include <wx/window.h>

@@ -89,8 +89,6 @@ private:
     boost::statechart::result rightDown();
 
     void addTransition(model::TransitionType type);
-
-    static const wxString sTooltip;
 };
 
 }}} // namespace
