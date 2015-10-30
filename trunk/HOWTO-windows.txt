@@ -72,6 +72,8 @@ NOTE: <VIDIOT_DIR> is the dir in which all 'vidiot' work is done.
 * Cleanup, remove everything except 'boost' and 'lib32-msvc-12.0'
   
 =================== WXWIDGETS ===================
+* Install poEdit (translations) 
+  https://poedit.net/
 * Windows explorer, go to <VIDIOT_DIR> 
   - Tortoisegit clone https://github.com/wxWidgets/wxWidgets.git INTO <VIDIOT_DIR>/wxWidgets
 * Copy include/wx/msw/setup0.h to setup.h

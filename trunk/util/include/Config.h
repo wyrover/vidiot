@@ -46,6 +46,7 @@ public:
     Config(const wxString& appName, const wxString& vendorName, const wxString& localFilename);
 
     static void init(const wxString& applicationName, const wxString& vendorName, bool inCxxTestMode);
+    static void exit();
 
     //////////////////////////////////////////////////////////////////////////
     // GET/SET
@@ -142,6 +143,7 @@ public:
     static const wxString sPathVideoDefaultWidth;
     static const wxString sPathVideoOverruleFourCC; ///< Used to overrule the FourCC for encoding MPEG4 formy Car DVD player (only swallows MPEG4 labeled with XVID)
     static const wxString sPathVideoShowBoundingBox;
+    static const wxString sPathWorkspaceLanguage;
     static const wxString sPathWorkspaceH;
     static const wxString sPathWorkspaceMaximized;
     static const wxString sPathWorkspacePerspectiveCurrent;
@@ -156,6 +158,8 @@ private:
     //////////////////////////////////////////////////////////////////////////
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
+
+    static std::unique_ptr<wxLocale> sLocale;
 
     static bool sShowDebugInfo;
 

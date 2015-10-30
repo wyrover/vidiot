@@ -31,9 +31,7 @@
 
 namespace gui { namespace timeline { namespace state {
 
-const wxString StateLeftDown::sTooltip = _(
-    "Move the cursor to place the currently selected clips somewhere else."
-    );
+const wxString StateLeftDown::sTooltip = "";
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION

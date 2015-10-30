@@ -22,12 +22,15 @@
 #include "Enums.h"
 #include "UtilFrameRate.h"
 #include "UtilInitAvcodec.h"
+#include "UtilLocale.h"
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
 #include "UtilPath.h"
 
+// static
 bool Config::sShowDebugInfo(false);
 bool Config::sHold(false);
+std::unique_ptr<wxLocale> Config::sLocale = nullptr;
 
 DEFINE_EVENT(EVENT_CONFIG_UPDATED, EventConfigUpdated, wxString);
 
@@ -190,6 +193,30 @@ void Config::init(const wxString& applicationName, const wxString& vendorName, b
     setDefault(Config::sPathWorkspaceX, -1);
     setDefault(Config::sPathWorkspaceY, -1);
     setDefault(Config::sPathWorkspacePerspectiveCurrent,"");
+    setDefault(Config::sPathWorkspaceLanguage, getDefaultLanguage());
+
+    wxString Language{ getLanguageCode() };
+    std::vector<std::pair<wxString, wxString>> supported{ getSupportedLanguages() };
+    if (std::find_if(supported.begin(), supported.end(), [Language](std::pair<wxString, wxString> name_and_code) { return name_and_code.second == Language; }) == supported.end())
+    {
+         // Unsupported language code in config
+        Language = getDefaultLanguage();
+        if (std::find_if(supported.begin(), supported.end(), [Language](std::pair<wxString, wxString> name_and_code) { return name_and_code.second == Language; }) == supported.end())
+        {
+            // Unsupported default language
+            Language = "en";
+        }
+    }
+
+    wxLocale::AddCatalogLookupPathPrefix(util::path::getLanguagesPath().GetFullPath());
+    sLocale.reset(new wxLocale());
+    wxLanguage languageId{ getLanguageId(Language) };
+    bool LocaleInitialization = sLocale->Init(languageId, wxLOCALE_LOAD_DEFAULT);
+    bool WxTranslations = sLocale->AddCatalog("vidiotwx", languageId);
+    bool VidiotTranslations = sLocale->AddCatalog("vidiot", languageId); // Load last: This gives vidiot strings higher priority than wx strings (exmple the Copy string in 'nl_NL')
+    VAR_ERROR(Language)(LocaleInitialization)(VidiotTranslations)(WxTranslations);
+
+    WriteString(Config::sPathWorkspaceLanguage, Language);
 
     if (inCxxTestMode)
     {
@@ -211,6 +238,12 @@ void Config::init(const wxString& applicationName, const wxString& vendorName, b
     sShowDebugInfo = Config::ReadBool(Config::sPathDebugShowDebugInfoOnWidgets);
 
     Avcodec::configureLog();
+}
+
+// static
+void Config::exit()
+{
+    sLocale.reset();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -478,6 +511,7 @@ const wxString Config::sPathVideoDefaultScaling("/Video/DefaultScaling");
 const wxString Config::sPathVideoDefaultWidth("/Video/DefaultWidth");
 const wxString Config::sPathVideoOverruleFourCC("/Video/FourCC");
 const wxString Config::sPathVideoShowBoundingBox("/Video/ShowBoundingBox");
+const wxString Config::sPathWorkspaceLanguage("/Workspace/Language");
 const wxString Config::sPathWorkspaceH("/Workspace/H");
 const wxString Config::sPathWorkspaceMaximized("/Workspace/Maximized");
 const wxString Config::sPathWorkspacePerspectiveName("/Workspace/PerspectiveName");

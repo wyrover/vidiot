@@ -98,7 +98,7 @@ bool sendDebugReport(wxString subject, wxString body, boost::optional<wxString> 
 
     if (file)
     {
-        body += _("\nPlease attach the file '") + *file + _("' if it was not yet attached to this mail.\nUnfortunately, some email clients do not support adding attachments automatically.\n");
+        body += wxString::Format(_("\nPlease attach the file %s if it was not yet attached to this mail.\nUnfortunately, some email clients do not support adding attachments automatically.\n"), *file);
     }
 
     command << xdg

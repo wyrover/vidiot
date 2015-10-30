@@ -152,6 +152,7 @@ extern "C" {
 #include <wx/headerctrl.h>
 #include <wx/iconbndl.h>
 #include <wx/intl.h>
+#include <wx/listbox.h>
 #include <wx/menu.h>
 #include <wx/mousestate.h>
 #include <wx/notebook.h>

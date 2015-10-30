@@ -97,7 +97,7 @@ wxString ClipInterval::getDescription() const
         return mDescription;
     }
     mDescription = mRender->getDescription();
-    wxString strip = Config::ReadString(Config::sPathTimelineStripFromClipNames);
+    wxString strip = Config::ReadString(Config::sPathTimelineStripFromClipNames); // todo only in main thread!!! get crash here when calling this for a video file which cannot be opened anymore (from VideoClip:146)
 
     wxStringTokenizer t(strip, "|");
     while (t.HasMoreTokens())

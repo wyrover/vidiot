@@ -21,6 +21,6 @@
 
 namespace worker {
 
-DECLARE_EVENT(EVENT_WORKER_QUEUE_SIZE, WorkerQueueSizeEvent, long);
+DECLARE_EVENT(EVENT_WORKER_QUEUE_SIZE, WorkerQueueSizeEvent, int);
 
 } // namespace

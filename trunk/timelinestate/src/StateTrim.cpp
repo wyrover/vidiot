@@ -30,9 +30,7 @@
 
 namespace gui { namespace timeline { namespace state {
 
-const wxString StateTrim::sTooltip = _(
-    "Move the cursor to change the entry point of the clip.\n"
-    );
+const wxString StateTrim::sTooltip = "";
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION

@@ -61,17 +61,17 @@ const std::map<int, wxString> Window::sMapMenuIdToPaneName = {
     { static_cast<int>(wxID_HELP), Window::sPaneNameHelp }
 };
 
-const wxString sPaneCaptionHelp(_("Help"));
-const wxString sPaneCaptionProject(_("Project"));
+const wxString Window::sPaneCaptionHelp(_("Help"));
+const wxString Window::sPaneCaptionProject(_("Project"));
 const wxString Window::sPaneCaptionDetails(_("Details"));
-const wxString sPaneCaptionPreview(_("Preview"));
-const wxString sPaneCaptionTimelines(_("Timelines"));
+const wxString Window::sPaneCaptionPreview(_("Preview"));
+const wxString Window::sPaneCaptionTimelines(_("Timelines"));
 
 //////////////////////////////////////////////////////////////////////////
 // HELPER CLASSES
 //////////////////////////////////////////////////////////////////////////
 
-struct ViewHelper :   public wxView
+struct ViewHelper : public wxView
 {
     ViewHelper() : wxView() {};
     virtual ~ViewHelper() {};
@@ -98,9 +98,9 @@ IMPLEMENT_DYNAMIC_CLASS(ViewHelper, wxView);
 const int sStatusProcessing = 8;
 int Window::sSequenceMenuIndex = 0;
 #ifndef NDEBUG
-static const wxString sTitle(_("Vidiot (DEBUG)"));
+static const wxString sTitle{ "Vidiot (DEBUG)" };
 #else
-static const wxString sTitle(_("Vidiot"));
+static const wxString sTitle{"Vidiot"};
 #endif
 
 Window::Window()
@@ -140,20 +140,21 @@ Window::Window()
     util::window::setIcons(this);
 
     mMenuFile = new wxMenu();
-    mMenuFile->Append(wxID_NEW);
+    wxMenuItem * p2 = mMenuFile->Append(wxID_NEW);
     mMenuFile->Append(wxID_OPEN);
     mMenuFile->Append(wxID_CLOSE);
-    //	mMenuFile->Append(wxID_REVERT);
+
+    //	mMenuFile->Append(wxID_REVERT); todo why not?
     mMenuFile->Append(wxID_SAVE);
     mMenuFile->Append(wxID_SAVEAS);
     mMenuFile->AppendSeparator();
-    mMenuFile->Append(ID_NEW_FILES, _("Add &files"), _("Add media files from disk."));
-    mMenuFile->Append(ID_NEW_AUTOFOLDER, _("Add &folder"), _("Add folder with media files from disk."));
-    mMenuFile->Append(ID_NEW_SEQUENCE, _("Add &sequence"), _("Add new (blank) movie sequence."));
+    mMenuFile->Append(ID_NEW_FILES, _("Add files"), _("Add media files from disk."));
+    mMenuFile->Append(ID_NEW_AUTOFOLDER, _("Add folder"), _("Add folder with media files from disk."));
+    mMenuFile->Append(ID_NEW_SEQUENCE, _("Add sequence"), _("Add new (blank) movie sequence."));
     mMenuFile->AppendSeparator();
     mMenuFile->Append(wxID_PROPERTIES);
     mMenuFile->AppendSeparator();
-    mMenuFile->Append(wxID_EXIT, _("E&xit"), _("Select exit to end the application."));
+    mMenuFile->Append(wxID_EXIT, _("Exit"));
     mMenuFile->Enable(ID_NEW_FILES,false);
     mMenuFile->Enable(ID_NEW_AUTOFOLDER,false);
     mMenuFile->Enable(ID_NEW_SEQUENCE,false);
@@ -187,7 +188,7 @@ Window::Window()
     mMenuSequence = new wxMenu();
 
     wxMenu* menutools = new wxMenu();
-    menutools->Append(wxID_PREFERENCES, _("&Options"), _("Open the options dialog."));
+    menutools->Append(wxID_PREFERENCES, _("Options"));
 
     mMenuWorkspace = new wxMenu();
     mMenuWorkspace->AppendCheckItem(ID_WORKSPACE_SHOW_CAPTIONS, _("Show captions"), _("Toggle this option to hide/show the captions on the workspace windows."));
@@ -198,9 +199,9 @@ Window::Window()
     mMenuWorkspace->Append(ID_WORKSPACE_DELETE, _("Delete"), _("Select a workspace layout to be deleted."));
     mMenuWorkspace->Append(ID_WORKSPACE_DELETEALL, _("Delete all"), _("Delete all saved workspace layouts."));
     mMenuWorkspace->AppendSeparator();
-    mMenuWorkspace->Append(ID_WORKSPACE_DEFAULT, ("Restore default"), _("Restore the original workspace layout."));
+    mMenuWorkspace->Append(ID_WORKSPACE_DEFAULT, _("Restore default"));
     mMenuWorkspace->AppendSeparator();
-    mMenuWorkspace->Append(ID_WORKSPACE_FULLSCREEN, ("Fullscreen\tF11"), _("Toggle between windowed and fullscreen mode."));
+    mMenuWorkspace->Append(ID_WORKSPACE_FULLSCREEN, _("Fullscreen") + "\t" + _("F11"));
     updateWorkspaceMenu();
 
     mMenuHelp = new wxMenu();
@@ -209,22 +210,22 @@ Window::Window()
     mMenuHelp->Append(ID_OPENLOGFILE, _("Open log file"), _("Use the default application associated with .txt files to open the log file."));
     mMenuHelp->Append(ID_OPENCONFIGFILE, _("Open config file"), _("Use the default application associated with .ini files to open the config file."));
     mMenuHelp->AppendSeparator();
-    mMenuHelp->Append(wxID_ABOUT, _("&About..."), _("Show the about dialog."));
+    mMenuHelp->Append(wxID_ABOUT, _("About..."));
 
     mMenuBar = new wxMenuBar();
-    mMenuBar->Append(mMenuFile,     _("&Project"));
-    mMenuBar->Append(mMenuEdit,     _("&Edit"));
-    mMenuBar->Append(mMenuView,     _("&View"));
-    mMenuBar->Append(mMenuSequence, _("&Sequence"));
+    mMenuBar->Append(mMenuFile,     _("Project"));
+    mMenuBar->Append(mMenuEdit,     _("Edit"));
+    mMenuBar->Append(mMenuView,     _("View"));
+    mMenuBar->Append(mMenuSequence, _("Sequence"));
     sSequenceMenuIndex = 3;
-    mMenuBar->Append(menutools,    _("&Tools"));
-    mMenuBar->Append(mMenuWorkspace,_("&Workspace"));
+    mMenuBar->Append(menutools,    _("Tools"));
+    mMenuBar->Append(mMenuWorkspace,_("Workspace"));
     if (Config::ReadBool(Config::sPathDebugShowCrashMenu))
     {
         mTestCrash = new util::TestCrash(this);
-        mMenuBar->Append(mTestCrash->getMenu(), _("&Crash"));
+        mMenuBar->Append(mTestCrash->getMenu(), _("Crash"));
     }
-    mMenuBar->Append(mMenuHelp,     _("&Help"));
+    mMenuBar->Append(mMenuHelp,     _("Help"));
 
     SetMenuBar( mMenuBar );
 
@@ -308,7 +309,7 @@ Window::Window()
 
     mUiManager.Bind(wxEVT_AUI_PANE_CLOSE, &Window::onClosePane, this);
     mUiManager.Bind(wxEVT_AUI_PANE_RESTORE, &Window::onRestorePane, this);
-    
+
     mDefaultPerspective = mUiManager.SavePerspective();
 
     wxString previous = Config::ReadString(Config::sPathWorkspacePerspectiveCurrent);
@@ -318,7 +319,7 @@ Window::Window()
         mUiManager.LoadPerspective(previous);
         mUiManager.Update();
     }
-    mUiManager.GetPane(mDetailsView).Caption(sPaneNameDetails); // Ensure that any specific details name (from a previous session) is replaced with the default. 
+    mUiManager.GetPane(mDetailsView).Caption(sPaneNameDetails); // Ensure that any specific details name (from a previous session) is replaced with the default.
     updateViewMenu();
 
     Bind(model::EVENT_OPEN_PROJECT,     &Window::onOpenProject,     this);
@@ -374,7 +375,13 @@ Window::Window()
         if (item->GetId() == wxID_CLOSE)
         {
             // This menu entry does not get an accelerator by default. Add Ctrl-W.
-            item->SetItemLabel(item->GetItemLabelText() + "\tCtrl-W");
+            item->SetItemLabel(item->GetItemLabelText() + "\t" + _("Ctrl") + "-W");
+        }
+        if (item->GetId() == wxID_NEW)
+        {
+
+            wxString kk = item->GetItemLabel();
+            VAR_ERROR(kk);
         }
     }
     for (wxMenuItem* item : mMenuHelp->GetMenuItems())
@@ -382,7 +389,7 @@ Window::Window()
         if (item->GetId() == wxID_HELP)
         {
             // This menu entry does not get an accelerator by default. Add Ctrl-H.
-            item->SetItemLabel(item->GetItemLabelText() + "\tCtrl-H");
+            item->SetItemLabel(item->GetItemLabelText() + "\t" + _("Ctrl") + "-H");
         }
     }
 
@@ -624,8 +631,8 @@ void Window::onClosePane(wxAuiManagerEvent& event)
     {
         if (t.second == event.GetPane()->name)
         {
-            if (t.first == wxID_HELP) 
-            { 
+            if (t.first == wxID_HELP)
+            {
                 mMenuHelp->Check(t.first, false);
             }
             else
@@ -643,8 +650,8 @@ void Window::onRestorePane(wxAuiManagerEvent& event)
     {
         if (t.second == event.GetPane()->name)
         {
-            if (t.first == wxID_HELP) 
-            { 
+            if (t.first == wxID_HELP)
+            {
                 mMenuHelp->Check(t.first, true);
             }
             else

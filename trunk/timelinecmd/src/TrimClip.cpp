@@ -81,11 +81,7 @@ void TrimClip::update(pts diff, bool shift, bool trimlink)
 
     mTrimLink = trimlink;
 
-    mCommandName =
-        _("Adjust ") +
-        (mOriginalClip->isA<model::Transition>() ? _("transition ") : _("clip ")) +
-        (isBeginTrim() ? _("begin") : _("end")) +
-        _(" point");
+    mCommandName = wxString::Format(_("Adjust %1$s side of %2$s"), isBeginTrim() ? _("left") : _("right"), mOriginalClip->isA<model::Transition>() ? _("transition") : _("clip"));
 
     mLinkTransition.reset();
     if (mOriginalLink)

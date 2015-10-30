@@ -176,7 +176,7 @@ void VideoDisplay::play()
         auto verify = [this](PaError err, wxString message)
         {
             if (err == paNoError) { return true; }
-            wxString msg; msg << _("Could not initialize playback.\n") << message << Pa_GetErrorText(err);
+            wxString msg; msg << _("Could not initialize playback.") << "\n" << message << Pa_GetErrorText(err);
             VAR_ERROR(msg);
             gui::Dialog::get().getConfirmation("Error", msg);
             mPlaying = true; // Ensure that 'stop' code is executed.

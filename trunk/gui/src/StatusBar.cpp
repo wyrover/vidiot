@@ -85,16 +85,14 @@ void StatusBar::onSize(wxSizeEvent& event)
 
 void StatusBar::onWorkerQueueSize(worker::WorkerQueueSizeEvent& event)
 {
-    wxString queuetext("");
-    if (event.getValue() == 1)
+    if (event.getValue() == 0)
     {
-        queuetext = _("1 item queued");
+        setQueueText("");
     }
-    else if (event.getValue() > 1)
+    else
     {
-        queuetext = wxString::Format("%ld %s", event.getValue(), _("items queued"));
+        setQueueText(wxString::Format(_("%d item(s) queued"), event.getValue()));
     }
-    setQueueText(queuetext);
 }
 
 //////////////////////////////////////////////////////////////////////////

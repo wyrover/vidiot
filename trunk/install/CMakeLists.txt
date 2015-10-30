@@ -68,6 +68,7 @@ if (WIN32 AND NOT UNIX)
   install (FILES ${BOOST_INSTALL_DEBUG}                   COMPONENT ${APPNAME} DESTINATION .  CONFIGURATIONS Debug)
   install (DIRECTORY ${PROJECT_SOURCE_DIR}/images/        COMPONENT ${APPNAME} DESTINATION images)
   install (DIRECTORY ${PROJECT_SOURCE_DIR}/html/          COMPONENT ${APPNAME} DESTINATION html)
+  install (DIRECTORY ${PROJECT_SOURCE_DIR}/lang/          COMPONENT ${APPNAME} DESTINATION lang)
   install (FILES ${PROJECT_BINARY_DIR}/changelog.html     COMPONENT ${APPNAME} DESTINATION html/about)
   install (FILES ${PROJECT_BINARY_DIR}/knownproblems.html COMPONENT ${APPNAME} DESTINATION html/about)
 
@@ -101,6 +102,10 @@ else ()
     DIRECTORY   ${PROJECT_SOURCE_DIR}/html/
     COMPONENT   ${APPNAME_LOWER}
     DESTINATION share/${APPNAME_LOWER}/html )
+  install (
+    DIRECTORY   ${PROJECT_SOURCE_DIR}/lang/
+    COMPONENT   ${APPNAME_LOWER}
+    DESTINATION share/${APPNAME_LOWER}/lang )
 
   # Install informational files
   install (

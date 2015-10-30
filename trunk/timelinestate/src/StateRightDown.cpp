@@ -32,9 +32,7 @@
 
 namespace gui { namespace timeline { namespace state {
 
-const wxString StateRightDown::sTooltip = _(
-    "\n" \
-    );
+const wxString StateRightDown::sTooltip = "\n";
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION

@@ -91,7 +91,7 @@ private:
     boost::barrier mBarrierStop;
     boost::scoped_ptr<boost::thread> mThread;
 };
-
+// todo remove all ~ bu files
 void TestUiDialog::testEscape()
 {
     StartTestSuite();
@@ -101,7 +101,7 @@ void TestUiDialog::testEscape()
     {
         Escape e;
         StartTest("Files dialog");
-        wxStrings result = gui::Dialog::get().getFiles("message", _("Movie clips (*.avi)|*.avi|All files (%s)|%s"));
+        wxStrings result = gui::Dialog::get().getFiles("message", "Movie clips (*.avi)|*.avi|All files (%s)|%s");
         ASSERT_ZERO(result.size());
 
     }

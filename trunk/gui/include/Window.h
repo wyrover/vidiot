@@ -72,7 +72,11 @@ public:
     static const wxString sPaneNamePreview;
     static const wxString sPaneNameTimelines;
     static const std::map<int, wxString> sMapMenuIdToPaneName;
+    static const wxString sPaneCaptionHelp;
+    static const wxString sPaneCaptionProject;
     static const wxString sPaneCaptionDetails;
+    static const wxString sPaneCaptionPreview;
+    static const wxString sPaneCaptionTimelines;
 
     //////////////////////////////////////////////////////////////////////////
     // INITIALIZATION

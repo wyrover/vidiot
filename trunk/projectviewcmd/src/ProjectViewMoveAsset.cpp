@@ -31,11 +31,11 @@ ProjectViewMoveAsset::ProjectViewMoveAsset(const model::NodePtrs& nodes, const m
     ASSERT_NONZERO(mNewParent);
     if (nodes.size() == 1)
     {
-        mCommandName = _("Move ") + _("\"") + (*(nodes.begin()))->getName() + _("\"");
+        mCommandName = wxString::Format(_("Move %s"), (*(nodes.begin()))->getName());
     }
     else
     {
-        mCommandName = _("Move assets");
+        mCommandName = _("Move");
     }
 }
 

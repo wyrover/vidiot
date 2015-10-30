@@ -30,7 +30,7 @@ ProjectViewCreateAutoFolder::ProjectViewCreateAutoFolder(const model::FolderPtr&
 ,   mPath(path)
 {
     VAR_INFO(this)(parent)(path);
-    mCommandName = _("Add folder")  + _(" \"")   + util::path::toName(mPath)  + _("\"");
+    mCommandName = wxString::Format(_("Add folder %s"), util::path::toName(mPath));
 }
 
 ProjectViewCreateAutoFolder::~ProjectViewCreateAutoFolder()

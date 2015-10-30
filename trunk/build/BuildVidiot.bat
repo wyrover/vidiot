@@ -105,6 +105,7 @@ cd %VIDIOT_DIR%
 if NOT EXIST Build mkdir Build
 
 cd %VIDIOT_BUILD%
+if "%1%"=="CMAKE" goto BUILD
 
 
 
@@ -141,6 +142,42 @@ C:\Python27\python.exe "%VIDIOT_DIR%\vidiot_trunk\build\make_knownproblems.py" "
 
 REM ============================== BUILD ==============================
 :BUILD
+
+REM === UPDATE TRANSLATIONS FILES ===
+
+set LANGTOOLSDIR=C:\Program Files (x86)\Poedit\Gettexttools\bin
+set LANGDIR=%SOURCE%\lang
+pushd %SOURCE%
+dir /b /s *.cpp *.h > "%TMP%/files.txt"
+popd
+if not exist "%LANGTOOLSDIR%" goto:NOPO
+echo Updating "%LANGDIR%\vidiot.pot" template
+"%LANGTOOLSDIR%\xgettext.exe" -f "%TMP%/files.txt" --output=%LANGDIR%\vidiot.pot --keyword=_
+
+REM Update all translations 
+for /f "tokens=*" %%L in ('dir /b/o "%%LANGDIR%%"') do (
+    if exist "%LANGDIR%\%%L\vidiot.po" (
+        echo Updating language %%L
+
+        echo Updating "%LANGDIR%\%%L\vidiot.po" from "%LANGDIR%\vidiot.pot"
+        "%LANGTOOLSDIR%\msgmerge.exe" -U "%LANGDIR%\%%L\vidiot.po" "%LANGDIR%\vidiot.pot"
+        
+        echo Compiling "%LANGDIR%\%%L\vidiot.po"
+        "%LANGTOOLSDIR%\msgfmt.exe" "%LANGDIR%\%%L\vidiot.po" --output-file="%LANGDIR%\%%L\vidiot.mo"
+
+        if exist "%VIDIOT_DIR%\wxWidgets\locale\%%L.po" (
+		
+            echo Updating wxwidgets %%L.po into "%LANGDIR%\%%L\vidiotwx.po"
+            copy "%VIDIOT_DIR%\wxWidgets\locale\%%L.po" "%LANGDIR%\%%L\vidiotwx.po"
+
+            echo Compiling "%LANGDIR%\%%L\vidiotwx.po"
+            "%LANGTOOLSDIR%\msgfmt.exe" "%LANGDIR%\%%L\vidiotwx.po" --output-file="%LANGDIR%\%%L\vidiotwx.mo"
+        )
+    )
+)
+
+
+
 
 REM === FIND BOOST ====
 REM o-d: always use newest version
@@ -206,5 +243,10 @@ exit
 
 :NOVAR
 echo "Define VIDIOT_DIR first"
+pause
+exit
+
+:NOPO
+echo "Install poEdit"
 pause
 exit

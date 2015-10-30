@@ -22,6 +22,7 @@
 #include "ProjectView.h"
 #include "TimelinesView.h"
 #include "Details.h"
+#include "UtilLocale.h"
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
 #include "UtilPath.h"
@@ -163,7 +164,12 @@ void Help::onTimer(wxTimerEvent& event)
 
 void Help::home()
 {
-    mHtml->LoadPage(util::path::getResource("html/help", "index.html"));
+    wxString main{ util::path::getResource("html/help/" + getLanguageCode(), "index.html") };
+    if (!wxFile::Exists(main))
+    {
+        main = util::path::getResource("html/help/en", "index.html"); 
+    }
+    mHtml->LoadPage(main);
 }
 
 void Help::updateButtons()

@@ -190,7 +190,7 @@ void File::check(bool immediately)
             readMetaData();
             if (!canBeOpened())
             {
-                gui::Dialog::get().getConfirmation(_("File removed"), _("The file ") + util::path::toPath(mPath) + _(" has been removed from disk. File is removed from project also."));
+                gui::Dialog::get().getConfirmation(_("File removed"), wxString::Format(_("The file %s has been removed from disk. File is removed from project also."), util::path::toPath(mPath)));
                 parent->removeChild(self());
             }
         }

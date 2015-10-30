@@ -80,7 +80,7 @@ void DetailsTrim::show(const model::IClipPtr& src, const model::IClipPtr& trg, c
 
     if (!requestsToBeShown())
     {
-        requestShow(true, _("Resizing ") + src->getDescription());
+        requestShow(true, wxString::Format(_("Resizing %s"), src->getDescription()));
         Fit();
     }
 

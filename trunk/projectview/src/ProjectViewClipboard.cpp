@@ -131,7 +131,7 @@ bool ProjectViewClipboard::storeSelectionInClipboard() const
     }
     else if (mProjectView.selectionContainsRootNode())
     {
-        StatusBar::get().timedInfoText(_("Project (topmost item) cannot be stored in clipbaord."));
+        StatusBar::get().timedInfoText(_("Project (topmost item) cannot be stored in clipboard."));
     }
     else
     {

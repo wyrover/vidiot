@@ -302,7 +302,7 @@ void Render::scheduleAll()
 
     bool anError = false;
     wxString error;
-    error << _("The following sequence(s) have not been scheduled:\n");
+    error << _("The following sequence(s) have not been scheduled") + ":\n";
     wxStrings errors;
 
     wxFileNames allFilenames;
@@ -315,13 +315,13 @@ void Render::scheduleAll()
     {
         if (!sequence->getRender()->checkFileName())
         {
-            error << "- " << sequence->getName() << ": Filename is not specified.\n";
+            error << "- " << sequence->getName() << ": " << _("Filename is not specified.") << "\n";
             anError = true;
             continue;
         }
         if (std::count(allFilenames.begin(),allFilenames.end(),sequence->getRender()->getFileName()) > 1)
         {
-            error << "- " << sequence->getName() << ": Specified filename also used for another sequence.\n";
+            error << "- " << sequence->getName() << ": " << _("Specified filename also used for another sequence.") << "\n";
             anError = true;
             continue;
         }
@@ -369,7 +369,7 @@ void RenderWork::generate()
 
     sequence->moveTo(mFrom);
     showProgressBar(mLength, true);
-    wxString ps; ps << _("Rendering sequence '") << sequence->getName() << "'";
+    wxString ps{ wxString::Format(_("Rendering sequence %s"), sequence->getName()) };
     showProgressText(ps);
 
     OutputFormatPtr outputformat = mRender->getOutputFormat();
@@ -436,7 +436,7 @@ void RenderWork::generate()
             if (videoCodec->ticks_per_frame != 1)
             {
                 VAR_ERROR(videoCodec->ticks_per_frame)(videoCodec);
-                throw EncodingError("Unsupported number of ticks per frame in target codec.");
+                throw EncodingError(_("Unsupported number of ticks per frame in target codec"));
             }
 
             if (mFourCC)
@@ -473,7 +473,7 @@ void RenderWork::generate()
         {
             if (!outputformat->getVideoCodec()->open(videoCodec))
             {
-                throw EncodingError(_("Failed to open video codec."));
+                throw EncodingError(_("Failed to open video codec"));
             }
 
             outputPicture = alloc_picture(videoCodec->pix_fmt, videoCodec->width, videoCodec->height);
@@ -499,7 +499,7 @@ void RenderWork::generate()
         {
             if (!outputformat->getAudioCodec()->open(audioCodec))
             {
-                throw EncodingError(_("Failed to open audio codec."));
+                throw EncodingError(_("Failed to open audio codec"));
             }
 
             nRequiredInputSamplesPerChannel = audioCodec->frame_size;
@@ -530,7 +530,7 @@ void RenderWork::generate()
                 if (bytesPerSampleForEncoder == 0)
                 {
                     VAR_ERROR(audioCodec->sample_fmt)(audioCodec)(*this);
-                    throw EncodingError(_("Failed to determine audio sample size for encoding."));
+                    throw EncodingError(_("Failed to determine audio sample size"));
                 }
 
                 audioSampleFormatResampleContext = swr_alloc_set_opts(0,
@@ -570,7 +570,7 @@ void RenderWork::generate()
         if (avio_open(&context->pb, filename.c_str(), AVIO_FLAG_WRITE) < 0)
         {
             VAR_ERROR(filename);
-            throw EncodingError(_("Failed to open file for writing."));
+            throw EncodingError(_("Failed to open file"));
         }
 
         fileOpened = true;
@@ -601,8 +601,7 @@ void RenderWork::generate()
             // SHOW PROGRESS
             //////////////////////////////////////////////////////////////////////////
 
-            wxString s; s << _("(frame ") << (position - mFrom) << _(" out of ") << mLength << ")";
-            showProgressText(ps + " " + s);
+            showProgressText(ps + " " + wxString::Format(_("Frame %1$" PRId64 " out of %2$" PRId64), position - mFrom, mLength));
             showProgress(position - mFrom);
 
             if (writeAudio && audioTime < videoTime)
@@ -702,7 +701,7 @@ void RenderWork::generate()
                 if (0 != result)
                 {
                     VAR_ERROR(result)(avcodecErrorString(result))(*this);
-                    throw EncodingError(_("Failed to encode audio data."));
+                    throw EncodingError(_("Failed to encode audio"));
                 }
 
                 delete encodeFrame; // May be 0
@@ -720,7 +719,7 @@ void RenderWork::generate()
                     if (0 != result)
                     {
                         VAR_ERROR(result)(avcodecErrorString(result))(*this);
-                        throw EncodingError(_("Failed to write audio data."));
+                        throw EncodingError(_("Failed to write audio"));
                     }
                 }
                 // else Packet possibly buffered inside codec
@@ -811,7 +810,7 @@ void RenderWork::generate()
                     if (0 != result)
                     {
                         VAR_ERROR(result)(avcodecErrorString(result))(*this);
-                        throw EncodingError(_("Failed to write raw video data."));
+                        throw EncodingError(_("Failed to write raw video"));
                     }
                 }
                 else
@@ -825,7 +824,7 @@ void RenderWork::generate()
                     if (0 != result)
                     {
                         VAR_ERROR(result)(avcodecErrorString(result))(*this);
-                        throw EncodingError(_("Failed to encode video data."));
+                        throw EncodingError(_("Failed to encode video"));
                     }
 
                     //////////////////////////////////////////////////////////////////////////
@@ -839,7 +838,7 @@ void RenderWork::generate()
                         if (0 != result)
                         {
                             VAR_ERROR(result)(avcodecErrorString(result))(*this);
-                            throw EncodingError(_("Failed to write video data."));
+                            throw EncodingError(_("Failed to write video"));
                         }
                     }
                     // else Packet possibly buffered inside codec
@@ -852,7 +851,7 @@ void RenderWork::generate()
         if (result != 0)
         {
             VAR_ERROR(result)(avcodecErrorString(result))(*this);
-            throw EncodingError(_("Failed to close file."));
+            throw EncodingError(_("Failed to close file"));
         }
     }
     catch (EncodingError error)

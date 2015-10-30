@@ -34,7 +34,7 @@ SplitAtCursor::SplitAtCursor(const model::SequencePtr& sequence)
     :   AClipEdit(sequence)
 {
     VAR_INFO(this);
-    mCommandName = _("Insert split at cursor position");
+    mCommandName = _("Split at cursor");
 }
 
 SplitAtCursor::~SplitAtCursor()

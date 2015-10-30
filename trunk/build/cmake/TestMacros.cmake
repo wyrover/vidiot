@@ -44,6 +44,7 @@ macro (AddTests TestProjectName)
 
   copy_html_files_to_target (${TestProjectName})
   copy_images_to_target (${TestProjectName})
-
+  copy_lang_files_to_target (${TestProjectName})
+  
 endmacro ()
 
