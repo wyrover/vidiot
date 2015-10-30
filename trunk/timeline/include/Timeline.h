@@ -37,7 +37,6 @@ namespace gui {
         class Selection;
         class SequenceView;
         class TimelineClipboard;
-        class Tooltip;
         class Trim;
         class ViewMap;
         class Zoom;
@@ -97,8 +96,6 @@ public:
     const Cursor& getCursor() const;
     Drag& getDrag();
     const Drag& getDrag() const;
-    Tooltip& getTooltip();
-    const Tooltip& getTooltip() const;
     Trim& getTrim();
     const Trim& getTrim() const;
     state::Machine& getStateMachine();
@@ -250,7 +247,6 @@ private:
     Selection* mSelection;
     Cursor* mCursor;  // Must be AFTER mPlayer and AFTER mScroll
     Drag* mDrag;
-    Tooltip* mTooltip;
     state::Machine* mStateMachine; // Must be AFTER mViewMap due to constructor list.
     MenuHandler* mMenuHandler; // Init as last since it depends on other parts
     Details* mDetails; // Must be after all other Parts (since it uses these during the initialization)

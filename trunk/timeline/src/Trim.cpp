@@ -33,7 +33,6 @@
 #include "Selection.h"
 #include "Sequence.h"
 #include "Timeline.h"
-#include "Tooltip.h"
 #include "Track.h"
 #include "Transition.h"
 #include "TrimClip.h"

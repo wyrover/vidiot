@@ -50,8 +50,6 @@ struct StateScrolling
     boost::statechart::result react( const EvRightUp& evt );
     boost::statechart::result react( const EvLeave& evt );
     boost::statechart::result react( const EvKeyDown& evt );
-
-    static const wxString sTooltip;
 };
 
 }}} // namespace

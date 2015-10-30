@@ -53,7 +53,6 @@
 #include "StateTrim.h"
 #include "Timeline.h"
 #include "TimelineClipboard.h"
-#include "Tooltip.h"
 #include "Track.h"
 #include "UtilLog.h"
 #include "VideoTrack.h"
@@ -62,10 +61,6 @@
 #include "Zoom.h"
 
 namespace gui { namespace timeline { namespace state {
-
-const wxString Idle::sTooltip = _(
-    "Move the cursor to 'scrub' over the timeline and see the frames back in the preview."
-    );
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
@@ -154,11 +149,6 @@ boost::statechart::result Idle::react( const EvKeyDown& evt)
         {
             evt.consumed();
             getSelection().deleteClips(getKeyboard().getShiftDown());
-            break;
-        }
-        case WXK_F1:
-        {
-            getTooltip().show(sTooltip);
             break;
         }
         case '1':

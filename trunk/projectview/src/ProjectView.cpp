@@ -352,7 +352,7 @@ void ProjectView::onDeleteUnused()
 
 void ProjectView::onNewFolder(const model::FolderPtr& parent)
 {
-    wxString s = gui::Dialog::get().getText(_("Create new folder"), _("Enter folder name"), _("New Folder default value") );
+    wxString s = gui::Dialog::get().getText(_("Create folder"), _("Enter name"), _("Folder") );
     if ((s.CompareTo(_T("")) != 0) &&
         (!findConflictingName(parent, s, NODETYPE_FOLDER)))
     {
@@ -362,7 +362,7 @@ void ProjectView::onNewFolder(const model::FolderPtr& parent)
 
 void ProjectView::onNewAutoFolder(const model::FolderPtr& parent)
 {
-    wxString s = gui::Dialog::get().getDir( _("Add folder from disk"),wxStandardPaths::Get().GetDocumentsDir() );
+    wxString s = gui::Dialog::get().getDir(_("Select folder"), wxStandardPaths::Get().GetDocumentsDir());
     if ((s.CompareTo(_T("")) != 0) &&
         (!findConflictingName(parent, s, NODETYPE_FOLDER)))
     {
@@ -379,7 +379,7 @@ void ProjectView::onNewAutoFolderInRoot()
 
 void ProjectView::onNewSequence(const model::FolderPtr& parent)
 {
-    wxString s = gui::Dialog::get().getText(_("Create new sequence"), _("Enter sequence name"), _("New sequence default value") );
+    wxString s = gui::Dialog::get().getText(_("Create sequence"), _("Enter name"), _("Sequence") );
     if ((s.CompareTo(_T("")) != 0) &&
         (!findConflictingName(parent, s, NODETYPE_SEQUENCE)))
     {
@@ -394,7 +394,7 @@ void ProjectView::onNewSequenceInRoot()
 
 void ProjectView::onNewFile(const model::FolderPtr& parent)
 {
-    wxStrings files = gui::Dialog::get().getFiles( _("Select file(s) to add") );
+    wxStrings files = gui::Dialog::get().getFiles( _("Select file(s)") );
     std::vector<wxFileName> list;
     for ( wxString path : files )
     {
@@ -527,14 +527,14 @@ void ProjectView::onContextMenu(wxDataViewEvent &event)
 
         wxMenu menu;
 
-        menu.Append(wxID_CUT, _("Cu&t\tCTRL-x"));
+        menu.Append(wxID_CUT, _("Cut") + "\t" + _("CTRL") + "-X");
         menu.Enable(wxID_CUT, enableDelete);
-        menu.Append(wxID_COPY, _("Cop&y\tCTRL-c"));
+        menu.Append(wxID_COPY, _("Copy") + "\t" + _("CTRL") + "-C");
         menu.Enable(wxID_COPY, (nSelected > 0));
-        menu.Append(wxID_PASTE, _("&Paste\tCTRL-v"));
+        menu.Append(wxID_PASTE, _("Paste") + "\t" + _("CTRL") + "-V");
         menu.Enable(wxID_PASTE, enablePaste);
         menu.AppendSeparator();
-        menu.Append(wxID_DELETE, _("&Delete\tDEL"));
+        menu.Append(wxID_DELETE, _("Delete") + "\t" +_("DEL"));
         menu.Enable(wxID_DELETE, enableDelete);
         if (showDeleteUnused)
         {
@@ -545,12 +545,12 @@ void ProjectView::onContextMenu(wxDataViewEvent &event)
 
         if (showCreateSequence)
         {
-            menu.Append(ID_CREATE_SEQUENCE, _("&Make sequence"), ("Create a new sequence containing all the clips in the folder"));
+            menu.Append(ID_CREATE_SEQUENCE, _("Make sequence"));
             menu.Enable(ID_CREATE_SEQUENCE, enableCreateSequence);
         }
         if (showOpenSequence)
         {
-            menu.Append(wxID_OPEN, _("&Open sequence\to"));
+            menu.Append(wxID_OPEN, _("Open sequence"));
             menu.Enable(wxID_OPEN, enableOpen);
         }
 
@@ -559,16 +559,16 @@ void ProjectView::onContextMenu(wxDataViewEvent &event)
             menu.AppendSeparator();
 
             wxMenu* addMenu = new wxMenu();
-            addMenu->Append(ID_NEW_AUTOFOLDER, _("&Folder from disk"), _("Add disk folder and its contents to the project and then monitor for changes."));
-            addMenu->Append(ID_NEW_FILES, _("Fi&le(s) from disk"), _("Select file(s) on disk to be added to the project."));
-            menu.AppendSubMenu(addMenu, _("&Add"));
+            addMenu->Append(ID_NEW_AUTOFOLDER, _("Folder from disk"));
+            addMenu->Append(ID_NEW_FILES, _("File(s) from disk"));
+            menu.AppendSubMenu(addMenu, _("Add"));
 
             menu.AppendSeparator();
 
             wxMenu* createMenu = new wxMenu();
-            createMenu->Append(ID_NEW_FOLDER, _("&Folder"), _("Add a new folder in the project"));
-            createMenu->Append(ID_NEW_SEQUENCE, _("&Sequence"), _("Create a new (empty) movie sequence"));
-            menu.AppendSubMenu(createMenu, _("&New"));
+            createMenu->Append(ID_NEW_FOLDER, _("Folder"));
+            createMenu->Append(ID_NEW_SEQUENCE, _("Sequence"));
+            menu.AppendSubMenu(createMenu, _("New"));
         }
 
         int result = GetPopupMenuSelectionFromUser(menu);

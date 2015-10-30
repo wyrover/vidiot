@@ -91,7 +91,7 @@ private:
     boost::barrier mBarrierStop;
     boost::scoped_ptr<boost::thread> mThread;
 };
-// todo remove all ~ bu files
+
 void TestUiDialog::testEscape()
 {
     StartTestSuite();

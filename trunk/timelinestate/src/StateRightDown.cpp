@@ -26,13 +26,10 @@
 #include "StateIdle.h"
 #include "StateScrolling.h"
 #include "Timeline.h"
-#include "Tooltip.h"
 #include "UtilLog.h"
 #include "Zoom.h"
 
 namespace gui { namespace timeline { namespace state {
-
-const wxString StateRightDown::sTooltip = "\n";
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
@@ -86,9 +83,6 @@ boost::statechart::result StateRightDown::react( const EvKeyDown& evt )
 
     switch (evt.KeyCode)
     {
-    case WXK_F1:        
-        getTooltip().show(sTooltip); 
-        break;
     case WXK_ESCAPE:    
         evt.consumed();
         return transit<Idle>();

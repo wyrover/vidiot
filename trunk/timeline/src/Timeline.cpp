@@ -35,7 +35,6 @@
 #include "State.h"
 #include "ThumbnailView.h"
 #include "TimelineClipboard.h"
-#include "Tooltip.h"
 #include "Track.h"
 #include "Trim.h"
 #include "UtilLog.h"
@@ -76,7 +75,6 @@ Timeline::Timeline(wxWindow *parent, const model::SequencePtr& sequence, bool be
 ,   mSelection(new Selection(this))
 ,   mCursor(new Cursor(this))
 ,   mDrag(new Drag(this))
-,   mTooltip(new Tooltip(this))
 ,   mStateMachine(new state::Machine(*this))
 ,   mMenuHandler(new MenuHandler(this))
 ,   mDetails(Window::get().getDetailsView().openTimeline(this))
@@ -129,7 +127,6 @@ Timeline::~Timeline()
 
     delete mMenuHandler;    mMenuHandler = 0;
     delete mStateMachine;   mStateMachine = 0;
-    delete mTooltip;        mTooltip = 0;
     delete mDrag;           mDrag = 0;
     delete mCursor;         mCursor = 0;
     delete mSelection;      mSelection = 0;
@@ -282,16 +279,6 @@ Drag& Timeline::getDrag()
 const Drag& Timeline::getDrag() const
 {
     return *mDrag;
-}
-
-Tooltip& Timeline::getTooltip()
-{
-    return *mTooltip;
-}
-
-const Tooltip& Timeline::getTooltip() const
-{
-    return *mTooltip;
 }
 
 Trim& Timeline::getTrim()

@@ -25,17 +25,9 @@
 #include "Mouse.h"
 #include "StateIdle.h"
 #include "Timeline.h"
-#include "Tooltip.h"
 #include "UtilLog.h"
 
 namespace gui { namespace timeline { namespace state {
-
-const wxString Dragging::sTooltip = _(
-    "Move the clips by dragging them around.\n" \
-    "Release Left Mouse Button to 'drop'.\n\n" \
-    "CTRL:  Hold and move to Change 'grab point'\n" \
-    "SHIFT: Shift original clips to make room for moved clips" \
-    );
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
@@ -120,9 +112,6 @@ boost::statechart::result Dragging::react( const EvKeyDown& evt )
     case WXK_SHIFT:     
         evt.consumed();
         getDrag().move(getMouse().getVirtualPosition()); 
-        break;
-    case WXK_F1:        
-        getTooltip().show(sTooltip);                     
         break;
     case WXK_ESCAPE:    
         evt.consumed();

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-28 20:23+0100\n"
+"POT-Creation-Date: 2015-10-30 13:43+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -39,7 +39,6 @@ msgid "Images"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:75
-#: C:\Vidiot\vidiot_trunk\test\testui\src\TestUiDialog.cpp:104
 msgid "All files"
 msgstr ""
 
@@ -73,88 +72,55 @@ msgid "Back"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:37
-msgid "Found no usable media files."
-msgstr ""
-
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:48
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:50
 msgid "Create new project"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:62
-msgid ""
-"Start a new project starting from a folder of files.\n"
-"All files in this folder are added into a new movie sequence."
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:38
+msgid "No media files found."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:70
-msgid ""
-"Start a new project by selecting a list of files\n"
-"to be added to a new movie sequence."
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:39
+msgid "Select a folder containing media files for creating a new movie."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:79
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:40
+msgid "Select individual media files for creating a new movie."
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:41
 msgid "Start a new empty project."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:103
-msgid ""
-"Select a folder with media files\n"
-"for creating a new movie sequence."
-msgstr ""
-
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:106
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:42
+#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:365
 msgid "Select folder"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:125
-msgid "Select media files to be added to the movie sequence."
-msgstr ""
-
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:128
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:43
 msgid "Select files"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:331
-msgid "Movie sequence"
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:339
+msgid "Movie"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:374
-msgid "Select folder with media files"
-msgstr ""
-
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:397
-msgid "Select media files"
-msgstr ""
-
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:461
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:469
 msgid "&Finish"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:542
-msgid "Select folder to continue."
-msgstr ""
-
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:568
-msgid "Select one or more media files to continue."
-msgstr ""
-
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:590
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:598
 #: C:\Vidiot\vidiot_trunk\modelfile\src\FileAnalyzer.cpp:319
-#: C:\Vidiot\vidiot_trunk\modelfile\src\FileAnalyzer.cpp:321
 #, c-format
 msgid "Found %d file(s)"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:591
-#: C:\Vidiot\vidiot_trunk\modelfile\src\FileAnalyzer.cpp:320
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:599
 #, c-format
 msgid "%d folder(s)"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:604
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:608
-#: C:\Vidiot\vidiot_trunk\modelfile\src\FileAnalyzer.cpp:324
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:612
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:616
 msgid "in"
 msgstr ""
 
@@ -164,7 +130,7 @@ msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:64
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:123
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:199
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:191
 msgid "Options"
 msgstr ""
 
@@ -181,7 +147,7 @@ msgid "Load last project on startup"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:75
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:205
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:197
 msgid "Save"
 msgstr ""
 
@@ -313,11 +279,8 @@ msgid "Application"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:230
-msgid "Language"
-msgstr ""
-
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:246
-msgid "Select language"
+msgid "Language"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:249
@@ -515,17 +478,19 @@ msgid "Starting audio stream failed:"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:64
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:216
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:236
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:208
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:228
 msgid "Help"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:65
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:224
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:216
 msgid "Project"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:66
+#: C:\Vidiot\vidiot_trunk\render\src\AudioCodec.cpp:164
+#: C:\Vidiot\vidiot_trunk\render\src\VideoCodec.cpp:165
 msgid "Details"
 msgstr ""
 
@@ -549,259 +514,242 @@ msgstr ""
 msgid "Vidiot Project View"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:159
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:151
 #: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewCreateFile.cpp:37
 msgid "Add files"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:159
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:151
 msgid "Add media files from disk."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:160
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:152
 msgid "Add folder"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:160
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:152
 msgid "Add folder with media files from disk."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:161
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:153
 msgid "Add sequence"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:161
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:153
 msgid "Add new (blank) movie sequence."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:165
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:157
 msgid "Exit"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:165
-msgid "Select exit to end the application."
-msgstr ""
-
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:183
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:175
 msgid "Snap to clips"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:183
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:175
 msgid ""
 "Check this item to ensure that operations in the timeline 'snap' to adjacent "
 "clip boundaries."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:185
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:177
 msgid "Snap to cursor"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:185
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:177
 msgid ""
 "Check this item to ensure that operations in the timeline 'snap' to the "
 "cursor position."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:188
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:180
 msgid "Show bounding box"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:188
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:180
 msgid "Show the bounding box of the generated video in the preview window."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:191
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:183
 msgid "Show/hide the project view pane."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:192
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:184
 msgid "Show/hide the timeline details pane."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:193
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:185
 msgid "Show/hide the timeline preview pane."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:194
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:186
 msgid "Show/hide the timelines pane."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:199
-msgid "Open the options dialog."
-msgstr ""
-
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:202
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:194
 msgid "Show captions"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:202
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:194
 msgid "Toggle this option to hide/show the captions on the workspace windows."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:205
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:197
 msgid "Save the current workspace layout."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:206
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:198
 msgid "Load"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:206
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:198
 msgid "Load a previously saved workspace layout."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:207
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:199
+#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:537
 msgid "Delete"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:207
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:199
 msgid "Select a workspace layout to be deleted."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:208
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:200
 msgid "Delete all"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:208
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:200
 msgid "Delete all saved workspace layouts."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:210
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:202
 msgid "Restore default"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:210
-msgid "Restore the original workspace layout."
-msgstr ""
-
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:212
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:204
 msgid "Fullscreen"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:212
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:204
 msgid "F11"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:212
-msgid "Toggle between windowed and fullscreen mode."
-msgstr ""
-
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:216
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:208
 msgid "Open the help."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:218
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:210
 msgid "Open log file"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:218
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:210
 msgid ""
 "Use the default application associated with .txt files to open the log file."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:219
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:211
 msgid "Open config file"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:219
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:211
 msgid ""
 "Use the default application associated with .ini files to open the config "
 "file."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:221
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:213
 msgid "About..."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:221
-msgid "Show the about dialog."
-msgstr ""
-
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:225
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:217
 msgid "Edit"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:226
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:218
 msgid "View"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:227
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:219
+#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:382
+#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:570
 msgid "Sequence"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:229
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:221
 msgid "Tools"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:230
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:222
 msgid "Workspace"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:234
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:226
 msgid "Crash"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:386
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:400
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:378
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:392
 #: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:369
 #: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:370
 #: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:371
 msgid "Ctrl"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:431
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:423
 msgid "Log file error"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:431
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:423
 msgid "Could not open the log file for writing. Continue running?"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:788
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:770
 msgid "Enter workspace name"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:788
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:770
 msgid ""
 "Enter name for the saved workspace.\n"
 "If this is an existing name it is overwritten."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:805
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:787
 msgid "Select workspace"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:811
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:793
 msgid "Select workspace to be restored."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:820
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:802
 msgid "Load workspace failed"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:820
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:802
 msgid "Something went wrong while trying to load the saved perspective. Sorry."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:828
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:810
 msgid "Select workspace to be removed."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:841
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:823
 msgid "Remove all saved workspaces"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:841
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:823
 msgid ""
 "This will remove all saved workspace layouts which cannot be undone.\n"
 "Are you sure?"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:899
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:881
 msgid "Attention"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:900
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:882
 msgid ""
 "Note that changing this file will not update the gui.\n"
 "Changed settings are applied only after restarting the application.\n"
@@ -815,8 +763,7 @@ msgid ""
 "restart Vidiot.\n"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:1004
-#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:570
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:986
 msgid "&Sequence"
 msgstr ""
 
@@ -881,7 +828,8 @@ msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\modelproject\src\AutoFolder.cpp:71
 #: C:\Vidiot\vidiot_trunk\modelproject\src\AutoFolder.cpp:92
-msgid "Updating"
+#, c-format
+msgid "Updating %s"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\modelproject\src\AutoFolder.cpp:240
@@ -937,7 +885,7 @@ msgstr ""
 #: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:302
 #, c-format
 msgid ""
-"Could not read the contents of %s. \n"
+"Could not read %s. \n"
 "Vidiot must be restarted ((known bug that opening a project after this will "
 "fail)"
 msgstr ""
@@ -989,51 +937,49 @@ msgid "A %1$s with name %2$s already exists"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:355
-msgid "Create new folder"
+msgid "Create folder"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:355
-msgid "Enter folder name"
+#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:382
+msgid "Enter name"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:355
-msgid "New Folder default value"
-msgstr ""
-
-#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:365
-msgid "Add folder from disk"
+#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:569
+msgid "Folder"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:382
-msgid "Create new sequence"
-msgstr ""
-
-#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:382
-msgid "Enter sequence name"
-msgstr ""
-
-#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:382
-msgid "New sequence default value"
+msgid "Create sequence"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:397
-msgid "Select file(s) to add"
+msgid "Select file(s)"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:530
-msgid "Cu&t\tCTRL-x"
+#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:369
+msgid "Cut"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:530
+#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:532
+#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:534
+msgid "CTRL"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:532
-msgid "Cop&y\tCTRL-c"
+#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:370
+msgid "Copy"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:534
-msgid "&Paste\tCTRL-v"
+msgid "Paste"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:537
-msgid "&Delete\tDEL"
+msgid "DEL"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:541
@@ -1041,48 +987,27 @@ msgid "Delete unused files on disk"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:548
-msgid "&Make sequence"
+msgid "Make sequence"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:553
-msgid "&Open sequence\to"
+msgid "Open sequence"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:562
-msgid "&Folder from disk"
-msgstr ""
-
-#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:562
-msgid ""
-"Add disk folder and its contents to the project and then monitor for changes."
+msgid "Folder from disk"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:563
-msgid "Fi&le(s) from disk"
-msgstr ""
-
-#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:563
-msgid "Select file(s) on disk to be added to the project."
+msgid "File(s) from disk"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:564
-msgid "&Add"
-msgstr ""
-
-#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:569
-msgid "&Folder"
-msgstr ""
-
-#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:569
-msgid "Add a new folder in the project"
-msgstr ""
-
-#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:570
-msgid "Create a new (empty) movie sequence"
+msgid "Add"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:571
-msgid "&New"
+msgid "New"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\projectview\src\ProjectViewClipboard.cpp:130
@@ -1152,7 +1077,7 @@ msgstr ""
 #: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewCreateAutoFolder.cpp:33
 #: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewCreateFolder.cpp:31
 #, c-format
-msgid "Add folder \"%s\" "
+msgid "Add folder %s"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewCreateFile.cpp:59
@@ -1222,11 +1147,12 @@ msgid "%zu files moved to recycle bin."
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewMoveAsset.cpp:34
-msgid "Move "
+#, c-format
+msgid "Move %s"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewMoveAsset.cpp:38
-msgid "Move assets"
+msgid "Move"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewRenameAsset.cpp:31
@@ -1251,18 +1177,13 @@ msgstr ""
 msgid "Could not deduce required sample format for audio."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\render\src\AudioCodec.cpp:164
-#: C:\Vidiot\vidiot_trunk\render\src\VideoCodec.cpp:165
-msgid "Detailed information:"
-msgstr ""
-
 #: C:\Vidiot\vidiot_trunk\render\src\AudioCodecParameter.cpp:27
 #: C:\Vidiot\vidiot_trunk\render\src\VideoCodecParameter.cpp:29
 msgid "Bit rate"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:305
-msgid "The following sequence(s) have not been scheduled:"
+msgid "The following sequence(s) have not been scheduled"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:318
@@ -1290,6 +1211,10 @@ msgstr ""
 msgid "Rendering sequence %s"
 msgstr ""
 
+#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:439
+msgid "Unsupported number of ticks per frame in target codec"
+msgstr ""
+
 #: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:476
 msgid "Failed to open video codec"
 msgstr ""
@@ -1299,7 +1224,7 @@ msgid "Failed to open audio codec"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:533
-msgid "Failed to determine audio sample size for encoding"
+msgid "Failed to determine audio sample size"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:545
@@ -1311,7 +1236,7 @@ msgid "Failed to allocate memory for resampling"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:573
-msgid "Failed to open file for writing"
+msgid "Failed to open file"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:604
@@ -1320,23 +1245,23 @@ msgid "Frame %1$<PRId64> out of %2$<PRId64>"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:704
-msgid "Failed to encode audio data"
+msgid "Failed to encode audio"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:722
-msgid "Failed to write audio data"
+msgid "Failed to write audio"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:813
-msgid "Failed to write raw video data"
+msgid "Failed to write raw video"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:827
-msgid "Failed to encode video data"
+msgid "Failed to encode video"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:841
-msgid "Failed to write video data"
+msgid "Failed to write video"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:854
@@ -1373,10 +1298,6 @@ msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\render\src\VideoCodecParameter.cpp:60
 msgid "Rate distortion"
-msgstr ""
-
-#: C:\Vidiot\vidiot_trunk\test\testui\src\TestUiDialog.cpp:104
-msgid "Movie clips"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:72
@@ -1491,7 +1412,6 @@ msgid "Press SHIFT to remove blank areas during the trimming"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsTrim.cpp:52
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:375
 msgid "Shift"
 msgstr ""
 
@@ -1658,14 +1578,6 @@ msgstr ""
 msgid "Cross-fade to next"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:369
-msgid "Cut"
-msgstr ""
-
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:370
-msgid "Copy"
-msgstr ""
-
 #: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:371
 msgid "Paste at cursor"
 msgstr ""
@@ -1683,12 +1595,19 @@ msgid "Delete selected"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:374
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:375
-msgid "Del"
+msgid "&Del"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:375
 msgid "Delete and Trim selected"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:375
+msgid "Shif&t"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:375
+msgid "Del"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:376
@@ -1835,30 +1754,6 @@ msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\timelinecmd\src\UnlinkClips.cpp:33
 msgid "Unlink clips"
-msgstr ""
-
-#: C:\Vidiot\vidiot_trunk\timelinestate\src\StateDragging.cpp:34
-msgid ""
-"Move the clips by dragging them around.\n"
-"Release Left Mouse Button to 'drop'.\n"
-"\n"
-"CTRL:  Hold and move to Change 'grab point'\n"
-"SHIFT: Shift original clips to make room for moved clips"
-msgstr ""
-
-#: C:\Vidiot\vidiot_trunk\timelinestate\src\StateIdle.cpp:67
-#: C:\Vidiot\vidiot_trunk\timelinestate\src\StateMoveTrackDivider.cpp:42
-msgid ""
-"Move the cursor to 'scrub' over the timeline and see the frames back in the "
-"preview."
-msgstr ""
-
-#: C:\Vidiot\vidiot_trunk\timelinestate\src\StateScrolling.cpp:31
-msgid "Drag mouse left/right to move the view."
-msgstr ""
-
-#: C:\Vidiot\vidiot_trunk\timelinestate\src\StateTrim.cpp:34
-msgid "Move the cursor to change the entry point of the clip."
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\util\src\UtilInitAvcodec.cpp:27

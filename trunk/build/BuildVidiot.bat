@@ -145,6 +145,10 @@ REM ============================== BUILD ==============================
 
 REM === UPDATE TRANSLATIONS FILES ===
 
+REM Remove and ~ files
+dir /s /o /b %SOURCE%\*~ > %TEMP%\files.txt
+for /f "delims=" %%f in (%TEMP%\files.txt) do del "%%f"
+
 set LANGTOOLSDIR=C:\Program Files (x86)\Poedit\Gettexttools\bin
 set LANGDIR=%SOURCE%\lang
 pushd %SOURCE%

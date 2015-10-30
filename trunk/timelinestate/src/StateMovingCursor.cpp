@@ -26,12 +26,9 @@
 #include "Intervals.h"
 #include "Mouse.h"
 #include "StateIdle.h"
-#include "Tooltip.h"
 #include "UtilLog.h"
 
 namespace gui { namespace timeline { namespace state {
-
-const wxString MovingCursor::sTooltip = "";
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
@@ -104,7 +101,6 @@ boost::statechart::result MovingCursor::react( const EvKeyDown& evt)
     switch (evt.KeyCode)
     {
     case WXK_SHIFT:     triggerToggleStart();        break;
-    case WXK_F1:        getTooltip().show(sTooltip); break;
     }
     return forward_event();
 }

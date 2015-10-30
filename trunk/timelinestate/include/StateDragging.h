@@ -65,8 +65,6 @@ struct Dragging
     boost::statechart::result react( const EvDragEnd& evt );
     boost::statechart::result react( const EvKeyDown& evt );
     boost::statechart::result react( const EvKeyUp& evt );
-
-    static const wxString sTooltip;
 };
 
 }}} // namespace
