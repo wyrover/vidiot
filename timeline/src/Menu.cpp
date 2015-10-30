@@ -58,7 +58,7 @@ namespace gui { namespace timeline {
 
 enum
 {
-    ID_TRIGGER_POPUP_MENU = wxID_HIGHEST + 1,
+    ID_TRIGGER_POPUP_MENU = wxID_HIGHEST + 100, // +100: Avoids showing the help texts for het project view popup menu
     ID_ADD_INTRANSITION,
     ID_ADD_INOUTTRANSITION,
     ID_ADD_OUTTRANSITION,
@@ -225,7 +225,7 @@ void MenuHandler::onTriggerPopupMenu(wxCommandEvent& event)
                 {
                     menu.AppendSeparator();
                 }
-                menu.Append(id, text);
+                menu.Append(id, text, "");
                 menu.Enable(id, enable);
             }
         };
