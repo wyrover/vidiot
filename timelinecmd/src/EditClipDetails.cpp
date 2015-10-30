@@ -44,7 +44,7 @@ EditClipDetails::EditClipDetails(
     , mLinkClone(linkClone)
 {
     VAR_INFO(this)(mClip)(mLink);
-    mCommandName = message + mClip->getDescription();
+    mCommandName = wxString::Format(message, mClip->getDescription());
 }
 
 EditClipDetails::~EditClipDetails()

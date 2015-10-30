@@ -184,7 +184,7 @@ wxMenu* MenuHandler::getMenu()
 
 void MenuHandler::updateItems()
 {
-    mMenu.Enable( ID_DELETEMARKED,   !getIntervals().isEmpty() );// todo no hints when hovering over player buttons, and most of the details clip edit controls
+    mMenu.Enable( ID_DELETEMARKED,   !getIntervals().isEmpty() );
     mMenu.Enable( ID_DELETEUNMARKED, !getIntervals().isEmpty() );
     mMenu.Enable( ID_REMOVEMARKERS,  !getIntervals().isEmpty() );
 }
@@ -368,7 +368,7 @@ void MenuHandler::onTriggerPopupMenu(wxCommandEvent& event)
 
         add(menu, wxID_CUT, _("Cut") + "\t" + _("Ctrl") + "-X", true, selectedMediaClip, true);
         add(menu, wxID_COPY, _("Copy") + "\t" + _("Ctrl") + "-C", true, selectedMediaClip, false);
-        add(menu, wxID_PASTE, _("Paste at cursor") + "\t" + _("Ctrl") + "-V", true, canPaste, false); // todo get strange texts in status bar when using cursor keys to navigate popup menu
+        add(menu, wxID_PASTE, _("Paste at cursor") + "\t" + _("Ctrl") + "-V", true, canPaste, false);
         add(menu, wxID_REPLACE, _("Paste here"), true, canPaste, false);
         add(menu, ID_REMOVE_EMPTY, _("Remove empty space") + "\t" + "&e", clickedOnEmptyClip, clickedOnEmptyClip, true);
         add(menu, ID_DELETE_CLIPS, _("Delete selected") + "\t" + _("&Del"), selectedMediaClip, true, true);
