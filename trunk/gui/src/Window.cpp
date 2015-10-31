@@ -144,7 +144,7 @@ Window::Window()
     mMenuFile->Append(wxID_OPEN);
     mMenuFile->Append(wxID_CLOSE);
 
-    //	mMenuFile->Append(wxID_REVERT); todo why not?
+    mMenuFile->Append(wxID_REVERT, _("Revert"));
     mMenuFile->Append(wxID_SAVE);
     mMenuFile->Append(wxID_SAVEAS);
     mMenuFile->AppendSeparator();

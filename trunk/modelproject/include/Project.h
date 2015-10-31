@@ -76,6 +76,9 @@ public:
     /// Overridden to change the error dialogs.
     bool DoOpenDocument(const wxString& file) override;
 
+    /// Overridden to first close the project when reverting
+    bool Revert() override;
+
     //////////////////////////////////////////////////////////////////////////
     // ACCESSORS
     //////////////////////////////////////////////////////////////////////////
@@ -93,6 +96,7 @@ private:
     boost::shared_ptr<FileMetaDataCache> mMetaDataCache;
     PropertiesPtr mProperties;
     wxString mSaveFolder;
+    bool mReverting;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS

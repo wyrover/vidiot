@@ -47,6 +47,7 @@ Project::Project()
 , mMetaDataCache()
 , mProperties()
 , mSaveFolder("")
+, mReverting(false)
 {
     VAR_INFO(this);
     ASSERT(!IsModified());
@@ -283,6 +284,14 @@ bool Project::DoSaveDocument(const wxString& file)
 
 bool Project::DoOpenDocument(const wxString& file)
 {
+    if (mReverting)
+    {
+        // Close document first (not done by wxWidgets)
+        OnCloseDocument();
+        mRoot.reset();
+        mProperties.reset();
+        mMetaDataCache.reset();
+    }
     wxFileName saveFolder(file);
     saveFolder.SetFullName(""); // Remove name and ext
     mSaveFolder = util::path::normalize(saveFolder).GetLongPath();
@@ -312,6 +321,20 @@ bool Project::DoOpenDocument(const wxString& file)
 
     return false;
 }
+
+bool Project::Revert()
+{
+    mReverting = true;
+
+    gui::Window::get().setDialogOpen(true);
+    bool result = wxDocument::Revert();
+    gui::Window::get().setDialogOpen(false);
+
+    mReverting = false;
+
+    return result;
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 // ACCESSORS

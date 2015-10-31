@@ -45,6 +45,20 @@ void WindowCheckMenu(int id, bool checked = true);
 /// \param checked if true, the menu is checked, unchecked otherwise
 void WindowCheckMenu(wxFrame& window, int id, bool checked = true);
 
+struct OpenProjectWaiter
+: public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
+{
+    OpenProjectWaiter();
+    ~OpenProjectWaiter();
+    void onOpenProject(model::EventOpenProject &event );
+    void wait();
+private:
+
+    boost::condition_variable mCondition;
+    boost::mutex mMutex;
+    std::atomic<bool> mDone;
+};
+
 /// Create a new project in a blank application by triggering File->New
 /// \return root node of the project
 model::FolderPtr WindowCreateProject();
