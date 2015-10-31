@@ -105,8 +105,6 @@ void VideoFile::moveTo(pts position)
 
     mDeliveredFrame.reset();
 
-    // todo take into account codec->delay???
-
     File::moveTo(position); // NOTE: This uses the pts in 'project' timebase units
 }
 

@@ -63,7 +63,7 @@ private:
 
     std::map<wxFileName, FileMetaDataPtr> mMetaData;
 
-    mutable boost::mutex mMutex; // todo replace boost threading with std threading
+    mutable boost::mutex mMutex;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
