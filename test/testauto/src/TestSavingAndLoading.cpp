@@ -216,6 +216,39 @@ void TestSavingAndLoading::testBackupBeforeSave()
     CloseProjectAndAvoidSaveDialog();
 }
 
+void TestSavingAndLoading::testRevert()
+{
+    StartTestSuite();
+    FixtureProject mProjectFixture(true);
+    mProjectFixture.init();
+    StartTest("Create temp dir and existing file");
+    mProjectFixture.destroy();
+    std::pair<RandomTempDirPtr, wxFileName> tempDir_fileName = SaveProjectAndClose(RandomTempDir::generate(), "");
+    OpenProject(tempDir_fileName.second.GetFullPath());
+
+    TimelineTrimLeft(VideoClip(0,3), 10, false);
+    TimelineDeleteClip(VideoClip(0,5));
+    TimelineDrag(From(Center(VideoClip(0, 0))).To(Center(VideoClip(0, 7)) + wxPoint(150, 0)));
+
+    OpenProjectWaiter waitForOpenedProject;
+    WindowTriggerMenu(wxID_REVERT);
+    WaitUntilDialogOpen(true);
+    wxUIActionSimulator().Char(WXK_RETURN);
+    WaitUntilDialogOpen(false);
+    waitForOpenedProject.wait();
+
+    ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip);
+    ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(AudioClip)(AudioClip)(AudioClip)(AudioClip);
+
+    for (size_t i = 0; i < mProjectFixture.InputFiles.size(); ++i)
+    {
+        ASSERT_EQUALS(VideoClip(0, i)->getLeftPts(), mProjectFixture.mOriginalPtsOfVideoClip[i]);
+        ASSERT_EQUALS(VideoClip(0, i)->getLength(), mProjectFixture.mOriginalLengthOfVideoClip[i]);
+        ASSERT_EQUALS(AudioClip(0, i)->getLeftPts(), mProjectFixture.mOriginalPtsOfAudioClip[i]);
+        ASSERT_EQUALS(AudioClip(0, i)->getLength(), mProjectFixture.mOriginalLengthOfAudioClip[i]);
+    }
+}
+
 ///////////////////////////d///////////////////////////////////////////////
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////

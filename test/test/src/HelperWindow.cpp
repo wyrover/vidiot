@@ -48,47 +48,38 @@ void WindowCheckMenu(wxFrame& window, int id, bool checked)
     });
 }
 
-struct OpenProjectWaiter
-: public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
-{
-    OpenProjectWaiter()
+OpenProjectWaiter::OpenProjectWaiter()
     : mDone(false)
+{
+    util::thread::RunInMainAndWait([this]
     {
-        util::thread::RunInMainAndWait([this]
-        {
-            gui::Window::get().Bind(model::EVENT_OPEN_PROJECT,     &OpenProjectWaiter::onOpenProject,     this);
-        });
-    }
+        gui::Window::get().Bind(model::EVENT_OPEN_PROJECT, &OpenProjectWaiter::onOpenProject, this);
+    });
+}
 
-    ~OpenProjectWaiter()
+OpenProjectWaiter::~OpenProjectWaiter()
+{
+    util::thread::RunInMainAndWait([this]
     {
-        util::thread::RunInMainAndWait([this]
-        {
-            gui::Window::get().Unbind(model::EVENT_OPEN_PROJECT,     &OpenProjectWaiter::onOpenProject,     this);
-        });
-    }
+        gui::Window::get().Unbind(model::EVENT_OPEN_PROJECT, &OpenProjectWaiter::onOpenProject, this);
+    });
+}
 
-    void onOpenProject(model::EventOpenProject &event )
+void OpenProjectWaiter::onOpenProject(model::EventOpenProject &event)
+{
+    event.Skip();
+    mDone = true;
+    mCondition.notify_all();
+}
+
+void OpenProjectWaiter::wait()
+{
+    boost::mutex::scoped_lock lock(mMutex);
+    while (!mDone)
     {
-        event.Skip();
-        mDone = true;
-        mCondition.notify_all();
+        mCondition.wait(lock);
     }
-
-    void wait()
-    {
-        boost::mutex::scoped_lock lock(mMutex);
-        while (!mDone)
-        {
-            mCondition.wait(lock);
-        }
-    }
-private:
-
-    boost::condition_variable mCondition;
-    boost::mutex mMutex;
-    std::atomic<bool> mDone;
-};
+}
 
 model::FolderPtr WindowCreateProject()
 {
@@ -167,7 +158,7 @@ void WaitUntilMainWindowActive(bool active)
 
 void WaitUntilDialogOpen(bool open)
 {
-    while ( open != util::thread::RunInMainReturning<bool>([] { return gui::Window::get().isDialogOpen(); }) )
+    while ( open != gui::Window::get().isDialogOpen() )
     {
         pause(50);
     }
