@@ -19,6 +19,7 @@
 
 #include "Cursor.h"
 #include "Logging.h"
+#include "Selection.h"
 #include "Sequence.h"
 #include "Timeline.h"
 #include "TimelinesView.h"
@@ -94,6 +95,7 @@ void SplitAtCursorAndTrim(const model::SequencePtr& sequence, bool backwards)
         {
             model::IClipPtr clip = videoClip ? videoClip : audioClip;
             ASSERT_NONZERO(clip);
+            timeline.getSelection().updateOnTrim(clip);
             command::TrimClip* cmd = new command::TrimClip(sequence, clip, model::TransitionPtr(), backwards ? ClipBegin : ClipEnd);
 
             pts left = clip->getLeftPts(); // Clip will be changed by the trim below, thus store here
