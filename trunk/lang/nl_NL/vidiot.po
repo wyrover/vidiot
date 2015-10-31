@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-10-31 15:36+0100\n"
-"PO-Revision-Date: 2015-10-31 16:00+0100\n"
+"PO-Revision-Date: 2015-10-31 16:37+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: nl_NL\n"
@@ -1696,9 +1696,8 @@ msgid "Delete and Trim selected"
 msgstr "Verwijder selectie en schuif aan"
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:375
-#, fuzzy
 msgid "Shif&t"
-msgstr "Opschonen"
+msgstr "Shif&t"
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:375
 msgid "Del"
