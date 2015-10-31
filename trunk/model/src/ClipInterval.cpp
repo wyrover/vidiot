@@ -51,9 +51,10 @@ ClipInterval::ClipInterval(const IFilePtr& render)
     , mSpeed(1)
     , mOffset(0)
     , mLength(mRender->getLength())
-    , mDescription("")
+    , mDescription(mRender->getDescription())
 {
     // NOT: VAR_DEBUG(*this); -- Log in most derived class. Avoids duplicate logging AND avoids pure virtual calls (implemented in most derived class).
+    updateDescription();
 }
 
 ClipInterval::ClipInterval(const ClipInterval& other)
@@ -92,22 +93,6 @@ void ClipInterval::moveTo(pts position)
 
 wxString ClipInterval::getDescription() const
 {
-    if (!mDescription.IsSameAs(""))
-    {
-        return mDescription;
-    }
-    mDescription = mRender->getDescription();
-    wxString strip = Config::ReadString(Config::sPathTimelineStripFromClipNames); // todo only in main thread!!! get crash here when calling this for a video file which cannot be opened anymore (from VideoClip:146)
-
-    wxStringTokenizer t(strip, "|");
-    while (t.HasMoreTokens())
-    {
-        wxString token = t.GetNextToken();
-        if (!token.IsEmpty())
-        {
-            mDescription.Replace(token,_T(""),false);
-        }
-    }
     return mDescription;
 }
 
@@ -248,6 +233,24 @@ pts ClipInterval::getRenderSourceLength() const
 }
 
 //////////////////////////////////////////////////////////////////////////
+// HELPER METHODS
+//////////////////////////////////////////////////////////////////////////
+
+void ClipInterval::updateDescription()
+{
+    wxString strip = Config::ReadString(Config::sPathTimelineStripFromClipNames);
+    wxStringTokenizer t(strip, "|");
+    while (t.HasMoreTokens())
+    {
+        wxString token = t.GetNextToken();
+        if (!token.IsEmpty())
+        {
+            mDescription.Replace(token,_T(""),false);
+        }
+    }
+}
+
+//////////////////////////////////////////////////////////////////////////
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
@@ -278,6 +281,7 @@ void ClipInterval::serialize(Archive & ar, const unsigned int version)
         }
         ar & BOOST_SERIALIZATION_NVP(mOffset);
         ar & BOOST_SERIALIZATION_NVP(mLength);
+        updateDescription();
     }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
     catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
