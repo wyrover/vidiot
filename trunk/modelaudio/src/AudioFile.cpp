@@ -98,13 +98,16 @@ void AudioFile::moveTo(pts position)
     // a start point beyond the first required sample. That, in turn, causes
     // slight video-audio offset problems and clicks/pops when making cuts
     // within one clip.
+    //
     // Typical cases of clicks/pops: make a crossfade/fade in and the samples
     // used within the transition do not align properly with the first samples
     // used AFTER the transition. Same thing can happen when making a cut
     // directly in a clip without any more adjusting.
+    //
+    // See also AVCodecContext->delay (here, it is assumed that 1 pts value is
+    // always greater than the delay value). This has the advantage that the
+    // codec need not be opened (getCoded() != 0) for the move operation.
     File::moveTo(std::max<pts>(position - 1,0));
-
-    // todo this seeking must take into account avcodeccontext->delay (see docs)?
 }
 
 void AudioFile::clean()
