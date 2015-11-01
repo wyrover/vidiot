@@ -384,7 +384,8 @@ void VideoDisplay::audioBufferThread()
     {
         while (!mAbortThreads)
         {
-            mAudioChunks.push(mSequence->getNextAudio(*mAudioParameters)); // No speed change. Just insert chunk.
+            model::AudioCompositionParameters parameters(*mAudioParameters);
+            mAudioChunks.push(mSequence->getNextAudio(parameters)); // No speed change. Just insert chunk.
         }
     }
     else
@@ -393,7 +394,7 @@ void VideoDisplay::audioBufferThread()
         pts outputPts = mStartPts;
         while (!mAbortThreads)
         {
-            samplecount chunksize = mAudioParameters->setPts(outputPts).determineChunkSize().getChunkSize();
+            samplecount chunksize = model::AudioCompositionParameters(*mAudioParameters).setPts(outputPts).determineChunkSize().getChunkSize();
             model::AudioChunkPtr outputChunk = boost::make_shared<model::AudioChunk>(mAudioParameters->getNrChannels(), chunksize, true, false);
             samplecount writtenSamples = 0;
             while (writtenSamples < chunksize)
@@ -409,7 +410,8 @@ void VideoDisplay::audioBufferThread()
                 }
                 else
                 {
-                    model::AudioChunkPtr chunk = mSequence->getNextAudio(*mAudioParameters);
+                    model::AudioCompositionParameters parameters(*mAudioParameters);
+                    model::AudioChunkPtr chunk = mSequence->getNextAudio(parameters);
                     atEnd = chunk == nullptr;
                     if (!atEnd)
                     {
