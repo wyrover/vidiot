@@ -50,11 +50,10 @@ ClipInterval::ClipInterval(const IFilePtr& render)
     , mRender(render)
     , mSpeed(1)
     , mOffset(0)
-    , mLength(mRender->getLength())
-    , mDescription(mRender->getDescription())
+    , mLength(render->getLength())
+    , mDescription(stripDescription(render->getDescription()))
 {
     // NOT: VAR_DEBUG(*this); -- Log in most derived class. Avoids duplicate logging AND avoids pure virtual calls (implemented in most derived class).
-    updateDescription();
 }
 
 ClipInterval::ClipInterval(const ClipInterval& other)
@@ -236,18 +235,21 @@ pts ClipInterval::getRenderSourceLength() const
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-void ClipInterval::updateDescription()
+// static
+wxString ClipInterval::stripDescription(const wxString& description)
 {
-    wxString strip = Config::ReadString(Config::sPathTimelineStripFromClipNames);
+    wxString result{ description };
+    static wxString strip = Config::ReadString(Config::sPathTimelineStripFromClipNames);
     wxStringTokenizer t(strip, "|");
     while (t.HasMoreTokens())
     {
         wxString token = t.GetNextToken();
         if (!token.IsEmpty())
         {
-            mDescription.Replace(token,_T(""),false);
+            result.Replace(token,_T(""),false);
         }
     }
+    return result;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -281,7 +283,10 @@ void ClipInterval::serialize(Archive & ar, const unsigned int version)
         }
         ar & BOOST_SERIALIZATION_NVP(mOffset);
         ar & BOOST_SERIALIZATION_NVP(mLength);
-        updateDescription();
+        if (Archive::is_loading::value)
+        {
+            mDescription = stripDescription(mRender->getDescription());
+        }
     }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
     catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
