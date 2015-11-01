@@ -123,10 +123,6 @@ public:
             fflush(mFile);
         }
     }
-    bool isEnabled() const
-    {
-        return mEnabled;
-    }
 private:
     void thread()
     {
@@ -178,11 +174,6 @@ void Log::setReportingLevel(const LogLevel& level)
 {
     ASSERT_LESS_THAN(level,LogLevel_MAX);
     sReportingLevel = level;
-}
-
-bool Log::isEnabled()
-{
-    return sWriter->isEnabled();
 }
 
 void Log::flush()

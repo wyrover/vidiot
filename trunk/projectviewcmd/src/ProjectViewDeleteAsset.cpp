@@ -28,14 +28,7 @@ ProjectViewDeleteAsset::ProjectViewDeleteAsset(const model::NodePtrs& nodes)
 ,   mPairs(ProjectViewCommand::makeParentAndChildPairs(nodes))
 {
     VAR_INFO(this)(mPairs);
-    if (nodes.size() == 1)
-    {
-        mCommandName = _("Delete ") + (*(nodes.begin()))->getName();
-    }
-    else
-    {
-        mCommandName = _("Delete assets");
-    }
+    mCommandName = _("Delete");
 }
 
 ProjectViewDeleteAsset::~ProjectViewDeleteAsset()
