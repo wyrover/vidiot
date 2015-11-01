@@ -596,24 +596,15 @@ wxString DialogNewProject::getOverviewMessage(boost::shared_ptr<model::FileAnaly
 {
     wxString result;
     wxString nFiles{ wxString::Format(_("Found %d file(s)"), mFileAnalyzer->getNumberOfMediaFiles()) };
-    wxString nFolders{ wxString::Format(_("%d folder(s)"), mFileAnalyzer->getNumberOfFolders()) };
 
     if (analyzer->getNumberOfMediaFiles() == 0)
     {
         result << sNoFiles;
     }
-    else if (mFileAnalyzer->getNumberOfFolders() == 0)
+    else
     {
         // todo make test that touches this for every language!
         result << nFiles << ".";
-    }
-    else if (mFileAnalyzer->getNumberOfFolders() == 1)
-    {
-        result << nFiles << " " << _("in") << " " << mFileAnalyzer->getFirstFolderName() << '.';
-    }
-    else // (mFileAnalyzer->getNumberOfFolders() > 1 && mFileAnalyzer->getNumberOfMediaFiles() >= 1)
-    {
-        result << nFiles << " " << _("in") << " " << nFolders << ".";
     }
     return result;
 }

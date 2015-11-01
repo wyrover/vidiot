@@ -51,10 +51,14 @@ DialogAbout::DialogAbout()
     ////////  ////////
 
     mHtml = new wxHtmlWindow(this);
-    wxString main{ util::path::getResource("html/about", "main." + getLanguageCode() + ".html") };
+    wxString main{ util::path::getResource("html/about", "main." + getLanguageCode() + ".html") }; // nl_NL
     if (!wxFile::Exists(main))
     {
-        main = util::path::getResource("html/about", "main.en.html"); 
+        main = util::path::getResource("html/about", "main." + getLanguageCode().Left(2) + ".html"); // nl
+    }
+    if (!wxFile::Exists(main))
+    {
+        main = util::path::getResource("html/about", "main.en.html"); // Default: en
     }
     mHtml->LoadPage(main);
 
@@ -72,6 +76,8 @@ DialogAbout::DialogAbout()
 
     mHtml->Bind(wxEVT_HTML_LINK_CLICKED, &DialogAbout::onLink, this);
     mBack->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &DialogAbout::onBack, this);
+
+    updateButtons();
 
     gui::Window::get().setDialogOpen(true);
 }
@@ -95,6 +101,7 @@ void DialogAbout::onLink(wxHtmlLinkEvent& event)
     }
     else
     {
+        mBack->Enable(true);
         event.Skip(true);
     }
 }
@@ -102,7 +109,13 @@ void DialogAbout::onLink(wxHtmlLinkEvent& event)
 void DialogAbout::onBack(wxCommandEvent &event)
 {
     mHtml->HistoryBack();
+    updateButtons();
     event.Skip();
+}
+
+void DialogAbout::updateButtons()
+{
+    mBack->Enable(mHtml->HistoryCanBack());
 }
 
 } //namespace

@@ -145,7 +145,6 @@ public:
 
     static LogLevel sReportingLevel;
     static void setReportingLevel(const LogLevel& level);
-    static bool isEnabled(); ///< \return true if log file has been opened
     static void flush(); ///< flush the logging. NOTE: Only use for testing!
 
     /// Log info in a separate line, preceded with meta data.

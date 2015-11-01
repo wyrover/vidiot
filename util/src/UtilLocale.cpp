@@ -26,9 +26,9 @@ std::vector<std::pair<wxString, wxString>> getSupportedLanguages()
 
     std::map<wxString, wxString> sLanguages =
     {
-        { "en", _("English") },
-        { "de", _("German") },
-        { "nl", _("Dutch") },
+        { "en_US", "English" },
+        { "de_DE", "Deutsch" },
+        { "nl_NL", "Nederlands" },
     };
 
     wxDir dir{ util::path::toPath(util::path::getLanguagesPath()) };

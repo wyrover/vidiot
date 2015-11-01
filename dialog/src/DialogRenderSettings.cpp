@@ -108,13 +108,13 @@ DialogRenderSettings::DialogRenderSettings(model::SequencePtr sequence)
 
     //////// VIDEO ////////
 
-    wxStaticBoxSizer* mVideoBoxSizer = new wxStaticBoxSizer(wxVERTICAL,outputbox,_("Video settings"));
+    wxStaticBoxSizer* mVideoBoxSizer = new wxStaticBoxSizer(wxVERTICAL,outputbox,_("Video"));
     mVideoParameters = new wxScrolledWindow(mVideoBoxSizer->GetStaticBox());
     mVideoBoxSizer->Add(mVideoParameters,wxSizerFlags(1).Expand());
 
     //////// AUDIO ////////
 
-    wxStaticBoxSizer* mAudioBoxSizer = new wxStaticBoxSizer(wxVERTICAL,outputbox,_("Audio settings"));
+    wxStaticBoxSizer* mAudioBoxSizer = new wxStaticBoxSizer(wxVERTICAL,outputbox,_("Audio"));
     mAudioParameters = new wxScrolledWindow(mAudioBoxSizer->GetStaticBox());
     mAudioBoxSizer->Add(mAudioParameters,wxSizerFlags(1).Expand());
 
@@ -143,7 +143,7 @@ DialogRenderSettings::DialogRenderSettings(model::SequencePtr sequence)
 
     wxPanel* buttons = new wxPanel(this);
     buttons->SetSizer(new wxBoxSizer(wxHORIZONTAL));
-    mRenderButton = new wxButton(buttons,wxID_ANY,_("OK && Render now"));
+    mRenderButton = new wxButton(buttons,wxID_ANY,_("OK & Render now"));
     mOkButton = new wxButton(buttons,wxID_ANY,_("OK"));
     mCancelButton = new wxButton(buttons,wxID_CANCEL,_("Cancel")); // Using wxID_CANCEL ensures that pressing ESC also closes the dialog
     mApplyButton = new wxButton(buttons,wxID_ANY,_("Apply"));

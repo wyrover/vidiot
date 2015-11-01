@@ -172,18 +172,18 @@ Window::Window()
 	mMenuEdit->Enable(wxID_PASTE,false);
 
     mMenuView = new wxMenu();
-    mMenuView->AppendCheckItem(ID_SNAP_CLIPS, _("Snap to clips"), _("Check this item to ensure that operations in the timeline 'snap' to adjacent clip boundaries."));
+    mMenuView->AppendCheckItem(ID_SNAP_CLIPS, _("Snap to clips"));
     mMenuView->Check(ID_SNAP_CLIPS, Config::ReadBool(Config::sPathTimelineSnapClips));
-    mMenuView->AppendCheckItem(ID_SNAP_CURSOR, _("Snap to cursor"), _("Check this item to ensure that operations in the timeline 'snap' to the cursor position."));
+    mMenuView->AppendCheckItem(ID_SNAP_CURSOR, _("Snap to cursor"));
     mMenuView->Check(ID_SNAP_CURSOR, Config::ReadBool(Config::sPathTimelineSnapCursor));
     mMenuView->AppendSeparator();
-    mMenuView->AppendCheckItem(ID_SHOW_BOUNDINGBOX, _("Show bounding box"), _("Show the bounding box of the generated video in the preview window."));
+    mMenuView->AppendCheckItem(ID_SHOW_BOUNDINGBOX, _("Show bounding box"));
     mMenuView->Check(ID_SHOW_BOUNDINGBOX, Config::ReadBool(Config::sPathVideoShowBoundingBox));
     mMenuView->AppendSeparator();
-    mMenuView->AppendCheckItem(ID_SHOW_PROJECT, sPaneCaptionProject, _("Show/hide the project view pane."));
-    mMenuView->AppendCheckItem(ID_SHOW_DETAILS, sPaneCaptionDetails, _("Show/hide the timeline details pane."));
-    mMenuView->AppendCheckItem(ID_SHOW_PREVIEW, sPaneCaptionPreview, _("Show/hide the timeline preview pane."));
-    mMenuView->AppendCheckItem(ID_SHOW_TIMELINES, sPaneCaptionTimelines, _("Show/hide the timelines pane."));
+    mMenuView->AppendCheckItem(ID_SHOW_PROJECT, sPaneCaptionProject);
+    mMenuView->AppendCheckItem(ID_SHOW_DETAILS, sPaneCaptionDetails);
+    mMenuView->AppendCheckItem(ID_SHOW_PREVIEW, sPaneCaptionPreview);
+    mMenuView->AppendCheckItem(ID_SHOW_TIMELINES, sPaneCaptionTimelines);
 
     mMenuSequence = new wxMenu();
 
@@ -191,13 +191,13 @@ Window::Window()
     menutools->Append(wxID_PREFERENCES, _("Options"));
 
     mMenuWorkspace = new wxMenu();
-    mMenuWorkspace->AppendCheckItem(ID_WORKSPACE_SHOW_CAPTIONS, _("Show captions"), _("Toggle this option to hide/show the captions on the workspace windows."));
+    mMenuWorkspace->AppendCheckItem(ID_WORKSPACE_SHOW_CAPTIONS, _("Show captions"));
     mMenuWorkspace->Check(ID_WORKSPACE_SHOW_CAPTIONS,true);
     mMenuWorkspace->AppendSeparator();
-    mMenuWorkspace->Append(ID_WORKSPACE_SAVE, _("Save"), _("Save the current workspace layout."));
-    mMenuWorkspace->Append(ID_WORKSPACE_LOAD, _("Load"), _("Load a previously saved workspace layout."));
-    mMenuWorkspace->Append(ID_WORKSPACE_DELETE, _("Delete"), _("Select a workspace layout to be deleted."));
-    mMenuWorkspace->Append(ID_WORKSPACE_DELETEALL, _("Delete all"), _("Delete all saved workspace layouts."));
+    mMenuWorkspace->Append(ID_WORKSPACE_SAVE, _("Save"));
+    mMenuWorkspace->Append(ID_WORKSPACE_LOAD, _("Load"));
+    mMenuWorkspace->Append(ID_WORKSPACE_DELETE, _("Delete"));
+    mMenuWorkspace->Append(ID_WORKSPACE_DELETEALL, _("Delete all"));
     mMenuWorkspace->AppendSeparator();
     mMenuWorkspace->Append(ID_WORKSPACE_DEFAULT, _("Restore default"));
     mMenuWorkspace->AppendSeparator();
@@ -205,10 +205,10 @@ Window::Window()
     updateWorkspaceMenu();
 
     mMenuHelp = new wxMenu();
-    mMenuHelp->AppendCheckItem(wxID_HELP, _("Help"), _("Open the help.") );
+    mMenuHelp->AppendCheckItem(wxID_HELP, _("Help"));
     mMenuHelp->AppendSeparator();
-    mMenuHelp->Append(ID_OPENLOGFILE, _("Open log file"), _("Use the default application associated with .txt files to open the log file."));
-    mMenuHelp->Append(ID_OPENCONFIGFILE, _("Open config file"), _("Use the default application associated with .ini files to open the config file."));
+    mMenuHelp->Append(ID_OPENLOGFILE, _("Open log file"));
+    mMenuHelp->Append(ID_OPENCONFIGFILE, _("Open config file"));
     mMenuHelp->AppendSeparator();
     mMenuHelp->Append(wxID_ABOUT, _("About..."));
 
@@ -417,14 +417,6 @@ Window::Window()
         }
     }
     Show();
-
-    if (!Log::isEnabled())
-    {
-        if (wxNO == Dialog::get().getConfirmation( _("Log file error"), _("Could not open the log file for writing. Continue running?"), wxYES | wxNO))
-        {
-            wxExit();
-        }
-    }
 }
 
 void Window::init()
@@ -983,7 +975,7 @@ void Window::setSequenceMenu(wxMenu* menu, bool enabled)
     if (mMenuBar->GetMenu(sSequenceMenuIndex) != menu)
     {
         // Only in case of changes. Otherwise wxWidgets asserts.
-        previous = mMenuBar->Replace(sSequenceMenuIndex, menu, _("&Sequence"));
+        previous = mMenuBar->Replace(sSequenceMenuIndex, menu, _("Sequence"));
     }
     mMenuBar->EnableTop(sSequenceMenuIndex,enable);
 }

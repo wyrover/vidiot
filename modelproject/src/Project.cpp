@@ -276,7 +276,7 @@ bool Project::DoSaveDocument(const wxString& file)
         else
         {
             gui::StatusBar::get().popInfoText();
-            gui::StatusBar::get().timedInfoText(saveFileName.GetFullName() + _(" saved successfully."));
+            gui::StatusBar::get().timedInfoText(wxString::Format(_("%s saved successfully."), saveFileName.GetFullName()));
         }
     }
     return true;

@@ -116,24 +116,28 @@ void Help::onLink( wxHtmlLinkEvent& event)
         mHighlightCount = 9; // Odd to show initially
         mHighlightTimer.Start(250, false);
     }
+    updateButtons();
     event.Skip();
 }
 
 void Help::onBack(wxCommandEvent &event)
 {
     mHtml->HistoryBack();
+    updateButtons();
     event.Skip();
 }
 
 void Help::onHome(wxCommandEvent &event)
 {
     home();
+    updateButtons();
     event.Skip();
 }
 
 void Help::onForward(wxCommandEvent &event)
 {
     mHtml->HistoryForward();
+    updateButtons();
     event.Skip();
 }
 
@@ -164,10 +168,14 @@ void Help::onTimer(wxTimerEvent& event)
 
 void Help::home()
 {
-    wxString main{ util::path::getResource("html/help/" + getLanguageCode(), "index.html") };
+    wxString main{ util::path::getResource("html/help/" + getLanguageCode(), "index.html") }; // nl_NL
     if (!wxFile::Exists(main))
     {
-        main = util::path::getResource("html/help/en", "index.html"); 
+        main = util::path::getResource("html/help/" + getLanguageCode().Left(2), "index.html"); // nl
+    }
+    if (!wxFile::Exists(main))
+    {
+        main = util::path::getResource("html/help/en", "index.html"); // Default: en
     }
     mHtml->LoadPage(main);
 }

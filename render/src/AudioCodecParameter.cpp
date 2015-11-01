@@ -24,7 +24,7 @@ namespace model { namespace render {
 IMPLEMENTENUM(AudioCodecParameterType);
 
 std::map<AudioCodecParameterType, wxString> AudioCodecParameterTypeConverter::mapToHumanReadibleString = {
-    { AudioBitRate, _("Bit rate") },
+    { AudioBitRate, "Bit rate" },
 };
 
 wxString getHumanReadibleName(const AudioCodecParameterType& id)

@@ -39,7 +39,7 @@ std::map<int, wxString> Avcodec::mapAvcodecLevels = {
 const int Avcodec::sMaxLogSize = 500;
 char* Avcodec::sFixedBuffer = 0;
 int Avcodec::sLevel = AV_LOG_FATAL;
-wxString Avcodec::sMostRecentLogLine(_("Increase the avcodec logging level in the .ini file to get detailed information."));
+wxString Avcodec::sMostRecentLogLine("Increase the avcodec logging level in the .ini file to get detailed information.");
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION

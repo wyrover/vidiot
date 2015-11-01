@@ -27,7 +27,7 @@ ProjectViewAddAsset::ProjectViewAddAsset(const model::NodePtr& parent, const mod
 ,   mChildren(ProjectViewCommand::prune(nodes))
 {
     VAR_INFO(this)(mParent)(mChildren);
-    mCommandName = _("Insert assets" );
+    mCommandName = _("Insert" );
 }
 
 ProjectViewAddAsset::~ProjectViewAddAsset()

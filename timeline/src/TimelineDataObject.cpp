@@ -191,7 +191,7 @@ bool TimelineDataObject::storeInClipboard()
 {
     if (mDropsVideo.empty() && mDropsAudio.empty())
     {
-        StatusBar::get().timedInfoText(_("Nothing to b e stored in clipboard."));
+        StatusBar::get().timedInfoText(_("Nothing to be stored in clipboard."));
     }
     else
     {
