@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-11-01 12:15+0100\n"
-"PO-Revision-Date: 2015-11-01 12:15+0100\n"
+"PO-Revision-Date: 2015-11-01 18:27+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -362,7 +362,7 @@ msgstr "Inkompatible Codec und Dateityp"
 
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:61
 msgid "Render sequence"
-msgstr "Render-Sequenz"
+msgstr "Film machen"
 
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:88
 msgid "Format"
@@ -398,7 +398,7 @@ msgstr "Als Standard einstellen"
 
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:146
 msgid "OK & Render now"
-msgstr "OK & Generieren"
+msgstr "OK & Machen"
 
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:147
 msgid "OK"
@@ -452,7 +452,7 @@ msgstr "Keine Datei ausgewählt"
 
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:523
 msgid "Nothing to render"
-msgstr "Nichts zu generieren"
+msgstr "Nichts zu machen"
 
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:523
 msgid "Select at least a video or audio codec."
@@ -1130,7 +1130,7 @@ msgstr "Es gab einen Fehler beim Öffnen des Audio-Codec."
 #: C:\Vidiot\vidiot_trunk\render\src\AudioCodec.cpp:148
 #: C:\Vidiot\vidiot_trunk\render\src\VideoCodec.cpp:153
 msgid "Rendering will be aborted."
-msgstr "Rendering wird abgebrochen."
+msgstr "Film machen wird abgebrochen."
 
 #: C:\Vidiot\vidiot_trunk\render\src\AudioCodec.cpp:155
 msgid "Could not deduce required sample format for audio."
@@ -1154,16 +1154,16 @@ msgstr "Nicht alle Filme wurden geplant:"
 
 #: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:364
 msgid "An internal error occurred during rendering."
-msgstr "Während der Generierung ist ein interner Fehler aufgetreten."
+msgstr "Während des machen des Filmes ist ein interner Fehler aufgetreten."
 
 #: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:365
 msgid "Rendering failed"
-msgstr "Generierung ist fehlgeschlagen"
+msgstr "Film machen ist fehlgeschlagen"
 
 #: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:372
 #, c-format
 msgid "Rendering sequence %s"
-msgstr "Generierung von Film %s"
+msgstr "Machen von Film %s"
 
 #: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:439
 msgid "Unsupported number of ticks per frame in target codec"
@@ -1414,15 +1414,15 @@ msgstr "Entfernen von leere Regionen"
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:98
 msgid "Render settings"
-msgstr "Einstellungen für Generierung"
+msgstr "Einstellungen für Film machen"
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:99
 msgid "Render"
-msgstr "Generieren"
+msgstr "Machen"
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:100
 msgid "Render all modified sequences"
-msgstr "Generieren von alle modifizierten Filme"
+msgstr "Machen von alle modifizierten Filme"
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:102
 msgid "Close"

@@ -183,7 +183,7 @@ void Config::init(const wxString& applicationName, const wxString& vendorName, b
     setDefault(Config::sPathDebugShowDebugInfoOnWidgets, false);
     setDefault(Config::sPathTimelineSnapClips, true);
     setDefault(Config::sPathTimelineSnapCursor, true);
-    setDefault(Config::sPathTimelineStripFromClipNames, "scene'2011");
+    setDefault(Config::sPathTimelineStripFromClipNames, "scene'2012");
     setDefault(Config::sPathTestRunCurrent, "");
     setDefault(Config::sPathTestRunFrom, "");
     setDefault(Config::sPathTestRunOnly, "");

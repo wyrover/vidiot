@@ -96,7 +96,7 @@ MenuHandler::MenuHandler(Timeline* timeline)
     mMenu.Append(ID_DELETEEMPTY,  _("Remove empty"));
     mMenu.AppendSeparator();
     mMenu.Append(ID_RENDERSETTINGS, _("Render settings"));
-    mMenu.Append(ID_RENDERSEQUENCE, _("Render") + " '" + getSequence()->getName() + "'");
+    mMenu.Append(ID_RENDERSEQUENCE, wxString::Format(_("Render %s"), getSequence()->getName()));
     mMenu.Append(ID_RENDERSEQUENCE, _("Render all modified sequences"));
     mMenu.AppendSeparator();
     mMenu.Append(ID_CLOSESEQUENCE,  _("Close"));
