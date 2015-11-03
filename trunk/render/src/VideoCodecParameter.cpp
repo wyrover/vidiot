@@ -25,18 +25,23 @@ IMPLEMENTENUM(VideoCodecParameterType);
 
 // Check mpegvideo_enc.c for all parameters and their bounds and dependencies...
 
-std::map<VideoCodecParameterType, wxString> VideoCodecParameterTypeConverter::mapToHumanReadibleString = {
-    { BitRate, "Bit rate" },
-    { BitRateTolerance, "Bit rate tolerance" },
-    { GopSize, "Gop size" },
-    { BFrames, "B Frames" },
-    { MacroBlockDecision, "Macro block decision" },
-};
+std::map<VideoCodecParameterType, wxString> VideoCodecParameterTypeConverter::getMapToHumanReadibleString()
+{
+    return
+    {
+        { BitRate, "Bit rate" },
+        { BitRateTolerance, "Bit rate tolerance" },
+        { GopSize, "Gop size" },
+        { BFrames, "B Frames" },
+        { MacroBlockDecision, "Macro block decision" },
+    };
+}
 
 wxString getHumanReadibleName(const VideoCodecParameterType& id)
 {
-    ASSERT(VideoCodecParameterTypeConverter::mapToHumanReadibleString.find(id) != VideoCodecParameterTypeConverter::mapToHumanReadibleString.end())(id);
-    return (VideoCodecParameterTypeConverter::mapToHumanReadibleString.find(id))->second;
+    std::map<VideoCodecParameterType, wxString> mapToHumanReadibleString = VideoCodecParameterTypeConverter::getMapToHumanReadibleString();
+    ASSERT(mapToHumanReadibleString.find(id) != mapToHumanReadibleString.end())(id);
+    return (mapToHumanReadibleString.find(id))->second;
 }
 
 void VideoCodecParameterBitrate::set(AVCodecContext* codec)

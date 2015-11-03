@@ -129,10 +129,10 @@ DialogOptions::DialogOptions(wxWindow* win)
         mDefaultVideoHeight = new wxSpinCtrl(mPanel, wxID_ANY, wxString::Format("%ld", initial), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, 20, 10000, initial);
         addoption(_("Default video height"), mDefaultVideoHeight);
 
-        mDefaultVideoScaling = new EnumSelector<model::VideoScaling>(mPanel, model::VideoScalingConverter::mapToHumanReadibleString, model::VideoScalingConverter::readConfigValue(Config::sPathVideoDefaultScaling));
+        mDefaultVideoScaling = new EnumSelector<model::VideoScaling>(mPanel, model::VideoScalingConverter::getMapToHumanReadibleString(), model::VideoScalingConverter::readConfigValue(Config::sPathVideoDefaultScaling));
         addoption(_("Default video scaling"), mDefaultVideoScaling);
 
-        mDefaultVideoAlignment = new EnumSelector<model::VideoAlignment>(mPanel, model::VideoAlignmentConverter::mapToHumanReadibleString, model::VideoAlignmentConverter::readConfigValue(Config::sPathVideoDefaultAlignment));
+        mDefaultVideoAlignment = new EnumSelector<model::VideoAlignment>(mPanel, model::VideoAlignmentConverter::getMapToHumanReadibleString(), model::VideoAlignmentConverter::readConfigValue(Config::sPathVideoDefaultAlignment));
         addoption(_("Default video alignment"), mDefaultVideoAlignment);
     }
     {
@@ -250,7 +250,7 @@ DialogOptions::DialogOptions(wxWindow* win)
 
         addbox(_("Logging"));
 
-        mSelectLogLevel = new EnumSelector<LogLevel>(mPanel, LogLevelConverter::mapToHumanReadibleString, LogLevelConverter::readConfigValue(Config::sPathDebugLogLevel));
+        mSelectLogLevel = new EnumSelector<LogLevel>(mPanel, LogLevelConverter::getMapToHumanReadibleString(), LogLevelConverter::readConfigValue(Config::sPathDebugLogLevel));
         addoption(_("Log level"), mSelectLogLevel);
 
         mSelectLogLevelAvcodec = new EnumSelector<int>(mPanel, Avcodec::mapAvcodecLevels, UtilMap<int,wxString>(Avcodec::mapAvcodecLevels).reverseLookup(Config::ReadString(Config::sPathDebugLogLevelAvcodec), Avcodec::getDefaultLogLevel()));

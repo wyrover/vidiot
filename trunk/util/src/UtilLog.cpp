@@ -41,12 +41,16 @@ namespace boost
 
 IMPLEMENTENUM(LogLevel);
 
-std::map<LogLevel, wxString> LogLevelConverter::mapToHumanReadibleString = {
-    { LogError, _("Errors") },
-    { LogWarning, _("Errors & Warnings") },
-    { LogInfo, _("Info (UI actions)") },
-    { LogDebug, _("Debugging") },
-};
+std::map<LogLevel, wxString> LogLevelConverter::getMapToHumanReadibleString()
+{
+    return
+    {
+        { LogError, _("Errors") },
+        { LogWarning, _("Errors & Warnings") },
+        { LogInfo, _("Info (UI actions)") },
+        { LogDebug, _("Debugging") },
+    };
+}
 
 static std::string sFilename("");
 static const unsigned int sMaximumBufferedLoglines = 10000;

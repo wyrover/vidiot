@@ -80,7 +80,7 @@ void Details::update()
             if (mLabel != details->getTitle())
             {
                 mLabel = details->getTitle();
-                gui::Window::get().getUiManager().GetPane(gui::Window::sPaneNameDetails).Caption( gui::Window::sPaneCaptionDetails  + ": " + mLabel);
+                gui::Window::get().getUiManager().GetPane(gui::Window::sPaneNameDetails).Caption( gui::Window::get().sPaneCaptionDetails  + ": " + mLabel);
                 gui::Window::get().getUiManager().Update();
             }
             if (mCurrent == details)
@@ -99,7 +99,7 @@ void Details::update()
     if (!shown)
     {
         mCurrent = 0;
-        gui::Window::get().getUiManager().GetPane(gui::Window::sPaneNameDetails).Caption(gui::Window::sPaneCaptionDetails);
+        gui::Window::get().getUiManager().GetPane(gui::Window::sPaneNameDetails).Caption(gui::Window::get().sPaneCaptionDetails);
         gui::Window::get().getUiManager().Update();
     }
     gui::Window::get().triggerLayout();
