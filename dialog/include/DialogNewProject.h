@@ -125,6 +125,15 @@ private:
 
     boost::shared_ptr<model::FileAnalyzer> mFileAnalyzer;
 
+    // Strings: not static/global (must initialize proper translation during startup first)
+    wxString sTitle;
+    wxString sNoFiles;
+    wxString sFolder;
+    wxString sFiles;
+    wxString sEmpty;
+    wxString sFolderShort;
+    wxString sFilesShort;
+
     //////////////////////////////////////////////////////////////////////////
     // HELPER CLASS
     //////////////////////////////////////////////////////////////////////////

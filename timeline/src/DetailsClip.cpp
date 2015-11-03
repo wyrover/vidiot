@@ -205,7 +205,7 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
 
     mScalingPanel = new wxPanel(this);
     wxBoxSizer* scalingsizer = new wxBoxSizer(wxHORIZONTAL);
-    mSelectScaling = new EnumSelector<model::VideoScaling>(mScalingPanel, model::VideoScalingConverter::mapToHumanReadibleString, model::VideoScalingNone);
+    mSelectScaling = new EnumSelector<model::VideoScaling>(mScalingPanel, model::VideoScalingConverter::getMapToHumanReadibleString(), model::VideoScalingNone);
     mSelectScaling->SetWindowVariant( wxWINDOW_VARIANT_SMALL );
     mScalingSlider = new wxSlider(mScalingPanel,wxID_ANY, 1 * model::Constants::sScalingPrecisionFactor, model::Constants::sScalingMin, model::Constants::sScalingMax);
     mScalingSlider->SetPageSize(model::Constants::sScalingPageSize);
@@ -225,7 +225,7 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
 
     mAlignmentPanel = new wxPanel(this);
     wxBoxSizer* alignmentsizer = new wxBoxSizer(wxHORIZONTAL);
-    mSelectAlignment = new EnumSelector<model::VideoAlignment>(mAlignmentPanel, model::VideoAlignmentConverter::mapToHumanReadibleString, model::VideoAlignmentCustom);
+    mSelectAlignment = new EnumSelector<model::VideoAlignment>(mAlignmentPanel, model::VideoAlignmentConverter::getMapToHumanReadibleString(), model::VideoAlignmentCustom);
     mSelectAlignment->SetWindowVariant( wxWINDOW_VARIANT_SMALL );
     wxStaticText* titleX = new wxStaticText(mAlignmentPanel, wxID_ANY, "  X:", wxDefaultPosition);
     mPositionXSlider = new wxSlider(mAlignmentPanel, wxID_ANY, 0, 0, 1);

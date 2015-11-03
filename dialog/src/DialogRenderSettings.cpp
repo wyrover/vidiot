@@ -40,7 +40,6 @@
 
 namespace gui {
 
-wxString sIncompatibleHeader(_("Incompatible codec and file type"));
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
@@ -58,21 +57,22 @@ void addOption(wxWindow* parent, wxSizer* vSizer, wxString name, wxWindow* optio
 };
 
 DialogRenderSettings::DialogRenderSettings(model::SequencePtr sequence)
-    :   wxDialog(&Window::get(),wxID_ANY,_("Render sequence"),wxDefaultPosition,wxSize(600,600),wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER,wxDialogNameStr )
-    ,   mSequence(sequence)
-    ,   mOriginal(make_cloned<model::render::Render>(sequence->getRender()))
-    ,   mNew(make_cloned<model::render::Render>(sequence->getRender()))
-    ,   mFile(0)
-    ,   mFileButton(0)
-    ,   mVideoCodec(0)
-    ,   mAudioCodec(0)
-    ,   mRenderButton(0)
-    ,   mOkButton(0)
-    ,   mCancelButton(0)
-    ,   mApplyButton(0)
-    ,   mSetDefaultButton(0)
-    ,   mRendering(false)
-    ,   mLength(0)
+    : wxDialog(&Window::get(), wxID_ANY, _("Render sequence"), wxDefaultPosition, wxSize(600, 600), wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER, wxDialogNameStr)
+    , mSequence(sequence)
+    , mOriginal(make_cloned<model::render::Render>(sequence->getRender()))
+    , mNew(make_cloned<model::render::Render>(sequence->getRender()))
+    , mFile(0)
+    , mFileButton(0)
+    , mVideoCodec(0)
+    , mAudioCodec(0)
+    , mRenderButton(0)
+    , mOkButton(0)
+    , mCancelButton(0)
+    , mApplyButton(0)
+    , mSetDefaultButton(0)
+    , mRendering(false)
+    , mLength(0)
+    , sIncompatibleHeader(_("Incompatible codec and file type"))
 {
     VAR_DEBUG(this);
 

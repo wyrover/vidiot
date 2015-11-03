@@ -34,14 +34,6 @@ namespace gui {
 // static
 boost::optional<wxStrings> DialogNewProject::sDroppedFiles = boost::none;
 
-wxString sTitle(_("Create new project"));
-wxString sNoFiles(_("No media files found."));
-wxString sFolder(_("Select a folder containing media files for creating a new movie."));
-wxString sFiles(_("Select individual media files for creating a new movie."));
-wxString sEmpty(_("Start a new empty project."));
-wxString sFolderShort(_("Select folder"));
-wxString sFilesShort( _("Select files"));
-
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
@@ -50,7 +42,15 @@ DialogNewProject::DialogNewProject()
     : wxWizard()
     , mDefaultType(Config::ReadEnum<model::DefaultNewProjectWizardStart>(Config::sPathProjectDefaultNewProjectType))
     , mFolderPath("")
+    , sTitle(_("Create new project"))
+    , sNoFiles(_("No media files found."))
+    , sFolder(_("Select a folder containing media files for creating a new movie."))
+    , sFiles(_("Select individual media files for creating a new movie."))
+    , sEmpty(_("Start a new empty project."))
+    , sFolderShort(_("Select folder"))
+    , sFilesShort(_("Select files"))
 {
+    
     Create(&Window::get(), wxID_ANY, sTitle, util::window::getBitmap("movie128.png"), wxDefaultPosition, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     util::window::setIcons(this);
     SetTitle(sTitle);

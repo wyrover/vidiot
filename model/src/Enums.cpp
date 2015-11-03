@@ -29,18 +29,26 @@ IMPLEMENTENUM(TransitionType);
 
 IMPLEMENTENUM(DefaultNewProjectWizardStart);
 
-std::map<VideoScaling, wxString> VideoScalingConverter::mapToHumanReadibleString = {
-    { VideoScalingFitAll, _("Fit all") },
-    { VideoScalingFitToFill, _("Fit to fill") },
-    { VideoScalingNone, _("Original size") },
-    { VideoScalingCustom, _("Custom") },
+std::map<VideoScaling, wxString> VideoScalingConverter::getMapToHumanReadibleString()
+{
+    return
+    {
+        { VideoScalingFitAll, _("Fit all") },
+        { VideoScalingFitToFill, _("Fit to fill") },
+        { VideoScalingNone, _("Original size") },
+        { VideoScalingCustom, _("Custom") },
     };
-
-std::map<VideoAlignment, wxString> VideoAlignmentConverter::mapToHumanReadibleString = {
-    { VideoAlignmentCenter, _("Centered") },
-    { VideoAlignmentCenterHorizontal, _("Centered horizontally") },
-    { VideoAlignmentCenterVertical, _("Centered vertically") },
-    { VideoAlignmentCustom, _("Custom") },
 };
+
+std::map<VideoAlignment, wxString> VideoAlignmentConverter::getMapToHumanReadibleString()
+{
+    return
+    {
+        { VideoAlignmentCenter, _("Centered") },
+        { VideoAlignmentCenterHorizontal, _("Centered horizontally") },
+        { VideoAlignmentCenterVertical, _("Centered vertically") },
+        { VideoAlignmentCustom, _("Custom") },
+    };
+}
 
 }

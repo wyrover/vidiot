@@ -107,6 +107,9 @@ private:
     std::map<model::render::AudioCodecParameterType, wxWindow*> mAudioParameterWidgets;
     std::map<model::render::VideoCodecParameterType, wxWindow*> mVideoParameterWidgets;
 
+    // Strings: not static/global (must initialize proper translation during startup first)
+    wxString sIncompatibleHeader;
+
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////

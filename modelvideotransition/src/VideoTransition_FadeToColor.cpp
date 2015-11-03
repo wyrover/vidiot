@@ -35,9 +35,13 @@ namespace model { namespace video { namespace transition {
 DECLAREENUM(FadeToColorParameters, \
     FadeToColorColor, FadeToColorDummy);
 IMPLEMENTENUM(FadeToColorParameters);
-std::map<FadeToColorParameters, wxString> FadeToColorParametersConverter::mapToHumanReadibleString = {
-    { FadeToColorColor, _("Color") },
-};
+std::map<FadeToColorParameters, wxString> FadeToColorParametersConverter::getMapToHumanReadibleString()
+{
+    return
+    {
+        { FadeToColorColor, _("Color") },
+    };
+}
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION

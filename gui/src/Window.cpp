@@ -61,12 +61,6 @@ const std::map<int, wxString> Window::sMapMenuIdToPaneName = {
     { static_cast<int>(wxID_HELP), Window::sPaneNameHelp }
 };
 
-const wxString Window::sPaneCaptionHelp(_("Help"));
-const wxString Window::sPaneCaptionProject(_("Project"));
-const wxString Window::sPaneCaptionDetails(_("Details"));
-const wxString Window::sPaneCaptionPreview(_("Preview"));
-const wxString Window::sPaneCaptionTimelines(_("Timelines"));
-
 //////////////////////////////////////////////////////////////////////////
 // HELPER CLASSES
 //////////////////////////////////////////////////////////////////////////
@@ -123,6 +117,11 @@ Window::Window()
     , mVideoTransitionFactory(new model::video::VideoTransitionFactory())
     , mProjectOpen(false)
     , mDialogOpen(false)
+    , sPaneCaptionHelp(_("Help"))
+    , sPaneCaptionProject(_("Project"))
+    , sPaneCaptionDetails(_("Details"))
+    , sPaneCaptionPreview(_("Preview"))
+    , sPaneCaptionTimelines(_("Timelines"))
 {
     Create(mDocManager, 0, wxID_ANY, sTitle, wxDefaultPosition, wxSize(1000,700));
 

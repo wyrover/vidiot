@@ -65,7 +65,7 @@ public: \
     virtual ~ENUMNAME ## Converter() {}; \
     static ENUMNAME ## Converter sConverter; \
     typedef std::map<ENUMNAME,wxString> ENUMNAME ## Map; \
-    static ENUMNAME ## Map mapToHumanReadibleString; \
+    static ENUMNAME ## Map getMapToHumanReadibleString(); \
     wxString toString( const ENUMNAME& value ) const { return mMap.find(value)->second; }; \
     ENUMNAME fromString( const wxString& value ) const { return UtilMap<ENUMNAME,wxString>(mMap).reverseLookup(value, ENUMNAME ## _MAX); }; \
     static ENUMNAME readConfigValue(const wxString& path); \
@@ -108,7 +108,7 @@ public: \
     virtual ~ENUMNAME ## Converter() {}; \
     static ENUMNAME ## Converter sConverter; \
     typedef std::map<ENUMNAME,wxString> ENUMNAME ## Map; \
-    static ENUMNAME ## Map mapToHumanReadibleString; \
+    static ENUMNAME ## Map getMapToHumanReadibleString(); \
     wxString toString( const ENUMNAME& value ) const { return mMap.find(value)->second; }; \
     ENUMNAME fromString( const wxString& value ) const { return UtilMap<ENUMNAME,wxString>(mMap).reverseLookup(value, ENUMNAME ## _MAX); }; \
     static ENUMNAME readConfigValue(const wxString& path); \
