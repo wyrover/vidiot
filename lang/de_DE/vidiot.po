@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-03 18:28+0100\n"
-"PO-Revision-Date: 2015-11-01 18:27+0100\n"
+"POT-Creation-Date: 2015-11-04 15:46+0100\n"
+"PO-Revision-Date: 2015-11-04 15:44+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -397,8 +397,8 @@ msgid "Set as default"
 msgstr "Als Standard einstellen"
 
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:146
-msgid "OK & Render now"
-msgstr "OK & Machen"
+msgid "OK && Render now"
+msgstr "OK && Machen"
 
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:147
 msgid "OK"
@@ -1417,9 +1417,9 @@ msgid "Render settings"
 msgstr "Einstellungen für Film machen"
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:99
-#, fuzzy, c-format
+#, c-format
 msgid "Render %s"
-msgstr "Machen"
+msgstr "Machen von %s"
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:100
 msgid "Render all modified sequences"
@@ -1701,235 +1701,3 @@ msgstr "Drücken Sie auf OK, um zu beenden."
 #: C:\Vidiot\vidiot_trunk\util\src\UtilPath.cpp:285
 msgid "Resources not found"
 msgstr "Ressourcen nicht gefunden"
-
-#~ msgid "poedit"
-#~ msgstr "poedit"
-
-#~ msgid "English"
-#~ msgstr "Englisch"
-
-#~ msgid "German"
-#~ msgstr "Deutsch"
-
-#~ msgid "Dutch"
-#~ msgstr "Holländisch"
-
-#~ msgid "OK && Render now"
-#~ msgstr "OK und generieren"
-
-#~ msgid ""
-#~ "Increase the avcodec logging level in the .ini file to get detailed "
-#~ "information."
-#~ msgstr ""
-#~ "Erhöhen Sie die avcodec Protokollierungsstufe in der INI-Datei, um "
-#~ "detaillierte Informationen zu erhalten."
-
-#~ msgid "Nothing to b e stored in clipboard."
-#~ msgstr "Nichts zum speichern in der Zwischenablage."
-
-#~ msgid "Fade in (more)"
-#~ msgstr "überblendung von (more)"
-
-#~ msgid "Fade out (more)"
-#~ msgstr "Fade out (mehr)"
-
-#~ msgid "Fade from previous (more)"
-#~ msgstr "Fade aus früheren (mehr)"
-
-#~ msgid "Fade to next (more)"
-#~ msgstr "Fade to next (mehr)"
-
-#~ msgid "Show all fade in transitions"
-#~ msgstr "Alle fade in Gänge anzeigen"
-
-#~ msgid "Show all fade out transitions"
-#~ msgstr "Alle anzeigen fade out Übergänge"
-
-#~ msgid "Show all fade from previous transitions"
-#~ msgstr "Alle Fade aus früheren Übergänge anzeigen"
-
-#~ msgid "Show all fade to next transitions"
-#~ msgstr "Alle Fade zum nächsten Übergänge anzeigen"
-
-#~ msgid "Cross-fade from previous"
-#~ msgstr "Überblendung von früheren"
-
-#~ msgid "Cross-fade to next"
-#~ msgstr "Überblendung zum nächsten"
-
-#~ msgid "Log file error"
-#~ msgstr "Log-Datei-Fehler"
-
-#~ msgid "Could not open the log file for writing. Continue running?"
-#~ msgstr ""
-#~ "Konnte nicht die Log-Datei zum Schreiben zu öffnen. Weiter ausgeführt "
-#~ "werden?"
-
-#~ msgid "&Sequence"
-#~ msgstr "&Film"
-
-#~ msgid " saved successfully."
-#~ msgstr " erfolgreich gespeichert."
-
-#~ msgid "Insert assets"
-#~ msgstr "Legen Vermögenswerte"
-
-#~ msgid "Delete "
-#~ msgstr "Löschen "
-
-#~ msgid "Delete assets"
-#~ msgstr "Vermögenswerte löschen"
-
-#~ msgid "Bit rate"
-#~ msgstr "Bitrate"
-
-#~ msgid "Bit rate tolerance"
-#~ msgstr "Bitrate Toleranz"
-
-#~ msgid "Gop size (max frame distance between 2 I-frames)"
-#~ msgstr "GOP-Größe (maximaler Abstand zwischen 2 I-Frames)"
-
-#~ msgid "B Frames"
-#~ msgstr "B-Frames"
-
-#~ msgid "Macro block decision"
-#~ msgstr "Makroblock-Entscheidung"
-
-#~ msgid "Least bits"
-#~ msgstr "Dest Bits"
-
-#~ msgid "Rate distortion"
-#~ msgstr "Verzerrungsrate"
-
-#~ msgid "Add a new video track to the sequence."
-#~ msgstr "Fügen Sie einen neuen Videospur der Sequenz."
-
-#~ msgid "Add a new audio track to the sequence."
-#~ msgstr "Fügen Sie einen neuen Audio-Track auf die Folge."
-
-#~ msgid "Remove all empty audio and video tracks in this sequence."
-#~ msgstr ""
-#~ "Entfernen Sie alle leeren Audio- und Videospuren in dieser Reihenfolge."
-
-#~ msgid "Split clips at the current cursor position."
-#~ msgstr "Split Clips an der aktuellen Cursorposition."
-
-#~ msgid "Delete all marked regions from sequence."
-#~ msgstr "Löschen Sie alle markierten Bereichen vom Folge."
-
-#~ msgid "Delete all unmarked regions from sequence."
-#~ msgstr "Löschen Sie alle nicht gekennzeichneten Regionen aus Folge."
-
-#~ msgid "Remove all markers from the sequence."
-#~ msgstr "Entfernen Sie alle Markierungen aus der Sequenz."
-
-#~ msgid "Remove all empty areas from the sequence."
-#~ msgstr "Entfernen Sie alle leeren Bereiche aus der Sequenz."
-
-#~ msgid "Generate movie file from sequence."
-#~ msgstr "Generieren Filmdatei aus Folge."
-
-#~ msgid "Generate movie files for all sequences in the project."
-#~ msgstr "Generieren von Filmdateien für alle Sequenzen im Projekt."
-
-#~ msgid "Close the sequence. Will not remove sequence from project."
-#~ msgstr ""
-#~ "Schließen Sie die Sequenz. Wird nicht Sequenz aus Projekt entfernen."
-
-#~ msgid "Open the help."
-#~ msgstr "Öffnen Sie die Hilfe."
-
-#~ msgid "Video settings"
-#~ msgstr "Video Einstellungen"
-
-#~ msgid "Audio settings"
-#~ msgstr "Audio Einstellungen"
-
-#~ msgid ""
-#~ "Check this item to ensure that operations in the timeline 'snap' to "
-#~ "adjacent clip boundaries."
-#~ msgstr ""
-#~ "Aktivieren Sie diese Option, um sicherzustellen, dass Operationen in der "
-#~ "Zeitleiste 'Snap' zu benachbarten Clipgrenzen."
-
-#~ msgid ""
-#~ "Check this item to ensure that operations in the timeline 'snap' to the "
-#~ "cursor position."
-#~ msgstr ""
-#~ "Aktivieren Sie diese Option, um sicherzustellen, dass Operationen in der "
-#~ "Timeline \"Snap\", um der Cursorposition."
-
-#~ msgid "Show the bounding box of the generated video in the preview window."
-#~ msgstr ""
-#~ "Zeigen Sie den Begrenzungsrahmen des erzeugten Videos im Vorschaufenster."
-
-#~ msgid "Show/hide the project view pane."
-#~ msgstr "Anzeigen / ausblenden Projektansichtsfenster."
-
-#~ msgid "Show/hide the timeline details pane."
-#~ msgstr "Einblenden / ausblenden die Zeitleiste Detailbereich."
-
-#~ msgid "Show/hide the timeline preview pane."
-#~ msgstr "Anzeigen / ausblenden Timeline Vorschaufenster."
-
-#~ msgid "Show/hide the timelines pane."
-#~ msgstr "Anzeigen / ausblenden Fristen Bereich."
-
-#~ msgid ""
-#~ "Toggle this option to hide/show the captions on the workspace windows."
-#~ msgstr ""
-#~ "Schaltet diese Option, um zu verbergen / zeigen die Beschriftungen auf "
-#~ "den Arbeitsbereich Fenster."
-
-#~ msgid "Save the current workspace layout."
-#~ msgstr "Speichern Sie den aktuellen Arbeitsbereich-Layout."
-
-#~ msgid "Load a previously saved workspace layout."
-#~ msgstr "Laden Sie eine zuvor gespeicherte Arbeitsbereich-Layout."
-
-#~ msgid "Select a workspace layout to be deleted."
-#~ msgstr "Wählen Sie ein Layout des Arbeitsbereichs gelöscht werden."
-
-#~ msgid "Delete all saved workspace layouts."
-#~ msgstr "Löschen aller gespeicherten Arbeitsbereich-Layouts."
-
-#~ msgid ""
-#~ "Use the default application associated with .txt files to open the log "
-#~ "file."
-#~ msgstr ""
-#~ "Verwenden Sie die Standard-Anwendung mit TXT-Dateien, um die "
-#~ "Protokolldatei zu öffnen verbunden."
-
-#~ msgid ""
-#~ "Use the default application associated with .ini files to open the config "
-#~ "file."
-#~ msgstr ""
-#~ "Verwenden Sie die Standard-Anwendung mit INI-Dateien, um die "
-#~ "Konfigurationsdatei zu öffnen verbunden."
-
-#~ msgid "%d folder(s)"
-#~ msgstr "%d Ordner(n)"
-
-#~ msgid ""
-#~ "Start a new project starting from a folder of files.\n"
-#~ "All files in this folder are added into a new movie sequence."
-#~ msgstr ""
-#~ "Wählen Sie einen Ordner mit Mediendateien zum Erzeugen einer neuen "
-#~ "Filmsequenz."
-
-#~ msgid ""
-#~ "Start a new project by selecting a list of files\n"
-#~ "to be added to a new movie sequence."
-#~ msgstr "Wählen Sie Media-Dateien zum Erzeugen einer neuen Filmsequenz."
-
-#~ msgid "Select media files to be added to the movie sequence."
-#~ msgstr "Wählen Sie Mediendateien zum hinzufügen in die Filmsequenz."
-
-#~ msgid "Select folder with media files"
-#~ msgstr "Wählen Sie ein Ordner mit Mediendateien"
-
-#~ msgid "Select language"
-#~ msgstr "Sprache auswählen"
-
-#~ msgid "Vidiot: About"
-#~ msgstr "Vidiot: Over"
