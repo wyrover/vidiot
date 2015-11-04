@@ -91,4 +91,7 @@ void TestPlayback::testPlaybackComplexSequence()
     Undo(3);
 }
 
-} // namespaceh
+
+// todo test playback with > speed and with < speed
+
+} // namespace
