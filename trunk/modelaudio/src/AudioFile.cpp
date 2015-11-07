@@ -337,7 +337,7 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
         int nOutputSamples = nOutputFrames * parameters.getNrChannels();
 
         // To check that the buffer was large enough to hold everything produced by swr_convert in one pass.
-        ASSERT_LESS_THAN(nOutputSamples, bufferSize);
+        ASSERT_LESS_THAN_EQUALS(nOutputSamples, bufferSize);
 
         // More data was allocated (to compensate for differences between the number
         // of output samples 'calculated' and the number that avcodec actually produced).
