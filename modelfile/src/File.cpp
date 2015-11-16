@@ -285,10 +285,18 @@ void File::moveTo(pts position)
                 {
                     // Last resort, any frame will do.
                     result = avformat_seek_file(mFileContext, -1, 0, timestamp, timestamp, AVSEEK_FLAG_BACKWARD | AVSEEK_FLAG_ANY);
-                    LOG_WARNING << "Seek resulted in non-keyframe position.";
+                    LOG_WARNING << "Seek to " << position << " resulted in non-keyframe position and result " << result << " for file " << *this;
+                    if (result < 0)
+                    {
+                        // Extracting data from an improperly initialized file will cause a crash.
+                        mFileOpenedOk = false;
+                    }
                 }
             }
-            ASSERT_MORE_THAN_EQUALS_ZERO(result)(avcodecErrorString(result))(*this);
+            if (mFileOpenedOk)
+            {
+                ASSERT_MORE_THAN_EQUALS_ZERO(result)(avcodecErrorString(result))(*this);
+            }
         }
     }
 
@@ -819,7 +827,8 @@ std::ostream& operator<<(std::ostream& os, const File& obj)
         << obj.mEOF << '|'
         << obj.mStreamIndex << '|'
         << obj.mMaxBufferSize << '|'
-        << obj.mTwoInARow;
+        << obj.mTwoInARow << '|'
+        << obj.mFileContext;
     return os;
 }
 
