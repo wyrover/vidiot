@@ -191,9 +191,8 @@ void FileAnalyzer::addNodesToProjectView() const
             return;
         }
     }
-    if (!mNodes.empty())
+    if (model::ProjectModification::submitIfPossible(new command::ProjectViewAddAsset(model::Project::get().getRoot(), mNodes)))
     {
-        model::ProjectModification::submit(new command::ProjectViewAddAsset(model::Project::get().getRoot(), mNodes));
         for (model::NodePtr node : mNodes)
         {
             node->check(true); // Update any added autofolders

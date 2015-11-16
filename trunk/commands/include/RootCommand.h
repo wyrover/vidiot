@@ -40,7 +40,7 @@ public:
     /// To be overridden in derived classes such that they can indicate whether
     /// submitting is possible or not.
     /// Default implementation always returns true.
-    virtual bool isPossible();
+    virtual bool isPossible() const;
 
     //////////////////////////////////////////////////////////////////////////
     // GET/SET

@@ -337,7 +337,7 @@ bool ProjectView::findConflictingName(const model::FolderPtr& parent, const wxSt
 
 void ProjectView::onDelete()
 {
-    model::ProjectModification::submit(new command::ProjectViewDeleteAsset(getSelection()));
+    model::ProjectModification::submitIfPossible(new command::ProjectViewDeleteAsset(getSelection()));
 }
 
 void ProjectView::onDeleteUnused()
@@ -469,7 +469,7 @@ void ProjectView::onContextMenu(wxDataViewEvent &event)
         bool enableUpdateAutoFolder = true;
 
         bool enableNew = (nSelected == 1);
-        bool enableDelete = true;
+        bool enableDelete = (nSelected >= 1);
         bool enablePaste = (nSelected == 1);
         bool enableCreateSequence = (nSelected == 1);
         bool enableOpen = (nSelected == 1);
@@ -608,7 +608,8 @@ void ProjectView::onMotion(wxMouseEvent& event)
                     wxDataViewItem item;
                     wxDataViewColumn* col;
                     mCtrl.HitTest(mDragStart, item, col);
-                    if (item.GetID())
+                    if (item.GetID() && 
+                        !getSelection().empty())
                     {
                         ProjectViewDataObject data(command::ProjectViewCommand::prune(getSelection()));
                         mDropSource.startDrag(data);
@@ -704,10 +705,7 @@ void ProjectView::onDrop(wxDataViewEvent &event)
                 return;
             }
         }
-        if (mDropSource.getData().getNodes().size() > 0)
-        {
-            model::ProjectModification::submit(new command::ProjectViewMoveAsset(mDropSource.getData().getNodes(), p));
-        }
+        model::ProjectModification::submitIfPossible(new command::ProjectViewMoveAsset(mDropSource.getData().getNodes(), p));
         event.Skip();
     });
 }

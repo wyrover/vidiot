@@ -45,7 +45,7 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    bool isPossible() override;
+    bool isPossible() const override;
 
     model::IClipPtr getLeftClip() const;
     model::IClipPtr getRightClip() const;
