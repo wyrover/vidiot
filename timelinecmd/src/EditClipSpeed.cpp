@@ -138,7 +138,7 @@ EditClipSpeed::~EditClipSpeed()
 // ROOTCOMMAND 
 //////////////////////////////////////////////////////////////////////////
 
-bool EditClipSpeed::isPossible() 
+bool EditClipSpeed::isPossible() const
 {
     return mPossible;
 }

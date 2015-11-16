@@ -24,6 +24,10 @@
 
 namespace command {
 
+//////////////////////////////////////////////////////////////////////////
+// INITIALIZATION
+//////////////////////////////////////////////////////////////////////////
+
 ProjectViewCommand::ProjectViewCommand()
     :   RootCommand()
 {
@@ -33,12 +37,16 @@ ProjectViewCommand::~ProjectViewCommand()
 {
 }
 
+//////////////////////////////////////////////////////////////////////////
+// INTERFACE
+//////////////////////////////////////////////////////////////////////////
+
 // static
 ParentAndChildPairs ProjectViewCommand::makeParentAndChildPairs(const model::NodePtrs& children)
 {
-    ASSERT_MORE_THAN_ZERO(children.size());
+    if (children.empty()) { LOG_WARNING; }
 
-    model::NodePtrs prunedlist = ProjectViewCommand::prune(children);
+    model::NodePtrs prunedlist{ ProjectViewCommand::prune(children) };
     ParentAndChildPairs pairs;
     for ( model::NodePtr child : prunedlist )
     {
@@ -68,7 +76,7 @@ bool isDescendantOf(const model::NodePtr& descendant, const model::NodePtr& asce
 // static
 model::NodePtrs ProjectViewCommand::prune(const model::NodePtrs& children)
 {
-    ASSERT_MORE_THAN_ZERO(children.size());
+    if (children.empty()) { LOG_WARNING; }
 
     model::NodePtrs newlist;
     for ( model::NodePtr child : children )

@@ -91,7 +91,7 @@ void ProjectViewClipboard::onCut()
 {
     if (storeSelectionInClipboard())
     {
-        model::ProjectModification::submit(new command::ProjectViewDeleteAsset(mProjectView.getSelection()));
+        model::ProjectModification::submitIfPossible(new command::ProjectViewDeleteAsset(mProjectView.getSelection()));
     }
 }
 
@@ -195,7 +195,7 @@ void ProjectViewClipboard::pasteFromClipboard()
                         return;
                     }
                 }
-                model::ProjectModification::submit(new command::ProjectViewAddAsset(target, data.getNodes()));
+                model::ProjectModification::submitIfPossible(new command::ProjectViewAddAsset(target, data.getNodes()));
             }
         }
         else if (wxTheClipboard->IsSupported(wxDataFormat(wxDF_FILENAME)))
@@ -236,12 +236,10 @@ void ProjectViewClipboard::pasteFromClipboard()
                         nodes.push_back(boost::make_shared<model::AutoFolder>(filename));
                     }
                 }
-                if (nodes.empty())
+                if (!model::ProjectModification::submitIfPossible(new command::ProjectViewAddAsset(target, nodes)))
                 {
                     StatusBar::get().timedInfoText(_("No supported files in clipboard."));
-                    return;
                 }
-                model::ProjectModification::submit(new command::ProjectViewAddAsset(target, nodes));
             }
         }
         else

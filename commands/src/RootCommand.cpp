@@ -44,7 +44,7 @@ void RootCommand::submit()
     model::ProjectModification::submit(this);
 }
 
-bool RootCommand::isPossible()
+bool RootCommand::isPossible() const
 {
     return true;
 }

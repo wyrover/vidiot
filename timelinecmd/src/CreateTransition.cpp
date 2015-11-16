@@ -161,7 +161,7 @@ void CreateTransition::initialize()
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-bool CreateTransition::isPossible()
+bool CreateTransition::isPossible() const
 {
     switch (mType)
     {
