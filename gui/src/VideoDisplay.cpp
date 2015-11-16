@@ -85,7 +85,11 @@ VideoDisplay::VideoDisplay(wxWindow *parent, model::SequencePtr sequence)
 
     SetBackgroundStyle(wxBG_STYLE_PAINT); // Required for wxAutoBufferedPaintDC
 
-    GetClientSize(&mWidth,&mHeight);
+    int w{ mWidth };
+    int h{ mHeight };
+    GetClientSize(&w,&h);
+    mWidth = w;
+    mHeight = h;
     VAR_DEBUG(mWidth)(mHeight);
 
     if (mWidth > 0 && mHeight > 0) // With wxGTK sometimes w > 0 and h == 0 (during creation)
@@ -579,8 +583,8 @@ inline void VideoDisplay::onEraseBackground(wxEraseEvent& event)
 
 void VideoDisplay::onSize(wxSizeEvent& event)
 {
-    int w = mWidth;
-    int h = mHeight;
+    int w{ mWidth };
+    int h{ mHeight };
     GetClientSize(&w,&h);
 
     if (mWidth != w || mHeight != h)
