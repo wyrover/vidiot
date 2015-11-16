@@ -132,8 +132,8 @@ private:
     model::VideoFramePtr mCurrentVideoFrame;
     boost::shared_ptr<wxBitmap> mCurrentBitmap;
 
-    int mWidth;
-    int mHeight;
+    std::atomic<int> mWidth;
+    std::atomic<int> mHeight;
     wxBitmapPtr mBufferBitmap = nullptr;
 
     std::unique_ptr<model::VideoCompositionParameters> mVideoParameters;
