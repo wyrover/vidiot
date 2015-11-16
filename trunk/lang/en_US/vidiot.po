@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-04 15:46+0100\n"
+"POT-Creation-Date: 2015-11-15 17:44+0100\n"
 "PO-Revision-Date: 2015-11-01 11:44+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -595,7 +595,7 @@ msgid "View"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:218
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:977
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:971
 #: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:382
 #: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:570
 msgid "Sequence"
@@ -614,58 +614,58 @@ msgid "Crash"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:377
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:391
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:385
 #: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:367
 #: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:368
 #: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:369
 msgid "Ctrl"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:761
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:755
 msgid "Enter workspace name"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:761
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:755
 msgid ""
 "Enter name for the saved workspace.\n"
 "If this is an existing name it is overwritten."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:778
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:772
 msgid "Select workspace"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:784
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:778
 msgid "Select workspace to be restored."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:793
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:787
 msgid "Load workspace failed"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:793
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:787
 msgid "Something went wrong while trying to load the saved perspective. Sorry."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:801
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:795
 msgid "Select workspace to be removed."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:814
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:808
 msgid "Remove all saved workspaces"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:814
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:808
 msgid ""
 "This will remove all saved workspace layouts which cannot be undone.\n"
 "Are you sure?"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:872
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:866
 msgid "Attention"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:873
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:867
 msgid ""
 "Note that changing this file will not update the gui.\n"
 "Changed settings are applied only after restarting the application.\n"

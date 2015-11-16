@@ -179,7 +179,7 @@ if (MSVC)
     endif ()
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /WX ") # Treat warnings as errors
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHa")
-    set (CMAKE_EXE_LINKER_FLAGS "/SAFESEH:NO") # Required for avcodec
+    set (CMAKE_EXE_LINKER_FLAGS "/SAFESEH:NO /PDBSTRIPPED:stripped.pdb") # SAFESEH:NO is required for avcodec, PDFSTRIPPED:stripped.pdb generates a separate PDB for inclusion in the installer
     string (REPLACE "/ZI" "/Zi" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}") # This ensures that in log lines not the full path is shown
     add_definitions (/D _CRT_SECURE_NO_WARNINGS)
     add_definitions (/D SOURCE_ROOT="${CMAKE_CURRENT_SOURCE_DIR}") # Used to fix the path to the test input files (part of sources) in the code, via the preprocessor.
