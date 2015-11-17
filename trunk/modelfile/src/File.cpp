@@ -687,8 +687,12 @@ void File::openFile()
                 }
                 else
                 {
-                    // todo suppprt test/filetypes_video/videoonly_encoded.m4v this is a file for which the length seems to be unknown until fully played
-
+                    // todo suppport test/filetypes_video/
+                    // - videoonly_encoded.m4v
+                    // - micro2.gif
+                    // - big-buck-bunny_trailer.webm
+                    // - elephants-dream.webm
+                    // These are files for which the length seems to be unknown until fully played
                     //if (stream->codec_info_nb_frames > 0)
                     //{
                     //    mNumberOfFrames = stream->codec_info_nb_frames;
