@@ -17,6 +17,7 @@
 
 ADD_SUBDIRECTORY(test)
 ADD_SUBDIRECTORY(testauto)
+ADD_SUBDIRECTORY(testfiletypes)
 ADD_SUBDIRECTORY(testrendering)
 ADD_SUBDIRECTORY(testsync)
 ADD_SUBDIRECTORY(testui)

@@ -621,7 +621,7 @@ void File::openFile()
             return false;
         }
         VAR_DEBUG(stream->codec->sample_fmt)(stream->codec->channels)(stream->codec->sample_rate);
-        if ((stream->codec->channels < 0) ||  (stream->codec->channels > 2))
+        if (stream->codec->channels <= 0)
         {
             LOG_WARNING << "Unsupported audio file '" << path << "'. Number of channels is " << stream->codec->channels << ".";
             return false;

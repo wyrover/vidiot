@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-15 17:44+0100\n"
+"POT-Creation-Date: 2015-11-17 20:27+0100\n"
 "PO-Revision-Date: 2015-11-04 15:44+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -123,7 +123,7 @@ msgid "&Finish"
 msgstr "&Voltooien"
 
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:598
-#: C:\Vidiot\vidiot_trunk\modelfile\src\FileAnalyzer.cpp:319
+#: C:\Vidiot\vidiot_trunk\modelfile\src\FileAnalyzer.cpp:318
 #, c-format
 msgid "Found %d file(s)"
 msgstr "%d bestanden gevonden."
@@ -483,15 +483,15 @@ msgstr "Volgende"
 msgid "%d item(s) queued"
 msgstr "%d actie(s) gepland"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\VideoDisplay.cpp:179
+#: C:\Vidiot\vidiot_trunk\gui\src\VideoDisplay.cpp:183
 msgid "Could not initialize playback."
 msgstr "Kan afspelen niet starten."
 
-#: C:\Vidiot\vidiot_trunk\gui\src\VideoDisplay.cpp:188
+#: C:\Vidiot\vidiot_trunk\gui\src\VideoDisplay.cpp:192
 msgid "Opening audio stream failed:"
 msgstr "Openen van audio is mislukt:"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\VideoDisplay.cpp:193
+#: C:\Vidiot\vidiot_trunk\gui\src\VideoDisplay.cpp:197
 msgid "Starting audio stream failed:"
 msgstr "Starten van audio is mislukt:"
 
@@ -537,7 +537,7 @@ msgid "Revert"
 msgstr "Herladen"
 
 #: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:150
-#: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewCreateFile.cpp:37
+#: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewCreateFile.cpp:41
 msgid "Add files"
 msgstr "Voeg bestanden toe"
 
@@ -587,7 +587,7 @@ msgstr "Laad"
 
 #: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:198
 #: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:537
-#: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewDeleteAsset.cpp:31
+#: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewDeleteAsset.cpp:35
 msgid "Delete"
 msgstr "Verwijder"
 
@@ -784,11 +784,11 @@ msgstr ""
 msgid "Indexing files"
 msgstr "Bezig met indexeren"
 
-#: C:\Vidiot\vidiot_trunk\modelfile\src\FileAnalyzer.cpp:210
+#: C:\Vidiot\vidiot_trunk\modelfile\src\FileAnalyzer.cpp:209
 msgid "Only regular files can be pasted/dropped."
 msgstr "Alleen bestanden kunnen ingevoegd worden."
 
-#: C:\Vidiot\vidiot_trunk\modelfile\src\FileAnalyzer.cpp:216
+#: C:\Vidiot\vidiot_trunk\modelfile\src\FileAnalyzer.cpp:215
 msgid "Some of these files cannot be used."
 msgstr "Sommige van deze bestanden zijn onbruikbaar."
 
@@ -1031,31 +1031,31 @@ msgstr "Films kunnen niet toegevoegd worden."
 msgid "Folders can not be pasted/dropped."
 msgstr "Mappen kunnen niet toegevoegd worden."
 
-#: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewAddAsset.cpp:30
+#: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewAddAsset.cpp:34
 msgid "Insert"
 msgstr "Toevoegen"
 
-#: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewCommand.cpp:100
+#: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewCommand.cpp:108
 msgid "Problem"
 msgstr "Probleem"
 
-#: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewCommand.cpp:106
+#: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewCommand.cpp:114
 #, c-format
 msgid "%s has been removed from disk."
 msgstr "%s is verwijderd van de harde schijf."
 
-#: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewCommand.cpp:112
+#: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewCommand.cpp:120
 #, c-format
 msgid "%s can not be opened."
 msgstr "%s kan niet worden geopend."
 
-#: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewCreateAutoFolder.cpp:33
-#: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewCreateFolder.cpp:31
+#: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewCreateAutoFolder.cpp:37
+#: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewCreateFolder.cpp:35
 #, c-format
 msgid "Add folder %s"
 msgstr "Voeg map %s toe"
 
-#: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewCreateFile.cpp:59
+#: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewCreateFile.cpp:67
 #, c-format
 msgid "Add file %s"
 msgstr "Voeg bestand %s toe"
@@ -1120,16 +1120,16 @@ msgstr "Bestand is verplaatst naar de prullenbak."
 msgid "%zu files moved to recycle bin."
 msgstr "%zu bestanden zijn verplaatst naar de prullenbak."
 
-#: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewMoveAsset.cpp:34
+#: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewMoveAsset.cpp:38
 #, c-format
 msgid "Move %s"
 msgstr "Verplaats %s"
 
-#: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewMoveAsset.cpp:38
+#: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewMoveAsset.cpp:42
 msgid "Move"
 msgstr "Verplaats"
 
-#: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewRenameAsset.cpp:31
+#: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewRenameAsset.cpp:35
 #, c-format
 msgid "Rename %1$s to %2$s"
 msgstr "Hernoem %1$s naar %2$s"
