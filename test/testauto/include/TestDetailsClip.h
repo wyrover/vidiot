@@ -68,6 +68,12 @@ public:
     /// Change clip (via details pane) during playback causes crash.
     void testEditClipDuringPlayback();
 
+    /// See [#252]
+    /// After a clip is moved around, its 'details view' should be re-initialized.
+    /// For example, after the move certain length buttons become (dis)abled because
+    /// of the new clip position.
+    void testClipUpdatedAfterDragAndDrop();
+
 private:
 
     FixtureProject mProjectFixture;

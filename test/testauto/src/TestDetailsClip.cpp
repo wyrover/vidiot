@@ -667,4 +667,29 @@ void TestDetailsClip::testEditClipDuringPlayback()
     }
 }
 
+void TestDetailsClip::testClipUpdatedAfterDragAndDrop()
+{
+    StartTestSuite();
+    WindowTriggerMenu(ID_ADDAUDIOTRACK);
+    WindowTriggerMenu(ID_ADDVIDEOTRACK);
+    WindowTriggerMenu(ID_SHOW_PROJECT);
+    TimelineDragToTrack(1, VideoClip(0, 3), AudioClip(0, 3));
+    TimelineDeleteClips({ VideoClip(0, 0), VideoClip(0, 2), VideoClip(0, 4), VideoClip(0, 5), VideoClip(0,6) });
+    TimelineSelectClips({ VideoClip(1,1) });
+    // Clip has length of 10s, all other buttons are enabled (10s button is disabled because current length == 10s)
+    for (int index : { 0, 1, 2, 3, 4, 5, 6, 7 })
+    {
+        wxToggleButton* button = DetailsClipView()->getLengthButtons()[index];
+        ASSERT(button->IsEnabled());
+    }
+    TimelineDrag(From(Center(VideoClip(1, 1))).AlignLeft(LeftPixel(VideoClip(0, 1))));
+    // Now the clip is updated after the drop. All clips have become disabled. 
+    // Clip can't be shortened anymore due to the clip in the other track
+    for (int index : { 0, 1, 2, 3, 4, 5, 6, 7, 8 })
+    {
+        wxToggleButton* button = DetailsClipView()->getLengthButtons()[index];
+        ASSERT(!button->IsEnabled());
+    }
+}
+
 } // namespace
