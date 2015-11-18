@@ -90,6 +90,8 @@ ExecuteDrop::ExecuteDrop(const model::SequencePtr& sequence, bool external)
     , mDrags()
     , mDrops()
     , mShift()
+    , mVideoClipDragged(false)
+    , mAudioClipDragged(false)
 {
     VAR_INFO(*this)(sequence)(external);
     mCommandName = _("Move clips");
@@ -189,6 +191,15 @@ void ExecuteDrop::onDragStart(const Drags& drags)
         {
             clip->setDragged(true);
         }
+    }
+
+    mVideoClipDragged = false;
+    mAudioClipDragged = false;
+    for (model::IClipPtr clip : mDrags)
+    {
+        if (clip->isA<model::VideoClip>()) { mVideoClipDragged = true; }
+        if (clip->isA<model::AudioClip>()) { mAudioClipDragged = true; }
+        if (mVideoClipDragged && mAudioClipDragged) { break; }
     }
 
     VAR_INFO(mDrags);
@@ -384,6 +395,16 @@ void ExecuteDrop::undoExtraAfter()
 const Drags& ExecuteDrop::getDrags() const
 {
     return mDrags;
+}
+
+bool ExecuteDrop::isVideoClipDragged() const
+{
+    return mVideoClipDragged;
+}
+
+bool ExecuteDrop::isAudioClipDragged() const
+{
+    return mAudioClipDragged;
 }
 
 //////////////////////////////////////////////////////////////////////////

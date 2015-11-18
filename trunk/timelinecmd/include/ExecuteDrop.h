@@ -119,6 +119,9 @@ public:
     /// undone with one undo action.
     const Drags& getDrags() const;
 
+    bool isVideoClipDragged() const;
+    bool isAudioClipDragged() const;
+
 private:
 
     //////////////////////////////////////////////////////////////////////////
@@ -129,6 +132,8 @@ private:
     Drops mDrops;
     Drags mDrags; ///< Clips that are removed. Use set to avoid duplicate entries (duplicate entries cause errors since a clip's attributes are changed - removed from a track, for instance - and then the clip is removed 'again' from the now nonexistent track)
     Shift mShift;
+    bool mVideoClipDragged = false;
+    bool mAudioClipDragged = false;
 
     model::TrackPtr mNewVideoTrack = nullptr;
     model::TrackPtr mNewAudioTrack = nullptr;

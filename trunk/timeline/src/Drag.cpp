@@ -246,12 +246,20 @@ void Drag::move(wxPoint position)
             if (!info.track && position.y < getSequenceView().getVideo().getRect().GetTop())
             {
                 // Add a new video track if the mouse pointer is moved 'above' all video tracks.
-                addedTrack = mCommand->onAddTrack(true);
+                if (mCommand->isVideoClipDragged())
+                {
+                    // But only add the track if a video clip is being dragged
+                    addedTrack = mCommand->onAddTrack(true);
+                }
             }
             else if (!info.track && position.y > getSequenceView().getAudio().getRect().GetBottom())
             {
                 // Add a new audio track if the mouse pointer is moved 'below' all audio tracks.
-                addedTrack = mCommand->onAddTrack(false);
+                if (mCommand->isAudioClipDragged())
+                {
+                    // But only add the track if an audio clip is being dragged
+                    addedTrack = mCommand->onAddTrack(false);
+                }
             }
         }
         if (addedTrack)
