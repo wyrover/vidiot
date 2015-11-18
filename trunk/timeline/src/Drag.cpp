@@ -363,6 +363,7 @@ void Drag::drop()
 
     mCommand->onDrop(drops, mShift);
     mCommand->submit();
+    getSelection().updateOnEdit();
     mCommand = 0;
 }
 

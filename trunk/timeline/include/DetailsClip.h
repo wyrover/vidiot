@@ -168,6 +168,7 @@ private:
     };
 
     model::IClipPtr mClip = nullptr;      ///< The clip for which the details view is shown. 0 in case a transition is selected
+    pts mClipPosition = 0; ///< The currently known position of the clip (used to 'reset' the clip when it is moved around)
     model::TransitionPtr mTransitionClone = nullptr; ///< Transition which is currently being edited
     std::unique_ptr<ClonesContainer> mClones;
 

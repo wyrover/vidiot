@@ -356,7 +356,7 @@ void DetailsClip::setClip(const model::IClipPtr& clip)
 {
     VAR_DEBUG(clip);
 
-    if (mClip == clip) return; // Avoid useless updating
+    if (mClip == clip && (!mClip || mClip->getLeftPts() == mClipPosition)) return; // Avoid useless updating
 
     // For some edit operations the preview is shown iso player.
     // The 'end' of the edit operation is not clear (edit opacity
@@ -387,6 +387,7 @@ void DetailsClip::setClip(const model::IClipPtr& clip)
     }
 
     mClip = nullptr;
+    mClipPosition = 0;
     mClones = nullptr;
     mTransitionClone = nullptr;
     mEditCommand = nullptr;
@@ -413,6 +414,7 @@ void DetailsClip::setClip(const model::IClipPtr& clip)
     {
         // Clip type for which editing details is supported.
         mClip = clip;
+        mClipPosition = mClip->getLeftPts();
 
         // Length/speed
         // For audio/video clips and transitions, the length can be edited.
