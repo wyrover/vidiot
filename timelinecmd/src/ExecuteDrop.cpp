@@ -257,6 +257,8 @@ void ExecuteDrop::onAbort()
     {
         clip->setDragged(false);
     }
+    onRemoveAddedTrack(true);
+    onRemoveAddedTrack(false);
 }
 
 //////////////////////////////////////////////////////////////////////////
