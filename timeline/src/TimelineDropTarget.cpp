@@ -84,11 +84,13 @@ wxDragResult TimelineDropTarget::OnEnter(wxCoord x, wxCoord y, wxDragResult def)
 
     getMouse().dragMove(wxPoint(x, y));
 
-    if (validDataDragged())
+    ::command::TrackCreator c(mNodes);
+    mVideo = c.getVideoTrack();
+    mAudio = c.getAudioTrack();
+
+    if (mVideo->getLength() > 0 &&
+        mAudio->getLength() > 0)
     {
-        ::command::TrackCreator c(mNodes);
-        mVideo = c.getVideoTrack();
-        mAudio = c.getAudioTrack();
         ProjectViewDropSource::get().setFeedback(false);
         wxMouseState mouseState = wxGetMouseState();
         state::EvKey keyEvent(mouseState,-1);
