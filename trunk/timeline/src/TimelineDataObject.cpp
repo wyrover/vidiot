@@ -72,10 +72,24 @@ TimelineDataObject::TimelineDataObject(model::SequencePtr sequence)
     {
         model::TrackPtr tempTrack = boost::make_shared<model::Track>();
         tempTrack->setIndex(track->getIndex());
+
+        // Also include all transitions for which all 'involved' clips are selected.
+        std::set<model::IClipPtr> transitions;
+        for (model::IClipPtr clip : track->getClips())
+        {
+            model::TransitionPtr transition{ boost::dynamic_pointer_cast<model::Transition>(clip) };
+            if (transition &&
+                (!transition->getLeft() || transition->getPrev()->getSelected()) &&
+                (!transition->getRight() || transition->getNext()->getSelected()))
+            {
+                transitions.insert(transition);
+            }
+        }
+
         model::IClips clips;
         for (model::IClipPtr clip : track->getClips())
         {
-            if (clip->getSelected())
+            if (clip->getSelected() || transitions.count(clip) != 0)
             {
                 clips.push_back(clip);
             }
