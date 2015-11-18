@@ -376,6 +376,10 @@ void Drag::stop()
         mCommand->onAbort();
         delete mCommand;
         mCommand = 0;
+        // Ensure that any clips painted 'beyond' the current maximum sequence length during the drag, are painted over again.
+        // Example: Create sequence with only one audio clip. Move clip to the right. Then move up, outside timeline (abort). 
+        // Without this refresh the clip's right position is not refreshed.
+        getTimeline().Refresh(); 
     }
     reset();
     getSequenceView().setMinimumLength(0);
