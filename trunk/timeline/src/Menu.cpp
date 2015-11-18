@@ -83,11 +83,12 @@ MenuHandler::MenuHandler(Timeline* timeline)
 {
     VAR_DEBUG(this);
 
+    // NOTE: Do not add accelerator keys here that are also used in the timeline state machine.
+    //       The menu accelerator keys take precedence, resulting in the disabling of timeline
+    //       key handling when the menu becomes disabled.
     mMenu.Append(ID_ADDVIDEOTRACK,  _("Add video track"));
     mMenu.Append(ID_ADDAUDIOTRACK,  _("Add audio track"));
     mMenu.Append(ID_REMOVE_EMPTY_TRACKS,  _("Remove empty tracks"));
-    mMenu.AppendSeparator();
-    mMenu.Append(ID_SPLIT_AT_CURSOR,   _("Split at cursor") + "\ts");
     mMenu.AppendSeparator();
     mMenu.Append(ID_DELETEMARKED,   _("Delete marked regions"));
     mMenu.Append(ID_DELETEUNMARKED, _("Delete unmarked regions"));
@@ -104,8 +105,6 @@ MenuHandler::MenuHandler(Timeline* timeline)
     Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onAddVideoTrack,         this, ID_ADDVIDEOTRACK);
     Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onAddAudioTrack,         this, ID_ADDAUDIOTRACK);
     Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRemoveEmptyTracks,     this, ID_REMOVE_EMPTY_TRACKS);
-
-    Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onSplitAtCursor,         this, ID_SPLIT_AT_CURSOR);
 
     Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onDeleteMarked,          this, ID_DELETEMARKED);
     Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onDeleteUnmarked,        this, ID_DELETEUNMARKED);
@@ -138,8 +137,6 @@ MenuHandler::~MenuHandler()
     Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onAddAudioTrack,         this, ID_ADDAUDIOTRACK);
     Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRemoveEmptyTracks,     this, ID_REMOVE_EMPTY_TRACKS);
 
-    Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,      &MenuHandler::onSplitAtCursor,         this, ID_SPLIT_AT_CURSOR);
-
     Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onDeleteMarked,          this, ID_DELETEMARKED);
     Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onDeleteUnmarked,        this, ID_DELETEUNMARKED);
     Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRemoveMarkers,         this, ID_REMOVEMARKERS);
@@ -167,7 +164,7 @@ void MenuHandler::onPlaybackActive(PlaybackActiveEvent& event)
     LOG_DEBUG;
     // Disable the menu if the playback is active.
     // Note that enabling the menu options can cause problems:
-    // For instance, pressing 's' will call ' MenuHandler::onSplitAtCursor'
+    // For instance, pressing 's' will call 'MenuHandler::onSplitAtCursor'
     // which causes a change to the sequence while playback is still active!
     Window::get().setSequenceMenu(getMenu(), !event.getValue());
     event.Skip();
@@ -503,19 +500,6 @@ void MenuHandler::onRemoveEmptyTracks(wxCommandEvent& event)
         {
             LOG_INFO;
             (new command::RemoveEmptyTracks(getSequence()))->submit();
-        }
-        event.Skip();
-    });
-}
-
-void MenuHandler::onSplitAtCursor(wxCommandEvent& event)
-{
-    CatchExceptions([this, &event]
-    {
-        if (mActive)
-        {
-            LOG_INFO;
-            (new command::SplitAtCursor(getSequence()))->submit();
         }
         event.Skip();
     });
