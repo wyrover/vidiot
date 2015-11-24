@@ -380,7 +380,7 @@ void RenderWork::generate()
     wxString filename = mRender->getFileName().GetFullPath();
     ASSERT_LESS_THAN_EQUALS(sizeof(filename.c_str()),sizeof(context->filename));
     #ifdef _MSC_VER
-    _snprintf(context->filename, sizeof(context->filename), "%s", filename.c_str());
+    _snprintf(context->filename, sizeof(context->filename), "%s", filename.c_str().AsChar());
     #else
     strncpy(context->filename, filename.c_str().AsChar(), sizeof(context->filename));
     #endif

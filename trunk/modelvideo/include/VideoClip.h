@@ -77,7 +77,7 @@ public:
     wxPoint getMaxPosition();
 
     void setOpacity(int opacity);
-    void setScaling(const VideoScaling& scaling, const boost::optional< boost::rational< int > >& factor = boost::none);
+    void setScaling(const VideoScaling& scaling, const boost::optional< boost::rational< int > >& factor = boost::optional< boost::rational< int > >());
     void setRotation(const boost::rational< int >& rotation);
     void setAlignment(const VideoAlignment& alignment);
     void setPosition(const wxPoint& position); ///< \param position the logical position as observed by the user. That is the combination of the alignment offset and the shift because of the region of interest.

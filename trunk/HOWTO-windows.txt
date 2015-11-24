@@ -63,7 +63,7 @@ NOTE: <VIDIOT_DIR> is the dir in which all 'vidiot' work is done.
 =================== BOOST ===================
 * Download Boost from http://sourceforge.net/projects/boost/files/boost-binaries into <VIDIOT_DIR>\boost_1_xx_y
 * Direct boost install:
-  - Select proper binaries (correct msvc version)
+  - Select proper binaries (correct msvc version) Ex: boost_1_59_0-msvc-14.0-32
   - Update paths in CMakeLists
 * Compiled boost:
   - cd <VIDIOT_DIR>\boost_1_xx_y
@@ -106,6 +106,7 @@ NOTE: <VIDIOT_DIR> is the dir in which all 'vidiot' work is done.
   - link with static runtime
   - unicode
   - use_ds
+  Add C:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Lib\ksguid.lib; to link libraries
 * Generate
 * Open solution
 * In preprocessor options: add PA_WDMKS_NO_KSGUID_LIB (both for debug and release)
@@ -118,7 +119,11 @@ Optional: C/C++ -> Code Generation -> Floating point model = fast
 =================== SOUNDTOUCH ===================
 * Create folder  <VIDIOT_DIR>\soundtouch_trunk
 * Checkout http://svn.code.sf.net/p/soundtouch/code/trunk into that dir
-* edit include/STTypes.h -> #define SOUNDTOUCH_INTEGER_SAMPLES     1    //< 16bit integer samples
+* edit include/STTypes.h (line 70) -> #define SOUNDTOUCH_INTEGER_SAMPLES     1    //< 16bit integer samples
+* edit source/SoundTouchDLL.cpp && source/SoundTouchDLL.h
+  soundtouch_putSamples and soundtouch_receiveSamples
+    * const short *samples
+    * unsigned int i.s.o. uint
 * (MSVC)
   - Open SoundTouch solution (convert if needed).
   - For all configurations change /MT[d] to /MD[d]

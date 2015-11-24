@@ -100,7 +100,7 @@ private:
 
     struct CompareSize
     {
-         bool operator()(const wxSize& s1, const wxSize& s2);
+         bool operator()(const wxSize& s1, const wxSize& s2) const;
     };
 
     mutable boost::optional<pixel> mW;

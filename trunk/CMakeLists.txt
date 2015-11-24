@@ -91,13 +91,13 @@ if (MSVC)
     set (BOOST_LIBRARYDIR $ENV{BOOST_ROOT}/stage/lib) # Locally compiled boost
   else ()
     set (BOOST_INCLUDEDIR $ENV{BOOST_ROOT}/boost) # Prebuilt boost
-    set (BOOST_LIBRARYDIR $ENV{BOOST_ROOT}/lib32-msvc-12.0)
+    set (BOOST_LIBRARYDIR $ENV{BOOST_ROOT}/lib32-msvc-14.0)
   endif ()
 else ()
   set (Boost_USE_STATIC_LIBS ON)
   set (Boost_USE_STATIC_RUNTIME ON)
 endif ()
-find_package (Boost 1.56 REQUIRED COMPONENTS date_time thread serialization system)
+find_package (Boost 1.59 REQUIRED COMPONENTS date_time thread serialization system)
 if (MSVC)
   # Find all dlls matching 'release' (== not gd) and 'threading-multi' (== mt)
   # Note: For some boost libraries, there is no dependency for building (above), but these dlls
@@ -158,7 +158,7 @@ macro (findFiles dir)
 endmacro ()
 
 
-set (VIDIOTPROJECTGROUPS model modelaudio modelempty modelevent modelfile modelproject modeltransition modelvideo modelvideotransition dialog gui guievent pch projectview projectviewcmd render timeline timelinecmd timelineevent timelinestate timelineview commands util worker)
+set (VIDIOTPROJECTGROUPS model modelaudio modelempty modelevent modelfile modelproject modeltransition modelvideo modelvideotransition dialog gui pch projectview projectviewcmd render timeline timelinecmd timelineevent timelinestate timelineview commands util worker)
 foreach (FOLDER ${VIDIOTPROJECTGROUPS})
   findFiles (${FOLDER})
   if (NOT FOLDER STREQUAL "pch")

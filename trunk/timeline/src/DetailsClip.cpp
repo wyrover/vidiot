@@ -1166,9 +1166,6 @@ void DetailsClip::createOrUpdateSpeedCommand(boost::rational<int> speed)
     getTimeline().Update();
 }
 
-// todo make it possible to add a solid color clip to the project view and timeline
-// todo testrender: sync is off?
-
 void DetailsClip::preview()
 {
     if (!mClones || !mClones->Video) { return; }

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-17 20:27+0100\n"
+"POT-Creation-Date: 2015-11-24 21:14+0100\n"
 "PO-Revision-Date: 2015-11-04 15:44+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -636,9 +636,9 @@ msgstr "Absturz"
 
 #: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:377
 #: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:385
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:367
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:368
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:369
+#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:364
+#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:365
+#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:366
 msgid "Ctrl"
 msgstr "Ctrl"
 
@@ -917,7 +917,7 @@ msgid "Select file(s)"
 msgstr "Datei(en) auswählen"
 
 #: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:530
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:367
+#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:364
 msgid "Cut"
 msgstr "Ausschneiden"
 
@@ -928,7 +928,7 @@ msgid "CTRL"
 msgstr "CTRL"
 
 #: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:532
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:368
+#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:365
 msgid "Copy"
 msgstr "Kopieren"
 
@@ -1314,18 +1314,18 @@ msgstr "Position"
 msgid "Volume (%)"
 msgstr "Volume (%)"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:819
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:821
 msgid ""
 "Could not execute the length change without messing up clips in other tracks."
 msgstr ""
 "Die Längenänderung wurde die ordnung von Clips in anderen Spuren "
 "Durcheinander bringen. Deshalb ist Sie nicht ausgeführt."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:825
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:827
 msgid "Set length of clip"
 msgstr "Einstellen der Länge vom Clip"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:1111
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:1113
 msgid "Change "
 msgstr "Änderung "
 
@@ -1378,130 +1378,125 @@ msgstr "Entfernen Sie leere Regionen"
 msgid "Remove empty region"
 msgstr "Leere Region entfernen"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:86
+#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:89
 msgid "Add video track"
 msgstr "Videospur hinzufügen"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:87
+#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:90
 msgid "Add audio track"
 msgstr "In Audio-Track"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:88
+#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:91
 #: C:\Vidiot\vidiot_trunk\timelinecmd\src\RemoveEmptyTracks.cpp:37
 msgid "Remove empty tracks"
 msgstr "Entfernen Sie leere Tracks"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:90
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\SplitAtCursor.cpp:37
-msgid "Split at cursor"
-msgstr "An der Cursor Split"
-
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:92
+#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:93
 msgid "Delete marked regions"
 msgstr "Löschen markierten Regionen"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:93
+#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:94
 msgid "Delete unmarked regions"
 msgstr "Löschen markierten Regionen"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:94
+#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:95
 msgid "Remove markers"
 msgstr "Marker entfernen"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:96
+#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:97
 msgid "Remove empty"
 msgstr "Entfernen von leere Regionen"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:98
+#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:99
 msgid "Render settings"
 msgstr "Einstellungen für Film machen"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:99
+#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:100
 #, c-format
 msgid "Render %s"
 msgstr "Machen von %s"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:100
+#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:101
 msgid "Render all modified sequences"
 msgstr "Machen von alle modifizierten Filme"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:102
+#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:103
 msgid "Close"
 msgstr "Schließen"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:257
+#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:254
 msgid "Fade in"
 msgstr "Einblenden"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:258
+#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:255
 msgid "Fade out"
 msgstr "Ausblenden"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:259
+#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:256
 msgid "Fade from previous"
 msgstr "Überblendung von vorhergehende"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:260
+#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:257
 msgid "Fade to next"
 msgstr "Überblendung zum nächsten"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:261
+#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:258
 msgid "more"
 msgstr "mehr"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:369
+#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:366
 msgid "Paste at cursor"
 msgstr "Einfügen an der Cursor"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:370
+#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:367
 msgid "Paste here"
 msgstr "Hier einfügen"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:371
+#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:368
 msgid "Remove empty space"
 msgstr "Leerraum löschen"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:372
+#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:369
 msgid "Delete selected"
 msgstr "Auswahl löschen"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:372
+#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:369
 msgid "&Del"
 msgstr "&Del"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:373
+#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:370
 msgid "Delete and Trim selected"
 msgstr "Auswahl löschen und leerraum entfernen"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:373
+#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:370
 msgid "Shif&t"
 msgstr "Shif&t"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:373
+#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:370
 msgid "Del"
 msgstr "Del"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:374
+#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:371
 msgid "Unlink audio and video clips"
 msgstr "Verknüpfung Audio- und Video-Clips löschen"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\TimelineDataObject.cpp:137
+#: C:\Vidiot\vidiot_trunk\timeline\src\TimelineDataObject.cpp:151
 msgid "Data in clipboard has incompatible properties."
 msgstr "Daten in Zwischenablage hat inkompatible Eigenschafte."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\TimelineDataObject.cpp:142
+#: C:\Vidiot\vidiot_trunk\timeline\src\TimelineDataObject.cpp:156
 msgid "Nothing to be pasted."
 msgstr "Nichts zum einfügen."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\TimelineDataObject.cpp:168
+#: C:\Vidiot\vidiot_trunk\timeline\src\TimelineDataObject.cpp:182
 msgid "Cannot paste: not enough video tracks."
 msgstr "Kann nicht einfügen: nicht genug Videospuren."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\TimelineDataObject.cpp:179
+#: C:\Vidiot\vidiot_trunk\timeline\src\TimelineDataObject.cpp:193
 msgid "Cannot paste: not enough audio tracks."
 msgstr "Kann nicht einfügen: nicht genug Audiospuren."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\TimelineDataObject.cpp:194
+#: C:\Vidiot\vidiot_trunk\timeline\src\TimelineDataObject.cpp:208
 msgid "Nothing to be stored in clipboard."
 msgstr "Nichts zum speichern in der Zwischenablage."
 
@@ -1567,7 +1562,7 @@ msgstr "(kein Platz für rechte Übergang)."
 msgid "(no clip remains)."
 msgstr "(kein Clip bleibt)."
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\ExecuteDrop.cpp:95
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\ExecuteDrop.cpp:97
 msgid "Move clips"
 msgstr "Verschieben von Clips"
 
@@ -1582,6 +1577,10 @@ msgstr "Intervall Auswahl entfernen"
 #: C:\Vidiot\vidiot_trunk\timelinecmd\src\IntervalRemoveAll.cpp:36
 msgid "Remove all markers"
 msgstr "Alle Intervalle entfernen"
+
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\SplitAtCursor.cpp:37
+msgid "Split at cursor"
+msgstr "An der Cursor Split"
 
 #: C:\Vidiot\vidiot_trunk\timelinecmd\src\SplitAtCursorAndTrim.cpp:57
 msgid "Can't trim: cut at cursor position."

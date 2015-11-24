@@ -49,6 +49,8 @@ public:
     /// playback.
     void testPlaybackComplexSequence();
 
+    void testPlaybackWithDifferentSpeed();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////

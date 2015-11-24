@@ -192,7 +192,7 @@ void EditClipSpeed::adjustSpeedForClipBounds(model::IClipPtr clip)
     // Ensure that the same begin position (in the underlying audio/video data, without speedup) can be used after changing the speed.
     pts begin = model::Convert::positionToNormalSpeed(clipInterval->getOffset(), clipInterval->getSpeed());
     model::TransitionPtr inTransition = clipInterval->getInTransition();
-    if (inTransition && inTransition->getRight() > 0)
+    if (inTransition && *(inTransition->getRight()) > 0)
     {
         // Ensure there is still enough room for the transition frames (start at same frame)
         //                                                                            render 
@@ -216,7 +216,7 @@ void EditClipSpeed::adjustSpeedForClipBounds(model::IClipPtr clip)
     // Ensure that the same end position (in the underlying audio/video data, without speedup) can be used after changing the speed.
     pts end = model::Convert::positionToNormalSpeed(clipInterval->getOffset() + clipInterval->getLength(), clipInterval->getSpeed());
     model::TransitionPtr outTransition = clipInterval->getOutTransition();
-    if (outTransition && outTransition->getLeft() > 0)
+    if (outTransition && *(outTransition->getLeft()) > 0)
     {
         // Ensure there is still enough room for the transition frames (end at same frame)
         //                                                                               render 

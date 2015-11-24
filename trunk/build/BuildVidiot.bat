@@ -21,6 +21,9 @@ REM along with Vidiot. If not, see <http://www.gnu.org/licenses />.
 
 set STARTTIME=%TIME: =0%
 
+set VSDIR=C:\Program Files (x86)\Microsoft Visual Studio 14.0
+set OUTTYPE=Visual Studio 14 2015
+if not exist "%VSDIR%" goto:NOVS
 
 goto BEGIN
 
@@ -199,15 +202,11 @@ set wxWidgets_ROOT_DIR=%VIDIOT_DIR%\wxwidgets
 
 REM add --trace to a cmake line for more logging 
 
-if EXIST "C:\Program Files\Microsoft Visual Studio 10.0\VC\bin\vcvars32.bat" call "C:\Program Files\Microsoft Visual Studio 10.0\VC\bin\vcvars32.bat"
+echo call "%VSDIR%\VC\bin\vcvars32.bat"
 
 cd %VIDIOT_BUILD%
-set OUTTYPE="Visual Studio 9 2008"
-if EXIST "%ProgramFiles(x86)%\Microsoft Visual Studio 12.0" set OUTTYPE="Visual Studio 12"
-if EXIST "%ProgramFiles%\Microsoft Visual Studio 12.0" set OUTTYPE="Visual Studio 12"
-cmake -G %OUTTYPE% -Wdev --debug-output %SOURCE%
-REM cmake -LAH  %SOURCE% > CMakeVariables.txt
-
+cmake -G "%OUTTYPE%" -Wno-dev --debug-output %SOURCE%
+REM -Wdev 
 
 
 
@@ -218,7 +217,7 @@ REM ============================== DELIVER ==============================
 if NOT "%1%"=="DELIVER" goto END
 
 cd %VIDIOT_BUILD%
-"C:\Program Files (x86)\Microsoft Visual Studio 12.0\Common7\IDE\devenv" Vidiot.sln /Build RelWithDebInfo /project PACKAGE 
+"%VSDIR%\Common7\IDE\devenv" Vidiot.sln /Build RelWithDebInfo /project PACKAGE 
 for %%i in (Vidiot*.exe) do start "" /b "%%i"
 
 :END
@@ -252,5 +251,10 @@ exit
 
 :NOPO
 echo "Install poEdit"
+pause
+exit
+
+:NOVS
+echo %VSDIR% not found
 pause
 exit
