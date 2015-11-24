@@ -210,13 +210,15 @@ AudioPeaks AudioClip::getPeaks(const AudioCompositionParameters& parameters)
     if (getInTransition())
     {
         boost::optional<pts> left{ getInTransition()->getRight() };
-        ASSERT_NONZERO(left);
+        ASSERT(left);
+        ASSERT_NONZERO(*left);
         offset -= *left;
     }
     if (getOutTransition())
     {
         boost::optional<pts> right{ getOutTransition()->getLeft() };
-        ASSERT_NONZERO(right);
+        ASSERT(right);
+        ASSERT_NONZERO(*right);
         length += *right;
     }
     if (mVolume == Constants::sDefaultVolume)

@@ -227,6 +227,12 @@ void Player::updateLength()
     updateStatus();
 }
 
+void Player::setSpeed(int speed)
+{
+    mDisplay->setSpeed(speed);
+    updateSpeedButton();
+}
+
 //////////////////////////////////////////////////////////////////////////
 // GUI EVENTS
 //////////////////////////////////////////////////////////////////////////
@@ -323,12 +329,10 @@ void Player::onSpeed(wxCommandEvent& event)
     mSpeedButton->Bind(wxEVT_LEFT_DOWN,                 &Player::onLeftDown,                 this);
 }
 
-
 void Player::onSpeedSliderUpdate( wxCommandEvent& event )
 {
     VAR_INFO(mSpeedSlider->GetValue());
-    mDisplay->setSpeed(mSpeedSlider->GetValue());
-    updateSpeedButton();
+    setSpeed(mSpeedSlider->GetValue());
 }
 
 void Player::onSpeedSliderFocusKill(wxFocusEvent& event)

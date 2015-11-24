@@ -51,7 +51,7 @@ wxImagePtr RenderClipPreviewWork::getResult()
 // COMPARISON OBJECT FOR CACHE
 //////////////////////////////////////////////////////////////////////////
 
-bool ClipPreview::CompareSize::operator()(const wxSize& s1, const wxSize& s2)
+bool ClipPreview::CompareSize::operator()(const wxSize& s1, const wxSize& s2) const
 {
     return (s1.x == s2.x) ? (s1.y < s2.y) : (s1.x < s2.x);
 }

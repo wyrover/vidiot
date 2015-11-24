@@ -246,7 +246,7 @@ wxPoint UnderTransitionLeftEdge(model::IClipPtr clip)
     // that algorithm, in combination with the 'return the empty clip after the transition
     // and not the transition' can cause the wrong position to be returned here.
     // Therefore, this method is not allowed in case of empty length clip used for transition.
-    ASSERT_IMPLIES(transition->getRight(), transition->getRight() > 0);
+    ASSERT_IMPLIES(transition->getRight(), *(transition->getRight()) > 0);
     return wxPoint( LeftPixel(clip), VBottomQuarter(clip->getTrack()) );
 }
 
@@ -259,7 +259,7 @@ wxPoint UnderTransitionRightEdge(model::IClipPtr clip)
     // that algorithm, in combination with the 'return the empty clip in front of the transition
     // and not the transition' can cause the wrong position to be returned here.
     // Therefore, this method is not allowed in case of empty length clip used for transition.
-    ASSERT_IMPLIES(transition->getLeft(), transition->getLeft() > 0);
+    ASSERT_IMPLIES(transition->getLeft(), *(transition->getLeft()) > 0);
 
     VAR_ERROR(TopPixel(clip->getTrack()));
     VAR_ERROR(VBottomQuarter(clip->getTrack()));

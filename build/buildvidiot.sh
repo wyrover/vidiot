@@ -115,7 +115,7 @@ BoostSetup()
 {
     # Parts taken from http://particlephysicsandcode.com/2013/03/11/installing-boost-1-52-ubuntu-12-04-fedora
     # Matthew M Reid 10/01/2013.
-    export BOOSTVER="56"
+    export BOOSTVER="59"
     if [ ! -d ${VIDIOT_DIR} ]; then 
         return 
     fi

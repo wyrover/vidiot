@@ -91,7 +91,18 @@ void TestPlayback::testPlaybackComplexSequence()
     Undo(3);
 }
 
-
-// todo test playback with > speed and with < speed
+void TestPlayback::testPlaybackWithDifferentSpeed()
+{
+    StartTestSuite();
+    util::thread::RunInMainAndWait([] { getTimeline().getPlayer()->setSpeed(50); });
+    TimelinePositionCursor(HCenter(VideoClip(0, 3)));
+    Play(1000);
+    util::thread::RunInMainAndWait([] { getTimeline().getPlayer()->setSpeed(110); });
+    TimelinePositionCursor(HCenter(VideoClip(0, 3)));
+    Play(1000);
+    util::thread::RunInMainAndWait([] { getTimeline().getPlayer()->setSpeed(150); });
+    TimelinePositionCursor(HCenter(VideoClip(0, 3)));
+    Play(1000);
+}
 
 } // namespace
