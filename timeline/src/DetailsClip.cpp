@@ -24,7 +24,6 @@
 #include "Combiner.h"
 #include "CommandProcessor.h"
 #include "Config.h"
-#include "Constants.h"
 #include "Convert.h"
 #include "Cursor.h"
 #include "DetailsPanel.h"
@@ -73,6 +72,10 @@ constexpr int sFactorPageSize = sFactorPrecision / 10; // 0.1
 const rational sFactorMin{ 1,100 }; // 0.01
 const rational sFactorMax{ 100,1 }; // 100
 
+const int DetailsClip::sRotationPrecisionFactor = static_cast<int>(pow(10.0, DetailsClip::sRotationPrecision)); ///< 10^sRotationPrecision
+const int DetailsClip::sRotationPageSize = DetailsClip::sRotationPrecisionFactor / 10; // 0.1
+const int DetailsClip::sRotationMin = -180 * DetailsClip::sRotationPrecisionFactor;
+const int DetailsClip::sRotationMax = 180 * DetailsClip::sRotationPrecisionFactor;
 
 const wxString sVideo(_("Video"));
 const wxString sAudio(_("Audio"));
@@ -182,11 +185,11 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
 
     mOpacityPanel = new wxPanel(this);
     wxBoxSizer* opacitysizer = new wxBoxSizer(wxHORIZONTAL);
-    mOpacitySlider = new wxSlider(mOpacityPanel, wxID_ANY, model::Constants::sOpacityMax, model::Constants::sOpacityMin, model::Constants::sOpacityMax );
+    mOpacitySlider = new wxSlider(mOpacityPanel, wxID_ANY, model::VideoClip::sOpacityMax, model::VideoClip::sOpacityMin, model::VideoClip::sOpacityMax );
     mOpacitySlider->SetPageSize(sOpacityPageSize);
     mOpacitySpin = new wxSpinCtrl(mOpacityPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(55,-1));
-    mOpacitySpin->SetRange(model::Constants::sOpacityMin, model::Constants::sOpacityMax);
-    mOpacitySpin->SetValue(model::Constants::sOpacityMax);
+    mOpacitySpin->SetRange(model::VideoClip::sOpacityMin, model::VideoClip::sOpacityMax);
+    mOpacitySpin->SetValue(model::VideoClip::sOpacityMax);
     mOpacitySpin->SetWindowVariant( wxWINDOW_VARIANT_SMALL );
     opacitysizer->Add(mOpacitySlider, wxSizerFlags(1).Expand());
     opacitysizer->Add(mOpacitySpin, wxSizerFlags(0));
@@ -195,15 +198,15 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
 
     mRotationPanel = new wxPanel(this);
     wxBoxSizer* rotationsizer = new wxBoxSizer(wxHORIZONTAL);
-    mRotationSlider = new wxSlider(mRotationPanel,wxID_ANY, 1 * model::Constants::sRotationPrecisionFactor, model::Constants::sRotationMin, model::Constants::sRotationMax);
-    mRotationSlider->SetPageSize(model::Constants::sRotationPageSize);
+    mRotationSlider = new wxSlider(mRotationPanel,wxID_ANY, 1 * sRotationPrecisionFactor, sRotationMin, sRotationMax);
+    mRotationSlider->SetPageSize(sRotationPageSize);
     mRotationSpin = new wxSpinCtrlDouble(mRotationPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(55,-1));
     mRotationSpin->SetWindowVariant( wxWINDOW_VARIANT_SMALL );
-    mRotationSpin->SetDigits(model::Constants::sRotationPrecision);
+    mRotationSpin->SetDigits(sRotationPrecision);
     mRotationSpin->SetValue(0); // No rotation
     mRotationSpin->SetRange(
-        static_cast<double>(model::Constants::sRotationMin) / static_cast<double>(model::Constants::sRotationPrecisionFactor),
-        static_cast<double>(model::Constants::sRotationMax) / static_cast<double>(model::Constants::sRotationPrecisionFactor));
+        static_cast<double>(sRotationMin) / static_cast<double>(sRotationPrecisionFactor),
+        static_cast<double>(sRotationMax) / static_cast<double>(sRotationPrecisionFactor));
     mRotationSpin->SetIncrement(sRotationIncrement);
     rotationsizer->Add(mRotationSlider, wxSizerFlags(1).Expand());
     rotationsizer->Add(mRotationSpin, wxSizerFlags(0));
@@ -275,12 +278,12 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
 
     mVolumePanel = new wxPanel(this);
     wxBoxSizer* volumesizer = new wxBoxSizer(wxHORIZONTAL);
-    mVolumeSlider = new wxSlider(mVolumePanel, wxID_ANY, model::Constants::sDefaultVolume, model::Constants::sMinVolume, model::Constants::sMaxVolume );
+    mVolumeSlider = new wxSlider(mVolumePanel, wxID_ANY, model::AudioClip::sDefaultVolume, model::AudioClip::sMinVolume, model::AudioClip::sMaxVolume );
     mVolumeSlider->SetPageSize(sVolumePageSize);
     mVolumeSpin = new wxSpinCtrl(mVolumePanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(55,-1));
     mVolumeSpin->SetWindowVariant( wxWINDOW_VARIANT_SMALL );
-    mVolumeSpin->SetRange(model::Constants::sMinVolume, model::Constants::sMaxVolume);
-    mVolumeSpin->SetValue(model::Constants::sMaxVolume);
+    mVolumeSpin->SetRange(model::AudioClip::sMinVolume, model::AudioClip::sMaxVolume);
+    mVolumeSpin->SetValue(model::AudioClip::sMaxVolume);
     volumesizer->Add(mVolumeSlider, wxSizerFlags(1).Expand());
     volumesizer->Add(mVolumeSpin, wxSizerFlags(0));
     mVolumePanel->SetSizer(volumesizer);
@@ -455,7 +458,7 @@ void DetailsClip::setClip(const model::IClipPtr& clip)
             mScalingSlider->SetValue(factorToSliderValue(factor));
             mScalingSpin->SetValue(boost::rational_cast<double>(factor));
 
-            mRotationSlider->SetValue(boost::rational_cast<int>(rotation * model::Constants::sRotationPrecisionFactor));
+            mRotationSlider->SetValue(boost::rational_cast<int>(rotation * sRotationPrecisionFactor));
             mRotationSpin->SetValue(boost::rational_cast<double>(rotation));
 
             mSelectAlignment->select(video->getAlignment());
@@ -622,7 +625,7 @@ void DetailsClip::onScalingSpinChanged(wxSpinDoubleEvent& event)
 void DetailsClip::onRotationSliderChanged(wxCommandEvent& event)
 {
     VAR_INFO(mRotationSlider->GetValue());
-    boost::rational<int> r(mRotationSlider->GetValue(), model::Constants::sRotationPrecisionFactor);
+    boost::rational<int> r(mRotationSlider->GetValue(), sRotationPrecisionFactor);
     CatchExceptions([this, r]
     {
         submitEditCommandUponAudioVideoEdit(sEditRotation);
@@ -634,8 +637,8 @@ void DetailsClip::onRotationSliderChanged(wxCommandEvent& event)
 void DetailsClip::onRotationSpinChanged(wxSpinDoubleEvent& event)
 {
     VAR_INFO(mRotationSpin->GetValue()); // NOT: event.GetValue() -- The event's value may be outside the range boundaries
-    int spinFactor = floor(mRotationSpin->GetValue() * model::Constants::sRotationPrecisionFactor);
-    boost::rational<int> r(spinFactor, model::Constants::sRotationPrecisionFactor);
+    int spinFactor = floor(mRotationSpin->GetValue() * sRotationPrecisionFactor);
+    boost::rational<int> r(spinFactor, sRotationPrecisionFactor);
     CatchExceptions([this,r]
     {
         submitEditCommandUponAudioVideoEdit(sEditRotation); // Changes same clip aspect as the slider
@@ -869,7 +872,7 @@ void DetailsClip::onScalingFactorChanged(model::EventChangeVideoClipScalingFacto
 void DetailsClip::onRotationChanged(model::EventChangeVideoClipRotation& event)
 {
     mRotationSpin->SetValue(boost::rational_cast<double>(event.getValue()));
-    mRotationSlider->SetValue(floor(event.getValue() * model::Constants::sRotationPrecisionFactor));
+    mRotationSlider->SetValue(floor(event.getValue() * sRotationPrecisionFactor));
     preview();
     event.Skip();
 }

@@ -18,7 +18,6 @@
 #include "Timeline.h"
 
 #include "AudioView.h"
-#include "Constants.h"
 #include "Cursor.h"
 #include "Details.h"
 #include "Drag.h"

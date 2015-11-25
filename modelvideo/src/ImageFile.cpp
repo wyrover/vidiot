@@ -17,7 +17,6 @@
 
 #include "ImageFile.h"
 
-#include "Constants.h"
 #include "Convert.h"
 #include "Properties.h"
 #include "UtilClone.h"
@@ -84,7 +83,7 @@ ImageFile::~ImageFile()
 
 pts ImageFile::getLength() const
 {
-    return Convert::timeToPts(Constants::sHour * 8); // 8 Hours...
+    return Convert::timeToPts(sHour * 8); // 8 Hours...
 }
 
 void ImageFile::moveTo(pts position)

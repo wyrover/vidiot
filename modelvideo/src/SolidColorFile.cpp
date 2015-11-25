@@ -71,7 +71,7 @@
 //
 //pts SolidColorFile::getLength() const
 //{
-//    return Convert::timeToPts(Constants::sHour * 8); // 8 Hours...
+//    return Convert::timeToPts(sHour * 8); // 8 Hours...
 //}
 //
 //void SolidColorFile::moveTo(pts position)

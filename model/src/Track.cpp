@@ -19,7 +19,6 @@
 
 #include "Calculate.h"
 #include "Clip.h"
-#include "Constants.h"
 #include "EmptyClip.h"
 #include "ModelEvent.h"
 #include "Node.h"
@@ -38,7 +37,7 @@ Track::Track()
 ,   wxEvtHandler()
 ,   mClips()
 ,   mItClips(mClips.end())
-,   mHeight(Constants::sDefaultTrackHeight)
+,   mHeight(sDefaultTrackHeight)
 ,   mIndex(0)
 {
     VAR_DEBUG(this);

@@ -19,7 +19,6 @@
 
 #include "AudioTrack.h"
 #include "AudioView.h"
-#include "Constants.h"
 #include "Convert.h"
 #include "Cursor.h"
 #include "DividerView.h"
@@ -211,7 +210,7 @@ void SequenceView::resetDividerPosition()
 
 pts SequenceView::getDefaultLength() const
 {
-    return getSequence()->getLength() + model::Convert::timeToPts(10 * model::Constants::sSecond); // Add 10 extra seconds
+    return getSequence()->getLength() + model::Convert::timeToPts(10 * sSecond); // Add 10 extra seconds
 }
 
 void SequenceView::setMinimumLength(pts length)

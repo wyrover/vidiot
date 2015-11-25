@@ -18,7 +18,6 @@
 #include "VideoClip.h"
 
 #include "Config.h"
-#include "Constants.h"
 #include "Convert.h"
 #include "EmptyFrame.h"
 #include "Properties.h"
@@ -46,7 +45,7 @@ const rational VideoClip::sScalingMax{ 100,1 }; // 100
 VideoClip::VideoClip()
     : ClipInterval()
     , mProgress(0)
-    , mOpacity(Constants::sOpacityMax)
+    , mOpacity(sOpacityMax)
     , mScaling()
     , mScalingFactor(1)
     , mRotation(0)
@@ -60,7 +59,7 @@ VideoClip::VideoClip()
 VideoClip::VideoClip(const VideoFilePtr& file)
     : ClipInterval(file)
     , mProgress(0)
-    , mOpacity(Constants::sOpacityMax)
+    , mOpacity(sOpacityMax)
     , mScaling(Config::ReadEnum<VideoScaling>(Config::sPathVideoDefaultScaling))
     , mScalingFactor(1)
     , mRotation(0)
@@ -281,8 +280,8 @@ void VideoClip::setOpacity(int opacity)
 {
     if (mOpacity != opacity)
     {
-        ASSERT_MORE_THAN_EQUALS(opacity, Constants::sOpacityMin);
-        ASSERT_LESS_THAN_EQUALS(opacity, Constants::sOpacityMax);
+        ASSERT_MORE_THAN_EQUALS(opacity, sOpacityMin);
+        ASSERT_LESS_THAN_EQUALS(opacity, sOpacityMax);
         mOpacity = opacity;
         EventChangeVideoClipOpacity event(mOpacity);
         ProcessEvent(event);

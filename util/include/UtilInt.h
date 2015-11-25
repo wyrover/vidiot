@@ -49,3 +49,8 @@ TYPE1 removeRemainder(const TYPE2& divisor, const TYPE1& value)
     TYPE1 remainder = value % divisor;
     return value - remainder;
 }
+
+constexpr milliseconds sMilliSecond = 1;                ///< Basic unit of time (==1)
+constexpr milliseconds sSecond = 1000 * sMilliSecond;   ///< Number of milliseconds in one second
+constexpr milliseconds sMinute = 60 * sSecond;          ///< Number of milliseconds in one minute
+constexpr milliseconds sHour = 60 * sMinute;            ///< Number of milliseconds in one hour

@@ -31,6 +31,8 @@ public:
 
     static const rational sScalingMin;
     static const rational sScalingMax;
+    static const int sOpacityMin = wxIMAGE_ALPHA_TRANSPARENT;
+    static const int sOpacityMax = wxIMAGE_ALPHA_OPAQUE;
 
 
     //////////////////////////////////////////////////////////////////////////

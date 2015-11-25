@@ -17,7 +17,6 @@
 
 #include "WximageFile.h"
 
-#include "Constants.h"
 #include "Convert.h"
 #include "UtilClone.h"
 #include "UtilLog.h"
@@ -74,7 +73,7 @@ WximageFile::~WximageFile()
 
 pts WximageFile::getLength() const
 {
-    return Convert::timeToPts(Constants::sHour * 8); // 8 Hours...
+    return Convert::timeToPts(sHour * 8); // 8 Hours...
 }
 
 void WximageFile::moveTo(pts position)

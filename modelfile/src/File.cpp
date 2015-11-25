@@ -18,7 +18,6 @@
 #include "File.h"
 
 #include "AutoFolder.h"
-#include "Constants.h"
 #include "Config.h"
 #include "Convert.h"
 #include "Dialog.h"
@@ -611,7 +610,7 @@ void File::openFile()
             // may result in the outcome '0'.
             return 1;
         }
-        return Convert::rationaltimeToPts(rational64(Constants::sSecond,1) * rational64(stream->duration,1) * rational64(stream->time_base.num,stream->time_base.den));
+        return Convert::rationaltimeToPts(rational64(sSecond,1) * rational64(stream->duration,1) * rational64(stream->time_base.num,stream->time_base.den));
     };
 
     auto isAudioSupported = [this,path](AVStream* stream) -> bool

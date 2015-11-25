@@ -18,7 +18,6 @@
 #include "Intervals.h"
 
 #include "Config.h"
-#include "Constants.h"
 #include "Convert.h"
 #include "Cursor.h"
 #include "EmptyClip.h"
@@ -127,8 +126,8 @@ void Intervals::addBeginMarker()
 {
     pts cursor = determineSnap(getCursor().getLogicalPosition());
     mNewIntervalActive = true;
-    mNewIntervalBegin = cursor + model::Convert::timeToPts(Config::ReadDouble(Config::sPathTimelineMarkerBeginAddition) * model::Constants::sSecond);
-    mNewIntervalEnd = cursor + model::Convert::timeToPts(Config::ReadDouble(Config::sPathTimelineMarkerEndAddition)   * model::Constants::sSecond);
+    mNewIntervalBegin = cursor + model::Convert::timeToPts(Config::ReadDouble(Config::sPathTimelineMarkerBeginAddition) * sSecond);
+    mNewIntervalEnd = cursor + model::Convert::timeToPts(Config::ReadDouble(Config::sPathTimelineMarkerEndAddition)   * sSecond);
 }
 
 void Intervals::addEndMarker()
@@ -170,7 +169,7 @@ void Intervals::update(pts newCursorPosition)
     VAR_DEBUG(cursor)(getCursor().getLogicalPosition());
     if (mNewIntervalActive)
     {
-        mNewIntervalEnd = cursor +  model::Convert::timeToPts(Config::ReadDouble(Config::sPathTimelineMarkerEndAddition) * model::Constants::sSecond);
+        mNewIntervalEnd = cursor +  model::Convert::timeToPts(Config::ReadDouble(Config::sPathTimelineMarkerEndAddition) * sSecond);
         refreshInterval(makeInterval(mNewIntervalBegin,mNewIntervalEnd));
     }
     if (mToggleActive)
