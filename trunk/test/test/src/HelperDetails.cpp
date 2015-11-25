@@ -77,7 +77,7 @@ void ASSERT_CLIPPROPERTIES(
     ASSERT_EQUALS(widget_xspin,position.x);
     ASSERT_EQUALS(widget_yslider,position.y)(widget_xslider);
     ASSERT_EQUALS(widget_yspin,position.y);
-    int rotationdigits = boost::rational_cast<int>(rotation * model::Constants::sRotationPrecisionFactor);
+    int rotationdigits = boost::rational_cast<int>(rotation * gui::timeline::DetailsClip::sRotationPrecisionFactor);
     ASSERT_EQUALS(widget_rotationdigits, rotationdigits);
 
     model::VideoClipPtr videoclip = getVideoClip(clip);

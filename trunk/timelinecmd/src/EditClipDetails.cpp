@@ -17,7 +17,6 @@
 
 #include "EditClipDetails.h"
 
-#include "Constants.h"
 #include "Convert.h"
 #include "IClip.h"
 #include "Selection.h"

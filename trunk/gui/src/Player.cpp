@@ -18,7 +18,6 @@
 #include "Player.h"
 
 #include "Config.h"
-#include "Constants.h"
 #include "Convert.h"
 #include "Cursor.h"
 #include "EditDisplay.h"
@@ -400,8 +399,8 @@ void Player::endEdit()
 void Player::updateStatus()
 {
     milliseconds time = model::Convert::ptsToTime(mPosition);
-    bool showHours =  time >= model::Constants::sHour;
-    wxDateTime t(time / model::Constants::sHour, (time % model::Constants::sHour) / model::Constants::sMinute, (time % model::Constants::sMinute) / model::Constants::sSecond, time % model::Constants::sSecond);
+    bool showHours =  time >= sHour;
+    wxDateTime t(time / sHour, (time % sHour) / sMinute, (time % sMinute) / sSecond, time % sSecond);
     wxString s = model::Convert::ptsToHumanReadibleString(mPosition, true, showHours) + " / " + model::Convert::ptsToHumanReadibleString(mLength, true, showHours);
     if (Config::ReadBool(Config::sPathDebugShowFrameNumbers))
     {

@@ -18,7 +18,6 @@
 #include "VideoFrame.h"
 
 #include "Config.h"
-#include "Constants.h"
 #include "UtilClone.h"
 #include "VideoFrameLayer.h"
 #include "UtilInitAvcodec.h"

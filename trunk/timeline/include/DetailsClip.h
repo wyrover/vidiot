@@ -50,6 +50,12 @@ class DetailsClip
 {
 public:
 
+    static const int sRotationPrecision = 2;
+    static const int sRotationPrecisionFactor;
+    static const int sRotationPageSize;
+    static const int sRotationMin;
+    static const int sRotationMax;
+
     //////////////////////////////////////////////////////////////////////////
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////

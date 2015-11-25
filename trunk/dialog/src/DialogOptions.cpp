@@ -18,7 +18,6 @@
 #include "DialogOptions.h"
 
 #include "Config.h"
-#include "Constants.h"
 #include "Convert.h"
 #include "Enums.h"
 #include "Properties.h"
@@ -154,14 +153,14 @@ DialogOptions::DialogOptions(wxWindow* win)
          std::vector<pts> values = {
              { 1 },
              { 12 },
-             { 1 * model::Convert::timeToPts(model::Constants::sSecond, framerate) },
-             { 2 * model::Convert::timeToPts(model::Constants::sSecond, framerate) },
-             { 3 * model::Convert::timeToPts(model::Constants::sSecond, framerate) },
-             { 4 * model::Convert::timeToPts(model::Constants::sSecond, framerate) },
-             { 5 * model::Convert::timeToPts(model::Constants::sSecond, framerate) },
-             { 6 * model::Convert::timeToPts(model::Constants::sSecond, framerate) },
-             { 10 * model::Convert::timeToPts(model::Constants::sSecond, framerate) },
-             { 1 * model::Convert::timeToPts(model::Constants::sMinute, framerate) },
+             { 1 * model::Convert::timeToPts(sSecond, framerate) },
+             { 2 * model::Convert::timeToPts(sSecond, framerate) },
+             { 3 * model::Convert::timeToPts(sSecond, framerate) },
+             { 4 * model::Convert::timeToPts(sSecond, framerate) },
+             { 5 * model::Convert::timeToPts(sSecond, framerate) },
+             { 6 * model::Convert::timeToPts(sSecond, framerate) },
+             { 10 * model::Convert::timeToPts(sSecond, framerate) },
+             { 1 * model::Convert::timeToPts(sMinute, framerate) },
              { initial },
          };
          std::sort(values.begin(), values.end());

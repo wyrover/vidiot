@@ -17,7 +17,6 @@
 
 #include "AudioComposition.h"
 
-#include "Constants.h"
 #include "Convert.h"
 #include "EmptyChunk.h"
 #include "Properties.h"

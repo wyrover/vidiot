@@ -19,12 +19,13 @@
 
 #include <boost/math/constants/constants.hpp>
 #include "AudioChunk.h"
-#include "Constants.h"
 #include "Properties.h"
 #include "UtilFrameRate.h"
 #include "UtilLog.h"
 
 namespace model {
+
+constexpr int sMicroseconds = 1000;
 
 // static
 pts Convert::timeToPts(milliseconds time)
@@ -47,7 +48,7 @@ pts Convert::timeToPts(milliseconds time, const FrameRate& framerate)
 // static
 pts Convert::rationaltimeToPts(rational64 time, const FrameRate& framerate )
 {
-    return floor64(time / rational64(Constants::sSecond) * framerate );
+    return floor64(time / rational64(sSecond) * framerate );
 }
 
 // static 
@@ -71,19 +72,19 @@ double Convert::ptsToSeconds(pts position)
 // static
 milliseconds Convert::ptsToTime(pts position, const FrameRate& framerate)
 {
-    return floor64(rational64(position) * rational64(Constants::sSecond) / framerate);
+    return floor64(rational64(position) * rational64(sSecond) / framerate);
 }
 
 // static
 microseconds Convert::ptsToMicroseconds(pts position)
 {
-    return floor64(rational64(ptsToTime(position)) * rational64(Constants::sMicroseconds));
+    return floor64(rational64(ptsToTime(position)) * rational64(sMicroseconds));
 }
 
 // static
 pts Convert::microsecondsToPts(microseconds us)
 {
-    return timeToPts(floor(rational(us) / rational(Constants::sMicroseconds)));
+    return timeToPts(floor(rational(us) / rational(sMicroseconds)));
 }
 
 // static
@@ -91,9 +92,9 @@ wxString Convert::msToHumanReadibleString(milliseconds ms, bool minutesAlways, b
 {
     std::ostringstream o;
 
-    lldiv_t divhours   = lldiv(ms,              Constants::sHour);
-    lldiv_t divminutes = lldiv(divhours.rem,    Constants::sMinute);
-    lldiv_t divseconds = lldiv(divminutes.rem,  Constants::sSecond);
+    lldiv_t divhours   = lldiv(ms,              sHour);
+    lldiv_t divminutes = lldiv(divhours.rem,    sMinute);
+    lldiv_t divseconds = lldiv(divminutes.rem,  sSecond);
 
     if (divhours.quot > 0 || hoursAlways)
     {
@@ -124,7 +125,7 @@ milliseconds Convert::samplesToTime(int audioRate, int nAudioChannels, samplecou
 {
     int64_t time =
         static_cast<int64_t>(nSamples) *
-        static_cast<int64_t>(Constants::sSecond) /
+        static_cast<int64_t>(sSecond) /
         static_cast<int64_t>(audioRate * nAudioChannels);
     ASSERT_MORE_THAN_EQUALS_ZERO(time);
     return time;

@@ -18,7 +18,6 @@
 #include "TimescaleView.h"
 
 #include "Config.h"
-#include "Constants.h"
 #include "Convert.h"
 #include "Intervals.h"
 #include "Sequence.h"
@@ -115,23 +114,23 @@ void TimescaleView::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset
         // NOTE: Match with map used in Zoom!!
         static std::map< rational, TicksAndNumbers> zoomToSteps = {
             //                              Time between ticks               Time between shown times
-            { rational(1, 120), TicksAndNumbers(60 * model::Constants::sSecond, 5 * model::Constants::sMinute) },
-            { rational(1, 60), TicksAndNumbers(20 * model::Constants::sSecond, 2 * model::Constants::sMinute) },
-            { rational(1, 45), TicksAndNumbers(10 * model::Constants::sSecond, 2 * model::Constants::sMinute) },
-            { rational(1, 30), TicksAndNumbers(10 * model::Constants::sSecond, 1 * model::Constants::sMinute) },
-            { rational(1, 20), TicksAndNumbers(5 * model::Constants::sSecond, 30 * model::Constants::sSecond) },
-            { rational(1, 15), TicksAndNumbers(5 * model::Constants::sSecond, 30 * model::Constants::sSecond) },
-            { rational(1, 10), TicksAndNumbers(2 * model::Constants::sSecond, 20 * model::Constants::sSecond) },
-            { rational(1, 9), TicksAndNumbers(2 * model::Constants::sSecond, 20 * model::Constants::sSecond) },
-            { rational(1, 8), TicksAndNumbers(2 * model::Constants::sSecond, 20 * model::Constants::sSecond) },
-            { rational(1, 7), TicksAndNumbers(2 * model::Constants::sSecond, 20 * model::Constants::sSecond) },
-            { rational(1, 6), TicksAndNumbers(2 * model::Constants::sSecond, 20 * model::Constants::sSecond) },
-            { rational(1, 5), TicksAndNumbers(2 * model::Constants::sSecond, 10 * model::Constants::sSecond) },
-            { rational(1, 4), TicksAndNumbers(model::Constants::sSecond, 10 * model::Constants::sSecond) },
-            { rational(1, 3), TicksAndNumbers(model::Constants::sSecond, 10 * model::Constants::sSecond) },
-            { rational(1, 2), TicksAndNumbers(model::Constants::sSecond, 5 * model::Constants::sSecond) },
-            { rational(1, 1), TicksAndNumbers(model::Constants::sSecond, 5 * model::Constants::sSecond) },
-            { rational(2, 1), TicksAndNumbers(model::Constants::sSecond, 1 * model::Constants::sSecond) },
+            { rational(1, 120), TicksAndNumbers(60 * sSecond, 5 * sMinute) },
+            { rational(1, 60), TicksAndNumbers(20 * sSecond, 2 * sMinute) },
+            { rational(1, 45), TicksAndNumbers(10 * sSecond, 2 * sMinute) },
+            { rational(1, 30), TicksAndNumbers(10 * sSecond, 1 * sMinute) },
+            { rational(1, 20), TicksAndNumbers(5 * sSecond, 30 * sSecond) },
+            { rational(1, 15), TicksAndNumbers(5 * sSecond, 30 * sSecond) },
+            { rational(1, 10), TicksAndNumbers(2 * sSecond, 20 * sSecond) },
+            { rational(1, 9), TicksAndNumbers(2 * sSecond, 20 * sSecond) },
+            { rational(1, 8), TicksAndNumbers(2 * sSecond, 20 * sSecond) },
+            { rational(1, 7), TicksAndNumbers(2 * sSecond, 20 * sSecond) },
+            { rational(1, 6), TicksAndNumbers(2 * sSecond, 20 * sSecond) },
+            { rational(1, 5), TicksAndNumbers(2 * sSecond, 10 * sSecond) },
+            { rational(1, 4), TicksAndNumbers(sSecond, 10 * sSecond) },
+            { rational(1, 3), TicksAndNumbers(sSecond, 10 * sSecond) },
+            { rational(1, 2), TicksAndNumbers(sSecond, 5 * sSecond) },
+            { rational(1, 1), TicksAndNumbers(sSecond, 5 * sSecond) },
+            { rational(2, 1), TicksAndNumbers(sSecond, 1 * sSecond) },
         };
 
         rational zoom = getZoom().getCurrent();
@@ -197,10 +196,10 @@ void TimescaleView::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset
                 {
                     if (showTime)
                     {
-                        unsigned short hours = ms / model::Constants::sHour ;
-                        wxDateTime t(hours, (ms % model::Constants::sHour) / model::Constants::sMinute, (ms % model::Constants::sMinute) / model::Constants::sSecond, ms % model::Constants::sSecond);
+                        unsigned short hours = ms / sHour ;
+                        wxDateTime t(hours, (ms % sHour) / sMinute, (ms % sMinute) / sSecond, ms % sSecond);
                         wxString format = (hours == 0) ? minutesFormat : hoursFormat; // Don't show hours for the first hour
-                        wxString s = t.Format(ms / model::Constants::sHour == 0 ? minutesFormat : hoursFormat);
+                        wxString s = t.Format(ms / sHour == 0 ? minutesFormat : hoursFormat);
                         wxSize ts = dc.GetTextExtent(s);
                         dc.DrawText( s, scrolledAndShiftedPosition + wxPoint(position - ts.GetX() / 2, TimeScaleMinutesHeight));
                     }

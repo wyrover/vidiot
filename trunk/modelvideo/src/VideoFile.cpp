@@ -20,7 +20,6 @@
 
 #include "VideoFile.h"
 
-#include "Constants.h"
 #include "Convert.h"
 #include "Node.h"
 #include "Properties.h"

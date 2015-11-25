@@ -578,7 +578,7 @@ void TestDetailsClip::testChangeVolume()
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::EditClipDetails>(); // Verify that only one command object was added to the undo history
         ASSERT_VOLUME(getAudioClip(AudioClip(0,3)),90,referenceChunk);
         Undo();
-        ASSERT_EQUALS(getAudioClip(AudioClip(0,3))->getVolume(), model::Constants::sDefaultVolume);
+        ASSERT_EQUALS(getAudioClip(AudioClip(0,3))->getVolume(), model::AudioClip::sDefaultVolume);
         ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
     }
     {
@@ -587,7 +587,7 @@ void TestDetailsClip::testChangeVolume()
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::EditClipDetails>(); // Verify that only one command object was added to the undo history
         ASSERT_VOLUME(getAudioClip(AudioClip(0,3)),97,referenceChunk);
         Undo();
-        ASSERT_EQUALS(getAudioClip(AudioClip(0,3))->getVolume(), model::Constants::sDefaultVolume);
+        ASSERT_EQUALS(getAudioClip(AudioClip(0,3))->getVolume(), model::AudioClip::sDefaultVolume);
         ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
     }
     {
@@ -596,7 +596,7 @@ void TestDetailsClip::testChangeVolume()
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::EditClipDetails>(); // Verify that only one command object was added to the undo history
         ASSERT_VOLUME(getAudioClip(AudioClip(0,3)),110,referenceChunk);
         Undo();
-        ASSERT_EQUALS(getAudioClip(AudioClip(0,3))->getVolume(), model::Constants::sDefaultVolume);
+        ASSERT_EQUALS(getAudioClip(AudioClip(0,3))->getVolume(), model::AudioClip::sDefaultVolume);
         ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
     }
     {
@@ -605,7 +605,7 @@ void TestDetailsClip::testChangeVolume()
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::EditClipDetails>(); // Verify that only one command object was added to the undo history
         ASSERT_VOLUME(getAudioClip(AudioClip(0,3)),105,referenceChunk);
         Undo();
-        ASSERT_EQUALS(getAudioClip(AudioClip(0,3))->getVolume(), model::Constants::sDefaultVolume);
+        ASSERT_EQUALS(getAudioClip(AudioClip(0,3))->getVolume(), model::AudioClip::sDefaultVolume);
         ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
     }
     {
@@ -629,7 +629,7 @@ void TestDetailsClip::testChangeVolume()
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::EditClipDetails>(); // Verify that only one command object was added to the undo history
         ASSERT_VOLUME(getAudioClip(AudioClip(0,4)),70,referenceChunk);
         Undo();
-        ASSERT_VOLUME(getAudioClip(AudioClip(0,4)),model::Constants::sDefaultVolume,referenceChunk);
+        ASSERT_VOLUME(getAudioClip(AudioClip(0,4)),model::AudioClip::sDefaultVolume,referenceChunk);
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::EditClipDetails>(); // Previous change audio volume
         Undo();
         ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();

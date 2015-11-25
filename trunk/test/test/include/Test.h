@@ -48,7 +48,6 @@
 #include "Combiner.h"
 #include "CommandProcessor.h"
 #include "Config.h"
-#include "Constants.h"
 #include "Convert.h"
 #include "CreateTransition.h"
 #include "CreateTransitionHelper.h"

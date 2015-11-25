@@ -22,7 +22,6 @@
 #include "AudioCodecs.h"
 #include "AudioCompositionParameters.h"
 #include "Config.h"
-#include "Constants.h"
 #include "Convert.h"
 #include "Dialog.h"
 #include "EmptyFrame.h"
@@ -63,7 +62,7 @@ public:
     ,   mSequence(sequence)
     ,   mFrom(from)
     {
-        pts maxLength = Convert::timeToPts(Config::ReadLong(Config::sPathDebugMaxRenderLength) *  Constants::sSecond);
+        pts maxLength = Convert::timeToPts(Config::ReadLong(Config::sPathDebugMaxRenderLength) *  sSecond);
         mLength = to - from;
         if (maxLength > 0 && maxLength < mLength)
         {

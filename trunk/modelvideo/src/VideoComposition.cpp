@@ -17,7 +17,6 @@
 
 #include "VideoComposition.h"
 
-#include "Constants.h"
 #include "Convert.h"
 #include "EmptyFrame.h"
 #include "Properties.h"

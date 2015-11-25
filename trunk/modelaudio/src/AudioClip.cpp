@@ -21,7 +21,6 @@
 #include "AudioCompositionParameters.h"
 #include "AudioFile.h"
 #include "AudioPeaks.h"
-#include "Constants.h"
 #include "Convert.h"
 #include "EmptyChunk.h"
 #include "Node.h"
@@ -37,7 +36,7 @@ namespace model {
 AudioClip::AudioClip()
     : ClipInterval()
     , mProgress(0)
-    , mVolume(Constants::sDefaultVolume)
+    , mVolume(sDefaultVolume)
     , mInputChunk()
 {
     VAR_DEBUG(*this);
@@ -46,7 +45,7 @@ AudioClip::AudioClip()
 AudioClip::AudioClip(const AudioFilePtr& file)
     : ClipInterval(file)
     , mProgress(0)
-    , mVolume(Constants::sDefaultVolume)
+    , mVolume(sDefaultVolume)
     , mInputChunk()
 {
     VAR_DEBUG(*this);
@@ -158,13 +157,13 @@ AudioChunkPtr AudioClip::getNextAudio(const AudioCompositionParameters& paramete
         }
         VAR_DEBUG(*this)(mProgress)(requiredSamples);
 
-        if (mVolume != Constants::sDefaultVolume)
+        if (mVolume != sDefaultVolume)
         {
             sample* sBegin = buffer;
             sample* sEnd = sBegin + requiredSamples;
             sample* s = sBegin;
             int32_t volume = static_cast<int32_t>(mVolume);
-            int32_t defaultVolume = static_cast<int32_t>(Constants::sDefaultVolume);
+            int32_t defaultVolume = static_cast<int32_t>(sDefaultVolume);
             while (s < sEnd)
             {
                 *s = static_cast<sample>(static_cast<int32_t>(*s) * volume / defaultVolume);
@@ -221,12 +220,12 @@ AudioPeaks AudioClip::getPeaks(const AudioCompositionParameters& parameters)
         ASSERT_NONZERO(*right);
         length += *right;
     }
-    if (mVolume == Constants::sDefaultVolume)
+    if (mVolume == sDefaultVolume)
     {
         return getDataGenerator<AudioFile>()->getPeaks(parameters, Convert::positionToNormalSpeed(offset, getSpeed()),length);
     }
     AudioPeaks result;
-    boost::rational<int32_t> factor{ mVolume, Constants::sDefaultVolume };
+    boost::rational<int32_t> factor{ mVolume, sDefaultVolume };
     ASSERT_MORE_THAN_EQUALS_ZERO(factor);
     for (const AudioPeak& peak : getDataGenerator<AudioFile>()->getPeaks(parameters, Convert::positionToNormalSpeed(offset, getSpeed()), length))
     {
