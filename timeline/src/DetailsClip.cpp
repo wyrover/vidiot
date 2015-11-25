@@ -60,13 +60,20 @@ namespace gui { namespace timeline {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-const double sSpeedIncrement = 0.01;
-const double sScalingIncrement = 0.01;
-const double sRotationIncrement = 0.01;
-const int sSpeedPageSize = 10;
-const int sPositionPageSize = 10;
-const int sOpacityPageSize = 10;
-const int sVolumePageSize = 10;
+constexpr double sFactorIncrement = 0.01;
+constexpr double sRotationIncrement = 0.01;
+
+constexpr int sPositionPageSize = 10;
+constexpr int sOpacityPageSize = 10;
+constexpr int sVolumePageSize = 10;
+
+constexpr int sFactorPrecision = 2;
+const int sFactorPrecisionFactor = static_cast<int>(pow(10.0, sFactorPrecision)); ///< 10^sFactorPrecision
+constexpr int sFactorPageSize = sFactorPrecision / 10; // 0.1
+const rational sFactorMin{ 1,100 }; // 0.01
+const rational sFactorMax{ 100,1 }; // 100
+
+
 const wxString sVideo(_("Video"));
 const wxString sAudio(_("Audio"));
 const wxString sTransition(_("Transition"));
@@ -80,13 +87,13 @@ const wxString sEditX(_("Edit X position of %s"));
 const wxString sEditY(_("Edit Y position of %s"));
 const wxString sEditVolume(_("Edit volume of %s"));
 
-// Helper methods for slider values. These ensure that 1/1 is in the middle.
-// 100 <-> 9999: 0.01 <-> 0.99 (divide by 100)
+// Helper methods for factor slider values. These ensure that 1/1 is in the middle.
+// 100 <-> 9999: 0.01 <-> 0.99 (divide by 10000)
 // 10000 : 1
 // 10001 <-> 19900 : 1.01 <-> 100.00
 
 // static
-int DetailsClip::speedToSliderValue(rational speed)
+int DetailsClip::factorToSliderValue(rational speed)
 {
     if (speed == 1) { return 10000; }
     if (speed < 1) { return boost::rational_cast<int>(speed * 10000); }
@@ -94,7 +101,7 @@ int DetailsClip::speedToSliderValue(rational speed)
 }
 
 // static
-rational DetailsClip::sliderToSpeedValue(int slidervalue) // todo this also for the scaling slider? (1 in the middle)
+rational DetailsClip::sliderValueToFactor(int slidervalue)
 {
     if (slidervalue < 10000) { return rational(slidervalue, 10000); }
     if (slidervalue == 10000) { return 1; }
@@ -157,14 +164,14 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
 
     mSpeedPanel = new wxPanel(this);
     wxBoxSizer* speedsizer = new wxBoxSizer(wxHORIZONTAL);
-    mSpeedSlider = new wxSlider(mSpeedPanel, wxID_ANY, speedToSliderValue(model::Constants::sSpeedMax), speedToSliderValue(model::Constants::sSpeedMin), speedToSliderValue(model::Constants::sSpeedMax));
-    mSpeedSlider->SetPageSize(sSpeedPageSize);
+    mSpeedSlider = new wxSlider(mSpeedPanel, wxID_ANY, factorToSliderValue(sFactorMax), factorToSliderValue(sFactorMin), factorToSliderValue(sFactorMax));
+    mSpeedSlider->SetPageSize(sFactorPageSize);
     mSpeedSpin = new wxSpinCtrlDouble(mSpeedPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(55,-1));
     mSpeedSpin->SetWindowVariant( wxWINDOW_VARIANT_SMALL );
-    mSpeedSpin->SetDigits(model::Constants::sSpeedPrecision);
+    mSpeedSpin->SetDigits(sFactorPrecision);
     mSpeedSpin->SetValue(1);
-    mSpeedSpin->SetRange(boost::rational_cast<double>(model::Constants::sSpeedMin), boost::rational_cast<double>(model::Constants::sSpeedMax));
-    mSpeedSpin->SetIncrement(sSpeedIncrement);
+    mSpeedSpin->SetRange(boost::rational_cast<double>(sFactorMin), boost::rational_cast<double>(sFactorMax));
+    mSpeedSpin->SetIncrement(sFactorIncrement);
     speedsizer->Add(mSpeedSlider, wxSizerFlags(1).Expand());
     speedsizer->Add(mSpeedSpin, wxSizerFlags(0));
     mSpeedPanel->SetSizer(speedsizer);
@@ -207,16 +214,14 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     wxBoxSizer* scalingsizer = new wxBoxSizer(wxHORIZONTAL);
     mSelectScaling = new EnumSelector<model::VideoScaling>(mScalingPanel, model::VideoScalingConverter::getMapToHumanReadibleString(), model::VideoScalingNone);
     mSelectScaling->SetWindowVariant( wxWINDOW_VARIANT_SMALL );
-    mScalingSlider = new wxSlider(mScalingPanel,wxID_ANY, 1 * model::Constants::sScalingPrecisionFactor, model::Constants::sScalingMin, model::Constants::sScalingMax);
-    mScalingSlider->SetPageSize(model::Constants::sScalingPageSize);
+    mScalingSlider = new wxSlider(mScalingPanel,wxID_ANY, factorToSliderValue(model::VideoClip::sScalingMax), factorToSliderValue(model::VideoClip::sScalingMin), factorToSliderValue(model::VideoClip::sScalingMax));
+    mScalingSlider->SetPageSize(sFactorPageSize);
     mScalingSpin = new wxSpinCtrlDouble(mScalingPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(55,-1));
     mScalingSpin->SetWindowVariant( wxWINDOW_VARIANT_SMALL );
     mScalingSpin->SetValue(1); // No scaling
-    mScalingSpin->SetDigits(model::Constants::sScalingPrecision);
-    mScalingSpin->SetRange(
-        static_cast<double>(model::Constants::sScalingMin) / static_cast<double>(model::Constants::sScalingPrecisionFactor),
-        static_cast<double>(model::Constants::sScalingMax) / static_cast<double>(model::Constants::sScalingPrecisionFactor));
-    mScalingSpin->SetIncrement(sScalingIncrement);
+    mScalingSpin->SetDigits(sFactorPrecision);
+    mScalingSpin->SetRange(boost::rational_cast<double>(model::VideoClip::sScalingMin), boost::rational_cast<double>(model::VideoClip::sScalingMax));
+    mScalingSpin->SetIncrement(sFactorIncrement);
     scalingsizer->Add(mSelectScaling, wxSizerFlags(0).Left());
     scalingsizer->Add(mScalingSlider, wxSizerFlags(1).Expand());
     scalingsizer->Add(mScalingSpin, wxSizerFlags(0));
@@ -425,11 +430,10 @@ void DetailsClip::setClip(const model::IClipPtr& clip)
 
         if (video && !audio)
         {
-            // todo enable changing speed for audio (and for linked audio) also (using soundtouch)
             if (!audio)
             {
                 boost::rational< int > speed = boost::dynamic_pointer_cast<model::ClipInterval>(mClip)->getSpeed();
-                mSpeedSlider->SetValue(speedToSliderValue(speed));
+                mSpeedSlider->SetValue(factorToSliderValue(speed));
                 mSpeedSpin->SetValue(boost::rational_cast<double>(speed));
             }
         }
@@ -443,19 +447,16 @@ void DetailsClip::setClip(const model::IClipPtr& clip)
             wxPoint maxpos = video->getMaxPosition();
             wxPoint minpos = video->getMinPosition();
             int opacity = video->getOpacity();
-            const double sScalingIncrement = 0.01;
 
             mOpacitySlider->SetValue(opacity);
             mOpacitySpin->SetValue(opacity);
 
             mSelectScaling->select(video->getScaling());
-            double sliderFactor = boost::rational_cast<double>(factor);
-            mScalingSlider->SetValue(boost::rational_cast<int>(factor * model::Constants::sScalingPrecisionFactor));
-            mScalingSpin->SetValue(sliderFactor);
+            mScalingSlider->SetValue(factorToSliderValue(factor));
+            mScalingSpin->SetValue(boost::rational_cast<double>(factor));
 
-            double angle = boost::rational_cast<double>(rotation);
             mRotationSlider->SetValue(boost::rational_cast<int>(rotation * model::Constants::sRotationPrecisionFactor));
-            mRotationSpin->SetValue(angle);
+            mRotationSpin->SetValue(boost::rational_cast<double>(rotation));
 
             mSelectAlignment->select(video->getAlignment());
             mPositionXSlider->SetRange(minpos.x, maxpos.x);
@@ -541,7 +542,7 @@ void DetailsClip::onSpeedSliderChanged(wxCommandEvent& event)
     VAR_INFO(mSpeedSlider->GetValue());
     CatchExceptions([this]
     {
-        createOrUpdateSpeedCommand(sliderToSpeedValue(mSpeedSlider->GetValue()));
+        createOrUpdateSpeedCommand(sliderValueToFactor(mSpeedSlider->GetValue()));
     });
     event.Skip();
 }
@@ -552,8 +553,8 @@ void DetailsClip::onSpeedSpinChanged(wxSpinDoubleEvent& event)
     VAR_INFO(value);
     CatchExceptions([this, value]
     {
-        int spinFactor = floor(value * model::Constants::sSpeedPrecisionFactor);
-        boost::rational<int> s(spinFactor, model::Constants::sSpeedPrecisionFactor);
+        int spinFactor = floor(value * sFactorPrecisionFactor);
+        boost::rational<int> s(spinFactor, sFactorPrecisionFactor);
         createOrUpdateSpeedCommand(s);
     });
     event.Skip();
@@ -596,22 +597,22 @@ void DetailsClip::onScalingChoiceChanged(wxCommandEvent& event)
 void DetailsClip::onScalingSliderChanged(wxCommandEvent& event)
 {
     VAR_INFO(mScalingSlider->GetValue());
-    boost::rational<int> r(mScalingSlider->GetValue(), model::Constants::sScalingPrecisionFactor);
-    CatchExceptions([this, r]
+    CatchExceptions([this]
     {
         submitEditCommandUponAudioVideoEdit(sEditScaling);
-        mClones->Video->setScaling(model::VideoScalingCustom, boost::optional< boost::rational< int > >(r));
+        mClones->Video->setScaling(model::VideoScalingCustom, boost::optional< boost::rational< int > >(sliderValueToFactor(mScalingSlider->GetValue())));
     });
     event.Skip();
 }
 
 void DetailsClip::onScalingSpinChanged(wxSpinDoubleEvent& event)
 {
-    VAR_INFO(mScalingSpin->GetValue()); // NOT: event.GetValue() -- The event's value may be outside the range boundaries
-    int spinFactor = floor(mScalingSpin->GetValue() * model::Constants::sScalingPrecisionFactor);
-    boost::rational<int> r(spinFactor, model::Constants::sScalingPrecisionFactor);
-    CatchExceptions([this, r]
+    double value = mScalingSpin->GetValue(); // NOT: event.GetValue() -- The event's value may be outside the range boundaries
+    VAR_INFO(value);
+    CatchExceptions([this, value]
     {
+        int spinFactor = floor(value * sFactorPrecisionFactor);
+        boost::rational<int> r(spinFactor, sFactorPrecisionFactor);
         submitEditCommandUponAudioVideoEdit(sEditScaling); // Changes same clip aspect as the slider
         mClones->Video->setScaling(model::VideoScalingCustom, boost::optional< boost::rational< int > >(r));
     });
@@ -860,7 +861,7 @@ void DetailsClip::onScalingChanged(model::EventChangeVideoClipScaling& event)
 void DetailsClip::onScalingFactorChanged(model::EventChangeVideoClipScalingFactor& event)
 {
     mScalingSpin->SetValue(boost::rational_cast<double>(event.getValue()));
-    mScalingSlider->SetValue(floor(event.getValue() * model::Constants::sScalingPrecisionFactor));
+    mScalingSlider->SetValue(factorToSliderValue(event.getValue()));
     preview();
     event.Skip();
 }
@@ -1151,14 +1152,14 @@ void DetailsClip::createOrUpdateSpeedCommand(boost::rational<int> speed)
     if (model::ProjectModification::submitIfPossible(mEditSpeedCommand))
     {
         mSpeedSpin->SetValue(boost::rational_cast<double>(mEditSpeedCommand->getActualSpeed()));
-        mSpeedSlider->SetValue(speedToSliderValue(mEditSpeedCommand->getActualSpeed()));
+        mSpeedSlider->SetValue(factorToSliderValue(mEditSpeedCommand->getActualSpeed()));
     }
     else
     {
         model::ClipIntervalPtr clipInterval{ boost::dynamic_pointer_cast<model::ClipInterval>(clip) };
         ASSERT_NONZERO(clipInterval);
         mSpeedSpin->SetValue(boost::rational_cast<double>(clipInterval->getSpeed()));
-        mSpeedSlider->SetValue(speedToSliderValue(clipInterval->getSpeed()));
+        mSpeedSlider->SetValue(factorToSliderValue(clipInterval->getSpeed()));
         mEditSpeedCommand = nullptr;
     }
 

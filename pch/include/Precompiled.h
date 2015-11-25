@@ -31,6 +31,7 @@ extern "C" {
 #pragma warning(disable:4244)
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
+#include <libavutil/imgutils.h>
 #include <libavutil/opt.h>
 #include <libavutil/pixfmt.h>
 #include <libswresample/swresample.h>
