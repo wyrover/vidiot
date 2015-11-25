@@ -379,7 +379,7 @@ Window::Window()
     }
     for (wxMenuItem* item : mMenuHelp->GetMenuItems())
     {
-        if (item->GetId() == wxID_HELP)  // todo add tip for repeatedly holding the 'n' key for making lots of audio fades
+        if (item->GetId() == wxID_HELP)
         {
             // This menu entry does not get an accelerator by default. Add Ctrl-H.
             item->SetItemLabel(item->GetItemLabelText() + "\t" + _("Ctrl") + "-H");
