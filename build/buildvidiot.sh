@@ -297,6 +297,9 @@ UpdateLanguageFiles()
 	        fi
 		fi
    	done
+   	# Delete all po~ files
+   	find ${languages_root} -name *~  -exec rm -f '{}'  \;
+
 }
 
 MakeDirs()
