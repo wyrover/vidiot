@@ -32,12 +32,14 @@ namespace gui { namespace timeline {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-static wxString sNotes(_("Notes"));
+static wxString sNotes;
 
 DetailsTrim::DetailsTrim(wxWindow* parent, Timeline& timeline)
     :   DetailsPanel(parent,timeline)
 {
     VAR_DEBUG(this);
+
+    sNotes = _("Notes"); // Singleton is not translated properly
 
     addBox(boost::optional<wxString>(_("Resizing")));
     mVideo = new wxStaticText(this, wxID_ANY, "");

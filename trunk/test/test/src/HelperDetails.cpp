@@ -71,9 +71,8 @@ void ASSERT_CLIPPROPERTIES(
     });
     ASSERT_EQUALS(selectedclip, clip);
 
-    int scalingdigits = boost::rational_cast<int>(scalingfactor * model::Constants::sScalingPrecisionFactor);
-    ASSERT_EQUALS(widget_scalingdigits, scalingdigits );
-    ASSERT_EQUALS(floor(widget_scalingspin * model::Constants::sScalingPrecisionFactor), scalingdigits);
+    ASSERT_EQUALS(gui::timeline::DetailsClip::sliderValueToFactor(widget_scalingdigits), scalingfactor);
+    ASSERT_EQUALS(floor(widget_scalingspin * 100), floor(boost::rational_cast<double>(scalingfactor) * 100)); // floor + *100 : ensure that only two digits are used
     ASSERT_EQUALS(widget_xslider,position.x)(widget_yslider);
     ASSERT_EQUALS(widget_xspin,position.x);
     ASSERT_EQUALS(widget_yslider,position.y)(widget_xslider);

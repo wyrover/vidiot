@@ -47,21 +47,11 @@ public:
 
     static const int sOpacityMin;
     static const int sOpacityMax;
-    static const int sScalingPrecision;       ///< Number of digits to be used maximally
-    static const int sScalingPrecisionFactor; ///< 10^sScalingPrecision
-    static const int sScalingPageSize;        ///< 0.1
-    static const int sScalingMin;
-    static const int sScalingMax;
     static const int sRotationPrecision;       ///< Number of digits to be used maximally
     static const int sRotationPrecisionFactor; ///< 10^sRotationPrecision
     static const int sRotationPageSize;        ///< 0.1
     static const int sRotationMin;
     static const int sRotationMax;
-    static const int sSpeedPrecision;          ///< Number of digits to be used maximally
-    static const int sSpeedPrecisionFactor;    ///< 10^sSpeedPrecision
-    static const int sSpeedPageSize;           
-    static const rational sSpeedMin;
-    static const rational sSpeedMax;
     static const int sMinVolume;
     static const int sMaxVolume;
     static const int sDefaultVolume;

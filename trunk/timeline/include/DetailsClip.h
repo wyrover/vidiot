@@ -61,8 +61,8 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    static int speedToSliderValue(rational speed);
-    static rational sliderToSpeedValue(int slidervalue);
+    static int factorToSliderValue(rational speed);
+    static rational sliderValueToFactor(int slidervalue);
 
     model::IClipPtr getClip() const;
     void setClip(const model::IClipPtr& clip);

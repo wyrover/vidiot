@@ -22,6 +22,7 @@
 #include "Convert.h"
 #include "EmptyFrame.h"
 #include "Properties.h"
+#include "StatusBar.h"
 #include "UtilClone.h"
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
@@ -38,6 +39,9 @@ namespace model {
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
+
+const rational VideoClip::sScalingMin{ 1,100 }; // 0.01
+const rational VideoClip::sScalingMax{ 100,1 }; // 100
 
 VideoClip::VideoClip()
     : ClipInterval()
@@ -296,18 +300,38 @@ void VideoClip::setScaling(const VideoScaling& scaling, const boost::optional<bo
     mScaling = scaling;
     if (factor)
     {
-        mScalingFactor = *factor;
+        wxSize inputsize = getInputSize();
+        unsigned int w{ boost::rational_cast<unsigned int>(inputsize.GetWidth() * *factor) };
+        unsigned int h{ boost::rational_cast<unsigned int>(inputsize.GetHeight() * *factor) };
+        if (w <= 0)
+        {
+            gui::StatusBar::get().timedInfoText(_("Width becomes 0."));
+        }
+        else if (h <= 0)
+        {
+            gui::StatusBar::get().timedInfoText(_("Height becomes 0."));
+        }
+        else if (av_image_check_size(w, h, 0, 0) < 0)
+        {
+            gui::StatusBar::get().timedInfoText(_("Image becomes too large."));
+        }
+        else
+        {
+            mScalingFactor = *factor;
+        }
     }
 
     updateAutomatedScaling();
     updateAutomatedPositioning();
 
-    if (mScaling != oldScaling)
+    if (mScaling != oldScaling || // Update of the change
+        mScaling != scaling)      // Inform that the change requested was not acknowledged
     {
         EventChangeVideoClipScaling event(mScaling);
         ProcessEvent(event);
     }
-    if (mScalingFactor != oldScalingFactor)
+    if (mScalingFactor != oldScalingFactor ||  // Update of the change
+        (factor && mScalingFactor != *factor)) // Inform that the change requested was not acknowledged
     {
         EventChangeVideoClipScalingFactor event(mScalingFactor);
         ProcessEvent(event);
@@ -390,7 +414,8 @@ void VideoClip::setPosition(const wxPoint& position)
 
     updateAutomatedPositioning();
 
-    if (mPosition != oldPosition)
+    if (mPosition != oldPosition ||  // Update of the change
+        mPosition != position)       // Inform that the change requested was not acknowledged
     {
         EventChangeVideoClipPosition event(mPosition);
         ProcessEvent(event);
@@ -445,13 +470,13 @@ void VideoClip::updateAutomatedScaling()
     }
 
     // Ensure that automated scaling never causes the scaling to exceed on of the scaling bounds
-    if (mScalingFactor > boost::rational<int>(Constants::sScalingMax, model::Constants::sScalingPrecisionFactor))
+    if (mScalingFactor > VideoClip::sScalingMax)
     {
-        mScalingFactor = boost::rational<int>(Constants::sScalingMax, model::Constants::sScalingPrecisionFactor);
+        mScalingFactor = VideoClip::sScalingMax;
     }
-    if (mScalingFactor < boost::rational<int>(Constants::sScalingMin, model::Constants::sScalingPrecisionFactor))
+    if (mScalingFactor < VideoClip::sScalingMin)
     {
-        mScalingFactor = boost::rational<int>(Constants::sScalingMin, model::Constants::sScalingPrecisionFactor);
+        mScalingFactor = VideoClip::sScalingMin;
     }
 }
 
