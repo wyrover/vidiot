@@ -90,7 +90,7 @@ bool Project::OnNewDocument()
         mMetaDataCache = boost::make_shared<FileMetaDataCache>();
         mProperties = boost::make_shared<Properties>();
 
-        if (!gui::DialogNewProject().runWizard())
+        if (!gui::DialogNewProject::runWizard())
         {
             // New project wizard was canceled
             return false;

@@ -110,6 +110,7 @@
 #include "UtilThread.h"
 #include "UtilVector.h"
 #include "VideoClip.h"
+#include "VideoClipKeyFrame.h"
 #include "VideoCodecs.h"
 #include "VideoCompositionParameters.h"
 #include "VideoDisplayEvent.h"

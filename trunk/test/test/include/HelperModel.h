@@ -27,21 +27,29 @@ model::VideoClipPtr getVideoClip(model::IClipPtr clip);
 /// \return the given clip cast to an audio clip
 model::AudioClipPtr getAudioClip(model::IClipPtr clip);
 
+/// \return the current opacity for the given (video) clip
+/// \pre clip is a video clip
+int getOpacity(model::IClipPtr clip, pts position = 0);
+
 /// \return the current scaling factor for the given (video) clip
 /// \pre clip is a video clip
-boost::rational<int> getScalingFactor(model::IClipPtr clip);
+boost::rational<int> getScalingFactor(model::IClipPtr clip, pts position = 0);
 
 /// \return the current scaling type for the given (video) clip
 /// \pre clip is a video clip
-model::VideoScaling getScaling(model::IClipPtr clip);
+model::VideoScaling getScaling(model::IClipPtr clip, pts position = 0);
 
 /// \return the current alignment type for the given (video) clip
 /// \pre clip is a video clip
-model::VideoAlignment getAlignment(model::IClipPtr clip);
+model::VideoAlignment getAlignment(model::IClipPtr clip, pts position = 0);
 
 /// \return the current position type for the given (video) clip
 /// \pre clip is a video clip
-wxPoint getPosition(model::IClipPtr clip);
+wxPoint getPosition(model::IClipPtr clip, pts position = 0);
+
+/// \return the current rotation for the given (video) clip
+/// \pre clip is a video clip
+boost::rational<int> getRotation(model::IClipPtr clip, pts position = 0);
 
 /// Unlink the clip from it's link (and vice versa)
 /// \pre clip->getLink()

@@ -19,7 +19,7 @@
 
 namespace gui { namespace timeline {
 
-DetailsClip::ClonesContainer::ClonesContainer(DetailsClip* details, model::IClipPtr clip)
+DetailsClip::ClonesContainer::ClonesContainer(DetailsClip* details, model::IClipPtr clip, pts position)
     : mDetails(details)
 {
     Clip = make_cloned<model::IClip>(clip);
@@ -43,14 +43,16 @@ DetailsClip::ClonesContainer::ClonesContainer(DetailsClip* details, model::IClip
 
     if (Video)
     {
-        Video->Bind(model::EVENT_CHANGE_VIDEOCLIP_OPACITY, &DetailsClip::onOpacityChanged, mDetails);
-        Video->Bind(model::EVENT_CHANGE_VIDEOCLIP_SCALING, &DetailsClip::onScalingChanged, mDetails);
-        Video->Bind(model::EVENT_CHANGE_VIDEOCLIP_SCALINGFACTOR, &DetailsClip::onScalingFactorChanged, mDetails);
-        Video->Bind(model::EVENT_CHANGE_VIDEOCLIP_ROTATION, &DetailsClip::onRotationChanged, mDetails);
-        Video->Bind(model::EVENT_CHANGE_VIDEOCLIP_ALIGNMENT, &DetailsClip::onAlignmentChanged, mDetails);
-        Video->Bind(model::EVENT_CHANGE_VIDEOCLIP_POSITION, &DetailsClip::onPositionChanged, mDetails);
-        Video->Bind(model::EVENT_CHANGE_VIDEOCLIP_MINPOSITION, &DetailsClip::onMinPositionChanged, mDetails);
-        Video->Bind(model::EVENT_CHANGE_VIDEOCLIP_MAXPOSITION, &DetailsClip::onMaxPositionChanged, mDetails);
+        VideoKeyFrame = Video->getKeyFrame(position);
+        ASSERT_NONZERO(VideoKeyFrame);
+        VideoKeyFrame->Bind(model::EVENT_CHANGE_VIDEOCLIP_OPACITY, &DetailsClip::onOpacityChanged, mDetails);
+        VideoKeyFrame->Bind(model::EVENT_CHANGE_VIDEOCLIP_SCALING, &DetailsClip::onScalingChanged, mDetails);
+        VideoKeyFrame->Bind(model::EVENT_CHANGE_VIDEOCLIP_SCALINGFACTOR, &DetailsClip::onScalingFactorChanged, mDetails);
+        VideoKeyFrame->Bind(model::EVENT_CHANGE_VIDEOCLIP_ROTATION, &DetailsClip::onRotationChanged, mDetails);
+        VideoKeyFrame->Bind(model::EVENT_CHANGE_VIDEOCLIP_ALIGNMENT, &DetailsClip::onAlignmentChanged, mDetails);
+        VideoKeyFrame->Bind(model::EVENT_CHANGE_VIDEOCLIP_POSITION, &DetailsClip::onPositionChanged, mDetails);
+        VideoKeyFrame->Bind(model::EVENT_CHANGE_VIDEOCLIP_MINPOSITION, &DetailsClip::onMinPositionChanged, mDetails);
+        VideoKeyFrame->Bind(model::EVENT_CHANGE_VIDEOCLIP_MAXPOSITION, &DetailsClip::onMaxPositionChanged, mDetails);
     }
     if (Audio)
     {
@@ -62,14 +64,15 @@ DetailsClip::ClonesContainer::~ClonesContainer()
 {
     if (Video)
     {
-        Video->Unbind(model::EVENT_CHANGE_VIDEOCLIP_OPACITY, &DetailsClip::onOpacityChanged, mDetails);
-        Video->Unbind(model::EVENT_CHANGE_VIDEOCLIP_SCALING, &DetailsClip::onScalingChanged, mDetails);
-        Video->Unbind(model::EVENT_CHANGE_VIDEOCLIP_SCALINGFACTOR, &DetailsClip::onScalingFactorChanged, mDetails);
-        Video->Unbind(model::EVENT_CHANGE_VIDEOCLIP_ROTATION, &DetailsClip::onRotationChanged, mDetails);
-        Video->Unbind(model::EVENT_CHANGE_VIDEOCLIP_ALIGNMENT, &DetailsClip::onAlignmentChanged, mDetails);
-        Video->Unbind(model::EVENT_CHANGE_VIDEOCLIP_POSITION, &DetailsClip::onPositionChanged, mDetails);
-        Video->Unbind(model::EVENT_CHANGE_VIDEOCLIP_MINPOSITION, &DetailsClip::onMinPositionChanged, mDetails);
-        Video->Unbind(model::EVENT_CHANGE_VIDEOCLIP_MAXPOSITION, &DetailsClip::onMaxPositionChanged, mDetails);
+        ASSERT_NONZERO(VideoKeyFrame);
+        VideoKeyFrame->Unbind(model::EVENT_CHANGE_VIDEOCLIP_OPACITY, &DetailsClip::onOpacityChanged, mDetails);
+        VideoKeyFrame->Unbind(model::EVENT_CHANGE_VIDEOCLIP_SCALING, &DetailsClip::onScalingChanged, mDetails);
+        VideoKeyFrame->Unbind(model::EVENT_CHANGE_VIDEOCLIP_SCALINGFACTOR, &DetailsClip::onScalingFactorChanged, mDetails);
+        VideoKeyFrame->Unbind(model::EVENT_CHANGE_VIDEOCLIP_ROTATION, &DetailsClip::onRotationChanged, mDetails);
+        VideoKeyFrame->Unbind(model::EVENT_CHANGE_VIDEOCLIP_ALIGNMENT, &DetailsClip::onAlignmentChanged, mDetails);
+        VideoKeyFrame->Unbind(model::EVENT_CHANGE_VIDEOCLIP_POSITION, &DetailsClip::onPositionChanged, mDetails);
+        VideoKeyFrame->Unbind(model::EVENT_CHANGE_VIDEOCLIP_MINPOSITION, &DetailsClip::onMinPositionChanged, mDetails);
+        VideoKeyFrame->Unbind(model::EVENT_CHANGE_VIDEOCLIP_MAXPOSITION, &DetailsClip::onMaxPositionChanged, mDetails);
     }
     if (Audio)
     {
@@ -78,6 +81,7 @@ DetailsClip::ClonesContainer::~ClonesContainer()
     Clip.reset();
     Link.reset();
     Video.reset();
+    VideoKeyFrame.reset();
     Audio.reset();
 };
 

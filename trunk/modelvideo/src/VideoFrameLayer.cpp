@@ -22,7 +22,7 @@
 #include "UtilInitAvcodec.h"
 #include "UtilLogBoost.h"
 #include "UtilLogWxwidgets.h"
-#include "VideoClip.h"
+#include "VideoClipKeyFrame.h"
 #include "VideoCompositionParameters.h"
 
 namespace model {
@@ -35,7 +35,7 @@ VideoFrameLayer::VideoFrameLayer(const wxImagePtr& image)
     : mImage(image)
     , mResultingImage(boost::none)
     , mPosition(0,0)
-    , mOpacity(VideoClip::sOpacityMax)
+    , mOpacity(VideoClipKeyFrame::sOpacityMax)
     , mRotation(boost::none)
 {
 }
@@ -44,7 +44,7 @@ VideoFrameLayer::VideoFrameLayer(const VideoFrameLayer& other)
     : mImage()
     , mResultingImage(boost::none)
     , mPosition(other.mPosition)
-    , mOpacity(VideoClip::sOpacityMax)
+    , mOpacity(VideoClipKeyFrame::sOpacityMax)
     , mRotation(other.mRotation)
 {
     mImage = boost::make_shared<wxImage>(const_cast<VideoFrameLayer&>(other).mImage->Copy());
@@ -115,7 +115,7 @@ wxImagePtr VideoFrameLayer::getImage()
         if (!mImage->HasAlpha())
         {
             // Init alpha done as late as possible (avoid creating needlessly).
-            if (mOpacity != VideoClip::sOpacityMax)
+            if (mOpacity != VideoClipKeyFrame::sOpacityMax)
             {
                 mImage->InitAlpha();
                 memset(mImage->GetAlpha(),mOpacity,mImage->GetWidth() * mImage->GetHeight());
@@ -128,14 +128,14 @@ wxImagePtr VideoFrameLayer::getImage()
         else
         {
             // Alpha already initialized.
-            if (mOpacity != VideoClip::sOpacityMax)
+            if (mOpacity != VideoClipKeyFrame::sOpacityMax)
             {
                 unsigned char* alpha = mImage->GetAlpha();
                 ASSERT_NONZERO(alpha);
 
                 for (int x = 0; x < mImage->GetWidth() * mImage->GetHeight(); ++x)
                 {
-                    *alpha = static_cast<char>(static_cast<int>(*alpha) * mOpacity / VideoClip::sOpacityMax);
+                    *alpha = static_cast<char>(static_cast<int>(*alpha) * mOpacity / VideoClipKeyFrame::sOpacityMax);
                     ++alpha;
                     // NOT: *alpha++ = static_cast<char>(static_cast<int>(*alpha) * mOpacity / Constants::sOpacityMax);
                     // Gives problems (on linux/GCC) because operand 'alpha' is used twice in the expression,
