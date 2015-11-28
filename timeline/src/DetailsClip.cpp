@@ -47,6 +47,7 @@
 #include "UtilLogStl.h"
 #include "UtilLogWxwidgets.h"
 #include "VideoClip.h"
+#include "VideoClipKeyFrame.h"
 #include "VideoClipEvent.h"
 #include "VideoComposition.h"
 #include "VideoCompositionParameters.h"
@@ -185,11 +186,11 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
 
     mOpacityPanel = new wxPanel(this);
     wxBoxSizer* opacitysizer = new wxBoxSizer(wxHORIZONTAL);
-    mOpacitySlider = new wxSlider(mOpacityPanel, wxID_ANY, model::VideoClip::sOpacityMax, model::VideoClip::sOpacityMin, model::VideoClip::sOpacityMax );
+    mOpacitySlider = new wxSlider(mOpacityPanel, wxID_ANY, model::VideoClipKeyFrame::sOpacityMax, model::VideoClipKeyFrame::sOpacityMin, model::VideoClipKeyFrame::sOpacityMax );
     mOpacitySlider->SetPageSize(sOpacityPageSize);
     mOpacitySpin = new wxSpinCtrl(mOpacityPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(55,-1));
-    mOpacitySpin->SetRange(model::VideoClip::sOpacityMin, model::VideoClip::sOpacityMax);
-    mOpacitySpin->SetValue(model::VideoClip::sOpacityMax);
+    mOpacitySpin->SetRange(model::VideoClipKeyFrame::sOpacityMin, model::VideoClipKeyFrame::sOpacityMax);
+    mOpacitySpin->SetValue(model::VideoClipKeyFrame::sOpacityMax);
     mOpacitySpin->SetWindowVariant( wxWINDOW_VARIANT_SMALL );
     opacitysizer->Add(mOpacitySlider, wxSizerFlags(1).Expand());
     opacitysizer->Add(mOpacitySpin, wxSizerFlags(0));
@@ -217,13 +218,13 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     wxBoxSizer* scalingsizer = new wxBoxSizer(wxHORIZONTAL);
     mSelectScaling = new EnumSelector<model::VideoScaling>(mScalingPanel, model::VideoScalingConverter::getMapToHumanReadibleString(), model::VideoScalingNone);
     mSelectScaling->SetWindowVariant( wxWINDOW_VARIANT_SMALL );
-    mScalingSlider = new wxSlider(mScalingPanel,wxID_ANY, factorToSliderValue(model::VideoClip::sScalingMax), factorToSliderValue(model::VideoClip::sScalingMin), factorToSliderValue(model::VideoClip::sScalingMax));
+    mScalingSlider = new wxSlider(mScalingPanel,wxID_ANY, factorToSliderValue(model::VideoClipKeyFrame::sScalingMax), factorToSliderValue(model::VideoClipKeyFrame::sScalingMin), factorToSliderValue(model::VideoClipKeyFrame::sScalingMax));
     mScalingSlider->SetPageSize(sFactorPageSize);
     mScalingSpin = new wxSpinCtrlDouble(mScalingPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(55,-1));
     mScalingSpin->SetWindowVariant( wxWINDOW_VARIANT_SMALL );
     mScalingSpin->SetValue(1); // No scaling
     mScalingSpin->SetDigits(sFactorPrecision);
-    mScalingSpin->SetRange(boost::rational_cast<double>(model::VideoClip::sScalingMin), boost::rational_cast<double>(model::VideoClip::sScalingMax));
+    mScalingSpin->SetRange(boost::rational_cast<double>(model::VideoClipKeyFrame::sScalingMin), boost::rational_cast<double>(model::VideoClipKeyFrame::sScalingMax));
     mScalingSpin->SetIncrement(sFactorIncrement);
     scalingsizer->Add(mSelectScaling, wxSizerFlags(0).Left());
     scalingsizer->Add(mScalingSlider, wxSizerFlags(1).Expand());
@@ -444,24 +445,24 @@ void DetailsClip::setClip(const model::IClipPtr& clip)
         if (video)
         {
             wxSize originalSize = video->getInputSize();
-            boost::rational< int > factor = video->getScalingFactor();
-            boost::rational< int > rotation = video->getRotation();
-            wxPoint position = video->getPosition();
-            wxPoint maxpos = video->getMaxPosition();
-            wxPoint minpos = video->getMinPosition();
-            int opacity = video->getOpacity();
+            boost::rational< int > factor = video->getKeyFrame(0)->getScalingFactor();
+            boost::rational< int > rotation = video->getKeyFrame(0)->getRotation();
+            wxPoint position = video->getKeyFrame(0)->getPosition();
+            wxPoint maxpos = video->getKeyFrame(0)->getMaxPosition();
+            wxPoint minpos = video->getKeyFrame(0)->getMinPosition();
+            int opacity = video->getKeyFrame(0)->getOpacity();
 
             mOpacitySlider->SetValue(opacity);
             mOpacitySpin->SetValue(opacity);
 
-            mSelectScaling->select(video->getScaling());
+            mSelectScaling->select(video->getKeyFrame(0)->getScaling());
             mScalingSlider->SetValue(factorToSliderValue(factor));
             mScalingSpin->SetValue(boost::rational_cast<double>(factor));
 
             mRotationSlider->SetValue(boost::rational_cast<int>(rotation * sRotationPrecisionFactor));
             mRotationSpin->SetValue(boost::rational_cast<double>(rotation));
 
-            mSelectAlignment->select(video->getAlignment());
+            mSelectAlignment->select(video->getKeyFrame(0)->getAlignment());
             mPositionXSlider->SetRange(minpos.x, maxpos.x);
             mPositionXSlider->SetValue(position.x);
             mPositionXSpin->SetRange(minpos.x, maxpos.x);
@@ -570,7 +571,7 @@ void DetailsClip::onOpacitySliderChanged(wxCommandEvent& event)
     CatchExceptions([this]
     {
         submitEditCommandUponAudioVideoEdit(sEditOpacity);
-        mClones->Video->setOpacity(mOpacitySlider->GetValue());
+        mClones->VideoKeyFrame->setOpacity(mOpacitySlider->GetValue());
     });
     event.Skip();
 }
@@ -581,7 +582,7 @@ void DetailsClip::onOpacitySpinChanged(wxSpinEvent& event)
     CatchExceptions([this]
     {
         submitEditCommandUponAudioVideoEdit(sEditOpacity); // Changes same clip aspect as the slider
-        mClones->Video->setOpacity(mOpacitySpin->GetValue());
+        mClones->VideoKeyFrame->setOpacity(mOpacitySpin->GetValue());
     });
     event.Skip();
 }
@@ -592,7 +593,7 @@ void DetailsClip::onScalingChoiceChanged(wxCommandEvent& event)
     CatchExceptions([this]
     {
         submitEditCommandUponAudioVideoEdit(sEditScalingType);
-        mClones->Video->setScaling(mSelectScaling->getValue(), boost::none);
+        mClones->VideoKeyFrame->setScaling(mSelectScaling->getValue(), boost::none);
     });
     event.Skip();
 }
@@ -603,7 +604,7 @@ void DetailsClip::onScalingSliderChanged(wxCommandEvent& event)
     CatchExceptions([this]
     {
         submitEditCommandUponAudioVideoEdit(sEditScaling);
-        mClones->Video->setScaling(model::VideoScalingCustom, boost::optional< boost::rational< int > >(sliderValueToFactor(mScalingSlider->GetValue())));
+        mClones->VideoKeyFrame->setScaling(model::VideoScalingCustom, boost::optional< boost::rational< int > >(sliderValueToFactor(mScalingSlider->GetValue())));
     });
     event.Skip();
 }
@@ -617,7 +618,7 @@ void DetailsClip::onScalingSpinChanged(wxSpinDoubleEvent& event)
         int spinFactor = floor(value * sFactorPrecisionFactor);
         boost::rational<int> r(spinFactor, sFactorPrecisionFactor);
         submitEditCommandUponAudioVideoEdit(sEditScaling); // Changes same clip aspect as the slider
-        mClones->Video->setScaling(model::VideoScalingCustom, boost::optional< boost::rational< int > >(r));
+        mClones->VideoKeyFrame->setScaling(model::VideoScalingCustom, boost::optional< boost::rational< int > >(r));
     });
     event.Skip();
 }
@@ -629,7 +630,7 @@ void DetailsClip::onRotationSliderChanged(wxCommandEvent& event)
     CatchExceptions([this, r]
     {
         submitEditCommandUponAudioVideoEdit(sEditRotation);
-        mClones->Video->setRotation(r);
+        mClones->VideoKeyFrame->setRotation(r);
     });
     event.Skip();
 }
@@ -642,7 +643,7 @@ void DetailsClip::onRotationSpinChanged(wxSpinDoubleEvent& event)
     CatchExceptions([this,r]
     {
         submitEditCommandUponAudioVideoEdit(sEditRotation); // Changes same clip aspect as the slider
-        mClones->Video->setRotation(r);
+        mClones->VideoKeyFrame->setRotation(r);
     });
     event.Skip();
 }
@@ -653,7 +654,7 @@ void DetailsClip::onAlignmentChoiceChanged(wxCommandEvent& event)
     CatchExceptions([this]
     {
         submitEditCommandUponAudioVideoEdit(sEditAlignment);
-        mClones->Video->setAlignment(mSelectAlignment->getValue());
+        mClones->VideoKeyFrame->setAlignment(mSelectAlignment->getValue());
     });
     event.Skip();
 }
@@ -665,7 +666,7 @@ void DetailsClip::onPositionXSliderChanged(wxCommandEvent& event)
     {
         submitEditCommandUponAudioVideoEdit(sEditX);
         updateAlignment(true);
-        mClones->Video->setPosition(wxPoint(mPositionXSlider->GetValue(), mPositionYSlider->GetValue()));
+        mClones->VideoKeyFrame->setPosition(wxPoint(mPositionXSlider->GetValue(), mPositionYSlider->GetValue()));
     });
     event.Skip();
 }
@@ -677,7 +678,7 @@ void DetailsClip::onPositionXSpinChanged(wxSpinEvent& event)
     {
         submitEditCommandUponAudioVideoEdit(sEditX); // Changes same clip aspect as the slider
         updateAlignment(true);
-        mClones->Video->setPosition(wxPoint(mPositionXSpin->GetValue(), mPositionYSlider->GetValue()));
+        mClones->VideoKeyFrame->setPosition(wxPoint(mPositionXSpin->GetValue(), mPositionYSlider->GetValue()));
     });
     event.Skip();
 }
@@ -689,7 +690,7 @@ void DetailsClip::onPositionYSliderChanged(wxCommandEvent& event)
     {
         submitEditCommandUponAudioVideoEdit(sEditY);
         updateAlignment(false);
-        mClones->Video->setPosition(wxPoint(mPositionXSlider->GetValue(), mPositionYSlider->GetValue()));
+        mClones->VideoKeyFrame->setPosition(wxPoint(mPositionXSlider->GetValue(), mPositionYSlider->GetValue()));
     });
     event.Skip();
 }
@@ -701,7 +702,7 @@ void DetailsClip::onPositionYSpinChanged(wxSpinEvent& event)
     {
         submitEditCommandUponAudioVideoEdit(sEditY); // Changes same clip aspect as the slider
         updateAlignment(false);
-        mClones->Video->setPosition(wxPoint(mPositionXSlider->GetValue(), mPositionYSpin->GetValue()));
+        mClones->VideoKeyFrame->setPosition(wxPoint(mPositionXSlider->GetValue(), mPositionYSpin->GetValue()));
     });
     event.Skip();
 }
@@ -1231,7 +1232,7 @@ void DetailsClip::updateAlignment(bool horizontalchange)
         }
         return mSelectAlignment->getValue();
     };
-    mClones->Video->setAlignment(getAlignment());
+    mClones->Video->getKeyFrame(0)->setAlignment(getAlignment()); // todo just edit the cloned keyframe mClones->VideoKeyFrame
 }
 
 void DetailsClip::determineClipSizeBounds()

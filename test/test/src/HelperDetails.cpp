@@ -50,8 +50,10 @@ void ASSERT_CLIPPROPERTIES(
     WaitForIdle;
 
     model::IClipPtr selectedclip = nullptr;
+    model::VideoScaling widget_scaling = model::VideoScalingCustom;
     int widget_scalingdigits = 0;
     double widget_scalingspin = 0.0;
+    model::VideoAlignment widget_alignment = model::VideoAlignmentCustom;
     int widget_xslider = 0;
     int widget_xspin = 0;
     int widget_yslider = 0;
@@ -61,8 +63,10 @@ void ASSERT_CLIPPROPERTIES(
     util::thread::RunInMainAndWait([&]
     {
         selectedclip = DetailsClipView()->getClip();
+        widget_scaling = DetailsClipView()->getScalingSelector()->getValue();
         widget_scalingdigits = DetailsClipView()->getScalingSlider()->GetValue();
         widget_scalingspin = DetailsClipView()->getScalingSpin()->GetValue();
+        widget_alignment = DetailsClipView()->getAlignmentSelector()->getValue();
         widget_xslider = DetailsClipView()->getPositionXSlider()->GetValue();
         widget_xspin = DetailsClipView()->getPositionXSpin()->GetValue();
         widget_yslider = DetailsClipView()->getPositionYSlider()->GetValue();
@@ -71,8 +75,10 @@ void ASSERT_CLIPPROPERTIES(
     });
     ASSERT_EQUALS(selectedclip, clip);
 
+    ASSERT_EQUALS(widget_scaling, scaling);
     ASSERT_EQUALS(gui::timeline::DetailsClip::sliderValueToFactor(widget_scalingdigits), scalingfactor);
     ASSERT_EQUALS(floor(widget_scalingspin * 100), floor(boost::rational_cast<double>(scalingfactor) * 100)); // floor + *100 : ensure that only two digits are used
+    ASSERT_EQUALS(widget_alignment, alignment);
     ASSERT_EQUALS(widget_xslider,position.x)(widget_yslider);
     ASSERT_EQUALS(widget_xspin,position.x);
     ASSERT_EQUALS(widget_yslider,position.y)(widget_xslider);
@@ -81,11 +87,11 @@ void ASSERT_CLIPPROPERTIES(
     ASSERT_EQUALS(widget_rotationdigits, rotationdigits);
 
     model::VideoClipPtr videoclip = getVideoClip(clip);
-    ASSERT_EQUALS(videoclip->getScaling(),scaling);
-    ASSERT_EQUALS(videoclip->getScalingFactor(),scalingfactor);
-    ASSERT_EQUALS(videoclip->getAlignment(),alignment);
-    ASSERT_EQUALS(videoclip->getPosition(),position);
-    ASSERT_EQUALS(videoclip->getRotation(),rotation);
+    ASSERT_EQUALS(videoclip->getKeyFrame(0)->getScaling(),scaling);
+    ASSERT_EQUALS(videoclip->getKeyFrame(0)->getScalingFactor(),scalingfactor);
+    ASSERT_EQUALS(videoclip->getKeyFrame(0)->getAlignment(),alignment);
+    ASSERT_EQUALS(videoclip->getKeyFrame(0)->getPosition(),position);
+    ASSERT_EQUALS(videoclip->getKeyFrame(0)->getRotation(),rotation);
 };
 
 } // namespace

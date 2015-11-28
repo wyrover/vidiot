@@ -337,11 +337,11 @@ void TestDetailsClip::testTransform()
     gui::Window::get().getUiManager().GetPane("Details").MinSize(wxSize(600,-1));
 
     model::VideoClipPtr videoclip = getVideoClip(VideoClip(0,3));
-    model::VideoScaling oldScaling = videoclip->getScaling();
-    boost::rational<int> oldScalingFactor = videoclip->getScalingFactor();
-    wxPoint oldPosition = videoclip->getPosition();
-    model::VideoAlignment oldAlignment = videoclip->getAlignment();
-    boost::rational<int> oldRotation = videoclip->getRotation();
+    model::VideoScaling oldScaling = getScaling(videoclip);
+    boost::rational<int> oldScalingFactor = getScalingFactor(videoclip);
+    wxPoint oldPosition = getPosition(videoclip);
+    model::VideoAlignment oldAlignment = getAlignment(videoclip);
+    boost::rational<int> oldRotation = getRotation(videoclip);
     ASSERT_EQUALS(videoclip->getInputSize(), wxSize(1280,720)); //Ensure that all checks are based on the right dimensions
     auto ASSERT_ORIGINAL_CLIPPROPERTIES = []
     {

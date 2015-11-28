@@ -232,14 +232,23 @@ DialogNewProject::~DialogNewProject()
     gui::Window::get().setDialogOpen(false);
 }
 
+// static
 bool DialogNewProject::runWizard()
 {
-    if (mDefaultType == model::DefaultNewProjectWizardStartNone)
+    if (Config::ReadEnum<model::DefaultNewProjectWizardStart>(Config::sPathProjectDefaultNewProjectType) == model::DefaultNewProjectWizardStartNone)
     {
         return true;
     }
+    return DialogNewProject().RunWizard();
+}
 
-    return RunWizard(mPageStart);
+bool DialogNewProject::RunWizard(wxWizardPage* firstPage)
+{
+    if (firstPage == nullptr)
+    {
+        return wxWizard::RunWizard(mPageStart);
+    }
+    return wxWizard::RunWizard(firstPage);
 }
 
 // static

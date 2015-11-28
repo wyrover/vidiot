@@ -33,24 +33,34 @@ model::AudioClipPtr getAudioClip(model::IClipPtr clip)
     return audioclip;
 }
 
-boost::rational<int> getScalingFactor(model::IClipPtr clip)
+int getOpacity(model::IClipPtr clip, pts position)
 {
-    return getVideoClip(clip)->getScalingFactor();
+    return getVideoClip(clip)->getKeyFrame(position)->getOpacity();
 };
 
-model::VideoScaling getScaling(model::IClipPtr clip)
+boost::rational<int> getScalingFactor(model::IClipPtr clip, pts position)
 {
-    return getVideoClip(clip)->getScaling();
+    return getVideoClip(clip)->getKeyFrame(position)->getScalingFactor();
 };
 
-model::VideoAlignment getAlignment(model::IClipPtr clip)
+model::VideoScaling getScaling(model::IClipPtr clip, pts position)
 {
-    return getVideoClip(clip)->getAlignment();
+    return getVideoClip(clip)->getKeyFrame(position)->getScaling();
+};
+
+model::VideoAlignment getAlignment(model::IClipPtr clip, pts position)
+{
+    return getVideoClip(clip)->getKeyFrame(position)->getAlignment();
 }
 
-wxPoint getPosition(model::IClipPtr clip)
+wxPoint getPosition(model::IClipPtr clip, pts position)
 {
-    return getVideoClip(clip)->getPosition();
+    return getVideoClip(clip)->getKeyFrame(position)->getPosition();
+}
+
+boost::rational<int> getRotation(model::IClipPtr clip, pts position)
+{
+    return getVideoClip(clip)->getKeyFrame(position)->getRotation();
 }
 
 void Unlink(model::IClipPtr clip)

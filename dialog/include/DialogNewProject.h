@@ -44,7 +44,8 @@ public:
     DialogNewProject();
     virtual ~DialogNewProject();
 
-    bool runWizard();
+    static bool runWizard();
+    bool RunWizard(wxWizardPage* firstPage = nullptr) override;
 
     static void setDroppedFiles(wxStrings files);
 

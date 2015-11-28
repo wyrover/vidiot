@@ -163,13 +163,14 @@ private:
     {
         ClonesContainer(const ClonesContainer& other) = delete;
 
-        explicit ClonesContainer(DetailsClip* details, model::IClipPtr clip);
+        explicit ClonesContainer(DetailsClip* details, model::IClipPtr clip, pts position = 0);
         virtual ~ClonesContainer();
 
         DetailsClip* mDetails = nullptr;
         model::IClipPtr Clip = nullptr;
         model::IClipPtr Link = nullptr;
         model::VideoClipPtr Video = nullptr;
+        model::VideoClipKeyFramePtr VideoKeyFrame = nullptr;
         model::AudioClipPtr Audio = nullptr;
     };
 
