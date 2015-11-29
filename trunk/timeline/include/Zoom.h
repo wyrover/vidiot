@@ -20,6 +20,7 @@
 #include "Part.h"
 #include "UtilEvent.h"
 #include "UtilInt.h"
+#include "UtilRational.h"
 
 namespace gui { namespace timeline {
 
@@ -40,7 +41,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     // Return current zoom level
-    rational getCurrent() const;
+    rational64 getCurrent() const;
 
     /// Change the current zoom level
     /// \param steps number of steps to change (>0 zoom in, <0 zoom out)
@@ -55,11 +56,11 @@ public:
     pts pixelsToPts(int pixels) const;
     int ptsToPixels(pts position) const;
 
-    static int ptsToPixels(pts position, rational zoom);
+    static int ptsToPixels(pts position, rational64 zoom);
 
 private:
 
-    rational mZoom; ///< Number of pixels per frame
+    rational64 mZoom; ///< Number of pixels per frame
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION
@@ -72,4 +73,4 @@ private:
 
 }} // namespace
 
-BOOST_CLASS_VERSION(gui::timeline::Zoom, 1)
+BOOST_CLASS_VERSION(gui::timeline::Zoom, 2)

@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-26 18:26+0100\n"
-"PO-Revision-Date: 2015-11-04 15:44+0100\n"
+"POT-Creation-Date: 2015-11-29 12:21+0100\n"
+"PO-Revision-Date: 2015-11-28 16:34+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: nl_NL\n"
@@ -114,15 +114,15 @@ msgstr "Selecteer map"
 msgid "Select files"
 msgstr "Selecteer bestanden"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:339
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:348
 msgid "Movie"
 msgstr "Film"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:469
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:478
 msgid "&Finish"
 msgstr "&Voltooien"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:598
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:607
 #: C:\Vidiot\vidiot_trunk\modelfile\src\FileAnalyzer.cpp:318
 #, c-format
 msgid "Found %d file(s)"
@@ -203,7 +203,7 @@ msgstr ""
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogProjectProperties.cpp:43
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:111
 #: C:\Vidiot\vidiot_trunk\gui\src\EditProjectProperties.cpp:40
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:80
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:82
 msgid "Video"
 msgstr "Video"
 
@@ -244,7 +244,7 @@ msgstr "Standaard lengte voor plaatjes (in frames)"
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogProjectProperties.cpp:70
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:117
 #: C:\Vidiot\vidiot_trunk\gui\src\EditProjectProperties.cpp:58
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:81
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:83
 msgid "Audio"
 msgstr "Audio"
 
@@ -871,18 +871,15 @@ msgstr "Kleur"
 msgid "Missing file: "
 msgstr "Bestand niet gevonden:"
 
-#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoClip.cpp:307
-#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoClipKeyFrame.cpp:307
+#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoClipKeyFrame.cpp:199
 msgid "Width becomes 0."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoClip.cpp:311
-#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoClipKeyFrame.cpp:311
+#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoClipKeyFrame.cpp:203
 msgid "Height becomes 0."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoClip.cpp:315
-#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoClipKeyFrame.cpp:315
+#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoClipKeyFrame.cpp:207
 msgid "Image becomes too large."
 msgstr ""
 
@@ -1260,51 +1257,51 @@ msgstr "Fout in video codec"
 msgid "There was an error when opening the video codec."
 msgstr "Er is een fout opgetreden bij het openen van de video codec."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:82
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:84
 msgid "Transition"
 msgstr "Overgang"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:84
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:86
 #, c-format
 msgid "Edit opacity of %s"
 msgstr "Bewerk doorzichtigheid van %s"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:85
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:87
 #, c-format
 msgid "Edit automated scaling of %s"
 msgstr "Bewerk schaling van %s"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:86
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:88
 #, c-format
 msgid "Edit scaling of %s"
 msgstr "Bewerk schaalfactor van %s"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:87
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:89
 #, c-format
 msgid "Edit rotation of %s"
 msgstr "Bewerk rotatie van %s"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:88
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:90
 #, c-format
 msgid "Edit automated alignment of %s"
 msgstr "Bewerk positionering van %s"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:89
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:91
 #, c-format
 msgid "Edit X position of %s"
 msgstr "Bewerk X positie van %s"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:90
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:92
 #, c-format
 msgid "Edit Y position of %s"
 msgstr "Bewerk Y positie van %s"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:91
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:93
 #, c-format
 msgid "Edit volume of %s"
 msgstr "Bewerk volume van %s"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:160
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:168
 msgid ""
 "Change the length of the clip to this length. Will shift other clips to "
 "avoid introducing a black area."
@@ -1312,49 +1309,54 @@ msgstr ""
 "Verander de lengte van de clip naar deze lengte. Andere clips worden "
 "verschoven om lege ruimte te voorkomen."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:160
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:168
 msgid "Shortcut key"
 msgstr "Toets"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:166
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:174
 msgid "Fixed lengths (s)"
 msgstr "Standaard duur (s)"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:181
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:189
 msgid "Speed"
 msgstr "Snelheid"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:197
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:205
 msgid "Opacity"
-msgstr "Matheid"
+msgstr "Ondoorzichtigheid"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:214
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:222
 msgid "Rotation"
 msgstr "Rotatie"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:232
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:240
 msgid "Scaling"
 msgstr "Schaling"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:260
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:268
 msgid "Position"
 msgstr "Positie"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:290
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:294
+#, fuzzy
+msgid "Video key frames"
+msgstr "Video bestanden"
+
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:327
 msgid "Volume (%)"
 msgstr "Volume (%)"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:825
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:961
 msgid ""
 "Could not execute the length change without messing up clips in other tracks."
 msgstr ""
 "Kon de lengte niet veranderen zonder andere sporen in de war te brengen."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:831
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:967
 msgid "Set length of clip"
 msgstr "Zet lengte van clip"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:1117
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:1253
 msgid "Change "
 msgstr "Verander"
 

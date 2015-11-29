@@ -19,6 +19,7 @@
 
 #include "UtilFifo.h"
 #include "UtilInt.h"
+#include "UtilRational.h"
 #include "UtilRTTI.h"
 
 namespace model {

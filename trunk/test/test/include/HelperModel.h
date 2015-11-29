@@ -33,7 +33,7 @@ int getOpacity(model::IClipPtr clip, pts position = 0);
 
 /// \return the current scaling factor for the given (video) clip
 /// \pre clip is a video clip
-boost::rational<int> getScalingFactor(model::IClipPtr clip, pts position = 0);
+rational64 getScalingFactor(model::IClipPtr clip, pts position = 0);
 
 /// \return the current scaling type for the given (video) clip
 /// \pre clip is a video clip
@@ -49,14 +49,14 @@ wxPoint getPosition(model::IClipPtr clip, pts position = 0);
 
 /// \return the current rotation for the given (video) clip
 /// \pre clip is a video clip
-boost::rational<int> getRotation(model::IClipPtr clip, pts position = 0);
+rational64 getRotation(model::IClipPtr clip, pts position = 0);
 
 /// Unlink the clip from it's link (and vice versa)
 /// \pre clip->getLink()
 /// \post !clip->getLink() && !originalLink->getLink()
 void Unlink(model::IClipPtr clip);
 
-void AssertClipSpeed(model::IClipPtr clip, rational speed);
+void AssertClipSpeed(model::IClipPtr clip, rational64 speed);
 #define ASSERT_CLIP_SPEED(clip, speed) AssertClipSpeed(clip, speed)
 
 } // namespace

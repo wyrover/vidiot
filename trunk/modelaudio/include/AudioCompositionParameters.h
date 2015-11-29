@@ -19,6 +19,7 @@
 
 #include "IAudio.h"
 #include "UtilInt.h"
+#include "UtilRational.h"
 
 namespace model {
 
@@ -43,8 +44,8 @@ public:
     AudioCompositionParameters& setNrChannels(int nChannels);
     int getNrChannels() const;
 
-    AudioCompositionParameters& setSpeed(boost::rational<int> speed);
-    boost::rational<int> getSpeed() const;
+    AudioCompositionParameters& setSpeed(rational64 speed);
+    rational64 getSpeed() const;
 
     AudioCompositionParameters& setPts(pts position);
     AudioCompositionParameters& adjustPts(pts adjustment);
@@ -62,7 +63,7 @@ private:
 
     int mSampleRate;    ///< The rate (samples per second) at which audio will be played (44100/48000/etc.)
     int mNrChannels;    ///< Number of audio channels (speakers)
-    boost::rational<int> mSpeed;
+    rational64 mSpeed;
     boost::optional<pts> mPts;
     boost::optional<samplecount> mChunkSize;
 

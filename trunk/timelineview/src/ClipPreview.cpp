@@ -28,7 +28,7 @@ namespace gui { namespace timeline {
 //////////////////////////////////////////////////////////////////////////
 
 
-RenderClipPreviewWork::RenderClipPreviewWork(const model::IClipPtr& clip, const wxSize& size, rational zoom)
+RenderClipPreviewWork::RenderClipPreviewWork(const model::IClipPtr& clip, const wxSize& size, rational64 zoom)
     : worker::Work([this] { mResult = createBitmap(); })
     , mClip(clip)
     , mSize(size)

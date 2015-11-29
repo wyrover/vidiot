@@ -48,7 +48,7 @@ pts Convert::timeToPts(milliseconds time, const FrameRate& framerate)
 // static
 pts Convert::rationaltimeToPts(rational64 time, const FrameRate& framerate )
 {
-    return floor64(time / rational64(sSecond) * framerate );
+    return floor(time / rational64(sSecond) * framerate );
 }
 
 // static 
@@ -72,19 +72,19 @@ double Convert::ptsToSeconds(pts position)
 // static
 milliseconds Convert::ptsToTime(pts position, const FrameRate& framerate)
 {
-    return floor64(rational64(position) * rational64(sSecond) / framerate);
+    return floor(rational64(position) * rational64(sSecond) / framerate);
 }
 
 // static
 microseconds Convert::ptsToMicroseconds(pts position)
 {
-    return floor64(rational64(ptsToTime(position)) * rational64(sMicroseconds));
+    return floor(rational64(ptsToTime(position)) * rational64(sMicroseconds));
 }
 
 // static
 pts Convert::microsecondsToPts(microseconds us)
 {
-    return timeToPts(floor(rational(us) / rational(sMicroseconds)));
+    return timeToPts(floor(rational64(us) / rational64(sMicroseconds)));
 }
 
 // static
@@ -117,7 +117,7 @@ wxString Convert::ptsToHumanReadibleString(pts duration, bool minutesAlways, boo
 // static
 samplecount Convert::ptsToSamplesPerChannel(int audioRate, pts position)
 {
-    return floor64(rational64(position) * rational64(audioRate) / Properties::get().getFrameRate());
+    return floor(rational64(position) * rational64(audioRate) / Properties::get().getFrameRate());
 }
 
 // static
@@ -139,7 +139,7 @@ double Convert::samplesToSeconds(samplecount nSamples)
 
 pts convertFrameRate(pts inputposition, const FrameRate& inputrate, const FrameRate& outputrate)
 {
-    return floor64(rational64(inputposition) / inputrate * outputrate );
+    return floor(rational64(inputposition) / inputrate * outputrate );
 }
 
 //static
@@ -155,42 +155,37 @@ pts Convert::fromProjectFrameRate(pts outputposition, const FrameRate& inputrate
 }
 
 // static
-int Convert::scale(int input, rational factor)
+int Convert::scale(int input, rational64 factor)
 {
-    return floor(factor * rational(input));
+    return floor(factor * rational64(input));
 }
 
 // static
-wxSize Convert::scale(const wxSize& input, rational factor)
+wxSize Convert::scale(const wxSize& input, rational64 factor)
 {
     return wxSize(scale(input.x,factor),scale(input.y,factor));
 }
 
 // static
-wxPoint Convert::scale(const wxPoint& input, rational factor)
+wxPoint Convert::scale(const wxPoint& input, rational64 factor)
 {
     return wxPoint(scale(input.x,factor),scale(input.y,factor));
 }
 
 // static
-wxRect Convert::scale(const wxRect& input, rational factor)
+wxRect Convert::scale(const wxRect& input, rational64 factor)
 {
     return wxRect(scale(input.GetPosition(),factor),scale(input.GetSize(),factor));
 }
 
 // static
-wxSize Convert::sizeInBoundingBox(const wxSize& input, const wxSize& boundingbox, rational& scaling, bool fill)
+wxSize Convert::sizeInBoundingBox(const wxSize& input, const wxSize& boundingbox, rational64& scaling, bool fill)
 {
-    rational bbWidth(boundingbox.GetWidth());
-    rational inWidth(input.GetWidth());
-    rational scWidth = bbWidth / inWidth;
+    rational64 scWidth{ boundingbox.GetWidth(), input.GetWidth() };
+    rational64 scHeight{ boundingbox.GetHeight(), input.GetHeight() };
 
-    rational bbHeight(boundingbox.GetHeight());
-    rational inHeight(input.GetHeight());
-    rational scHeight = bbHeight / inHeight;
-
-    ASSERT_LESS_THAN_EQUALS(scWidth  * rational(input.GetWidth()),   rational(boundingbox.GetWidth()));
-    ASSERT_LESS_THAN_EQUALS(scHeight * rational(input.GetHeight()), rational(boundingbox.GetHeight()));
+    ASSERT_LESS_THAN_EQUALS(scWidth  * input.GetWidth(), boundingbox.GetWidth());
+    ASSERT_LESS_THAN_EQUALS(scHeight * input.GetHeight(), boundingbox.GetHeight());
 
     if (fill)
     {
@@ -207,12 +202,12 @@ wxSize Convert::sizeInBoundingBox(const wxSize& input, const wxSize& boundingbox
 // static
 wxSize Convert::sizeInBoundingBox(const wxSize& input, const wxSize& boundingbox)
 {
-    rational dummy;
-    return sizeInBoundingBox(input,boundingbox,dummy);
+    rational64 dummy;
+    return sizeInBoundingBox(input, boundingbox, dummy);
 }
 
 // static
-double Convert::degreesToRadians(rational degrees)
+double Convert::degreesToRadians(rational64 degrees)
 {
     return -1 * boost::rational_cast<double>(degrees) * boost::math::constants::pi<double>() / 180.0;
 }
@@ -230,19 +225,19 @@ samplecount Convert::audioSamplesToBytes(samplecount nSamples)
 }
 
 // static 
-pts Convert::positionToNewSpeed(pts position, rational newSpeed, rational oldSpeed)
+pts Convert::positionToNewSpeed(pts position, rational64 newSpeed, rational64 oldSpeed)
 {
      return boost::rational_cast<pts>(position * oldSpeed / newSpeed);
 }
 
 // static 
-pts Convert::positionToNormalSpeed(pts position, rational speed)
+pts Convert::positionToNormalSpeed(pts position, rational64 speed)
 {
      return boost::rational_cast<pts>(speed * position);
 }
 
 // static 
-int Convert::samplerateToNewSpeed(int samplerate, rational newSpeed, rational oldSpeed)
+int Convert::samplerateToNewSpeed(int samplerate, rational64 newSpeed, rational64 oldSpeed)
 {
      return boost::rational_cast<int>(samplerate * oldSpeed / newSpeed);
 }

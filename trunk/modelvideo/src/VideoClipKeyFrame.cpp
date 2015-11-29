@@ -40,11 +40,12 @@ namespace model {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-const rational VideoClipKeyFrame::sScalingMin{ 1,100 }; // 0.01
-const rational VideoClipKeyFrame::sScalingMax{ 100,1 }; // 100
+const rational64 VideoClipKeyFrame::sScalingMin{ 1,100 }; // 0.01
+const rational64 VideoClipKeyFrame::sScalingMax{ 100,1 }; // 100
 
 VideoClipKeyFrame::VideoClipKeyFrame()
     : wxEvtHandler{}
+    , mIsInterpolated{ false }
     , mInputSize{ 0,0 }
     , mOpacity{ sOpacityMax }
     , mScaling{}
@@ -58,23 +59,40 @@ VideoClipKeyFrame::VideoClipKeyFrame()
 }
 
 VideoClipKeyFrame::VideoClipKeyFrame(const wxSize& size)
-    : wxEvtHandler{}
-    , mInputSize{ size }
-    , mOpacity{ sOpacityMax }
-    , mScaling{ Config::ReadEnum<VideoScaling>(Config::sPathVideoDefaultScaling) }
-    , mScalingFactor{ 1 }
-    , mRotation{ 0 }
-    , mRotationPositionOffset{ 0, 0 }
-    , mAlignment{ Config::ReadEnum<VideoAlignment>(Config::sPathVideoDefaultAlignment) }
-    , mPosition{ 0, 0 }
+    : VideoClipKeyFrame{}
 {
     VAR_DEBUG(*this);
+    mInputSize = size;
+    mScaling = Config::ReadEnum<VideoScaling>(Config::sPathVideoDefaultScaling);
+    mAlignment = Config::ReadEnum<VideoAlignment>(Config::sPathVideoDefaultAlignment);
     updateAutomatedScaling();
     updateAutomatedPositioning();
 }
 
+VideoClipKeyFrame::VideoClipKeyFrame(VideoClipKeyFramePtr before, VideoClipKeyFramePtr after, pts positionBefore, pts position, pts positionAfter)
+    : VideoClipKeyFrame{}
+{
+    ASSERT_EQUALS(before->getSize(), after->getSize());
+    ASSERT_LESS_THAN(positionBefore, position);
+    ASSERT_LESS_THAN(position, positionAfter);
+    rational64 factor{ position - positionBefore, positionAfter - positionBefore };
+
+    mIsInterpolated = true;
+    mInputSize = before->getSize();
+    mOpacity = before->getOpacity() + boost::rational_cast<int>(factor * (rational64(after->getOpacity() - before->getOpacity())));
+    mScaling = model::VideoScalingCustom;
+    mScalingFactor = before->getScalingFactor() + (factor * (rational64(after->getScaling() - before->getScaling())));
+    mRotation = before->getRotation() + (factor * (rational64(after->getRotation() - before->getRotation())));
+    mRotationPositionOffset.x = before->getRotationPositionOffset().x + boost::rational_cast<int>(factor * (rational64(after->getRotationPositionOffset().x - before->getRotationPositionOffset().x)));
+    mRotationPositionOffset.y = before->getRotationPositionOffset().y + boost::rational_cast<int>(factor * (rational64(after->getRotationPositionOffset().y - before->getRotationPositionOffset().y)));
+    mAlignment = model::VideoAlignmentCustom;
+    mPosition.x = before->getPosition().x + boost::rational_cast<int>(factor * (rational64(after->getPosition().x - before->getPosition().x)));
+    mPosition.y = before->getPosition().y + boost::rational_cast<int>(factor * (rational64(after->getPosition().y - before->getPosition().y)));
+}
+
 VideoClipKeyFrame::VideoClipKeyFrame(const VideoClipKeyFrame& other)
     : wxEvtHandler{}
+    , mIsInterpolated{ other.mIsInterpolated }
     , mInputSize{ other.mInputSize }
     , mOpacity{ other.mOpacity }
     , mScaling{ other.mScaling }
@@ -111,12 +129,12 @@ VideoScaling VideoClipKeyFrame::getScaling() const
     return mScaling;
 }
 
-boost::rational<int> VideoClipKeyFrame::getScalingFactor() const
+rational64 VideoClipKeyFrame::getScalingFactor() const
 {
     return mScalingFactor;
 }
 
-boost::rational<int> VideoClipKeyFrame::getRotation() const
+rational64 VideoClipKeyFrame::getRotation() const
 {
     return mRotation;
 }
@@ -163,10 +181,10 @@ void VideoClipKeyFrame::setOpacity(int opacity)
     }
 }
 
-void VideoClipKeyFrame::setScaling(const VideoScaling& scaling, const boost::optional<boost::rational< int > >& factor)
+void VideoClipKeyFrame::setScaling(const VideoScaling& scaling, const boost::optional<rational64 >& factor)
 {
     VideoScaling oldScaling = mScaling;
-    boost::rational<int> oldScalingFactor = mScalingFactor;
+    rational64 oldScalingFactor = mScalingFactor;
     wxPoint oldPosition = mPosition;
     wxPoint oldMinPosition = getMinPosition();
     wxPoint oldMaxPosition = getMaxPosition();
@@ -226,9 +244,9 @@ void VideoClipKeyFrame::setScaling(const VideoScaling& scaling, const boost::opt
     }
 }
 
-void VideoClipKeyFrame::setRotation(const boost::rational< int >& rotation)
+void VideoClipKeyFrame::setRotation(const rational64& rotation)
 {
-    boost::rational< int > oldRotation = mRotation;
+    rational64 oldRotation = mRotation;
     wxPoint oldPosition = mPosition;
     wxPoint oldMinPosition = getMinPosition();
     wxPoint oldMaxPosition = getMaxPosition();
@@ -308,7 +326,7 @@ wxSize VideoClipKeyFrame::getBoundingBox()
 {
     ASSERT_DIFFERS(mInputSize, wxSize(0, 0));
     wxSize scaledsize = Convert::scale(mInputSize, getScalingFactor());
-    if (mRotation == boost::rational<int>(0))
+    if (mRotation == rational64(0))
     {
         return scaledsize;
     }
@@ -326,13 +344,13 @@ void VideoClipKeyFrame::updateAutomatedScaling()
     {
     case VideoScalingFitToFill:
     {
-        boost::rational<int> scalingfactor;
+        rational64 scalingfactor;
         Convert::sizeInBoundingBox(mInputSize, outputsize, mScalingFactor, true); // The true ensures that the bounding box is filled
         break;
     }
     case VideoScalingFitAll:
     {
-        boost::rational<int> scalingfactor;
+        rational64 scalingfactor;
         Convert::sizeInBoundingBox(mInputSize, outputsize, mScalingFactor);
         break;
     }

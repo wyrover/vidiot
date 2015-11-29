@@ -149,9 +149,9 @@ void TestRender::testRenderingTransformedClip()
     ASSERT(clip);
     util::thread::RunInMainAndWait([clip]
     {
-        clip->getKeyFrame(0)->setOpacity(128);
-        clip->getKeyFrame(0)->setScaling(model::VideoScalingCustom, boost::optional<boost::rational< int > >(1,2));
-        clip->getKeyFrame(0)->setPosition(wxPoint(50,50));
+        clip->getKeyFrameAt(0)->setOpacity(128);
+        clip->getKeyFrameAt(0)->setScaling(model::VideoScalingCustom, boost::optional<rational64>(1,2));
+        clip->getKeyFrameAt(0)->setPosition(wxPoint(50,50));
     });
 
     RenderAndPlaybackCurrentTimeline();

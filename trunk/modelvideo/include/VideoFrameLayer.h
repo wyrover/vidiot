@@ -19,7 +19,7 @@
 
 #include "UtilFifo.h"
 #include "UtilFrameRate.h"
-#include "UtilInt.h"
+#include "UtilRational.h"
 #include "UtilRTTI.h"
 
 namespace model {
@@ -63,7 +63,7 @@ public:
     void setOpacity(int opacity);
     int getOpacity() const;
 
-    void setRotation(boost::rational<int> rotation);
+    void setRotation(rational64 rotation);
 
     /// Return an image, using the frame's data clipped to the region of interest.
     /// \note This method may return a 0 ptr if the region of interest is empty
@@ -83,7 +83,7 @@ private:
     boost::optional<wxImagePtr> mResultingImage; ///< Image with the changes (position, etc.) imposed by the layer
     wxPoint mPosition;
     int mOpacity;
-    boost::optional< boost::rational<int> > mRotation;
+    boost::optional< rational64 > mRotation;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

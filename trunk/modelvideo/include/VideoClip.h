@@ -66,7 +66,8 @@ public:
 
     wxSize getInputSize(); ///< \return size of input video
 
-    VideoClipKeyFramePtr getKeyFrame(pts position) const;
+    size_t getNumberOfKeyFrames() const;
+    VideoClipKeyFramePtr getKeyFrameAt(pts position) const;
 
 protected:
 

@@ -107,6 +107,7 @@
 #include "UtilLogBoost.h"
 #include "UtilLogWxwidgets.h"
 #include "UtilPath.h"
+#include "UtilRational.h"
 #include "UtilThread.h"
 #include "UtilVector.h"
 #include "VideoClip.h"

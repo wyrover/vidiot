@@ -24,7 +24,10 @@ typedef int64_t milliseconds;
 typedef int64_t microseconds;
 typedef int16_t sample;
 
-samplecount min(samplecount first, samplecount second);
+inline samplecount min(samplecount first, samplecount second)
+{
+    return first < second ? first : second;
+}
 
 template <typename TYPE>
 TYPE min3(const TYPE& t1, const TYPE& t2, const TYPE& t3)
@@ -37,12 +40,6 @@ typedef boost::icl::interval_set<pixel> PixelIntervals;
 typedef boost::icl::discrete_interval<pts> PtsInterval;
 typedef boost::icl::discrete_interval<pixel> PixelInterval;
 
-typedef boost::rational<int> rational;
-typedef boost::rational<int64_t> rational64;
-
-int floor(rational r);
-int64_t floor64(rational64 r);
-
 template <typename TYPE1, typename TYPE2>
 TYPE1 removeRemainder(const TYPE2& divisor, const TYPE1& value)
 {
@@ -54,3 +51,12 @@ constexpr milliseconds sMilliSecond = 1;                ///< Basic unit of time 
 constexpr milliseconds sSecond = 1000 * sMilliSecond;   ///< Number of milliseconds in one second
 constexpr milliseconds sMinute = 60 * sSecond;          ///< Number of milliseconds in one minute
 constexpr milliseconds sHour = 60 * sMinute;            ///< Number of milliseconds in one hour
+ 
+// From: http://www.stroustrup.com/Programming/std_lib_facilities.h                                                        
+// Run-time checked narrowing cast (type conversion):
+template<class R, class A> R narrow_cast(const A& a)
+{
+    R r = R(a);
+    ASSERT_EQUALS(A(r), a);
+    return r;
+}

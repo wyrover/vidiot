@@ -1,4 +1,4 @@
-// Copyright 2013-2015 Eric Raijmakers.
+// Copyright 2015 Eric Raijmakers.
 //
 // This file is part of Vidiot.
 //
@@ -15,19 +15,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#include "UtilInt.h"
+#pragma once
 
-samplecount min(samplecount first, samplecount second)
+typedef boost::rational<int32_t> rational32;
+typedef boost::rational<int64_t> rational64;
+
+inline int32_t floor(boost::rational<int32_t> r)
 {
-    return first < second ? first : second;
+    return static_cast<int32_t>(boost::rational_cast<double>(r));
 }
 
-int floor(rational r)
-{
-    return static_cast<int>(floor(boost::rational_cast<double>(r)));
-}
-
-int64_t floor64(rational64 r)
+inline int64_t floor(boost::rational<int64_t> r)
 {
     return static_cast<int64_t>(boost::rational_cast<double>(r));
+
 }

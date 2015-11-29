@@ -43,7 +43,7 @@ DetailsClip::ClonesContainer::ClonesContainer(DetailsClip* details, model::IClip
 
     if (Video)
     {
-        VideoKeyFrame = Video->getKeyFrame(position);
+        VideoKeyFrame = Video->getKeyFrameAt(position);
         ASSERT_NONZERO(VideoKeyFrame);
         VideoKeyFrame->Bind(model::EVENT_CHANGE_VIDEOCLIP_OPACITY, &DetailsClip::onOpacityChanged, mDetails);
         VideoKeyFrame->Bind(model::EVENT_CHANGE_VIDEOCLIP_SCALING, &DetailsClip::onScalingChanged, mDetails);

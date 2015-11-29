@@ -19,6 +19,7 @@
 
 #include "Enums.h"
 #include "UtilInt.h"
+#include "UtilRational.h"
 
 namespace model {
 
@@ -27,8 +28,8 @@ class VideoClipKeyFrame
 {
 public:
 
-    static const rational sScalingMin;
-    static const rational sScalingMax;
+    static const rational64 sScalingMin;
+    static const rational64 sScalingMax;
     static const int sOpacityMin = wxIMAGE_ALPHA_TRANSPARENT;
     static const int sOpacityMax = wxIMAGE_ALPHA_OPAQUE;
 
@@ -40,6 +41,8 @@ public:
     VideoClipKeyFrame();
 
     VideoClipKeyFrame(const wxSize& size);
+
+    VideoClipKeyFrame(VideoClipKeyFramePtr before, VideoClipKeyFramePtr after, pts positionBefore, pts position, pts positionAfter);
     
     virtual VideoClipKeyFrame* clone() const;
     void onCloned() const {};
@@ -50,10 +53,13 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
+    wxSize getSize() const { return mInputSize; }
+    bool isInterpolated() const { return mIsInterpolated; }
+
     int getOpacity() const;
     VideoScaling getScaling() const;
-    boost::rational<int> getScalingFactor() const;
-    boost::rational<int> getRotation() const;
+    rational64 getScalingFactor() const;
+    rational64 getRotation() const;
     wxPoint getRotationPositionOffset() const;
     VideoAlignment getAlignment() const;
     wxPoint getPosition() const; ///< \return the logical position as observed by the user. That is the combination of the alignment offset and the shift because of the region of interest.
@@ -62,8 +68,8 @@ public:
     wxPoint getMaxPosition();
 
     void setOpacity(int opacity);
-    void setScaling(const VideoScaling& scaling, const boost::optional< boost::rational< int > >& factor = boost::optional< boost::rational< int > >());
-    void setRotation(const boost::rational< int >& rotation);
+    void setScaling(const VideoScaling& scaling, const boost::optional< rational64 >& factor = boost::optional< rational64 >());
+    void setRotation(const rational64& rotation);
     void setRotationPositionOffset(wxPoint position);
     void setAlignment(const VideoAlignment& alignment);
     void setPosition(const wxPoint& position); ///< \param position the logical position as observed by the user. That is the combination of the alignment offset and the shift because of the region of interest.
@@ -85,19 +91,21 @@ private:
 
     wxSize mInputSize;
 
-    int mOpacity;
+    bool mIsInterpolated = false;
 
-    VideoScaling mScaling;
+    int mOpacity = sOpacityMax;
+
+    VideoScaling mScaling = model::VideoScalingNone;
 
     /// Uses Constants::sScalingPrecisionFactor as denominator.
     /// Avoid rounding errors with doubles
     /// (leads to small diffs which cause test asserts to fail).
-    boost::rational<int> mScalingFactor;
+    rational64 mScalingFactor;
 
     /// Uses Constants::sRotationPrecisionFactor as denominator.
     /// Avoid rounding errors with doubles
     /// (leads to small diffs which cause test asserts to fail).
-    boost::rational<int> mRotation;
+    rational64 mRotation;
 
     /// Offset added to the position to avoid the image being
     /// moved when rotating. Furthermore, guarantees that automated

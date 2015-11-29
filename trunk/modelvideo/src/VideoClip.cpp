@@ -129,16 +129,16 @@ VideoFramePtr VideoClip::getNextVideo(const VideoCompositionParameters& paramete
         }
         else
         {
-            VideoClipKeyFramePtr keyFrame{ getKeyFrame(mProgress) };
+            VideoClipKeyFramePtr keyFrame{ getKeyFrameAt(mProgress) };
 
             // Scale the clip's size and region of interest to the bounding box
             // Determine scaling for 'fitting' a clip with size 'projectSize' in a bounding box of size 'size'
             wxSize outputsize = Properties::get().getVideoSize();
 
-            boost::rational<int> scaleToBoundingBox(0);
+            rational64 scaleToBoundingBox(0);
             wxSize requiredOutputSize = Convert::sizeInBoundingBox(outputsize, parameters.getBoundingBox(), scaleToBoundingBox);
             ASSERT_NONZERO(scaleToBoundingBox);
-            boost::rational<int> videoscaling = keyFrame->getScalingFactor() * scaleToBoundingBox;
+            rational64 videoscaling = keyFrame->getScalingFactor() * scaleToBoundingBox;
             wxSize inputsize = generator->getSize();
             wxSize requiredVideoSize = Convert::scale(inputsize, videoscaling);
 
@@ -212,12 +212,42 @@ wxSize VideoClip::getInputSize()
     return getDataGenerator<VideoFile>()->getSize();
 }
 
-VideoClipKeyFramePtr VideoClip::getKeyFrame(pts position) const
+size_t VideoClip::getNumberOfKeyFrames() const
+{
+    // todo always store all key frames with a position relative to the input, NOT to the trimmed part.
+    // then, in this method (and in 'getKeyFrame') return a 'trimmed' list of key frames.
+    // todo, when trimming, what should be done with the new 'first' and 'last' frames? Should keyframes be added for this?
+    return mKeyFrames.size();
+}
+
+VideoClipKeyFramePtr VideoClip::getKeyFrameAt(pts position) const
 {
     ASSERT_MORE_THAN_ZERO(mKeyFrames.size());
-    ASSERT_EQUALS(mKeyFrames.size(), 1);
-    auto it{ mKeyFrames.begin() };
-    return it->second;
+    VideoClipKeyFramePtr result{ nullptr };
+
+    if (mKeyFrames.size() == 1)
+    {
+        // This one key frame holds settings for all frames.
+        return mKeyFrames.begin()->second;
+    }
+
+    auto itExact{ mKeyFrames.find(position) };
+    if (itExact != mKeyFrames.end())
+    {
+        // Exact key frame found. Return that.
+        return itExact->second;
+    }
+
+    // No exact frame possible. Return an interpolated frame.
+    auto it{ mKeyFrames.upper_bound(position + getOffset()) }; // Points to first key frame 'beyond' position.
+    ASSERT(it != mKeyFrames.begin());
+    ASSERT(it != mKeyFrames.end());
+    pts positionAfter{ it->first };
+    VideoClipKeyFramePtr after{ it->second };
+    it--;
+    pts positionBefore{ it->first };
+    VideoClipKeyFramePtr before{ it->second };
+    return boost::make_shared<VideoClipKeyFrame>( before, after, positionBefore, position, positionAfter );
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -251,8 +281,8 @@ void VideoClip::serialize(Archive & ar, const unsigned int version)
         {
             int mOpacity;
             VideoScaling mScaling;
-            boost::rational<int> mScalingFactor{ 1 };
-            boost::rational<int> mRotation{ 0 };
+            rational32 mScalingFactor{ 1 };
+            rational32 mRotation{ 0 };
             wxPoint mRotationPositionOffset{ 0,0 };
             VideoAlignment mAlignment;
             wxPoint mPosition;
@@ -271,8 +301,9 @@ void VideoClip::serialize(Archive & ar, const unsigned int version)
             ar & BOOST_SERIALIZATION_NVP(mPosition);
             mKeyFrames = { { 0, boost::make_shared<VideoClipKeyFrame>(getInputSize()) } };
             mKeyFrames[0]->setOpacity(mOpacity);
-            mKeyFrames[0]->setScaling(mScaling, mScalingFactor);
-            mKeyFrames[0]->setRotation(mRotation);
+            rational64 scalingFactor64{ mScalingFactor.numerator(), mScalingFactor.denominator() };
+            mKeyFrames[0]->setScaling(mScaling, scalingFactor64);
+            mKeyFrames[0]->setRotation(rational64{ mRotation.numerator(), mRotation.denominator() });
             mKeyFrames[0]->setRotationPositionOffset(mRotationPositionOffset);
             mKeyFrames[0]->setAlignment(mAlignment);
             mKeyFrames[0]->setPosition(mPosition);

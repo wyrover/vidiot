@@ -42,10 +42,10 @@ void ASSERT_DETAILSCLIP(model::IClipPtr clip)
 void ASSERT_CLIPPROPERTIES(
     model::IClipPtr clip,
     model::VideoScaling scaling,
-    boost::rational<int> scalingfactor,
+    rational64 scalingfactor,
     model::VideoAlignment alignment,
     wxPoint position,
-    boost::rational<int> rotation)
+    rational64 rotation)
 {
     WaitForIdle;
 
@@ -87,11 +87,11 @@ void ASSERT_CLIPPROPERTIES(
     ASSERT_EQUALS(widget_rotationdigits, rotationdigits);
 
     model::VideoClipPtr videoclip = getVideoClip(clip);
-    ASSERT_EQUALS(videoclip->getKeyFrame(0)->getScaling(),scaling);
-    ASSERT_EQUALS(videoclip->getKeyFrame(0)->getScalingFactor(),scalingfactor);
-    ASSERT_EQUALS(videoclip->getKeyFrame(0)->getAlignment(),alignment);
-    ASSERT_EQUALS(videoclip->getKeyFrame(0)->getPosition(),position);
-    ASSERT_EQUALS(videoclip->getKeyFrame(0)->getRotation(),rotation);
+    ASSERT_EQUALS(videoclip->getKeyFrameAt(0)->getScaling(),scaling);
+    ASSERT_EQUALS(videoclip->getKeyFrameAt(0)->getScalingFactor(),scalingfactor);
+    ASSERT_EQUALS(videoclip->getKeyFrameAt(0)->getAlignment(),alignment);
+    ASSERT_EQUALS(videoclip->getKeyFrameAt(0)->getPosition(),position);
+    ASSERT_EQUALS(videoclip->getKeyFrameAt(0)->getRotation(),rotation);
 };
 
 } // namespace

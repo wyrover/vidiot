@@ -27,27 +27,27 @@
 
 namespace gui { namespace timeline {
 
-static rational sDefaultZoom(1,5);
-typedef std::vector<rational> zoomlist;
+static rational64 sDefaultZoom{ 1,5 };
+typedef std::vector<rational64> zoomlist;
 // NOTE: Match with map used in TimescaleView!!!
 static zoomlist sZooms = {
-    { rational(1, 120) },
-    { rational(1, 60) },
-    { rational(1, 45) },
-    { rational(1, 30) },
-    { rational(1, 20) },
-    { rational(1, 15) },
-    { rational(1, 10) },
-    { rational(1, 9) },
-    { rational(1, 8) },
-    { rational(1, 7) },
-    { rational(1, 6) },
-    { rational(1, 5) },
-    { rational(1, 4) },
-    { rational(1, 3) },
-    { rational(1, 2) },
-    { rational(1, 1) },
-    { rational(2, 1) },
+    { rational64{1, 120} },
+    { rational64{1, 60} },
+    { rational64{1, 45} },
+    { rational64{1, 30} },
+    { rational64{1, 20} },
+    { rational64{1, 15} },
+    { rational64{1, 10} },
+    { rational64{1, 9} },
+    { rational64{1, 8} },
+    { rational64{1, 7} },
+    { rational64{1, 6} },
+    { rational64{1, 5} },
+    { rational64{1, 4} },
+    { rational64{1, 3} },
+    { rational64{1, 2} },
+    { rational64{1, 1} },
+    { rational64{2, 1} },
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -70,7 +70,7 @@ Zoom::~Zoom()
 // ZOOM
 //////////////////////////////////////////////////////////////////////////
 
-rational Zoom::getCurrent() const
+rational64 Zoom::getCurrent() const
 {
     return mZoom;
 }
@@ -78,7 +78,7 @@ rational Zoom::getCurrent() const
 void Zoom::change(int steps)
 {
     getScrolling().storeCenterPts();
-    rational oldzoom = mZoom;
+    rational64 oldzoom = mZoom;
     zoomlist::iterator it = find(sZooms.begin(), sZooms.end(), mZoom);
     while (steps > 0)
     {
@@ -123,7 +123,7 @@ int Zoom::pixelsToTime(int pixels) const
 
 pts Zoom::pixelsToPts(int pixels) const
 {
-    return floor(rational(pixels) / rational(mZoom));
+    return floor(rational64{ pixels } / rational64{ mZoom });
 }
 
 int Zoom::ptsToPixels(pts position) const
@@ -132,9 +132,9 @@ int Zoom::ptsToPixels(pts position) const
 }
 
 // static 
-int Zoom::ptsToPixels(pts position, rational zoom)
+int Zoom::ptsToPixels(pts position, rational64 zoom)
 {
-    return floor(rational(position) * rational(zoom));
+    return floor(rational64{ position } *rational64{ zoom });
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -146,7 +146,16 @@ void Zoom::serialize(Archive & ar, const unsigned int version)
 {
     try
     {
-        ar & BOOST_SERIALIZATION_NVP(mZoom);
+        if (version < 2)
+        {
+            rational32 zoom;
+            ar & boost::serialization::make_nvp("mZoom", zoom);
+            mZoom = rational64{ zoom.numerator(), zoom.denominator() };;
+        }
+        else
+        {
+            ar & BOOST_SERIALIZATION_NVP(mZoom);
+        }
     }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
     catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }

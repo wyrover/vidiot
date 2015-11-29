@@ -202,7 +202,7 @@ void TestUiTimelinePopupMenu::testRightClickScrollingAfterOpeningPopupMenu()
 {
     StartTestSuite();
     TimelineZoomIn(4);
-    ASSERT_EQUALS(getTimeline().getZoom().getCurrent(), rational(1,1));
+    ASSERT_EQUALS(getTimeline().getZoom().getCurrent(), rational64(1,1));
     StartTest("Open popup menu then start a scrolling via right mouse down");
     ASSERT_MORE_THAN(getTimeline().GetVirtualSize().x,getTimeline().GetClientSize().x);
     TimelineOpenPopupMenuAt(Center(VideoClip(0,3)));

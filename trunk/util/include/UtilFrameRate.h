@@ -17,8 +17,8 @@
 
 #pragma once
 
-#include "libavutil/rational.h"
 #include "UtilInt.h"
+#include "UtilRational.h"
 
 class FrameRate
     : public rational64
@@ -34,7 +34,6 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     explicit FrameRate(const int64_t& num, const int64_t& den);
-    explicit FrameRate(const AVRational& avr);
     explicit FrameRate(const wxString& framerate);
     explicit FrameRate(const rational64& r);
 

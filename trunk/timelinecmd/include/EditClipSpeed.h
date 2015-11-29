@@ -28,8 +28,8 @@ class EditClipSpeed
 {
 public:
 
-    static const rational sMinimumSpeedAllowed;
-    static const rational sMaximumSpeedAllowed;
+    static const rational64 sMinimumSpeedAllowed;
+    static const rational64 sMaximumSpeedAllowed;
 
     //////////////////////////////////////////////////////////////////////////
     // INITIALIZATION
@@ -43,7 +43,7 @@ public:
         const model::IClipPtr& link,
         const model::IClipPtr& clipClone,
         const model::IClipPtr& linkClone,
-        rational speed);
+        rational64 speed);
 
     virtual ~EditClipSpeed();
 
@@ -64,7 +64,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     model::IClipPtr getClip() const;
-    rational getActualSpeed() const;
+    rational64 getActualSpeed() const;
 
 private:
 
@@ -76,7 +76,7 @@ private:
     model::IClipPtr mClipClone;
     model::IClipPtr mLink;
     model::IClipPtr mLinkClone;
-    boost::rational<int> mSpeed;
+    rational64 mSpeed;
     bool mPossible;
 
     //////////////////////////////////////////////////////////////////////////

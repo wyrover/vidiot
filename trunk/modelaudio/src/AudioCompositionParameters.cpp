@@ -72,13 +72,13 @@ int AudioCompositionParameters::getNrChannels() const
     return mNrChannels;
 }
 
-AudioCompositionParameters& AudioCompositionParameters::setSpeed(boost::rational<int> speed)
+AudioCompositionParameters& AudioCompositionParameters::setSpeed(rational64 speed)
 {
     mSpeed = speed;
     return *this;
 }
  
-boost::rational<int> AudioCompositionParameters::getSpeed() const
+rational64 AudioCompositionParameters::getSpeed() const
 {
     return mSpeed;
 }

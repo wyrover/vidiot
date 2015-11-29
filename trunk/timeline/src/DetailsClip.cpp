@@ -46,6 +46,7 @@
 #include "UtilLog.h"
 #include "UtilLogStl.h"
 #include "UtilLogWxwidgets.h"
+#include "UtilWindow.h"
 #include "VideoClip.h"
 #include "VideoClipKeyFrame.h"
 #include "VideoClipEvent.h"
@@ -70,8 +71,8 @@ constexpr int sVolumePageSize = 10;
 constexpr int sFactorPrecision = 2;
 const int sFactorPrecisionFactor = static_cast<int>(pow(10.0, sFactorPrecision)); ///< 10^sFactorPrecision
 constexpr int sFactorPageSize = sFactorPrecision / 10; // 0.1
-const rational sFactorMin{ 1,100 }; // 0.01
-const rational sFactorMax{ 100,1 }; // 100
+const rational64 sFactorMin{ 1,100 }; // 0.01
+const rational64 sFactorMax{ 100,1 }; // 100
 
 const int DetailsClip::sRotationPrecisionFactor = static_cast<int>(pow(10.0, DetailsClip::sRotationPrecision)); ///< 10^sRotationPrecision
 const int DetailsClip::sRotationPageSize = DetailsClip::sRotationPrecisionFactor / 10; // 0.1
@@ -97,7 +98,7 @@ const wxString sEditVolume(_("Edit volume of %s"));
 // 10001 <-> 19900 : 1.01 <-> 100.00
 
 // static
-int DetailsClip::factorToSliderValue(rational speed)
+int DetailsClip::factorToSliderValue(rational64 speed)
 {
     if (speed == 1) { return 10000; }
     if (speed < 1) { return boost::rational_cast<int>(speed * 10000); }
@@ -105,16 +106,22 @@ int DetailsClip::factorToSliderValue(rational speed)
 }
 
 // static
-rational DetailsClip::sliderValueToFactor(int slidervalue)
+rational64 DetailsClip::sliderValueToFactor(int slidervalue)
 {
-    if (slidervalue < 10000) { return rational(slidervalue, 10000); }
+    if (slidervalue < 10000) { return rational64(slidervalue, 10000); }
     if (slidervalue == 10000) { return 1; }
     int diff = slidervalue - 10000;
-    return rational(diff + 100, 100); // +100 ensures 10001 starts at 1.01. -(diff/100) ensures that 20000 is exactly 100.00 again.
+    return rational64(diff + 100, 100); // +100 ensures 10001 starts at 1.01. -(diff/100) ensures that 20000 is exactly 100.00 again.
 }
 
 DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     : DetailsPanel(parent, timeline)
+    , mBmpHome(util::window::getIcon("preview-home.png"))
+    , mBmpEnd(util::window::getIcon("preview-end.png"))
+    , mBmpNext(util::window::getIcon("preview-next.png")) // todo remove the 'preview' part from the images
+    , mBmpPrevious(util::window::getIcon("preview-previous.png"))
+    , mBmpPlus{ util::window::getIcon("plus.png") }
+    , mBmpMinus{ util::window::getIcon("minus.png") }
 {
     VAR_DEBUG(this);
 
@@ -264,6 +271,28 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     mSelectAlignment->SetMinSize(wxSize(mSelectScaling->GetSize().x,-1));
     mSelectScaling->SetMinSize(wxSize(mSelectAlignment->GetSize().x,-1));
 
+    mVideoKeyFramesEditPanel = new wxPanel(this);
+    wxBoxSizer* videokeyframessizer = new wxBoxSizer(wxHORIZONTAL);
+
+    std::map<wxButton**, wxBitmap> buttons{ { &mVideoKeyFramesHomeButton, mBmpHome },{ &mVideoKeyFramesPrevButton, mBmpPrevious },{ &mVideoKeyFramesNextButton, mBmpNext }, { &mVideoKeyFramesEndButton, mBmpEnd }, { &mVideoKeyFramesAddButton, mBmpPlus}, { &mVideoKeyFramesRemoveButton, mBmpMinus} };
+    for (std::pair<wxButton**, wxBitmap> button_bmp : buttons)
+    {
+        (*button_bmp.first) = new wxButton(mVideoKeyFramesEditPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+        (*button_bmp.first)->SetBitmap(button_bmp.second);
+        (*button_bmp.first)->SetBitmapMargins(0, 0);
+        (*button_bmp.first)->SetMinSize(wxSize{ wxDefaultCoord, wxButton::GetDefaultSize().GetHeight() });
+    }
+    videokeyframessizer->Add(mVideoKeyFramesHomeButton, wxSizerFlags(0));
+    videokeyframessizer->Add(mVideoKeyFramesPrevButton, wxSizerFlags(0));
+    mVideoKeyFramesPanel = new wxPanel(mVideoKeyFramesEditPanel);
+    videokeyframessizer->Add(mVideoKeyFramesPanel, wxSizerFlags(1));
+    videokeyframessizer->Add(mVideoKeyFramesNextButton, wxSizerFlags(0));
+    videokeyframessizer->Add(mVideoKeyFramesEndButton, wxSizerFlags(0));
+    videokeyframessizer->Add(mVideoKeyFramesAddButton, wxSizerFlags(0));
+    videokeyframessizer->Add(mVideoKeyFramesRemoveButton, wxSizerFlags(0));
+    mVideoKeyFramesEditPanel->SetSizer(videokeyframessizer);
+    addOption(_("Video key frames"), mVideoKeyFramesEditPanel);
+
     mOpacitySlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onOpacitySliderChanged, this);
     mOpacitySpin->Bind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onOpacitySpinChanged, this);
     mSelectScaling->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &DetailsClip::onScalingChoiceChanged, this);
@@ -276,6 +305,13 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     mPositionXSpin->Bind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onPositionXSpinChanged, this);
     mPositionYSlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onPositionYSliderChanged, this);
     mPositionYSpin->Bind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onPositionYSpinChanged, this);
+
+    mVideoKeyFramesHomeButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &DetailsClip::onVideoKeyFramesHomeButtonPressed, this);
+    mVideoKeyFramesPrevButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &DetailsClip::onVideoKeyFramesPrevButtonPressed, this);
+    mVideoKeyFramesNextButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &DetailsClip::onVideoKeyFramesNextButtonPressed, this);
+    mVideoKeyFramesEndButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &DetailsClip::onVideoKeyFramesEndButtonPressed, this);
+    mVideoKeyFramesAddButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &DetailsClip::onVideoKeyFramesAddButtonPressed, this);
+    mVideoKeyFramesRemoveButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &DetailsClip::onVideoKeyFramesRemoveButtonPressed, this);
 
     mVolumePanel = new wxPanel(this);
     wxBoxSizer* volumesizer = new wxBoxSizer(wxHORIZONTAL);
@@ -340,6 +376,12 @@ DetailsClip::~DetailsClip()
     mPositionXSpin->Unbind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onPositionXSpinChanged, this);
     mPositionYSlider->Unbind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onPositionYSliderChanged, this);
     mPositionYSpin->Unbind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onPositionYSpinChanged, this);
+    mVideoKeyFramesHomeButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &DetailsClip::onVideoKeyFramesHomeButtonPressed, this);
+    mVideoKeyFramesPrevButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &DetailsClip::onVideoKeyFramesPrevButtonPressed, this);
+    mVideoKeyFramesNextButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &DetailsClip::onVideoKeyFramesNextButtonPressed, this);
+    mVideoKeyFramesEndButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &DetailsClip::onVideoKeyFramesEndButtonPressed, this);
+    mVideoKeyFramesAddButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &DetailsClip::onVideoKeyFramesAddButtonPressed, this);
+    mVideoKeyFramesRemoveButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &DetailsClip::onVideoKeyFramesRemoveButtonPressed, this);
     mVolumeSlider->Unbind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onVolumeSliderChanged, this);
     mVolumeSpin->Unbind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onVolumeSpinChanged, this);
 
@@ -436,7 +478,7 @@ void DetailsClip::setClip(const model::IClipPtr& clip)
         {
             if (!audio)
             {
-                boost::rational< int > speed = boost::dynamic_pointer_cast<model::ClipInterval>(mClip)->getSpeed();
+                rational64 speed = boost::dynamic_pointer_cast<model::ClipInterval>(mClip)->getSpeed();
                 mSpeedSlider->SetValue(factorToSliderValue(speed));
                 mSpeedSpin->SetValue(boost::rational_cast<double>(speed));
             }
@@ -445,24 +487,65 @@ void DetailsClip::setClip(const model::IClipPtr& clip)
         if (video)
         {
             wxSize originalSize = video->getInputSize();
-            boost::rational< int > factor = video->getKeyFrame(0)->getScalingFactor();
-            boost::rational< int > rotation = video->getKeyFrame(0)->getRotation();
-            wxPoint position = video->getKeyFrame(0)->getPosition();
-            wxPoint maxpos = video->getKeyFrame(0)->getMaxPosition();
-            wxPoint minpos = video->getKeyFrame(0)->getMinPosition();
-            int opacity = video->getKeyFrame(0)->getOpacity();
+
+            mVideoOffset = 0;
+            size_t nKeyFrames{ video->getNumberOfKeyFrames() };
+            if (nKeyFrames > 1)
+            {
+                // This clip has key frames. Decide which one to show.
+                // todo show a special button (the '+' maybe?) if the currently position frame (cursor) is not a keyframe?
+                pts position{ getCursor().getLogicalPosition() }; // By default, edit the frame under the cursor (which is already currently shown, typically)
+                if (position >= video->getLeftPts() && position < video->getRightPts())
+                {
+                    // The cursor is positioned inside the clip being adjusted.
+                    mVideoOffset = position - video->getLeftPts();
+                }
+                // else: Use first key frame
+
+                // todo add a keyframe if the current frame is not a keyframe and an option is changed.
+            }
+            model::VideoClipKeyFramePtr keyframe{ video->getKeyFrameAt(mVideoOffset) };
+
+            // todo If the cursor in the timeline is on another clip, simply pick the first key frame.
+            // todo If a keyframe button is pressed, move the timeline cursor accordingly.
+            // todo for the preview do not pick the center frame but the first frame? (or simply: the current keyframe)
+
+            size_t nButtons{ video->getNumberOfKeyFrames() };
+            if (mVideoKeyFramesPanel->GetChildren().size() != nButtons)
+            {
+                mVideoKeyFramesPanel->DestroyChildren();
+
+                wxBoxSizer* sizer{ new wxBoxSizer{ wxHORIZONTAL } };
+                for (size_t i{ 0 }; i < nButtons; ++i)
+                {
+                    wxButton* button{ new wxButton{ mVideoKeyFramesPanel, wxID_ANY, wxString::Format("%d", i + 1), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT } };
+                    button->SetFont(button->GetFont().Smaller().Smaller());
+                    sizer->Add(button, wxSizerFlags{ 1 });
+                }
+                mVideoKeyFramesPanel->SetSizerAndFit(sizer);
+                mVideoKeyFramesPanel->Layout();
+                mVideoKeyFramesEditPanel->Layout();
+                Layout();
+            }
+
+            rational64 factor = keyframe->getScalingFactor();
+            rational64 rotation = keyframe->getRotation();
+            wxPoint position = keyframe->getPosition();
+            wxPoint maxpos = keyframe->getMaxPosition();
+            wxPoint minpos = keyframe->getMinPosition();
+            int opacity = keyframe->getOpacity();
 
             mOpacitySlider->SetValue(opacity);
             mOpacitySpin->SetValue(opacity);
 
-            mSelectScaling->select(video->getKeyFrame(0)->getScaling());
+            mSelectScaling->select(keyframe->getScaling());
             mScalingSlider->SetValue(factorToSliderValue(factor));
             mScalingSpin->SetValue(boost::rational_cast<double>(factor));
 
             mRotationSlider->SetValue(boost::rational_cast<int>(rotation * sRotationPrecisionFactor));
             mRotationSpin->SetValue(boost::rational_cast<double>(rotation));
 
-            mSelectAlignment->select(video->getKeyFrame(0)->getAlignment());
+            mSelectAlignment->select(keyframe->getAlignment());
             mPositionXSlider->SetRange(minpos.x, maxpos.x);
             mPositionXSlider->SetValue(position.x);
             mPositionXSpin->SetRange(minpos.x, maxpos.x);
@@ -518,6 +601,8 @@ pts DetailsClip::getLength(wxToggleButton* button) const
     return model::Convert::timeToPts(mLengths[button->GetId()]);
 }
 
+// todo split this cpp file into several files.
+
 //////////////////////////////////////////////////////////////////////////
 // GUI EVENTS
 //////////////////////////////////////////////////////////////////////////
@@ -558,7 +643,7 @@ void DetailsClip::onSpeedSpinChanged(wxSpinDoubleEvent& event)
     CatchExceptions([this, value]
     {
         int spinFactor = floor(value * sFactorPrecisionFactor);
-        boost::rational<int> s(spinFactor, sFactorPrecisionFactor);
+        rational64 s(spinFactor, sFactorPrecisionFactor);
         createOrUpdateSpeedCommand(s);
     });
     event.Skip();
@@ -604,7 +689,7 @@ void DetailsClip::onScalingSliderChanged(wxCommandEvent& event)
     CatchExceptions([this]
     {
         submitEditCommandUponAudioVideoEdit(sEditScaling);
-        mClones->VideoKeyFrame->setScaling(model::VideoScalingCustom, boost::optional< boost::rational< int > >(sliderValueToFactor(mScalingSlider->GetValue())));
+        mClones->VideoKeyFrame->setScaling(model::VideoScalingCustom, boost::optional< rational64 >(sliderValueToFactor(mScalingSlider->GetValue())));
     });
     event.Skip();
 }
@@ -616,9 +701,9 @@ void DetailsClip::onScalingSpinChanged(wxSpinDoubleEvent& event)
     CatchExceptions([this, value]
     {
         int spinFactor = floor(value * sFactorPrecisionFactor);
-        boost::rational<int> r(spinFactor, sFactorPrecisionFactor);
+        rational64 r(spinFactor, sFactorPrecisionFactor);
         submitEditCommandUponAudioVideoEdit(sEditScaling); // Changes same clip aspect as the slider
-        mClones->VideoKeyFrame->setScaling(model::VideoScalingCustom, boost::optional< boost::rational< int > >(r));
+        mClones->VideoKeyFrame->setScaling(model::VideoScalingCustom, boost::optional< rational64 >(r));
     });
     event.Skip();
 }
@@ -626,7 +711,7 @@ void DetailsClip::onScalingSpinChanged(wxSpinDoubleEvent& event)
 void DetailsClip::onRotationSliderChanged(wxCommandEvent& event)
 {
     VAR_INFO(mRotationSlider->GetValue());
-    boost::rational<int> r(mRotationSlider->GetValue(), sRotationPrecisionFactor);
+    rational64 r(mRotationSlider->GetValue(), sRotationPrecisionFactor);
     CatchExceptions([this, r]
     {
         submitEditCommandUponAudioVideoEdit(sEditRotation);
@@ -639,7 +724,7 @@ void DetailsClip::onRotationSpinChanged(wxSpinDoubleEvent& event)
 {
     VAR_INFO(mRotationSpin->GetValue()); // NOT: event.GetValue() -- The event's value may be outside the range boundaries
     int spinFactor = floor(mRotationSpin->GetValue() * sRotationPrecisionFactor);
-    boost::rational<int> r(spinFactor, sRotationPrecisionFactor);
+    rational64 r(spinFactor, sRotationPrecisionFactor);
     CatchExceptions([this,r]
     {
         submitEditCommandUponAudioVideoEdit(sEditRotation); // Changes same clip aspect as the slider
@@ -703,6 +788,56 @@ void DetailsClip::onPositionYSpinChanged(wxSpinEvent& event)
         submitEditCommandUponAudioVideoEdit(sEditY); // Changes same clip aspect as the slider
         updateAlignment(false);
         mClones->VideoKeyFrame->setPosition(wxPoint(mPositionXSlider->GetValue(), mPositionYSpin->GetValue()));
+    });
+    event.Skip();
+}
+
+void DetailsClip::onVideoKeyFramesHomeButtonPressed(wxCommandEvent& event)
+{
+    CatchExceptions([this]
+    {
+        //submitEditCommandUponAudioVideoEdit(sEditY); // Changes same clip aspect as the slider
+        //mClones->VideoKeyFrame->setPosition(wxPoint(mPositionXSlider->GetValue(), mPositionYSpin->GetValue()));
+    });
+    event.Skip();
+}
+
+void DetailsClip::onVideoKeyFramesPrevButtonPressed(wxCommandEvent& event)
+{
+    CatchExceptions([this]
+    {
+    });
+    event.Skip();
+}
+
+void DetailsClip::onVideoKeyFramesNextButtonPressed(wxCommandEvent& event)
+{
+    CatchExceptions([this]
+    {
+    });
+    event.Skip();
+}
+
+void DetailsClip::onVideoKeyFramesEndButtonPressed(wxCommandEvent& event)
+{
+    CatchExceptions([this]
+    {
+    });
+    event.Skip();
+}
+
+void DetailsClip::onVideoKeyFramesAddButtonPressed(wxCommandEvent& event)
+{
+    CatchExceptions([this]
+    {
+    });
+    event.Skip();
+}
+
+void DetailsClip::onVideoKeyFramesRemoveButtonPressed(wxCommandEvent& event)
+{
+    CatchExceptions([this]
+    {
     });
     event.Skip();
 }
@@ -1131,7 +1266,7 @@ void DetailsClip::submitEditCommandUponTransitionEdit(const wxString& parameter)
     }
 }
 
-void DetailsClip::createOrUpdateSpeedCommand(boost::rational<int> speed)
+void DetailsClip::createOrUpdateSpeedCommand(rational64 speed)
 {
     getPlayer()->stop(); // Stop iteration through the sequence, since the sequence is going to be changed.
 
@@ -1232,7 +1367,7 @@ void DetailsClip::updateAlignment(bool horizontalchange)
         }
         return mSelectAlignment->getValue();
     };
-    mClones->Video->getKeyFrame(0)->setAlignment(getAlignment()); // todo just edit the cloned keyframe mClones->VideoKeyFrame
+    mClones->Video->getKeyFrameAt(mVideoOffset)->setAlignment(getAlignment()); // todo just edit the cloned keyframe mClones->VideoKeyFrame
 }
 
 void DetailsClip::determineClipSizeBounds()

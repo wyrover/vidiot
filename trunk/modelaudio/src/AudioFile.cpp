@@ -317,10 +317,9 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
     else
     {
         // Resample
-        typedef boost::rational<int> rational;
         auto convertInputSampleCountToOutputSampleCount = [parameters,codec](samplecount input) -> samplecount
         {
-            return floor64(rational64(input) * rational64(Convert::samplerateToNewSpeed(parameters.getSampleRate(), parameters.getSpeed(), 1)) / rational64(codec->sample_rate));
+            return floor(rational64(input) * rational64(Convert::samplerateToNewSpeed(parameters.getSampleRate(), parameters.getSpeed(), 1)) / rational64(codec->sample_rate));
         };
 
         int nExpectedOutputSamplesPerChannel = convertInputSampleCountToOutputSampleCount(nDecodedSamplesPerChannel);
@@ -517,7 +516,7 @@ void AudioFile::stopDecodingAudio()
 samplecount AudioFile::getFirstSample(int64_t pts)
 {
     samplecount result =
-        floor64(
+        floor(
         rational64(pts) *
         rational64(getStream()->time_base.num, getStream()->time_base.den) *
         rational64(getCodec()->sample_rate));

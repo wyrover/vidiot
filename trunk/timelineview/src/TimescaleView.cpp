@@ -112,28 +112,28 @@ void TimescaleView::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset
         static wxString hoursFormat = "%H:%M:%S";
 
         // NOTE: Match with map used in Zoom!!
-        static std::map< rational, TicksAndNumbers> zoomToSteps = {
+        static std::map< rational64, TicksAndNumbers> zoomToSteps = {
             //                              Time between ticks               Time between shown times
-            { rational(1, 120), TicksAndNumbers(60 * sSecond, 5 * sMinute) },
-            { rational(1, 60), TicksAndNumbers(20 * sSecond, 2 * sMinute) },
-            { rational(1, 45), TicksAndNumbers(10 * sSecond, 2 * sMinute) },
-            { rational(1, 30), TicksAndNumbers(10 * sSecond, 1 * sMinute) },
-            { rational(1, 20), TicksAndNumbers(5 * sSecond, 30 * sSecond) },
-            { rational(1, 15), TicksAndNumbers(5 * sSecond, 30 * sSecond) },
-            { rational(1, 10), TicksAndNumbers(2 * sSecond, 20 * sSecond) },
-            { rational(1, 9), TicksAndNumbers(2 * sSecond, 20 * sSecond) },
-            { rational(1, 8), TicksAndNumbers(2 * sSecond, 20 * sSecond) },
-            { rational(1, 7), TicksAndNumbers(2 * sSecond, 20 * sSecond) },
-            { rational(1, 6), TicksAndNumbers(2 * sSecond, 20 * sSecond) },
-            { rational(1, 5), TicksAndNumbers(2 * sSecond, 10 * sSecond) },
-            { rational(1, 4), TicksAndNumbers(sSecond, 10 * sSecond) },
-            { rational(1, 3), TicksAndNumbers(sSecond, 10 * sSecond) },
-            { rational(1, 2), TicksAndNumbers(sSecond, 5 * sSecond) },
-            { rational(1, 1), TicksAndNumbers(sSecond, 5 * sSecond) },
-            { rational(2, 1), TicksAndNumbers(sSecond, 1 * sSecond) },
+            { rational64{1, 120}, TicksAndNumbers(60 * sSecond, 5 * sMinute) },
+            { rational64{1, 60}, TicksAndNumbers(20 * sSecond, 2 * sMinute) },
+            { rational64{1, 45}, TicksAndNumbers(10 * sSecond, 2 * sMinute) },
+            { rational64{1, 30}, TicksAndNumbers(10 * sSecond, 1 * sMinute) },
+            { rational64{1, 20}, TicksAndNumbers(5 * sSecond, 30 * sSecond) },
+            { rational64{1, 15}, TicksAndNumbers(5 * sSecond, 30 * sSecond) },
+            { rational64{1, 10}, TicksAndNumbers(2 * sSecond, 20 * sSecond) },
+            { rational64{1, 9}, TicksAndNumbers(2 * sSecond, 20 * sSecond) },
+            { rational64{1, 8}, TicksAndNumbers(2 * sSecond, 20 * sSecond) },
+            { rational64{1, 7}, TicksAndNumbers(2 * sSecond, 20 * sSecond) },
+            { rational64{1, 6}, TicksAndNumbers(2 * sSecond, 20 * sSecond) },
+            { rational64{1, 5}, TicksAndNumbers(2 * sSecond, 10 * sSecond) },
+            { rational64{1, 4}, TicksAndNumbers(sSecond, 10 * sSecond) },
+            { rational64{1, 3}, TicksAndNumbers(sSecond, 10 * sSecond) },
+            { rational64{1, 2}, TicksAndNumbers(sSecond, 5 * sSecond) },
+            { rational64{1, 1}, TicksAndNumbers(sSecond, 5 * sSecond) },
+            { rational64{2, 1}, TicksAndNumbers(sSecond, 1 * sSecond) },
         };
 
-        rational zoom = getZoom().getCurrent();
+        rational64 zoom = getZoom().getCurrent();
         ASSERT(zoomToSteps.find(zoom) != zoomToSteps.end())(zoom)(zoomToSteps);
         TicksAndNumbers steps = zoomToSteps.find(zoom)->second;
 

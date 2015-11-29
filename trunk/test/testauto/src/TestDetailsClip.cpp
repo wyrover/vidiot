@@ -52,10 +52,10 @@ void TestDetailsClip::testChangeLength()
         ASSERT_CLIPPROPERTIES(
             VideoClip(0, 3),
             model::VideoScalingFitToFill,
-            boost::rational<int>(4, 5),
+            rational64(4, 5),
             model::VideoAlignmentCenter,
             wxPoint(-152, 0),
-            0);
+            rational64(0));
     ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
     ASSERT_SELECTION_SIZE(1); // Clip and link selected
     pts originalLength = VideoClip(0, 3)->getLength();
@@ -338,20 +338,20 @@ void TestDetailsClip::testTransform()
 
     model::VideoClipPtr videoclip = getVideoClip(VideoClip(0,3));
     model::VideoScaling oldScaling = getScaling(videoclip);
-    boost::rational<int> oldScalingFactor = getScalingFactor(videoclip);
+    rational64 oldScalingFactor = getScalingFactor(videoclip);
     wxPoint oldPosition = getPosition(videoclip);
     model::VideoAlignment oldAlignment = getAlignment(videoclip);
-    boost::rational<int> oldRotation = getRotation(videoclip);
+    rational64 oldRotation = getRotation(videoclip);
     ASSERT_EQUALS(videoclip->getInputSize(), wxSize(1280,720)); //Ensure that all checks are based on the right dimensions
     auto ASSERT_ORIGINAL_CLIPPROPERTIES = []
     {
         ASSERT_CLIPPROPERTIES(
             VideoClip(0,3),
             model::VideoScalingFitToFill,
-            boost::rational<int>{80, 100},
+            rational64{80, 100},
             model::VideoAlignmentCenter,
             wxPoint(-152,0),
-            boost::rational<int>(0));
+            rational64{ 0 });
         // verify only one command is added to the history when doing multiple edits.
         ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
     };
@@ -366,7 +366,7 @@ void TestDetailsClip::testTransform()
         StartTest("Scaling: Slider: If moved to the right, the scaling is increased. Scaling enum is changed to custom.");
         SetValue(DetailsClipView()->getScalingSlider(), 7000); // Same as presing WXK_PAGEUP
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::EditClipDetails>();
-        ASSERT_CLIPPROPERTIES(VideoClip(0, 3), model::VideoScalingCustom, rational{ 70,100 }, model::VideoAlignmentCenter, wxPoint(-88, 36), oldRotation);
+        ASSERT_CLIPPROPERTIES(VideoClip(0, 3), model::VideoScalingCustom, rational64{ 70,100 }, model::VideoAlignmentCenter, wxPoint(-88, 36), oldRotation);
         Undo();
         ASSERT_ORIGINAL_CLIPPROPERTIES();
     }
@@ -374,7 +374,7 @@ void TestDetailsClip::testTransform()
         StartTest("Scaling: Slider: If moved to the left, the scaling is decreased. Scaling enum is changed to custom.");
         SetValue(DetailsClipView()->getScalingSlider(), 9000); // Same as presing WXK_PAGEDOWN
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::EditClipDetails>();
-        ASSERT_CLIPPROPERTIES(VideoClip(0, 3), model::VideoScalingCustom, rational{ 90,100 }, model::VideoAlignmentCenter, wxPoint(-216, -36), oldRotation);
+        ASSERT_CLIPPROPERTIES(VideoClip(0, 3), model::VideoScalingCustom, rational64{ 90,100 }, model::VideoAlignmentCenter, wxPoint(-216, -36), oldRotation);
         Undo();
         ASSERT_ORIGINAL_CLIPPROPERTIES();
     }
@@ -393,7 +393,7 @@ void TestDetailsClip::testTransform()
         StartTest("Scaling: Spin: If moved up, the scaling is increased. Scaling enum is changed to custom.");
         SetValue(DetailsClipView()->getScalingSpin(), DetailsClipView()->getScalingSpin()->GetValue() + 0.01); // Same as pressing WXK_UP
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::EditClipDetails>();
-        ASSERT_CLIPPROPERTIES(VideoClip(0, 3), model::VideoScalingCustom, rational{ 81,100 }, model::VideoAlignmentCenter, wxPoint(-158, -3), oldRotation); // The scaling spin buttons increment with 0.01, not 0.0001
+        ASSERT_CLIPPROPERTIES(VideoClip(0, 3), model::VideoScalingCustom, rational64{ 81,100 }, model::VideoAlignmentCenter, wxPoint(-158, -3), oldRotation); // The scaling spin buttons increment with 0.01, not 0.0001
         Undo();
         ASSERT_ORIGINAL_CLIPPROPERTIES();
     }
@@ -401,7 +401,7 @@ void TestDetailsClip::testTransform()
         StartTest("Scaling: Spin: If moved down, the scaling is decreased. Scaling enum is changed to custom.");
         SetValue(DetailsClipView()->getScalingSpin(), DetailsClipView()->getScalingSpin()->GetValue() - 0.01); // Same as pressing WXK_DOWN
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::EditClipDetails>();
-        ASSERT_CLIPPROPERTIES(VideoClip(0, 3), model::VideoScalingCustom, rational{ 79,100 }, model::VideoAlignmentCenter, wxPoint(-145, 4), oldRotation);// The scaling spin buttons increment with 0.01, not 0.0001
+        ASSERT_CLIPPROPERTIES(VideoClip(0, 3), model::VideoScalingCustom, rational64{ 79,100 }, model::VideoAlignmentCenter, wxPoint(-145, 4), oldRotation);// The scaling spin buttons increment with 0.01, not 0.0001
         Undo();
         ASSERT_ORIGINAL_CLIPPROPERTIES();
     }
@@ -409,7 +409,7 @@ void TestDetailsClip::testTransform()
         StartTest("Scaling: Choice: 'Fit all'");
         SetValue(DetailsClipView()->getScalingSelector(),model::VideoScalingFitAll);
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::EditClipDetails>();
-        ASSERT_CLIPPROPERTIES(VideoClip(0, 3), model::VideoScalingFitAll, rational{ 9, 16 }, model::VideoAlignmentCenter, wxPoint(0, 85), oldRotation);
+        ASSERT_CLIPPROPERTIES(VideoClip(0, 3), model::VideoScalingFitAll, rational64{ 9, 16 }, model::VideoAlignmentCenter, wxPoint(0, 85), oldRotation);
         Undo();
         ASSERT_ORIGINAL_CLIPPROPERTIES();
     }
@@ -418,7 +418,7 @@ void TestDetailsClip::testTransform()
         SetValue(DetailsClipView()->getScalingSlider(), 9000); // Same as presing WXK_PAGEDOWN. First change the position a bit.
         SetValue(DetailsClipView()->getScalingSelector(),model::VideoScalingFitToFill);
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::EditClipDetails>();
-        ASSERT_CLIPPROPERTIES(VideoClip(0, 3), model::VideoScalingFitToFill, rational{ 4,5 }, model::VideoAlignmentCenter, wxPoint(-152, 0), oldRotation);
+        ASSERT_CLIPPROPERTIES(VideoClip(0, 3), model::VideoScalingFitToFill, rational64{ 4,5 }, model::VideoAlignmentCenter, wxPoint(-152, 0), oldRotation);
         Undo(2);
         ASSERT_ORIGINAL_CLIPPROPERTIES();
     }
@@ -478,7 +478,7 @@ void TestDetailsClip::testTransform()
         StartTest("Rotation: Slider: moved to the right.");
         SetValue(DetailsClipView()->getRotationSlider(), -10); // Same as WXK_PAGEUP
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::EditClipDetails>(); // Verify that only one command object was added to the undo history
-        ASSERT_CLIPPROPERTIES(VideoClip(0,3),oldScaling,oldScalingFactor,oldAlignment,oldPosition,boost::rational<int>(-1,10));
+        ASSERT_CLIPPROPERTIES(VideoClip(0, 3), oldScaling, oldScalingFactor, oldAlignment, oldPosition, rational64{ -1,10 });
         Undo();
         ASSERT_ORIGINAL_CLIPPROPERTIES();
     }
@@ -486,7 +486,7 @@ void TestDetailsClip::testTransform()
         StartTest("Scaling: Slider: moved to the left.");
         SetValue(DetailsClipView()->getRotationSlider(), 10); // Same as WXK_PAGEDOWN
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::EditClipDetails>(); // Verify that only one command object was added to the undo history
-        ASSERT_CLIPPROPERTIES(VideoClip(0,3),oldScaling,oldScalingFactor,oldAlignment,oldPosition,boost::rational<int>(1,10));
+        ASSERT_CLIPPROPERTIES(VideoClip(0, 3), oldScaling, oldScalingFactor, oldAlignment, oldPosition, rational64{ 1,10 });
         Undo();
         ASSERT_ORIGINAL_CLIPPROPERTIES();
     }
@@ -494,7 +494,7 @@ void TestDetailsClip::testTransform()
         StartTest("Rotation: Spin: moved up.");
         SetValue(DetailsClipView()->getRotationSlider(), 1); // Same as WXK_UP
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::EditClipDetails>(); // Verify that only one command object was added to the undo history
-        ASSERT_CLIPPROPERTIES(VideoClip(0,3),oldScaling,oldScalingFactor,oldAlignment,oldPosition,boost::rational<int>(1,100));
+        ASSERT_CLIPPROPERTIES(VideoClip(0, 3), oldScaling, oldScalingFactor, oldAlignment, oldPosition, rational64{ 1,100 });
         Undo();
         ASSERT_ORIGINAL_CLIPPROPERTIES();
     }
@@ -502,7 +502,7 @@ void TestDetailsClip::testTransform()
         StartTest("Scaling: Spin: moved down.");
         SetValue(DetailsClipView()->getRotationSlider(), -1); // Same as WXK_DOWN
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::EditClipDetails>(); // Verify that only one command object was added to the undo history
-        ASSERT_CLIPPROPERTIES(VideoClip(0,3),oldScaling,oldScalingFactor,oldAlignment,oldPosition,boost::rational<int>(-1,100));
+        ASSERT_CLIPPROPERTIES(VideoClip(0, 3), oldScaling, oldScalingFactor, oldAlignment, oldPosition, rational64{ -1,100 });
         Undo();
         ASSERT_ORIGINAL_CLIPPROPERTIES();
     }
