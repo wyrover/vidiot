@@ -46,7 +46,7 @@ EditClipSpeed::EditClipSpeed(
     const model::IClipPtr& link,
     const model::IClipPtr& clipClone,
     const model::IClipPtr& linkClone,
-    rational speed)
+    rational64 speed)
     : AClipEdit(sequence)
     , mClip(clip)
     , mClipClone(clipClone)
@@ -78,7 +78,7 @@ EditClipSpeed::EditClipSpeed(
         }
     }
 
-    boost::rational<int> originalSpeed = clipInterval->getSpeed();
+    rational64 originalSpeed = clipInterval->getSpeed();
     pts originalOffset = clipInterval->getOffset();
     pts originalLength = clipInterval->getLength();
     pts originalLeftPts = mClip->getLeftPts();
@@ -161,13 +161,13 @@ model::IClipPtr EditClipSpeed::getClip() const
     return mClip;
 }
 
-rational EditClipSpeed::getActualSpeed() const
+rational64 EditClipSpeed::getActualSpeed() const
 {
     return mSpeed;
 }
 
 
-wxString toString(rational speed)
+wxString toString(rational64 speed)
 {
     std::ostringstream os; os << std::setprecision(2) << std::fixed << boost::rational_cast<double>(speed);
     return wxString(os.str());
@@ -205,7 +205,7 @@ void EditClipSpeed::adjustSpeedForClipBounds(model::IClipPtr clip)
         //           <    right   > <              length                     >
         //  
         // begin / max_speed >= right    ====>    max_speed =< begin / right
-        rational maxSpeed{ rational(begin, inTransition->getLength()) };
+        rational64 maxSpeed{ begin, inTransition->getLength() };
         if (mSpeed > maxSpeed)
         {
             message = wxString::Format(_("Can't scale beyond %s"), toString(maxSpeed)) + " " + _("(no room for left transition).");
@@ -229,7 +229,7 @@ void EditClipSpeed::adjustSpeedForClipBounds(model::IClipPtr clip)
         //  <  offset  > <              length                     > <    left   >
         // 
         // (renderlength - end) / max_speed >= left    ====>    max_speed =< (renderlength - end) / left
-        rational maxSpeed{ rational(clipInterval->getRenderSourceLength() - end, outTransition->getLength()) };
+        rational64 maxSpeed{ clipInterval->getRenderSourceLength() - end, outTransition->getLength() };
         if (mSpeed > maxSpeed)
         {
             message = wxString::Format(_("Can't scale beyond %s"), toString(maxSpeed)) + " " + _("(no room for right transition).");
@@ -239,7 +239,7 @@ void EditClipSpeed::adjustSpeedForClipBounds(model::IClipPtr clip)
 
     // Ensure that there's always a difference between the begin and end points
     // (end - begin) / maxspeed >= 1
-    rational maxSpeed{ rational(end - 1 - begin, 1) };
+    rational64 maxSpeed{ end - 1 - begin, 1 };
     if (mSpeed > maxSpeed)
     {
         message = wxString::Format(_("Can't scale beyond %s"), toString(maxSpeed)) + " " + _("(no clip remains).");

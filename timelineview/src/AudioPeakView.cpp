@@ -26,8 +26,8 @@
 #include "Properties.h"
 #include "Transition.h"
 #include "UtilClone.h"
-#include "UtilInt.h"
 #include "UtilLog.h"
+#include "UtilRational.h"
 #include "Zoom.h"
 
 namespace gui { namespace timeline {
@@ -41,7 +41,7 @@ struct RenderPeaksWork
 {
     // Here, all access to folder must be done, not in the worker thread.
     // Rationale: all access to model objects must be done in the main thread!
-    explicit RenderPeaksWork(const model::IClipPtr& clip, const wxSize& size, rational zoom)
+    explicit RenderPeaksWork(const model::IClipPtr& clip, const wxSize& size, rational64 zoom)
         : RenderClipPreviewWork(clip,size,zoom)
     {
         ASSERT(clip->isA<model::AudioClip>())(clip);

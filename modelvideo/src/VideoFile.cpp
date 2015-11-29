@@ -142,8 +142,9 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
 
     // Pts/time based variables
     AVStream* stream = getStream();
-    FrameRate inputFrameRate = FrameRate(av_stream_get_r_frame_rate(stream)); // 24000/1001
-    FrameRate inputTimeBase = FrameRate(stream->time_base); // 1/240000
+    AVRational streamRate = av_stream_get_r_frame_rate(stream);
+    FrameRate inputFrameRate = FrameRate(streamRate.num, streamRate.den); // 24000/1001
+    FrameRate inputTimeBase = FrameRate(stream->time_base.num, stream->time_base.den); // 1/240000
     rational64 ticksPerFrame = rational64(1) / (inputFrameRate * inputTimeBase);
     ASSERT_MORE_THAN_ZERO(ticksPerFrame);
 
@@ -375,7 +376,8 @@ wxSize VideoFile::getSize()
 
 FrameRate VideoFile::getFrameRate()
 {
-    return FrameRate(getStream()->r_frame_rate);
+    AVRational frameRate = getStream()->r_frame_rate;
+    return FrameRate(frameRate.num, frameRate.den);
 }
 
 uint64_t VideoFile::getVideoPacketPts()
@@ -430,7 +432,8 @@ void VideoFile::startDecodingVideo(const VideoCompositionParameters& parameters)
     int result = avcodec_open2(avctx, videoCodec, 0);
     ASSERT_MORE_THAN_EQUALS_ZERO(result)(avcodecErrorString(result));
 
-    FrameRate videoFrameRate = FrameRate(getStream()->r_frame_rate);
+    AVRational frameRate = getStream()->r_frame_rate;
+    FrameRate videoFrameRate = FrameRate(frameRate.num, frameRate.den);
     if (videoFrameRate != Properties::get().getFrameRate())
     {
         LOG_DEBUG << "Frame rate conversion required from " << videoFrameRate << " to " << Properties::get().getFrameRate();

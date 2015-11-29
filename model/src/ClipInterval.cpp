@@ -107,12 +107,12 @@ void ClipInterval::clean()
 // ICLIP
 //////////////////////////////////////////////////////////////////////////
 
-void ClipInterval::setSpeed(const boost::rational<int>& speed)
+void ClipInterval::setSpeed(const rational64& speed)
 {
     VAR_DEBUG(speed);
     if (speed != mSpeed)
     {
-        rational oldSpeed = mSpeed;
+        rational64 oldSpeed = mSpeed;
         pts oldOffset = mOffset;
         pts oldLength = mLength;
 
@@ -135,7 +135,7 @@ void ClipInterval::setSpeed(const boost::rational<int>& speed)
     }
 }
 
-boost::rational<int> ClipInterval::getSpeed() const
+rational64 ClipInterval::getSpeed() const
 {
     return mSpeed;
 }
@@ -200,7 +200,7 @@ void ClipInterval::adjustEnd(pts adjustment)
 // FOR PREVIEWING
 //////////////////////////////////////////////////////////////////////////
 
-pts ClipInterval::getOffset()
+pts ClipInterval::getOffset() const
 {
     return mOffset;
 }
@@ -277,9 +277,15 @@ void ClipInterval::serialize(Archive & ar, const unsigned int version)
     {
         ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Clip);
         ar & BOOST_SERIALIZATION_NVP(mRender);
-        if (version >= 2)
+        if (version >= 3)
         {
             ar & BOOST_SERIALIZATION_NVP(mSpeed);
+        }
+        else if (version >= 2)
+        {
+            rational32 speed;
+            ar & boost::serialization::make_nvp("mSpeed", speed);
+            mSpeed = rational64{ speed.numerator(),speed.denominator() };
         }
         ar & BOOST_SERIALIZATION_NVP(mOffset);
         ar & BOOST_SERIALIZATION_NVP(mLength);

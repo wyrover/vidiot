@@ -90,9 +90,9 @@ int VideoFrameLayer::getOpacity() const
     return mOpacity;
 }
 
-void VideoFrameLayer::setRotation(boost::rational<int> rotation)
+void VideoFrameLayer::setRotation(rational64 rotation)
 {
-    if (rotation != boost::rational<int>(0,1))
+    if (rotation != rational64(0,1))
     {
         mRotation.reset(rotation);
         mResultingImage.reset();

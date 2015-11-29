@@ -17,6 +17,7 @@
 
 #pragma once
 
+#include "UtilRational.h"
 #include "View.h"
 #include "Work.h"
 
@@ -31,7 +32,7 @@ class RenderClipPreviewWork
 {
 public:
 
-    explicit RenderClipPreviewWork(const model::IClipPtr& clip, const wxSize& size, rational zoom);
+    explicit RenderClipPreviewWork(const model::IClipPtr& clip, const wxSize& size, rational64 zoom);
 
     wxImagePtr getResult();
     wxSize getSize();
@@ -42,7 +43,7 @@ protected:
 
     const model::IClipPtr mClip;
     const wxSize mSize;
-    const rational mZoom;
+    const rational64 mZoom;
 
 private:
 

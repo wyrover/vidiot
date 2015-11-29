@@ -225,12 +225,12 @@ AudioPeaks AudioClip::getPeaks(const AudioCompositionParameters& parameters)
         return getDataGenerator<AudioFile>()->getPeaks(parameters, Convert::positionToNormalSpeed(offset, getSpeed()),length);
     }
     AudioPeaks result;
-    boost::rational<int32_t> factor{ mVolume, sDefaultVolume };
-    ASSERT_MORE_THAN_EQUALS_ZERO(factor);
+    rational64 proportion{ mVolume, sDefaultVolume };
+    ASSERT_MORE_THAN_EQUALS_ZERO(proportion);
     for (const AudioPeak& peak : getDataGenerator<AudioFile>()->getPeaks(parameters, Convert::positionToNormalSpeed(offset, getSpeed()), length))
     {
-        int32_t negativePeak{ floor(boost::rational<int32_t>(peak.first) * factor) };
-        int32_t positivePeak{ floor(boost::rational<int32_t>(peak.second) * factor) };
+        int64_t negativePeak{ floor(rational64{peak.first} * proportion) };
+        int64_t positivePeak{ floor(rational64{peak.second} * proportion) };
         sample n = (negativePeak > std::numeric_limits<sample>::min()) ? static_cast<sample>(negativePeak) : std::numeric_limits<sample>::min();
         sample p = (positivePeak < std::numeric_limits<sample>::max()) ? static_cast<sample>(positivePeak) : std::numeric_limits<sample>::max();
         ASSERT_LESS_THAN_EQUALS_ZERO(n);

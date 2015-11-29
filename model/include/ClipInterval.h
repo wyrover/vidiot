@@ -18,6 +18,7 @@
 #pragma once
 
 #include "Clip.h"
+#include "UtilRational.h"
 
 namespace model {
 
@@ -61,14 +62,14 @@ public:
     // SPEED
     //////////////////////////////////////////////////////////////////////////
 
-    virtual void setSpeed(const boost::rational<int>& speed);
-    virtual boost::rational<int> getSpeed() const;
+    virtual void setSpeed(const rational64& speed);
+    virtual rational64 getSpeed() const;
 
     //////////////////////////////////////////////////////////////////////////
     // FOR PREVIEWING
     //////////////////////////////////////////////////////////////////////////
 
-    pts getOffset();
+    pts getOffset() const;
     void maximize();
 
     //////////////////////////////////////////////////////////////////////////
@@ -112,11 +113,11 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    IFilePtr mRender;               ///< The producer of audiovisual data for this clip
+    IFilePtr mRender;   ///< The producer of audiovisual data for this clip
 
-    boost::rational<int> mSpeed;    ///< Speed for rendering. A speed != 1 implies that the speed of of frames of mRender is changed with the given speed. Offset and length are applied AFTER applying the speed.
-    pts mOffset;                    ///< Offset in 'sequence' speed and time base; number of frames to skip from the original media file (after applying speed - to skip).
-    pts mLength;                    ///< Length of the clip in 'sequence' speed and time base; number of frames to show from the original media file (after applying speed).
+    rational64 mSpeed; ///< Speed for rendering. A speed != 1 implies that the speed of of frames of mRender is changed with the given speed. Offset and length are applied AFTER applying the speed.
+    pts mOffset;        ///< Offset in 'sequence' speed and time base; number of frames to skip from the original media file (after applying speed - to skip).
+    pts mLength;        ///< Length of the clip in 'sequence' speed and time base; number of frames to show from the original media file (after applying speed).
 
     mutable wxString mDescription;  ///< Stored for performance (cached) and for easier debugging.
 
@@ -143,5 +144,5 @@ private:
 
 } // namespace
 
-BOOST_CLASS_VERSION(model::ClipInterval, 2)
+BOOST_CLASS_VERSION(model::ClipInterval, 3)
 BOOST_CLASS_EXPORT_KEY(model::ClipInterval)

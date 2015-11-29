@@ -58,25 +58,25 @@ void TestConvert::testFactorSliderConversions()
 {
     StartTestSuite();
 
-    ASSERT_EQUALS(gui::timeline::DetailsClip::sliderValueToFactor(19900), rational(100,1));
-    ASSERT_EQUALS(gui::timeline::DetailsClip::sliderValueToFactor(14900), rational(50,1));
-    ASSERT_EQUALS(gui::timeline::DetailsClip::sliderValueToFactor(11000), rational(11,1));
-    ASSERT_EQUALS(gui::timeline::DetailsClip::sliderValueToFactor(10100), rational(2,1));
-    ASSERT_EQUALS(gui::timeline::DetailsClip::sliderValueToFactor(10001), rational(101,100));
-    ASSERT_EQUALS(gui::timeline::DetailsClip::sliderValueToFactor(10000), rational(1,1));
-    ASSERT_EQUALS(gui::timeline::DetailsClip::sliderValueToFactor(5000), rational(1,2));
-    ASSERT_EQUALS(gui::timeline::DetailsClip::sliderValueToFactor(2000), rational(1,5));
-    ASSERT_EQUALS(gui::timeline::DetailsClip::sliderValueToFactor(100), rational(1,100));
+    ASSERT_EQUALS(gui::timeline::DetailsClip::sliderValueToFactor(19900), rational64(100,1));
+    ASSERT_EQUALS(gui::timeline::DetailsClip::sliderValueToFactor(14900), rational64(50,1));
+    ASSERT_EQUALS(gui::timeline::DetailsClip::sliderValueToFactor(11000), rational64(11,1));
+    ASSERT_EQUALS(gui::timeline::DetailsClip::sliderValueToFactor(10100), rational64(2,1));
+    ASSERT_EQUALS(gui::timeline::DetailsClip::sliderValueToFactor(10001), rational64(101,100));
+    ASSERT_EQUALS(gui::timeline::DetailsClip::sliderValueToFactor(10000), rational64(1,1));
+    ASSERT_EQUALS(gui::timeline::DetailsClip::sliderValueToFactor(5000), rational64(1,2));
+    ASSERT_EQUALS(gui::timeline::DetailsClip::sliderValueToFactor(2000), rational64(1,5));
+    ASSERT_EQUALS(gui::timeline::DetailsClip::sliderValueToFactor(100), rational64(1,100));
     
-    ASSERT_EQUALS(gui::timeline::DetailsClip::factorToSliderValue(rational(100,1)), 19900);
-    ASSERT_EQUALS(gui::timeline::DetailsClip::factorToSliderValue(rational(50,1)), 14900);
-    ASSERT_EQUALS(gui::timeline::DetailsClip::factorToSliderValue(rational(11,1)), 11000);
-    ASSERT_EQUALS(gui::timeline::DetailsClip::factorToSliderValue(rational(101,100)), 10001);
-    ASSERT_EQUALS(gui::timeline::DetailsClip::factorToSliderValue(rational(2,1)), 10100);
-    ASSERT_EQUALS(gui::timeline::DetailsClip::factorToSliderValue(rational(1,1)), 10000);
-    ASSERT_EQUALS(gui::timeline::DetailsClip::factorToSliderValue(rational(1,2)), 5000);
-    ASSERT_EQUALS(gui::timeline::DetailsClip::factorToSliderValue(rational(1,5)), 2000);
-    ASSERT_EQUALS(gui::timeline::DetailsClip::factorToSliderValue(rational(1,100)), 100);
+    ASSERT_EQUALS(gui::timeline::DetailsClip::factorToSliderValue(rational64(100,1)), 19900);
+    ASSERT_EQUALS(gui::timeline::DetailsClip::factorToSliderValue(rational64(50,1)), 14900);
+    ASSERT_EQUALS(gui::timeline::DetailsClip::factorToSliderValue(rational64(11,1)), 11000);
+    ASSERT_EQUALS(gui::timeline::DetailsClip::factorToSliderValue(rational64(101,100)), 10001);
+    ASSERT_EQUALS(gui::timeline::DetailsClip::factorToSliderValue(rational64(2,1)), 10100);
+    ASSERT_EQUALS(gui::timeline::DetailsClip::factorToSliderValue(rational64(1,1)), 10000);
+    ASSERT_EQUALS(gui::timeline::DetailsClip::factorToSliderValue(rational64(1,2)), 5000);
+    ASSERT_EQUALS(gui::timeline::DetailsClip::factorToSliderValue(rational64(1,5)), 2000);
+    ASSERT_EQUALS(gui::timeline::DetailsClip::factorToSliderValue(rational64(1,100)), 100);
 }
 
 } // namespace

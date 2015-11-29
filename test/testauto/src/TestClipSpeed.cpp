@@ -71,7 +71,7 @@ void TestClipSpeed::testChangeClipSpeed()
         ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
         ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
         SetValue(DetailsClipView()->getSpeedSlider(), 5000); // 5000 'to the left' sets speed to 0.5
-        ASSERT_CLIP_SPEED(VideoClip(0,4), rational(1,1));
+        ASSERT_CLIP_SPEED(VideoClip(0, 4), rational64(1,1));
         ASSERT_EQUALS(DetailsClipView()->getSpeedSpin()->GetValue(), 1.0);
     }
     {
@@ -118,7 +118,7 @@ void TestClipSpeed::testChangeClipSpeed()
         ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
         ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
         SetValue(DetailsClipView()->getSpeedSlider(), 14900);
-        ASSERT_CLIP_SPEED(VideoClip(0,4), rational(50,1));
+        ASSERT_CLIP_SPEED(VideoClip(0,4), rational64(50,1));
         ASSERT_EQUALS(DetailsClipView()->getSpeedSpin()->GetValue(), 50.0);
         ASSERT_EQUALS(VideoClip(0, 6)->getLeftPts(), AudioClip(0, 6)->getLeftPts()); // Verify proper shifting
         Undo(2);
@@ -134,7 +134,7 @@ void TestClipSpeed::testChangeClipSpeed()
         SetValue(DetailsClipView()->getSpeedSlider(), 14900);
         ASSERT_EQUALS(DetailsClipView()->getSpeedSpin()->GetValue(), 50.0);
         ASSERT_EQUALS(DetailsClipView()->getSpeedSlider()->GetValue(), 14900);
-        ASSERT_CLIP_SPEED(VideoClip(0,1), rational(50,1));
+        ASSERT_CLIP_SPEED(VideoClip(0,1), rational64(50,1));
         Undo(2);
     }
     {
@@ -149,7 +149,7 @@ void TestClipSpeed::testChangeClipSpeed()
         ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
         ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
         SetValue(DetailsClipView()->getSpeedSlider(), 15000);
-        ASSERT_CLIP_SPEED(VideoClip(0, 4), rational(1, 1));
+        ASSERT_CLIP_SPEED(VideoClip(0, 4), rational64(1, 1));
         Undo(5);
         ASSERT_EQUALS(VideoClip(0, 6)->getLeftPts(), AudioClip(0, 6)->getLeftPts()); // Verify proper shifting
     }
@@ -165,7 +165,7 @@ void TestClipSpeed::testChangeClipSpeed()
         ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
         ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
         SetValue(DetailsClipView()->getSpeedSlider(), 5000); // 5000 'to the left' sets speed to 0.5
-        ASSERT_CLIP_SPEED(VideoClip(0, 4), rational(1, 1));
+        ASSERT_CLIP_SPEED(VideoClip(0, 4), rational64(1, 1));
         ASSERT_EQUALS(DetailsClipView()->getSpeedSpin()->GetValue(), 1.0);
         Undo(5);
         ASSERT_EQUALS(VideoClip(0, 6)->getLeftPts(), AudioClip(0, 6)->getLeftPts()); // Verify proper shifting
@@ -179,7 +179,7 @@ void TestClipSpeed::testChangeClipSpeed()
         ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
         ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
         SetValue(DetailsClipView()->getSpeedSpin(), 0.5);
-        ASSERT_CLIP_SPEED(VideoClip(0,1), rational(1,2));
+        ASSERT_CLIP_SPEED(VideoClip(0,1), rational64(1,2));
         ASSERT_EQUALS(DetailsClipView()->getSpeedSlider()->GetValue(), 5000);
         ASSERT_EQUALS(DetailsClipView()->getSpeedSpin()->GetValue(), 0.5);
         Undo(2);
@@ -193,7 +193,7 @@ void TestClipSpeed::testChangeClipSpeed()
         ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
         ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
         SetValue(DetailsClipView()->getSpeedSpin(), 50.0);
-        ASSERT_CLIP_SPEED(VideoClip(0,1), rational(50,1));
+        ASSERT_CLIP_SPEED(VideoClip(0,1), rational64(50,1));
         ASSERT_EQUALS(DetailsClipView()->getSpeedSlider()->GetValue(), 14900);
         ASSERT_EQUALS(DetailsClipView()->getSpeedSpin()->GetValue(), 50.0);
         Undo(2);
@@ -210,7 +210,7 @@ void TestClipSpeed::testChangeClipSpeedWithOffsetAndLength()
     TimelineTrimLeft(VideoClip(0, 4), 50, false); // Note: the trim adds an empty clip, thus the clip must now be indexed with '5'
 
 
-    ASSERT_EQUALS(getVideoClip(VideoClip(0, 5))->getSpeed(), rational(1, 1));
+    ASSERT_CLIP_SPEED(VideoClip(0, 5), rational64(1, 1));
     model::VideoFramePtr referenceFirstFrame{ FirstFrame(VideoClip(0, 5)) };
     model::VideoFramePtr referenceLAstFrame{ LastFrame(VideoClip(0, 5)) };
 
@@ -221,7 +221,7 @@ void TestClipSpeed::testChangeClipSpeedWithOffsetAndLength()
         ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
         ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
         SetValue(DetailsClipView()->getSpeedSlider(), 100); // Minimum speed is maximum length increase
-        ASSERT_CLIP_SPEED(VideoClip(0, 5), rational(1,100));
+        ASSERT_CLIP_SPEED(VideoClip(0, 5), rational64(1,100));
         ASSERT_EQUALS(DetailsClipView()->getSpeedSpin()->GetValue(), 0.01);
         ASSERT_EQUALS(DetailsClipView()->getSpeedSlider()->GetValue(), 100);
         ASSERT_EQUALS(VideoClip(0, 8)->getLeftPts(), AudioClip(0, 6)->getLeftPts()); // Verify proper shifting
@@ -232,7 +232,7 @@ void TestClipSpeed::testChangeClipSpeedWithOffsetAndLength()
         Scrub(RightPixel(VideoClip(0,5)) - 10, RightPixel(VideoClip(0,5)));
         ASSERT_FRAMES_EQUAL(referenceLAstFrame, LastFrame(VideoClip(0, 5)));
         Undo();
-        ASSERT_CLIP_SPEED(VideoClip(0, 5), rational(1,1));
+        ASSERT_CLIP_SPEED(VideoClip(0, 5), rational64(1,1));
     }
     {
         StartTest("Speed increase: Reducing clip allowed, begin and end frames stay the same");
@@ -241,7 +241,7 @@ void TestClipSpeed::testChangeClipSpeedWithOffsetAndLength()
         ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
         ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
         SetValue(DetailsClipView()->getSpeedSlider(), 10100);
-        ASSERT_CLIP_SPEED(VideoClip(0, 5), rational(2,1));
+        ASSERT_CLIP_SPEED(VideoClip(0, 5), rational64(2,1));
         ASSERT_EQUALS(DetailsClipView()->getSpeedSpin()->GetValue(), 2.00);
         ASSERT_EQUALS(VideoClip(0, 8)->getLeftPts(), AudioClip(0, 6)->getLeftPts()); // Verify proper shifting
         StartTest("Speed increase: Verify begin frame the same");
@@ -251,7 +251,7 @@ void TestClipSpeed::testChangeClipSpeedWithOffsetAndLength()
         Scrub(RightPixel(VideoClip(0,5)) - 10, RightPixel(VideoClip(0,5)));
         // NOT: ASSERT_FRAMES_EQUAL(referenceLAstFrame, LastFrame(VideoClip(0, 5))); -- todo why is the last frame in the faster clip, always the last - 2 of the original clip?
         Undo();
-        ASSERT_CLIP_SPEED(VideoClip(0, 5), rational(1,1));
+        ASSERT_CLIP_SPEED(VideoClip(0, 5), rational64(1,1));
     }
     Undo(4);
 }
@@ -264,7 +264,7 @@ void TestClipSpeed::testChangeClipSpeedWithInTransition()
     TimelineDeleteClip(AudioClip(0, 4));
 
     MakeInTransitionAfterClip preparation(3); // This makes the tested clip have number 5
-    ASSERT_EQUALS(getVideoClip(VideoClip(0, 5))->getSpeed(), rational(1, 1));
+    ASSERT_CLIP_SPEED(VideoClip(0, 5), rational64(1, 1));
     model::VideoFramePtr referenceFirstFrame{ FirstFrame(VideoClip(0, 5)) };
     model::VideoFramePtr referenceLAstFrame{ LastFrame(VideoClip(0, 5)) };
 
@@ -277,7 +277,8 @@ void TestClipSpeed::testChangeClipSpeedWithInTransition()
         ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
         ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
         SetValue(DetailsClipView()->getSpeedSlider(), 100); // Minimum speed is maximum length increase
-        Scrub(LeftPixel(VideoClip(0,5)), LeftPixel(VideoClip(0,5)) + 10);        ASSERT_CLIP_SPEED(VideoClip(0, 5), rational(1,100));
+        Scrub(LeftPixel(VideoClip(0,5)), LeftPixel(VideoClip(0,5)) + 10);        
+        ASSERT_CLIP_SPEED(VideoClip(0, 5), rational64(1,100));
         ASSERT_EQUALS(VideoClip(0, 7)->getLeftPts(), AudioClip(0, 6)->getLeftPts()); // Verify proper shifting
         StartTest("Speed decrease: Verify begin frame the same");
         Scrub(LeftPixel(VideoClip(0,5)), LeftPixel(VideoClip(0,5)) + 10);
@@ -286,7 +287,7 @@ void TestClipSpeed::testChangeClipSpeedWithInTransition()
         Scrub(RightPixel(VideoClip(0,5)) - 10, RightPixel(VideoClip(0,5)));
         ASSERT_FRAMES_EQUAL(referenceLAstFrame, LastFrame(VideoClip(0, 5)));
         Undo();
-        ASSERT_CLIP_SPEED(VideoClip(0, 5), rational(1,1));
+        ASSERT_CLIP_SPEED(VideoClip(0, 5), rational64(1,1));
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>(); // Verify that the command is not in the undo history
     }
     {
@@ -296,7 +297,7 @@ void TestClipSpeed::testChangeClipSpeedWithInTransition()
         ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
         ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
         SetValue(DetailsClipView()->getSpeedSlider(), 10101);
-        ASSERT_CLIP_SPEED(VideoClip(0, 5), rational(1,1));
+        ASSERT_CLIP_SPEED(VideoClip(0, 5), rational64(1,1));
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>(); // Verify that the command is not in the undo history
     }
     {
@@ -307,7 +308,7 @@ void TestClipSpeed::testChangeClipSpeedWithInTransition()
         ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
         ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
         SetValue(DetailsClipView()->getSpeedSlider(), 10100);
-        ASSERT_CLIP_SPEED(VideoClip(0, 5), rational(2,1));
+        ASSERT_CLIP_SPEED(VideoClip(0, 5), rational64(2,1));
         ASSERT_EQUALS(VideoClip(0, 7)->getLeftPts(), AudioClip(0, 6)->getLeftPts()); // Verify proper shifting
         StartTest("Speed increase: Verify begin frame the same");
         Scrub(LeftPixel(VideoClip(0,5)), LeftPixel(VideoClip(0,5)) + 10);
@@ -316,7 +317,7 @@ void TestClipSpeed::testChangeClipSpeedWithInTransition()
         Scrub(RightPixel(VideoClip(0,5)) - 10, RightPixel(VideoClip(0,5)));
         // NOT: ASSERT_FRAMES_EQUAL(referenceLAstFrame, LastFrame(VideoClip(0, 5))); // Not always possible when increasing speed
         Undo();
-        ASSERT_CLIP_SPEED(VideoClip(0, 5), rational(1,1));
+        ASSERT_CLIP_SPEED(VideoClip(0, 5), rational64(1,1));
         Undo();
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>(); // Verify that the command is not in the undo history
     }
@@ -333,7 +334,7 @@ void TestClipSpeed::testChangeClipSpeedWithInOutTransitionBefore()
 // todo gdi calls in non main thread cause crash: thumbnail being generated during scrubbing....
 #ifndef __GNUC__
     MakeInOutTransitionAfterClip preparation(3); // This makes the tested clip have number 5
-    ASSERT_EQUALS(getVideoClip(VideoClip(0, 5))->getSpeed(), rational(1, 1));
+    ASSERT_CLIP_SPEED(VideoClip(0, 5), rational64(1, 1));
     model::VideoFramePtr referenceFirstFrame{ FirstFrame(VideoClip(0, 5)) };
     model::VideoFramePtr referenceLAstFrame{ LastFrame(VideoClip(0, 5)) };
 
@@ -344,7 +345,7 @@ void TestClipSpeed::testChangeClipSpeedWithInOutTransitionBefore()
         ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
         ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
         SetValue(DetailsClipView()->getSpeedSlider(), 100); // Minimum speed is maximum length increase
-        ASSERT_CLIP_SPEED(VideoClip(0, 5), rational(1,100));
+        ASSERT_CLIP_SPEED(VideoClip(0, 5), rational64(1,100));
         ASSERT_EQUALS(VideoClip(0, 7)->getLeftPts(), AudioClip(0, 6)->getLeftPts()); // Verify proper shifting
         StartTest("Speed decrease: Verify begin frame the same");
         Scrub(LeftPixel(VideoClip(0,5)), LeftPixel(VideoClip(0,5)) + 10);
@@ -353,7 +354,7 @@ void TestClipSpeed::testChangeClipSpeedWithInOutTransitionBefore()
         Scrub(RightPixel(VideoClip(0,5)) - 10, RightPixel(VideoClip(0,5)));
         ASSERT_FRAMES_EQUAL(referenceLAstFrame, LastFrame(VideoClip(0, 5)));
         Undo();
-        ASSERT_CLIP_SPEED(VideoClip(0, 5), rational(1,1));
+        ASSERT_CLIP_SPEED(VideoClip(0, 5), rational64(1,1));
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>(); // Verify that the command is not in the undo history
     }
     {
@@ -364,7 +365,7 @@ void TestClipSpeed::testChangeClipSpeedWithInOutTransitionBefore()
         ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
         ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
         SetValue(DetailsClipView()->getSpeedSlider(), 10101);
-        ASSERT_CLIP_SPEED(VideoClip(0, 5), rational(1,1));
+        ASSERT_CLIP_SPEED(VideoClip(0, 5), rational64(1,1));
         Undo();
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>(); // Verify that the command is not in the undo history
     }
@@ -376,7 +377,7 @@ void TestClipSpeed::testChangeClipSpeedWithInOutTransitionBefore()
         ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
         ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
         SetValue(DetailsClipView()->getSpeedSlider(), 10100);
-        ASSERT_CLIP_SPEED(VideoClip(0, 5), rational(2,1));
+        ASSERT_CLIP_SPEED(VideoClip(0, 5), rational64(2,1));
         ASSERT_EQUALS(VideoClip(0, 7)->getLeftPts(), AudioClip(0, 6)->getLeftPts()); // Verify proper shifting
         StartTest("Speed increase: Verify begin frame the same");
         Scrub(LeftPixel(VideoClip(0,5)), LeftPixel(VideoClip(0,5)) + 10);
@@ -385,7 +386,7 @@ void TestClipSpeed::testChangeClipSpeedWithInOutTransitionBefore()
         Scrub(RightPixel(VideoClip(0,5)) - 10, RightPixel(VideoClip(0,5)));
         // NOT: ASSERT_FRAMES_EQUAL(referenceLAstFrame, LastFrame(VideoClip(0, 5))); // Not always possible when increasing speed
         Undo();
-        ASSERT_CLIP_SPEED(VideoClip(0, 5), rational(1,1));
+        ASSERT_CLIP_SPEED(VideoClip(0, 5), rational64(1,1));
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>(); // Verify that the command is not in the undo history
     }
 #endif
@@ -399,7 +400,7 @@ void TestClipSpeed::testChangeClipSpeedWithOutTransition()
     TimelineDeleteClip(AudioClip(0, 4));
 
     MakeOutTransitionAfterClip preparation(4);
-    ASSERT_EQUALS(getVideoClip(VideoClip(0, 4))->getSpeed(), rational(1, 1));
+    ASSERT_EQUALS(getVideoClip(VideoClip(0, 4))->getSpeed(), rational64(1, 1));
     model::VideoFramePtr referenceFirstFrame{ FirstFrame(VideoClip(0, 4)) };
     model::VideoFramePtr referenceLAstFrame{ LastFrame(VideoClip(0, 4)) };
 
@@ -412,7 +413,7 @@ void TestClipSpeed::testChangeClipSpeedWithOutTransition()
         ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
         ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
         SetValue(DetailsClipView()->getSpeedSlider(), 100); // Minimum speed is maximum length increase
-        ASSERT_CLIP_SPEED(VideoClip(0, 4), rational(1,100));
+        ASSERT_CLIP_SPEED(VideoClip(0, 4), rational64(1,100));
         ASSERT_EQUALS(VideoClip(0, 7)->getLeftPts(), AudioClip(0, 6)->getLeftPts()); // Verify proper shifting
         StartTest("Speed decrease: Verify begin frame the same");
         Scrub(LeftPixel(VideoClip(0,4)), LeftPixel(VideoClip(0,4)) + 10);
@@ -421,7 +422,7 @@ void TestClipSpeed::testChangeClipSpeedWithOutTransition()
         Scrub(RightPixel(VideoClip(0,4)) - 10, RightPixel(VideoClip(0,4)));
         ASSERT_FRAMES_EQUAL(referenceLAstFrame, LastFrame(VideoClip(0, 4)));
         Undo();
-        ASSERT_CLIP_SPEED(VideoClip(0, 4), rational(1,1));
+        ASSERT_CLIP_SPEED(VideoClip(0, 4), rational64(1,1));
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>(); // Verify that the command is not in the undo history
     }
     {
@@ -431,7 +432,7 @@ void TestClipSpeed::testChangeClipSpeedWithOutTransition()
         ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
         ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
         SetValue(DetailsClipView()->getSpeedSlider(), 10101);
-        ASSERT_CLIP_SPEED(VideoClip(0, 4), rational(1,1));
+        ASSERT_CLIP_SPEED(VideoClip(0, 4), rational64(1,1));
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>(); // Verify that the command is not in the undo history
     }
     {
@@ -442,7 +443,7 @@ void TestClipSpeed::testChangeClipSpeedWithOutTransition()
         ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
         ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
         SetValue(DetailsClipView()->getSpeedSlider(), 10100);
-        ASSERT_CLIP_SPEED(VideoClip(0, 4), rational(2,1));
+        ASSERT_CLIP_SPEED(VideoClip(0, 4), rational64(2,1));
         ASSERT_EQUALS(VideoClip(0, 7)->getLeftPts(), AudioClip(0, 6)->getLeftPts()); // Verify proper shifting
         StartTest("Speed increase: Verify begin frame the same");
         Scrub(LeftPixel(VideoClip(0,4)), LeftPixel(VideoClip(0,4)) + 10);
@@ -451,7 +452,7 @@ void TestClipSpeed::testChangeClipSpeedWithOutTransition()
         Scrub(RightPixel(VideoClip(0,4)) - 10, RightPixel(VideoClip(0,4)));
         // NOT: ASSERT_FRAMES_EQUAL(referenceLAstFrame, LastFrame(VideoClip(0, 5))); // Not always possible when increasing speed
         Undo();
-        ASSERT_CLIP_SPEED(VideoClip(0, 4), rational(1,1));
+        ASSERT_CLIP_SPEED(VideoClip(0, 4), rational64(1,1));
         Undo();
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>(); // Verify that the command is not in the undo history
     }
@@ -468,7 +469,7 @@ void TestClipSpeed::testChangeClipSpeedWithInOutTransitionAfter()
 // todo gdi calls in non main thread cause crash: thumbnail being generated during scrubbing....
 #ifndef __GNUC__
     MakeInOutTransitionAfterClip preparation(4);
-    ASSERT_EQUALS(getVideoClip(VideoClip(0, 4))->getSpeed(), rational(1, 1));
+    ASSERT_EQUALS(getVideoClip(VideoClip(0, 4))->getSpeed(), rational64(1, 1));
     model::VideoFramePtr referenceFirstFrame{ FirstFrame(VideoClip(0, 4)) };
     model::VideoFramePtr referenceLAstFrame{ LastFrame(VideoClip(0, 4)) };
 
@@ -479,7 +480,7 @@ void TestClipSpeed::testChangeClipSpeedWithInOutTransitionAfter()
         ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
         ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
         SetValue(DetailsClipView()->getSpeedSlider(), 100); // Minimum speed is maximum length increase
-        ASSERT_CLIP_SPEED(VideoClip(0, 4), rational(1,100));
+        ASSERT_CLIP_SPEED(VideoClip(0, 4), rational64(1,100));
         ASSERT_EQUALS(VideoClip(0, 7)->getLeftPts(), AudioClip(0, 6)->getLeftPts()); // Verify proper shifting
         StartTest("Speed decrease: Verify begin frame the same");
         Scrub(LeftPixel(VideoClip(0,4)), LeftPixel(VideoClip(0,4)) + 10);
@@ -488,7 +489,7 @@ void TestClipSpeed::testChangeClipSpeedWithInOutTransitionAfter()
         Scrub(RightPixel(VideoClip(0,4)) - 10, RightPixel(VideoClip(0,4)));
         ASSERT_FRAMES_EQUAL(referenceLAstFrame, LastFrame(VideoClip(0, 4)));
         Undo();
-        ASSERT_CLIP_SPEED(VideoClip(0, 4), rational(1,1));
+        ASSERT_CLIP_SPEED(VideoClip(0, 4), rational64(1,1));
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>(); // Verify that the command is not in the undo history
     }
     {
@@ -499,7 +500,7 @@ void TestClipSpeed::testChangeClipSpeedWithInOutTransitionAfter()
         ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
         ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
         SetValue(DetailsClipView()->getSpeedSlider(), 10101);
-        ASSERT_CLIP_SPEED(VideoClip(0, 4), rational(1,1));
+        ASSERT_CLIP_SPEED(VideoClip(0, 4), rational64(1,1));
         Undo();
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>(); // Verify that the command is not in the undo history
     }
@@ -511,7 +512,7 @@ void TestClipSpeed::testChangeClipSpeedWithInOutTransitionAfter()
         ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
         ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
         SetValue(DetailsClipView()->getSpeedSlider(), 10100);
-        ASSERT_CLIP_SPEED(VideoClip(0, 4), rational(2,1));
+        ASSERT_CLIP_SPEED(VideoClip(0, 4), rational64(2,1));
         ASSERT_EQUALS(VideoClip(0, 7)->getLeftPts(), AudioClip(0, 6)->getLeftPts()); // Verify proper shifting
         StartTest("Speed increase: Verify begin frame the same");
         Scrub(LeftPixel(VideoClip(0,4)), LeftPixel(VideoClip(0,4)) + 10);
@@ -520,7 +521,7 @@ void TestClipSpeed::testChangeClipSpeedWithInOutTransitionAfter()
         Scrub(RightPixel(VideoClip(0,4)) - 10, RightPixel(VideoClip(0,4)));
         // NOT: ASSERT_FRAMES_EQUAL(referenceLAstFrame, LastFrame(VideoClip(0, 5))); // Not always possible when increasing speed
         Undo();
-        ASSERT_CLIP_SPEED(VideoClip(0, 4), rational(1,1));
+        ASSERT_CLIP_SPEED(VideoClip(0, 4), rational64(1,1));
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>(); // Verify that the command is not in the undo history
     }
 #endif
@@ -532,7 +533,7 @@ void TestClipSpeed::testChangeClipSpeedWithAdjacentTransitions()
     TimelineZoomIn(3);
     Unlink(VideoClip(0, 4));
     TimelineDeleteClip(AudioClip(0, 4));
-    ASSERT_EQUALS(getVideoClip(VideoClip(0, 4))->getSpeed(), rational(1, 1));
+    ASSERT_CLIP_SPEED(VideoClip(0, 4), rational64(1, 1));
     model::VideoFramePtr referenceFirstFrame{ FirstFrame(VideoClip(0, 4)) };
     model::VideoFramePtr referenceLAstFrame{ LastFrame(VideoClip(0, 4)) };
 
@@ -547,8 +548,8 @@ void TestClipSpeed::testChangeClipSpeedWithAdjacentTransitions()
             ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
             ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
             SetValue(DetailsClipView()->getSpeedSlider(), 100); // Minimum speed is maximum length increase
-            ASSERT_CLIP_SPEED(VideoClip(0, 5), rational(1, 100));
-        ASSERT_EQUALS(VideoClip(0, 7)->getLeftPts(), AudioClip(0, 6)->getLeftPts()); // Verify proper shifting
+            ASSERT_CLIP_SPEED(VideoClip(0, 5), rational64(1, 100));
+            ASSERT_EQUALS(VideoClip(0, 7)->getLeftPts(), AudioClip(0, 6)->getLeftPts()); // Verify proper shifting
             StartTest("Speed decrease: Verify begin frame the same");
             Scrub(LeftPixel(VideoClip(0, 5)), LeftPixel(VideoClip(0, 5)) + 10);
             ASSERT_FRAMES_EQUAL(referenceFirstFrame, FirstFrame(VideoClip(0, 5)));
@@ -556,7 +557,7 @@ void TestClipSpeed::testChangeClipSpeedWithAdjacentTransitions()
             Scrub(RightPixel(VideoClip(0, 5)) - 10, RightPixel(VideoClip(0, 5)));
             ASSERT_FRAMES_EQUAL(referenceLAstFrame, LastFrame(VideoClip(0, 5)));
             Undo();
-            ASSERT_CLIP_SPEED(VideoClip(0, 5), rational(1, 1));
+            ASSERT_CLIP_SPEED(VideoClip(0, 5), rational64(1, 1));
             ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>(); // Verify that the command is not in the undo history
         }
         {
@@ -566,8 +567,8 @@ void TestClipSpeed::testChangeClipSpeedWithAdjacentTransitions()
             ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
             ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
             SetValue(DetailsClipView()->getSpeedSlider(), 10100);
-            ASSERT_CLIP_SPEED(VideoClip(0, 5), rational(2, 1));
-        ASSERT_EQUALS(VideoClip(0, 7)->getLeftPts(), AudioClip(0, 6)->getLeftPts()); // Verify proper shifting
+            ASSERT_CLIP_SPEED(VideoClip(0, 5), rational64(2, 1));
+            ASSERT_EQUALS(VideoClip(0, 7)->getLeftPts(), AudioClip(0, 6)->getLeftPts()); // Verify proper shifting
             StartTest("Speed increase: Verify begin frame the same");
             Scrub(LeftPixel(VideoClip(0, 5)), LeftPixel(VideoClip(0, 5)) + 10);
             ASSERT_FRAMES_EQUAL(referenceFirstFrame, FirstFrame(VideoClip(0, 5)));
@@ -575,7 +576,7 @@ void TestClipSpeed::testChangeClipSpeedWithAdjacentTransitions()
             Scrub(RightPixel(VideoClip(0, 5)) - 10, RightPixel(VideoClip(0, 5)));
             // NOT: ASSERT_FRAMES_EQUAL(referenceLAstFrame, LastFrame(VideoClip(0, 5))); // Not always possible when increasing speed
             Undo();
-            ASSERT_CLIP_SPEED(VideoClip(0, 5), rational(1, 1));
+            ASSERT_CLIP_SPEED(VideoClip(0, 5), rational64(1, 1));
             ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>(); // Verify that the command is not in the undo history
         }
     }
@@ -588,7 +589,7 @@ void TestClipSpeed::testChangeClipSpeedWithAdjacentTransitions()
             ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
             ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
             SetValue(DetailsClipView()->getSpeedSlider(), 100); // Minimum speed is maximum length increase
-            ASSERT_CLIP_SPEED(VideoClip(0, 4), rational(1, 100));
+            ASSERT_CLIP_SPEED(VideoClip(0, 4), rational64(1, 100));
             ASSERT_EQUALS(VideoClip(0, 7)->getLeftPts(), AudioClip(0, 6)->getLeftPts()); // Verify proper shifting
             StartTest("Speed decrease: Verify begin frame the same");
             Scrub(LeftPixel(VideoClip(0, 4)), LeftPixel(VideoClip(0, 4)) + 10);
@@ -597,7 +598,7 @@ void TestClipSpeed::testChangeClipSpeedWithAdjacentTransitions()
             Scrub(RightPixel(VideoClip(0, 4)) - 10, RightPixel(VideoClip(0, 4)));
             ASSERT_FRAMES_EQUAL(referenceLAstFrame, LastFrame(VideoClip(0, 4)));
             Undo();
-            ASSERT_CLIP_SPEED(VideoClip(0, 4), rational(1, 1));
+            ASSERT_CLIP_SPEED(VideoClip(0, 4), rational64(1, 1));
             ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>(); // Verify that the command is not in the undo history
         }
         {
@@ -607,7 +608,7 @@ void TestClipSpeed::testChangeClipSpeedWithAdjacentTransitions()
             ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
             ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
             SetValue(DetailsClipView()->getSpeedSlider(), 10100);
-            ASSERT_CLIP_SPEED(VideoClip(0, 4), rational(2, 1));
+            ASSERT_CLIP_SPEED(VideoClip(0, 4), rational64(2, 1));
             ASSERT_EQUALS(VideoClip(0, 7)->getLeftPts(), AudioClip(0, 6)->getLeftPts()); // Verify proper shifting
             StartTest("Speed increase: Verify begin frame the same");
             Scrub(LeftPixel(VideoClip(0, 4)), LeftPixel(VideoClip(0, 4)) + 10);
@@ -616,7 +617,7 @@ void TestClipSpeed::testChangeClipSpeedWithAdjacentTransitions()
             Scrub(RightPixel(VideoClip(0, 4)) - 10, RightPixel(VideoClip(0, 4)));
             // NOT: ASSERT_FRAMES_EQUAL(referenceLAstFrame, LastFrame(VideoClip(0, 5))); // Not always possible when increasing speed
             Undo();
-            ASSERT_CLIP_SPEED(VideoClip(0, 4), rational(1, 1));
+            ASSERT_CLIP_SPEED(VideoClip(0, 4), rational64(1, 1));
             ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>(); // Verify that the command is not in the undo history
         }
     }

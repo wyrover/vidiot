@@ -119,10 +119,10 @@ public:
     /// \return the related to be decoded frame number
     static pts fromProjectFrameRate(pts outputposition, const FrameRate& inputrate);
 
-    static int      scale(int input,               rational factor);
-    static wxSize   scale(const wxSize& input,     rational factor);
-    static wxPoint  scale(const wxPoint& input,    rational factor);
-    static wxRect   scale(const wxRect& input,     rational factor);
+    static int      scale(int input, rational64 factor);
+    static wxSize   scale(const wxSize& input, rational64 factor);
+    static wxPoint  scale(const wxPoint& input, rational64 factor);
+    static wxRect   scale(const wxRect& input, rational64 factor);
 
     /// Convert an input size to a size fitting entirely in a given bounding
     /// box. Width and height ratio is repected.
@@ -131,14 +131,12 @@ public:
     /// \param fill if true, then tries to fill the bounding box as much as possible (possibly clipping information). If false, then the entire frame is 'fit' inside the bounding box (possibly with black bands).
     /// \param[out] scaling used scaling by the algorithm
     /// \return maximum size fitting in bounding box with given width/height ratio
-    static wxSize sizeInBoundingBox(const wxSize& input, const wxSize& boundingbox, rational& scaling, bool fill = false);
+    static wxSize sizeInBoundingBox(const wxSize& input, const wxSize& boundingbox, rational64& scaling, bool fill = false);
     static wxSize sizeInBoundingBox(const wxSize& input, const wxSize &boundingbox);
 
-    static double degreesToRadians(boost::rational<int> degrees);
+    static double degreesToRadians(rational64 degrees);
 
     static int doubleToInt(double x);
-    static int factorToDigits(rational number, int nDigits);
-    static boost::rational<int> digitsToFactor(int number, int nDigits);
 
     /// Convert a number of audio samples (data for one speaker) to a number of bytes required to store this
     /// \param nSamples Number of audio samples
@@ -150,13 +148,13 @@ public:
     /// \param newSpeed new speed to be used for the position
     /// \param oldSpeed speed in which 'position' is specified
     /// \return same position but now using newSpeed as base speed.
-    static pts positionToNewSpeed(pts position, rational newSpeed, rational oldSpeed);
+    static pts positionToNewSpeed(pts position, rational64 newSpeed, rational64 oldSpeed);
 
     /// Convert a position using 'speed' to the same position but then with a 1/1 speed.
     /// \param position position/length with speed as base speed
     /// \return same position but now using 1/1 as base speed
-    static pts positionToNormalSpeed(pts position, rational speed);
+    static pts positionToNormalSpeed(pts position, rational64 speed); // todo inline these
 
-    static int samplerateToNewSpeed(int samplerate, rational newSpeed, rational oldSpeed);
+    static int samplerateToNewSpeed(int samplerate, rational64 newSpeed, rational64 oldSpeed);
 };
 } // namespace

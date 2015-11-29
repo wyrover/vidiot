@@ -34,17 +34,12 @@ const std::vector<FrameRateEntry> sPossibleFrameRates = {
 //////////////////////////////////////////////////////////////////////////
 
 FrameRate::FrameRate(const int64_t& num, const int64_t& den)
-    :   rational64(num,den)
-{
-}
-
-FrameRate::FrameRate(const AVRational& avr)
-    :   rational64(avr.num,avr.den)
+    : rational64(num,den)
 {
 }
 
 FrameRate::FrameRate(const wxString& framerate)
-    :   rational64(FrameRate::s24p) // Default value. Only used if the given framerate is unknown.
+    : rational64(FrameRate::s24p) // Default value. Only used if the given framerate is unknown.
 {
     for (unsigned int i = 0; i < sPossibleFrameRates.size(); ++i)
     {
@@ -109,7 +104,7 @@ void FrameRate::serialize(Archive & ar, const unsigned int version)
 {
     try
     {
-        ar & boost::serialization::make_nvp( "rational64", boost::serialization::base_object< rational64 >(*this));
+        ar & boost::serialization::make_nvp("rational64", boost::serialization::base_object< rational64 >(*this));
     }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
     catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }

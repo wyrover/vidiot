@@ -67,8 +67,8 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    static int factorToSliderValue(rational speed);
-    static rational sliderValueToFactor(int slidervalue);
+    static int factorToSliderValue(rational64 speed);
+    static rational64 sliderValueToFactor(int slidervalue);
 
     model::IClipPtr getClip() const;
     void setClip(const model::IClipPtr& clip);
@@ -96,6 +96,13 @@ public:
     void onPositionXSpinChanged(wxSpinEvent& event);
     void onPositionYSliderChanged(wxCommandEvent& event);
     void onPositionYSpinChanged(wxSpinEvent& event);
+
+    void onVideoKeyFramesHomeButtonPressed(wxCommandEvent& event);
+    void onVideoKeyFramesPrevButtonPressed(wxCommandEvent& event);
+    void onVideoKeyFramesNextButtonPressed(wxCommandEvent& event);
+    void onVideoKeyFramesEndButtonPressed(wxCommandEvent& event);
+    void onVideoKeyFramesAddButtonPressed(wxCommandEvent& event);
+    void onVideoKeyFramesRemoveButtonPressed(wxCommandEvent& event);
 
     void onVolumeSliderChanged(wxCommandEvent& event);
     void onVolumeSpinChanged(wxSpinEvent& event);
@@ -176,6 +183,7 @@ private:
 
     model::IClipPtr mClip = nullptr;      ///< The clip for which the details view is shown. 0 in case a transition is selected
     pts mClipPosition = 0; ///< The currently known position of the clip (used to 'reset' the clip when it is moved around)
+    pts mVideoOffset = 0; ///< Offset 'in' the video clip, for showing the proper key frame
     model::TransitionPtr mTransitionClone = nullptr; ///< Transition which is currently being edited
     std::unique_ptr<ClonesContainer> mClones;
 
@@ -212,6 +220,21 @@ private:
     wxSpinCtrl* mPositionYSpin = nullptr;
     wxSlider* mPositionYSlider = nullptr;
 
+    wxPanel* mVideoKeyFramesEditPanel = nullptr;
+    wxButton* mVideoKeyFramesHomeButton = nullptr;
+    wxButton* mVideoKeyFramesPrevButton = nullptr;
+    wxButton* mVideoKeyFramesNextButton = nullptr;
+    wxButton* mVideoKeyFramesEndButton = nullptr;
+    wxButton* mVideoKeyFramesAddButton = nullptr;
+    wxButton* mVideoKeyFramesRemoveButton = nullptr;
+    wxPanel* mVideoKeyFramesPanel = nullptr;
+    wxBitmap mBmpHome;
+    wxBitmap mBmpEnd;
+    wxBitmap mBmpNext;
+    wxBitmap mBmpPrevious;
+    wxBitmap mBmpPlus;
+    wxBitmap mBmpMinus;
+
     pts mMinimumLengthWhenBeginTrimming = 0;
     pts mMaximumLengthWhenBeginTrimming = 0;
     pts mMinimumLengthWhenEndTrimming = 0;
@@ -231,7 +254,7 @@ private:
 
     void submitEditCommandUponAudioVideoEdit(const wxString& message);
     void submitEditCommandUponTransitionEdit(const wxString& parameter);
-    void createOrUpdateSpeedCommand(boost::rational<int> speed);
+    void createOrUpdateSpeedCommand(rational64 speed);
 
     void preview();
 

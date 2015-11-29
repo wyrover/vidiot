@@ -44,7 +44,7 @@ struct RenderThumbnailWork
 {
     // Here, all access to folder must be done, not in the worker thread.
     // Rationale: all access to model objects must be done in the main thread!
-    explicit RenderThumbnailWork(const model::IClipPtr& clip, const wxSize& size, rational zoom)
+    explicit RenderThumbnailWork(const model::IClipPtr& clip, const wxSize& size, rational64 zoom)
         : RenderClipPreviewWork(clip,size,zoom)
     {
         mParameters.setBoundingBox(mSize).setDrawBoundingBox(false);

@@ -35,9 +35,9 @@ void ASSERT_DETAILSCLIP(model::IClipPtr clip);
 void ASSERT_CLIPPROPERTIES(
     model::IClipPtr clip,
     model::VideoScaling scaling,
-    boost::rational<int> scalingfactor,
+    rational64 scaling_factor,
     model::VideoAlignment alignment,
     wxPoint position,
-    boost::rational<int> rotation);
+    rational64 rotation);
 
 } // namespace
