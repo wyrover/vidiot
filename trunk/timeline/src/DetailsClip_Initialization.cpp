@@ -47,12 +47,12 @@ const rational64 DetailsClip::sFactorMax{ 100,1 }; // 100
 
 DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     : DetailsPanel(parent, timeline)
-    , mBmpHome(util::window::getIcon("preview-home.png"))
-    , mBmpEnd(util::window::getIcon("preview-end.png"))
-    , mBmpNext(util::window::getIcon("preview-next.png")) // todo remove the 'preview' part from the images
-    , mBmpPrevious(util::window::getIcon("preview-previous.png"))
-    , mBmpPlus{ util::window::getIcon("plus.png") }
-    , mBmpMinus{ util::window::getIcon("minus.png") }
+    , mBmpHome(util::window::getIcon("icon-home.png"))
+    , mBmpEnd(util::window::getIcon("icon-end.png"))
+    , mBmpNext(util::window::getIcon("icon-next.png")) // todo remove the 'preview' part from the images
+    , mBmpPrevious(util::window::getIcon("icon-previous.png"))
+    , mBmpPlus{ util::window::getIcon("icon-plus.png") }
+    , mBmpMinus{ util::window::getIcon("icon-minus.png") }
     , sVideo(_("Video"))
     , sAudio(_("Audio"))
     , sTransition(_("Transition"))
