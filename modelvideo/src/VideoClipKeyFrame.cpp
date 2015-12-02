@@ -283,6 +283,7 @@ void VideoClipKeyFrame::setRotationPositionOffset(wxPoint position)
 
 void VideoClipKeyFrame::setAlignment(const VideoAlignment& alignment)
 {
+    ASSERT(!mIsInterpolated)(*this);
     VideoAlignment oldAlignment = mAlignment;
     wxPoint oldPosition = mPosition;
 

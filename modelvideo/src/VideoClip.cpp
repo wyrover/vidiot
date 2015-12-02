@@ -235,6 +235,7 @@ VideoClipKeyFramePtr VideoClip::getKeyFrameAt(pts position) const
     if (itExact != mKeyFrames.end())
     {
         // Exact key frame found. Return that.
+        itExact->second->setIndex(std::distance(mKeyFrames.begin(), itExact));
         return itExact->second;
     }
 

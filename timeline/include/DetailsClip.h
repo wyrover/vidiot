@@ -183,7 +183,6 @@ private:
 
     model::IClipPtr mClip = nullptr;      ///< The clip for which the details view is shown. 0 in case a transition is selected
     pts mClipPosition = 0; ///< The currently known position of the clip (used to 'reset' the clip when it is moved around)
-    pts mVideoOffset = 0; ///< Offset 'in' the video clip, for showing the proper key frame
     model::TransitionPtr mTransitionClone = nullptr; ///< Transition which is currently being edited
     std::unique_ptr<ClonesContainer> mClones;
 
@@ -228,6 +227,7 @@ private:
     wxButton* mVideoKeyFramesAddButton = nullptr;
     wxButton* mVideoKeyFramesRemoveButton = nullptr;
     wxPanel* mVideoKeyFramesPanel = nullptr;
+    std::map<size_t, wxToggleButton*> mVideoKeyFrames;
     wxBitmap mBmpHome;
     wxBitmap mBmpEnd;
     wxBitmap mBmpNext;
@@ -252,6 +252,13 @@ private:
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
+    model::VideoClipPtr getVideoClip(const model::IClipPtr& clip) const;
+    model::AudioClipPtr getAudioClip(const model::IClipPtr& clip) const;
+    model::TransitionPtr getTransition(const model::IClipPtr& clip) const;
+
+    pts getVideoKeyFrameOffset() const;
+    model::VideoClipKeyFramePtr getVideoKeyFrame() const;
+
     void submitEditCommandUponAudioVideoEdit(const wxString& message);
     void submitEditCommandUponTransitionEdit(const wxString& parameter);
     void createOrUpdateSpeedCommand(rational64 speed);
@@ -265,6 +272,8 @@ private:
     void determineClipSizeBounds();
 
     void updateLengthButtons();
+
+    void updateVideoKeyFrameControls();
 };
 
 }} // namespace
