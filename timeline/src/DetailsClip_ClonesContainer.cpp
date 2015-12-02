@@ -17,6 +17,13 @@
 
 #include "DetailsClip.h"
 
+#include "AudioClip.h"
+#include "AudioClipEvent.h"
+#include "TransitionParameter.h"
+#include "UtilClone.h"
+#include "VideoClipEvent.h"
+#include "VideoClipKeyFrame.h"
+
 namespace gui { namespace timeline {
 
 DetailsClip::ClonesContainer::ClonesContainer(DetailsClip* details, model::IClipPtr clip, pts position)

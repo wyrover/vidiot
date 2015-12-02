@@ -50,11 +50,33 @@ class DetailsClip
 {
 public:
 
-    static const int sRotationPrecision = 2;
+    static constexpr int sRotationPrecision = 2;
     static const int sRotationPrecisionFactor;
     static const int sRotationPageSize;
     static const int sRotationMin;
     static const int sRotationMax;
+
+    static constexpr int sFactorPrecision = 2;
+    static const int sFactorPrecisionFactor;
+    static const int sFactorPageSize;
+    static const rational64 sFactorMin;
+    static const rational64 sFactorMax;
+
+    const wxString sVideo;
+    const wxString sAudio;
+    const wxString sTransition;
+
+    const wxString sEditOpacity;
+    const wxString sEditScalingType;
+    const wxString sEditScaling;
+    const wxString sEditRotation;
+    const wxString sEditAlignment;
+    const wxString sEditX;
+    const wxString sEditY;
+    const wxString sEditVolume;
+
+    static int factorToSliderValue(rational64 speed);
+    static rational64 sliderValueToFactor(int slidervalue);
 
     //////////////////////////////////////////////////////////////////////////
     // INITIALIZATION
@@ -66,9 +88,6 @@ public:
     //////////////////////////////////////////////////////////////////////////
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
-
-    static int factorToSliderValue(rational64 speed);
-    static rational64 sliderValueToFactor(int slidervalue);
 
     model::IClipPtr getClip() const;
     void setClip(const model::IClipPtr& clip);
@@ -129,10 +148,6 @@ public:
     void onVolumeChanged(model::EventChangeAudioClipVolume& event);
 
     void onTransitionParameterChanged(model::EventTransitionParameterChanged& event);
-
-    //////////////////////////////////////////////////////////////////////////
-    // SELECTION EVENTS
-    //////////////////////////////////////////////////////////////////////////
 
     void onSelectionChanged(timeline::EventSelectionUpdate& event);
 

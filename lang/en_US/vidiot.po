@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-29 12:21+0100\n"
+"POT-Creation-Date: 2015-12-02 15:20+0100\n"
 "PO-Revision-Date: 2015-11-01 11:44+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -181,7 +181,7 @@ msgstr ""
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogProjectProperties.cpp:43
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:111
 #: C:\Vidiot\vidiot_trunk\gui\src\EditProjectProperties.cpp:40
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:82
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:56
 msgid "Video"
 msgstr ""
 
@@ -222,7 +222,7 @@ msgstr ""
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogProjectProperties.cpp:70
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:117
 #: C:\Vidiot\vidiot_trunk\gui\src\EditProjectProperties.cpp:58
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:83
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:57
 msgid "Audio"
 msgstr ""
 
@@ -1188,103 +1188,127 @@ msgstr ""
 msgid "There was an error when opening the video codec."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:84
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_GuiEvents.cpp:381
+msgid ""
+"Could not execute the length change without messing up clips in other tracks."
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_GuiEvents.cpp:387
+msgid "Set length of clip"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_HelperMethods.cpp:168
+msgid "Change "
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:58
 msgid "Transition"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:86
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:59
 #, c-format
 msgid "Edit opacity of %s"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:87
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:60
 #, c-format
 msgid "Edit automated scaling of %s"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:88
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:61
 #, c-format
 msgid "Edit scaling of %s"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:89
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:62
 #, c-format
 msgid "Edit rotation of %s"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:90
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:63
 #, c-format
 msgid "Edit automated alignment of %s"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:91
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:64
 #, c-format
 msgid "Edit X position of %s"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:92
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:65
 #, c-format
 msgid "Edit Y position of %s"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:93
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:66
 #, c-format
 msgid "Edit volume of %s"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:168
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:110
 msgid ""
 "Change the length of the clip to this length. Will shift other clips to "
 "avoid introducing a black area."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:168
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:110
 msgid "Shortcut key"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:174
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:116
 msgid "Fixed lengths (s)"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:189
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:131
 msgid "Speed"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:205
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:147
 msgid "Opacity"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:222
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:164
 msgid "Rotation"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:240
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:182
 msgid "Scaling"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:268
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:210
 msgid "Position"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:294
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:221
+msgid "Go to first key frame."
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:222
+msgid "Go to previous key frame."
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:223
+msgid "Go to next key frame."
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:224
+msgid "Go to last key frame."
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:225
+msgid "Add a key frame at the current position."
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:226
+msgid "Remove the key frame at the current position."
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:246
 msgid "Video key frames"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:327
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:279
 msgid "Volume (%)"
-msgstr ""
-
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:961
-msgid ""
-"Could not execute the length change without messing up clips in other tracks."
-msgstr ""
-
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:967
-msgid "Set length of clip"
-msgstr ""
-
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip.cpp:1253
-msgid "Change "
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsTrim.cpp:42
