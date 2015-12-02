@@ -55,6 +55,8 @@ public:
 
     wxSize getSize() const { return mInputSize; }
     bool isInterpolated() const { return mIsInterpolated; }
+    size_t getIndex() const { return mIndex; }
+    void setIndex(size_t index) { mIndex = index; }
 
     int getOpacity() const;
     VideoScaling getScaling() const;
@@ -92,6 +94,7 @@ private:
     wxSize mInputSize;
 
     bool mIsInterpolated = false;
+    size_t mIndex = 0;
 
     int mOpacity = sOpacityMax;
 
