@@ -17,11 +17,49 @@
 
 #include "DetailsClip.h"
 
+#include "VideoDisplayEvent.h"
+
 namespace gui { namespace timeline {
 
 //////////////////////////////////////////////////////////////////////////
 // PROJECT EVENTS
 //////////////////////////////////////////////////////////////////////////
+
+void DetailsClip::updateProjectEventBindings()
+{
+    // todo use this for all events below and then remove the clonescontainer
+
+    // Unbind by default
+    mVideoKeyFrameEventsUnbind.reset();
+
+    // Bind to the 'current' clip's events
+    model::VideoClipPtr videoclip{ getVideoClip(mClip) };
+    if (videoclip)
+    {
+        model::VideoClipKeyFramePtr videoKeyFrame{ getVideoKeyFrame() };
+        ASSERT_NONZERO(videoKeyFrame);
+
+        videoKeyFrame->Bind(model::EVENT_CHANGE_VIDEOCLIP_OPACITY, &DetailsClip::onOpacityChanged, this);
+        videoKeyFrame->Bind(model::EVENT_CHANGE_VIDEOCLIP_SCALING, &DetailsClip::onScalingChanged, this);
+        videoKeyFrame->Bind(model::EVENT_CHANGE_VIDEOCLIP_SCALINGFACTOR, &DetailsClip::onScalingFactorChanged, this);
+        videoKeyFrame->Bind(model::EVENT_CHANGE_VIDEOCLIP_ROTATION, &DetailsClip::onRotationChanged, this);
+        videoKeyFrame->Bind(model::EVENT_CHANGE_VIDEOCLIP_ALIGNMENT, &DetailsClip::onAlignmentChanged, this);
+        videoKeyFrame->Bind(model::EVENT_CHANGE_VIDEOCLIP_POSITION, &DetailsClip::onPositionChanged, this);
+        videoKeyFrame->Bind(model::EVENT_CHANGE_VIDEOCLIP_MINPOSITION, &DetailsClip::onMinPositionChanged, this);
+        videoKeyFrame->Bind(model::EVENT_CHANGE_VIDEOCLIP_MAXPOSITION, &DetailsClip::onMaxPositionChanged, this);
+        mVideoKeyFrameEventsUnbind.reset(new Cleanup([this, videoKeyFrame] {
+            ASSERT_NONZERO(videoKeyFrame);
+            videoKeyFrame->Unbind(model::EVENT_CHANGE_VIDEOCLIP_OPACITY, &DetailsClip::onOpacityChanged, this);
+            videoKeyFrame->Unbind(model::EVENT_CHANGE_VIDEOCLIP_SCALING, &DetailsClip::onScalingChanged, this);
+            videoKeyFrame->Unbind(model::EVENT_CHANGE_VIDEOCLIP_SCALINGFACTOR, &DetailsClip::onScalingFactorChanged, this);
+            videoKeyFrame->Unbind(model::EVENT_CHANGE_VIDEOCLIP_ROTATION, &DetailsClip::onRotationChanged, this);
+            videoKeyFrame->Unbind(model::EVENT_CHANGE_VIDEOCLIP_ALIGNMENT, &DetailsClip::onAlignmentChanged, this);
+            videoKeyFrame->Unbind(model::EVENT_CHANGE_VIDEOCLIP_POSITION, &DetailsClip::onPositionChanged, this);
+            videoKeyFrame->Unbind(model::EVENT_CHANGE_VIDEOCLIP_MINPOSITION, &DetailsClip::onMinPositionChanged, this);
+            videoKeyFrame->Unbind(model::EVENT_CHANGE_VIDEOCLIP_MAXPOSITION, &DetailsClip::onMaxPositionChanged, this);
+        }));
+    }
+}
 
 void DetailsClip::onOpacityChanged(model::EventChangeVideoClipOpacity& event)
 {
@@ -134,6 +172,18 @@ void DetailsClip::onSelectionChanged(timeline::EventSelectionUpdate& event)
         }
         setClip(selectedclip);
     });
+    event.Skip();
 }
+
+void DetailsClip::onPlaybackPosition(PlaybackPositionEvent& event)
+{
+    LOG_DEBUG;
+    CatchExceptions([this]
+    {
+        updateVideoKeyFrameControls();
+    });
+    event.Skip();
+}
+
 
 }} // namespace

@@ -20,9 +20,9 @@
 #include "View.h"
 
 namespace model{
+class EventChangeClipKeyFrames;
 class EventDragClip;
 class EventSelectClip;
-class DebugEventRenderProgress;
 }
 
 namespace gui { namespace timeline {
@@ -94,6 +94,7 @@ public:
 
     void onClipDragged(model::EventDragClip& event);
     void onClipSelected(model::EventSelectClip& event);
+    void onKeyFramesChanged(model::EventChangeClipKeyFrames& event);
 
 private:
 
@@ -111,6 +112,8 @@ private:
     /// \param drawDraggedClips indicates if clips currently being dragged must be drawn or left empty
     /// \param drawNotDraggedClips indicates if clips currently NOT being dragged  must be drawn or left empty
     void draw(wxBitmap& bitmap, bool drawDraggedClips, bool drawNotDraggedClips) const;
+
+    static wxBitmap& getKeyFrameIndicator();
 
 };
 

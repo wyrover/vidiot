@@ -337,11 +337,11 @@ void TestDetailsClip::testTransform()
     gui::Window::get().getUiManager().GetPane("Details").MinSize(wxSize(600,-1));
 
     model::VideoClipPtr videoclip = getVideoClip(VideoClip(0,3));
-    model::VideoScaling oldScaling = getScaling(videoclip);
-    rational64 oldScalingFactor = getScalingFactor(videoclip);
-    wxPoint oldPosition = getPosition(videoclip);
-    model::VideoAlignment oldAlignment = getAlignment(videoclip);
-    rational64 oldRotation = getRotation(videoclip);
+    model::VideoScaling oldScaling = getScaling(DefaultVideoKeyFrame(videoclip));
+    rational64 oldScalingFactor = getScalingFactor(DefaultVideoKeyFrame(videoclip));
+    wxPoint oldPosition = getPosition(DefaultVideoKeyFrame(videoclip));
+    model::VideoAlignment oldAlignment = getAlignment(DefaultVideoKeyFrame(videoclip));
+    rational64 oldRotation = getRotation(DefaultVideoKeyFrame(videoclip));
     ASSERT_EQUALS(videoclip->getInputSize(), wxSize(1280,720)); //Ensure that all checks are based on the right dimensions
     auto ASSERT_ORIGINAL_CLIPPROPERTIES = []
     {
@@ -389,6 +389,8 @@ void TestDetailsClip::testTransform()
 //        ASSERT_ORIGINAL_CLIPPROPERTIES();
 //    }
 //#endif
+
+    // todo opacity
     {
         StartTest("Scaling: Spin: If moved up, the scaling is increased. Scaling enum is changed to custom.");
         SetValue(DetailsClipView()->getScalingSpin(), DetailsClipView()->getScalingSpin()->GetValue() + 0.01); // Same as pressing WXK_UP

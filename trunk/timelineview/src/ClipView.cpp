@@ -31,6 +31,7 @@
 #include "Transition.h"
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
+#include "UtilWindow.h"
 #include "VideoClip.h"
 #include "VideoFrame.h"
 #include "ViewMap.h"
@@ -66,6 +67,7 @@ ClipView::ClipView(const model::IClipPtr& clip, View* parent)
     }
     mClip->Bind(model::EVENT_DRAG_CLIP, &ClipView::onClipDragged, this);
     mClip->Bind(model::EVENT_SELECT_CLIP, &ClipView::onClipSelected, this);
+    mClip->Bind(model::EVENT_CHANGE_CLIP_KEYFRAMES, &ClipView::onKeyFramesChanged, this);
 
     // IMPORTANT: No drawing/lengthy code here. Due to the nature of adding removing clips as
     //            part of edit operations, that will severely impact performance.
@@ -77,6 +79,7 @@ ClipView::~ClipView()
 
     mClip->Unbind(model::EVENT_DRAG_CLIP, &ClipView::onClipDragged, this);
     mClip->Unbind(model::EVENT_SELECT_CLIP, &ClipView::onClipSelected, this);
+    mClip->Unbind(model::EVENT_CHANGE_CLIP_KEYFRAMES, &ClipView::onKeyFramesChanged, this);
 
     if (mClip->isA<model::VideoClip>())
     {
@@ -182,6 +185,28 @@ void ClipView::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) con
                 if (mClip->isA<model::VideoClip>() || mClip->isA<model::AudioClip>())
                 {
                     getViewMap().getClipPreview(mClip)->draw(dc, region, offset);
+
+                    if (mClip->isA<model::VideoClip>()) // todo audio
+                    {
+                        model::ClipIntervalPtr interval{ boost::dynamic_pointer_cast<model::ClipInterval>(mClip) };
+
+                        pts origin{ interval->getOffset() - (mClip->getInTransition() ? *(mClip->getInTransition()->getRight()) : 0) };
+                     
+                        std::map<pts, model::KeyFramePtr> keyframes{ interval->getKeyFrames() };
+                        wxBitmap& kfi{ getKeyFrameIndicator() };
+                        for (auto pts_frame : keyframes)
+                        {
+                            wxRect r{ getRect() };
+                            r.x += getZoom().ptsToPixels(pts_frame.first - origin) - kfi.GetWidth() / 2;
+                            r.x = std::max(getX(), r.x);
+                            r.y += getH() - kfi.GetHeight() - ClipView::BorderSize;
+                            getTimeline().copyRect(dc, region, offset, kfi, r, true);
+                        }
+
+                        // todo click on key frame indicator, select clip and select key frame
+                        // todo add a key frame 'under' a transition does not work...
+                        // todo add key frame to clip with offset does not work
+                    }
                 }
             }
         }
@@ -512,5 +537,34 @@ void ClipView::onClipSelected(model::EventSelectClip& event)
     event.Skip();
 }
 
+void ClipView::onKeyFramesChanged(model::EventChangeClipKeyFrames& event)
+{
+    mBitmap.reset();
+    repaint();
+    event.Skip();
 }
-} // namespace
+
+// static
+wxBitmap& ClipView::getKeyFrameIndicator()
+{
+    static wxBitmap result;
+    if (!result.IsOk()) 
+    {
+        result.Create(8, 8);
+        wxBitmap mask{ result.GetSize(), 1 };
+        wxMemoryDC dc{ result };
+        dc.SetPen(wxPen{ wxColour{ 75,67,0 }, 1 });
+        dc.SetBrush(wxBrush{ wxColour{ 255,255,0 }, wxBRUSHSTYLE_SOLID });
+        dc.DrawRoundedRectangle(0, 0, result.GetWidth(), result.GetHeight(), 2);
+        dc.SelectObject(wxNullBitmap);
+        wxMemoryDC dcMask{ mask };
+        dcMask.SetPen(wxPen{ wxColour{ 255,255,255 }, 1 });
+        dcMask.SetBrush(wxBrush{ wxColour{ 255,255,255 }, wxBRUSHSTYLE_SOLID });
+        dcMask.DrawRoundedRectangle(0, 0, result.GetWidth(), result.GetHeight(), 2);
+        dcMask.SelectObject(wxNullBitmap);
+        result.SetMask(new wxMask{ mask });
+    }
+    return result;
+}
+
+}} // namespace

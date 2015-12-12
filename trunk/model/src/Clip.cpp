@@ -249,6 +249,41 @@ pts Clip::getPerceivedLength() const
     return left + getLength() + right;
 }
 
+pts Clip::getPerceivedLeftPts() const
+{
+    pts result{ getLeftPts() };
+    model::TransitionPtr inTransition{ getInTransition() };
+    if (inTransition)
+    {
+        result -= *(inTransition->getRight()); // See getInTransition: check for getRight() not needed
+    }
+    return result;
+}
+
+pts Clip::getPerceivedRightPts() const
+{
+    pts result{ getRightPts() };
+    model::TransitionPtr outTransition{ getOutTransition() };
+    if (outTransition)
+    {
+        result += *(outTransition->getLeft()); // See getInTransition: check for getLeft() not needed
+    }
+    return result;
+}
+
+IClipPtr Clip::getExtendedClone() const
+{
+    model::IClipPtr c{ clone() };
+    
+    pts addBegin{ getInTransition() ? *getInTransition()->getRight() : 0 };
+    pts addEnd{ getOutTransition() ? *getOutTransition()->getLeft() : 0 };
+
+    c->adjustBegin(-addBegin); // Ensure that any key frames 'under' a
+    c->adjustEnd(addEnd);      // transition are also shown.
+
+    return c;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // LOGGING
 //////////////////////////////////////////////////////////////////////////

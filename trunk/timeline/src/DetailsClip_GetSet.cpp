@@ -40,16 +40,18 @@ void DetailsClip::setClip(const model::IClipPtr& clip)
 {
     VAR_DEBUG(clip);
 
-    if (mClip == clip && (!mClip || mClip->getLeftPts() == mClipPosition)) return; // Avoid useless updating
+    // Avoid useless updating. The position check ensures updating after moving a clip in the timeline (DND).
+    if (mClip == clip && (!mClip || mClip->getLeftPts() == mClipPosition)) return;
 
-    // For some edit operations the preview is shown iso player.
-    // The 'end' of the edit operation is not clear (edit opacity
-    // via the slider starts the operation, and the preview, but
-    // when does the operation end?).
-    //
-    // However, at some point the preview must be removed again.
-    // That's done here, when another (or no) clip is selected.
-    getTimeline().getPlayer()->showPlayer();
+    //todo this has become obsolete since no preview is shown but simply the current frame shown again in the player?
+    //// For some edit operations the preview is shown iso player.
+    //// The 'end' of the edit operation is not clear (edit opacity
+    //// via the slider starts the operation, and the preview, but
+    //// when does the operation end?).
+    ////
+    //// However, at some point the preview must be removed again.
+    //// That's done here, when another (or no) clip is selected.
+    //getTimeline().getPlayer()->showPlayer();
 
     if (mTransitionClone)
     {
@@ -76,6 +78,7 @@ void DetailsClip::setClip(const model::IClipPtr& clip)
     mTransitionClone = nullptr;
     mEditCommand = nullptr;
     mEditSpeedCommand = nullptr;
+    updateProjectEventBindings(); // Unbind
 
     model::VideoClipPtr video{ getVideoClip(clip) };
     model::AudioClipPtr audio{ getAudioClip(clip) };
@@ -137,6 +140,9 @@ void DetailsClip::setClip(const model::IClipPtr& clip)
         requestShow(false);
     }
 
+    updateProjectEventBindings(); // Bind again
+                                  
+                                  
     // Note: disabling a control and then enabling it again can cause extra events (value changed).
     // Therefore this has been placed here, to only dis/enable in the minimal number of cases.
     showOption(mLengthPanel, video != nullptr || audio  != nullptr || transition != nullptr);

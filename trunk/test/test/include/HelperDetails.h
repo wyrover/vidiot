@@ -27,8 +27,56 @@ namespace test {
 
 gui::timeline::DetailsClip* DetailsClipView();
 
-void ASSERT_NO_DETAILSCLIP();
-void ASSERT_DETAILSCLIP(model::IClipPtr clip);
+void ASSERT_NO_DETAILSCLIP(); // todo obsolete replace with ASSERT(DetailsView(nullptr));
+void ASSERT_DETAILSCLIP(model::IClipPtr clip); // todo obsolete replace with ASSERT(DetailsView(clip));
+
+// todo use these checkers and no more ASSERT_CLIPPROPERTIES
+struct KeyFrameValues
+{
+    explicit KeyFrameValues(model::IClipPtr clip);
+
+    inline KeyFrameValues& Opacity(int opacity) { mOpacity.reset(opacity); return *this; }
+    inline KeyFrameValues& Scaling(model::VideoScaling scaling) { mScaling.reset(scaling); return *this; }
+    inline KeyFrameValues& ScalingFactor(rational64 scalingfactor) { mScalingFactor.reset(scalingfactor); return *this; }
+    inline KeyFrameValues& Alignment(model::VideoAlignment alignment) { mAlignment.reset(alignment); return *this; }
+    inline KeyFrameValues& Position(wxPoint position) { mPosition.reset(position); return *this; }
+    inline KeyFrameValues& Rotation(rational64 rotation) { mRotation.reset(rotation); return *this; }
+
+    virtual operator bool() const = 0;
+
+protected:
+
+    model::IClipPtr mClip = nullptr;
+    boost::optional<int> mOpacity;
+    boost::optional<model::VideoScaling> mScaling;
+    boost::optional<rational64> mScalingFactor;
+    boost::optional<model::VideoAlignment> mAlignment;
+    boost::optional<wxPoint> mPosition;
+    boost::optional<rational64> mRotation;
+};
+
+struct KeyFrame : public KeyFrameValues
+{
+    explicit KeyFrame(model::IClipPtr clip, int keyFrameIndex);
+    explicit KeyFrame(model::IClipPtr clip); ///< Uses default key frame
+
+    operator bool() const override;
+
+protected:
+
+    model::VideoClipKeyFramePtr mKeyFrame = nullptr;
+};
+
+struct DefaultKeyFrame : public KeyFrame 
+{ 
+    using KeyFrame::KeyFrame;
+};
+
+struct DetailsView : public KeyFrameValues
+{
+    using KeyFrameValues::KeyFrameValues; // todo use this inheriting constructors pg.596 trick more often (for example for the state events)
+    operator bool() const override;
+};
 
 /// Check the properties of the current details view and the given clip
 /// \pre The given clip must be selected and shown in the details view
@@ -38,6 +86,7 @@ void ASSERT_CLIPPROPERTIES(
     rational64 scaling_factor,
     model::VideoAlignment alignment,
     wxPoint position,
-    rational64 rotation);
+    rational64 rotation,
+    int index = -1);
 
 } // namespace

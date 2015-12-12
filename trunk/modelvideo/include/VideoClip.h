@@ -66,9 +66,6 @@ public:
 
     wxSize getInputSize(); ///< \return size of input video
 
-    size_t getNumberOfKeyFrames() const;
-    VideoClipKeyFramePtr getKeyFrameAt(pts position) const;
-
 protected:
 
     //////////////////////////////////////////////////////////////////////////
@@ -79,6 +76,12 @@ protected:
     /// \see make_cloned
     VideoClip(const VideoClip& other);
 
+    //////////////////////////////////////////////////////////////////////////
+    // KEY FRAMES
+    //////////////////////////////////////////////////////////////////////////
+
+    KeyFramePtr interpolate(KeyFramePtr before, KeyFramePtr after, pts positionBefore, pts position, pts positionAfter) const override;
+
 private:
 
     //////////////////////////////////////////////////////////////////////////
@@ -87,8 +90,6 @@ private:
 
     /// Current render position in pts units (delivered video frames count)
     pts mProgress;
-
-    std::map<pts, VideoClipKeyFramePtr> mKeyFrames;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

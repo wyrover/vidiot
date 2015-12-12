@@ -49,7 +49,7 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     : DetailsPanel(parent, timeline)
     , mBmpHome(util::window::getIcon("icon-home.png"))
     , mBmpEnd(util::window::getIcon("icon-end.png"))
-    , mBmpNext(util::window::getIcon("icon-next.png")) // todo remove the 'preview' part from the images
+    , mBmpNext(util::window::getIcon("icon-next.png"))
     , mBmpPrevious(util::window::getIcon("icon-previous.png"))
     , mBmpPlus{ util::window::getIcon("icon-plus.png") }
     , mBmpMinus{ util::window::getIcon("icon-minus.png") }
@@ -64,6 +64,8 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     , sEditX(_("Edit X position of %s"))
     , sEditY(_("Edit Y position of %s"))
     , sEditVolume(_("Edit volume of %s"))
+    , sEditKeyFramesAdd(_("Add key frame to %s"))
+    , sEditKeyFramesRemove(_("Remove key frame from %s"))
 {
     VAR_DEBUG(this);
 
@@ -303,6 +305,8 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     setClip(nullptr); // Ensures disabling all controls
 
     getSelection().Bind(EVENT_SELECTION_UPDATE, &DetailsClip::onSelectionChanged, this);
+    getPlayer()->Bind(EVENT_PLAYBACK_POSITION, &DetailsClip::onPlaybackPosition, this);
+
     VAR_INFO(GetSize());
 }
 
@@ -313,6 +317,7 @@ DetailsClip::~DetailsClip()
         button->Unbind(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, &DetailsClip::onLengthButtonPressed, this);
     }
     getSelection().Unbind(EVENT_SELECTION_UPDATE, &DetailsClip::onSelectionChanged, this);
+    getPlayer()->Unbind(EVENT_PLAYBACK_POSITION, &DetailsClip::onPlaybackPosition, this);
 
     mSpeedSlider->Unbind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onSpeedSliderChanged, this);
     mSpeedSpin->Unbind(wxEVT_COMMAND_SPINCTRLDOUBLE_UPDATED, &DetailsClip::onSpeedSpinChanged, this);
@@ -334,6 +339,10 @@ DetailsClip::~DetailsClip()
     mVideoKeyFramesEndButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &DetailsClip::onVideoKeyFramesEndButtonPressed, this);
     mVideoKeyFramesAddButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &DetailsClip::onVideoKeyFramesAddButtonPressed, this);
     mVideoKeyFramesRemoveButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &DetailsClip::onVideoKeyFramesRemoveButtonPressed, this);
+    for (auto button : mVideoKeyFrames)
+    {
+        button.second->Unbind(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, &DetailsClip::onVideoKeyFrameButtonPressed, this);
+    }
     mVolumeSlider->Unbind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onVolumeSliderChanged, this);
     mVolumeSpin->Unbind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onVolumeSpinChanged, this);
 
@@ -342,6 +351,7 @@ DetailsClip::~DetailsClip()
     mTransitionClone = nullptr;
     mEditCommand = nullptr;
     mEditSpeedCommand = nullptr;
+    updateProjectEventBindings(); // Reset all bindings (unbind all)
 
     Unbind(wxEVT_SHOW, &DetailsClip::onShow, this);
 }

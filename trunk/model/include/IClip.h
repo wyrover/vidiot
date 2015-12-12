@@ -137,6 +137,23 @@ public:
     /// 'under' a transition in the timeline.
     virtual pts getPerceivedLength() const = 0;
 
+    /// Return the left position of the clip as viewed by the user.
+    /// The difference between the actual position of the clip (getLeftpts()) and
+    /// this perceived position is the area of the clip that is part of an
+    /// adjacent in transition; basically, the part of the clip that is shown
+    /// 'under' a transition in the timeline.
+    virtual pts getPerceivedLeftPts() const = 0;
+
+    /// Return the right position of the clip as viewed by the user.
+    /// The difference between the actual position of the clip (getRightpts()) and
+    /// this perceived position is the area of the clip that is part of an
+    /// adjacent out transition; basically, the part of the clip that is shown
+    /// 'under' a transition in the timeline.
+    virtual pts getPerceivedRightPts() const = 0;
+
+    /// \return a clone that includes that area required for adjacent transitions
+    virtual IClipPtr getExtendedClone() const = 0;
+
     //////////////////////////////////////////////////////////////////////////
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
