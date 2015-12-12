@@ -108,4 +108,46 @@ wxSpinCtrl* DetailsClip::getVolumeSpin() const
     return mVolumeSpin;
 }
 
+wxButton* DetailsClip::getVideoKeyFramesHomeButton() const 
+{ 
+    return mVideoKeyFramesHomeButton; 
+}
+
+wxButton* DetailsClip::getVideoKeyFramesPrevButton() const 
+{ 
+    return mVideoKeyFramesPrevButton; 
+}
+
+wxButton* DetailsClip::getVideoKeyFramesNextButton() const 
+{ 
+    return mVideoKeyFramesNextButton; 
+}
+
+wxButton* DetailsClip::getVideoKeyFramesEndButton() const 
+{ 
+    return mVideoKeyFramesEndButton; 
+}
+
+wxButton* DetailsClip::getVideoKeyFramesAddButton() const 
+{ 
+    return mVideoKeyFramesAddButton; 
+}
+
+wxButton* DetailsClip::getVideoKeyFramesRemoveButton() const 
+{ 
+    return mVideoKeyFramesRemoveButton; 
+}
+
+size_t DetailsClip::getVideoKeyFrameButtonCount() const
+{
+    return mVideoKeyFrames.size();
+}
+
+wxToggleButton* DetailsClip::getVideoKeyFrameButton(size_t index) const 
+{ 
+    ASSERT_MAP_CONTAINS(mVideoKeyFrames, index);
+    return mVideoKeyFrames.find(index)->second; 
+}
+
+
 }} // namespace

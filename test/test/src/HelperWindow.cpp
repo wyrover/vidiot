@@ -117,7 +117,7 @@ void Redo(int steps)
     }
 }
 
-wxCommand* getCurrentCommand()
+wxCommand* getCurrentCommand() // todo replace with ASSERT_HISTORY_SKIP
 {
     return model::CommandProcessor::get().GetCurrentCommand();
 }

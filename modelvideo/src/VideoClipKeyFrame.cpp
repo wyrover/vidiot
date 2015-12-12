@@ -44,8 +44,7 @@ const rational64 VideoClipKeyFrame::sScalingMin{ 1,100 }; // 0.01
 const rational64 VideoClipKeyFrame::sScalingMax{ 100,1 }; // 100
 
 VideoClipKeyFrame::VideoClipKeyFrame()
-    : wxEvtHandler{}
-    , mIsInterpolated{ false }
+    : KeyFrame{ false }
     , mInputSize{ 0,0 }
     , mOpacity{ sOpacityMax }
     , mScaling{}
@@ -59,7 +58,7 @@ VideoClipKeyFrame::VideoClipKeyFrame()
 }
 
 VideoClipKeyFrame::VideoClipKeyFrame(const wxSize& size)
-    : VideoClipKeyFrame{}
+    : KeyFrame{ false }
 {
     VAR_DEBUG(*this);
     mInputSize = size;
@@ -70,29 +69,29 @@ VideoClipKeyFrame::VideoClipKeyFrame(const wxSize& size)
 }
 
 VideoClipKeyFrame::VideoClipKeyFrame(VideoClipKeyFramePtr before, VideoClipKeyFramePtr after, pts positionBefore, pts position, pts positionAfter)
-    : VideoClipKeyFrame{}
+    : KeyFrame{ false }
 {
     ASSERT_EQUALS(before->getSize(), after->getSize());
     ASSERT_LESS_THAN(positionBefore, position);
     ASSERT_LESS_THAN(position, positionAfter);
     rational64 factor{ position - positionBefore, positionAfter - positionBefore };
+    ASSERT_MORE_THAN_EQUALS_ZERO(factor);
+    ASSERT_LESS_THAN(factor, 1);
 
-    mIsInterpolated = true;
     mInputSize = before->getSize();
     mOpacity = before->getOpacity() + boost::rational_cast<int>(factor * (rational64(after->getOpacity() - before->getOpacity())));
     mScaling = model::VideoScalingCustom;
-    mScalingFactor = before->getScalingFactor() + (factor * (rational64(after->getScaling() - before->getScaling())));
+    mScalingFactor = before->getScalingFactor() + (factor * (rational64(after->getScalingFactor() - before->getScalingFactor())));
+    ASSERT_MORE_THAN_ZERO(mScalingFactor);
     mRotation = before->getRotation() + (factor * (rational64(after->getRotation() - before->getRotation())));
-    mRotationPositionOffset.x = before->getRotationPositionOffset().x + boost::rational_cast<int>(factor * (rational64(after->getRotationPositionOffset().x - before->getRotationPositionOffset().x)));
-    mRotationPositionOffset.y = before->getRotationPositionOffset().y + boost::rational_cast<int>(factor * (rational64(after->getRotationPositionOffset().y - before->getRotationPositionOffset().y)));
     mAlignment = model::VideoAlignmentCustom;
     mPosition.x = before->getPosition().x + boost::rational_cast<int>(factor * (rational64(after->getPosition().x - before->getPosition().x)));
     mPosition.y = before->getPosition().y + boost::rational_cast<int>(factor * (rational64(after->getPosition().y - before->getPosition().y)));
+    updateAutomatedPositioning(); //Update mRotationPositionOffset
 }
 
 VideoClipKeyFrame::VideoClipKeyFrame(const VideoClipKeyFrame& other)
-    : wxEvtHandler{}
-    , mIsInterpolated{ other.mIsInterpolated }
+    : KeyFrame{ other }
     , mInputSize{ other.mInputSize }
     , mOpacity{ other.mOpacity }
     , mScaling{ other.mScaling }
@@ -171,6 +170,7 @@ wxPoint VideoClipKeyFrame::getMaxPosition()
 
 void VideoClipKeyFrame::setOpacity(int opacity)
 {
+    ASSERT(!isInterpolated())(*this);
     if (mOpacity != opacity)
     {
         ASSERT_MORE_THAN_EQUALS(opacity, sOpacityMin);
@@ -183,6 +183,7 @@ void VideoClipKeyFrame::setOpacity(int opacity)
 
 void VideoClipKeyFrame::setScaling(const VideoScaling& scaling, const boost::optional<rational64 >& factor)
 {
+    ASSERT(!isInterpolated())(*this);
     VideoScaling oldScaling = mScaling;
     rational64 oldScalingFactor = mScalingFactor;
     wxPoint oldPosition = mPosition;
@@ -192,6 +193,7 @@ void VideoClipKeyFrame::setScaling(const VideoScaling& scaling, const boost::opt
     mScaling = scaling;
     if (factor)
     {
+        ASSERT_MORE_THAN_ZERO(*factor)(*factor);
         unsigned int w{ boost::rational_cast<unsigned int>(mInputSize.GetWidth() * *factor) };
         unsigned int h{ boost::rational_cast<unsigned int>(mInputSize.GetHeight() * *factor) };
         if (w <= 0)
@@ -246,6 +248,7 @@ void VideoClipKeyFrame::setScaling(const VideoScaling& scaling, const boost::opt
 
 void VideoClipKeyFrame::setRotation(const rational64& rotation)
 {
+    ASSERT(!isInterpolated())(*this);
     rational64 oldRotation = mRotation;
     wxPoint oldPosition = mPosition;
     wxPoint oldMinPosition = getMinPosition();
@@ -283,7 +286,7 @@ void VideoClipKeyFrame::setRotationPositionOffset(wxPoint position)
 
 void VideoClipKeyFrame::setAlignment(const VideoAlignment& alignment)
 {
-    ASSERT(!mIsInterpolated)(*this);
+    ASSERT(!isInterpolated())(*this);
     VideoAlignment oldAlignment = mAlignment;
     wxPoint oldPosition = mPosition;
 
@@ -305,6 +308,7 @@ void VideoClipKeyFrame::setAlignment(const VideoAlignment& alignment)
 
 void VideoClipKeyFrame::setPosition(const wxPoint& position)
 {
+    ASSERT(!isInterpolated())(*this);
     VAR_INFO(position);
     wxPoint oldPosition = mPosition;
     mPosition = position;
@@ -375,6 +379,7 @@ void VideoClipKeyFrame::updateAutomatedScaling()
     {
         mScalingFactor = VideoClipKeyFrame::sScalingMin;
     }
+    ASSERT_MORE_THAN_ZERO(mScalingFactor);
 }
 
 void VideoClipKeyFrame::updateAutomatedPositioning()
@@ -422,7 +427,8 @@ void VideoClipKeyFrame::updateAutomatedPositioning()
 
 std::ostream& operator<<(std::ostream& os, const VideoClipKeyFrame& obj)
 {
-    os << std::setw(4) << obj.mInputSize << '|'
+    os << static_cast<const KeyFrame&>(obj) << '|'
+        << std::setw(4) << obj.mInputSize << '|'
         << std::setw(2) << std::hex << obj.mOpacity << std::dec << '|'
         << obj.mScaling << '|'
         << obj.mScalingFactor << '|'
@@ -442,6 +448,7 @@ void VideoClipKeyFrame::serialize(Archive & ar, const unsigned int version)
 {
     try
     {
+        ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(KeyFrame);
         ar & BOOST_SERIALIZATION_NVP(mInputSize);
         ar & BOOST_SERIALIZATION_NVP(mOpacity);
         ar & BOOST_SERIALIZATION_NVP(mScaling);

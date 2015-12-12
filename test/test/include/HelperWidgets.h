@@ -67,4 +67,8 @@ void SetValue(wxCheckBox* widget, bool value);
 /// \param button button for which command event 'pressed' is generated
 void ButtonTriggerPressed(wxButton* button);
 
+/// Simulate the pressing of the given button.
+/// \param button button for which command event 'pressed' is generated
+void ButtonTriggerPressed(wxToggleButton* button);
+
 } // namespace

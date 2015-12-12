@@ -26,7 +26,7 @@
 
 namespace gui { namespace timeline {
 
-DetailsClip::ClonesContainer::ClonesContainer(DetailsClip* details, model::IClipPtr clip, pts position)
+DetailsClip::ClonesContainer::ClonesContainer(DetailsClip* details, model::IClipPtr clip)
     : mDetails(details)
 {
     Clip = make_cloned<model::IClip>(clip);
@@ -48,47 +48,23 @@ DetailsClip::ClonesContainer::ClonesContainer(DetailsClip* details, model::IClip
         Link->setLink(Clip);
     }
 
-    if (Video)
-    {
-        VideoKeyFrame = Video->getKeyFrameAt(position);
-        ASSERT_NONZERO(VideoKeyFrame);
-        VideoKeyFrame->Bind(model::EVENT_CHANGE_VIDEOCLIP_OPACITY, &DetailsClip::onOpacityChanged, mDetails);
-        VideoKeyFrame->Bind(model::EVENT_CHANGE_VIDEOCLIP_SCALING, &DetailsClip::onScalingChanged, mDetails);
-        VideoKeyFrame->Bind(model::EVENT_CHANGE_VIDEOCLIP_SCALINGFACTOR, &DetailsClip::onScalingFactorChanged, mDetails);
-        VideoKeyFrame->Bind(model::EVENT_CHANGE_VIDEOCLIP_ROTATION, &DetailsClip::onRotationChanged, mDetails);
-        VideoKeyFrame->Bind(model::EVENT_CHANGE_VIDEOCLIP_ALIGNMENT, &DetailsClip::onAlignmentChanged, mDetails);
-        VideoKeyFrame->Bind(model::EVENT_CHANGE_VIDEOCLIP_POSITION, &DetailsClip::onPositionChanged, mDetails);
-        VideoKeyFrame->Bind(model::EVENT_CHANGE_VIDEOCLIP_MINPOSITION, &DetailsClip::onMinPositionChanged, mDetails);
-        VideoKeyFrame->Bind(model::EVENT_CHANGE_VIDEOCLIP_MAXPOSITION, &DetailsClip::onMaxPositionChanged, mDetails);
-    }
     if (Audio)
     {
+        // todo do this via the cleanup class
         Audio->Bind(model::EVENT_CHANGE_AUDIOCLIP_VOLUME, &DetailsClip::onVolumeChanged, mDetails);
     }
 };
     
 DetailsClip::ClonesContainer::~ClonesContainer()
 {
-    if (Video)
-    {
-        ASSERT_NONZERO(VideoKeyFrame);
-        VideoKeyFrame->Unbind(model::EVENT_CHANGE_VIDEOCLIP_OPACITY, &DetailsClip::onOpacityChanged, mDetails);
-        VideoKeyFrame->Unbind(model::EVENT_CHANGE_VIDEOCLIP_SCALING, &DetailsClip::onScalingChanged, mDetails);
-        VideoKeyFrame->Unbind(model::EVENT_CHANGE_VIDEOCLIP_SCALINGFACTOR, &DetailsClip::onScalingFactorChanged, mDetails);
-        VideoKeyFrame->Unbind(model::EVENT_CHANGE_VIDEOCLIP_ROTATION, &DetailsClip::onRotationChanged, mDetails);
-        VideoKeyFrame->Unbind(model::EVENT_CHANGE_VIDEOCLIP_ALIGNMENT, &DetailsClip::onAlignmentChanged, mDetails);
-        VideoKeyFrame->Unbind(model::EVENT_CHANGE_VIDEOCLIP_POSITION, &DetailsClip::onPositionChanged, mDetails);
-        VideoKeyFrame->Unbind(model::EVENT_CHANGE_VIDEOCLIP_MINPOSITION, &DetailsClip::onMinPositionChanged, mDetails);
-        VideoKeyFrame->Unbind(model::EVENT_CHANGE_VIDEOCLIP_MAXPOSITION, &DetailsClip::onMaxPositionChanged, mDetails);
-    }
     if (Audio)
     {
+        // todo do this via the cleanup class
         Audio->Unbind(model::EVENT_CHANGE_AUDIOCLIP_VOLUME, &DetailsClip::onVolumeChanged, mDetails);
     }
     Clip.reset();
     Link.reset();
     Video.reset();
-    VideoKeyFrame.reset();
     Audio.reset();
 };
 

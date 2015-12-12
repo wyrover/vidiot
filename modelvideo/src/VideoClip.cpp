@@ -24,7 +24,6 @@
 #include "StatusBar.h"
 #include "UtilClone.h"
 #include "UtilLog.h"
-#include "UtilLogStl.h"
 #include "UtilLogWxwidgets.h"
 #include "UtilSerializeBoost.h"
 #include "UtilSerializeWxwidgets.h"
@@ -44,7 +43,6 @@ namespace model {
 VideoClip::VideoClip()
     : ClipInterval()
     , mProgress(0)
-    , mKeyFrames{ { 0, boost::make_shared<VideoClipKeyFrame>() } }
 {
     VAR_DEBUG(*this);
 }
@@ -52,15 +50,14 @@ VideoClip::VideoClip()
 VideoClip::VideoClip(const VideoFilePtr& file)
     : ClipInterval(file)
     , mProgress(0)
-    , mKeyFrames{ { 0, boost::make_shared<VideoClipKeyFrame>(file->getSize()) } }
 {
     VAR_DEBUG(*this);
+    setDefaultKeyFrame(boost::make_shared<VideoClipKeyFrame>(file->getSize()));
 }
 
 VideoClip::VideoClip(const VideoClip& other)
     : ClipInterval(other)
     , mProgress(0)
-    , mKeyFrames{ make_cloned(other.mKeyFrames) }
 {
     VAR_DEBUG(*this)(other);
 }
@@ -129,7 +126,7 @@ VideoFramePtr VideoClip::getNextVideo(const VideoCompositionParameters& paramete
         }
         else
         {
-            VideoClipKeyFramePtr keyFrame{ getKeyFrameAt(mProgress) };
+            VideoClipKeyFramePtr keyFrame{ boost::dynamic_pointer_cast<VideoClipKeyFrame>(getFrameAt(mProgress)) };
 
             // Scale the clip's size and region of interest to the bounding box
             // Determine scaling for 'fitting' a clip with size 'projectSize' in a bounding box of size 'size'
@@ -212,43 +209,13 @@ wxSize VideoClip::getInputSize()
     return getDataGenerator<VideoFile>()->getSize();
 }
 
-size_t VideoClip::getNumberOfKeyFrames() const
+//////////////////////////////////////////////////////////////////////////
+// KEY FRAMES
+//////////////////////////////////////////////////////////////////////////
+
+KeyFramePtr VideoClip::interpolate(KeyFramePtr before, KeyFramePtr after, pts positionBefore, pts position, pts positionAfter) const
 {
-    // todo always store all key frames with a position relative to the input, NOT to the trimmed part.
-    // then, in this method (and in 'getKeyFrame') return a 'trimmed' list of key frames.
-    // todo, when trimming, what should be done with the new 'first' and 'last' frames? Should keyframes be added for this?
-    return mKeyFrames.size();
-}
-
-VideoClipKeyFramePtr VideoClip::getKeyFrameAt(pts position) const
-{
-    ASSERT_MORE_THAN_ZERO(mKeyFrames.size());
-    VideoClipKeyFramePtr result{ nullptr };
-
-    if (mKeyFrames.size() == 1)
-    {
-        // This one key frame holds settings for all frames.
-        return mKeyFrames.begin()->second;
-    }
-
-    auto itExact{ mKeyFrames.find(position) };
-    if (itExact != mKeyFrames.end())
-    {
-        // Exact key frame found. Return that.
-        itExact->second->setIndex(std::distance(mKeyFrames.begin(), itExact));
-        return itExact->second;
-    }
-
-    // No exact frame possible. Return an interpolated frame.
-    auto it{ mKeyFrames.upper_bound(position + getOffset()) }; // Points to first key frame 'beyond' position.
-    ASSERT(it != mKeyFrames.begin());
-    ASSERT(it != mKeyFrames.end());
-    pts positionAfter{ it->first };
-    VideoClipKeyFramePtr after{ it->second };
-    it--;
-    pts positionBefore{ it->first };
-    VideoClipKeyFramePtr before{ it->second };
-    return boost::make_shared<VideoClipKeyFrame>( before, after, positionBefore, position, positionAfter );
+    return boost::make_shared<VideoClipKeyFrame>(boost::dynamic_pointer_cast<VideoClipKeyFrame>(before), boost::dynamic_pointer_cast<VideoClipKeyFrame>(after), positionBefore, position, positionAfter);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -258,8 +225,7 @@ VideoClipKeyFramePtr VideoClip::getKeyFrameAt(pts position) const
 std::ostream& operator<<(std::ostream& os, const VideoClip& obj)
 {
     os << static_cast<const ClipInterval&>(obj) << '|'
-        << std::setw(4) << obj.mProgress << '|'
-        << obj.mKeyFrames;
+        << std::setw(4) << obj.mProgress;
     return os;
 }
 
@@ -274,11 +240,7 @@ void VideoClip::serialize(Archive & ar, const unsigned int version)
     {
         ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ClipInterval);
         ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(IVideo);
-        if (version >= 4)
-        {
-            ar & BOOST_SERIALIZATION_NVP(mKeyFrames);
-        }
-        else
+        if (version < 4)
         {
             int mOpacity;
             VideoScaling mScaling;
@@ -300,14 +262,15 @@ void VideoClip::serialize(Archive & ar, const unsigned int version)
             }
             ar & BOOST_SERIALIZATION_NVP(mAlignment);
             ar & BOOST_SERIALIZATION_NVP(mPosition);
-            mKeyFrames = { { 0, boost::make_shared<VideoClipKeyFrame>(getInputSize()) } };
-            mKeyFrames[0]->setOpacity(mOpacity);
+            VideoClipKeyFramePtr keyFrame{ boost::make_shared<VideoClipKeyFrame>(getInputSize()) };
+            keyFrame->setOpacity(mOpacity);
             rational64 scalingFactor64{ mScalingFactor.numerator(), mScalingFactor.denominator() };
-            mKeyFrames[0]->setScaling(mScaling, scalingFactor64);
-            mKeyFrames[0]->setRotation(rational64{ mRotation.numerator(), mRotation.denominator() });
-            mKeyFrames[0]->setRotationPositionOffset(mRotationPositionOffset);
-            mKeyFrames[0]->setAlignment(mAlignment);
-            mKeyFrames[0]->setPosition(mPosition);
+            keyFrame->setScaling(mScaling, scalingFactor64);
+            keyFrame->setRotation(rational64{ mRotation.numerator(), mRotation.denominator() });
+            keyFrame->setRotationPositionOffset(mRotationPositionOffset);
+            keyFrame->setAlignment(mAlignment);
+            keyFrame->setPosition(mPosition);
+            setDefaultKeyFrame(keyFrame);
         }
     }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }

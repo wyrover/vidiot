@@ -1,4 +1,4 @@
-// Copyright 2013-2015 Eric Raijmakers.
+// Copyright 2015 Eric Raijmakers.
 //
 // This file is part of Vidiot.
 //
@@ -17,54 +17,35 @@
 
 #pragma once
 
-#include "ClipInterval.h"
 #include "Enums.h"
-#include "IVideo.h"
 
 namespace model {
 
-class VideoClip
-    :   public ClipInterval
-    ,   public IVideo
+class KeyFrame
+    : public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
 {
 public:
+
 
     //////////////////////////////////////////////////////////////////////////
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    VideoClip();
+    KeyFrame(bool interpolated = false);
+    
+    virtual KeyFrame* clone() const;
+    void onCloned() const {};
 
-    VideoClip(const VideoFilePtr& clip);
+    virtual ~KeyFrame();
 
-    virtual VideoClip* clone() const override;
-
-    virtual ~VideoClip();
-
-    //////////////////////////////////////////////////////////////////////////
-    // ICONTROL
-    //////////////////////////////////////////////////////////////////////////
-
-    virtual void clean() override;
-
-    //////////////////////////////////////////////////////////////////////////
-    // ICLIP
-    //////////////////////////////////////////////////////////////////////////
-
-    virtual std::ostream& dump(std::ostream& os) const override;
-    virtual const char* getType() const override;
-
-    //////////////////////////////////////////////////////////////////////////
-    // IVIDEO
-    //////////////////////////////////////////////////////////////////////////
-
-    virtual VideoFramePtr getNextVideo(const VideoCompositionParameters& parameters) override;
+    // todo add virtual 'getHeightFactor' for showing opacity/volume relatively
 
     //////////////////////////////////////////////////////////////////////////
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    wxSize getInputSize(); ///< \return size of input video
+    bool isInterpolated() const { return mInterpolated; }
+    void setInterpolated(bool interpolated) { mInterpolated = interpolated; };
 
 protected:
 
@@ -74,13 +55,7 @@ protected:
 
     /// Copy constructor. Use make_cloned for making deep copies of objects.
     /// \see make_cloned
-    VideoClip(const VideoClip& other);
-
-    //////////////////////////////////////////////////////////////////////////
-    // KEY FRAMES
-    //////////////////////////////////////////////////////////////////////////
-
-    KeyFramePtr interpolate(KeyFramePtr before, KeyFramePtr after, pts positionBefore, pts position, pts positionAfter) const override;
+    KeyFrame(const KeyFrame& other);
 
 private:
 
@@ -88,14 +63,17 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    /// Current render position in pts units (delivered video frames count)
-    pts mProgress;
+    bool mInterpolated = false;
+
+    //////////////////////////////////////////////////////////////////////////
+    // HELPER METHODS
+    //////////////////////////////////////////////////////////////////////////
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<(std::ostream& os, const VideoClip& obj);
+    friend std::ostream& operator<<(std::ostream& os, const KeyFrame& obj);
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION
@@ -108,5 +86,5 @@ private:
 
 } // namespace
 
-BOOST_CLASS_VERSION(model::VideoClip, 4)
-BOOST_CLASS_EXPORT_KEY(model::VideoClip)
+BOOST_CLASS_VERSION(model::KeyFrame, 1)
+BOOST_CLASS_EXPORT_KEY(model::KeyFrame)

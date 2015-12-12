@@ -298,7 +298,7 @@ void VideoDisplay::moveTo(pts position)
         mCurrentBitmap.reset();
     }
 
-    Refresh(false); // Update the shown bitmap
+    Refresh(true); // Update the shown bitmap
     Update(); // For immediate feedback when moving the cursor quickly over the timeline
 }
 

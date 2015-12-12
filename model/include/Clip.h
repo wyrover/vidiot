@@ -63,7 +63,10 @@ public:
 
     TransitionPtr getInTransition() const override;
     TransitionPtr getOutTransition() const override;
-    virtual pts getPerceivedLength() const override;
+    pts getPerceivedLength() const override;
+    pts getPerceivedLeftPts() const override;
+    pts getPerceivedRightPts() const override;
+    IClipPtr getExtendedClone() const override;
 
     bool getSelected() const override;
     void setSelected(bool selected) override;

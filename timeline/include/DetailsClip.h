@@ -36,7 +36,10 @@ namespace model {
     class EventTransitionParameterChanging;
 }
 
-namespace gui { namespace timeline {
+namespace gui { 
+    class PlaybackPositionEvent;
+
+    namespace timeline {
     class EventSelectionUpdate;
 
 namespace command {
@@ -44,6 +47,8 @@ namespace command {
     class EditClipSpeed;
     class TrimClip;
 }
+
+struct Cleanup;
 
 class DetailsClip
     : public DetailsPanel
@@ -74,6 +79,8 @@ public:
     const wxString sEditX;
     const wxString sEditY;
     const wxString sEditVolume;
+    const wxString sEditKeyFramesAdd;
+    const wxString sEditKeyFramesRemove;
 
     static int factorToSliderValue(rational64 speed);
     static rational64 sliderValueToFactor(int slidervalue);
@@ -122,6 +129,7 @@ public:
     void onVideoKeyFramesEndButtonPressed(wxCommandEvent& event);
     void onVideoKeyFramesAddButtonPressed(wxCommandEvent& event);
     void onVideoKeyFramesRemoveButtonPressed(wxCommandEvent& event);
+    void onVideoKeyFrameButtonPressed(wxCommandEvent& event);
 
     void onVolumeSliderChanged(wxCommandEvent& event);
     void onVolumeSpinChanged(wxSpinEvent& event);
@@ -135,6 +143,8 @@ public:
     //////////////////////////////////////////////////////////////////////////
     // PROJECT EVENTS
     //////////////////////////////////////////////////////////////////////////
+
+    void updateProjectEventBindings();
 
     void onOpacityChanged(model::EventChangeVideoClipOpacity& event);
     void onScalingChanged(model::EventChangeVideoClipScaling& event);
@@ -150,6 +160,7 @@ public:
     void onTransitionParameterChanged(model::EventTransitionParameterChanged& event);
 
     void onSelectionChanged(timeline::EventSelectionUpdate& event);
+    void onPlaybackPosition(PlaybackPositionEvent& event);
 
     //////////////////////////////////////////////////////////////////////////
     // TEST
@@ -175,6 +186,15 @@ public:
     wxSlider* getVolumeSlider() const;
     wxSpinCtrl* getVolumeSpin() const;
 
+    wxButton* getVideoKeyFramesHomeButton() const;
+    wxButton* getVideoKeyFramesPrevButton() const;
+    wxButton* getVideoKeyFramesNextButton() const;
+    wxButton* getVideoKeyFramesEndButton() const;
+    wxButton* getVideoKeyFramesAddButton() const;
+    wxButton* getVideoKeyFramesRemoveButton() const;
+    size_t getVideoKeyFrameButtonCount() const;
+    wxToggleButton* getVideoKeyFrameButton(size_t index) const;
+
 private:
 
     //////////////////////////////////////////////////////////////////////////
@@ -185,14 +205,13 @@ private:
     {
         ClonesContainer(const ClonesContainer& other) = delete;
 
-        explicit ClonesContainer(DetailsClip* details, model::IClipPtr clip, pts position = 0);
+        explicit ClonesContainer(DetailsClip* details, model::IClipPtr clip);
         virtual ~ClonesContainer();
 
         DetailsClip* mDetails = nullptr;
         model::IClipPtr Clip = nullptr;
         model::IClipPtr Link = nullptr;
         model::VideoClipPtr Video = nullptr;
-        model::VideoClipKeyFramePtr VideoKeyFrame = nullptr;
         model::AudioClipPtr Audio = nullptr;
     };
 
@@ -200,6 +219,7 @@ private:
     pts mClipPosition = 0; ///< The currently known position of the clip (used to 'reset' the clip when it is moved around)
     model::TransitionPtr mTransitionClone = nullptr; ///< Transition which is currently being edited
     std::unique_ptr<ClonesContainer> mClones;
+    std::unique_ptr<Cleanup> mVideoKeyFrameEventsUnbind = nullptr;
 
     command::EditClipDetails* mEditCommand = nullptr;
     command::EditClipSpeed* mEditSpeedCommand = nullptr;
@@ -271,6 +291,7 @@ private:
     model::AudioClipPtr getAudioClip(const model::IClipPtr& clip) const;
     model::TransitionPtr getTransition(const model::IClipPtr& clip) const;
 
+    std::map<pts, model::VideoClipKeyFramePtr> getVideoKeyFrames() const;
     pts getVideoKeyFrameOffset() const;
     model::VideoClipKeyFramePtr getVideoKeyFrame() const;
 
@@ -289,6 +310,8 @@ private:
     void updateLengthButtons();
 
     void updateVideoKeyFrameControls();
+
+    void moveCursorToKeyFrame(model::IClipPtr clip, pts offset);
 };
 
 }} // namespace

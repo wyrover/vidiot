@@ -22,6 +22,7 @@
 #include "EditClipDetails.h"
 #include "EditClipSpeed.h"
 #include "ProjectModification.h"
+#include "UtilLog.h"
 #include "VideoComposition.h"
 #include "VideoCompositionParameters.h"
 #include "VideoFrame.h"
@@ -50,6 +51,13 @@ rational64 DetailsClip::sliderValueToFactor(int slidervalue)
     int diff = slidervalue - 10000;
     return rational64(diff + 100, 100); // +100 ensures 10001 starts at 1.01. -(diff/100) ensures that 20000 is exactly 100.00 again.
 }
+
+struct Cleanup
+{
+    Cleanup(std::function<void()> _cleanup) : cleanup(_cleanup) {}
+    ~Cleanup() { cleanup(); }
+    std::function<void()> cleanup;
+};
 
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS
@@ -81,18 +89,60 @@ model::TransitionPtr DetailsClip::getTransition(const model::IClipPtr& clip) con
         nullptr;
 }
 
+std::map<pts, model::VideoClipKeyFramePtr> DetailsClip::getVideoKeyFrames() const
+{
+    model::VideoClipPtr videoclip{ getVideoClip(mClip) };
+    ASSERT_NONZERO(videoclip);
+
+    model::ClipIntervalPtr interval{ boost::dynamic_pointer_cast<model::ClipInterval>(videoclip) };
+    ASSERT_NONZERO(interval);
+
+    std::map<pts, model::VideoClipKeyFramePtr> result;
+
+    for (auto kvp : interval->getKeyFrames())
+    {
+        auto video{ boost::dynamic_pointer_cast<model::VideoClipKeyFrame>(kvp.second) };
+        ASSERT_NONZERO(video);
+        result[kvp.first] = video;
+    }
+
+    return result;
+}
+
 pts DetailsClip::getVideoKeyFrameOffset() const
 {
     model::VideoClipPtr videoclip{ getVideoClip(mClip) };
     ASSERT_NONZERO(videoclip);
 
-    pts result{ 0 }; // Default: use first key frame
-    if (getCursor().getLogicalPosition() >= videoclip->getLeftPts() &&  // By default, edit the frame under the cursor
-        getCursor().getLogicalPosition() < videoclip->getRightPts())    // (which is already currently shown, typically)
+    model::ClipIntervalPtr interval{ boost::dynamic_pointer_cast<model::ClipInterval>(videoclip) };
+    ASSERT_NONZERO(interval);
+
+    pts origin{ videoclip->getLeftPts() - interval->getOffset() }; // Theoretical position of first input frame
+
+    pts addleft{ videoclip->getInTransition() ? *videoclip->getInTransition()->getRight() : 0 };
+    pts firstFrame{ videoclip->getLeftPts() - addleft };
+
+    pts addright{ videoclip->getOutTransition() ? *videoclip->getOutTransition()->getLeft() : 0 };
+    pts lastFrame{ videoclip->getRightPts() + addright };
+
+    pts result{ -1 };
+    pts cursor{ getCursor().getLogicalPosition() };
+    if (cursor <= firstFrame)
     {
-        // The cursor is positioned inside the clip being adjusted.
-        result = getCursor().getLogicalPosition() - videoclip->getLeftPts();
+        // Cursor before clip: use first frame
+        result = firstFrame - origin;
     }
+    else if (cursor >= lastFrame)
+    {
+        // Cursor after clip : use last frame
+        result = lastFrame - origin;
+    }
+    else
+    {
+        // Inside the clip being adjusted
+        result = cursor - origin;
+    }
+    
     ASSERT_MORE_THAN_EQUALS_ZERO(result);
     return result;
 }
@@ -101,10 +151,29 @@ model::VideoClipKeyFramePtr DetailsClip::getVideoKeyFrame() const
 {
     model::VideoClipPtr videoclip{ getVideoClip(mClip) };
     if (!videoclip) { return nullptr; }
-    
-    model::VideoClipKeyFramePtr result{ videoclip->getKeyFrameAt(getVideoKeyFrameOffset()) };
-    ASSERT_NONZERO(result);
 
+    model::VideoClipKeyFramePtr result{ nullptr };
+    pts position{ getVideoKeyFrameOffset() };
+    std::map<pts, model::VideoClipKeyFramePtr> keyframes{ getVideoKeyFrames() };
+    if (keyframes.empty())
+    {
+        // Clip without key frames. Use the default key frame for the overall clip settings
+        result = boost::dynamic_pointer_cast<model::VideoClipKeyFrame>(videoclip->getDefaultKeyFrame());
+    }
+    else
+    {
+        auto it{ keyframes.find(position) };
+        if (it != keyframes.end())
+        {
+            result = it->second;
+        }
+        else
+        {
+            // Return interpolated frame (for previewing the values)
+            result = boost::dynamic_pointer_cast<model::VideoClipKeyFrame>(videoclip->getFrameAt(position));
+        }
+    }
+    ASSERT_NONZERO(result);
     return result;
 }
 
@@ -114,7 +183,9 @@ void DetailsClip::submitEditCommandUponAudioVideoEdit(const wxString& message)
 
     if (mEditCommand == nullptr || // No command submit yet
         mEditCommand != model::CommandProcessor::get().GetCurrentCommand() || // If another command was done inbetween
-        mEditCommand->getMessage() != message) // Another aspect was changed
+        mEditCommand->getMessage() != message ||  // Another aspect was changed
+        message == sEditKeyFramesAdd || // A key frame addition is always a separate command
+        message == sEditKeyFramesRemove)  // A key frame removal is always a separate command
     {
         // Use new clones for the new command
         mClones = std::unique_ptr<ClonesContainer>(new ClonesContainer(this, mClip));
@@ -129,6 +200,13 @@ void DetailsClip::submitEditCommandUponAudioVideoEdit(const wxString& message)
         mClip = mClones->Clip;
 
         mEditCommand->submit();
+
+        // Bind to the proper events before submitting the command.
+        // This ensures that the project events are received which, in turn,
+        // results in updating the preview window.
+        // Note that the proper key frame is requested from the clip in the model,
+        // hence the command must be submit first.
+        updateProjectEventBindings();
 
         // Do not reset mEditCommand: required for checking subsequent edits.
         // If a clip aspect is edited twice, simply adjust the clone twice,
@@ -153,7 +231,7 @@ void DetailsClip::submitEditCommandUponAudioVideoEdit(const wxString& message)
         }
     }
 
-    preview();
+//    preview(); // todo obsolete as after creating the command the clip is edited resulting in a project event, which should result in a preview again?
 }
 
 void DetailsClip::submitEditCommandUponTransitionEdit(const wxString& parameter)
@@ -223,50 +301,21 @@ void DetailsClip::createOrUpdateSpeedCommand(rational64 speed)
 
 void DetailsClip::preview()
 {
-    if (!mClones || !mClones->Video) { return; }
-    ASSERT_NONZERO(mClones->Video->getTrack()); // The edit command must have been submitted
-
-    pts position = getCursor().getLogicalPosition(); // By default, show the frame under the cursor (which is already currently shown, typically)
-    if ((position < mClones->Video->getLeftPts()) ||
-        (position >= mClones->Video->getRightPts()))
+    pts position{ getCursor().getLogicalPosition() }; // By default, show the frame under the cursor (which is already currently shown, typically)
+    ASSERT(mClones != nullptr);
+    if (!mClones->Video) { return; } // In case of audio-only preview is not updated.
+    if ((position < mClones->Video->getPerceivedLeftPts()) ||
+        (position >= mClones->Video->getPerceivedRightPts()))
     {
         // The cursor is not positioned under the clip being adjusted. Move the cursor to the middle frame of that clip
+        ASSERT_ZERO(mClones->Video->getKeyFrames().size()); // This can only happen in case there are no keyframes.
         position = mClones->Video->getLeftPts() + mClones->Video->getLength() / 2; // Show the middle frame of the clip
         VAR_DEBUG(position);
         getCursor().setLogicalPosition(position); // ...and move the cursor to that position
     }
-
-    wxSize s = getPlayer()->getVideoSize();
-    if (mClones->Video->getLength() > 0 &&
-        s.GetWidth() > 0 &&
-        s.GetHeight() > 0)
+    else
     {
-        boost::shared_ptr<wxBitmap> bmp = boost::make_shared<wxBitmap>(s);
-        wxMemoryDC dc(*bmp);
-
-        // Fill with black
-        dc.SetBrush(wxBrush{ wxColour{ 0, 0, 0 } });
-        dc.SetPen(wxPen{ wxColour{ 0, 0, 0 } });
-        dc.DrawRectangle(wxPoint(0,0),dc.GetSize());
-
-        // Draw preview of operation
-        getSequence()->moveTo(position);
-        ASSERT_EQUALS(dc.GetSize(),s);
-        model::VideoCompositionPtr composition = getSequence()->getVideoComposition(model::VideoCompositionParameters().setBoundingBox(dc.GetSize()).setPts(position));
-        model::VideoFramePtr compositeFrame = composition->generate();
-        if (compositeFrame)
-        {
-            wxBitmapPtr bitmap = compositeFrame->getBitmap();
-            if (bitmap)
-            {
-                // Don't use DrawBitmap since this gives wrong output when using wxGTK.
-                wxMemoryDC dcBmp(*bitmap);
-                dc.Blit(wxPoint(0,0), bitmap->GetSize(), &dcBmp, wxPoint(0,0));
-            }
-        }
-
-        dc.SelectObject(wxNullBitmap);
-        getPlayer()->showPreview(bmp);
+        getPlayer()->moveTo(getCursor().getLogicalPosition());
     }
 }
 
@@ -282,7 +331,7 @@ void DetailsClip::updateAlignment(bool horizontalchange)
         }
         return mSelectAlignment->getValue();
     };
-    mClones->Video->getKeyFrameAt(getVideoKeyFrameOffset())->setAlignment(getAlignment()); // todo just edit the cloned keyframe mClones->VideoKeyFrame
+    getVideoKeyFrame()->setAlignment(getAlignment());
 }
 
 void DetailsClip::determineClipSizeBounds()
@@ -421,8 +470,9 @@ void DetailsClip::updateLengthButtons()
 
 void DetailsClip::updateVideoKeyFrameControls()
 {
+    if (!mClip) { return; }
     model::VideoClipPtr videoclip{ getVideoClip(mClip) };
-    ASSERT_NONZERO(videoclip);
+    if (!videoclip) { return; }
     model::VideoClipKeyFramePtr videoKeyFrame{ getVideoKeyFrame() };
     ASSERT_NONZERO(videoKeyFrame);
     pts videoKeyFrameOffset{ getVideoKeyFrameOffset() };
@@ -467,38 +517,56 @@ void DetailsClip::updateVideoKeyFrameControls()
     mPositionYSlider->Enable(!videoKeyFrame->isInterpolated());
     mPositionYSpin->Enable(!videoKeyFrame->isInterpolated());
 
-    // todo If a keyframe button is pressed, move the timeline cursor accordingly.
-    // todo for the preview do not pick the center frame but the first frame? (or simply: the current keyframe)
-
-    size_t nKeyFrames{ videoclip->getNumberOfKeyFrames() };
-    if (mVideoKeyFramesPanel->GetChildren().size() != nKeyFrames) // todo handle too much keyframes to show....
+    std::map<pts, model::VideoClipKeyFramePtr> keyframes{ getVideoKeyFrames() };
+    if (mVideoKeyFramesPanel->GetChildren().size() != keyframes.size()) // todo handle too much keyframes to show....
     {
+        for (auto button : mVideoKeyFrames) { button.second->Unbind(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, &DetailsClip::onVideoKeyFrameButtonPressed, this); }
+
         mVideoKeyFramesPanel->DestroyChildren();
         mVideoKeyFrames.clear();
 
         wxBoxSizer* sizer{ new wxBoxSizer{ wxHORIZONTAL } };
-        for (size_t i{ 0 }; i < nKeyFrames; ++i)
+        for (size_t i{ 0 }; i < keyframes.size(); ++i)
         {
-            mVideoKeyFrames[i] = new wxToggleButton{ mVideoKeyFramesPanel, wxID_ANY, wxString::Format("%d", i + 1), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT };
+            mVideoKeyFrames[i] = new wxToggleButton{ mVideoKeyFramesPanel, narrow_cast<int, size_t>(i), wxString::Format("%d", i + 1), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT };
             mVideoKeyFrames[i]->SetFont(mVideoKeyFrames[i]->GetFont().Smaller().Smaller());
             sizer->Add(mVideoKeyFrames[i], wxSizerFlags{ 1 });
         }
         mVideoKeyFramesPanel->SetSizerAndFit(sizer);
-        mVideoKeyFramesPanel->Layout();
-        //mVideoKeyFramesEditPanel->Layout();
-        //Layout();
+        mVideoKeyFramesEditPanel->Layout(); // Required for properly updating button lengths after adding/removing key frames.
+
+        for (auto button : mVideoKeyFrames) { button.second->Bind(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, &DetailsClip::onVideoKeyFrameButtonPressed, this); }
     }
-    for (size_t i{ 0 }; i < nKeyFrames; ++i)
+    ASSERT_EQUALS(mVideoKeyFrames.size(), keyframes.size());
+    // todo take the part 'under' a transition into account (test)
+
+    mVideoKeyFramesHomeButton->Enable(!keyframes.empty() && videoKeyFrameOffset > keyframes.begin()->first);
+    mVideoKeyFramesPrevButton->Enable(!keyframes.empty() && videoKeyFrameOffset > keyframes.begin()->first);
+    mVideoKeyFramesNextButton->Enable(!keyframes.empty() && videoKeyFrameOffset < keyframes.rbegin()->first);
+    mVideoKeyFramesEndButton->Enable(!keyframes.empty() && videoKeyFrameOffset < keyframes.rbegin()->first);
+    mVideoKeyFramesRemoveButton->Enable(!keyframes.empty() && keyframes.find(videoKeyFrameOffset) != keyframes.end());
+    // Note: if there are no keyframes, there are no buttons to dis/enable.
+    auto it{ keyframes.begin() };
+    for (size_t i{ 0 }; i < keyframes.size(); ++i)
     {
-        mVideoKeyFrames[i]->SetValue(i == videoKeyFrame->getIndex() && nKeyFrames > 1);
-        mVideoKeyFrames[i]->Enable(i != videoKeyFrame->getIndex());
+        mVideoKeyFrames[i]->SetValue(it->first == videoKeyFrameOffset);
+        ++it;
     }
-    mVideoKeyFramesHomeButton->Enable(videoKeyFrame->getIndex() > 0);
-    mVideoKeyFramesPrevButton->Enable(videoKeyFrame->getIndex() > 0);
-    mVideoKeyFramesNextButton->Enable(videoKeyFrame->getIndex() < nKeyFrames - 1);
-    mVideoKeyFramesEndButton->Enable(videoKeyFrame->getIndex() < nKeyFrames - 1);
-    mVideoKeyFramesRemoveButton->Enable(videoKeyFrame->getIndex() > 0);
-    mVideoKeyFramesAddButton->Enable(videoKeyFrame->isInterpolated() || (nKeyFrames == 1 && videoKeyFrameOffset > 0));
+
+    // Only enable if cursor is 'inside' clip visible region
+    pts cursor{ getCursor().getLogicalPosition() };
+    bool cursorInBetween{ mClip->getPerceivedLeftPts() <= cursor && mClip->getPerceivedRightPts() > cursor };
+    mVideoKeyFramesAddButton->Enable(cursorInBetween && (keyframes.empty() || videoKeyFrame->isInterpolated()));
+}
+
+void DetailsClip::moveCursorToKeyFrame(model::IClipPtr clip, pts offset)
+{
+    std::map<pts, model::VideoClipKeyFramePtr> keyFrames{ getVideoKeyFrames() };
+    ASSERT_NONZERO(keyFrames.size());
+    ASSERT_MAP_CONTAINS(keyFrames, offset);
+    model::ClipIntervalPtr interval{ boost::dynamic_pointer_cast<model::ClipInterval>(clip) };
+    ASSERT_NONZERO(interval);
+    getCursor().setLogicalPosition(interval->getLeftPts() - interval->getOffset() + offset); // todo preview not updated when moving between key frames (via next button) - directly after adding a key frame
 }
 
 }} // namespace

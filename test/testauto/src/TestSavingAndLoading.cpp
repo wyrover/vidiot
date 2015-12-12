@@ -101,6 +101,10 @@ void TestSavingAndLoading::testSaveAndLoad()
     TimelineLeftClick(Center(VideoClip(0,1)));
     TimelineKeyPress(WXK_DELETE);
 
+    StartTest("Add video key frames");
+    // todo modify one clip without adding key frames
+    // todo add key frames to another clip, and modify those key frames
+
     StartTest("Zoom");
     TimelineKeyPressN(4,'='); // Zoom in until factor is 1:1
 

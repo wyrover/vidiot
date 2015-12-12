@@ -17,6 +17,7 @@
 
 #pragma once
 
+#include "KeyFrame.h"
 #include "Enums.h"
 #include "UtilInt.h"
 #include "UtilRational.h"
@@ -24,7 +25,7 @@
 namespace model {
 
 class VideoClipKeyFrame
-    : public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
+    : public KeyFrame
 {
 public:
 
@@ -44,8 +45,7 @@ public:
 
     VideoClipKeyFrame(VideoClipKeyFramePtr before, VideoClipKeyFramePtr after, pts positionBefore, pts position, pts positionAfter);
     
-    virtual VideoClipKeyFrame* clone() const;
-    void onCloned() const {};
+    virtual VideoClipKeyFrame* clone() const override;
 
     virtual ~VideoClipKeyFrame();
 
@@ -54,9 +54,6 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     wxSize getSize() const { return mInputSize; }
-    bool isInterpolated() const { return mIsInterpolated; }
-    size_t getIndex() const { return mIndex; }
-    void setIndex(size_t index) { mIndex = index; }
 
     int getOpacity() const;
     VideoScaling getScaling() const;
@@ -76,6 +73,7 @@ public:
     void setAlignment(const VideoAlignment& alignment);
     void setPosition(const wxPoint& position); ///< \param position the logical position as observed by the user. That is the combination of the alignment offset and the shift because of the region of interest.
 
+protected:
 
     //////////////////////////////////////////////////////////////////////////
     // COPY CONSTRUCTOR
@@ -92,9 +90,6 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     wxSize mInputSize;
-
-    bool mIsInterpolated = false;
-    size_t mIndex = 0;
 
     int mOpacity = sOpacityMax;
 

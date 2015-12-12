@@ -66,6 +66,34 @@ public:
     virtual rational64 getSpeed() const;
 
     //////////////////////////////////////////////////////////////////////////
+    // KEY FRAMES
+    //////////////////////////////////////////////////////////////////////////
+
+    /// \return list of actual possible key frames. These are the key frames that are in the region 'visible' in the timeline.
+    /// \note Returned pts'es are related to the input, thus no offset is applied! 
+    ///       However, the speed has been applied! 
+    ///       Rationale: that allows proper 'target' ptses, but also allows having keyframes under transitions.
+    /// \note returned pts'es include positions 'under' any adjacent transitions
+    /// \note If there are no key frames only contains the [-1] default key frame.
+    std::map<pts, KeyFramePtr> getKeyFrames() const;
+
+    /// \return the always present default key frame (the parameters used when there are no key frames)
+    KeyFramePtr getDefaultKeyFrame() const;
+
+    /// \return (clone of) key frame (possibly interpolated) at given (output) position
+    /// \param offset offset with respect to the output
+    KeyFramePtr getFrameAt(pts offset) const;
+
+    /// Add a key frame
+    /// \param offset offset into the input data
+    /// \param frame new key frame
+    void addKeyFrameAt(pts offset, KeyFramePtr frame);
+
+    /// Remove a key frame
+    /// \param offset offset into the input data
+    void removeKeyFrameAt(pts offset);
+
+    //////////////////////////////////////////////////////////////////////////
     // FOR PREVIEWING
     //////////////////////////////////////////////////////////////////////////
 
@@ -107,6 +135,14 @@ protected:
     /// \see make_cloned
     ClipInterval(const ClipInterval& other);
 
+    //////////////////////////////////////////////////////////////////////////
+    // KEY FRAMES
+    //////////////////////////////////////////////////////////////////////////
+
+    void setDefaultKeyFrame(KeyFramePtr keyframe);
+
+    virtual KeyFramePtr interpolate(KeyFramePtr before, KeyFramePtr after, pts positionBefore, pts position, pts positionAfter) const = 0;
+
 private:
 
     //////////////////////////////////////////////////////////////////////////
@@ -120,6 +156,13 @@ private:
     pts mLength;        ///< Length of the clip in 'sequence' speed and time base; number of frames to show from the original media file (after applying speed).
 
     mutable wxString mDescription;  ///< Stored for performance (cached) and for easier debugging.
+
+    /// Keyframes are stored with a position relative to the input.
+    /// Thus, trimming has no effect on the (member) list of key frames.
+    std::map<pts, KeyFramePtr> mKeyFrames;
+
+    /// Parameters used when no keyframes are present
+    KeyFramePtr mDefaultKeyFrame;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
@@ -144,5 +187,5 @@ private:
 
 } // namespace
 
-BOOST_CLASS_VERSION(model::ClipInterval, 3)
+BOOST_CLASS_VERSION(model::ClipInterval, 4)
 BOOST_CLASS_EXPORT_KEY(model::ClipInterval)

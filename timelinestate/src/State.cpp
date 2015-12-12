@@ -460,8 +460,6 @@ void Machine::onPlaybackPosition(PlaybackPositionEvent& event)
     LOG_DEBUG;
     process_event(EvPlaybackPositionChanged(event.getValue()));
     event.Skip();
-
-
 }
 
 }}} // namespace

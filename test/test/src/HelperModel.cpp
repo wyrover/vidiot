@@ -19,6 +19,7 @@
 
 namespace test {
 
+// todo caps
 model::VideoClipPtr getVideoClip(model::IClipPtr clip)
 {
     model::VideoClipPtr videoclip = boost::dynamic_pointer_cast<model::VideoClip>(clip);
@@ -33,34 +34,54 @@ model::AudioClipPtr getAudioClip(model::IClipPtr clip)
     return audioclip;
 }
 
-int getOpacity(model::IClipPtr clip, pts position)
+model::VideoClipKeyFramePtr DefaultVideoKeyFrame(model::IClipPtr clip)
 {
-    return getVideoClip(clip)->getKeyFrameAt(position)->getOpacity();
-};
-
-rational64 getScalingFactor(model::IClipPtr clip, pts position)
-{
-    return getVideoClip(clip)->getKeyFrameAt(position)->getScalingFactor();
-};
-
-model::VideoScaling getScaling(model::IClipPtr clip, pts position)
-{
-    return getVideoClip(clip)->getKeyFrameAt(position)->getScaling();
-};
-
-model::VideoAlignment getAlignment(model::IClipPtr clip, pts position)
-{
-    return getVideoClip(clip)->getKeyFrameAt(position)->getAlignment();
+    return boost::dynamic_pointer_cast<model::VideoClipKeyFrame>(getVideoClip(clip)->getDefaultKeyFrame());
 }
 
-wxPoint getPosition(model::IClipPtr clip, pts position)
+model::VideoClipKeyFramePtr VideoKeyFrame(model::IClipPtr clip, size_t index)
 {
-    return getVideoClip(clip)->getKeyFrameAt(position)->getPosition();
+    std::map<pts, model::KeyFramePtr> keyFrames{ getVideoClip(clip)->getKeyFrames() };
+    ASSERT_NONZERO(keyFrames.size());
+    for (auto kvp : keyFrames)
+    {
+        if (0 == index--)
+        {
+            return boost::dynamic_pointer_cast<model::VideoClipKeyFrame>(kvp.second);
+        }
+    }
+    FATAL("Key frame not found");
+    return nullptr;
 }
 
-rational64 getRotation(model::IClipPtr clip, pts position)
+int getOpacity(model::VideoClipKeyFramePtr keyframe)
 {
-    return getVideoClip(clip)->getKeyFrameAt(position)->getRotation();
+    return keyframe->getOpacity();
+};
+
+rational64 getScalingFactor(model::VideoClipKeyFramePtr keyframe)
+{
+    return keyframe->getScalingFactor();
+};
+
+model::VideoScaling getScaling(model::VideoClipKeyFramePtr keyframe)
+{
+    return keyframe->getScaling();
+};
+
+model::VideoAlignment getAlignment(model::VideoClipKeyFramePtr keyframe)
+{
+    return keyframe->getAlignment();
+}
+
+wxPoint getPosition(model::VideoClipKeyFramePtr keyframe)
+{
+    return keyframe->getPosition();
+}
+
+rational64 getRotation(model::VideoClipKeyFramePtr keyframe)
+{
+    return keyframe->getRotation();
 }
 
 void Unlink(model::IClipPtr clip)

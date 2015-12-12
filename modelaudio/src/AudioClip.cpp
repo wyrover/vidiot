@@ -49,6 +49,7 @@ AudioClip::AudioClip(const AudioFilePtr& file)
     , mInputChunk()
 {
     VAR_DEBUG(*this);
+    // todo setDefaultKeyFrame(boost::make_shared<AudioClipKeyFrame>(file->getSize()));
 }
 
 AudioClip::AudioClip(const AudioClip& other)
@@ -241,6 +242,18 @@ AudioPeaks AudioClip::getPeaks(const AudioCompositionParameters& parameters)
 }
 
 //////////////////////////////////////////////////////////////////////////
+// KEY FRAMES
+//////////////////////////////////////////////////////////////////////////
+
+
+KeyFramePtr AudioClip::interpolate(KeyFramePtr before, KeyFramePtr after, pts positionBefore, pts position, pts positionAfter) const
+{
+    // todo 
+    return nullptr;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
@@ -267,6 +280,7 @@ void AudioClip::serialize(Archive & ar, const unsigned int version)
         {
             ar & BOOST_SERIALIZATION_NVP(mVolume);
         }
+        // todo             setDefaultKeyFrame(keyFrame);
     }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
     catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }

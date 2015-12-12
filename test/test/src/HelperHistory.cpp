@@ -1,4 +1,4 @@
-// Copyright 2013-2015 Eric Raijmakers.
+// Copyright 2015 Eric Raijmakers.
 //
 // This file is part of Vidiot.
 //
@@ -21,41 +21,28 @@
 
 namespace test {
 
-void ASSERT_NO_TRANSITIONS_IN_VIDEO_TRACK(int trackindex)
-{
-    for (int i = 0; i < NumberOfVideoClipsInTrack(trackindex); ++i)
-    {
-        ASSERT(!VideoClip(trackindex,i)->isA<model::Transition>())(i);
-    }
-}
-
-void ASSERT_SELECTION_SIZE(int size)
-{
-    ASSERT_EQUALS(getSelectedClipsCount(),2 * size); // * 2 since AudioClips are selected also
-}
-
 //////////////////////////////////////////////////////////////////////////
-// CLIPTYPEASSERTER
+// HistoryCommandAsserter
 //////////////////////////////////////////////////////////////////////////
 
-ClipTypeAsserter::~ClipTypeAsserter()
+HistoryCommandAsserter::~HistoryCommandAsserter()
 {
-};
+    // Ensures that any 'extra' commands do not go unnoticed.
+    ASSERT(mCurrentCommandSeen);
+}
 
-void ClipTypeAsserter::ClipTypeMismatch(const std::type_info& expectedtype)
+void HistoryCommandAsserter::CommandMismatch(size_t mSkip, size_t mIndex, const std::type_info& expectedtype)
 {
-    int TrackNumber = mTrackNumber;
-    int ClipNumber = mClipNumber;
-    std::string TrackType = mVideo ? "VIDEO" : "AUDIO";
+    size_t Skip{ mSkip };
+    size_t Index{ mIndex };
     auto convert = [](const std::type_info& info) -> std::string
     {
-        std::string theName = info.name();
+        std::string theName{ info.name() };
         return theName.substr(theName.find_last_of(':') + 1);
     };
 
-    std::string Expected = convert(expectedtype);
-    std::string Got = mVideo ? convert(typeid(*VideoClip(TrackNumber,mClipNumber))) : convert(typeid(*AudioClip(TrackNumber, mClipNumber)));;
-    LogVar("Clip type error", __FILE__, __LINE__,__FUNCTION__).LOGVAR_A(TrackType)(TrackNumber)(mClipNumber)(Expected)(Got);
+    std::string Expected{ convert(expectedtype) };
+    LogVar("History type error", __FILE__, __LINE__,__FUNCTION__).LOGVAR_A(Skip)(Index)(Expected);
 }
 
 } // namespace

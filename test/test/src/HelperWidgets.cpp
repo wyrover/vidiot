@@ -54,7 +54,7 @@ void SetValue(wxSlider* widget, int value)
     util::thread::RunInMainAndWait([widget,value]
     {
         widget->SetValue(value);
-        wxCommandEvent event{wxEVT_SLIDER};
+        wxCommandEvent event{wxEVT_COMMAND_SLIDER_UPDATED};
         widget->GetEventHandler()->ProcessEvent(event);
     });
 }
@@ -96,6 +96,17 @@ void ButtonTriggerPressed(wxButton* button)
     util::thread::RunInMainAndWait([button]
     {
         wxCommandEvent event(wxEVT_COMMAND_BUTTON_CLICKED);
+        button->GetEventHandler()->ProcessEvent(event);
+    });
+}
+
+void ButtonTriggerPressed(wxToggleButton* button)
+{
+    // Using QueueEvent (without RunInMainAndWait) did not work.
+    util::thread::RunInMainAndWait([button]
+    {
+        wxCommandEvent event(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED);
+        event.SetId(button->GetId());
         button->GetEventHandler()->ProcessEvent(event);
     });
 }

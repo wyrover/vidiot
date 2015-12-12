@@ -76,7 +76,7 @@ void DetailsClip::onOpacitySliderChanged(wxCommandEvent& event)
     CatchExceptions([this]
     {
         submitEditCommandUponAudioVideoEdit(sEditOpacity);
-        mClones->VideoKeyFrame->setOpacity(mOpacitySlider->GetValue());
+        getVideoKeyFrame()->setOpacity(mOpacitySlider->GetValue());
     });
     event.Skip();
 }
@@ -87,7 +87,7 @@ void DetailsClip::onOpacitySpinChanged(wxSpinEvent& event)
     CatchExceptions([this]
     {
         submitEditCommandUponAudioVideoEdit(sEditOpacity); // Changes same clip aspect as the slider
-        mClones->VideoKeyFrame->setOpacity(mOpacitySpin->GetValue());
+        getVideoKeyFrame()->setOpacity(mOpacitySpin->GetValue());
     });
     event.Skip();
 }
@@ -98,7 +98,7 @@ void DetailsClip::onScalingChoiceChanged(wxCommandEvent& event)
     CatchExceptions([this]
     {
         submitEditCommandUponAudioVideoEdit(sEditScalingType);
-        mClones->VideoKeyFrame->setScaling(mSelectScaling->getValue(), boost::none);
+        getVideoKeyFrame()->setScaling(mSelectScaling->getValue(), boost::none);
     });
     event.Skip();
 }
@@ -109,7 +109,7 @@ void DetailsClip::onScalingSliderChanged(wxCommandEvent& event)
     CatchExceptions([this]
     {
         submitEditCommandUponAudioVideoEdit(sEditScaling);
-        mClones->VideoKeyFrame->setScaling(model::VideoScalingCustom, boost::optional< rational64 >(sliderValueToFactor(mScalingSlider->GetValue())));
+        getVideoKeyFrame()->setScaling(model::VideoScalingCustom, boost::optional< rational64 >(sliderValueToFactor(mScalingSlider->GetValue())));
     });
     event.Skip();
 }
@@ -123,7 +123,7 @@ void DetailsClip::onScalingSpinChanged(wxSpinDoubleEvent& event)
         int spinFactor = floor(value * sFactorPrecisionFactor);
         rational64 r(spinFactor, sFactorPrecisionFactor);
         submitEditCommandUponAudioVideoEdit(sEditScaling); // Changes same clip aspect as the slider
-        mClones->VideoKeyFrame->setScaling(model::VideoScalingCustom, boost::optional< rational64 >(r));
+        getVideoKeyFrame()->setScaling(model::VideoScalingCustom, boost::optional< rational64 >(r));
     });
     event.Skip();
 }
@@ -135,7 +135,7 @@ void DetailsClip::onRotationSliderChanged(wxCommandEvent& event)
     CatchExceptions([this, r]
     {
         submitEditCommandUponAudioVideoEdit(sEditRotation);
-        mClones->VideoKeyFrame->setRotation(r);
+        getVideoKeyFrame()->setRotation(r);
     });
     event.Skip();
 }
@@ -148,7 +148,7 @@ void DetailsClip::onRotationSpinChanged(wxSpinDoubleEvent& event)
     CatchExceptions([this,r]
     {
         submitEditCommandUponAudioVideoEdit(sEditRotation); // Changes same clip aspect as the slider
-        mClones->VideoKeyFrame->setRotation(r);
+        getVideoKeyFrame()->setRotation(r);
     });
     event.Skip();
 }
@@ -159,7 +159,7 @@ void DetailsClip::onAlignmentChoiceChanged(wxCommandEvent& event)
     CatchExceptions([this]
     {
         submitEditCommandUponAudioVideoEdit(sEditAlignment);
-        mClones->VideoKeyFrame->setAlignment(mSelectAlignment->getValue());
+        getVideoKeyFrame()->setAlignment(mSelectAlignment->getValue());
     });
     event.Skip();
 }
@@ -171,7 +171,7 @@ void DetailsClip::onPositionXSliderChanged(wxCommandEvent& event)
     {
         submitEditCommandUponAudioVideoEdit(sEditX);
         updateAlignment(true);
-        mClones->VideoKeyFrame->setPosition(wxPoint(mPositionXSlider->GetValue(), mPositionYSlider->GetValue()));
+        getVideoKeyFrame()->setPosition(wxPoint(mPositionXSlider->GetValue(), mPositionYSlider->GetValue()));
     });
     event.Skip();
 }
@@ -183,7 +183,7 @@ void DetailsClip::onPositionXSpinChanged(wxSpinEvent& event)
     {
         submitEditCommandUponAudioVideoEdit(sEditX); // Changes same clip aspect as the slider
         updateAlignment(true);
-        mClones->VideoKeyFrame->setPosition(wxPoint(mPositionXSpin->GetValue(), mPositionYSlider->GetValue()));
+        getVideoKeyFrame()->setPosition(wxPoint(mPositionXSpin->GetValue(), mPositionYSlider->GetValue()));
     });
     event.Skip();
 }
@@ -195,7 +195,7 @@ void DetailsClip::onPositionYSliderChanged(wxCommandEvent& event)
     {
         submitEditCommandUponAudioVideoEdit(sEditY);
         updateAlignment(false);
-        mClones->VideoKeyFrame->setPosition(wxPoint(mPositionXSlider->GetValue(), mPositionYSlider->GetValue()));
+        getVideoKeyFrame()->setPosition(wxPoint(mPositionXSlider->GetValue(), mPositionYSlider->GetValue()));
     });
     event.Skip();
 }
@@ -207,7 +207,7 @@ void DetailsClip::onPositionYSpinChanged(wxSpinEvent& event)
     {
         submitEditCommandUponAudioVideoEdit(sEditY); // Changes same clip aspect as the slider
         updateAlignment(false);
-        mClones->VideoKeyFrame->setPosition(wxPoint(mPositionXSlider->GetValue(), mPositionYSpin->GetValue()));
+        getVideoKeyFrame()->setPosition(wxPoint(mPositionXSlider->GetValue(), mPositionYSpin->GetValue()));
     });
     event.Skip();
 }
@@ -216,8 +216,9 @@ void DetailsClip::onVideoKeyFramesHomeButtonPressed(wxCommandEvent& event)
 {
     CatchExceptions([this]
     {
-        //submitEditCommandUponAudioVideoEdit(sEditY); // Changes same clip aspect as the slider
-        //mClones->VideoKeyFrame->setPosition(wxPoint(mPositionXSlider->GetValue(), mPositionYSpin->GetValue()));
+        std::map<pts, model::VideoClipKeyFramePtr> keyFrames{ getVideoKeyFrames() };
+        ASSERT_NONZERO(keyFrames.size());
+        moveCursorToKeyFrame(mClip, keyFrames.begin()->first);
     });
     event.Skip();
 }
@@ -226,6 +227,19 @@ void DetailsClip::onVideoKeyFramesPrevButtonPressed(wxCommandEvent& event)
 {
     CatchExceptions([this]
     {
+        model::VideoClipPtr videoclip{ getVideoClip(mClip) };
+        ASSERT_NONZERO(videoclip);
+        std::map<pts, model::VideoClipKeyFramePtr> keyFrames{ getVideoKeyFrames() }; 
+        ASSERT_NONZERO(keyFrames.size());
+        pts offset{ 0 };
+        auto it{ keyFrames.begin() };
+        while (it != keyFrames.end() && it->first < getVideoKeyFrameOffset())
+        {
+            offset = it->first;
+            ++it;
+        }
+        ASSERT(it != keyFrames.end());
+        moveCursorToKeyFrame(mClip, offset);
     });
     event.Skip();
 }
@@ -234,6 +248,19 @@ void DetailsClip::onVideoKeyFramesNextButtonPressed(wxCommandEvent& event)
 {
     CatchExceptions([this]
     {
+        model::VideoClipPtr videoclip{ getVideoClip(mClip) };
+        ASSERT_NONZERO(videoclip);
+        std::map<pts, model::VideoClipKeyFramePtr> keyFrames{ getVideoKeyFrames() };
+        ASSERT_NONZERO(keyFrames.size());
+        pts offset{ 0 };
+        auto it{ keyFrames.rbegin() };
+        while (it != keyFrames.rend() && it->first > getVideoKeyFrameOffset())
+        {
+            offset = it->first;
+            ++it;
+        }
+        ASSERT(it != keyFrames.rend());
+        moveCursorToKeyFrame(mClip, offset);
     });
     event.Skip();
 }
@@ -242,6 +269,9 @@ void DetailsClip::onVideoKeyFramesEndButtonPressed(wxCommandEvent& event)
 {
     CatchExceptions([this]
     {
+        std::map<pts, model::VideoClipKeyFramePtr> keyFrames{ getVideoKeyFrames() };
+        ASSERT_NONZERO(keyFrames.size());
+        moveCursorToKeyFrame(mClip, keyFrames.rbegin()->first);
     });
     event.Skip();
 }
@@ -250,6 +280,13 @@ void DetailsClip::onVideoKeyFramesAddButtonPressed(wxCommandEvent& event)
 {
     CatchExceptions([this]
     {
+        submitEditCommandUponAudioVideoEdit(sEditKeyFramesAdd);
+        model::VideoClipPtr videoclip{ getVideoClip(mClip) };
+        ASSERT_NONZERO(videoclip);
+        ASSERT_NONZERO(getVideoKeyFrame());
+        model::VideoClipKeyFramePtr keyFrame{ getVideoKeyFrame() };
+        videoclip->addKeyFrameAt(getVideoKeyFrameOffset(), keyFrame);
+        updateVideoKeyFrameControls(); // Update buttons
     });
     event.Skip();
 }
@@ -258,9 +295,37 @@ void DetailsClip::onVideoKeyFramesRemoveButtonPressed(wxCommandEvent& event)
 {
     CatchExceptions([this]
     {
+        submitEditCommandUponAudioVideoEdit(sEditKeyFramesRemove);
+        model::VideoClipPtr videoclip{ getVideoClip(mClip) };
+        ASSERT_NONZERO(videoclip);
+        ASSERT_NONZERO(getVideoKeyFrame());
+        videoclip->removeKeyFrameAt(getVideoKeyFrameOffset());
+        updateVideoKeyFrameControls(); // Update buttons
+        getPlayer()->moveTo(getCursor().getLogicalPosition()); // Force redraw (since the current frame is updated)
     });
     event.Skip();
 }
+
+void DetailsClip::onVideoKeyFrameButtonPressed(wxCommandEvent& event)
+{
+    CatchExceptions([this, event]
+    {
+        model::VideoClipPtr videoclip{ getVideoClip(mClip) };
+        ASSERT_NONZERO(videoclip);
+        std::map<pts, model::VideoClipKeyFramePtr> keyFrames{ getVideoKeyFrames() };
+        ASSERT_NONZERO(keyFrames.size());
+        size_t buttonNumber{ narrow_cast<size_t,int>(event.GetId()) };
+        ASSERT_MORE_THAN(keyFrames.size(), buttonNumber)(*videoclip);
+
+        size_t index{ 0 };
+        auto it{ keyFrames.begin() };
+        for (; it != keyFrames.end() && index++ < buttonNumber; ++it);
+        ASSERT(it != keyFrames.end());
+        moveCursorToKeyFrame(mClip, it->first);
+    });
+    event.Skip();
+}
+
 
 void DetailsClip::onVolumeSliderChanged(wxCommandEvent& event)
 {

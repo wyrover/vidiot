@@ -21,11 +21,13 @@
 #include "Config.h"
 #include "Convert.h"
 #include "File.h"
+#include "KeyFrame.h"
 #include "Track.h"
 #include "Transition.h"
 #include "UtilClone.h"
 #include "UtilLog.h"
 #include "UtilLogBoost.h"
+#include "UtilLogStl.h"
 #include "UtilSerializeBoost.h"
 
 namespace model {
@@ -35,34 +37,39 @@ namespace model {
 //////////////////////////////////////////////////////////////////////////
 
 ClipInterval::ClipInterval()
-    : Clip()
-    , mRender()
-    , mSpeed(1)
-    , mOffset(0)
-    , mLength(-1)
-    , mDescription("")
+    : Clip{}
+    , mRender{}
+    , mSpeed{ 1 }
+    , mOffset{ 0 }
+    , mLength{ -1 }
+    , mDescription{ "" }
+    , mKeyFrames{}
+    , mDefaultKeyFrame{ nullptr }
 {
     // NOT: VAR_DEBUG(*this); -- Log in most derived class. Avoids duplicate logging AND avoids pure virtual calls (implemented in most derived class).
 }
 
 ClipInterval::ClipInterval(const IFilePtr& render)
-    : Clip()
-    , mRender(render)
-    , mSpeed(1)
-    , mOffset(0)
-    , mLength(render->getLength())
-    , mDescription(stripDescription(render->getDescription()))
+    : Clip{}
+    , mRender{ render }
+    , mSpeed{ 1 }
+    , mOffset{ 0 }
+    , mLength{ render->getLength() }
+    , mDescription{ stripDescription(render->getDescription()) }
+    , mDefaultKeyFrame{ nullptr } // Initialized in derived class
 {
     // NOT: VAR_DEBUG(*this); -- Log in most derived class. Avoids duplicate logging AND avoids pure virtual calls (implemented in most derived class).
 }
 
 ClipInterval::ClipInterval(const ClipInterval& other)
-    : Clip(other)
-    , mRender(make_cloned<IFile>(other.mRender))
-    , mSpeed(other.mSpeed)
-    , mOffset(other.mOffset)
-    , mLength(other.mLength)
-    , mDescription(other.mDescription)
+    : Clip{ other }
+    , mRender{ make_cloned<IFile>(other.mRender) }
+    , mSpeed{ other.mSpeed }
+    , mOffset{ other.mOffset }
+    , mLength{ other.mLength }
+    , mDescription{ other.mDescription }
+    , mKeyFrames{ make_cloned<pts, KeyFrame>(other.mKeyFrames) }
+    , mDefaultKeyFrame{ other.mDefaultKeyFrame == nullptr ? nullptr : make_cloned<KeyFrame>(other.mDefaultKeyFrame) } // todo remove after adding audio key frames
 {
     // NOT: VAR_DEBUG(*this); -- Log in most derived class. Avoids duplicate logging AND avoids pure virtual calls (implemented in most derived class).
 }
@@ -165,7 +172,8 @@ void ClipInterval::adjustBegin(pts adjustment)
     mOffset += adjustment;
     mLength -= adjustment;
     ASSERT_MORE_THAN_EQUALS_ZERO(mOffset);
-    ASSERT_LESS_THAN_EQUALS(mLength,getRenderLength() - mOffset)(adjustment)(mLength)(mRender->getLength())(mSpeed)(getRenderLength())(mOffset)(*this);;
+    ASSERT_LESS_THAN_EQUALS(mLength,getRenderLength() - mOffset)(adjustment)(mLength)(mRender->getLength())(mSpeed)(getRenderLength())(mOffset)(*this);
+    // todo remove keyframes that are 'outside' the visible region (which includes intransitions)
     VAR_DEBUG(*this)(adjustment);
 }
 
@@ -193,7 +201,154 @@ void ClipInterval::adjustEnd(pts adjustment)
     ASSERT(!hasTrack())(getTrack()); // Otherwise, this action needs an event indicating the change to the track(view). Instead, tracks are updated by replacing clips.
     mLength += adjustment;
     ASSERT_LESS_THAN_EQUALS(mLength,getRenderLength() - mOffset)(adjustment)(mLength)(mRender->getLength())(mSpeed)(getRenderLength())(mOffset)(*this);
+    // todo remove keyframes that are 'outside' the visible region (which includes outtransitions)
     VAR_DEBUG(*this)(adjustment);
+}
+
+//////////////////////////////////////////////////////////////////////////
+// KEY FRAMES
+//////////////////////////////////////////////////////////////////////////
+
+std::map<pts, KeyFramePtr> ClipInterval::getKeyFrames() const // todo test imageclip
+{
+    std::map<pts, KeyFramePtr> result;
+    pts lowerBound{ getOffset() - (getInTransition() ? *(getInTransition()->getRight()) : 0) };
+    pts upperBound{ getOffset() + getLength() + (getOutTransition() ? *(getOutTransition()->getLeft()) : 0) };
+    for (auto k : mKeyFrames)
+    {
+        pts adjustedForSpeed{ model::Convert::positionToNewSpeed(k.first, getSpeed(), 1) };
+        if (adjustedForSpeed >= lowerBound && adjustedForSpeed <= upperBound)
+        {
+            result[adjustedForSpeed] = k.second;
+        }
+    }
+    return result;
+}
+
+KeyFramePtr ClipInterval::getDefaultKeyFrame() const
+{
+    ASSERT_NONZERO(mDefaultKeyFrame);
+    return mDefaultKeyFrame;
+}
+
+KeyFramePtr ClipInterval::getFrameAt(pts offset) const
+{
+    KeyFramePtr result{ nullptr };
+
+    ASSERT_MORE_THAN_EQUALS_ZERO(offset);
+
+    offset += getOffset();
+
+    std::map<pts, KeyFramePtr> keyFrames{ getKeyFrames() };
+
+    if (keyFrames.size() == 0)
+    {
+        // No key frames (visible) in current trim. Return the default frame.
+        ASSERT_NONZERO(mDefaultKeyFrame);
+        return make_cloned<KeyFrame>(mDefaultKeyFrame); 
+    }
+
+    auto itExact{ keyFrames.find(offset) };
+    if (itExact != keyFrames.end())
+    {
+        // Exact key frame found. Return that.
+        return make_cloned<KeyFrame>(itExact->second);
+    }
+
+    // No exact frame possible. 
+    // Return an interpolated key frame or a clone of the nearest key frame (only at begin and end).
+    auto it{ keyFrames.upper_bound(offset) }; // Points to first (visible) key frame 'beyond' position.
+    if (it == keyFrames.end())
+    {
+        // Position is after last key frame.
+        // Return clone of last key frame.
+        result = make_cloned<KeyFrame>(keyFrames.rbegin()->second);
+    }
+    else if (it == keyFrames.begin())
+    {
+        // The position is before the first key frame.
+        // This can happen after begin trimming a clip.
+        // Return clone of first key frame.
+        result = make_cloned<KeyFrame>(keyFrames.begin()->second);
+    }
+    else
+    {
+        // Interpolate between the two frames 'around' position.
+        pts positionAfter{ it->first };
+        KeyFramePtr after{ it->second };
+        ASSERT_NONZERO(after)(offset)(keyFrames)(*this);
+
+        --it;
+
+        pts positionBefore{ it->first };
+        KeyFramePtr before{ it->second };
+        ASSERT_NONZERO(before)(offset)(keyFrames)(*this);
+        
+        result = interpolate(before, after, positionBefore, offset, positionAfter);
+    }
+    result->setInterpolated(true);
+    return result;
+}
+
+void ClipInterval::addKeyFrameAt(pts offset, KeyFramePtr frame)
+{
+    ASSERT_MORE_THAN_EQUALS_ZERO(offset);
+    frame->setInterpolated(false);
+
+    // Ensure that a key frame position not returned by 'getKeyFrames' was used
+    std::map<pts, KeyFramePtr> keyframes{ getKeyFrames() };
+    ASSERT_MAP_CONTAINS_NOT(keyframes, offset)(*this);
+
+    pts offsetWithSpeed{ model::Convert::positionToNewSpeed(offset, 1, getSpeed()) };
+
+    // Always clone here. Sometimes, the frames used during editing are an exact frame
+    // (and thus may be edited directly), but for adding a new frame a real clone is
+    // required.
+    // Example: Take a clip with only one key frame (thus, from a user point of view
+    //          a clip without key frames) and add another key frame. This shouldn't
+    //          be the same frame as the original only frame, but a new clone.
+    //
+    // Note: frame is stored with 'input' speed
+    mKeyFrames[offsetWithSpeed] = make_cloned<KeyFrame>(frame);
+
+    EventChangeClipKeyFrames event(0);
+    ProcessEvent(event);
+}
+
+void ClipInterval::removeKeyFrameAt(pts offset)
+{
+    ASSERT_DIFFERS(offset, -1);
+    ASSERT_MORE_THAN_EQUALS_ZERO(offset);
+
+    if (mKeyFrames.size() == 1)
+    {
+        // Removing the only remaining non-default keyframe.
+        // Ensure that the resulting default frame uses the same settings
+        // as that frame. Otherwise, removing the last keyframe suddenly
+        // restores 'very old' settings.
+        mDefaultKeyFrame = mKeyFrames.begin()->second;
+    }
+
+    // Ensure that a key frame position returned by 'getKeyFrames' was used
+    std::map<pts, KeyFramePtr> keyframes{ getKeyFrames() };
+    ASSERT_MAP_CONTAINS(keyframes, offset)(*this);
+
+    for (auto it{ mKeyFrames.begin()++ }; it != mKeyFrames.end(); ++it) // begin()++: Ignore default frame
+    {
+        if (offset == model::Convert::positionToNewSpeed(it->first, getSpeed(), 1))
+        {
+            mKeyFrames.erase(it);
+            EventChangeClipKeyFrames event(0);
+            ProcessEvent(event);
+            return;
+        }
+    }
+    FATAL("Key frame not found");
+}
+
+void ClipInterval::setDefaultKeyFrame(KeyFramePtr keyframe)
+{
+    mDefaultKeyFrame = keyframe;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -262,7 +417,8 @@ std::ostream& operator<<(std::ostream& os, const ClipInterval& obj)
     os  << static_cast<const Clip&>(obj) << '|'
         << obj.mSpeed << '|'
         << std::setw(6) << obj.mOffset << '|'
-        << std::setw(6) << obj.mLength;
+        << std::setw(6) << obj.mLength << '|'
+        << obj.mKeyFrames;
     return os;
 }
 
@@ -292,6 +448,11 @@ void ClipInterval::serialize(Archive & ar, const unsigned int version)
         if (Archive::is_loading::value)
         {
             mDescription = stripDescription(mRender->getDescription());
+        }
+        if (version >= 4)
+        {
+            ar & BOOST_SERIALIZATION_NVP(mKeyFrames);
+            ar & BOOST_SERIALIZATION_NVP(mDefaultKeyFrame);
         }
     }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
