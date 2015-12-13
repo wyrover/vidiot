@@ -27,18 +27,6 @@ gui::timeline::DetailsClip* DetailsClipView()
     return detailsclip;
 }
 
-void ASSERT_NO_DETAILSCLIP()
-{
-    wxWindow* current = getTimeline().getDetails().getCurrent();
-    gui::timeline::DetailsClip* detailsclip = dynamic_cast<gui::timeline::DetailsClip*>(current);
-    ASSERT_ZERO(detailsclip);
-}
-
-void ASSERT_DETAILSCLIP(model::IClipPtr clip)
-{
-    ASSERT_EQUALS(DetailsClipView()->getClip(),clip);
-}
-
 KeyFrameValues::KeyFrameValues(model::IClipPtr clip)
     : mClip(clip)
     , mOpacity{ boost::none }

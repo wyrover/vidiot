@@ -27,10 +27,6 @@ namespace test {
 
 gui::timeline::DetailsClip* DetailsClipView();
 
-void ASSERT_NO_DETAILSCLIP(); // todo obsolete replace with ASSERT(DetailsView(nullptr));
-void ASSERT_DETAILSCLIP(model::IClipPtr clip); // todo obsolete replace with ASSERT(DetailsView(clip));
-
-// todo use these checkers and no more ASSERT_CLIPPROPERTIES
 struct KeyFrameValues
 {
     explicit KeyFrameValues(model::IClipPtr clip);
@@ -77,16 +73,5 @@ struct DetailsView : public KeyFrameValues
     using KeyFrameValues::KeyFrameValues; // todo use this inheriting constructors pg.596 trick more often (for example for the state events)
     operator bool() const override;
 };
-
-/// Check the properties of the current details view and the given clip
-/// \pre The given clip must be selected and shown in the details view
-void ASSERT_CLIPPROPERTIES(
-    model::IClipPtr clip,
-    model::VideoScaling scaling,
-    rational64 scaling_factor,
-    model::VideoAlignment alignment,
-    wxPoint position,
-    rational64 rotation,
-    int index = -1);
 
 } // namespace
