@@ -57,7 +57,7 @@ void TestBugs::testDetailsNotShownAfterMovingTimelineCursor()
     TimelineLeftClick(Center(VideoClip(0,3)));
     TimelinePositionCursor(HCenter(VideoClip(0,3)));
     TimelineLeftClick(Center(VideoClip(0,3)));
-    ASSERT_DETAILSCLIP(VideoClip(0,3));
+    ASSERT(DetailsView(VideoClip(0,3)));
 }
 
 void TestBugs::testLinkingErrorWhenDroppingOverBeginOfLinkedClip()
@@ -83,14 +83,14 @@ void TestBugs::testErrorInGetNextHandlingForEmptyClips()
     TimelineDrag(From(Center(VideoClip(2,1))).AlignLeft(LeftPixel(VideoClip(1,1))));
 
     TimelineLeftClick(Center(VideoClip(1,1)));
-    ASSERT_DETAILSCLIP(VideoClip(1,1));
+    ASSERT(DetailsView(VideoClip(1,1)));
 
     SetValue(DetailsClipView()->getScalingSlider(), 4000); // Same as pressing 6 * PageUp
     SetValue(DetailsClipView()->getPositionXSlider(), 424); // Same as pressing 4 * PageDown
     SetValue(DetailsClipView()->getPositionYSlider(), 256); // Same as pressing 4 * PageDown
 
     TimelineLeftClick(Center(VideoClip(2,1)));
-    ASSERT_DETAILSCLIP(VideoClip(2,1));
+    ASSERT(DetailsView(VideoClip(2,1)));
 
     SetValue(DetailsClipView()->getScalingSlider(), 4000); // Same as pressing 6 * PageUp
     SetValue(DetailsClipView()->getPositionXSlider(), 304); // Same as pressing 4 * PageUp
@@ -769,18 +769,18 @@ void TestBugs::testCrashAfterSelectingAnEmptyClip()
     TimelineDeleteClip(VideoClip(0,1));
     ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip);
     TimelineLeftClick(Center(VideoClip(0,1)));
-    ASSERT_NO_DETAILSCLIP();
+    ASSERT(DetailsView(nullptr));
     ASSERT_SELECTION_SIZE(0);
     TimelineLeftClick(Center(VideoClip(0,0)));
-    ASSERT_DETAILSCLIP(VideoClip(0,0));
+    ASSERT(DetailsView(VideoClip(0,0)));
     ASSERT_SELECTION_SIZE(1);
     TimelineLeftClick(Center(VideoClip(0,1)));
-    ASSERT_DETAILSCLIP(VideoClip(0,0));
+    ASSERT(DetailsView(VideoClip(0,0)));
     ASSERT_SELECTION_SIZE(1);
     TimelineKeyDown(WXK_CONTROL);
     TimelineLeftClick(Center(VideoClip(0,1)));
     TimelineKeyUp(WXK_CONTROL);
-    ASSERT_DETAILSCLIP(VideoClip(0,0));
+    ASSERT(DetailsView(VideoClip(0,0)));
     ASSERT_SELECTION_SIZE(1);
 }
 

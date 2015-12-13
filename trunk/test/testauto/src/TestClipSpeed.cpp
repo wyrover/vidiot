@@ -44,7 +44,7 @@ void TestClipSpeed::testChangeClipSpeed()
     {
         StartTest("Not allowed for linked clips");
         TimelineLeftClick(Center(VideoClip(0,4)));
-        ASSERT_DETAILSCLIP(VideoClip(0,4));
+        ASSERT(DetailsView(VideoClip(0,4)));
         ASSERT(!DetailsClipView()->getSpeedSlider()->IsEnabled());
         ASSERT(!DetailsClipView()->getSpeedSpin()->IsEnabled());
     }
@@ -53,21 +53,21 @@ void TestClipSpeed::testChangeClipSpeed()
     {
         StartTest("Allowed for Unlinked video");
         TimelineLeftClick(Center(VideoClip(0,4)));
-        ASSERT_DETAILSCLIP(VideoClip(0,4));
+        ASSERT(DetailsView(VideoClip(0,4)));
         ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
         ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
     }
     {
         StartTest("Not allowed for unlinked audio");
         TimelineLeftClick(Center(AudioClip(0,4)));
-        ASSERT_DETAILSCLIP(AudioClip(0,4));
+        ASSERT(DetailsView(AudioClip(0,4)));
         ASSERT(!DetailsClipView()->getSpeedSlider()->IsEnabled());
         ASSERT(!DetailsClipView()->getSpeedSpin()->IsEnabled());
     }
     {
         StartTest("Decrease (size enlargement) not allowed when clip in other track");
         TimelineLeftClick(Center(VideoClip(0,4)));
-        ASSERT_DETAILSCLIP(VideoClip(0,4));
+        ASSERT(DetailsView(VideoClip(0,4)));
         ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
         ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
         SetValue(DetailsClipView()->getSpeedSlider(), 5000); // 5000 'to the left' sets speed to 0.5
@@ -77,7 +77,7 @@ void TestClipSpeed::testChangeClipSpeed()
     {
         StartTest("Increase (size reduction) not allowed when clip in other track");
         TimelineLeftClick(Center(VideoClip(0,4)));
-        ASSERT_DETAILSCLIP(VideoClip(0,4));
+        ASSERT(DetailsView(VideoClip(0,4)));
         ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
         ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
         SetValue(DetailsClipView()->getSpeedSlider(), 15000); // 5000 'to the right' sets speed to 50.5
@@ -89,7 +89,7 @@ void TestClipSpeed::testChangeClipSpeed()
         TimelineDeselectAllClips();
         TimelineDrag(From(Center(AudioClip(0, 4))).To(LeftCenter(AudioClip(0,4))));
         TimelineLeftClick(Center(VideoClip(0,4)));
-        ASSERT_DETAILSCLIP(VideoClip(0,4));
+        ASSERT(DetailsView(VideoClip(0,4)));
         ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
         ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
         SetValue(DetailsClipView()->getSpeedSlider(), 15000);
@@ -102,7 +102,7 @@ void TestClipSpeed::testChangeClipSpeed()
         TimelineDeselectAllClips();
         TimelineDrag(From(Center(AudioClip(0, 4))).To(RightCenter(AudioClip(0,4))));
         TimelineLeftClick(Center(VideoClip(0,4)));
-        ASSERT_DETAILSCLIP(VideoClip(0,4));
+        ASSERT(DetailsView(VideoClip(0,4)));
         ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
         ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
         SetValue(DetailsClipView()->getSpeedSlider(), 15000);
@@ -114,7 +114,7 @@ void TestClipSpeed::testChangeClipSpeed()
         StartTest("Increase (size reduction) allowed when empty clips in other tracks");
         TimelineDeleteClip(AudioClip(0,4));
         TimelineLeftClick(Center(VideoClip(0,4)));
-        ASSERT_DETAILSCLIP(VideoClip(0,4));
+        ASSERT(DetailsView(VideoClip(0,4)));
         ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
         ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
         SetValue(DetailsClipView()->getSpeedSlider(), 14900);
@@ -128,7 +128,7 @@ void TestClipSpeed::testChangeClipSpeed()
         TimelineDeleteClips({ AudioClip(0, 0), AudioClip(0, 1), AudioClip(0, 2), AudioClip(0, 3), AudioClip(0, 4), AudioClip(0, 5), AudioClip(0, 6) });
         ASSERT_AUDIOTRACK0SIZE(0);
         TimelineLeftClick(Center(VideoClip(0,1)));
-        ASSERT_DETAILSCLIP(VideoClip(0,1));
+        ASSERT(DetailsView(VideoClip(0,1)));
         ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
         ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
         SetValue(DetailsClipView()->getSpeedSlider(), 14900);
@@ -145,7 +145,7 @@ void TestClipSpeed::testChangeClipSpeed()
         TimelineDrag(From(Center(AudioClip(0, 3))).MoveLeft(20));
         TimelineDrag(From(Center(AudioClip(0, 5))).MoveLeft(20)); // Now the empty clip 'under' the to-be-changed clip has a large enough length, but does not fully cover the clip timeframe.
         TimelineLeftClick(Center(VideoClip(0, 4)));
-        ASSERT_DETAILSCLIP(VideoClip(0, 4));
+        ASSERT(DetailsView(VideoClip(0, 4)));
         ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
         ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
         SetValue(DetailsClipView()->getSpeedSlider(), 15000);
@@ -161,7 +161,7 @@ void TestClipSpeed::testChangeClipSpeed()
         TimelineDrag(From(Center(AudioClip(0, 3))).MoveLeft(20));
         TimelineDrag(From(Center(AudioClip(0, 5))).MoveLeft(20)); // Now the empty clip 'under' the to-be-changed clip has a large enough length, but does not fully cover the clip timeframe.
         TimelineLeftClick(Center(VideoClip(0, 4)));
-        ASSERT_DETAILSCLIP(VideoClip(0, 4));
+        ASSERT(DetailsView(VideoClip(0, 4)));
         ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
         ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
         SetValue(DetailsClipView()->getSpeedSlider(), 5000); // 5000 'to the left' sets speed to 0.5
@@ -175,7 +175,7 @@ void TestClipSpeed::testChangeClipSpeed()
         TimelineDeleteClips({ AudioClip(0, 0), AudioClip(0, 1), AudioClip(0, 2), AudioClip(0, 3), AudioClip(0, 4), AudioClip(0, 5), AudioClip(0, 6) });
         ASSERT_AUDIOTRACK0SIZE(0);
         TimelineLeftClick(Center(VideoClip(0,1)));
-        ASSERT_DETAILSCLIP(VideoClip(0,1));
+        ASSERT(DetailsView(VideoClip(0,1)));
         ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
         ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
         SetValue(DetailsClipView()->getSpeedSpin(), 0.5);
@@ -189,7 +189,7 @@ void TestClipSpeed::testChangeClipSpeed()
         TimelineDeleteClips({ AudioClip(0, 0), AudioClip(0, 1), AudioClip(0, 2), AudioClip(0, 3), AudioClip(0, 4), AudioClip(0, 5), AudioClip(0, 6) });
         ASSERT_AUDIOTRACK0SIZE(0);
         TimelineLeftClick(Center(VideoClip(0,1)));
-        ASSERT_DETAILSCLIP(VideoClip(0,1));
+        ASSERT(DetailsView(VideoClip(0,1)));
         ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
         ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
         SetValue(DetailsClipView()->getSpeedSpin(), 50.0);
@@ -217,7 +217,7 @@ void TestClipSpeed::testChangeClipSpeedWithOffsetAndLength()
     {
         StartTest("Speed decrease: Enlarging clip allowed, begin and end frames stay the same");
         TimelineLeftClick(Center(VideoClip(0,5)));
-        ASSERT_DETAILSCLIP(VideoClip(0,5));
+        ASSERT(DetailsView(VideoClip(0,5)));
         ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
         ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
         SetValue(DetailsClipView()->getSpeedSlider(), 100); // Minimum speed is maximum length increase
@@ -237,7 +237,7 @@ void TestClipSpeed::testChangeClipSpeedWithOffsetAndLength()
     {
         StartTest("Speed increase: Reducing clip allowed, begin and end frames stay the same");
         TimelineLeftClick(Center(VideoClip(0,5)));
-        ASSERT_DETAILSCLIP(VideoClip(0,5));
+        ASSERT(DetailsView(VideoClip(0,5)));
         ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
         ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
         SetValue(DetailsClipView()->getSpeedSlider(), 10100);
@@ -273,7 +273,7 @@ void TestClipSpeed::testChangeClipSpeedWithInTransition()
     {
         StartTest("Speed decrease: Enlarging clip allowed, begin and end frames stay the same");
         TimelineLeftClick(Center(VideoClip(0,5)));
-        ASSERT_DETAILSCLIP(VideoClip(0,5));
+        ASSERT(DetailsView(VideoClip(0,5)));
         ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
         ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
         SetValue(DetailsClipView()->getSpeedSlider(), 100); // Minimum speed is maximum length increase
@@ -293,7 +293,7 @@ void TestClipSpeed::testChangeClipSpeedWithInTransition()
     {
         StartTest("Speed increase: Reducing clip not allowed (need enough frames for transition)");
         TimelineLeftClick(Center(VideoClip(0,5)));
-        ASSERT_DETAILSCLIP(VideoClip(0,5));
+        ASSERT(DetailsView(VideoClip(0,5)));
         ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
         ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
         SetValue(DetailsClipView()->getSpeedSlider(), 10101);
@@ -304,7 +304,7 @@ void TestClipSpeed::testChangeClipSpeedWithInTransition()
         StartTest("Speed increase: Reducing clip allowed (when there's enough room), begin and end frames stay the same");
         TimelineTrimTransitionRightClipBegin(VideoClip(0,4),100);
         TimelineLeftClick(Center(VideoClip(0,5)));
-        ASSERT_DETAILSCLIP(VideoClip(0,5));
+        ASSERT(DetailsView(VideoClip(0,5)));
         ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
         ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
         SetValue(DetailsClipView()->getSpeedSlider(), 10100);
@@ -341,8 +341,8 @@ void TestClipSpeed::testChangeClipSpeedWithInOutTransitionBefore()
     {
         StartTest("Speed decrease: Enlarging clip allowed, begin and end frames stay the same");
         TimelineLeftClick(Center(VideoClip(0,5)));
-        ASSERT_DETAILSCLIP(VideoClip(0,5));
-        ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
+        ASSERT(DetailsView(VideoClip(0,5)));
+        ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled()); // todo add to detailsview checking
         ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
         SetValue(DetailsClipView()->getSpeedSlider(), 100); // Minimum speed is maximum length increase
         ASSERT_CLIP_SPEED(VideoClip(0, 5), rational64(1,100));
@@ -361,7 +361,7 @@ void TestClipSpeed::testChangeClipSpeedWithInOutTransitionBefore()
         StartTest("Speed increase: Reducing clip not allowed (need enough frames for transition)");
         TimelineTrimTransitionRightClipBegin(VideoClip(0,4), -200); // Ensure that the entire 'clip offset' is required by the transition (extend as much as possible)
         TimelineLeftClick(Center(VideoClip(0,5)));
-        ASSERT_DETAILSCLIP(VideoClip(0,5));
+        ASSERT(DetailsView(VideoClip(0,5)));
         ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
         ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
         SetValue(DetailsClipView()->getSpeedSlider(), 10101);
@@ -373,7 +373,7 @@ void TestClipSpeed::testChangeClipSpeedWithInOutTransitionBefore()
         StartTest("Speed increase: Reducing clip allowed (when there's enough room), begin and end frames stay the same");
         // NOT: TimelineTrimTransitionRightClipBegin(VideoClip(0,4), 100); -- for creating the in-out-transition already a bit 'extra' is trimmed away.
         TimelineLeftClick(Center(VideoClip(0,5)));
-        ASSERT_DETAILSCLIP(VideoClip(0,5));
+        ASSERT(DetailsView(VideoClip(0,5)));
         ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
         ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
         SetValue(DetailsClipView()->getSpeedSlider(), 10100);
@@ -409,7 +409,7 @@ void TestClipSpeed::testChangeClipSpeedWithOutTransition()
     {
         StartTest("Speed decrease: Enlarging clip allowed, begin and end frames stay the same");
         TimelineLeftClick(Center(VideoClip(0,4)));
-        ASSERT_DETAILSCLIP(VideoClip(0,4));
+        ASSERT(DetailsView(VideoClip(0,4)));
         ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
         ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
         SetValue(DetailsClipView()->getSpeedSlider(), 100); // Minimum speed is maximum length increase
@@ -428,7 +428,7 @@ void TestClipSpeed::testChangeClipSpeedWithOutTransition()
     {
         StartTest("Speed increase: Reducing clip not allowed (need enough frames for transition)");
         TimelineLeftClick(Center(VideoClip(0,4)));
-        ASSERT_DETAILSCLIP(VideoClip(0,4));
+        ASSERT(DetailsView(VideoClip(0,4)));
         ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
         ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
         SetValue(DetailsClipView()->getSpeedSlider(), 10101);
@@ -439,7 +439,7 @@ void TestClipSpeed::testChangeClipSpeedWithOutTransition()
         StartTest("Speed increase: Reducing clip allowed (when there's enough room), begin and end frames stay the same");
         TimelineTrimTransitionLeftClipEnd(VideoClip(0,5),-100);
         TimelineLeftClick(Center(VideoClip(0,4)));
-        ASSERT_DETAILSCLIP(VideoClip(0,4));
+        ASSERT(DetailsView(VideoClip(0,4)));
         ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
         ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
         SetValue(DetailsClipView()->getSpeedSlider(), 10100);
@@ -476,7 +476,7 @@ void TestClipSpeed::testChangeClipSpeedWithInOutTransitionAfter()
     {
         StartTest("Speed decrease: Enlarging clip allowed, begin and end frames stay the same");
         TimelineLeftClick(Center(VideoClip(0,4)));
-        ASSERT_DETAILSCLIP(VideoClip(0,4));
+        ASSERT(DetailsView(VideoClip(0,4)));
         ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
         ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
         SetValue(DetailsClipView()->getSpeedSlider(), 100); // Minimum speed is maximum length increase
@@ -496,7 +496,7 @@ void TestClipSpeed::testChangeClipSpeedWithInOutTransitionAfter()
         StartTest("Speed increase: Reducing clip not allowed (need enough frames for transition)");
         TimelineTrimTransitionLeftClipEnd(VideoClip(0,5), +200); // Ensure that the entire 'clip offset' is required by the transition (extend as much as possible)
         TimelineLeftClick(Center(VideoClip(0,4)));
-        ASSERT_DETAILSCLIP(VideoClip(0,4));
+        ASSERT(DetailsView(VideoClip(0,4)));
         ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
         ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
         SetValue(DetailsClipView()->getSpeedSlider(), 10101);
@@ -508,7 +508,7 @@ void TestClipSpeed::testChangeClipSpeedWithInOutTransitionAfter()
         StartTest("Speed increase: Reducing clip allowed (when there's enough room), begin and end frames stay the same");
         // NOT: TimelineTrimTransitionLeftClipEnd(VideoClip(0,5), -100);  -- for creating the in-out-transition already a bit 'extra' is trimmed away.
         TimelineLeftClick(Center(VideoClip(0,4)));
-        ASSERT_DETAILSCLIP(VideoClip(0,4));
+        ASSERT(DetailsView(VideoClip(0,4)));
         ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
         ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
         SetValue(DetailsClipView()->getSpeedSlider(), 10100);
@@ -544,7 +544,7 @@ void TestClipSpeed::testChangeClipSpeedWithAdjacentTransitions()
         {
             StartTest("Speed decrease: Enlarging clip allowed, begin and end frames stay the same");
             TimelineLeftClick(Center(VideoClip(0, 5)));
-            ASSERT_DETAILSCLIP(VideoClip(0, 5));
+            ASSERT(DetailsView(VideoClip(0, 5))); // todo also checking for the enabling below
             ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
             ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
             SetValue(DetailsClipView()->getSpeedSlider(), 100); // Minimum speed is maximum length increase
@@ -563,7 +563,7 @@ void TestClipSpeed::testChangeClipSpeedWithAdjacentTransitions()
         {
             StartTest("Speed increase: Reducing clip allowed (enough room), begin and end frames stay the same");
             TimelineLeftClick(Center(VideoClip(0, 5)));
-            ASSERT_DETAILSCLIP(VideoClip(0, 5));
+            ASSERT(DetailsView(VideoClip(0, 5)));
             ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
             ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
             SetValue(DetailsClipView()->getSpeedSlider(), 10100);
@@ -585,7 +585,7 @@ void TestClipSpeed::testChangeClipSpeedWithAdjacentTransitions()
         {
             StartTest("Speed decrease: Enlarging clip allowed, begin and end frames stay the same");
             TimelineLeftClick(Center(VideoClip(0, 4)));
-            ASSERT_DETAILSCLIP(VideoClip(0, 4));
+            ASSERT(DetailsView(VideoClip(0, 4)));
             ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
             ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
             SetValue(DetailsClipView()->getSpeedSlider(), 100); // Minimum speed is maximum length increase
@@ -604,7 +604,7 @@ void TestClipSpeed::testChangeClipSpeedWithAdjacentTransitions()
         {
             StartTest("Speed increase: Reducing clip allowed (enough room), begin and end frames stay the same");
             TimelineLeftClick(Center(VideoClip(0, 4)));
-            ASSERT_DETAILSCLIP(VideoClip(0, 4));
+            ASSERT(DetailsView(VideoClip(0, 4)));
             ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
             ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
             SetValue(DetailsClipView()->getSpeedSlider(), 10100);
