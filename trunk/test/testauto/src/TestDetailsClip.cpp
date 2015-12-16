@@ -374,7 +374,24 @@ void TestDetailsClip::testTransform()
 //    }
 //#endif
 
-    // todo opacity
+    {
+        StartTest("Opacity: Spin");
+        SetValue(DetailsClipView()->getOpacitySpin(), 128);
+        ASSERT_HISTORY_END(gui::timeline::command::EditClipDetails);
+        ASSERT(DefaultKeyFrame(VideoClip(0, 3)).Opacity(128));
+        ASSERT(DetailsView(VideoClip(0, 3)).Opacity(128));
+        Undo();
+        ASSERT_ORIGINAL_CLIPPROPERTIES();
+    }
+    {
+        StartTest("Opacity: Slider");
+        SetValue(DetailsClipView()->getOpacitySlider(), 128);
+        ASSERT_HISTORY_END(gui::timeline::command::EditClipDetails);
+        ASSERT(DefaultKeyFrame(VideoClip(0, 3)).Opacity(128));
+        ASSERT(DetailsView(VideoClip(0, 3)).Opacity(128));
+        Undo();
+        ASSERT_ORIGINAL_CLIPPROPERTIES();
+    }
     {
         StartTest("Scaling: Spin: If moved up, the scaling is increased. Scaling enum is changed to custom.");
         SetValue(DetailsClipView()->getScalingSpin(), DetailsClipView()->getScalingSpin()->GetValue() + 0.01); // Same as pressing WXK_UP
