@@ -288,7 +288,7 @@ void TestClipSpeed::testChangeClipSpeedWithInTransition()
         ASSERT_FRAMES_EQUAL(referenceLAstFrame, LastFrame(VideoClip(0, 5)));
         Undo();
         ASSERT_CLIP_SPEED(VideoClip(0, 5), rational64(1,1));
-        ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>(); // Verify that the command is not in the undo history
+        ASSERT_HISTORY_END(gui::timeline::command::CreateTransition); // Verify that the command is not in the undo history
     }
     {
         StartTest("Speed increase: Reducing clip not allowed (need enough frames for transition)");
@@ -298,7 +298,7 @@ void TestClipSpeed::testChangeClipSpeedWithInTransition()
         ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
         SetValue(DetailsClipView()->getSpeedSlider(), 10101);
         ASSERT_CLIP_SPEED(VideoClip(0, 5), rational64(1,1));
-        ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>(); // Verify that the command is not in the undo history
+        ASSERT_HISTORY_END(gui::timeline::command::CreateTransition); // Verify that the command is not in the undo history
     }
     {
         StartTest("Speed increase: Reducing clip allowed (when there's enough room), begin and end frames stay the same");
@@ -319,7 +319,7 @@ void TestClipSpeed::testChangeClipSpeedWithInTransition()
         Undo();
         ASSERT_CLIP_SPEED(VideoClip(0, 5), rational64(1,1));
         Undo();
-        ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>(); // Verify that the command is not in the undo history
+        ASSERT_HISTORY_END(gui::timeline::command::CreateTransition); // Verify that the command is not in the undo history
     }
 #endif
 }
@@ -355,7 +355,7 @@ void TestClipSpeed::testChangeClipSpeedWithInOutTransitionBefore()
         ASSERT_FRAMES_EQUAL(referenceLAstFrame, LastFrame(VideoClip(0, 5)));
         Undo();
         ASSERT_CLIP_SPEED(VideoClip(0, 5), rational64(1,1));
-        ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>(); // Verify that the command is not in the undo history
+        ASSERT_HISTORY_END(gui::timeline::command::CreateTransition); // Verify that the command is not in the undo history
     }
     {
         StartTest("Speed increase: Reducing clip not allowed (need enough frames for transition)");
@@ -367,7 +367,7 @@ void TestClipSpeed::testChangeClipSpeedWithInOutTransitionBefore()
         SetValue(DetailsClipView()->getSpeedSlider(), 10101);
         ASSERT_CLIP_SPEED(VideoClip(0, 5), rational64(1,1));
         Undo();
-        ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>(); // Verify that the command is not in the undo history
+        ASSERT_HISTORY_END(gui::timeline::command::CreateTransition); // Verify that the command is not in the undo history
     }
     {
         StartTest("Speed increase: Reducing clip allowed (when there's enough room), begin and end frames stay the same");
@@ -387,7 +387,7 @@ void TestClipSpeed::testChangeClipSpeedWithInOutTransitionBefore()
         // NOT: ASSERT_FRAMES_EQUAL(referenceLAstFrame, LastFrame(VideoClip(0, 5))); // Not always possible when increasing speed
         Undo();
         ASSERT_CLIP_SPEED(VideoClip(0, 5), rational64(1,1));
-        ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>(); // Verify that the command is not in the undo history
+        ASSERT_HISTORY_END(gui::timeline::command::CreateTransition); // Verify that the command is not in the undo history
     }
 #endif
 }
@@ -423,7 +423,7 @@ void TestClipSpeed::testChangeClipSpeedWithOutTransition()
         ASSERT_FRAMES_EQUAL(referenceLAstFrame, LastFrame(VideoClip(0, 4)));
         Undo();
         ASSERT_CLIP_SPEED(VideoClip(0, 4), rational64(1,1));
-        ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>(); // Verify that the command is not in the undo history
+        ASSERT_HISTORY_END(gui::timeline::command::CreateTransition); // Verify that the command is not in the undo history
     }
     {
         StartTest("Speed increase: Reducing clip not allowed (need enough frames for transition)");
@@ -433,7 +433,7 @@ void TestClipSpeed::testChangeClipSpeedWithOutTransition()
         ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
         SetValue(DetailsClipView()->getSpeedSlider(), 10101);
         ASSERT_CLIP_SPEED(VideoClip(0, 4), rational64(1,1));
-        ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>(); // Verify that the command is not in the undo history
+        ASSERT_HISTORY_END(gui::timeline::command::CreateTransition); // Verify that the command is not in the undo history
     }
     {
         StartTest("Speed increase: Reducing clip allowed (when there's enough room), begin and end frames stay the same");
@@ -454,7 +454,7 @@ void TestClipSpeed::testChangeClipSpeedWithOutTransition()
         Undo();
         ASSERT_CLIP_SPEED(VideoClip(0, 4), rational64(1,1));
         Undo();
-        ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>(); // Verify that the command is not in the undo history
+        ASSERT_HISTORY_END(gui::timeline::command::CreateTransition); // Verify that the command is not in the undo history
     }
 #endif
 }
@@ -490,7 +490,7 @@ void TestClipSpeed::testChangeClipSpeedWithInOutTransitionAfter()
         ASSERT_FRAMES_EQUAL(referenceLAstFrame, LastFrame(VideoClip(0, 4)));
         Undo();
         ASSERT_CLIP_SPEED(VideoClip(0, 4), rational64(1,1));
-        ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>(); // Verify that the command is not in the undo history
+        ASSERT_HISTORY_END(gui::timeline::command::CreateTransition); // Verify that the command is not in the undo history
     }
     {
         StartTest("Speed increase: Reducing clip not allowed (need enough frames for transition)");
@@ -502,7 +502,7 @@ void TestClipSpeed::testChangeClipSpeedWithInOutTransitionAfter()
         SetValue(DetailsClipView()->getSpeedSlider(), 10101);
         ASSERT_CLIP_SPEED(VideoClip(0, 4), rational64(1,1));
         Undo();
-        ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>(); // Verify that the command is not in the undo history
+        ASSERT_HISTORY_END(gui::timeline::command::CreateTransition); // Verify that the command is not in the undo history
     }
     {
         StartTest("Speed increase: Reducing clip allowed (when there's enough room), begin and end frames stay the same");
@@ -522,7 +522,7 @@ void TestClipSpeed::testChangeClipSpeedWithInOutTransitionAfter()
         // NOT: ASSERT_FRAMES_EQUAL(referenceLAstFrame, LastFrame(VideoClip(0, 5))); // Not always possible when increasing speed
         Undo();
         ASSERT_CLIP_SPEED(VideoClip(0, 4), rational64(1,1));
-        ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>(); // Verify that the command is not in the undo history
+        ASSERT_HISTORY_END(gui::timeline::command::CreateTransition); // Verify that the command is not in the undo history
     }
 #endif
 }
@@ -558,7 +558,7 @@ void TestClipSpeed::testChangeClipSpeedWithAdjacentTransitions()
             ASSERT_FRAMES_EQUAL(referenceLAstFrame, LastFrame(VideoClip(0, 5)));
             Undo();
             ASSERT_CLIP_SPEED(VideoClip(0, 5), rational64(1, 1));
-            ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>(); // Verify that the command is not in the undo history
+            ASSERT_HISTORY_END(gui::timeline::command::CreateTransition); // Verify that the command is not in the undo history
         }
         {
             StartTest("Speed increase: Reducing clip allowed (enough room), begin and end frames stay the same");
@@ -577,7 +577,7 @@ void TestClipSpeed::testChangeClipSpeedWithAdjacentTransitions()
             // NOT: ASSERT_FRAMES_EQUAL(referenceLAstFrame, LastFrame(VideoClip(0, 5))); // Not always possible when increasing speed
             Undo();
             ASSERT_CLIP_SPEED(VideoClip(0, 5), rational64(1, 1));
-            ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>(); // Verify that the command is not in the undo history
+            ASSERT_HISTORY_END(gui::timeline::command::CreateTransition); // Verify that the command is not in the undo history
         }
     }
     {
@@ -599,7 +599,7 @@ void TestClipSpeed::testChangeClipSpeedWithAdjacentTransitions()
             ASSERT_FRAMES_EQUAL(referenceLAstFrame, LastFrame(VideoClip(0, 4)));
             Undo();
             ASSERT_CLIP_SPEED(VideoClip(0, 4), rational64(1, 1));
-            ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>(); // Verify that the command is not in the undo history
+            ASSERT_HISTORY_END(gui::timeline::command::CreateTransition); // Verify that the command is not in the undo history
         }
         {
             StartTest("Speed increase: Reducing clip allowed (enough room), begin and end frames stay the same");
@@ -618,7 +618,7 @@ void TestClipSpeed::testChangeClipSpeedWithAdjacentTransitions()
             // NOT: ASSERT_FRAMES_EQUAL(referenceLAstFrame, LastFrame(VideoClip(0, 5))); // Not always possible when increasing speed
             Undo();
             ASSERT_CLIP_SPEED(VideoClip(0, 4), rational64(1, 1));
-            ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>(); // Verify that the command is not in the undo history
+            ASSERT_HISTORY_END(gui::timeline::command::CreateTransition); // Verify that the command is not in the undo history
         }
     }
 #endif
