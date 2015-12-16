@@ -27,7 +27,7 @@ struct StackWalker
     //////////////////////////////////////////////////////////////////////////
 
     StackWalker();
-    virtual ~StackWalker();
+    ~StackWalker() = default;
 
     std::string show();
 
@@ -35,7 +35,7 @@ struct StackWalker
     // THE INTERFACE
     //////////////////////////////////////////////////////////////////////////
 
-    virtual void OnStackFrame(const wxStackFrame &frame) override;
+    void OnStackFrame(const wxStackFrame &frame) override;
 
 private:
 

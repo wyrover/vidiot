@@ -25,7 +25,6 @@ namespace model {
 
 /// Container class for embedding avcodec packets
 class Packet
-    :   boost::noncopyable
 {
 public:
 
@@ -34,6 +33,8 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     Packet(AVPacket* packet);
+    Packet(const Packet& other) = delete;
+    Packet& operator=(const Packet&) = delete;
     virtual ~Packet();
 
     //////////////////////////////////////////////////////////////////////////

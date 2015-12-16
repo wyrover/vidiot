@@ -35,7 +35,9 @@ public:
     {
     }
 
-    virtual ~CommandLine() {};
+    CommandLine(const CommandLine&) = delete;
+    CommandLine& operator=(const CommandLine&) = delete;
+    ~CommandLine() = default;
 
     //////////////////////////////////////////////////////////////////////////
     // MEMBERS

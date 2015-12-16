@@ -39,9 +39,10 @@ public:
         }
         select(defaultValue);
     }
-    virtual ~EnumSelector()
-    {
-    }
+    EnumSelector(const EnumSelector&) = delete;
+    EnumSelector& operator=(const EnumSelector&) = delete;
+    ~EnumSelector() = default;
+
     ITEMTYPE getValue()
     {
         return mSelectionToItem[GetSelection()];

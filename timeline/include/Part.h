@@ -48,7 +48,6 @@ namespace gui {
         } // namespace
 
 class Part
-    :   public boost::noncopyable
 {
 public:
 
@@ -58,6 +57,8 @@ public:
 
     Part(); ///< For constructing states
     Part(Timeline* timeline);
+    Part(const Part& other) = delete;
+    Part& operator=(const Part&) = delete;
     virtual ~Part();
 
     //////////////////////////////////////////////////////////////////////////

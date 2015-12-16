@@ -44,6 +44,8 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     Config(const wxString& appName, const wxString& vendorName, const wxString& localFilename);
+    Config(const Config&) = delete;
+    Config& operator=(const Config&) = delete;
 
     static void init(const wxString& applicationName, const wxString& vendorName, bool inCxxTestMode);
     static void exit();

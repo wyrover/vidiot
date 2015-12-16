@@ -25,7 +25,6 @@ typedef std::function< void() > Callable;
 
 class Work
     : public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
-    , boost::noncopyable
     , public Self<Work>
 {
 public:
@@ -35,6 +34,8 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     explicit Work(const Callable& work);
+    Work(const Work&) = delete;
+    Work& operator=(const Work&) = delete;
     virtual ~Work();
 
     void execute(bool showProgress = true);

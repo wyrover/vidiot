@@ -21,7 +21,7 @@
 
 namespace test {
 
-void ASSERT_NO_TRANSITIONS_IN_VIDEO_TRACK(int trackindex)
+void AssertNoTransitionsInVideoTrack(int trackindex)
 {
     for (int i = 0; i < NumberOfVideoClipsInTrack(trackindex); ++i)
     {
@@ -29,7 +29,7 @@ void ASSERT_NO_TRANSITIONS_IN_VIDEO_TRACK(int trackindex)
     }
 }
 
-void ASSERT_SELECTION_SIZE(int size)
+void AssertSelectionSize(int size)
 {
     ASSERT_EQUALS(getSelectedClipsCount(),2 * size); // * 2 since AudioClips are selected also
 }

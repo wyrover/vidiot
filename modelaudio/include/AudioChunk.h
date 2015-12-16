@@ -20,7 +20,7 @@
 #include "UtilFifo.h"
 #include "UtilInt.h"
 #include "UtilRTTI.h"
-
+#include <boost/noncopyable.hpp>
 namespace model {
 
 typedef Fifo<AudioChunkPtr> FifoAudio;
@@ -31,8 +31,7 @@ std::ostream& operator<<(std::ostream& os, const AudioChunkPtr obj);
 /// A sample is the data for one speaker.  Its size is typically two bytes.
 /// A frame  is the data for all speakers. Its size is 'the number of channels' * 'the size of one sample'
 class AudioChunk
-    :   public boost::noncopyable
-    ,   public IRTTI
+    :   public IRTTI
 {
 public:
 
@@ -52,6 +51,9 @@ public:
     /// \pre buffer ==> allocate && !zero
     AudioChunk(int nChannels, samplecount nSamples, bool allocate, bool zero, sample* buffer = 0);
 
+    AudioChunk(const AudioChunk& other) = delete;
+    AudioChunk& operator=(const AudioChunk&) = delete;
+    
     virtual ~AudioChunk();
 
     //////////////////////////////////////////////////////////////////////////

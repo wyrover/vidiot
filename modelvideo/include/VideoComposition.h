@@ -22,7 +22,6 @@
 namespace model {
 
 class VideoComposition
-    : boost::noncopyable
 {
 public:
 
@@ -31,6 +30,8 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     VideoComposition(const VideoCompositionParameters& parameters);
+    VideoComposition(const VideoComposition& other) = delete;
+    VideoComposition& operator=(const VideoComposition&) = delete;
     virtual ~VideoComposition();
 
     //////////////////////////////////////////////////////////////////////////

@@ -22,7 +22,7 @@
 #include "UtilLog.h"
 
 template<class ELEMENT>
-class Fifo : boost::noncopyable
+class Fifo
 {
 public:
     explicit Fifo(const unsigned int& maxSize)
@@ -31,9 +31,9 @@ public:
     {
     }
 
-    virtual ~Fifo()
-    {
-    }
+    Fifo(const Fifo& other) = delete;
+    Fifo& operator=(const Fifo&) = delete;
+    ~Fifo() = default;
 
     long getSize()
     {

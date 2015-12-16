@@ -23,7 +23,7 @@ namespace test {
 // HistoryCommandAsserter
 //////////////////////////////////////////////////////////////////////////
 
-struct HistoryCommandAsserter   // todo remove all boost::noncopyable  replace with =delete
+struct HistoryCommandAsserter
 {
     HistoryCommandAsserter& HISTORYCOMMANDASSERTER_A;   ///< Helper, in order to be able to compile the code (HISTORYCOMMANDASSERTER_* macros)
     HistoryCommandAsserter& HISTORYCOMMANDASSERTER_B;   ///< Helper, in order to be able to compile the code (HISTORYCOMMANDASSERTER_* macros)
@@ -34,6 +34,9 @@ struct HistoryCommandAsserter   // todo remove all boost::noncopyable  replace w
         , HISTORYCOMMANDASSERTER_B(*this)
     {
     }
+
+    HistoryCommandAsserter(const HistoryCommandAsserter&) = delete;
+    HistoryCommandAsserter& operator=(const HistoryCommandAsserter&) = delete;
 
     ~HistoryCommandAsserter();
 
