@@ -43,16 +43,6 @@ void DetailsClip::setClip(const model::IClipPtr& clip)
     // Avoid useless updating. The position check ensures updating after moving a clip in the timeline (DND).
     if (mClip == clip && (!mClip || mClip->getLeftPts() == mClipPosition)) return;
 
-    //todo this has become obsolete since no preview is shown but simply the current frame shown again in the player?
-    //// For some edit operations the preview is shown iso player.
-    //// The 'end' of the edit operation is not clear (edit opacity
-    //// via the slider starts the operation, and the preview, but
-    //// when does the operation end?).
-    ////
-    //// However, at some point the preview must be removed again.
-    //// That's done here, when another (or no) clip is selected.
-    //getTimeline().getPlayer()->showPlayer();
-
     if (mTransitionClone)
     {
         while (mTransitionBoxSizer->GetItemCount() > 0)

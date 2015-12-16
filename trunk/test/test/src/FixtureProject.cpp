@@ -47,6 +47,7 @@ void FixtureProject::init()
     mSequence = ProjectViewCreateSequence( mAutoFolder );
 
     ASSERT_EQUALS(mSequence->getParent(),mRoot);
+    ASSERT_HISTORY_END(command::ProjectViewCreateAutoFolder)(command::ProjectViewCreateSequence);
 
     for ( model::IClipPtr clip : mSequence->getVideoTrack(0)->getClips() )
     {

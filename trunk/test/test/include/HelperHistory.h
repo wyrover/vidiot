@@ -28,46 +28,32 @@ struct HistoryCommandAsserter   // todo remove all boost::noncopyable  replace w
     HistoryCommandAsserter& HISTORYCOMMANDASSERTER_A;   ///< Helper, in order to be able to compile the code (HISTORYCOMMANDASSERTER_* macros)
     HistoryCommandAsserter& HISTORYCOMMANDASSERTER_B;   ///< Helper, in order to be able to compile the code (HISTORYCOMMANDASSERTER_* macros)
 
-    HistoryCommandAsserter(size_t skip)
+    /// Verify last command in history
+    explicit HistoryCommandAsserter()
         : HISTORYCOMMANDASSERTER_A(*this)
         , HISTORYCOMMANDASSERTER_B(*this)
-        , mSkip(skip)
-    {}
+    {
+    }
 
     ~HistoryCommandAsserter();
 
     template<class type>
     HistoryCommandAsserter& AssertEntry()
     {
-        std::vector<wxCommand*> commands;
-        for (wxCommand* c : model::CommandProcessor::get().GetCommands().AsVector<wxCommand*>())
-        {
-            commands.push_back(c);
-        }
-        size_t required{ mSkip + mIndex };
-        ASSERT_LESS_THAN(required, commands.size());
-        wxCommand* got{ commands.at(required) };
-        ASSERT(!mCurrentCommandSeen);
-        mCurrentCommandSeen = (got == getCurrentCommand());
-        if (dynamic_cast<type*>(got) == nullptr)
-        {
-            CommandMismatch(mSkip, mIndex, typeid(type));
-        }
-        mIndex++;
+        Expected.push_back(getName(typeid(type)));
         return *this;
     }
 
-    void CommandMismatch(size_t mSkip, size_t mIndex, const std::type_info& expectedtype);
+private:
 
-    size_t mSkip{ 0 };
-    size_t mIndex{ 0 };
-    bool mCurrentCommandSeen{ false };
+    wxStrings Expected;
+
+    wxString getName(const std::type_info& info);
 };
 
 #define HISTORYCOMMANDASSERTER_A(type) HISTORYCOMMANDASSERTER_OP(type, B)
 #define HISTORYCOMMANDASSERTER_B(type) HISTORYCOMMANDASSERTER_OP(type, A)
 #define HISTORYCOMMANDASSERTER_OP(type, next) HISTORYCOMMANDASSERTER_A.AssertEntry<type>().HISTORYCOMMANDASSERTER_ ## next
-#define ASSERT_HISTORY_SKIP(skip) HistoryCommandAsserter(skip).HISTORYCOMMANDASSERTER_A
-#define ASSERT_HISTORY ASSERT_HISTORY_SKIP(0)
+#define ASSERT_HISTORY_END HistoryCommandAsserter().HISTORYCOMMANDASSERTER_A
 
 } // namespace

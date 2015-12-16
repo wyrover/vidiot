@@ -25,24 +25,28 @@ namespace test {
 // HistoryCommandAsserter
 //////////////////////////////////////////////////////////////////////////
 
+
 HistoryCommandAsserter::~HistoryCommandAsserter()
 {
-    // Ensures that any 'extra' commands do not go unnoticed.
-    ASSERT(mCurrentCommandSeen);
-}
+    std::vector<wxCommand*> commands{ model::CommandProcessor::get().getUndoHistory() };
 
-void HistoryCommandAsserter::CommandMismatch(size_t mSkip, size_t mIndex, const std::type_info& expectedtype)
-{
-    size_t Skip{ mSkip };
-    size_t Index{ mIndex };
-    auto convert = [](const std::type_info& info) -> std::string
+    wxStrings Actual;
+    for (wxCommand* c : commands)
     {
-        std::string theName{ info.name() };
-        return theName.substr(theName.find_last_of(':') + 1);
-    };
+        Actual.push_back(getName(typeid(*c)));
+    }
 
-    std::string Expected{ convert(expectedtype) };
-    LogVar("History type error", __FILE__, __LINE__,__FUNCTION__).LOGVAR_A(Skip)(Index)(Expected);
+    ASSERT_LESS_THAN_EQUALS(Expected.size(), Actual.size())(Expected)(Actual)(commands);
+    size_t offset{ Actual.size() - Expected.size() };
+
+    Actual.erase(Actual.begin(), Actual.begin() + offset);
+    ASSERT_EQUALS(Actual, Expected);
 }
+
+wxString HistoryCommandAsserter::getName(const std::type_info& info)
+{
+    wxString theName{ info.name() };
+    return theName.substr(theName.find_last_of(':') + 1);
+};
 
 } // namespace
