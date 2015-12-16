@@ -19,7 +19,7 @@
 #include "UtilLog.h"
 #include "UtilLogStl.h"
 
-namespace command {
+namespace cmd {
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION

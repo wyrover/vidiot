@@ -142,7 +142,7 @@ typedef std::vector<ICodecParameterPtr> ICodecParameters;
 
 }}
 
-namespace command {
+namespace cmd {
 
 typedef std::pair<model::NodePtr ,model::NodePtr>  ParentAndChildPair;
 typedef std::vector<ParentAndChildPair> ParentAndChildPairs;

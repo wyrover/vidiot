@@ -43,12 +43,12 @@ TimelineDataObject::TimelineDataObject(model::SequencePtr sequence)
 {
     SetFormat(wxDataFormat(sFormat));
 
-    command::LinkReplacementMap replacementMap;
+    cmd::LinkReplacementMap replacementMap;
 
-    auto addDrop = [&replacementMap](command::Drops& drops, model::TrackPtr track, model::IClips& clips)
+    auto addDrop = [&replacementMap](cmd::Drops& drops, model::TrackPtr track, model::IClips& clips)
     {
         ASSERT(!clips.empty());
-        command::Drop d;
+        cmd::Drop d;
         d.position = clips.front()->getLeftPts();
         d.clips = make_cloned(clips);
         ASSERT_EQUALS(clips.size(), d.clips.size());
@@ -68,7 +68,7 @@ TimelineDataObject::TimelineDataObject(model::SequencePtr sequence)
         clips.clear();
     };
 
-    auto getDropsInTrack = [&addDrop](command::Drops& drops, model::TrackPtr track)
+    auto getDropsInTrack = [&addDrop](cmd::Drops& drops, model::TrackPtr track)
     {
         model::TrackPtr tempTrack = boost::make_shared<model::Track>();
         tempTrack->setIndex(track->getIndex());
@@ -159,39 +159,39 @@ bool TimelineDataObject::checkIfOkForPasteOrDrop() const
 	return true;
 }
 
-command::Drops TimelineDataObject::getDrops(const model::SequencePtr& sequence, pts sequenceOrigin) const
+cmd::Drops TimelineDataObject::getDrops(const model::SequencePtr& sequence, pts sequenceOrigin) const
 {
 	ASSERT_MORE_THAN_EQUALS_ZERO(sequenceOrigin);
 
 	// Clips are 'copied' using their normal position in the sequence.
 	// However, for dropping, the leftmost pasted clip should be dropped at position '0'.
     pts clipsOrigin = std::numeric_limits<pts>::max();
-    std::for_each(mDropsVideo.begin(), mDropsVideo.end(), [&clipsOrigin](const command::Drop& d) { clipsOrigin = std::min(clipsOrigin, d.position); });
-    std::for_each(mDropsAudio.begin(), mDropsAudio.end(), [&clipsOrigin](const command::Drop& d) { clipsOrigin = std::min(clipsOrigin, d.position); });
+    std::for_each(mDropsVideo.begin(), mDropsVideo.end(), [&clipsOrigin](const cmd::Drop& d) { clipsOrigin = std::min(clipsOrigin, d.position); });
+    std::for_each(mDropsAudio.begin(), mDropsAudio.end(), [&clipsOrigin](const cmd::Drop& d) { clipsOrigin = std::min(clipsOrigin, d.position); });
 
 	ASSERT_MORE_THAN_EQUALS_ZERO(clipsOrigin);
 
 	int nVideoTracks = sequence->getVideoTracks().size();
 	int nAudioTracks = sequence->getAudioTracks().size();
 
-	command::Drops result;
-	for (command::Drop drop : mDropsVideo)
+	cmd::Drops result;
+	for (cmd::Drop drop : mDropsVideo)
 	{
 		if (drop.track->getIndex() >= nVideoTracks)
 		{
 			StatusBar::get().timedInfoText(_("Cannot paste: not enough video tracks."));
-			return command::Drops();
+			return cmd::Drops();
 		}
 		drop.track = sequence->getVideoTrack(drop.track->getIndex());
 		drop.position += (-clipsOrigin) + sequenceOrigin;
 		result.push_back(drop);
 	}
-	for (command::Drop drop : mDropsAudio)
+	for (cmd::Drop drop : mDropsAudio)
 	{
 		if (drop.track->getIndex() >= nAudioTracks)
 		{
 			StatusBar::get().timedInfoText(_("Cannot paste: not enough audio tracks."));
-			return command::Drops();
+			return cmd::Drops();
 		}
 		drop.track = sequence->getAudioTrack(drop.track->getIndex());
 		drop.position += (-clipsOrigin) + sequenceOrigin;

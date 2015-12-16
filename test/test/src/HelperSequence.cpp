@@ -36,7 +36,7 @@ void ExtendSequenceWithRepeatedClips( model::SequencePtr sequence, model::IPaths
             for ( model::IPathPtr path : files )
             {
                 model::FilePtr file = boost::make_shared<model::File>(path->getPath());
-                std::pair<model::IClipPtr,model::IClipPtr> videoClip_audioClip = command::ClipCreator::makeClips(file);
+                std::pair<model::IClipPtr,model::IClipPtr> videoClip_audioClip = cmd::ClipCreator::makeClips(file);
                 videoTrack->addClips({ videoClip_audioClip.first }, atBegin ? videoTrack->getClips().front() : model::IClipPtr());
                 audioTrack->addClips({ videoClip_audioClip.second }, atBegin ? audioTrack->getClips().front() : model::IClipPtr());
             }
@@ -74,7 +74,7 @@ void ExtendSequenceWithStillImage( model::SequencePtr sequence )
         ASSERT(file);
         ASSERT(file->canBeOpened());
 
-        std::pair<model::IClipPtr,model::IClipPtr> videoClip_audioClip = command::ClipCreator::makeClips(file);
+        std::pair<model::IClipPtr,model::IClipPtr> videoClip_audioClip = cmd::ClipCreator::makeClips(file);
         videoTrack->addClips({ videoClip_audioClip.first });
         audioTrack->addClips({ videoClip_audioClip.second });
     });
@@ -100,7 +100,7 @@ void ExtendTrack(model::TrackPtr track, model::IPaths files, int nRepeat)
             for (model::IPathPtr path : files)
             {
                 model::FilePtr file = boost::make_shared<model::File>(path->getPath());
-                std::pair<model::IClipPtr, model::IClipPtr> videoClip_audioClip = command::ClipCreator::makeClips(file);
+                std::pair<model::IClipPtr, model::IClipPtr> videoClip_audioClip = cmd::ClipCreator::makeClips(file);
                 if (track->isA<model::VideoTrack>())
                 {
                     track->addClips({ videoClip_audioClip.first });

@@ -19,7 +19,7 @@
 
 #include "RootCommand.h"
 
-namespace command {
+namespace cmd {
 
 class ProjectViewCommand
     :   public RootCommand

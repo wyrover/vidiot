@@ -180,7 +180,7 @@ bool ProjectViewModel::SetValue(const wxVariant &variant, const wxDataViewItem &
     {
         wxDataViewIconText icontext;
         icontext << variant;
-        model::ProjectModification::submit(new command::ProjectViewRenameAsset(node, icontext.GetText()));
+        model::ProjectModification::submit(new cmd::ProjectViewRenameAsset(node, icontext.GetText()));
         return true;
     }
     return false;

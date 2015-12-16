@@ -19,7 +19,7 @@
 
 #include "ATimelineCommand.h"
 
-namespace gui { namespace timeline { namespace command {
+namespace gui { namespace timeline { namespace cmd {
 
 class CreateVideoTrack
     :   public ATimelineCommand

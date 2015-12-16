@@ -17,7 +17,7 @@
 
 #pragma once
 
-namespace gui { namespace timeline { namespace command {
+namespace gui { namespace timeline { namespace cmd {
 
 void SplitAtCursorAndTrim(const model::SequencePtr& sequence, bool backwards);
 

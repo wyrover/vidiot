@@ -425,22 +425,22 @@ void TestTimeline::testUndo()
     ASSERT(VideoClip(0,2)->isA<model::EmptyClip>());
     ASSERT(!VideoClip(0,2)->isA<model::Transition>());
     ASSERT_HISTORY_END
-        (command::ProjectViewCreateAutoFolder)
-        (command::ProjectViewCreateSequence)
-        (gui::timeline::command::TrimClip)
-        (gui::timeline::command::TrimClip)
-        (gui::timeline::command::CreateTransition)
-        (gui::timeline::command::ExecuteDrop);
+        (cmd::ProjectViewCreateAutoFolder)
+        (cmd::ProjectViewCreateSequence)
+        (gui::timeline::cmd::TrimClip)
+        (gui::timeline::cmd::TrimClip)
+        (gui::timeline::cmd::CreateTransition)
+        (gui::timeline::cmd::ExecuteDrop);
     Undo(5); 
-    ASSERT_HISTORY_END(command::ProjectViewCreateAutoFolder);
+    ASSERT_HISTORY_END(cmd::ProjectViewCreateAutoFolder);
     Redo(5);
     ASSERT_HISTORY_END
-        (command::ProjectViewCreateAutoFolder)
-        (command::ProjectViewCreateSequence)
-        (gui::timeline::command::TrimClip)
-        (gui::timeline::command::TrimClip)
-        (gui::timeline::command::CreateTransition)
-        (gui::timeline::command::ExecuteDrop);
+        (cmd::ProjectViewCreateAutoFolder)
+        (cmd::ProjectViewCreateSequence)
+        (gui::timeline::cmd::TrimClip)
+        (gui::timeline::cmd::TrimClip)
+        (gui::timeline::cmd::CreateTransition)
+        (gui::timeline::cmd::ExecuteDrop);
     Undo();
 }
 
@@ -449,7 +449,7 @@ void TestTimeline::testAbortDrag()
     StartTestSuite();
     for (int zoom = 0; zoom < 4; zoom++)
     {
-        ASSERT_HISTORY_END(command::ProjectViewCreateSequence);
+        ASSERT_HISTORY_END(cmd::ProjectViewCreateSequence);
 
         TimelineDeselectAllClips();
         TimelineDrag(From(Center(VideoClip(0,5))).To(Center(VideoClip(0,4))).DontReleaseMouse());

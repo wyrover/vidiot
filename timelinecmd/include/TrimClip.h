@@ -20,7 +20,7 @@
 #include "AClipEdit.h"
 #include "PositionInfo.h"
 
-namespace gui { namespace timeline { namespace command {
+namespace gui { namespace timeline { namespace cmd {
 class TrimClip
     :   public AClipEdit
 {

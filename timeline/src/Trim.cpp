@@ -284,7 +284,7 @@ void Trim::start()
 
     ASSERT_ZERO(mCommand);
     getSelection().updateOnTrim(originalclip);
-    mCommand = new command::TrimClip(getSequence(), originalclip, transition, mPosition);
+    mCommand = new cmd::TrimClip(getSequence(), originalclip, transition, mPosition);
     determinePossibleSnapPoints(originalclip);
     // Fix the length of the timeline such that it will never be shortened during
     // the trim operation. Otherwise, trimming at the end of the sequence gives

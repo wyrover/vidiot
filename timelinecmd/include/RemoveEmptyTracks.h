@@ -20,7 +20,7 @@
 #include "ATimelineCommand.h"
 #include "SequenceEvent.h"
 
-namespace gui { namespace timeline { namespace command {
+namespace gui { namespace timeline { namespace cmd {
 
 class RemoveEmptyTracks
     :   public ATimelineCommand

@@ -84,7 +84,7 @@ wxDragResult TimelineDropTarget::OnEnter(wxCoord x, wxCoord y, wxDragResult def)
 
     getMouse().dragMove(wxPoint(x, y));
 
-    ::command::TrackCreator c(mNodes);
+    ::cmd::TrackCreator c(mNodes);
     mVideo = c.getVideoTrack();
     mAudio = c.getAudioTrack();
 

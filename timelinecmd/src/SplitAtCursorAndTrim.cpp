@@ -28,7 +28,7 @@
 #include "UtilLog.h"
 #include "Zoom.h"
 
-namespace gui { namespace timeline { namespace command {
+namespace gui { namespace timeline { namespace cmd {
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -96,7 +96,7 @@ void SplitAtCursorAndTrim(const model::SequencePtr& sequence, bool backwards)
             model::IClipPtr clip = videoClip ? videoClip : audioClip;
             ASSERT_NONZERO(clip);
             timeline.getSelection().updateOnTrim(clip);
-            command::TrimClip* cmd = new command::TrimClip(sequence, clip, model::TransitionPtr(), backwards ? ClipBegin : ClipEnd);
+            cmd::TrimClip* cmd = new cmd::TrimClip(sequence, clip, model::TransitionPtr(), backwards ? ClipBegin : ClipEnd);
 
             pts left = clip->getLeftPts(); // Clip will be changed by the trim below, thus store here
             pts right = clip->getRightPts(); // Clip will be changed by the trim below, thus store here

@@ -283,7 +283,7 @@ void Selection::deleteClips(bool shift)
     ASSERT(wxThread::IsMain());
     LOG_DEBUG;
     setPreviouslyClicked(model::IClipPtr()); // reset
-    (new command::DeleteSelectedClips(getSequence(),shift))->submit();
+    (new cmd::DeleteSelectedClips(getSequence(),shift))->submit();
     QueueEvent(new EventSelectionUpdate(0));
 }
 

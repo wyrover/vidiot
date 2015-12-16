@@ -191,7 +191,7 @@ void FileAnalyzer::addNodesToProjectView() const
             return;
         }
     }
-    if (model::ProjectModification::submitIfPossible(new command::ProjectViewAddAsset(model::Project::get().getRoot(), mNodes)))
+    if (model::ProjectModification::submitIfPossible(new cmd::ProjectViewAddAsset(model::Project::get().getRoot(), mNodes)))
     {
         for (model::NodePtr node : mNodes)
         {

@@ -337,7 +337,7 @@ bool ProjectView::findConflictingName(const model::FolderPtr& parent, const wxSt
 
 void ProjectView::onDelete()
 {
-    model::ProjectModification::submitIfPossible(new command::ProjectViewDeleteAsset(getSelection()));
+    model::ProjectModification::submitIfPossible(new cmd::ProjectViewDeleteAsset(getSelection()));
 }
 
 void ProjectView::onDeleteUnused()
@@ -345,7 +345,7 @@ void ProjectView::onDeleteUnused()
     model::AutoFolderPtr folder = boost::dynamic_pointer_cast<model::AutoFolder>(getSelectedContainer());
     ASSERT(folder);
 
-    command::ProjectViewDeleteUnusedFiles(folder).recycleFiles();
+    cmd::ProjectViewDeleteUnusedFiles(folder).recycleFiles();
     // To ensure that starting this again doesn't use files that no longer exist:
     folder->check(true);
 }
@@ -356,7 +356,7 @@ void ProjectView::onNewFolder(const model::FolderPtr& parent)
     if ((s.CompareTo(_T("")) != 0) &&
         (!findConflictingName(parent, s, NODETYPE_FOLDER)))
     {
-        model::ProjectModification::submit(new command::ProjectViewCreateFolder(parent, s));
+        model::ProjectModification::submit(new cmd::ProjectViewCreateFolder(parent, s));
     }
 }
 
@@ -368,7 +368,7 @@ void ProjectView::onNewAutoFolder(const model::FolderPtr& parent)
     {
         wxFileName path(s,"");
         path.Normalize();
-        model::ProjectModification::submit(new command::ProjectViewCreateAutoFolder(parent, path));
+        model::ProjectModification::submit(new cmd::ProjectViewCreateAutoFolder(parent, path));
     }
 }
 
@@ -383,7 +383,7 @@ void ProjectView::onNewSequence(const model::FolderPtr& parent)
     if ((s.CompareTo(_T("")) != 0) &&
         (!findConflictingName(parent, s, NODETYPE_SEQUENCE)))
     {
-        model::ProjectModification::submit(new command::ProjectViewCreateSequence(parent, s));
+        model::ProjectModification::submit(new cmd::ProjectViewCreateSequence(parent, s));
     }
 }
 
@@ -412,7 +412,7 @@ void ProjectView::onNewFile(const model::FolderPtr& parent)
     }
     if (list.size() > 0 )
     {
-        model::ProjectModification::submit(new command::ProjectViewCreateFile(parent, list));
+        model::ProjectModification::submit(new cmd::ProjectViewCreateFile(parent, list));
     }
 }
 
@@ -423,7 +423,7 @@ void ProjectView::onNewFileInRoot()
 
 void ProjectView::onCreateSequence()
 {
-    command::ProjectViewCreateSequence* cmd = new command::ProjectViewCreateSequence(getSelectedContainer());
+    cmd::ProjectViewCreateSequence* cmd = new cmd::ProjectViewCreateSequence(getSelectedContainer());
     if (!findConflictingName(cmd->getParent(), cmd->getName(), NODETYPE_SEQUENCE))
     {
         model::ProjectModification::submit(cmd);
@@ -611,7 +611,7 @@ void ProjectView::onMotion(wxMouseEvent& event)
                     if (item.GetID() && 
                         !getSelection().empty())
                     {
-                        ProjectViewDataObject data(command::ProjectViewCommand::prune(getSelection()));
+                        ProjectViewDataObject data(cmd::ProjectViewCommand::prune(getSelection()));
                         mDropSource.startDrag(data);
                         mDragCount = 0;
                     }
@@ -705,7 +705,7 @@ void ProjectView::onDrop(wxDataViewEvent &event)
                 return;
             }
         }
-        model::ProjectModification::submitIfPossible(new command::ProjectViewMoveAsset(mDropSource.getData().getNodes(), p));
+        model::ProjectModification::submitIfPossible(new cmd::ProjectViewMoveAsset(mDropSource.getData().getNodes(), p));
         event.Skip();
     });
 }

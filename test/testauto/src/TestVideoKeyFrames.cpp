@@ -93,7 +93,7 @@ void TestVideoKeyFrames::testAddKeyFrames()
         ASSERT(!DetailsClipView()->getVideoKeyFramesAddButton()->IsEnabled());
         ASSERT(DetailsClipView()->getVideoKeyFramesRemoveButton()->IsEnabled());
         ASSERT_EQUALS(1, DetailsClipView()->getVideoKeyFrameButtonCount());
-        ASSERT_HISTORY_END(command::ProjectViewCreateSequence)(gui::timeline::command::EditClipDetails);
+        ASSERT_HISTORY_END(cmd::ProjectViewCreateSequence)(gui::timeline::cmd::EditClipDetails);
     }
     {
         StartTest("Position after first key frame.");
@@ -123,10 +123,10 @@ void TestVideoKeyFrames::testAddKeyFrames()
         StartTest("Multiple key frames.");
         TimelinePositionCursor(KeyFrame1Pixel);
         ButtonTriggerPressed(DetailsClipView()->getVideoKeyFramesAddButton());
-        ASSERT_HISTORY_END(gui::timeline::command::EditClipDetails)(gui::timeline::command::EditClipDetails);
+        ASSERT_HISTORY_END(gui::timeline::cmd::EditClipDetails)(gui::timeline::cmd::EditClipDetails);
         TimelinePositionCursor(KeyFrame3Pixel);
         ButtonTriggerPressed(DetailsClipView()->getVideoKeyFramesAddButton());
-        ASSERT_HISTORY_END(gui::timeline::command::EditClipDetails)(gui::timeline::command::EditClipDetails)(gui::timeline::command::EditClipDetails);
+        ASSERT_HISTORY_END(gui::timeline::cmd::EditClipDetails)(gui::timeline::cmd::EditClipDetails)(gui::timeline::cmd::EditClipDetails);
         ASSERT_EQUALS(3, getVideoClip(VideoClip(0, 4))->getKeyFrames().size());
         ASSERT_EQUALS(3, DetailsClipView()->getVideoKeyFrameButtonCount());
     }
@@ -199,10 +199,10 @@ void TestVideoKeyFrames::testAddKeyFrames()
         ASSERT(DetailsView(VideoClip(0, 4)).Opacity(255).Scaling(model::VideoScalingFitToFill).ScalingFactor(1).Alignment(model::VideoAlignmentCenter).Position(wxPoint{ 0,0 }).Rotation(0));
         SetValue(DetailsClipView()->getRotationSlider(), 9000); // 90 degrees
         ASSERT_HISTORY_END
-            (gui::timeline::command::EditClipDetails) // Add key frame 1
-            (gui::timeline::command::EditClipDetails) // Add key frame 2
-            (gui::timeline::command::EditClipDetails) // Add key frame 3
-            (gui::timeline::command::EditClipDetails);// Change rotation
+            (gui::timeline::cmd::EditClipDetails) // Add key frame 1
+            (gui::timeline::cmd::EditClipDetails) // Add key frame 2
+            (gui::timeline::cmd::EditClipDetails) // Add key frame 3
+            (gui::timeline::cmd::EditClipDetails);// Change rotation
         ASSERT(KeyFrame(VideoClip(0, 4), 0).Rotation(90));
         ASSERT(DetailsView(VideoClip(0, 4)).Rotation(90));
     }
@@ -216,11 +216,11 @@ void TestVideoKeyFrames::testAddKeyFrames()
         ASSERT(DetailsView(VideoClip(0, 4)).Opacity(255).Scaling(model::VideoScalingFitToFill).ScalingFactor(1).Alignment(model::VideoAlignmentCenter).Position(wxPoint{ 0,0 }).Rotation(0));
         SetValue(DetailsClipView()->getScalingSlider(), 5000); // scale to 50%
         ASSERT_HISTORY_END
-            (gui::timeline::command::EditClipDetails) // Add key frame 1
-            (gui::timeline::command::EditClipDetails) // Add key frame 2
-            (gui::timeline::command::EditClipDetails) // Add key frame 3
-            (gui::timeline::command::EditClipDetails) // Change rotation
-            (gui::timeline::command::EditClipDetails);// Change scaling
+            (gui::timeline::cmd::EditClipDetails) // Add key frame 1
+            (gui::timeline::cmd::EditClipDetails) // Add key frame 2
+            (gui::timeline::cmd::EditClipDetails) // Add key frame 3
+            (gui::timeline::cmd::EditClipDetails) // Change rotation
+            (gui::timeline::cmd::EditClipDetails);// Change scaling
         ASSERT(KeyFrame(VideoClip(0, 4), 1).Scaling(model::VideoScalingCustom).ScalingFactor(rational64{ 1,2 }));
         ASSERT(DetailsView(VideoClip(0, 4)).Scaling(model::VideoScalingCustom).ScalingFactor(rational64{ 1,2 }));
 
@@ -235,12 +235,12 @@ void TestVideoKeyFrames::testAddKeyFrames()
         ASSERT(DetailsView(VideoClip(0, 4)).Opacity(255).Scaling(model::VideoScalingFitToFill).ScalingFactor(1).Alignment(model::VideoAlignmentCenter).Position(wxPoint{ 0,0 }).Rotation(0));
         SetValue(DetailsClipView()->getOpacitySlider(), 128); // 50% opaque
         ASSERT_HISTORY_END
-            (gui::timeline::command::EditClipDetails) // Add key frame 1
-            (gui::timeline::command::EditClipDetails) // Add key frame 2
-            (gui::timeline::command::EditClipDetails) // Add key frame 3
-            (gui::timeline::command::EditClipDetails) // Change rotation
-            (gui::timeline::command::EditClipDetails)// Change scaling
-            (gui::timeline::command::EditClipDetails); // Change opacity
+            (gui::timeline::cmd::EditClipDetails) // Add key frame 1
+            (gui::timeline::cmd::EditClipDetails) // Add key frame 2
+            (gui::timeline::cmd::EditClipDetails) // Add key frame 3
+            (gui::timeline::cmd::EditClipDetails) // Change rotation
+            (gui::timeline::cmd::EditClipDetails)// Change scaling
+            (gui::timeline::cmd::EditClipDetails); // Change opacity
         ASSERT(KeyFrame(VideoClip(0, 4), 2).Opacity(128));
         ASSERT(DetailsView(VideoClip(0, 4)).Opacity(128));
     }
@@ -304,12 +304,12 @@ void TestVideoKeyFrames::testChangeClipSpeed()
     ButtonTriggerPressed(DetailsClipView()->getVideoKeyFramesAddButton());
     SetValue(DetailsClipView()->getRotationSlider(), 9000); // 90 degrees
     ASSERT_HISTORY_END
-        (command::ProjectViewCreateAutoFolder)
-        (command::ProjectViewCreateSequence)
-        (gui::timeline::command::UnlinkClips) // todo move all commands to the command namespace and rename that namesapce to cmd
-        (gui::timeline::command::DeleteSelectedClips)
-        (gui::timeline::command::EditClipDetails) // Add key frame
-        (gui::timeline::command::EditClipDetails); // Rotate
+        (cmd::ProjectViewCreateAutoFolder)
+        (cmd::ProjectViewCreateSequence)
+        (gui::timeline::cmd::UnlinkClips)
+        (gui::timeline::cmd::DeleteSelectedClips)
+        (gui::timeline::cmd::EditClipDetails) // Add key frame
+        (gui::timeline::cmd::EditClipDetails); // Rotate
 
     {
         StartTest("Increase speed and verify key frame");
@@ -319,9 +319,9 @@ void TestVideoKeyFrames::testChangeClipSpeed()
         ASSERT(KeyFrame(VideoClip(0, 4), 0).Rotation(90));
         TimelinePositionCursor(HCenter(VideoClip(0, 4)));
         ASSERT(DetailsClipView()->getVideoKeyFrameButton(0)->GetValue());
-        ASSERT_HISTORY_END(gui::timeline::command::EditClipDetails)(gui::timeline::command::EditClipDetails)(gui::timeline::command::EditClipSpeed); // todo move all timelinestuff directly in the gui namespace
+        ASSERT_HISTORY_END(gui::timeline::cmd::EditClipDetails)(gui::timeline::cmd::EditClipDetails)(gui::timeline::cmd::EditClipSpeed); // todo move all timelinestuff directly in the gui namespace
         Undo();
-        ASSERT_HISTORY_END(gui::timeline::command::EditClipDetails)(gui::timeline::command::EditClipDetails);
+        ASSERT_HISTORY_END(gui::timeline::cmd::EditClipDetails)(gui::timeline::cmd::EditClipDetails);
     }
     {
         StartTest("Decrease speed and verify key frame");
@@ -331,9 +331,9 @@ void TestVideoKeyFrames::testChangeClipSpeed()
         ASSERT(KeyFrame(VideoClip(0, 4), 0).Rotation(90));
         TimelinePositionCursor(HCenter(VideoClip(0, 4)));
         ASSERT(DetailsClipView()->getVideoKeyFrameButton(0)->GetValue());
-        ASSERT_HISTORY_END(gui::timeline::command::EditClipDetails)(gui::timeline::command::EditClipDetails)(gui::timeline::command::EditClipSpeed); // todo move all timelinestuff directly in the gui namespace
+        ASSERT_HISTORY_END(gui::timeline::cmd::EditClipDetails)(gui::timeline::cmd::EditClipDetails)(gui::timeline::cmd::EditClipSpeed); // todo move all timelinestuff directly in the gui namespace
         Undo();
-        ASSERT_HISTORY_END(gui::timeline::command::EditClipDetails)(gui::timeline::command::EditClipDetails);
+        ASSERT_HISTORY_END(gui::timeline::cmd::EditClipDetails)(gui::timeline::cmd::EditClipDetails);
     }
 }
 
@@ -351,36 +351,36 @@ void TestVideoKeyFrames::testTrimAwayKeyFrames()
     ButtonTriggerPressed(DetailsClipView()->getVideoKeyFramesAddButton());
     TimelinePositionCursor(KeyFrame3Pixel);
     ButtonTriggerPressed(DetailsClipView()->getVideoKeyFramesAddButton());
-    ASSERT_HISTORY_END(gui::timeline::command::EditClipDetails)(gui::timeline::command::EditClipDetails)(gui::timeline::command::EditClipDetails);
+    ASSERT_HISTORY_END(gui::timeline::cmd::EditClipDetails)(gui::timeline::cmd::EditClipDetails)(gui::timeline::cmd::EditClipDetails);
     ASSERT_EQUALS(DetailsClipView()->getVideoKeyFrameButtonCount(), 3);
     {
         StartTest("Remove frame by begin trim");
         TimelineTrimLeft(VideoClip(0, 4), 100);
         ASSERT_EQUALS(DetailsClipView()->getVideoKeyFrameButtonCount(), 2);
-        ASSERT_HISTORY_END(gui::timeline::command::TrimClip);
+        ASSERT_HISTORY_END(gui::timeline::cmd::TrimClip);
     }
     {
         StartTest("Add frame by begin trim"); // todo in clip interval remove (during trimming) the key frames that are not visible anymore (otherwise, the clip starts with interpolated frames!)
         TimelineTrimLeft(VideoClip(0, 4), -100);
         // todo ASSERT_EQUALS(DetailsClipView()->getVideoKeyFrameButtonCount(), 2);
-        // ASSERT_HISTORY_SKIP(5)(gui::timeline::command::TrimClip);
+        // ASSERT_HISTORY_SKIP(5)(gui::timeline::cmd::TrimClip);
         ASSERT_EQUALS(DetailsClipView()->getVideoKeyFrameButtonCount(), 3);
-        ASSERT_HISTORY_END(gui::timeline::command::TrimClip)(gui::timeline::command::TrimClip);
+        ASSERT_HISTORY_END(gui::timeline::cmd::TrimClip)(gui::timeline::cmd::TrimClip);
     }
     Undo(2);
     {
         StartTest("Remove frame by end trim");
         TimelineTrimRight(VideoClip(0, 4), -100);
         ASSERT_EQUALS(DetailsClipView()->getVideoKeyFrameButtonCount(), 2);
-        ASSERT_HISTORY_END(gui::timeline::command::TrimClip);
+        ASSERT_HISTORY_END(gui::timeline::cmd::TrimClip);
     }
     {
         StartTest("Add frame by end trim"); // todo in clip interval remove (during trimming) the key frames that are not visible anymore (otherwise, the clip starts with interpolated frames!)
         TimelineTrimRight(VideoClip(0, 4), 100);
         // todo ASSERT_EQUALS(DetailsClipView()->getVideoKeyFrameButtonCount(), 2);
-        // ASSERT_HISTORY_SKIP(5)(gui::timeline::command::TrimClip);
+        // ASSERT_HISTORY_SKIP(5)(gui::timeline::cmd::TrimClip);
         ASSERT_EQUALS(DetailsClipView()->getVideoKeyFrameButtonCount(), 3);
-        ASSERT_HISTORY_END(gui::timeline::command::TrimClip)(gui::timeline::command::TrimClip);
+        ASSERT_HISTORY_END(gui::timeline::cmd::TrimClip)(gui::timeline::cmd::TrimClip);
     }
 }
 
@@ -389,7 +389,7 @@ void TestVideoKeyFrames::testInTransition()
     StartTestSuite();
     TimelineZoomIn(8);
     MakeInOutTransitionAfterClip prepare(3);
-    prepare.dontUndo(); // todo remove this mechanism and add HISTORY asserts for all relevant places
+    prepare.dontUndo();
     {
         StartTest("Make two key frames under an in transition");
         TimelinePositionCursor(LeftPixel(VideoClip(0, 5)) - 3);

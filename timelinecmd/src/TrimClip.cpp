@@ -31,7 +31,7 @@
 #include "UtilLog.h"
 #include "Zoom.h"
 
-namespace gui { namespace timeline { namespace command {
+namespace gui { namespace timeline { namespace cmd {
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION

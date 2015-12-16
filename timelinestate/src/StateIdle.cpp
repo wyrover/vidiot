@@ -170,7 +170,7 @@ boost::statechart::result Idle::react( const EvKeyDown& evt)
         case 'B':
         {
             evt.consumed();
-            command::SplitAtCursorAndTrim(getSequence(), true);
+            cmd::SplitAtCursorAndTrim(getSequence(), true);
             break;
         }
         case 'c':
@@ -187,7 +187,7 @@ boost::statechart::result Idle::react( const EvKeyDown& evt)
         case 'E':
         {
             evt.consumed();
-            command::SplitAtCursorAndTrim(getSequence(), false);
+            cmd::SplitAtCursorAndTrim(getSequence(), false);
             break;
         }
         case 'i':
@@ -224,7 +224,7 @@ boost::statechart::result Idle::react( const EvKeyDown& evt)
             if (!evt.CtrlDown)
             {
                 evt.consumed();
-                model::ProjectModification::submitIfPossible(new command::SplitAtCursor(getSequence()));
+                model::ProjectModification::submitIfPossible(new cmd::SplitAtCursor(getSequence()));
             }
             break;
         }
@@ -438,7 +438,7 @@ void Idle::addTransition(model::TransitionType type)
 
         ASSERT(info.track);
         model::TransitionPtr transition = info.track->isA<model::VideoTrack>() ? model::video::VideoTransitionFactory::get().getDefault() : model::audio::AudioTransitionFactory::get().getDefault();
-        ::gui::timeline::command::createTransition(getSequence(), info.clip, type, transition);
+        ::gui::timeline::cmd::createTransition(getSequence(), info.clip, type, transition);
     }
 }
 

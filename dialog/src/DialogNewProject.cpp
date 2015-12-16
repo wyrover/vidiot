@@ -340,13 +340,13 @@ void DialogNewProject::onFinish(wxWizardEvent& event)
             // Create sequence of this folder
             ::model::AutoFolderPtr folder = boost::dynamic_pointer_cast<::model::AutoFolder>(nodes.front());
             ASSERT(folder);
-            model::ProjectModification::submit(new command::ProjectViewCreateSequence(folder));
+            model::ProjectModification::submit(new cmd::ProjectViewCreateSequence(folder));
         }
         else if (mFileAnalyzer->getNumberOfFolders() == 0 && mFileAnalyzer->getNumberOfMediaFiles() > 0)
         {
             // Create sequence of all given files
             wxString sequenceName = nodes.size() > 1 ? _("Movie") : nodes.front()->getName();
-            model::ProjectModification::submit(new command::ProjectViewCreateSequence(root, sequenceName, nodes));
+            model::ProjectModification::submit(new cmd::ProjectViewCreateSequence(root, sequenceName, nodes));
         }
     }
 

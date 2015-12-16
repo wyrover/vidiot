@@ -24,7 +24,7 @@ class ShiftParams;
 typedef boost::shared_ptr<ShiftParams> Shift;
 }}
 
-namespace gui { namespace timeline { namespace command {
+namespace gui { namespace timeline { namespace cmd {
 
 //////////////////////////////////////////////////////////////////////////
 // HELPER CLASSES

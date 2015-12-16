@@ -22,7 +22,7 @@
 #include "UtilLog.h"
 #include "SequenceView.h"
 
-namespace gui { namespace timeline { namespace command {
+namespace gui { namespace timeline { namespace cmd {
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION

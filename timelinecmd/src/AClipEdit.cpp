@@ -39,7 +39,7 @@
 #include "VideoClip.h"
 #include "VideoTransition.h"
 
-namespace gui { namespace timeline { namespace command {
+namespace gui { namespace timeline { namespace cmd {
 
     //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION

@@ -17,7 +17,7 @@
 
 #pragma once
 
-namespace command {
+namespace cmd {
 
 class RootCommand : public wxCommand
 {

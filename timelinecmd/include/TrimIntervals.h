@@ -22,7 +22,7 @@
 
 namespace gui { namespace timeline {
 
-namespace command {
+namespace cmd {
 
 class TrimIntervals
     :   public AClipEdit

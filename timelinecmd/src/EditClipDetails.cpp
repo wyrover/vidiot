@@ -26,7 +26,7 @@
 #include "UtilLogStl.h"
 #include "UtilClone.h"
 
-namespace gui { namespace timeline { namespace command {
+namespace gui { namespace timeline { namespace cmd {
 
     // todo make derived classes (only for syntactic sugar during tests) and create those
 EditClipDetails::EditClipDetails(

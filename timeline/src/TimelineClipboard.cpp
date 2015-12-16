@@ -128,7 +128,7 @@ void TimelineClipboard::onPaste(bool atCursor)
             wxTheClipboard->Close();
 			if (data.checkIfOkForPasteOrDrop())
 			{
-				command::ExecuteDrop* command = new command::ExecuteDrop(getSequence(), true);
+				cmd::ExecuteDrop* command = new cmd::ExecuteDrop(getSequence(), true);
 				command->onDrop(data.getDrops(getSequence(), dropPosition));
 				command->submit();
 			}
@@ -162,21 +162,21 @@ void TimelineClipboard::onPaste(bool atCursor)
 			}
 			if (!nodes.empty())
 			{
-				::command::TrackCreator c(nodes);
+				::cmd::TrackCreator c(nodes);
 				model::TrackPtr video = c.getVideoTrack();
 				model::TrackPtr audio = c.getAudioTrack();
-				command::Drops drops;
-				command::Drop videoDrop;
+				cmd::Drops drops;
+				cmd::Drop videoDrop;
 				videoDrop.clips = video->getClips();
 				videoDrop.position = dropPosition;
 				videoDrop.track = getSequence()->getVideoTrack(0);
-				command::Drop audioDrop;
+				cmd::Drop audioDrop;
 				audioDrop.clips = audio->getClips();
 				audioDrop.position = dropPosition;
 				audioDrop.track = getSequence()->getAudioTrack(0);
 				drops.push_back(videoDrop);
 				drops.push_back(audioDrop);
-				command::ExecuteDrop* command = new command::ExecuteDrop(getSequence(), true);
+				cmd::ExecuteDrop* command = new cmd::ExecuteDrop(getSequence(), true);
 				command->onDrop(drops);
 				command->submit();
 			}

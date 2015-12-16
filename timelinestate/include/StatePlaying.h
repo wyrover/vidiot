@@ -19,7 +19,7 @@
 
 #include "State.h"
 
-namespace command {
+namespace cmd {
 class RootCommand;
 }
 

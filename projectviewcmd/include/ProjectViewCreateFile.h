@@ -19,7 +19,7 @@
 
 #include "ProjectViewCommand.h"
 
-namespace command {
+namespace cmd {
 
 class ProjectViewCreateFile
     :   public ProjectViewCommand

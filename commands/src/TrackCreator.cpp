@@ -28,7 +28,7 @@
 #include "VideoFile.h"
 #include "VideoTrack.h"
 
-namespace command {
+namespace cmd {
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION

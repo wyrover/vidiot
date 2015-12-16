@@ -23,7 +23,7 @@
 #include "UtilLogStl.h"
 #include "UtilClone.h"
 
-namespace gui { namespace timeline { namespace command {
+namespace gui { namespace timeline { namespace cmd {
 
 UnlinkClips::UnlinkClips(const model::SequencePtr& sequence, const model::IClips& clips)
     :   AClipEdit(sequence)

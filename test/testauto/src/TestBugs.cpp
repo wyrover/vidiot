@@ -111,7 +111,7 @@ void TestBugs::testDraggingWithoutSelection()
     TimelineKeyDown(WXK_CONTROL);
     TimelineLeftDown(); // Deselects the clip already
     TimelineMove(Center(VideoClip(0,3))); // Starts the drag without anything being selected: ASSERT at the time of the bug. Now the drag should be simply omitted.
-    ASSERT_HISTORY_END(command::ProjectViewCreateSequence);
+    ASSERT_HISTORY_END(cmd::ProjectViewCreateSequence);
     TimelineKeyUp(WXK_CONTROL);
     TimelineLeftUp();
 }
@@ -618,7 +618,7 @@ void TestBugs::testCrashWhenCreatingCrossfadeViaKeyboardTwice()
     StartTest("Prepare");
     TimelineMove(LeftCenter(VideoClip(0,1)));
     TimelineKeyPress('p'); // Create the transition
-    ASSERT_HISTORY_END(command::ProjectViewCreateSequence)(command::Combiner);
+    ASSERT_HISTORY_END(cmd::ProjectViewCreateSequence)(cmd::Combiner);
     ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip);
     TimelineMove(RightCenter(VideoClip(0,1)) + wxPoint(3,0));
     StartTest("InTransition");
@@ -628,7 +628,7 @@ void TestBugs::testCrashWhenCreatingCrossfadeViaKeyboardTwice()
     StartTest("OutTransition");
     TimelineKeyPress('n'); // Create transition again: not possible
     TimelineKeyPress('o'); // Create transition again: not possible
-    ASSERT_HISTORY_END(command::ProjectViewCreateSequence)(command::Combiner);
+    ASSERT_HISTORY_END(cmd::ProjectViewCreateSequence)(cmd::Combiner);
 }
 
 void TestBugs::testCrashCausedByCreatingTransitionAtAudioClipEndAfterReadingProjectFromDisk()

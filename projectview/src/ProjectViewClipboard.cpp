@@ -91,7 +91,7 @@ void ProjectViewClipboard::onCut()
 {
     if (storeSelectionInClipboard())
     {
-        model::ProjectModification::submitIfPossible(new command::ProjectViewDeleteAsset(mProjectView.getSelection()));
+        model::ProjectModification::submitIfPossible(new cmd::ProjectViewDeleteAsset(mProjectView.getSelection()));
     }
 }
 
@@ -136,7 +136,7 @@ bool ProjectViewClipboard::storeSelectionInClipboard() const
     else
     {
         // For nodes in an autofolder, do not copy the nodes if the autofolder is also selected.
-        model::NodePtrs selection = command::ProjectViewCommand::prune(mProjectView.getSelection());
+        model::NodePtrs selection = cmd::ProjectViewCommand::prune(mProjectView.getSelection());
         if (wxTheClipboard->Open())
         {
             wxTheClipboard->SetData(new ProjectViewDataObject(selection));
@@ -195,7 +195,7 @@ void ProjectViewClipboard::pasteFromClipboard()
                         return;
                     }
                 }
-                model::ProjectModification::submitIfPossible(new command::ProjectViewAddAsset(target, data.getNodes()));
+                model::ProjectModification::submitIfPossible(new cmd::ProjectViewAddAsset(target, data.getNodes()));
             }
         }
         else if (wxTheClipboard->IsSupported(wxDataFormat(wxDF_FILENAME)))
@@ -236,7 +236,7 @@ void ProjectViewClipboard::pasteFromClipboard()
                         nodes.push_back(boost::make_shared<model::AutoFolder>(filename));
                     }
                 }
-                if (!model::ProjectModification::submitIfPossible(new command::ProjectViewAddAsset(target, nodes)))
+                if (!model::ProjectModification::submitIfPossible(new cmd::ProjectViewAddAsset(target, nodes)))
                 {
                     StatusBar::get().timedInfoText(_("No supported files in clipboard."));
                 }

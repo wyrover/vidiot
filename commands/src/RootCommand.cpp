@@ -19,7 +19,7 @@
 
 #include "ProjectModification.h"
 
-namespace command {
+namespace cmd {
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION

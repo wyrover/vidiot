@@ -19,7 +19,7 @@
 
 #include "Part.h"
 
-namespace gui { namespace timeline { namespace command {
+namespace gui { namespace timeline { namespace cmd {
     class ExecuteDrop;
     struct Drop;
     typedef std::vector<Drop> Drops;
@@ -106,7 +106,7 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    command::ExecuteDrop* mCommand;             ///< The command that is submitted when the drop operation finishes.
+    cmd::ExecuteDrop* mCommand;             ///< The command that is submitted when the drop operation finishes.
     wxPoint mHotspot;                           ///< Hotspot within the timeline. Basically: pointer position at start of dragging.
     pts mHotspotPts;                            ///< The pts value that corresponds to the hotspot's x position. Required when changing zoom/scrolling.
     wxPoint mPosition;                          ///< Current pointer drag position. In timeline coordinates.
@@ -258,7 +258,7 @@ private:
     /// Return the list of 'drops' on the given track
     /// \param track onto which clips are dropped
     /// \return list of drops onto that track
-    command::Drops getDrops(const model::TrackPtr& track);
+    cmd::Drops getDrops(const model::TrackPtr& track);
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

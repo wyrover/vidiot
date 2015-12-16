@@ -22,7 +22,7 @@
 #include "Timeline.h"
 #include "Sequence.h"
 
-namespace gui { namespace timeline { namespace command {
+namespace gui { namespace timeline { namespace cmd {
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION

@@ -34,7 +34,7 @@
 #include "VideoClip.h"
 #include "VideoTransition.h"
 
-namespace gui { namespace timeline { namespace command {
+namespace gui { namespace timeline { namespace cmd {
 
 void createTransition(const model::SequencePtr& sequence, const model::IClipPtr& clip, const model::TransitionType& type, const model::TransitionPtr& transition)
 {
@@ -47,7 +47,7 @@ void createTransition(const model::SequencePtr& sequence, const model::IClipPtr&
     Timeline& timeline = gui::TimelinesView::get().getTimeline(sequence);
 
     timeline.beginTransaction();
-    command::CreateTransition* createTransitionCommand = new command::CreateTransition(sequence, clip, transition, type);
+    cmd::CreateTransition* createTransitionCommand = new cmd::CreateTransition(sequence, clip, transition, type);
     model::IClipPtr leftClip = createTransitionCommand->getLeftClip();
     model::IClipPtr rightClip = createTransitionCommand->getRightClip();
     if (!model::ProjectModification::submitIfPossible(createTransitionCommand))
@@ -61,13 +61,13 @@ void createTransition(const model::SequencePtr& sequence, const model::IClipPtr&
             model::TrackPtr track = clip->getTrack();
             model::IClipPtr prevClip = leftClip->getPrev(); // Temporarily stored to retrieve the (new) trimmed clips again. NOTE: This may be 0 if leftClip is the first clip of the track!!!
 
-            command::TrimClip* trimLeftCommand = 0;
-            command::TrimClip* trimRightCommand = 0;
+            cmd::TrimClip* trimLeftCommand = 0;
+            cmd::TrimClip* trimRightCommand = 0;
 
             pts extraNeededLeft = leftClip->getMaxAdjustEnd() - (defaultSize / 2);
             if (extraNeededLeft < 0)
             {
-                trimLeftCommand = new command::TrimClip(sequence, leftClip, model::TransitionPtr(), ClipEnd);
+                trimLeftCommand = new cmd::TrimClip(sequence, leftClip, model::TransitionPtr(), ClipEnd);
                 trimLeftCommand->update(extraNeededLeft, true, true);
             }
 
@@ -77,15 +77,15 @@ void createTransition(const model::SequencePtr& sequence, const model::IClipPtr&
             pts extraNeededRight = rightClip->getMinAdjustBegin() + (defaultSize / 2);
             if (extraNeededRight > 0)
             {
-                trimRightCommand = new command::TrimClip(sequence, rightClip, model::TransitionPtr(), ClipBegin);
+                trimRightCommand = new cmd::TrimClip(sequence, rightClip, model::TransitionPtr(), ClipBegin);
                 trimRightCommand->update(extraNeededRight, true, true);
             }
 
-            command::CreateTransition* createTransitionCommand = new command::CreateTransition(sequence, leftClip, transition, model::TransitionTypeFadeOutToNext);
+            cmd::CreateTransition* createTransitionCommand = new cmd::CreateTransition(sequence, leftClip, transition, model::TransitionTypeFadeOutToNext);
 
             if (createTransitionCommand->isPossible())
             {
-                ::command::Combiner* combiner = new ::command::Combiner();
+                ::cmd::Combiner* combiner = new ::cmd::Combiner();
                 if (trimLeftCommand)
                 {
                     combiner->add(trimLeftCommand);

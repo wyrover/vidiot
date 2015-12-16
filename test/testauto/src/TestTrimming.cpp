@@ -116,70 +116,70 @@ void TestTrimming::testKeyboardTrimming()
     TimelinePositionCursor(LeftPixel(VideoClip(0, 2)));
     TimelineKeyPress('b');
     TimelineKeyPress('e');
-    ASSERT_HISTORY_END(command::ProjectViewCreateSequence);
+    ASSERT_HISTORY_END(cmd::ProjectViewCreateSequence);
 
     TestBeginTrimSucceeds("Without other tracks: Begin trim");
-    ASSERT_HISTORY_END(command::ProjectViewCreateSequence)(gui::timeline::command::TrimClip);
+    ASSERT_HISTORY_END(cmd::ProjectViewCreateSequence)(gui::timeline::cmd::TrimClip);
     Undo();
 
     TestEndTrimSucceeds("Without other tracks: End trim");
-    ASSERT_HISTORY_END(command::ProjectViewCreateSequence)(gui::timeline::command::TrimClip);
+    ASSERT_HISTORY_END(cmd::ProjectViewCreateSequence)(gui::timeline::cmd::TrimClip);
     Undo();
 
     WindowTriggerMenu(ID_ADDVIDEOTRACK);
     WindowTriggerMenu(ID_ADDAUDIOTRACK);
     TimelineTrimRight(VideoClip(0,4), - 250); // Make smaller for easier positioning
-    ASSERT_HISTORY_END(gui::timeline::command::CreateAudioTrack)(gui::timeline::command::TrimClip);
+    ASSERT_HISTORY_END(gui::timeline::cmd::CreateAudioTrack)(gui::timeline::cmd::TrimClip);
 
     TestBeginTrimSucceeds("With other track without clips: Begin trim");
-    ASSERT_HISTORY_END(gui::timeline::command::TrimClip)(gui::timeline::command::TrimClip);
+    ASSERT_HISTORY_END(gui::timeline::cmd::TrimClip)(gui::timeline::cmd::TrimClip);
     Undo();
 
     TestEndTrimSucceeds("With other track without clips: End trim");
-    ASSERT_HISTORY_END(gui::timeline::command::TrimClip)(gui::timeline::command::TrimClip);
+    ASSERT_HISTORY_END(gui::timeline::cmd::TrimClip)(gui::timeline::cmd::TrimClip);
     Undo();
 
     TimelineDragToTrack(1,VideoClip(0,4),AudioClip(0,4));
 
     TestBeginTrimSucceeds("With other track with empty clip: Begin trim");
-    ASSERT_HISTORY_END(gui::timeline::command::ExecuteDrop)(gui::timeline::command::TrimClip);
+    ASSERT_HISTORY_END(gui::timeline::cmd::ExecuteDrop)(gui::timeline::cmd::TrimClip);
     Undo();
 
     TestEndTrimSucceeds("With other track with empty clip: End trim");
-    ASSERT_HISTORY_END(gui::timeline::command::ExecuteDrop)(gui::timeline::command::TrimClip);
+    ASSERT_HISTORY_END(gui::timeline::cmd::ExecuteDrop)(gui::timeline::cmd::TrimClip);
     Undo();
 
     TimelineDrag(From(Center(VideoClip(1,1))).To(wxPoint(HCenter(VideoClip(0,2)), VCenter(VideoTrack(1)))));
-    ASSERT_HISTORY_END(gui::timeline::command::ExecuteDrop)(gui::timeline::command::ExecuteDrop);
+    ASSERT_HISTORY_END(gui::timeline::cmd::ExecuteDrop)(gui::timeline::cmd::ExecuteDrop);
 
     TestBeginTrimImpossible("With other track with fully obscuring non-empty clip: Begin trim");
-    ASSERT_HISTORY_END(gui::timeline::command::ExecuteDrop);
+    ASSERT_HISTORY_END(gui::timeline::cmd::ExecuteDrop);
 
     TestEndTrimImpossible("With other track with fully obscuring non-empty clip: End trim");
-    ASSERT_HISTORY_END(gui::timeline::command::ExecuteDrop);
+    ASSERT_HISTORY_END(gui::timeline::cmd::ExecuteDrop);
 
     Undo();
-    ASSERT_HISTORY_END(gui::timeline::command::TrimClip)(gui::timeline::command::ExecuteDrop);
+    ASSERT_HISTORY_END(gui::timeline::cmd::TrimClip)(gui::timeline::cmd::ExecuteDrop);
 
     TimelineDrag(From(Center(VideoClip(1,1))).AlignLeft(RightPixel(VideoClip(0,2)) - 20));
-    ASSERT_HISTORY_END(gui::timeline::command::ExecuteDrop)(gui::timeline::command::ExecuteDrop);
+    ASSERT_HISTORY_END(gui::timeline::cmd::ExecuteDrop)(gui::timeline::cmd::ExecuteDrop);
 
     TestBeginTrimSucceeds("With other track with partially right obscuring non-empty clip: Begin trim");
-    ASSERT_HISTORY_END(gui::timeline::command::ExecuteDrop)(gui::timeline::command::TrimClip);
+    ASSERT_HISTORY_END(gui::timeline::cmd::ExecuteDrop)(gui::timeline::cmd::TrimClip);
     Undo();
 
     TestEndTrimImpossible("With other track with partially right obscuring non-empty clip: End trim (no change)");
-    ASSERT_HISTORY_END(gui::timeline::command::ExecuteDrop);
+    ASSERT_HISTORY_END(gui::timeline::cmd::ExecuteDrop);
     Undo();
 
     TimelineDrag(From(RightCenter(VideoClip(1,1)) + wxPoint(-20,0)).AlignRight(LeftPixel(VideoClip(0,2)) + 20));
-    ASSERT_HISTORY_END(gui::timeline::command::ExecuteDrop)(gui::timeline::command::ExecuteDrop);
+    ASSERT_HISTORY_END(gui::timeline::cmd::ExecuteDrop)(gui::timeline::cmd::ExecuteDrop);
 
     TestBeginTrimImpossible("With other track with partially left obscuring non-empty clip: Begin trim");
-    ASSERT_HISTORY_END(gui::timeline::command::ExecuteDrop);
+    ASSERT_HISTORY_END(gui::timeline::cmd::ExecuteDrop);
 
     TestEndTrimSucceeds("With other track with partially left obscuring non-empty clip: End trim (no change)");
-    ASSERT_HISTORY_END(gui::timeline::command::ExecuteDrop)(gui::timeline::command::TrimClip);
+    ASSERT_HISTORY_END(gui::timeline::cmd::ExecuteDrop)(gui::timeline::cmd::TrimClip);
 }
 
 void TestTrimming::testKeyboardTrimmingDuringPlayback()
