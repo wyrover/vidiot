@@ -65,7 +65,7 @@ void TestSavingAndLoading::testSaveAndLoad()
     ExtendSequenceWithRepeatedClips(getSequence(), getListOfInputPaths(), 1);
 
     // Ensure each transition type is saved once
-    int number = 4;
+    int number = 6;
     for ( model::TransitionPtr t : model::video::VideoTransitionFactory::get().getAllPossibleTransitions() )
     {
         for (model::TransitionType direction : { model::TransitionTypeFadeIn, model::TransitionTypeFadeInFromPrevious, model::TransitionTypeFadeOut, model::TransitionTypeFadeOutToNext })
@@ -101,9 +101,23 @@ void TestSavingAndLoading::testSaveAndLoad()
     TimelineLeftClick(Center(VideoClip(0,1)));
     TimelineKeyPress(WXK_DELETE);
 
-    StartTest("Add video key frames");
-    // todo modify one clip without adding key frames
-    // todo add key frames to another clip, and modify those key frames
+    StartTest("Change default video key frame");
+    TimelineSelectClips({ VideoClip(0,3) });
+    SetValue(DetailsClipView()->getRotationSlider(), -4500);
+    ASSERT(DefaultKeyFrame(VideoClip(0, 3)).Rotation(rational64{ -45, 1 }));
+
+    StartTest("Add and change non-default video key frames");
+    TimelineSelectClips({ VideoClip(0,4) });
+    TimelinePositionCursor(HCenter(VideoClip(0, 4)));
+    ButtonTriggerPressed(DetailsClipView()->getVideoKeyFramesAddButton());
+    SetValue(DetailsClipView()->getScalingSlider(), 7000);
+    TimelinePositionCursor(HCenter(VideoClip(0, 4)) - 20);
+    ButtonTriggerPressed(DetailsClipView()->getVideoKeyFramesAddButton());
+    SetValue(DetailsClipView()->getOpacitySlider(), 128);
+    TimelinePositionCursor(HCenter(VideoClip(0, 4)) + 30);
+    ButtonTriggerPressed(DetailsClipView()->getVideoKeyFramesAddButton());
+    SetValue(DetailsClipView()->getPositionXSlider(), -200);
+    SetValue(DetailsClipView()->getPositionYSlider(), -111);
 
     StartTest("Zoom");
     TimelineKeyPressN(4,'='); // Zoom in until factor is 1:1

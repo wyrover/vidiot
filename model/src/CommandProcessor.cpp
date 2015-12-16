@@ -22,41 +22,25 @@
 namespace model {
 
 //////////////////////////////////////////////////////////////////////////
-// INITIALIZATION
-//////////////////////////////////////////////////////////////////////////
-
-CommandProcessor::CommandProcessor()
-    :   wxCommandProcessor()
-    ,   mUndoSize(0)
-{
-}
-
-CommandProcessor::~CommandProcessor()
-{
-}
-
-//////////////////////////////////////////////////////////////////////////
 // wxCommandProcessor
 //////////////////////////////////////////////////////////////////////////
 
 bool CommandProcessor::Redo()
 {
-    mUndoSize++;
-    ASSERT_MORE_THAN_ZERO(mUndoSize);
+    ASSERT_MORE_THAN_ZERO(mRedo);
+    mRedo--;
     return wxCommandProcessor::Redo();
 }
 
-bool CommandProcessor::Submit (wxCommand *command, bool storeIt)
+bool CommandProcessor::Submit(wxCommand *command, bool storeIt)
 {
-    mUndoSize++;
-    ASSERT_MORE_THAN_ZERO(mUndoSize);
+    mRedo = 0;
     return wxCommandProcessor::Submit(command,storeIt);
 }
 
 bool CommandProcessor::Undo()
 {
-    mUndoSize++;
-    ASSERT_MORE_THAN_EQUALS_ZERO(mUndoSize);
+    mRedo++;
     return wxCommandProcessor::Undo();
 }
 
@@ -64,10 +48,23 @@ bool CommandProcessor::Undo()
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-int CommandProcessor::getUndoSize() const
+std::vector<wxCommand*> CommandProcessor::getUndoHistory() const
 {
-    ASSERT_MORE_THAN_EQUALS_ZERO(mUndoSize);
-    return mUndoSize;
+    std::vector<wxCommand*> result;
+    for (wxCommand* c : GetCommands().AsVector<wxCommand*>())
+    {
+        result.push_back(c);
+    }
+
+    // Remove any 'Undone' commands.
+    ASSERT_LESS_THAN_EQUALS(mRedo, result.size())(result);
+    size_t undone{ mRedo };
+    while (undone-- > 0)
+    {
+        result.pop_back();
+    }
+    return result;
 }
+
 
 } // namespace

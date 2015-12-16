@@ -230,8 +230,6 @@ void DetailsClip::submitEditCommandUponAudioVideoEdit(const wxString& message)
             getTimeline().repaint(preview->getRect());
         }
     }
-
-//    preview(); // todo obsolete as after creating the command the clip is edited resulting in a project event, which should result in a preview again?
 }
 
 void DetailsClip::submitEditCommandUponTransitionEdit(const wxString& parameter)

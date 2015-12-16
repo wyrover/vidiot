@@ -31,8 +31,8 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    CommandProcessor();
-    virtual ~CommandProcessor();
+    CommandProcessor() = default;
+    virtual ~CommandProcessor() = default;
 
     //////////////////////////////////////////////////////////////////////////
     // wxCommandProcessor
@@ -46,7 +46,7 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    int getUndoSize() const; ///< \return maximum number of Undos that is currently possible
+    std::vector<wxCommand*> getUndoHistory() const;
 
 private:
 
@@ -54,7 +54,7 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    int mUndoSize; ///< Maximum number of Undos that is currently possible
+    size_t mRedo = 0; ///< Number of commands in the command list that is redo-able.
 };
 
 } // namespace

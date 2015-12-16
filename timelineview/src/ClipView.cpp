@@ -186,10 +186,8 @@ void ClipView::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) con
                 {
                     getViewMap().getClipPreview(mClip)->draw(dc, region, offset);
 
-                    if (mClip->isA<model::VideoClip>()) // todo audio
+                    if (auto interval = boost::dynamic_pointer_cast<model::ClipInterval>(mClip))
                     {
-                        model::ClipIntervalPtr interval{ boost::dynamic_pointer_cast<model::ClipInterval>(mClip) };
-
                         pts origin{ interval->getOffset() - (mClip->getInTransition() ? *(mClip->getInTransition()->getRight()) : 0) };
                      
                         std::map<pts, model::KeyFramePtr> keyframes{ interval->getKeyFrames() };
@@ -204,8 +202,6 @@ void ClipView::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) con
                         }
 
                         // todo click on key frame indicator, select clip and select key frame
-                        // todo add a key frame 'under' a transition does not work...
-                        // todo add key frame to clip with offset does not work
                     }
                 }
             }

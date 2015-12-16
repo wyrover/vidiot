@@ -41,7 +41,7 @@ const int DetailsClip::sRotationMin = -180 * DetailsClip::sRotationPrecisionFact
 const int DetailsClip::sRotationMax = 180 * DetailsClip::sRotationPrecisionFactor;
 
 const int DetailsClip::sFactorPrecisionFactor = static_cast<int>(pow(10.0, sFactorPrecision)); ///< 10^sFactorPrecision
-const int DetailsClip::sFactorPageSize = sFactorPrecision / 10; // 0.1 todo bug (rounding)
+const int DetailsClip::sFactorPageSize = sFactorPrecision / 10; // 0.1
 const rational64 DetailsClip::sFactorMin{ 1,100 }; // 0.01
 const rational64 DetailsClip::sFactorMax{ 100,1 }; // 100
 
