@@ -424,16 +424,23 @@ void TestTimeline::testUndo()
     ASSERT_EQUALS(afterclip,VideoClip(0,3));
     ASSERT(VideoClip(0,2)->isA<model::EmptyClip>());
     ASSERT(!VideoClip(0,2)->isA<model::Transition>());
-    Undo(); ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>();
-    Undo(); ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::TrimClip>();
-    Undo(); ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::TrimClip>();
-    Undo(); ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
-    Undo(); ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateAutoFolder>();
-    Redo(); ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
-    Redo(); ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::TrimClip>();
-    Redo(); ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::TrimClip>();
-    Redo(); ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>();
-    Redo(); ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::ExecuteDrop>();
+    ASSERT_HISTORY_END
+        (command::ProjectViewCreateAutoFolder)
+        (command::ProjectViewCreateSequence)
+        (gui::timeline::command::TrimClip)
+        (gui::timeline::command::TrimClip)
+        (gui::timeline::command::CreateTransition)
+        (gui::timeline::command::ExecuteDrop);
+    Undo(5); 
+    ASSERT_HISTORY_END(command::ProjectViewCreateAutoFolder);
+    Redo(5);
+    ASSERT_HISTORY_END
+        (command::ProjectViewCreateAutoFolder)
+        (command::ProjectViewCreateSequence)
+        (gui::timeline::command::TrimClip)
+        (gui::timeline::command::TrimClip)
+        (gui::timeline::command::CreateTransition)
+        (gui::timeline::command::ExecuteDrop);
     Undo();
 }
 
@@ -442,7 +449,7 @@ void TestTimeline::testAbortDrag()
     StartTestSuite();
     for (int zoom = 0; zoom < 4; zoom++)
     {
-        ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
+        ASSERT_HISTORY_END(command::ProjectViewCreateSequence);
 
         TimelineDeselectAllClips();
         TimelineDrag(From(Center(VideoClip(0,5))).To(Center(VideoClip(0,4))).DontReleaseMouse());

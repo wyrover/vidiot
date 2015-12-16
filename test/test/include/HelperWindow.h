@@ -74,30 +74,6 @@ void Undo(int steps = 1);
 /// \param steps number of times an Undo is triggered
 void Redo(int steps = 1);
 
-/// Return current command in the history
-wxCommand* getCurrentCommand();
-
-/// Assert if the current active command in the history
-/// (the command that will be undone if undo is triggered)
-/// is of the given type.
-template <class COMMAND>
-void ASSERT_CURRENT_COMMAND_TYPE()
-{
-    wxCommand* cmd = 0;
-    util::thread::RunInMainAndWait([&]
-    {
-        cmd = getCurrentCommand(); // Split to make debugging easier (inspect cmd to see what the current command is in case of failure)
-    });
-    ASSERT(cmd);
-    COMMAND* command = dynamic_cast<COMMAND*>(cmd);
-    if (!command)
-    {
-        const char* Expected = (typeid(COMMAND).name());
-        const char* Actual = (typeid(*cmd).name());
-        ASSERT(command)(Expected)(Actual);
-    }
-};
-
 /// Use this to set a breakpoint, after which the window is given focus
 /// again so that the test case won't fail. This can be used to enable
 /// specific other breakpoints at desired times (particularly, after

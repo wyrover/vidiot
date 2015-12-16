@@ -117,11 +117,6 @@ void Redo(int steps)
     }
 }
 
-wxCommand* getCurrentCommand() // todo replace with ASSERT_HISTORY_SKIP
-{
-    return model::CommandProcessor::get().GetCurrentCommand();
-}
-
 void BREAK()
 {
 #if (defined _MSC_VER) || (defined __BORLANDC__)
