@@ -134,7 +134,7 @@ void Intervals::addEndMarker()
 {
     if (mNewIntervalActive)
     {
-        (new command::IntervalChange(getSequence(), makeInterval(mNewIntervalBegin, mNewIntervalEnd), true))->submit();
+        (new cmd::IntervalChange(getSequence(), makeInterval(mNewIntervalBegin, mNewIntervalEnd), true))->submit();
     }
     mNewIntervalActive = false;
 }
@@ -153,7 +153,7 @@ void Intervals::endToggle()
     {
         mToggleActive = false;
         VAR_DEBUG(mToggleBegin)(mToggleEnd);
-        (new command::IntervalChange(getSequence(), makeInterval(mToggleBegin,mToggleEnd), toggleIsAddition()))->submit();
+        (new cmd::IntervalChange(getSequence(), makeInterval(mToggleBegin,mToggleEnd), toggleIsAddition()))->submit();
     }
 }
 
@@ -197,7 +197,7 @@ void Intervals::change(const PtsInterval& interval, bool add)
 
 void Intervals::clear()
 {
-    (new command::IntervalRemoveAll(getSequence()))->submit();
+    (new cmd::IntervalRemoveAll(getSequence()))->submit();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -244,7 +244,7 @@ void Intervals::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) co
 void Intervals::deleteMarked()
 {
      VAR_INFO(mIntervals);
-    (new command::TrimIntervals(getSequence(), mIntervals,  _("Remove marked regions")))->submit();
+    (new cmd::TrimIntervals(getSequence(), mIntervals,  _("Remove marked regions")))->submit();
 }
 
 void Intervals::deleteUnmarked()
@@ -253,7 +253,7 @@ void Intervals::deleteUnmarked()
     unmarked += PtsInterval(0,getSequence()->getLength());
     unmarked -= mIntervals;
     VAR_INFO(unmarked);
-    (new command::TrimIntervals(getSequence(), unmarked, _("Remove unmarked regions")))->submit();
+    (new cmd::TrimIntervals(getSequence(), unmarked, _("Remove unmarked regions")))->submit();
 }
 
 void Intervals::deleteEmpty()
@@ -262,7 +262,7 @@ void Intervals::deleteEmpty()
     empty += PtsInterval(0,getSequence()->getLength());
     removeRegionUsedByClips(getSequence(),empty);
     VAR_INFO(empty);
-    (new command::TrimIntervals(getSequence(), empty, _("Remove empty regions")))->submit();
+    (new cmd::TrimIntervals(getSequence(), empty, _("Remove empty regions")))->submit();
 }
 
 void Intervals::deleteEmptyClip(const model::IClipPtr& clip)
@@ -272,7 +272,7 @@ void Intervals::deleteEmptyClip(const model::IClipPtr& clip)
     empty += PtsInterval(clip->getLeftPts(), clip->getRightPts());
     removeRegionUsedByClips(getSequence(),empty);
     VAR_INFO(empty);
-    (new command::TrimIntervals(getSequence(), empty, _("Remove empty region")))->submit();
+    (new cmd::TrimIntervals(getSequence(), empty, _("Remove empty region")))->submit();
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -20,7 +20,7 @@
 #include "ATimelineCommand.h"
 #include "UtilInt.h"
 
-namespace gui { namespace timeline { namespace command {
+namespace gui { namespace timeline { namespace cmd {
 
 /// This command removes all marked intervals from the timeline.
 /// This does not change the sequence, only the marked range is changed.

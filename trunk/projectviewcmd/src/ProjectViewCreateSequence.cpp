@@ -25,7 +25,7 @@
 #include "UtilLog.h"
 #include "Window.h"
 
-namespace command {
+namespace cmd {
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION

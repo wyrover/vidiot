@@ -19,7 +19,7 @@
 
 #include "RootCommand.h"
 
-namespace command {
+namespace cmd {
 
 /// Combine multiple commands into one entry in the Undo history
 /// Simply add the commands. Only the last command is 'visible' in the undo history.

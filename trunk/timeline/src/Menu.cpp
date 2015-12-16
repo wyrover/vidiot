@@ -399,16 +399,16 @@ void MenuHandler::onTriggerPopupMenu(wxCommandEvent& event)
                 case wxID_NONE:
                 break;
                 case ID_ADD_INTRANSITION:
-                command::createTransition(getSequence(), info.getLogicalClip(), model::TransitionTypeFadeIn, defaultTransition);
+                cmd::createTransition(getSequence(), info.getLogicalClip(), model::TransitionTypeFadeIn, defaultTransition);
                 break;
                 case ID_ADD_OUTTRANSITION:
-                command::createTransition(getSequence(), info.getLogicalClip(), model::TransitionTypeFadeOut, defaultTransition);
+                cmd::createTransition(getSequence(), info.getLogicalClip(), model::TransitionTypeFadeOut, defaultTransition);
                 break;
                 case ID_ADD_INOUTTRANSITION:
-                command::createTransition(getSequence(), info.getLogicalClip(), model::TransitionTypeFadeInFromPrevious, defaultTransition);
+                cmd::createTransition(getSequence(), info.getLogicalClip(), model::TransitionTypeFadeInFromPrevious, defaultTransition);
                 break;
                 case ID_ADD_OUTINTRANSITION:
-                command::createTransition(getSequence(), info.getLogicalClip(), model::TransitionTypeFadeOutToNext, defaultTransition);
+                cmd::createTransition(getSequence(), info.getLogicalClip(), model::TransitionTypeFadeOutToNext, defaultTransition);
                 break;
                 case wxID_CUT:
                 getClipboard().onCut();
@@ -432,7 +432,7 @@ void MenuHandler::onTriggerPopupMenu(wxCommandEvent& event)
                 getSelection().deleteClips(true);
                 break;
                 case ID_UNLINK_CLIPS:
-                (new command::UnlinkClips(getSequence(), unlink))->submit();
+                (new cmd::UnlinkClips(getSequence(), unlink))->submit();
                 break;
                 default:
                 if (clickedOnVideoClip && result >= ID_POPUP_END)
@@ -440,7 +440,7 @@ void MenuHandler::onTriggerPopupMenu(wxCommandEvent& event)
                     // Selected one of the video transitions
                     ASSERT_MAP_CONTAINS(mapMenuItemToTransitionType, result);
                     ASSERT_MAP_CONTAINS(mapMenuItemToTransition, result);
-                    command::createTransition(getSequence(), info.getLogicalClip(), mapMenuItemToTransitionType[result], mapMenuItemToTransition[result]);
+                    cmd::createTransition(getSequence(), info.getLogicalClip(), mapMenuItemToTransitionType[result], mapMenuItemToTransition[result]);
                 }
                 break;
             }
@@ -473,7 +473,7 @@ void MenuHandler::onAddVideoTrack(wxCommandEvent& event)
         if (mActive)
         {
             LOG_INFO;
-            (new command::CreateVideoTrack(getSequence()))->submit();
+            (new cmd::CreateVideoTrack(getSequence()))->submit();
         }
         event.Skip();
     });
@@ -486,7 +486,7 @@ void MenuHandler::onAddAudioTrack(wxCommandEvent& event)
         if (mActive)
         {
             LOG_INFO;
-            (new command::CreateAudioTrack(getSequence()))->submit();
+            (new cmd::CreateAudioTrack(getSequence()))->submit();
         }
         event.Skip();
     });
@@ -499,7 +499,7 @@ void MenuHandler::onRemoveEmptyTracks(wxCommandEvent& event)
         if (mActive)
         {
             LOG_INFO;
-            (new command::RemoveEmptyTracks(getSequence()))->submit();
+            (new cmd::RemoveEmptyTracks(getSequence()))->submit();
         }
         event.Skip();
     });

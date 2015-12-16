@@ -191,7 +191,7 @@ void DetailsClip::submitEditCommandUponAudioVideoEdit(const wxString& message)
         mClones = std::unique_ptr<ClonesContainer>(new ClonesContainer(this, mClip));
 
         // Create the command - which replaces the original clip(s) with their changed clones - and add it to the undo system.
-        mEditCommand = new command::EditClipDetails(getSequence(), message, mClip, mClip->getLink(), mClones->Clip, mClones->Link);
+        mEditCommand = new cmd::EditClipDetails(getSequence(), message, mClip, mClip->getLink(), mClones->Clip, mClones->Link);
 
         // The submission of the command will result in a newly selected clip: the clone
         // Storing that clone as the current clip serves two purposes:
@@ -241,7 +241,7 @@ void DetailsClip::submitEditCommandUponTransitionEdit(const wxString& parameter)
     if (mEditCommand == nullptr)
     {
         // Create the command - which replaces the original clip(s) with their changed clones - and add it to the undo system.
-        mEditCommand = new command::EditClipDetails(getSequence(), _("Change "), mClip, nullptr, mTransitionClone, nullptr);
+        mEditCommand = new cmd::EditClipDetails(getSequence(), _("Change "), mClip, nullptr, mTransitionClone, nullptr);
 
         // The submission of the command will result in a newly selected clip: the clone
         // Storing that clone as the current clip serves two purposes:
@@ -276,7 +276,7 @@ void DetailsClip::createOrUpdateSpeedCommand(rational64 speed)
     model::IClipPtr clip{ mClip };
     mClip = mClones->Clip;
 
-    mEditSpeedCommand = new command::EditClipSpeed(getSequence(), clip, clip->getLink(), mClones->Clip, mClones->Link, speed);
+    mEditSpeedCommand = new cmd::EditClipSpeed(getSequence(), clip, clip->getLink(), mClones->Clip, mClones->Link, speed);
     ASSERT_NONZERO(mEditSpeedCommand);
 
     if (model::ProjectModification::submitIfPossible(mEditSpeedCommand))
@@ -339,17 +339,17 @@ void DetailsClip::determineClipSizeBounds()
     model::IClipPtr link = mClip->getLink();
     model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(mClip);
 
-    command::TrimClip::TrimLimit limitsBeginTrim;
-    command::TrimClip::TrimLimit limitsEndTrim;
+    cmd::TrimClip::TrimLimit limitsBeginTrim;
+    cmd::TrimClip::TrimLimit limitsEndTrim;
     if (transition)
     {
-        limitsBeginTrim = command::TrimClip::determineBoundaries(getSequence(), transition, model::IClipPtr(), TransitionBegin, false);
-        limitsEndTrim = command::TrimClip::determineBoundaries(getSequence(), transition, model::IClipPtr(), TransitionEnd, false);
+        limitsBeginTrim = cmd::TrimClip::determineBoundaries(getSequence(), transition, model::IClipPtr(), TransitionBegin, false);
+        limitsEndTrim = cmd::TrimClip::determineBoundaries(getSequence(), transition, model::IClipPtr(), TransitionEnd, false);
     }
     else
     {
-        limitsBeginTrim = command::TrimClip::determineBoundaries(getSequence(), mClip, link, ClipBegin, true);
-        limitsEndTrim = command::TrimClip::determineBoundaries(getSequence(), mClip, link, ClipEnd, true);
+        limitsBeginTrim = cmd::TrimClip::determineBoundaries(getSequence(), mClip, link, ClipBegin, true);
+        limitsEndTrim = cmd::TrimClip::determineBoundaries(getSequence(), mClip, link, ClipEnd, true);
     }
 
     pts clipPerceivedLength = mClip->getPerceivedLength();
@@ -536,7 +536,6 @@ void DetailsClip::updateVideoKeyFrameControls()
         for (auto button : mVideoKeyFrames) { button.second->Bind(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, &DetailsClip::onVideoKeyFrameButtonPressed, this); }
     }
     ASSERT_EQUALS(mVideoKeyFrames.size(), keyframes.size());
-    // todo take the part 'under' a transition into account (test)
 
     mVideoKeyFramesHomeButton->Enable(!keyframes.empty() && videoKeyFrameOffset > keyframes.begin()->first);
     mVideoKeyFramesPrevButton->Enable(!keyframes.empty() && videoKeyFrameOffset > keyframes.begin()->first);
@@ -564,7 +563,7 @@ void DetailsClip::moveCursorToKeyFrame(model::IClipPtr clip, pts offset)
     ASSERT_MAP_CONTAINS(keyFrames, offset);
     model::ClipIntervalPtr interval{ boost::dynamic_pointer_cast<model::ClipInterval>(clip) };
     ASSERT_NONZERO(interval);
-    getCursor().setLogicalPosition(interval->getLeftPts() - interval->getOffset() + offset); // todo preview not updated when moving between key frames (via next button) - directly after adding a key frame
+    getCursor().setLogicalPosition(interval->getLeftPts() - interval->getOffset() + offset);
 }
 
 }} // namespace

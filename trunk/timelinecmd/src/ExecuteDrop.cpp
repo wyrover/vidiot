@@ -30,7 +30,7 @@
 #include "UtilLogStl.h"
 #include "UtilSet.h"
 
-namespace gui { namespace timeline { namespace command {
+namespace gui { namespace timeline { namespace cmd {
 
 //////////////////////////////////////////////////////////////////////////
 // HELPER CLASSES

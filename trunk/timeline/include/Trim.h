@@ -33,7 +33,7 @@ struct EvMotion;
 struct EvKeyUp;
 struct EvKeyDown;
 
-namespace command {
+namespace cmd {
     class TrimClip;
 }
 
@@ -92,7 +92,7 @@ private:
     bool mSnappingEnabled;          ///< Used to overrule snapping during a trim operation.
     bool mTrimLink;                 ///< Used to overrule trimming the link simultaneously.
 
-    command::TrimClip* mCommand;    ///< The command that executes the Trim operation
+    cmd::TrimClip* mCommand;    ///< The command that executes the Trim operation
 
     pts mFixedPts;                  ///< Pts value (in the track) that must be kept at a fixed pixel position. Used for keeping the left/right position of the clip fixed as much as possible when shift trimming.
     pixel mFixedPixel;              ///< Pixel value (physical) that mFixedPts must be aligned with. Used for keeping the left/right position of the clip fixed as much as possible when shift trimming.

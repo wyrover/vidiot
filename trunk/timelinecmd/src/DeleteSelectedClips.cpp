@@ -29,7 +29,7 @@
 #include "UtilLogStl.h"
 #include "UtilSet.h"
 
-namespace gui { namespace timeline { namespace command {
+namespace gui { namespace timeline { namespace cmd {
 
 DeleteSelectedClips::DeleteSelectedClips(const model::SequencePtr& sequence, bool shift)
     :   AClipEdit(sequence)

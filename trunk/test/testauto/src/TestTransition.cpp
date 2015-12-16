@@ -50,25 +50,25 @@ void TestTransition::testSelectionAndDeletion()
         ASSERT(VideoClip(0,1)->getSelected());
         ASSERT(!VideoClip(0,2)->getSelected());
         ASSERT(!VideoClip(0,3)->getSelected());
-        ASSERT_HISTORY_END(gui::timeline::command::CreateTransition); // Was a bug once when clicking on a clip's begin/end
+        ASSERT_HISTORY_END(gui::timeline::cmd::CreateTransition); // Was a bug once when clicking on a clip's begin/end
         StartTest("InOutTransition: Clicking on TransitionRightClipInterior selects the clip right of the transition.");
         TimelineLeftClick(TransitionRightClipInterior(VideoClip(0,2)));
         ASSERT(!VideoClip(0,1)->getSelected());
         ASSERT(!VideoClip(0,2)->getSelected());
         ASSERT(VideoClip(0,3)->getSelected());
-        ASSERT_HISTORY_END(gui::timeline::command::CreateTransition); // Was a bug once when clicking on a clip's begin/end
+        ASSERT_HISTORY_END(gui::timeline::cmd::CreateTransition); // Was a bug once when clicking on a clip's begin/end
         StartTest("InOutTransition: Clicking on TransitionLeftClipEnd selects the clip left of the transition.");
         TimelineLeftClick(TransitionLeftClipEnd(VideoClip(0,2)));
         ASSERT(VideoClip(0,1)->getSelected());
         ASSERT(!VideoClip(0,2)->getSelected());
         ASSERT(!VideoClip(0,3)->getSelected());
-        ASSERT_HISTORY_END(gui::timeline::command::CreateTransition); // Was a bug once when clicking on a clip's begin/end
+        ASSERT_HISTORY_END(gui::timeline::cmd::CreateTransition); // Was a bug once when clicking on a clip's begin/end
         StartTest("InOutTransition: Clicking on TransitionRightClipBegin selects the clip right of the transition.");
         TimelineLeftClick(TransitionRightClipBegin(VideoClip(0,2)));
         ASSERT(!VideoClip(0,1)->getSelected());
         ASSERT(!VideoClip(0,2)->getSelected());
         ASSERT(VideoClip(0,3)->getSelected());
-        ASSERT_HISTORY_END(gui::timeline::command::CreateTransition); // Was a bug once when clicking on a clip's begin/end
+        ASSERT_HISTORY_END(gui::timeline::cmd::CreateTransition); // Was a bug once when clicking on a clip's begin/end
     }
     {
         TimelineDeselectAllClips();
@@ -414,7 +414,7 @@ void TestTransition::testPlaybackAndScrubbing()
         TimelineKeyPress(WXK_DELETE);
         ASSERT_EQUALS(VideoClip(0,1)->getLength(), preparation.lengthOfClipBeforeTransitionBeforeTransitionApplied);
         ASSERT_EQUALS(VideoClip(0,2)->getLength(), preparation.lengthOfClipAfterTransitionBeforeTransitionApplied);
-        ASSERT_HISTORY_END(gui::timeline::command::DeleteSelectedClips);
+        ASSERT_HISTORY_END(gui::timeline::cmd::DeleteSelectedClips);
         Undo();
         StartTest("Move clips around InOutTransition: the transition must be moved also.");
         TimelineDeselectAllClips();
@@ -430,7 +430,7 @@ void TestTransition::testPlaybackAndScrubbing()
         ASSERT_EQUALS(VideoClip(0,9)->getRightPts(),AudioClip(0,8)->getRightPts());
         Scrub(LeftPixel(VideoTransition(0,5)) - 5, RightPixel(VideoTransition(0,5)) + 5);
         Play(LeftPixel(VideoTransition(0,5)) - 2, 500); // -2: Also take some frames from the left clip
-        ASSERT_HISTORY_END(gui::timeline::command::ExecuteDrop);
+        ASSERT_HISTORY_END(gui::timeline::cmd::ExecuteDrop);
         Undo();
     }
     {
@@ -441,7 +441,7 @@ void TestTransition::testPlaybackAndScrubbing()
         TimelineKeyPress(WXK_DELETE);
         ASSERT_EQUALS(VideoClip(0,1)->getLength(), preparation.lengthOfClipBeforeTransitionBeforeTransitionApplied);
         ASSERT_EQUALS(VideoClip(0,2)->getLength(), preparation.lengthOfClipAfterTransitionBeforeTransitionApplied);
-        ASSERT_HISTORY_END(gui::timeline::command::DeleteSelectedClips);
+        ASSERT_HISTORY_END(gui::timeline::cmd::DeleteSelectedClips);
         Undo();
         StartTest("Move clip related to InTransition: the transition must be moved also.");
         TimelineDeselectAllClips();
@@ -454,7 +454,7 @@ void TestTransition::testPlaybackAndScrubbing()
         ASSERT_EQUALS(VideoClip(0,8)->getRightPts(),AudioClip(0,7)->getRightPts());
         Scrub(LeftPixel(VideoTransition(0,5)) - 5, RightPixel(VideoTransition(0,5)) + 5);
         Play(LeftPixel(VideoTransition(0,5)) - 2, 500); // -2: Also take some frames from the left clip
-        ASSERT_HISTORY_END(gui::timeline::command::ExecuteDrop);
+        ASSERT_HISTORY_END(gui::timeline::cmd::ExecuteDrop);
         Undo(); // Undo until the two trimmed clips are present
     }
     {
@@ -465,7 +465,7 @@ void TestTransition::testPlaybackAndScrubbing()
         TimelineKeyPress(WXK_DELETE);
         ASSERT_EQUALS(VideoClip(0,1)->getLength(), preparation.lengthOfClipBeforeTransitionBeforeTransitionApplied);
         ASSERT_EQUALS(VideoClip(0,2)->getLength(), preparation.lengthOfClipAfterTransitionBeforeTransitionApplied);
-        ASSERT_HISTORY_END(gui::timeline::command::DeleteSelectedClips);
+        ASSERT_HISTORY_END(gui::timeline::cmd::DeleteSelectedClips);
         Undo();
         StartTest("Move clip related to OutTransition: the transition must be moved also.");
         TimelineDeselectAllClips();
@@ -478,7 +478,7 @@ void TestTransition::testPlaybackAndScrubbing()
         ASSERT_EQUALS(VideoClip(0,8)->getRightPts(),AudioClip(0,7)->getRightPts());
         Scrub(LeftPixel(VideoTransition(0,6)) - 5, RightPixel(VideoTransition(0,6)) + 5);
         Play(LeftPixel(VideoTransition(0,6)) - 2, 500); // -1: Also take some frames from the left clip
-        ASSERT_HISTORY_END(gui::timeline::command::ExecuteDrop);
+        ASSERT_HISTORY_END(gui::timeline::cmd::ExecuteDrop);
         Undo(); // Undo until the two trimmed clips are present
     }
 }
@@ -1015,13 +1015,13 @@ void TestTransition::testTrimmingTransition()
         MakeOutTransitionAfterClip preparation(1);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
         TimelineDeleteClip(VideoClip(0,3));
-        ASSERT_HISTORY_END(gui::timeline::command::DeleteSelectedClips);
+        ASSERT_HISTORY_END(gui::timeline::cmd::DeleteSelectedClips);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(EmptyClip);
         TimelineTrimTransitionLeftClipEnd(VideoClip(0,2),-20);
-        ASSERT_HISTORY_END(gui::timeline::command::TrimClip);
+        ASSERT_HISTORY_END(gui::timeline::cmd::TrimClip);
         TimelineTrim(VTopQuarterRight(VideoClip(0,2)),Center(VideoClip(0,4)));
         Undo();
-        ASSERT_HISTORY_END(gui::timeline::command::DeleteSelectedClips);
+        ASSERT_HISTORY_END(gui::timeline::cmd::DeleteSelectedClips);
         Undo();
     }
     {
@@ -1225,7 +1225,7 @@ void TestTransition::testVideoTransitionTypes()
         TimelineDeselectAllClips();
         TimelineLeftClick(Center(VideoClip(0,index)));
         SetValue(DetailsClipView()->getOpacitySlider(), opacity); // Same as WXK_PAGEUP
-        ASSERT_HISTORY_END(gui::timeline::command::EditClipDetails); // Verify that only one command object was added to the undo history
+        ASSERT_HISTORY_END(gui::timeline::cmd::EditClipDetails); // Verify that only one command object was added to the undo history
         ASSERT_EQUALS(getOpacity(DefaultVideoKeyFrame(VideoClip(0, index))), opacity);
     };
 
@@ -1236,7 +1236,7 @@ void TestTransition::testVideoTransitionTypes()
         if (t->supports(model::TransitionTypeFadeIn))
         {
             StartTest("FadeIn: " + t->getDescription());
-            util::thread::RunInMainAndWait([t]() { gui::timeline::command::createTransition(getSequence(), VideoClip(0,1),model::TransitionTypeFadeIn, t); });
+            util::thread::RunInMainAndWait([t]() { gui::timeline::cmd::createTransition(getSequence(), VideoClip(0,1),model::TransitionTypeFadeIn, t); });
             ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip);
             Scrub(-2 + LeftPixel(VideoClip(0,1)), RightPixel(VideoClip(0,1)) + 2);
             StartTest("FadeIn with opacity: " + t->getDescription());
@@ -1247,7 +1247,7 @@ void TestTransition::testVideoTransitionTypes()
         if (t->supports(model::TransitionTypeFadeOut))
         {
             StartTest("FadeOut: " + t->getDescription());
-            util::thread::RunInMainAndWait([t]() { gui::timeline::command::createTransition(getSequence(), VideoClip(0,1),model::TransitionTypeFadeOut, t); });
+            util::thread::RunInMainAndWait([t]() { gui::timeline::cmd::createTransition(getSequence(), VideoClip(0,1),model::TransitionTypeFadeOut, t); });
             ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition);
             Scrub(-2 + LeftPixel(VideoClip(0,2)), RightPixel(VideoClip(0,2)) + 2);
             StartTest("FadeOut with opacity: " + t->getDescription());
@@ -1258,7 +1258,7 @@ void TestTransition::testVideoTransitionTypes()
         if (t->supports(model::TransitionTypeFadeInFromPrevious))
         {
             StartTest("FadeInOut: " + t->getDescription());
-            util::thread::RunInMainAndWait([t]() { gui::timeline::command::createTransition(getSequence(), VideoClip(0,1),model::TransitionTypeFadeInFromPrevious, t); });
+            util::thread::RunInMainAndWait([t]() { gui::timeline::cmd::createTransition(getSequence(), VideoClip(0,1),model::TransitionTypeFadeInFromPrevious, t); });
             ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip);
             Scrub(-2 + LeftPixel(VideoClip(0,1)), RightPixel(VideoClip(0,1)) + 2);
             StartTest("FadeInOut with opacity: " + t->getDescription());
@@ -1270,7 +1270,7 @@ void TestTransition::testVideoTransitionTypes()
         if (t->supports(model::TransitionTypeFadeOutToNext))
         {
             StartTest("FadeOutIn: " + t->getDescription());
-            util::thread::RunInMainAndWait([t]() { gui::timeline::command::createTransition(getSequence(), VideoClip(0,1),model::TransitionTypeFadeOutToNext, t); });
+            util::thread::RunInMainAndWait([t]() { gui::timeline::cmd::createTransition(getSequence(), VideoClip(0,1),model::TransitionTypeFadeOutToNext, t); });
             ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition);
             Scrub(-2 + LeftPixel(VideoClip(0,2)), RightPixel(VideoClip(0,2)) + 2);
             StartTest("FadeOutIn with opacity: " + t->getDescription());

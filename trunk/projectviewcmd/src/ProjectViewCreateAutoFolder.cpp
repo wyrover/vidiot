@@ -22,7 +22,7 @@
 #include "UtilLogWxwidgets.h"
 #include "UtilPath.h"
 
-namespace command {
+namespace cmd {
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION

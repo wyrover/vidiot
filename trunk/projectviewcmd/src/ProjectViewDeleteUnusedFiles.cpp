@@ -30,7 +30,7 @@
 #include "UtilPath.h"
 #include "UtilRecycle.h"
 
-namespace command {
+namespace cmd {
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION

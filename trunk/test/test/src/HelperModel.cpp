@@ -19,7 +19,6 @@
 
 namespace test {
 
-// todo caps
 model::VideoClipPtr getVideoClip(model::IClipPtr clip)
 {
     model::VideoClipPtr videoclip = boost::dynamic_pointer_cast<model::VideoClip>(clip);
@@ -91,7 +90,7 @@ void Unlink(model::IClipPtr clip)
     ASSERT_NONZERO(clip->getLink()->getLink());
     util::thread::RunInMainAndWait([sequence,clip]()
     {
-        (new gui::timeline::command::UnlinkClips(getSequence(), { clip, clip->getLink() }))->submit();
+        (new gui::timeline::cmd::UnlinkClips(getSequence(), { clip, clip->getLink() }))->submit();
     });
 }
 

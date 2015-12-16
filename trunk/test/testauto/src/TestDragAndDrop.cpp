@@ -517,7 +517,7 @@ void TestDragAndDrop::testCreateTrackDuringDraggingByMovingMouseOutsideListOfTra
         to.y--;
         TimelineDrag(To(to).DontReleaseMouse());
         ASSERT_VIDEOTRACKS(2);
-        ASSERT_HISTORY_END(command::ProjectViewCreateSequence);
+        ASSERT_HISTORY_END(cmd::ProjectViewCreateSequence);
         ASSERT_ZERO(NumberOfVideoClipsInTrack(1)); // They're part of the drag, not of the sequence yet.
         StartTest("Only one track is added");
         TimelineDrag(To(to).DontReleaseMouse());
@@ -525,15 +525,15 @@ void TestDragAndDrop::testCreateTrackDuringDraggingByMovingMouseOutsideListOfTra
         StartTest("Execute the drop");
         TimelineDrag(To(to));
         ASSERT_VIDEOTRACKS(2);
-        ASSERT_HISTORY_END(gui::timeline::command::ExecuteDrop);
+        ASSERT_HISTORY_END(gui::timeline::cmd::ExecuteDrop);
         ASSERT_VIDEOTRACK1(     EmptyClip      )(VideoClip);
         StartTest("Undo add video track");
         Undo();
-        ASSERT_HISTORY_END(command::ProjectViewCreateSequence);
+        ASSERT_HISTORY_END(cmd::ProjectViewCreateSequence);
         ASSERT_VIDEOTRACKS(1);
         StartTest("Redo add video track");
         Redo();
-        ASSERT_HISTORY_END(gui::timeline::command::ExecuteDrop);
+        ASSERT_HISTORY_END(gui::timeline::cmd::ExecuteDrop);
         ASSERT_VIDEOTRACKS(2);
         ASSERT_VIDEOTRACK1(     EmptyClip      )(VideoClip);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(EmptyClip)(VideoClip);
@@ -552,7 +552,7 @@ void TestDragAndDrop::testCreateTrackDuringDraggingByMovingMouseOutsideListOfTra
         to.y++;
         TimelineDrag(To(to).DontReleaseMouse());
         ASSERT_AUDIOTRACKS(2);
-        ASSERT_HISTORY_END(command::ProjectViewCreateSequence);
+        ASSERT_HISTORY_END(cmd::ProjectViewCreateSequence);
         ASSERT_ZERO(NumberOfAudioClipsInTrack(1)); // They're part of the drag, not of the sequence yet.
         StartTest("Only one track is added");
         TimelineDrag(To(to).DontReleaseMouse());
@@ -560,15 +560,15 @@ void TestDragAndDrop::testCreateTrackDuringDraggingByMovingMouseOutsideListOfTra
         StartTest("Execute the drop");
         TimelineDrag(To(to));
         ASSERT_AUDIOTRACKS(2);
-        ASSERT_HISTORY_END(gui::timeline::command::ExecuteDrop);
+        ASSERT_HISTORY_END(gui::timeline::cmd::ExecuteDrop);
         ASSERT_AUDIOTRACK1(     EmptyClip      )(AudioClip);
         StartTest("Undo add audio track");
         Undo();
-        ASSERT_HISTORY_END(command::ProjectViewCreateSequence);
+        ASSERT_HISTORY_END(cmd::ProjectViewCreateSequence);
         ASSERT_AUDIOTRACKS(1);
         StartTest("Redo add audio track");
         Redo();
-        ASSERT_HISTORY_END(gui::timeline::command::ExecuteDrop);
+        ASSERT_HISTORY_END(gui::timeline::cmd::ExecuteDrop);
         ASSERT_AUDIOTRACKS(2);
         ASSERT_AUDIOTRACK1(     EmptyClip      )(AudioClip);
         ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(EmptyClip)(AudioClip);

@@ -34,14 +34,14 @@ void ProjectModification::trigger()
 //////////////////////////////////////////////////////////////////////////
 
 // static
-void ProjectModification::submit(command::RootCommand* c)
+void ProjectModification::submit(cmd::RootCommand* c)
 {
     trigger();
     model::CommandProcessor::get().Submit(c);
 }
 
 // static 
-bool ProjectModification::submitIfPossible(command::RootCommand* c)
+bool ProjectModification::submitIfPossible(cmd::RootCommand* c)
 {
     if (c->isPossible())
     {

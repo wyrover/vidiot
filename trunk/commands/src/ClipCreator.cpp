@@ -29,7 +29,7 @@
 #include "WximageClip.h"
 #include "WximageFile.h"
 
-namespace command {
+namespace cmd {
 
 //////////////////////////////////////////////////////////////////////////
 // GET/SET

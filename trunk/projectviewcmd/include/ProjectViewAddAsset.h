@@ -20,7 +20,7 @@
 #include "ProjectViewCommand.h"
 #include "Node.h"
 
-namespace command {
+namespace cmd {
 
 class ProjectViewAddAsset : public ProjectViewCommand
 {

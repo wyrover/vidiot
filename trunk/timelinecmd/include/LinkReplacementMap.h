@@ -17,7 +17,7 @@
 
 #pragma once
 
-namespace gui { namespace timeline { namespace command {
+namespace gui { namespace timeline { namespace cmd {
 
 /// Holds administration of clips and the clips that these clips
 /// have been replaced with during edits.

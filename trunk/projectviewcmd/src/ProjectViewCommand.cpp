@@ -22,7 +22,7 @@
 #include "Node.h" 
 #include "UtilLog.h"
 
-namespace command {
+namespace cmd {
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION

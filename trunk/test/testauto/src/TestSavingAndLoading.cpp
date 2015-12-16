@@ -83,7 +83,7 @@ void TestSavingAndLoading::testSaveAndLoad()
 
                 util::thread::RunInMainAndWait([t, direction, number]()
                 {
-                    gui::timeline::command::createTransition(getSequence(), VideoClip(0, number), direction, make_cloned<model::Transition>(t));
+                    gui::timeline::cmd::createTransition(getSequence(), VideoClip(0, number), direction, make_cloned<model::Transition>(t));
                 });
                 number += (direction == model::TransitionTypeFadeOutToNext) ? 3 : 2;
             }

@@ -17,7 +17,7 @@
 
 #pragma once
 
-namespace command {
+namespace cmd {
     class RootCommand;
 }
 
@@ -36,7 +36,7 @@ struct ProjectModification
     /// That includes triggering the modified status of the project.
     /// \see trigger()
     /// \param comand
-    static void submit(command::RootCommand* c);
+    static void submit(cmd::RootCommand* c);
 
     /// Submit a change to the project, but only if the change isPossible.
     /// That includes triggering the modified status of the project.
@@ -44,7 +44,7 @@ struct ProjectModification
     /// \see trigger()
     /// \param comand
     /// \return true if the command was submit
-    static bool submitIfPossible(command::RootCommand* c);
+    static bool submitIfPossible(cmd::RootCommand* c);
 };
 
 } // namespace

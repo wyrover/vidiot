@@ -17,7 +17,7 @@
 
 #pragma once
 
-namespace command {
+namespace cmd {
 
 /// Helper class for converting a list of assets to a video and an audio track
 class TrackCreator

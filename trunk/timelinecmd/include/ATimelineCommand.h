@@ -23,11 +23,11 @@ namespace gui { namespace timeline {
     class Timeline;
 }}
 
-namespace gui { namespace timeline { namespace command {
+namespace gui { namespace timeline { namespace cmd {
 
 /// Abstract base for all modifications on the timeline/sequence.
 class ATimelineCommand
-    :   public ::command::RootCommand
+    :   public ::cmd::RootCommand
 {
 public:
 

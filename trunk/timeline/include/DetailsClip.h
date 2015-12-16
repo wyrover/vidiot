@@ -42,7 +42,7 @@ namespace gui {
     namespace timeline {
     class EventSelectionUpdate;
 
-namespace command {
+namespace cmd {
     class EditClipDetails;
     class EditClipSpeed;
     class TrimClip;
@@ -221,8 +221,8 @@ private:
     std::unique_ptr<ClonesContainer> mClones;
     std::unique_ptr<Cleanup> mVideoKeyFrameEventsUnbind = nullptr;
 
-    command::EditClipDetails* mEditCommand = nullptr;
-    command::EditClipSpeed* mEditSpeedCommand = nullptr;
+    cmd::EditClipDetails* mEditCommand = nullptr;
+    cmd::EditClipSpeed* mEditSpeedCommand = nullptr;
 
     wxPanel* mLengthPanel = nullptr;
     std::vector<pts> mLengths;

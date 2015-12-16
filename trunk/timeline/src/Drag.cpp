@@ -130,8 +130,8 @@ void Drag::start(const wxPoint& hotspot, bool external)
     mPosition = hotspot;
     mBitmapOffset = wxPoint(0,0);
     mDropTrack = info.track;
-    mCommand = new command::ExecuteDrop(getSequence(), external);
-    command::Drags drags;
+    mCommand = new cmd::ExecuteDrop(getSequence(), external);
+    cmd::Drags drags;
 
     if (external)
     {
@@ -353,10 +353,10 @@ void Drag::move(wxPoint position)
 void Drag::drop()
 {
     VAR_DEBUG(*this);
-    command::Drops drops;
+    cmd::Drops drops;
     for ( model::TrackPtr track : getSequence()->getTracks() )
     {
-        command::Drops adddrops = getDrops(track);
+        cmd::Drops adddrops = getDrops(track);
         VAR_INFO(track)(adddrops);
         drops.insert(drops.end(), adddrops.begin(), adddrops.end());
     }
@@ -939,16 +939,16 @@ void Drag::determineShift()
     }
 }
 
-command::Drops Drag::getDrops(const model::TrackPtr& track)
+cmd::Drops Drag::getDrops(const model::TrackPtr& track)
 {
-    command::Drops drops;
+    cmd::Drops drops;
     model::TrackPtr draggedTrack = trackOnTopOf(track);
     VAR_DEBUG(track)(draggedTrack);
     if (draggedTrack)
     {
         LOG_DEBUG << DUMP(track) << DUMP(draggedTrack);
         pts position = 0;
-        command::Drop pi;
+        cmd::Drop pi;
         pi.position = -1;
         pi.track = track;
         bool inregion = false;

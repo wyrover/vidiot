@@ -20,7 +20,7 @@
 #include "ProjectViewCommand.h"
 #include "Folder.h"
 
-namespace command {
+namespace cmd {
 
 class ProjectViewCreateFolder : public ProjectViewCommand
 {

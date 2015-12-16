@@ -21,7 +21,7 @@
 #include "PositionInfo.h"
 #include "UtilInt.h"
 
-namespace gui { namespace timeline { namespace command {
+namespace gui { namespace timeline { namespace cmd {
 
 class EditClipSpeed
     :   public AClipEdit

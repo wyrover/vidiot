@@ -391,7 +391,7 @@ void DetailsClip::handleLengthButtonPressed(wxToggleButton* button)
     ASSERT(mTrimAtEnd.find(length) != mTrimAtEnd.end())(mTrimAtEnd)(length);
     ASSERT(mTrimAtBegin.find(length) != mTrimAtBegin.end())(mTrimAtBegin)(length);
 
-    ::command::Combiner* command = new ::command::Combiner();
+    ::cmd::Combiner* command = new ::cmd::Combiner();
 
     getTimeline().beginTransaction();
 
@@ -404,7 +404,7 @@ void DetailsClip::handleLengthButtonPressed(wxToggleButton* button)
 
     if (endtrim != 0)
     {
-        ::gui::timeline::command::TrimClip* trimCommand = new command::TrimClip(getSequence(), clip, model::TransitionPtr(), transition ? TransitionEnd : ClipEnd);
+        ::gui::timeline::cmd::TrimClip* trimCommand = new cmd::TrimClip(getSequence(), clip, model::TransitionPtr(), transition ? TransitionEnd : ClipEnd);
         trimCommand->update(endtrim, shift, true);
         clip = trimCommand->getNewClip();
         transition = boost::dynamic_pointer_cast<model::Transition>(clip);
@@ -421,20 +421,20 @@ void DetailsClip::handleLengthButtonPressed(wxToggleButton* button)
             //
             // The differences between the original computation and the result here are particularly related to shifting clips in other tracks and
             // related to having multiple transitions besides the clip.
-            command::TrimClip::TrimLimit limitsBeginTrim;
+            cmd::TrimClip::TrimLimit limitsBeginTrim;
             if (transition)
             {
-                limitsBeginTrim = command::TrimClip::determineBoundaries(getSequence(), transition, model::IClipPtr(), TransitionBegin, false);
+                limitsBeginTrim = cmd::TrimClip::determineBoundaries(getSequence(), transition, model::IClipPtr(), TransitionBegin, false);
             }
             else
             {
-                limitsBeginTrim = command::TrimClip::determineBoundaries(getSequence(), clip, clip->getLink(), ClipBegin, true);
+                limitsBeginTrim = cmd::TrimClip::determineBoundaries(getSequence(), clip, clip->getLink(), ClipBegin, true);
             }
             error = (begintrim < limitsBeginTrim.Min || begintrim > limitsBeginTrim.Max);
         }
         if (!error)
         {
-            ::gui::timeline::command::TrimClip* trimCommand = new command::TrimClip(getSequence(), clip, model::TransitionPtr(), transition ? TransitionBegin : ClipBegin);
+            ::gui::timeline::cmd::TrimClip* trimCommand = new cmd::TrimClip(getSequence(), clip, model::TransitionPtr(), transition ? TransitionBegin : ClipBegin);
             trimCommand->update(begintrim, shift, true);
             clip = trimCommand->getNewClip();
             command->add(trimCommand);

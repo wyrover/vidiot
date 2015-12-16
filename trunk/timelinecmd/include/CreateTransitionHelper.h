@@ -19,7 +19,7 @@
 
 #include "Enums.h"
 
-namespace gui { namespace timeline { namespace command {
+namespace gui { namespace timeline { namespace cmd {
 
 /// Create a transition to or from the given clip
 /// \param clip the transition must apply to this clip

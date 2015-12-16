@@ -195,7 +195,7 @@ MakeInOutTransitionAfterClip::~MakeInOutTransitionAfterClip()
 {
     if (mUndo)
     {
-        ASSERT_HISTORY_END(gui::timeline::command::TrimClip)(gui::timeline::command::TrimClip)(gui::timeline::command::CreateTransition);
+        ASSERT_HISTORY_END(gui::timeline::cmd::TrimClip)(gui::timeline::cmd::TrimClip)(gui::timeline::cmd::CreateTransition);
         Undo(3);
         TimelineDeselectAllClips(); // Done to avoid 'leaving' selected clips which cause other tests to fail
     }
@@ -225,7 +225,7 @@ MakeInTransitionAfterClip::~MakeInTransitionAfterClip()
 {
     if (mUndo)
     {
-        ASSERT_HISTORY_END(gui::timeline::command::CreateTransition);
+        ASSERT_HISTORY_END(gui::timeline::cmd::CreateTransition);
         Undo(); // Undo create transition
         TimelineDeselectAllClips(); // Done to avoid 'leaving' selected clips which cause other tests to fail
     }
@@ -255,7 +255,7 @@ MakeOutTransitionAfterClip::~MakeOutTransitionAfterClip()
 {
     if (mUndo)
     {
-        ASSERT_HISTORY_END(gui::timeline::command::CreateTransition);
+        ASSERT_HISTORY_END(gui::timeline::cmd::CreateTransition);
         Undo(); // Undo create transition
         TimelineDeselectAllClips(); // Done to avoid 'leaving' selected clips which cause other tests to fail
     }

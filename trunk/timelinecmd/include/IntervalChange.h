@@ -20,7 +20,7 @@
 #include "ATimelineCommand.h"
 #include "UtilInt.h"
 
-namespace gui { namespace timeline { namespace command {
+namespace gui { namespace timeline { namespace cmd {
 
 class IntervalChange
     :   public ATimelineCommand

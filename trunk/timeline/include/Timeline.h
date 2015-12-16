@@ -19,7 +19,7 @@
 
 #include "UtilInt.h"
 
-namespace command {
+namespace cmd {
     class RootCommand;
 }
 

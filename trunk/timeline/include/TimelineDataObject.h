@@ -21,7 +21,7 @@
 
 namespace gui { namespace timeline {
 
-    namespace command {
+    namespace cmd {
         struct Drop;
         typedef std::vector<Drop> Drops;
     }
@@ -68,7 +68,7 @@ public:
 	/// \return drops to be used in ExecuteDrop for adding the clips to the sequence
 	/// \param sequence sequence to be dropped upon (required for looking up tracks)
 	/// \param origin origin (in the sequence) of the leftmost added clip
-	command::Drops getDrops(const model::SequencePtr& sequence, pts sequenceOrigin) const;
+	cmd::Drops getDrops(const model::SequencePtr& sequence, pts sequenceOrigin) const;
 
     bool storeInClipboard();
 
@@ -80,8 +80,8 @@ private:
 
     FrameRate mFrameRate; ///< FrameRate used when the data was put in the clipboard
     int mAudioSampleRate; ///< SampleRate used when the data was put in the clipboard
-    command::Drops mDropsVideo;
-    command::Drops mDropsAudio;
+    cmd::Drops mDropsVideo;
+    cmd::Drops mDropsAudio;
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

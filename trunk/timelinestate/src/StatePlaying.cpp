@@ -46,17 +46,17 @@ Playing::Playing( my_context ctx ) // entry
 Playing::~Playing() // exit
 {
     LOG_DEBUG;
-    ::command::RootCommand* cmd = 0;
+    ::cmd::RootCommand* cmd = 0;
     switch (mKeyCodeTriggeringStop)
     {
     case 'b':
     case 'B':
-        command::SplitAtCursorAndTrim(getSequence(), true);
+        cmd::SplitAtCursorAndTrim(getSequence(), true);
         getPlayer()->play();
         break;
     case 's':
     case 'S':
-        cmd  = new command::SplitAtCursor(getSequence());
+        cmd  = new cmd::SplitAtCursor(getSequence());
         model::ProjectModification::submitIfPossible(cmd);
         getPlayer()->play();
         break;

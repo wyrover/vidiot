@@ -17,7 +17,7 @@
 
 #pragma once
 
-namespace command {
+namespace cmd {
 
 /// Factory class for creating new clips from a file on disk
 class ClipCreator

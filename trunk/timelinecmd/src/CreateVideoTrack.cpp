@@ -22,7 +22,7 @@
 #include "Sequence.h"
 #include "VideoTrack.h"
 
-namespace gui { namespace timeline { namespace command {
+namespace gui { namespace timeline { namespace cmd {
 
 CreateVideoTrack::CreateVideoTrack(const model::SequencePtr& sequence)
 :   ATimelineCommand(sequence)
