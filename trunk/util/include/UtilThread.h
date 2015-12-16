@@ -48,7 +48,9 @@ public:
         }
     }
 
-    virtual ~RunInMainThreadWithResult()
+    RunInMainThreadWithResult(const RunInMainThreadWithResult&) = delete;
+    RunInMainThreadWithResult& operator=(const RunInMainThreadWithResult&) = delete;
+    ~RunInMainThreadWithResult()
     {
         if (mDone)
         {

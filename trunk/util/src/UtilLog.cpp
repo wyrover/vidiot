@@ -66,7 +66,7 @@ static LogWriter* sWriter = 0;
 
 static std::string sEndString("END");
 
-class LogWriter : boost::noncopyable
+class LogWriter
 {
 public:
     LogWriter()
@@ -95,6 +95,8 @@ public:
             }
         }
     }
+    LogWriter(const LogWriter&) = delete;
+    LogWriter& operator=(const LogWriter&) = delete;
     ~LogWriter()
     {
         mEnabled = false;
@@ -163,10 +165,6 @@ private:
 ////////////////////////////////////////////////////////////////////////////////
 // LOG CLASS
 ////////////////////////////////////////////////////////////////////////////////
-
- Log::Log()
-{
-}
 
 Log::~Log()
 {

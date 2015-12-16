@@ -28,7 +28,6 @@ namespace gui { namespace timeline {
 
 class TimelineDataObject
     : public wxTextDataObject
-    , public boost::noncopyable
 {
 public:
 
@@ -44,6 +43,9 @@ public:
     /// it requires getting the Properties object.
     /// \param sequence All selected clips in the sequence are made part of the object.
     TimelineDataObject(model::SequencePtr sequence);
+
+    TimelineDataObject(const TimelineDataObject& other) = delete;
+    TimelineDataObject& operator=(const TimelineDataObject&) = delete;
 
     virtual ~TimelineDataObject();
 

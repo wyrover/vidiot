@@ -133,12 +133,13 @@ DECLAREENUM(LogLevel, \
 /// is used for guaranteeing thread-safety of logging these messages.
 /// Actual logging is done when this object's destructor is called.
 class Log
-    :   boost::noncopyable
 {
 public:
 
-    Log();
-    virtual ~Log();
+    Log() = default;
+    Log(const Log& other) = delete;
+    Log& operator=(const Log&) = delete;
+    ~Log();
 
     static void init();
     static void exit();
@@ -155,6 +156,7 @@ public:
     std::ostringstream& get(const std::string& category);
 
 private:
+
     std::ostringstream os;
 };
 
@@ -169,7 +171,6 @@ private:
 /// It uses the Log() class for appending a line to the logging.
 /// Actual logging is done when this object's destructor is called.
 struct LogVar
-    :   boost::noncopyable
 {
     LogVar& LOGVAR_A;   ///< Helper, in order to be able to compile the code (LOGVAR_* macros)
     LogVar& LOGVAR_B;   ///< Helper, in order to be able to compile the code (LOGVAR_* macros)
@@ -201,6 +202,9 @@ struct LogVar
         ,   mAssert(boost::optional<std::string>(std::string("[ASSERT:") + expr + ']'))
     {
     }
+
+    LogVar(const LogVar&) = delete;
+    LogVar& operator=(const LogVar&) = delete;
 
     virtual ~LogVar();  ///< Upon destruction of this object, the actual logging is executed.
 

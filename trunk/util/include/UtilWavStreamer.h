@@ -37,6 +37,8 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     explicit WavStreamer(std::string filename, int sampleRate, short channels);
+    WavStreamer(const WavStreamer&) = delete;
+    WavStreamer& operator=(const WavStreamer&) = delete;
     ~WavStreamer();
 
     //////////////////////////////////////////////////////////////////////////

@@ -19,13 +19,15 @@
 
 namespace test {
 
-class RandomTempDir : boost::noncopyable
+class RandomTempDir
 {
 public:
 
     explicit RandomTempDir(bool cleanup = true);
     explicit RandomTempDir(wxFileName path); ///< Used to reuse this object, but with a fixed path. \note path is not removed.
     explicit RandomTempDir(wxFileName parentDir, bool cleanup); ///< Make subdir
+    RandomTempDir(const RandomTempDir&) = delete;
+    RandomTempDir& operator=(const RandomTempDir&) = delete;
     virtual ~RandomTempDir();
 
     static RandomTempDirPtr generate(bool cleanup = true);

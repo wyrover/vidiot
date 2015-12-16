@@ -28,10 +28,6 @@ StackWalker::StackWalker()
     mOverview << std::endl;
 }
 
-StackWalker::~StackWalker()
-{
-}
-
 std::string StackWalker::show()
 {
     try

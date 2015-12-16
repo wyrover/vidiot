@@ -78,7 +78,6 @@ extern "C" {
 #include <boost/limits.hpp>
 #include <boost/make_shared.hpp>
 #include <boost/mpl/list.hpp>
-#include <boost/noncopyable.hpp>
 #include <boost/none.hpp>
 #include <boost/range/adaptor/reversed.hpp>
 #include <boost/rational.hpp>

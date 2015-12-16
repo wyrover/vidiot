@@ -43,6 +43,8 @@ public:
         , mDone(false)
     {
     }
+    RunInMainThread(const RunInMainThread&) = delete;
+    RunInMainThread& operator=(const RunInMainThread&) = delete;
 
     void run()
     {

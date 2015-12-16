@@ -21,7 +21,6 @@ namespace gui {
 
 class ProjectViewDataObject
     :   public wxTextDataObject
-    ,   public boost::noncopyable
 {
 public:
 
@@ -31,6 +30,8 @@ public:
 
     ProjectViewDataObject();
     ProjectViewDataObject(const model::NodePtrs& assets);
+    ProjectViewDataObject(const ProjectViewDataObject& other) = delete;
+    ProjectViewDataObject& operator=(const ProjectViewDataObject&) = delete;
     virtual ~ProjectViewDataObject();
 
     static const wxString sFormat;

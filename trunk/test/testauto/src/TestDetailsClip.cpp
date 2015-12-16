@@ -340,7 +340,7 @@ void TestDetailsClip::testTransform()
 
     StartTest("If one clip is selected the details view changes accordingly.");
     TimelineLeftClick(Center(VideoClip(0,3)));
-    ASSERT(DetailsView(VideoClip(0,3)));// todo params of widgets
+    ASSERT(DetailsView(VideoClip(0,3)));
     ASSERT_ORIGINAL_CLIPPROPERTIES();
     ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
 

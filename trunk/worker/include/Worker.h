@@ -29,7 +29,6 @@ typedef Fifo<WorkPtr> FifoWork;
 /// background.
 class Worker
     :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
-    ,   public boost::noncopyable
 {
 public:
 
@@ -38,6 +37,9 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     Worker(const char* name, bool progress);
+
+    Worker(const Worker&) = delete;
+    Worker& operator=(const Worker&) = delete;
 
     void start();
 
