@@ -153,7 +153,7 @@ public:
     /// Convert a position using 'speed' to the same position but then with a 1/1 speed.
     /// \param position position/length with speed as base speed
     /// \return same position but now using 1/1 as base speed
-    static pts positionToNormalSpeed(pts position, rational64 speed); // todo inline these
+    static pts positionToNormalSpeed(pts position, rational64 speed);
 
     static int samplerateToNewSpeed(int samplerate, rational64 newSpeed, rational64 oldSpeed);
 };

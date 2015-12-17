@@ -106,6 +106,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     void onShow(wxShowEvent& event);
+    void onSize(wxSizeEvent& event);
     void onLengthButtonPressed(wxCommandEvent& event);
     void onSpeedSliderChanged(wxCommandEvent& event);
     void onSpeedSpinChanged(wxSpinDoubleEvent& event);
@@ -310,6 +311,7 @@ private:
     void updateLengthButtons();
 
     void updateVideoKeyFrameControls();
+    void updateVideoKeyFrameButtons();
 
     void moveCursorToKeyFrame(model::IClipPtr clip, pts offset);
 };

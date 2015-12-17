@@ -286,6 +286,7 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     mTransitionBoxSizer = addBox(boost::none);
 
     Bind(wxEVT_SHOW, &DetailsClip::onShow, this);
+    Bind(wxEVT_SIZE, &DetailsClip::onSize, this);
 
     // This very small button was an experiment to make 'hidable' panels for duration/video/etc.
     //addbox(_("Audio"));
@@ -353,6 +354,7 @@ DetailsClip::~DetailsClip()
     mEditSpeedCommand = nullptr;
     updateProjectEventBindings(); // Reset all bindings (unbind all)
 
+    Unbind(wxEVT_SIZE, &DetailsClip::onSize, this);
     Unbind(wxEVT_SHOW, &DetailsClip::onShow, this);
 }
 

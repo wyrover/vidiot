@@ -82,6 +82,10 @@ void DetailsClip::setClip(const model::IClipPtr& clip)
         mClip = clip;
         mClipPosition = mClip->getLeftPts();
 
+        // Must be done before adding/showing/hiding controls, because the computation for key frames buttons (which buttons to show)
+        // depend on calculating the required widget size. Required widget size is not updated if the entire panel is hidden.
+        requestShow(true, mClip->getDescription() + " (" + model::Convert::ptsToHumanReadibleString(mClip->getPerceivedLength()) + "s)");
+
         // Length/speed
         // For audio/video clips and transitions, the length can be edited.
         updateLengthButtons();
@@ -123,7 +127,6 @@ void DetailsClip::setClip(const model::IClipPtr& clip)
             }
         }
 
-        requestShow(true, mClip->getDescription() + " (" + model::Convert::ptsToHumanReadibleString(mClip->getPerceivedLength()) + "s)");
     }
     else
     {
