@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-12-09 22:21+0100\n"
-"PO-Revision-Date: 2015-11-28 16:34+0100\n"
+"PO-Revision-Date: 2015-12-17 19:08+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: nl_NL\n"
@@ -148,7 +148,7 @@ msgstr "Opstarten"
 
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:72
 msgid "Load last project on startup"
-msgstr "Laad meest recent project na opstarten."
+msgstr "Laad meest recente project na opstarten."
 
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:74
 #: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:196

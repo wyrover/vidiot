@@ -554,7 +554,43 @@ void DetailsClip::updateVideoKeyFrameControls()
     pts cursor{ getCursor().getLogicalPosition() };
     bool cursorInBetween{ mClip->getPerceivedLeftPts() <= cursor && mClip->getPerceivedRightPts() > cursor };
     mVideoKeyFramesAddButton->Enable(cursorInBetween && (keyframes.empty() || videoKeyFrame->isInterpolated()));
+
+    updateVideoKeyFrameButtons();
 }
+
+void DetailsClip::updateVideoKeyFrameButtons()
+{
+    if (!mClip) { return; }
+    model::VideoClipPtr videoclip{ getVideoClip(mClip) };
+    if (!videoclip) { return; }
+    std::map<pts, model::VideoClipKeyFramePtr> keyframes{ getVideoKeyFrames() };
+    pts videoKeyFrameOffset{ getVideoKeyFrameOffset() };
+    int availableSize{ mVideoKeyFramesPanel->GetSize().x };
+    int requiredSize{ mVideoKeyFramesPanel->GetBestFittingSize().x };
+    if (availableSize < requiredSize && mVideoKeyFrames.size() > 0)
+    {
+        // Not all the buttons will fit in the available space. Show as much buttons as possible,
+        // while keeping the current video offset approximately centered.
+        int totalNumberOfButtons{ narrow_cast<int, size_t>(mVideoKeyFrames.size()) };
+        int buttonWidth{ requiredSize / totalNumberOfButtons };
+        int maxFittingButtons{ availableSize / buttonWidth };
+        int lastPossibleButton{ totalNumberOfButtons - 1 };
+        int middle{ std::distance(keyframes.begin(), std::find_if(keyframes.begin(), keyframes.end(), [videoKeyFrameOffset](auto kvp) { return kvp.first >= videoKeyFrameOffset; })) };
+        int move{ maxFittingButtons / 2 };
+        int first{ middle - move };
+        int last{ middle + move };
+        while (first < 0) { ++first; ++last; }
+        while (last > lastPossibleButton) { --last; --first; }
+        ASSERT_MORE_THAN_EQUALS_ZERO(first)(requiredSize)(availableSize)(totalNumberOfButtons)(buttonWidth)(maxFittingButtons)(lastPossibleButton)(middle)(first)(last);
+        ASSERT_LESS_THAN_EQUALS(last, lastPossibleButton)(first)(requiredSize)(availableSize)(totalNumberOfButtons)(buttonWidth)(maxFittingButtons)(lastPossibleButton)(middle)(first)(last);
+        for (size_t count{ 0 }; count < mVideoKeyFrames.size(); ++count)
+        {
+            mVideoKeyFrames[count]->Show(narrow_cast<int, size_t>(count) >= first && narrow_cast<int, size_t>(count) <= last);
+        }
+    }
+    mVideoKeyFramesPanel->Layout();
+}
+
 
 void DetailsClip::moveCursorToKeyFrame(model::IClipPtr clip, pts offset)
 {

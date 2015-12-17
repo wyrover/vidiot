@@ -731,7 +731,7 @@ void TestTransition::testTrimmingLinkedClips()
         ASSERT_NO_TRANSITIONS_IN_VIDEO_TRACK();
         ASSERT_LESS_THAN(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionBeforeTransitionApplied);
         ASSERT_LESS_THAN(AudioClip(0,1)->getLength(),originalLengthOfAudioClip1);
-        ASSERT(VideoClip(0,2)->isA<model::EmptyClip>()); // todo make ASSERT_CLIPTYPE
+        ASSERT(VideoClip(0,2)->isA<model::EmptyClip>());
         ASSERT(AudioClip(0,2)->isA<model::EmptyClip>());
         ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionBeforeTransitionApplied);
         ASSERT_EQUALS(AudioClip(0,3)->getLength(),originalLengthOfAudioClip2);

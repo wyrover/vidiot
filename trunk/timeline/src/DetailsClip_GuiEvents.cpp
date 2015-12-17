@@ -36,6 +36,15 @@ void DetailsClip::onShow(wxShowEvent& event)
     event.Skip();
 }
 
+void DetailsClip::onSize(wxSizeEvent& event)
+{
+    CatchExceptions([this]
+    {
+        updateVideoKeyFrameButtons();
+    });
+    event.Skip();
+}
+
 void DetailsClip::onLengthButtonPressed(wxCommandEvent& event)
 {
     wxToggleButton* button = dynamic_cast<wxToggleButton*>(event.GetEventObject());

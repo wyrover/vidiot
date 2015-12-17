@@ -319,7 +319,7 @@ void TestVideoKeyFrames::testChangeClipSpeed()
         ASSERT(KeyFrame(VideoClip(0, 4), 0).Rotation(90));
         TimelinePositionCursor(HCenter(VideoClip(0, 4)));
         ASSERT(DetailsClipView()->getVideoKeyFrameButton(0)->GetValue());
-        ASSERT_HISTORY_END(gui::timeline::cmd::EditClipDetails)(gui::timeline::cmd::EditClipDetails)(gui::timeline::cmd::EditClipSpeed); // todo move all timelinestuff directly in the gui namespace
+        ASSERT_HISTORY_END(gui::timeline::cmd::EditClipDetails)(gui::timeline::cmd::EditClipDetails)(gui::timeline::cmd::EditClipSpeed);
         Undo();
         ASSERT_HISTORY_END(gui::timeline::cmd::EditClipDetails)(gui::timeline::cmd::EditClipDetails);
     }
@@ -331,7 +331,7 @@ void TestVideoKeyFrames::testChangeClipSpeed()
         ASSERT(KeyFrame(VideoClip(0, 4), 0).Rotation(90));
         TimelinePositionCursor(HCenter(VideoClip(0, 4)));
         ASSERT(DetailsClipView()->getVideoKeyFrameButton(0)->GetValue());
-        ASSERT_HISTORY_END(gui::timeline::cmd::EditClipDetails)(gui::timeline::cmd::EditClipDetails)(gui::timeline::cmd::EditClipSpeed); // todo move all timelinestuff directly in the gui namespace
+        ASSERT_HISTORY_END(gui::timeline::cmd::EditClipDetails)(gui::timeline::cmd::EditClipDetails)(gui::timeline::cmd::EditClipSpeed);
         Undo();
         ASSERT_HISTORY_END(gui::timeline::cmd::EditClipDetails)(gui::timeline::cmd::EditClipDetails);
     }
