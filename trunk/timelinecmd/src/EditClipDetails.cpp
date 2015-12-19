@@ -33,15 +33,13 @@ EditClipDetails::EditClipDetails(
     const model::SequencePtr& sequence,
         const wxString& message,
     const model::IClipPtr& clip,
-    const model::IClipPtr& link,
-    const model::IClipPtr& clipClone,
-    const model::IClipPtr& linkClone)
+    const model::IClipPtr& clipClone)
     : AClipEdit(sequence)
     , mMessage(message)
     , mClip(clip)
     , mClipClone(clipClone)
-    , mLink(link)
-    , mLinkClone(linkClone)
+    , mLink(clip->getLink())
+    , mLinkClone(clipClone->getLink())
 {
     VAR_INFO(this)(mClip)(mLink);
     mCommandName = wxString::Format(message, mClip->getDescription());
@@ -60,6 +58,7 @@ void EditClipDetails::initialize()
     replaceClip(mClip, { mClipClone });
     if (mLink != nullptr)
     {
+        ASSERT_NONZERO(mLinkClone);
         replaceClip(mLink, { mLinkClone }); 
     }
 }

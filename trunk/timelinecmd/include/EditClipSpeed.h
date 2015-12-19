@@ -40,9 +40,7 @@ public:
     EditClipSpeed(
         const model::SequencePtr& sequence, 
         const model::IClipPtr& clip,
-        const model::IClipPtr& link,
         const model::IClipPtr& clipClone,
-        const model::IClipPtr& linkClone,
         rational64 speed);
 
     virtual ~EditClipSpeed();
@@ -74,8 +72,8 @@ private:
 
     model::IClipPtr mClip;
     model::IClipPtr mClipClone;
-    model::IClipPtr mLink;
-    model::IClipPtr mLinkClone;
+    model::IClipPtr mLink; // Must be kept as member to avoid ref count reaching 0
+    model::IClipPtr mLinkClone; // Must be kept as member to avoid ref count reaching 0
     rational64 mSpeed;
     bool mPossible;
 

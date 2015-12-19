@@ -342,7 +342,8 @@ void DetailsClip::onVolumeSliderChanged(wxCommandEvent& event)
     CatchExceptions([this]
     {
         submitEditCommandUponAudioVideoEdit(sEditVolume);
-        mClones->Audio->setVolume(mVolumeSlider->GetValue());
+        model::AudioClipPtr audioclip{ getAudioClip(mClip) };
+        audioclip->setVolume(mVolumeSlider->GetValue());
     });
     event.Skip();
 }
@@ -353,7 +354,8 @@ void DetailsClip::onVolumeSpinChanged(wxSpinEvent& event)
     CatchExceptions([this]
     {
         submitEditCommandUponAudioVideoEdit(sEditVolume); // Changes same clip aspect as the slider
-        mClones->Audio->setVolume(mVolumeSpin->GetValue());
+        model::AudioClipPtr audioclip{ getAudioClip(mClip) };
+        audioclip->setVolume(mVolumeSpin->GetValue());
     });
     event.Skip();
 }

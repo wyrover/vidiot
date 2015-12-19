@@ -39,9 +39,7 @@ public:
         const model::SequencePtr& sequence, 
         const wxString& message,
         const model::IClipPtr& clip,
-        const model::IClipPtr& link,
-        const model::IClipPtr& clipClone,
-        const model::IClipPtr& linkClone);
+        const model::IClipPtr& clipClone);
 
     virtual ~EditClipDetails();
 
@@ -75,8 +73,8 @@ private:
     wxString mMessage;
     model::IClipPtr mClip;
     model::IClipPtr mClipClone;
-    model::IClipPtr mLink;
-    model::IClipPtr mLinkClone;
+    model::IClipPtr mLink; // Must be kept as member to avoid ref count reaching 0
+    model::IClipPtr mLinkClone; // Must be kept as member to avoid ref count reaching 0
 };
 
 }}} // namespace

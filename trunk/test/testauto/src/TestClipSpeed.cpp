@@ -342,7 +342,7 @@ void TestClipSpeed::testChangeClipSpeedWithInOutTransitionBefore()
         StartTest("Speed decrease: Enlarging clip allowed, begin and end frames stay the same");
         TimelineLeftClick(Center(VideoClip(0,5)));
         ASSERT(DetailsView(VideoClip(0,5)));
-        ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled()); // todo add to detailsview checking
+        ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
         ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
         SetValue(DetailsClipView()->getSpeedSlider(), 100); // Minimum speed is maximum length increase
         ASSERT_CLIP_SPEED(VideoClip(0, 5), rational64(1,100));

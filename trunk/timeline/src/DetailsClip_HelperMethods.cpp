@@ -89,6 +89,26 @@ model::TransitionPtr DetailsClip::getTransition(const model::IClipPtr& clip) con
         nullptr;
 }
 
+std::pair<model::IClipPtr, model::IClipPtr> DetailsClip::replaceClipWithClone()
+{
+    ASSERT_NONZERO(mClip);
+    model::IClipPtr clipClone{ make_cloned<model::IClip>(mClip) };
+    model::IClipPtr linkClone{ mClip->getLink() ? make_cloned<model::IClip>(mClip->getLink()) : nullptr };
+    if (linkClone)
+    {
+        clipClone->setLink(linkClone);
+        linkClone->setLink(clipClone);
+    }
+
+    // The submission of the command will result in a newly selected clip: the clone
+    // Storing that clone as the current clip serves two purposes:
+    // - The first 'selectClip' after the submission is ignored (since it's the clone).
+    // - Undo will actually cause mClip to be selected again.
+    mClip = clipClone;
+
+    return std::make_pair(clipClone, linkClone);
+}
+
 std::map<pts, model::VideoClipKeyFramePtr> DetailsClip::getVideoKeyFrames() const
 {
     model::VideoClipPtr videoclip{ getVideoClip(mClip) };
@@ -188,41 +208,32 @@ void DetailsClip::submitEditCommandUponAudioVideoEdit(const wxString& message)
         message == sEditKeyFramesRemove)  // A key frame removal is always a separate command
     {
         // Use new clones for the new command
-        mClones = std::unique_ptr<ClonesContainer>(new ClonesContainer(this, mClip));
+        model::IClipPtr originalClip{ mClip };
+        std::pair<model::IClipPtr, model::IClipPtr> clones{ replaceClipWithClone() }; // Keep clones in scope to avoid the new clip's link being destructed
 
         // Create the command - which replaces the original clip(s) with their changed clones - and add it to the undo system.
-        mEditCommand = new cmd::EditClipDetails(getSequence(), message, mClip, mClip->getLink(), mClones->Clip, mClones->Link);
+        mEditCommand = new cmd::EditClipDetails(getSequence(), message, originalClip, mClip);
 
-        // The submission of the command will result in a newly selected clip: the clone
-        // Storing that clone as the current clip serves two purposes:
-        // - The first 'selectClip' after the submission is ignored (since it's the clone).
-        // - Undo will actually cause mClip to be selected again.
-        mClip = mClones->Clip;
-
-        mEditCommand->submit();
-
-        // Bind to the proper events before submitting the command.
+        // Bind to the proper events before handling the command.
         // This ensures that the project events are received which, in turn,
         // results in updating the preview window.
         // Note that the proper key frame is requested from the clip in the model,
         // hence the command must be submit first.
         updateProjectEventBindings();
 
+        mEditCommand->submit();
+
         // Do not reset mEditCommand: required for checking subsequent edits.
         // If a clip aspect is edited twice, simply adjust the clone twice,
         // but the command may only be submitted once.
 
-        // Do not try invalidating the rectangle: mClones->Video addition event has not been received
+        // Do not try invalidating the timeline rectangle. Addition of clone to track event has not been received
         // by the track view class. So, no clip view/clip preview is known yet.
     }
     else
     {
-        // Update the thumbnail for video (otherwise is not updated, since only one edit command is done).
-        // Note that this code is executed BEFORE resetting mClones below. The reason for this is that when the new clones
-        // are created, their views are not immediately initialized. However, the old clones have the same rect.
-        if (mClones &&
-            mClones->Video &&
-            mClones->Video->getTrack())
+        // Update the thumbnail/peaks (otherwise not updated, since only one edit command is done).
+        if (mClip && mClip->getTrack() != nullptr)
         {
             ClipPreview* preview{ getViewMap().getClipPreview(mClip) };
             preview->invalidateCachedBitmaps();
@@ -241,7 +252,7 @@ void DetailsClip::submitEditCommandUponTransitionEdit(const wxString& parameter)
     if (mEditCommand == nullptr)
     {
         // Create the command - which replaces the original clip(s) with their changed clones - and add it to the undo system.
-        mEditCommand = new cmd::EditClipDetails(getSequence(), _("Change "), mClip, nullptr, mTransitionClone, nullptr);
+        mEditCommand = new cmd::EditClipDetails(getSequence(), _("Change "), mClip, mTransitionClone);
 
         // The submission of the command will result in a newly selected clip: the clone
         // Storing that clone as the current clip serves two purposes:
@@ -270,14 +281,18 @@ void DetailsClip::createOrUpdateSpeedCommand(rational64 speed)
         model::CommandProcessor::get().Undo();
     }
 
-    mClones = std::unique_ptr<ClonesContainer>(new ClonesContainer(this, mClip));
+    model::IClipPtr originalClip{ mClip };
+    std::pair<model::IClipPtr, model::IClipPtr> clones{ replaceClipWithClone() }; // Keep clones in scope to avoid the new clip's link being destructed
 
-    // Avoid any subsequent setClip to reset the current clip (and reinitialize the controls and members)
-    model::IClipPtr clip{ mClip };
-    mClip = mClones->Clip;
-
-    mEditSpeedCommand = new cmd::EditClipSpeed(getSequence(), clip, clip->getLink(), mClones->Clip, mClones->Link, speed);
+    mEditSpeedCommand = new cmd::EditClipSpeed(getSequence(), originalClip, mClip, speed);
     ASSERT_NONZERO(mEditSpeedCommand);
+
+    // Bind to the proper events before handling the command.
+    // This ensures that the project events are received which, in turn,
+    // results in updating the preview window.
+    // Note that the proper key frame is requested from the clip in the model,
+    // hence the command must be submit first.
+    updateProjectEventBindings();
 
     if (model::ProjectModification::submitIfPossible(mEditSpeedCommand))
     {
@@ -286,11 +301,13 @@ void DetailsClip::createOrUpdateSpeedCommand(rational64 speed)
     }
     else
     {
-        model::ClipIntervalPtr clipInterval{ boost::dynamic_pointer_cast<model::ClipInterval>(clip) };
+        mClip = originalClip;
+        model::ClipIntervalPtr clipInterval{ boost::dynamic_pointer_cast<model::ClipInterval>(mClip) };
         ASSERT_NONZERO(clipInterval);
         mSpeedSpin->SetValue(boost::rational_cast<double>(clipInterval->getSpeed()));
         mSpeedSlider->SetValue(factorToSliderValue(clipInterval->getSpeed()));
         mEditSpeedCommand = nullptr;
+        updateProjectEventBindings(); // Bind to the original clip again
     }
 
     getTimeline().endTransaction();
@@ -299,15 +316,16 @@ void DetailsClip::createOrUpdateSpeedCommand(rational64 speed)
 
 void DetailsClip::preview()
 {
+    model::VideoClipPtr videoclip{ getVideoClip(mClip) };
+    if (!videoclip) { return; }
+    ASSERT_NONZERO(videoclip->getTrack())(videoclip);
     pts position{ getCursor().getLogicalPosition() }; // By default, show the frame under the cursor (which is already currently shown, typically)
-    ASSERT(mClones != nullptr);
-    if (!mClones->Video) { return; } // In case of audio-only preview is not updated.
-    if ((position < mClones->Video->getPerceivedLeftPts()) ||
-        (position >= mClones->Video->getPerceivedRightPts()))
+    if ((position < videoclip->getPerceivedLeftPts()) ||
+        (position >= videoclip->getPerceivedRightPts()))
     {
         // The cursor is not positioned under the clip being adjusted. Move the cursor to the middle frame of that clip
-        ASSERT_ZERO(mClones->Video->getKeyFrames().size()); // This can only happen in case there are no keyframes.
-        position = mClones->Video->getLeftPts() + mClones->Video->getLength() / 2; // Show the middle frame of the clip
+        ASSERT_ZERO(videoclip->getKeyFrames().size()); // This can only happen in case there are no keyframes.
+        position = videoclip->getLeftPts() + videoclip->getLength() / 2; // Show the middle frame of the clip
         VAR_DEBUG(position);
         getCursor().setLogicalPosition(position); // ...and move the cursor to that position
     }
@@ -516,7 +534,7 @@ void DetailsClip::updateVideoKeyFrameControls()
     mPositionYSpin->Enable(!videoKeyFrame->isInterpolated());
 
     std::map<pts, model::VideoClipKeyFramePtr> keyframes{ getVideoKeyFrames() };
-    if (mVideoKeyFramesPanel->GetChildren().size() != keyframes.size()) // todo handle too much keyframes to show....
+    if (mVideoKeyFramesPanel->GetChildren().size() != keyframes.size())
     {
         for (auto button : mVideoKeyFrames) { button.second->Unbind(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, &DetailsClip::onVideoKeyFrameButtonPressed, this); }
 

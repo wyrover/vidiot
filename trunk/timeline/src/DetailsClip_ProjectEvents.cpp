@@ -17,7 +17,9 @@
 
 #include "DetailsClip.h"
 
+#include "AudioClipEvent.h"
 #include "VideoDisplayEvent.h"
+#include "VideoClipEvent.h"
 
 namespace gui { namespace timeline {
 
@@ -27,10 +29,9 @@ namespace gui { namespace timeline {
 
 void DetailsClip::updateProjectEventBindings()
 {
-    // todo use this for all events below and then remove the clonescontainer
-
     // Unbind by default
     mVideoKeyFrameEventsUnbind.reset();
+    mAudioKeyFrameEventsUnbind.reset();
 
     // Bind to the 'current' clip's events
     model::VideoClipPtr videoclip{ getVideoClip(mClip) };
@@ -57,6 +58,16 @@ void DetailsClip::updateProjectEventBindings()
             videoKeyFrame->Unbind(model::EVENT_CHANGE_VIDEOCLIP_POSITION, &DetailsClip::onPositionChanged, this);
             videoKeyFrame->Unbind(model::EVENT_CHANGE_VIDEOCLIP_MINPOSITION, &DetailsClip::onMinPositionChanged, this);
             videoKeyFrame->Unbind(model::EVENT_CHANGE_VIDEOCLIP_MAXPOSITION, &DetailsClip::onMaxPositionChanged, this);
+        }));
+    }
+
+    model::AudioClipPtr audioclip{ getAudioClip(mClip) };
+    if (audioclip)
+    {
+        audioclip->Bind(model::EVENT_CHANGE_AUDIOCLIP_VOLUME, &DetailsClip::onVolumeChanged, this);
+        mAudioKeyFrameEventsUnbind.reset(new Cleanup([this, audioclip] {
+            ASSERT_NONZERO(audioclip);
+            audioclip->Unbind(model::EVENT_CHANGE_AUDIOCLIP_VOLUME, &DetailsClip::onVolumeChanged, this);
         }));
     }
 }
