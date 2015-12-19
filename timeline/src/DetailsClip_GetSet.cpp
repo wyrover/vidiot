@@ -20,6 +20,8 @@
 #include "AudioClip.h"
 #include "Convert.h"
 #include "Transition.h"
+#include "TransitionParameter.h"
+#include "UtilClone.h"
 #include "UtilException.h"
 #include "UtilLog.h"
 #include "VideoClip.h"
@@ -64,7 +66,6 @@ void DetailsClip::setClip(const model::IClipPtr& clip)
 
     mClip = nullptr;
     mClipPosition = 0;
-    mClones = nullptr;
     mTransitionClone = nullptr;
     mEditCommand = nullptr;
     mEditSpeedCommand = nullptr;

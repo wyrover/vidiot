@@ -348,7 +348,6 @@ DetailsClip::~DetailsClip()
     mVolumeSpin->Unbind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onVolumeSpinChanged, this);
 
     mClip = nullptr;
-    mClones = nullptr;
     mTransitionClone = nullptr;
     mEditCommand = nullptr;
     mEditSpeedCommand = nullptr;

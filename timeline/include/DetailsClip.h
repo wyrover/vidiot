@@ -202,24 +202,10 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    struct ClonesContainer
-    {
-        ClonesContainer(const ClonesContainer& other) = delete;
-
-        explicit ClonesContainer(DetailsClip* details, model::IClipPtr clip);
-        virtual ~ClonesContainer();
-
-        DetailsClip* mDetails = nullptr;
-        model::IClipPtr Clip = nullptr;
-        model::IClipPtr Link = nullptr;
-        model::VideoClipPtr Video = nullptr;
-        model::AudioClipPtr Audio = nullptr;
-    };
-
     model::IClipPtr mClip = nullptr;      ///< The clip for which the details view is shown. 0 in case a transition is selected
     pts mClipPosition = 0; ///< The currently known position of the clip (used to 'reset' the clip when it is moved around)
     model::TransitionPtr mTransitionClone = nullptr; ///< Transition which is currently being edited
-    std::unique_ptr<ClonesContainer> mClones;
+    std::unique_ptr<Cleanup> mAudioKeyFrameEventsUnbind = nullptr;
     std::unique_ptr<Cleanup> mVideoKeyFrameEventsUnbind = nullptr;
 
     cmd::EditClipDetails* mEditCommand = nullptr;
@@ -291,6 +277,12 @@ private:
     model::VideoClipPtr getVideoClip(const model::IClipPtr& clip) const;
     model::AudioClipPtr getAudioClip(const model::IClipPtr& clip) const;
     model::TransitionPtr getTransition(const model::IClipPtr& clip) const;
+
+    /// \return replacement clip and clone. 
+    /// The return value is used to ensure proper lifetime.
+    /// mClip only maintains a weak reference to its link, thus until the link
+    /// is being made part of a track we'll need to keep the link copy in scope.
+    std::pair<model::IClipPtr, model::IClipPtr> replaceClipWithClone();
 
     std::map<pts, model::VideoClipKeyFramePtr> getVideoKeyFrames() const;
     pts getVideoKeyFrameOffset() const;

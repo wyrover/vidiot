@@ -43,15 +43,13 @@ namespace gui { namespace timeline { namespace cmd {
 EditClipSpeed::EditClipSpeed(
     const model::SequencePtr& sequence,
     const model::IClipPtr& clip,
-    const model::IClipPtr& link,
     const model::IClipPtr& clipClone,
-    const model::IClipPtr& linkClone,
     rational64 speed)
     : AClipEdit(sequence)
     , mClip(clip)
     , mClipClone(clipClone)
-    , mLink(link)
-    , mLinkClone(linkClone)
+    , mLink(clip->getLink())
+    , mLinkClone(clipClone->getLink())
     , mSpeed(speed)
     , mPossible(false)
 {
@@ -84,8 +82,8 @@ EditClipSpeed::EditClipSpeed(
     pts originalLeftPts = mClip->getLeftPts();
     pts originalRightPts = mClip->getRightPts();
 
-    adjustSpeedForClipBounds(clip);
-    adjustSpeedForClipBounds(link);
+    adjustSpeedForClipBounds(mClip);
+    adjustSpeedForClipBounds(mLink);
 
     if (mSpeed == clipInterval->getSpeed()) 
     { 
