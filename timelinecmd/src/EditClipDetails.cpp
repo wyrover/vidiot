@@ -28,7 +28,6 @@
 
 namespace gui { namespace timeline { namespace cmd {
 
-    // todo make derived classes (only for syntactic sugar during tests) and create those
 EditClipDetails::EditClipDetails(
     const model::SequencePtr& sequence,
         const wxString& message,

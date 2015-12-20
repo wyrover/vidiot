@@ -278,6 +278,7 @@ void TrackView::getPositionInfo(const wxPoint& position, PointerPositionInfo& in
     if (info.clip)
     {
         getViewMap().getView(info.clip)->getPositionInfo(adjustedPosition, info);
+        getViewMap().getView(info.getLogicalClip())->getKeyframePositionInfo(adjustedPosition, info);
     }
 }
 

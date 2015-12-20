@@ -70,34 +70,41 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     /// \return list of actual possible key frames. These are the key frames that are in the region 'visible' in the timeline.
-    /// \note Returned pts'es are related to the input, thus no offset is applied! 
-    ///       However, the speed has been applied! 
+    /// \note Returned pts'es are relative to getPerceivedOffset(), taking the speed into account.
     ///       Rationale: that allows proper 'target' ptses, but also allows having keyframes under transitions.
     /// \note returned pts'es include positions 'under' any adjacent transitions
-    /// \note If there are no key frames only contains the [-1] default key frame.
-    std::map<pts, KeyFramePtr> getKeyFrames() const;
+    /// \note May be empty if there are no specific key frames.
+    std::map<pts, KeyFramePtr> getKeyFramesOfPerceivedClip() const;
 
     /// \return the always present default key frame (the parameters used when there are no key frames)
     KeyFramePtr getDefaultKeyFrame() const;
 
     /// \return (clone of) key frame (possibly interpolated) at given (output) position
-    /// \param offset offset with respect to the output
-    KeyFramePtr getFrameAt(pts offset) const;
+    /// \param offset offset with respect to 'getPerceivedOffset()'
+    KeyFramePtr getFrameAt(pts offset) const;//todo test
 
     /// Add a key frame
-    /// \param offset offset into the input data
+    /// \param offset offset with respect to  'getPerceivedOffset()'
     /// \param frame new key frame
     void addKeyFrameAt(pts offset, KeyFramePtr frame);
 
     /// Remove a key frame
-    /// \param offset offset into the input data
+    /// \param offset offset with respect to 'getPerceivedOffset()'
     void removeKeyFrameAt(pts offset);
 
     //////////////////////////////////////////////////////////////////////////
-    // FOR PREVIEWING
+    // OFFSET
     //////////////////////////////////////////////////////////////////////////
 
     pts getOffset() const;
+
+    /// Return the offset of the clip as viewed by the user.
+    /// The difference between the actual offset of the clip (getOffset()) and
+    /// this perceived offset is the area of the clip that is part of one of
+    /// its adjacent transitions; basically, the part of the clip that is shown
+    /// 'under' a transition in the timeline.
+    pts getPerceivedOffset() const;
+
     void maximize();
 
     //////////////////////////////////////////////////////////////////////////
@@ -157,8 +164,11 @@ private:
 
     mutable wxString mDescription;  ///< Stored for performance (cached) and for easier debugging.
 
-    /// Keyframes are stored with a position relative to the input.
+    /// Keyframes are stored with a position relative to the input, using the input speed.
     /// Thus, trimming has no effect on the (member) list of key frames.
+    /// Rationale: This allows changing speed, and trimming without having to adjust this data structure for the trimming.
+    /// Note that the data structure is adjusted during trimming, but only for removing 'invisible' key frames. 
+    /// The adjustments are not required to maintain a correct key frame structure. 
     std::map<pts, KeyFramePtr> mKeyFrames;
 
     /// Parameters used when no keyframes are present

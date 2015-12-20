@@ -79,6 +79,7 @@ public:
     pixel getShift() const;          ///< \return shift to accommocate repositioning during shift-drag
 
     void getPositionInfo(const wxPoint& position, PointerPositionInfo& info) const;
+    void getKeyframePositionInfo(const wxPoint& position, PointerPositionInfo& info) const;
 
     void update();
 

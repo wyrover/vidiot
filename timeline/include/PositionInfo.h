@@ -67,7 +67,7 @@ struct PointerPositionInfo
     //////////////////////////////////////////////////////////////////////////
 
     PointerPositionInfo();
-    virtual ~PointerPositionInfo();
+    ~PointerPositionInfo() = default;
 
     //////////////////////////////////////////////////////////////////////////
     // NON-SEQUENCE OBJECTS
@@ -89,6 +89,7 @@ struct PointerPositionInfo
 
     model::IClipPtr clip;   ///< Current clip under the mouse pointer. 0 if none.
     MouseOnClipPosition logicalclipposition;
+    boost::optional<size_t> keyframe; ///< Indicates if the position is over a keyframe indicator.
 
     /// \return logically selected clip (as seen from the user's perspective)
     /// This differs from the actual selected clip for transitions only. In the case

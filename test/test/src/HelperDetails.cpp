@@ -29,6 +29,7 @@ gui::timeline::DetailsClip* DetailsClipView()
 
 KeyFrameValues::KeyFrameValues(model::IClipPtr clip)
     : mClip(clip)
+    , mKeyFrameIndex{ boost::none }
     , mOpacity{ boost::none }
     , mScaling{ boost::none }
     , mScalingFactor{ boost::none }
@@ -38,43 +39,32 @@ KeyFrameValues::KeyFrameValues(model::IClipPtr clip)
 {
 }
 
-KeyFrame::KeyFrame(model::IClipPtr clip, int keyFrameIndex)
-    : KeyFrameValues{ clip }
-    , mKeyFrame{ VideoKeyFrame(clip, narrow_cast<size_t, int>(keyFrameIndex)) }
-{
-}
-
-KeyFrame::KeyFrame(model::IClipPtr clip)
-    : KeyFrameValues{ clip }
-    , mKeyFrame{ DefaultVideoKeyFrame(clip) }
-{
-}
-
 KeyFrame::operator bool() const
 {
+    model::VideoClipKeyFramePtr keyFrame{ mKeyFrameIndex ? VideoKeyFrame(mClip, *mKeyFrameIndex) : DefaultVideoKeyFrame(mClip) };
     if (mOpacity)
     {
-        ASSERT_EQUALS(*mOpacity, mKeyFrame->getOpacity());
+        ASSERT_EQUALS(*mOpacity, keyFrame->getOpacity());
     }
     if (mScaling)
     {
-        ASSERT_EQUALS(*mScaling, mKeyFrame->getScaling());
+        ASSERT_EQUALS(*mScaling, keyFrame->getScaling());
     }
     if (mScalingFactor)
     {
-        ASSERT_EQUALS(*mScalingFactor, mKeyFrame->getScalingFactor());
+        ASSERT_EQUALS(*mScalingFactor, keyFrame->getScalingFactor());
     }
     if (mAlignment)
     {
-        ASSERT_EQUALS(*mAlignment, mKeyFrame->getAlignment());
+        ASSERT_EQUALS(*mAlignment, keyFrame->getAlignment());
     }
     if (mPosition)
     {
-        ASSERT_EQUALS(*mPosition, mKeyFrame->getPosition());
+        ASSERT_EQUALS(*mPosition, keyFrame->getPosition());
     }
     if (mRotation)
     {
-        ASSERT_EQUALS(*mRotation, mKeyFrame->getRotation());
+        ASSERT_EQUALS(*mRotation, keyFrame->getRotation());
     }
     return true;
 }
@@ -95,9 +85,10 @@ DetailsView::operator bool() const
     int widget_yspin{ 0 };
     int widget_rotationdigits{ 0 };
     double widget_rotationspin{ 0.0 };
+    boost::optional<size_t> widget_activekeyframebutton{ boost::none };
     util::thread::RunInMainAndWait([&]
     {
-        wxWindow* current = getTimeline().getDetails().getCurrent();
+        wxWindow* current{ getTimeline().getDetails().getCurrent() };
         gui::timeline::DetailsClip* detailsclip{ dynamic_cast<gui::timeline::DetailsClip*>(current) };
         if (detailsclip != nullptr)
         {
@@ -114,6 +105,16 @@ DetailsView::operator bool() const
             widget_yspin = detailsclip->getPositionYSpin()->GetValue();
             widget_rotationdigits = detailsclip->getRotationSlider()->GetValue();
             widget_rotationspin = detailsclip->getRotationSpin()->GetValue();
+
+            for (size_t i = 0; i < detailsclip->getVideoKeyFrameButtonCount(); ++i)
+            {
+                if (detailsclip->getVideoKeyFrameButton(i)->GetValue())
+                {
+                    ASSERT(!widget_activekeyframebutton);
+                    widget_activekeyframebutton.reset(i);
+                    // NOT: break; -- check that all other buttons have !GetValue()
+                }
+            }
         }
     });
 
@@ -150,7 +151,11 @@ DetailsView::operator bool() const
         ASSERT_EQUALS(rotationdigits, widget_rotationdigits);
         ASSERT_EQUALS(floor(boost::rational_cast<double>(*mRotation) * 100), floor(widget_rotationspin * 100)); // floor + *100 : ensure that only two digits are used
     }
-
+    if (mKeyFrameIndex)
+    {
+        ASSERT(widget_activekeyframebutton);
+        ASSERT_EQUALS(*widget_activekeyframebutton, *mKeyFrameIndex);
+    }
 
     return true;
 }

@@ -40,6 +40,10 @@ public:
 
     void testAddKeyFrames();
 
+    void testRemoveKeyFrames();
+
+    void testSelectKeyFrameInTimeline();
+
     /// Verify that the default key frame gets the parameters from the last
     /// remaining key frame.
     void testRemoveLastKeyFrame();
@@ -47,6 +51,8 @@ public:
     void testChangeClipSpeed();
 
     void testTrimAwayKeyFrames();
+
+    void testBeginOffset();
 
     void testInTransition();
 

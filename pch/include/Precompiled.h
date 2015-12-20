@@ -79,6 +79,7 @@ extern "C" {
 #include <boost/make_shared.hpp>
 #include <boost/mpl/list.hpp>
 #include <boost/none.hpp>
+#include <boost/optional/optional_io.hpp>
 #include <boost/range/adaptor/reversed.hpp>
 #include <boost/rational.hpp>
 #include <boost/serialization/access.hpp>

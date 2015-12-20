@@ -40,17 +40,11 @@ model::VideoClipKeyFramePtr DefaultVideoKeyFrame(model::IClipPtr clip)
 
 model::VideoClipKeyFramePtr VideoKeyFrame(model::IClipPtr clip, size_t index)
 {
-    std::map<pts, model::KeyFramePtr> keyFrames{ getVideoClip(clip)->getKeyFrames() };
+    std::map<pts, model::KeyFramePtr> keyFrames{ getVideoClip(clip)->getKeyFramesOfPerceivedClip() };
     ASSERT_NONZERO(keyFrames.size());
-    for (auto kvp : keyFrames)
-    {
-        if (0 == index--)
-        {
-            return boost::dynamic_pointer_cast<model::VideoClipKeyFrame>(kvp.second);
-        }
-    }
-    FATAL("Key frame not found");
-    return nullptr;
+    auto it{ std::next(keyFrames.begin(), index) };
+    ASSERT(it != keyFrames.end())(keyFrames)(index);
+    return boost::dynamic_pointer_cast<model::VideoClipKeyFrame>(it->second);
 }
 
 int getOpacity(model::VideoClipKeyFramePtr keyframe)

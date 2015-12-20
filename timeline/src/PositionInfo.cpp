@@ -28,16 +28,13 @@ IMPLEMENTENUM(MouseOnClipPosition);
 //////////////////////////////////////////////////////////////////////////
 
 PointerPositionInfo::PointerPositionInfo()
-:   onAudioVideoDivider(false)
-,   track(model::TrackPtr())
-,   trackPosition(0)
-,   onTrackDivider(false)
-,   clip(model::IClipPtr())
-,   logicalclipposition(ClipInterior)
-{
-}
-
-PointerPositionInfo::~PointerPositionInfo()
+    : onAudioVideoDivider(false)
+    , track(model::TrackPtr())
+    , trackPosition(0)
+    , onTrackDivider(false)
+    , clip(model::IClipPtr())
+    , logicalclipposition(ClipInterior)
+    , keyframe(boost::none)
 {
 }
 
@@ -47,7 +44,7 @@ PointerPositionInfo::~PointerPositionInfo()
 
 model::IClipPtr PointerPositionInfo::getLogicalClip() const
 {
-    model::IClipPtr result = clip;
+    model::IClipPtr result{ clip };
     if (clip)
     {
         switch (logicalclipposition)
@@ -85,7 +82,14 @@ model::IClipPtr PointerPositionInfo::getLogicalClip() const
 
 std::ostream& operator<<(std::ostream& os, const PointerPositionInfo& obj)
 {
-    os << &obj << '|' << obj.onAudioVideoDivider << '|' << obj.track << '|' << obj.trackPosition << '|' << obj.onTrackDivider << '|' << obj.clip << '|' << obj.logicalclipposition;
+    os  << &obj << '|' 
+        << obj.onAudioVideoDivider << '|' 
+        << obj.track << '|' 
+        << obj.trackPosition << '|' 
+        << obj.onTrackDivider << '|' 
+        << obj.clip << '|' 
+        << obj.logicalclipposition << '|'
+        << obj.keyframe;
     return os;
 }
 

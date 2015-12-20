@@ -31,6 +31,7 @@ struct KeyFrameValues
 {
     explicit KeyFrameValues(model::IClipPtr clip);
 
+    inline KeyFrameValues& KeyFrameIndex(size_t keyFrameIndex) { mKeyFrameIndex.reset(keyFrameIndex); return *this; };
     inline KeyFrameValues& Opacity(int opacity) { mOpacity.reset(opacity); return *this; }
     inline KeyFrameValues& Scaling(model::VideoScaling scaling) { mScaling.reset(scaling); return *this; }
     inline KeyFrameValues& ScalingFactor(rational64 scalingfactor) { mScalingFactor.reset(scalingfactor); return *this; }
@@ -43,6 +44,7 @@ struct KeyFrameValues
 protected:
 
     model::IClipPtr mClip = nullptr;
+    boost::optional<size_t> mKeyFrameIndex;
     boost::optional<int> mOpacity;
     boost::optional<model::VideoScaling> mScaling;
     boost::optional<rational64> mScalingFactor;
@@ -53,14 +55,8 @@ protected:
 
 struct KeyFrame : public KeyFrameValues
 {
-    explicit KeyFrame(model::IClipPtr clip, int keyFrameIndex);
-    explicit KeyFrame(model::IClipPtr clip); ///< Uses default key frame
-
+    using KeyFrameValues::KeyFrameValues;
     operator bool() const override;
-
-protected:
-
-    model::VideoClipKeyFramePtr mKeyFrame = nullptr;
 };
 
 struct DefaultKeyFrame : public KeyFrame 
