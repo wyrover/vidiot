@@ -209,17 +209,17 @@ void ClipInterval::adjustEnd(pts adjustment)
 // KEY FRAMES
 //////////////////////////////////////////////////////////////////////////
 
-std::map<pts, KeyFramePtr> ClipInterval::getKeyFrames() const // todo test imageclip
+std::map<pts, KeyFramePtr> ClipInterval::getKeyFramesOfPerceivedClip() const // todo test imageclip
 {
     std::map<pts, KeyFramePtr> result;
-    pts lowerBound{ getOffset() - (getInTransition() ? *(getInTransition()->getRight()) : 0) };
-    pts upperBound{ getOffset() + getLength() + (getOutTransition() ? *(getOutTransition()->getLeft()) : 0) };
+    pts lowerBound{ getPerceivedOffset() };
+    pts upperBound{ getPerceivedOffset() + getPerceivedLength() };
     for (auto k : mKeyFrames)
     {
         pts adjustedForSpeed{ model::Convert::positionToNewSpeed(k.first, getSpeed(), 1) };
         if (adjustedForSpeed >= lowerBound && adjustedForSpeed <= upperBound)
         {
-            result[adjustedForSpeed] = k.second;
+            result[adjustedForSpeed - lowerBound] = k.second;
         }
     }
     return result;
@@ -239,7 +239,7 @@ KeyFramePtr ClipInterval::getFrameAt(pts offset) const
 
     offset += getOffset();
 
-    std::map<pts, KeyFramePtr> keyFrames{ getKeyFrames() };
+    std::map<pts, KeyFramePtr> keyFrames{ getKeyFramesOfPerceivedClip() };
 
     if (keyFrames.size() == 0)
     {
@@ -296,9 +296,13 @@ void ClipInterval::addKeyFrameAt(pts offset, KeyFramePtr frame)
     frame->setInterpolated(false);
 
     // Ensure that a key frame position not returned by 'getKeyFrames' was used
-    std::map<pts, KeyFramePtr> keyframes{ getKeyFrames() };
+    std::map<pts, KeyFramePtr> keyframes{ getKeyFramesOfPerceivedClip() };
     ASSERT_MAP_CONTAINS_NOT(keyframes, offset)(*this);
 
+    // Convert back to offset '0' (input time == no offset)
+    offset += getPerceivedOffset();
+
+    // Convert back to 1:1 speed
     pts offsetWithSpeed{ model::Convert::positionToNewSpeed(offset, 1, getSpeed()) };
 
     // Always clone here. Sometimes, the frames used during editing are an exact frame
@@ -329,11 +333,14 @@ void ClipInterval::removeKeyFrameAt(pts offset)
         mDefaultKeyFrame = mKeyFrames.begin()->second;
     }
 
-    // Ensure that a key frame position returned by 'getKeyFrames' was used
-    std::map<pts, KeyFramePtr> keyframes{ getKeyFrames() };
+    // Ensure that a key frame position returned by 'getKeyFramesOfPerceivedClip' was used
+    std::map<pts, KeyFramePtr> keyframes{ getKeyFramesOfPerceivedClip() };
     ASSERT_MAP_CONTAINS(keyframes, offset)(*this);
 
-    for (auto it{ mKeyFrames.begin()++ }; it != mKeyFrames.end(); ++it) // begin()++: Ignore default frame
+    // Convert back to offset '0' (input time == no offset)
+    offset += getPerceivedOffset();
+
+    for (auto it{ mKeyFrames.begin() }; it != mKeyFrames.end(); ++it)
     {
         if (offset == model::Convert::positionToNewSpeed(it->first, getSpeed(), 1))
         {
@@ -352,12 +359,22 @@ void ClipInterval::setDefaultKeyFrame(KeyFramePtr keyframe)
 }
 
 //////////////////////////////////////////////////////////////////////////
-// FOR PREVIEWING
+// OFFSET
 //////////////////////////////////////////////////////////////////////////
 
 pts ClipInterval::getOffset() const
 {
     return mOffset;
+}
+
+pts ClipInterval::getPerceivedOffset() const
+{
+    pts result{ getOffset() };
+    if (model::TransitionPtr inTransition{ getInTransition() })
+    {
+        result -= *(inTransition->getRight()); // See getInTransition: check for getRight() not needed
+    }
+    return result;
 }
 
 void ClipInterval::maximize()

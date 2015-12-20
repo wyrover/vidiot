@@ -186,22 +186,18 @@ void ClipView::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) con
                 {
                     getViewMap().getClipPreview(mClip)->draw(dc, region, offset);
 
-                    if (auto interval = boost::dynamic_pointer_cast<model::ClipInterval>(mClip))
+                    if (auto interval{ boost::dynamic_pointer_cast<model::ClipInterval>(mClip) })
                     {
-                        pts origin{ interval->getOffset() - (mClip->getInTransition() ? *(mClip->getInTransition()->getRight()) : 0) };
-                     
-                        std::map<pts, model::KeyFramePtr> keyframes{ interval->getKeyFrames() };
+                        std::map<pts, model::KeyFramePtr> keyframes{ interval->getKeyFramesOfPerceivedClip() };
                         wxBitmap& kfi{ getKeyFrameIndicator() };
                         for (auto pts_frame : keyframes)
                         {
                             wxRect r{ getRect() };
-                            r.x += getZoom().ptsToPixels(pts_frame.first - origin) - kfi.GetWidth() / 2;
+                            r.x += getZoom().ptsToPixels(pts_frame.first) - kfi.GetWidth() / 2;
                             r.x = std::max(getX(), r.x);
                             r.y += getH() - kfi.GetHeight() - ClipView::BorderSize;
                             getTimeline().copyRect(dc, region, offset, kfi, r, true);
                         }
-
-                        // todo click on key frame indicator, select clip and select key frame
                     }
                 }
             }
@@ -410,6 +406,95 @@ void ClipView::getPositionInfo(const wxPoint& position, PointerPositionInfo& inf
     }
 }
 
+void ClipView::getKeyframePositionInfo(const wxPoint& position, PointerPositionInfo& info) const
+{
+    ASSERT_EQUALS(info.getLogicalClip(), mClip)(info)(mClip);
+
+    std::vector<wxRect> keyFrameRects;
+    if (auto interval{ boost::dynamic_pointer_cast<model::ClipInterval>(mClip) })
+    {
+        std::map<pts, model::KeyFramePtr> keyframes{ interval->getKeyFramesOfPerceivedClip() };
+        wxBitmap& kfi{ getKeyFrameIndicator() };
+        for (auto pts_frame : keyframes)
+        {
+            wxRect r{ getRect() };
+            r.x += getZoom().ptsToPixels(pts_frame.first) - kfi.GetWidth() / 2;
+            r.x = std::max(getX(), r.x);
+            r.y += getH() - kfi.GetHeight() - ClipView::BorderSize;
+            r.SetSize(kfi.GetSize());
+            keyFrameRects.push_back(r);
+        }
+    }
+
+    size_t keyFrameIndex{ 0 };
+    info.keyframe.reset();
+    for (auto r : keyFrameRects)
+    {
+        if (r.Contains(position))
+        {
+            info.keyframe.reset(keyFrameIndex);
+            break;
+        }
+        ++keyFrameIndex;
+    }
+}
+
+//////////////////////////////////////////////////////////////////////////
+// DRAW
+//////////////////////////////////////////////////////////////////////////
+
+void ClipView::drawForDragging(const wxPoint& position, int height, wxDC& dc, wxDC& dcMask) const
+{
+    if (getDrag().contains(mClip) &&
+        getW() > 0)
+    {
+        int tmpBitmapHeight = height;
+        if (mClip->isA<model::Transition>())
+        {
+            // Only the top halve of the track height is filled for transitions.
+            // Do not use a 'too big' bitmap here, since it is blit'ed in its entirety.
+            // Using a 'track height' bitmap causes the area under the transition to
+            // become black during dragging.
+            height = std::min(height, ClipView::getTransitionHeight());
+        }
+        wxBitmap b(getW(), height);
+        draw(b, true, false);
+        // Don't use DrawBitmap since this gives wrong output when using wxGTK.
+        wxMemoryDC dcBmp(b);
+        dc.Blit(position, b.GetSize(), &dcBmp, wxPoint(0, 0));
+        if (mClip->isA<model::VideoClip>() ||
+            mClip->isA<model::AudioClip>())
+        {
+            getViewMap().getClipPreview(mClip)->drawForDragging(position, height, dc);
+        }
+        dcMask.DrawRectangle(position, b.GetSize());
+    }
+}
+
+//////////////////////////////////////////////////////////////////////////
+// MODEL EVENTS
+//////////////////////////////////////////////////////////////////////////
+
+void ClipView::onClipDragged(model::EventDragClip& event)
+{
+    repaint();
+    event.Skip();
+}
+
+void ClipView::onClipSelected(model::EventSelectClip& event)
+{
+    mBitmap.reset();
+    repaint();
+    event.Skip();
+}
+
+void ClipView::onKeyFramesChanged(model::EventChangeClipKeyFrames& event)
+{
+    mBitmap.reset();
+    repaint();
+    event.Skip();
+}
+
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
@@ -486,58 +571,6 @@ void ClipView::draw(wxBitmap& bitmap, bool drawDraggedClips, bool drawNotDragged
             dc.DrawText(sPts, wxPoint(5, 30));
         }
     }
-}
-
-void ClipView::drawForDragging(const wxPoint& position, int height, wxDC& dc, wxDC& dcMask) const
-{
-    if (getDrag().contains(mClip) &&
-        getW() > 0)
-    {
-        int tmpBitmapHeight = height;
-        if (mClip->isA<model::Transition>())
-        {
-            // Only the top halve of the track height is filled for transitions.
-            // Do not use a 'too big' bitmap here, since it is blit'ed in its entirety.
-            // Using a 'track height' bitmap causes the area under the transition to
-            // become black during dragging.
-            height = std::min(height, ClipView::getTransitionHeight());
-        }
-        wxBitmap b(getW(), height);
-        draw(b, true, false);
-        // Don't use DrawBitmap since this gives wrong output when using wxGTK.
-        wxMemoryDC dcBmp(b);
-        dc.Blit(position, b.GetSize(), &dcBmp, wxPoint(0, 0));
-        if (mClip->isA<model::VideoClip>() ||
-            mClip->isA<model::AudioClip>())
-        {
-            getViewMap().getClipPreview(mClip)->drawForDragging(position, height, dc);
-        }
-        dcMask.DrawRectangle(position, b.GetSize());
-    }
-}
-
-//////////////////////////////////////////////////////////////////////////
-// MODEL EVENTS
-//////////////////////////////////////////////////////////////////////////
-
-void ClipView::onClipDragged(model::EventDragClip& event)
-{
-    repaint();
-    event.Skip();
-}
-
-void ClipView::onClipSelected(model::EventSelectClip& event)
-{
-    mBitmap.reset();
-    repaint();
-    event.Skip();
-}
-
-void ClipView::onKeyFramesChanged(model::EventChangeClipKeyFrames& event)
-{
-    mBitmap.reset();
-    repaint();
-    event.Skip();
 }
 
 // static

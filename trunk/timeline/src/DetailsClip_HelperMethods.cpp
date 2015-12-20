@@ -119,7 +119,7 @@ std::map<pts, model::VideoClipKeyFramePtr> DetailsClip::getVideoKeyFrames() cons
 
     std::map<pts, model::VideoClipKeyFramePtr> result;
 
-    for (auto kvp : interval->getKeyFrames())
+    for (auto kvp : interval->getKeyFramesOfPerceivedClip())
     {
         auto video{ boost::dynamic_pointer_cast<model::VideoClipKeyFrame>(kvp.second) };
         ASSERT_NONZERO(video);
@@ -137,30 +137,25 @@ pts DetailsClip::getVideoKeyFrameOffset() const
     model::ClipIntervalPtr interval{ boost::dynamic_pointer_cast<model::ClipInterval>(videoclip) };
     ASSERT_NONZERO(interval);
 
-    pts origin{ videoclip->getLeftPts() - interval->getOffset() }; // Theoretical position of first input frame
-
-    pts addleft{ videoclip->getInTransition() ? *videoclip->getInTransition()->getRight() : 0 };
-    pts firstFrame{ videoclip->getLeftPts() - addleft };
-
-    pts addright{ videoclip->getOutTransition() ? *videoclip->getOutTransition()->getLeft() : 0 };
-    pts lastFrame{ videoclip->getRightPts() + addright };
+    pts firstFrame{ videoclip->getPerceivedLeftPts() };
+    pts lastFrame{ videoclip->getPerceivedRightPts() };
 
     pts result{ -1 };
     pts cursor{ getCursor().getLogicalPosition() };
     if (cursor <= firstFrame)
     {
         // Cursor before clip: use first frame
-        result = firstFrame - origin;
+        result = firstFrame;
     }
     else if (cursor >= lastFrame)
     {
         // Cursor after clip : use last frame
-        result = lastFrame - origin;
+        result = lastFrame;
     }
     else
     {
         // Inside the clip being adjusted
-        result = cursor - origin;
+        result = cursor - firstFrame;
     }
     
     ASSERT_MORE_THAN_EQUALS_ZERO(result);
@@ -324,8 +319,8 @@ void DetailsClip::preview()
         (position >= videoclip->getPerceivedRightPts()))
     {
         // The cursor is not positioned under the clip being adjusted. Move the cursor to the middle frame of that clip
-        ASSERT_ZERO(videoclip->getKeyFrames().size()); // This can only happen in case there are no keyframes.
-        position = videoclip->getLeftPts() + videoclip->getLength() / 2; // Show the middle frame of the clip
+        ASSERT_ZERO(videoclip->getKeyFramesOfPerceivedClip().size()); // This can only happen in case there are no keyframes.
+        position = videoclip->getPerceivedLeftPts() + (videoclip->getPerceivedLength() / 2); // Show the middle frame of the clip
         VAR_DEBUG(position);
         getCursor().setLogicalPosition(position); // ...and move the cursor to that position
     }
@@ -491,7 +486,6 @@ void DetailsClip::updateVideoKeyFrameControls()
     if (!videoclip) { return; }
     model::VideoClipKeyFramePtr videoKeyFrame{ getVideoKeyFrame() };
     ASSERT_NONZERO(videoKeyFrame);
-    pts videoKeyFrameOffset{ getVideoKeyFrameOffset() };
 
     rational64 factor{ videoKeyFrame->getScalingFactor() };
     rational64 rotation{ videoKeyFrame->getRotation() };
@@ -555,6 +549,7 @@ void DetailsClip::updateVideoKeyFrameControls()
     }
     ASSERT_EQUALS(mVideoKeyFrames.size(), keyframes.size());
 
+    pts videoKeyFrameOffset{ getVideoKeyFrameOffset() };
     mVideoKeyFramesHomeButton->Enable(!keyframes.empty() && videoKeyFrameOffset > keyframes.begin()->first);
     mVideoKeyFramesPrevButton->Enable(!keyframes.empty() && videoKeyFrameOffset > keyframes.begin()->first);
     mVideoKeyFramesNextButton->Enable(!keyframes.empty() && videoKeyFrameOffset < keyframes.rbegin()->first);
@@ -617,7 +612,7 @@ void DetailsClip::moveCursorToKeyFrame(model::IClipPtr clip, pts offset)
     ASSERT_MAP_CONTAINS(keyFrames, offset);
     model::ClipIntervalPtr interval{ boost::dynamic_pointer_cast<model::ClipInterval>(clip) };
     ASSERT_NONZERO(interval);
-    getCursor().setLogicalPosition(interval->getLeftPts() - interval->getOffset() + offset);
+    getCursor().setLogicalPosition(interval->getPerceivedLeftPts() + offset);
 }
 
 }} // namespace
