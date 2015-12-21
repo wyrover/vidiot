@@ -43,7 +43,7 @@ void TestTransition::testSelectionAndDeletion()
     TimelineZoomIn(4);
 
     {
-        TimelineDeselectAllClips();
+        TimelineSelectClips({});
         MakeInOutTransitionAfterClip preparation(1);
         StartTest("InOutTransition: Clicking on TransitionLeftClipInterior selects the clip left of the transition.");
         TimelineLeftClick(TransitionLeftClipInterior(VideoClip(0,2)));
@@ -71,7 +71,7 @@ void TestTransition::testSelectionAndDeletion()
         ASSERT_HISTORY_END(gui::timeline::cmd::CreateTransition); // Was a bug once when clicking on a clip's begin/end
     }
     {
-        TimelineDeselectAllClips();
+        TimelineSelectClips({});
         MakeOutTransitionAfterClip preparation(1);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
         StartTest("OutTransition: Clicking on TransitionLeftClipInterior selects the clip left of the transition.");
@@ -79,14 +79,14 @@ void TestTransition::testSelectionAndDeletion()
         ASSERT(VideoClip(0,1)->getSelected());
         ASSERT(!VideoClip(0,2)->getSelected());
         ASSERT(!VideoClip(0,3)->getSelected());
-        TimelineDeselectAllClips();
+        TimelineSelectClips({});
         StartTest("OutTransition: Clicking on TransitionLeftClipEnd selects the clip left of the transition.");
         TimelineLeftClick(TransitionLeftClipEnd(VideoClip(0,2)));
         ASSERT(VideoClip(0,1)->getSelected());
         ASSERT(!VideoClip(0,2)->getSelected());
         ASSERT(!VideoClip(0,3)->getSelected());
         StartTest("OutTransition: When deleting the associated clip, the transition must be deleted also.");
-        TimelineDeselectAllClips();
+        TimelineSelectClips({});
         TimelineLeftClick(Center(VideoClip(0,1)));
         ASSERT_SELECTION_SIZE(1);
         TimelineKeyPress(WXK_DELETE);
@@ -96,7 +96,7 @@ void TestTransition::testSelectionAndDeletion()
         Undo();
     }
     {
-        TimelineDeselectAllClips();
+        TimelineSelectClips({});
         MakeInTransitionAfterClip preparation(1);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
         StartTest("InTransition: Clicking on TransitionRightClipInterior selects the clip right of the transition.");
@@ -104,14 +104,14 @@ void TestTransition::testSelectionAndDeletion()
         ASSERT(!VideoClip(0,1)->getSelected());
         ASSERT(!VideoClip(0,2)->getSelected());
         ASSERT(VideoClip(0,3)->getSelected());
-        TimelineDeselectAllClips();
+        TimelineSelectClips({});
         StartTest("InTransition: Clicking on TransitionRightClipBegin selects the clip right of the transition.");
         TimelineLeftClick(TransitionRightClipBegin(VideoClip(0,2)));
         ASSERT(!VideoClip(0,1)->getSelected());
         ASSERT(!VideoClip(0,2)->getSelected());
         ASSERT(VideoClip(0,3)->getSelected());
         StartTest("InTransition: When deleting the associated clip, the transition must be deleted also.");
-        TimelineDeselectAllClips();
+        TimelineSelectClips({});
         TimelineLeftClick(Center(VideoClip(0,3)));
         ASSERT_SELECTION_SIZE(1);
         TimelineKeyPress(WXK_DELETE);
@@ -247,7 +247,7 @@ void TestTransition::testDragAndDropOfOtherClips()
     }
     {
         // Move the leftmost of the two clips adjacent to the transition: the transition must be removed
-        TimelineDeselectAllClips();
+        TimelineSelectClips({});
         TimelineDrag(From(Center(VideoClip(0,1))).To(Center(VideoClip(0,4))));
         ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(VideoClip);
         ASSERT_AUDIOTRACK0(AudioClip)(EmptyClip)(AudioClip)(AudioClip);
@@ -261,7 +261,7 @@ void TestTransition::testDragAndDropOfOtherClips()
         // Move a large clip onto a smaller clip. This causes linking issues
         // (the video clip was not completely removed, but the linked audio
         // clip was - or vice versa? - anyway: crashed....)
-        TimelineDeselectAllClips();
+        TimelineSelectClips({});
         TimelineLeftClick(Center(VideoClip(0,1)));
         TimelineDrag(From(LeftCenter(VideoClip(0,1)) + wxPoint(10,0)).To(Center(VideoClip(0,6))));
         Undo();
@@ -417,7 +417,7 @@ void TestTransition::testPlaybackAndScrubbing()
         ASSERT_HISTORY_END(gui::timeline::cmd::DeleteSelectedClips);
         Undo();
         StartTest("Move clips around InOutTransition: the transition must be moved also.");
-        TimelineDeselectAllClips();
+        TimelineSelectClips({});
         TimelineLeftClick(Center(VideoClip(0,1)));
         TimelineDrag(From(Center(VideoClip(0,3))).To(Center(VideoClip(0,5))).HoldCtrlBeforeDragStarts());
         //CtrlDrag(Center(VideoClip(0,3)), Center(VideoClip(0,5)));
@@ -444,7 +444,7 @@ void TestTransition::testPlaybackAndScrubbing()
         ASSERT_HISTORY_END(gui::timeline::cmd::DeleteSelectedClips);
         Undo();
         StartTest("Move clip related to InTransition: the transition must be moved also.");
-        TimelineDeselectAllClips();
+        TimelineSelectClips({});
         TimelineDrag(From(Center(VideoClip(0,3))).To(Center(VideoClip(0,5))));
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(EmptyClip)(VideoClip)(VideoClip)(Transition);
         ASSERT(VideoTransition(0,5)->getRight());
@@ -468,7 +468,7 @@ void TestTransition::testPlaybackAndScrubbing()
         ASSERT_HISTORY_END(gui::timeline::cmd::DeleteSelectedClips);
         Undo();
         StartTest("Move clip related to OutTransition: the transition must be moved also.");
-        TimelineDeselectAllClips();
+        TimelineSelectClips({});
         TimelineDrag(From(Center(VideoClip(0,1))).To(Center(VideoClip(0,5))));
         ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip)(Transition);
         ASSERT(!VideoTransition(0,6)->getRight());
@@ -1222,7 +1222,7 @@ void TestTransition::testVideoTransitionTypes()
     {
         std::ostringstream os; os << "Set opacity: " << opacity;
         StartTest(os.str().c_str());
-        TimelineDeselectAllClips();
+        TimelineSelectClips({});
         TimelineLeftClick(Center(VideoClip(0,index)));
         SetValue(DetailsClipView()->getOpacitySlider(), opacity); // Same as WXK_PAGEUP
         ASSERT_HISTORY_END(gui::timeline::cmd::EditClipDetails); // Verify that only one command object was added to the undo history

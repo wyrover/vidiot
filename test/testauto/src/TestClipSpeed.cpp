@@ -49,7 +49,7 @@ void TestClipSpeed::testChangeClipSpeed()
         ASSERT(!DetailsClipView()->getSpeedSpin()->IsEnabled());
     }
     Unlink(VideoClip(0, 4));
-    TimelineDeselectAllClips();
+    TimelineSelectClips({});
     {
         StartTest("Allowed for Unlinked video");
         TimelineLeftClick(Center(VideoClip(0,4)));
@@ -86,7 +86,7 @@ void TestClipSpeed::testChangeClipSpeed()
     }
     {
         StartTest("Increase (size reduction) not allowed when clip in other track (partial on begin)");
-        TimelineDeselectAllClips();
+        TimelineSelectClips({});
         TimelineDrag(From(Center(AudioClip(0, 4))).To(LeftCenter(AudioClip(0,4))));
         TimelineLeftClick(Center(VideoClip(0,4)));
         ASSERT(DetailsView(VideoClip(0,4)));
@@ -99,7 +99,7 @@ void TestClipSpeed::testChangeClipSpeed()
     }
     {
         StartTest("Increase (size reduction) not allowed when clip in other track (partial on end)");
-        TimelineDeselectAllClips();
+        TimelineSelectClips({});
         TimelineDrag(From(Center(AudioClip(0, 4))).To(RightCenter(AudioClip(0,4))));
         TimelineLeftClick(Center(VideoClip(0,4)));
         ASSERT(DetailsView(VideoClip(0,4)));

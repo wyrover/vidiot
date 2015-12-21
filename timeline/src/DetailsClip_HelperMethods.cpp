@@ -207,7 +207,6 @@ void DetailsClip::submitEditCommandUponAudioVideoEdit(const wxString& message, s
         // results in updating the preview window.
         // Note that the proper key frame is requested from the clip in the model,
         // hence the command must be submit first.
-//        updateProjectEventBindings(); todo remove these bindings AND these events completely!!!!
 
         mEditCommand->submit();
 

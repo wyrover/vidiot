@@ -428,30 +428,26 @@ gui::timeline::MouseOnClipPosition LogicalPosition(wxPoint position)
     return getTimeline().getMouse().getInfo(position).logicalclipposition;
 }
 
-void TimelineDeselectAllClips()// todo remove and replace with TimelineSelectClips({});
+void TimelineSelectClips(model::IClips clips) 
 {
-    LOG_DEBUG;
     util::thread::RunInMainAndWait([]
     {
         getTimeline().getSelection().unselectAll();
     });
-};
-
-void TimelineSelectClips(model::IClips clips) 
-{
-    ASSERT_NONZERO(clips.size());
-    TimelineDeselectAllClips();
-    ASSERT_SELECTION_SIZE(0);
-    TimelineLeftClick(Center(clips.front()));
-    clips.erase(clips.begin());
     if (!clips.empty())
     {
-        TimelineKeyDown(WXK_CONTROL);
-        for (model::IClipPtr clip : clips)
+        ASSERT_SELECTION_SIZE(0);
+        TimelineLeftClick(Center(clips.front()));
+        clips.erase(clips.begin());
+        if (!clips.empty())
         {
-            TimelineLeftClick(Center(clip));
+            TimelineKeyDown(WXK_CONTROL);
+            for (model::IClipPtr clip : clips)
+            {
+                TimelineLeftClick(Center(clip));
+            }
+            TimelineKeyUp(WXK_CONTROL);
         }
-        TimelineKeyUp(WXK_CONTROL);
     }
 }
 

@@ -81,7 +81,7 @@ public:
 
     /// \return (clone of) key frame (possibly interpolated) at given (output) position
     /// \param offset offset with respect to 'getPerceivedOffset()'
-    KeyFramePtr getFrameAt(pts offset) const;//todo test
+    KeyFramePtr getFrameAt(pts offset) const;
 
     /// Add a key frame
     /// \param offset offset with respect to  'getPerceivedOffset()'

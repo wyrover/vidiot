@@ -343,7 +343,6 @@ void DetailsClip::onVideoKeyFramesRemoveButtonPressed(wxCommandEvent& event)
             videoclip->removeKeyFrameAt(getVideoKeyFrameOffset());
         });
         updateVideoKeyFrameControls(); // Update buttons
-        getPlayer()->moveTo(getCursor().getLogicalPosition()); // Force redraw (since the current frame is updated) -- todo obsolete? (check by removing first and last key frames!)
     });
     event.Skip();
 }
