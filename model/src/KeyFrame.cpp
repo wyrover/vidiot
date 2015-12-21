@@ -15,8 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-// todo make separate folder for all 'clip' related stuff and for model sequence (track, sequence) stuff
-
 #include "KeyFrame.h"
 
 #include "UtilClone.h"
