@@ -27,7 +27,6 @@
 #include "UtilLogWxwidgets.h"
 #include "UtilSerializeBoost.h"
 #include "UtilSerializeWxwidgets.h"
-#include "VideoClipEvent.h"
 #include "VideoClipKeyFrame.h"
 #include "VideoCompositionParameters.h"
 #include "VideoFile.h"
@@ -126,7 +125,7 @@ VideoFramePtr VideoClip::getNextVideo(const VideoCompositionParameters& paramete
         }
         else
         {
-            VideoClipKeyFramePtr keyFrame{ boost::dynamic_pointer_cast<VideoClipKeyFrame>(getFrameAt(mProgress)) };
+            VideoClipKeyFramePtr keyFrame{ boost::dynamic_pointer_cast<VideoClipKeyFrame>(getFrameAt(mProgress + getOffset() - getPerceivedOffset())) };
 
             // Scale the clip's size and region of interest to the bounding box
             // Determine scaling for 'fitting' a clip with size 'projectSize' in a bounding box of size 'size'

@@ -69,7 +69,6 @@ void DetailsClip::setClip(const model::IClipPtr& clip)
     mTransitionClone = nullptr;
     mEditCommand = nullptr;
     mEditSpeedCommand = nullptr;
-    updateProjectEventBindings(); // Unbind
 
     model::VideoClipPtr video{ getVideoClip(clip) };
     model::AudioClipPtr audio{ getAudioClip(clip) };
@@ -104,16 +103,8 @@ void DetailsClip::setClip(const model::IClipPtr& clip)
             }
         }
 
-        if (video)
-        {
-            updateVideoKeyFrameControls();
-        }
-
-        if (audio)
-        {
-            mVolumeSlider->SetValue(audio->getVolume());
-            mVolumeSpin->SetValue(audio->getVolume());
-        }
+        updateVideoKeyFrameControls();
+        updateAudioKeyFrameControls();
 
         if (transition)
         {
@@ -134,9 +125,6 @@ void DetailsClip::setClip(const model::IClipPtr& clip)
         requestShow(false);
     }
 
-    updateProjectEventBindings(); // Bind again
-                                  
-                                  
     // Note: disabling a control and then enabling it again can cause extra events (value changed).
     // Therefore this has been placed here, to only dis/enable in the minimal number of cases.
     showOption(mLengthPanel, video != nullptr || audio  != nullptr || transition != nullptr);

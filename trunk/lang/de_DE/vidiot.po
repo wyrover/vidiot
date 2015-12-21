@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-12-19 14:46+0100\n"
+"POT-Creation-Date: 2015-12-20 21:48+0100\n"
 "PO-Revision-Date: 2015-11-04 15:44+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -857,15 +857,15 @@ msgstr "Farbe"
 msgid "Missing file: "
 msgstr "Fehlende Datei: "
 
-#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoClipKeyFrame.cpp:201
+#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoClipKeyFrame.cpp:197
 msgid "Width becomes 0."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoClipKeyFrame.cpp:205
+#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoClipKeyFrame.cpp:201
 msgid "Height becomes 0."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoClipKeyFrame.cpp:209
+#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoClipKeyFrame.cpp:205
 msgid "Image becomes too large."
 msgstr ""
 
@@ -1242,18 +1242,18 @@ msgstr "Fehler im Video-Codec"
 msgid "There was an error when opening the video codec."
 msgstr "Es gab einen Fehler beim Öffnen der Video-Codec."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_GuiEvents.cpp:457
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_GuiEvents.cpp:495
 msgid ""
 "Could not execute the length change without messing up clips in other tracks."
 msgstr ""
 "Die Längenänderung wurde die ordnung von Clips in anderen Spuren "
 "Durcheinander bringen. Deshalb ist Sie nicht ausgeführt."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_GuiEvents.cpp:463
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_GuiEvents.cpp:501
 msgid "Set length of clip"
 msgstr "Einstellen der Länge vom Clip"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_HelperMethods.cpp:255
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_HelperMethods.cpp:247
 msgid "Change "
 msgstr "Änderung "
 

@@ -237,8 +237,6 @@ KeyFramePtr ClipInterval::getFrameAt(pts offset) const
 
     ASSERT_MORE_THAN_EQUALS_ZERO(offset);
 
-    offset += getOffset();
-
     std::map<pts, KeyFramePtr> keyFrames{ getKeyFramesOfPerceivedClip() };
 
     if (keyFrames.size() == 0)
@@ -295,12 +293,19 @@ void ClipInterval::addKeyFrameAt(pts offset, KeyFramePtr frame)
     ASSERT_MORE_THAN_EQUALS_ZERO(offset);
     frame->setInterpolated(false);
 
-    // Ensure that a key frame position not returned by 'getKeyFrames' was used
-    std::map<pts, KeyFramePtr> keyframes{ getKeyFramesOfPerceivedClip() };
-    ASSERT_MAP_CONTAINS_NOT(keyframes, offset)(*this);
-
     // Convert back to offset '0' (input time == no offset)
     offset += getPerceivedOffset();
+
+    // Ensure that a key frame position not returned by 'getKeyFrames' was used
+    std::map<pts, KeyFramePtr> keyframes{ getKeyFramesOfPerceivedClip() };
+    if (keyframes.find(offset) != keyframes.end())
+    {
+        // At least in the module test I succeeded in pressing the Add button twice consecutively,
+        // without moving the cursor. To err on the safe side, ignore the second press here, in case
+        // it's also 'user possible'.
+        VAR_WARNING(*this)(keyframes)(offset);
+        return;
+    }
 
     // Convert back to 1:1 speed
     pts offsetWithSpeed{ model::Convert::positionToNewSpeed(offset, 1, getSpeed()) };
@@ -350,7 +355,10 @@ void ClipInterval::removeKeyFrameAt(pts offset)
             return;
         }
     }
-    FATAL("Key frame not found");
+    // At least in the module test I succeeded in pressing the Add button twice consecutively,
+    // without moving the cursor. That may also be possible for the remove button.
+    // To err on the safe side, ignore the second press here, in case it's also 'user possible'.
+    VAR_WARNING(*this)(keyframes)(offset);
 }
 
 void ClipInterval::setDefaultKeyFrame(KeyFramePtr keyframe)

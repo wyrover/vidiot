@@ -48,6 +48,12 @@ public:
     /// remaining key frame.
     void testRemoveLastKeyFrame();
 
+    void testGetKeyFrameWithoutOffset();
+
+    void testGetKeyFrameWithOffset();
+
+    void testGetKeyFrameWithTransition();
+
     void testChangeClipSpeed();
 
     void testTrimAwayKeyFrames();

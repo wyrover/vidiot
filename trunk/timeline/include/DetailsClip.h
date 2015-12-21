@@ -145,19 +145,6 @@ public:
     // PROJECT EVENTS
     //////////////////////////////////////////////////////////////////////////
 
-    void updateProjectEventBindings();
-
-    void onOpacityChanged(model::EventChangeVideoClipOpacity& event);
-    void onScalingChanged(model::EventChangeVideoClipScaling& event);
-    void onScalingFactorChanged(model::EventChangeVideoClipScalingFactor& event);
-    void onRotationChanged(model::EventChangeVideoClipRotation& event);
-    void onAlignmentChanged(model::EventChangeVideoClipAlignment& event);
-    void onPositionChanged(model::EventChangeVideoClipPosition& event);
-    void onMinPositionChanged(model::EventChangeVideoClipMinPosition& event);
-    void onMaxPositionChanged(model::EventChangeVideoClipMaxPosition& event);
-
-    void onVolumeChanged(model::EventChangeAudioClipVolume& event);
-
     void onTransitionParameterChanged(model::EventTransitionParameterChanged& event);
 
     void onSelectionChanged(timeline::EventSelectionUpdate& event);
@@ -205,8 +192,6 @@ private:
     model::IClipPtr mClip = nullptr;      ///< The clip for which the details view is shown. 0 in case a transition is selected
     pts mClipPosition = 0; ///< The currently known position of the clip (used to 'reset' the clip when it is moved around)
     model::TransitionPtr mTransitionClone = nullptr; ///< Transition which is currently being edited
-    std::unique_ptr<Cleanup> mAudioKeyFrameEventsUnbind = nullptr;
-    std::unique_ptr<Cleanup> mVideoKeyFrameEventsUnbind = nullptr;
 
     cmd::EditClipDetails* mEditCommand = nullptr;
     cmd::EditClipSpeed* mEditSpeedCommand = nullptr;
@@ -288,7 +273,7 @@ private:
     pts getVideoKeyFrameOffset() const;
     model::VideoClipKeyFramePtr getVideoKeyFrame() const;
 
-    void submitEditCommandUponAudioVideoEdit(const wxString& message);
+    void submitEditCommandUponAudioVideoEdit(const wxString& message, std::function<void()> edit);
     void submitEditCommandUponTransitionEdit(const wxString& parameter);
     void createOrUpdateSpeedCommand(rational64 speed);
 
@@ -304,6 +289,7 @@ private:
 
     void updateVideoKeyFrameControls();
     void updateVideoKeyFrameButtons();
+    void updateAudioKeyFrameControls();
 
     void moveCursorToKeyFrame(model::IClipPtr clip, pts offset);
 };

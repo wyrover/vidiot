@@ -27,8 +27,6 @@
 #include "UtilLogWxwidgets.h"
 #include "UtilSerializeBoost.h"
 #include "UtilSerializeWxwidgets.h"
-#include "VideoClipEvent.h"
-#include "VideoClipEvent.h" // todo rename to kfe
 #include "VideoCompositionParameters.h"
 #include "VideoFile.h"
 #include "VideoFrameLayer.h"
@@ -176,8 +174,6 @@ void VideoClipKeyFrame::setOpacity(int opacity)
         ASSERT_MORE_THAN_EQUALS(opacity, sOpacityMin);
         ASSERT_LESS_THAN_EQUALS(opacity, sOpacityMax);
         mOpacity = opacity;
-        EventChangeVideoClipOpacity event(mOpacity);
-        ProcessEvent(event);
     }
 }
 
@@ -216,34 +212,6 @@ void VideoClipKeyFrame::setScaling(const VideoScaling& scaling, const boost::opt
 
     updateAutomatedScaling();
     updateAutomatedPositioning();
-
-    if (mScaling != oldScaling || // Update of the change
-        mScaling != scaling)      // Inform that the change requested was not acknowledged
-    {
-        EventChangeVideoClipScaling event(mScaling);
-        ProcessEvent(event);
-    }
-    if (mScalingFactor != oldScalingFactor ||  // Update of the change
-        (factor && mScalingFactor != *factor)) // Inform that the change requested was not acknowledged
-    {
-        EventChangeVideoClipScalingFactor event(mScalingFactor);
-        ProcessEvent(event);
-    }
-    if (getMinPosition() != oldMinPosition)
-    {
-        EventChangeVideoClipMinPosition event(getMinPosition());
-        ProcessEvent(event);
-    }
-    if (getMaxPosition() != oldMaxPosition)
-    {
-        EventChangeVideoClipMaxPosition event(getMaxPosition());
-        ProcessEvent(event);
-    }
-    if (mPosition != oldPosition)
-    {
-        EventChangeVideoClipPosition event(mPosition);
-        ProcessEvent(event);
-    }
 }
 
 void VideoClipKeyFrame::setRotation(const rational64& rotation)
@@ -257,26 +225,6 @@ void VideoClipKeyFrame::setRotation(const rational64& rotation)
     mRotation = rotation;
 
     updateAutomatedPositioning();
-    if (mRotation != oldRotation)
-    {
-        EventChangeVideoClipRotation event(mRotation);
-        ProcessEvent(event);
-    }
-    if (getMinPosition() != oldMinPosition)
-    {
-        EventChangeVideoClipMinPosition event(getMinPosition());
-        ProcessEvent(event);
-    }
-    if (getMaxPosition() != oldMaxPosition)
-    {
-        EventChangeVideoClipMaxPosition event(getMaxPosition());
-        ProcessEvent(event);
-    }
-    if (mPosition != oldPosition)
-    {
-        EventChangeVideoClipPosition event(mPosition);
-        ProcessEvent(event);
-    }
 }
 
 void VideoClipKeyFrame::setRotationPositionOffset(wxPoint position)
@@ -293,17 +241,6 @@ void VideoClipKeyFrame::setAlignment(const VideoAlignment& alignment)
     mAlignment = alignment;
 
     updateAutomatedPositioning();
-
-    if (mAlignment != oldAlignment)
-    {
-        EventChangeVideoClipAlignment event(mAlignment);
-        ProcessEvent(event);
-    }
-    if (mPosition != oldPosition)
-    {
-        EventChangeVideoClipPosition event(mPosition);
-        ProcessEvent(event);
-    }
 }
 
 void VideoClipKeyFrame::setPosition(const wxPoint& position)
@@ -314,13 +251,6 @@ void VideoClipKeyFrame::setPosition(const wxPoint& position)
     mPosition = position;
 
     updateAutomatedPositioning();
-
-    if (mPosition != oldPosition ||  // Update of the change
-        mPosition != position)       // Inform that the change requested was not acknowledged
-    {
-        EventChangeVideoClipPosition event(mPosition);
-        ProcessEvent(event);
-    }
 }
 
 //////////////////////////////////////////////////////////////////////////

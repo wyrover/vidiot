@@ -17,132 +17,13 @@
 
 #include "DetailsClip.h"
 
-#include "AudioClipEvent.h"
 #include "VideoDisplayEvent.h"
-#include "VideoClipEvent.h"
 
 namespace gui { namespace timeline {
 
 //////////////////////////////////////////////////////////////////////////
 // PROJECT EVENTS
 //////////////////////////////////////////////////////////////////////////
-
-void DetailsClip::updateProjectEventBindings()
-{
-    // Unbind by default
-    mVideoKeyFrameEventsUnbind.reset();
-    mAudioKeyFrameEventsUnbind.reset();
-
-    // Bind to the 'current' clip's events
-    model::VideoClipPtr videoclip{ getVideoClip(mClip) };
-    if (videoclip)
-    {
-        model::VideoClipKeyFramePtr videoKeyFrame{ getVideoKeyFrame() };
-        ASSERT_NONZERO(videoKeyFrame);
-
-        videoKeyFrame->Bind(model::EVENT_CHANGE_VIDEOCLIP_OPACITY, &DetailsClip::onOpacityChanged, this);
-        videoKeyFrame->Bind(model::EVENT_CHANGE_VIDEOCLIP_SCALING, &DetailsClip::onScalingChanged, this);
-        videoKeyFrame->Bind(model::EVENT_CHANGE_VIDEOCLIP_SCALINGFACTOR, &DetailsClip::onScalingFactorChanged, this);
-        videoKeyFrame->Bind(model::EVENT_CHANGE_VIDEOCLIP_ROTATION, &DetailsClip::onRotationChanged, this);
-        videoKeyFrame->Bind(model::EVENT_CHANGE_VIDEOCLIP_ALIGNMENT, &DetailsClip::onAlignmentChanged, this);
-        videoKeyFrame->Bind(model::EVENT_CHANGE_VIDEOCLIP_POSITION, &DetailsClip::onPositionChanged, this);
-        videoKeyFrame->Bind(model::EVENT_CHANGE_VIDEOCLIP_MINPOSITION, &DetailsClip::onMinPositionChanged, this);
-        videoKeyFrame->Bind(model::EVENT_CHANGE_VIDEOCLIP_MAXPOSITION, &DetailsClip::onMaxPositionChanged, this);
-        mVideoKeyFrameEventsUnbind.reset(new Cleanup([this, videoKeyFrame] {
-            ASSERT_NONZERO(videoKeyFrame);
-            videoKeyFrame->Unbind(model::EVENT_CHANGE_VIDEOCLIP_OPACITY, &DetailsClip::onOpacityChanged, this);
-            videoKeyFrame->Unbind(model::EVENT_CHANGE_VIDEOCLIP_SCALING, &DetailsClip::onScalingChanged, this);
-            videoKeyFrame->Unbind(model::EVENT_CHANGE_VIDEOCLIP_SCALINGFACTOR, &DetailsClip::onScalingFactorChanged, this);
-            videoKeyFrame->Unbind(model::EVENT_CHANGE_VIDEOCLIP_ROTATION, &DetailsClip::onRotationChanged, this);
-            videoKeyFrame->Unbind(model::EVENT_CHANGE_VIDEOCLIP_ALIGNMENT, &DetailsClip::onAlignmentChanged, this);
-            videoKeyFrame->Unbind(model::EVENT_CHANGE_VIDEOCLIP_POSITION, &DetailsClip::onPositionChanged, this);
-            videoKeyFrame->Unbind(model::EVENT_CHANGE_VIDEOCLIP_MINPOSITION, &DetailsClip::onMinPositionChanged, this);
-            videoKeyFrame->Unbind(model::EVENT_CHANGE_VIDEOCLIP_MAXPOSITION, &DetailsClip::onMaxPositionChanged, this);
-        }));
-    }
-
-    model::AudioClipPtr audioclip{ getAudioClip(mClip) };
-    if (audioclip)
-    {
-        audioclip->Bind(model::EVENT_CHANGE_AUDIOCLIP_VOLUME, &DetailsClip::onVolumeChanged, this);
-        mAudioKeyFrameEventsUnbind.reset(new Cleanup([this, audioclip] {
-            ASSERT_NONZERO(audioclip);
-            audioclip->Unbind(model::EVENT_CHANGE_AUDIOCLIP_VOLUME, &DetailsClip::onVolumeChanged, this);
-        }));
-    }
-}
-
-void DetailsClip::onOpacityChanged(model::EventChangeVideoClipOpacity& event)
-{
-    mOpacitySlider->SetValue(event.getValue());
-    mOpacitySpin->SetValue(event.getValue());
-    preview();
-    event.Skip();
-}
-
-void DetailsClip::onScalingChanged(model::EventChangeVideoClipScaling& event)
-{
-    mSelectScaling->select(event.getValue());
-    event.Skip();
-}
-
-void DetailsClip::onScalingFactorChanged(model::EventChangeVideoClipScalingFactor& event)
-{
-    mScalingSpin->SetValue(boost::rational_cast<double>(event.getValue()));
-    mScalingSlider->SetValue(factorToSliderValue(event.getValue()));
-    preview();
-    event.Skip();
-}
-
-void DetailsClip::onRotationChanged(model::EventChangeVideoClipRotation& event)
-{
-    mRotationSpin->SetValue(boost::rational_cast<double>(event.getValue()));
-    mRotationSlider->SetValue(floor(event.getValue() * sRotationPrecisionFactor));
-    preview();
-    event.Skip();
-}
-
-void DetailsClip::onAlignmentChanged(model::EventChangeVideoClipAlignment& event)
-{
-    mSelectAlignment->select(event.getValue());
-    preview();
-    event.Skip();
-}
-
-void DetailsClip::onPositionChanged(model::EventChangeVideoClipPosition& event)
-{
-    mPositionXSpin->SetValue(event.getValue().x);
-    mPositionXSlider->SetValue(event.getValue().x);
-    mPositionYSpin->SetValue(event.getValue().y);
-    mPositionYSlider->SetValue(event.getValue().y);
-    preview();
-    event.Skip();
-}
-
-void DetailsClip::onMinPositionChanged(model::EventChangeVideoClipMinPosition& event)
-{
-    mPositionXSpin->SetRange(event.getValue().x,mPositionXSpin->GetMax());
-    mPositionYSpin->SetRange(event.getValue().y,mPositionYSpin->GetMax());
-    mPositionXSlider->SetRange(event.getValue().x,mPositionXSlider->GetMax());
-    mPositionYSlider->SetRange(event.getValue().y,mPositionYSlider->GetMax());
-    event.Skip();
-}
-
-void DetailsClip::onMaxPositionChanged(model::EventChangeVideoClipMaxPosition& event)
-{
-    mPositionXSpin->SetRange(mPositionXSpin->GetMin(),event.getValue().x);
-    mPositionYSpin->SetRange(mPositionYSpin->GetMin(), event.getValue().y);
-    mPositionXSlider->SetRange(mPositionXSlider->GetMin(),event.getValue().x);
-    mPositionYSlider->SetRange(mPositionYSlider->GetMin(), event.getValue().y);
-    event.Skip();
-}
-
-void DetailsClip::onVolumeChanged(model::EventChangeAudioClipVolume& event)
-{
-    mVolumeSlider->SetValue(event.getValue());
-    mVolumeSpin->SetValue(event.getValue());
-    event.Skip();
-}
 
 void DetailsClip::onTransitionParameterChanged(model::EventTransitionParameterChanged& event)
 {
@@ -192,6 +73,7 @@ void DetailsClip::onPlaybackPosition(PlaybackPositionEvent& event)
     CatchExceptions([this]
     {
         updateVideoKeyFrameControls();
+        updateAudioKeyFrameControls();
     });
     event.Skip();
 }
