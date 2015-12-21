@@ -147,7 +147,7 @@ void TestRender::testRenderingTransformedClip()
     TimelineDrag(From(Center(VideoClip(1,1))).To(LeftCenter(VideoClip(1,0)) + wxPoint(5,0)));
     model::VideoClipPtr clip = boost::dynamic_pointer_cast<model::VideoClip>(VideoClip(1,0));
     ASSERT(clip);
-    TimelineDeselectAllClips(); // Ensure that the actions below do not cause events in the details clip class.
+    TimelineSelectClips({}); // Ensure that the actions below do not cause events in the details clip class.
     util::thread::RunInMainAndWait([clip]
     {
         DefaultVideoKeyFrame(clip)->setOpacity(128);

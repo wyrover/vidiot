@@ -150,9 +150,6 @@ void ScrollWithRightMouseButton(pixel distance);                        ///< Scr
 
 gui::timeline::MouseOnClipPosition LogicalPosition(wxPoint position);   ///< \return logical mouse position of the given (pixel) position.
 
-/// Unselect all clips in the timeline
-void TimelineDeselectAllClips();
-
 /// Select the given clips (and their links, if any) by ctrl-clicking all of them.
 /// Selection is made empty beforehand.
 void TimelineSelectClips(model::IClips clips);

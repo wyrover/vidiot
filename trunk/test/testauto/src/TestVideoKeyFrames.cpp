@@ -344,28 +344,28 @@ void TestVideoKeyFrames::testSelectKeyFrameInTimeline()
         ButtonTriggerPressed(DetailsClipView()->getVideoKeyFramesAddButton());
         ASSERT_EQUALS(3, getVideoClip(VideoClip(0, 4))->getKeyFramesOfPerceivedClip().size());
         ASSERT_EQUALS(3, DetailsClipView()->getVideoKeyFrameButtonCount());
-        TimelineDeselectAllClips();
+        TimelineSelectClips({});
         ASSERT(DetailsView(nullptr));
     }
     {
         StartTest("Select first key frame");
         TimelineLeftClick(wxPoint(KeyFrame1Pixel, BottomPixel(VideoClip(0, 4)) - 2));
         ASSERT(DetailsView(VideoClip(0,4)).KeyFrameIndex(0));
-        TimelineDeselectAllClips();
+        TimelineSelectClips({});
         ASSERT(DetailsView(nullptr));
     }
     {
         StartTest("Select middle key frame");
         TimelineLeftClick(wxPoint(KeyFrame2Pixel, BottomPixel(VideoClip(0, 4)) - 2));
         ASSERT(DetailsView(VideoClip(0, 4)).KeyFrameIndex(1));
-        TimelineDeselectAllClips();
+        TimelineSelectClips({});
         ASSERT(DetailsView(nullptr));
     }
     {
         StartTest("Select last key frame");
         TimelineLeftClick(wxPoint(KeyFrame3Pixel, BottomPixel(VideoClip(0, 4)) - 2));
         ASSERT(DetailsView(VideoClip(0, 4)).KeyFrameIndex(2));
-        TimelineDeselectAllClips();
+        TimelineSelectClips({});
         ASSERT(DetailsView(nullptr));
     }
 }

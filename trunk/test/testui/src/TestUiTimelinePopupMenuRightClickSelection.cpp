@@ -43,7 +43,7 @@ void TestUiTimelinePopupMenuRightClickSelection::testRightClickSelection()
     TimelineZoomIn(4);
 
     {
-        TimelineDeselectAllClips();
+        TimelineSelectClips({});
         MakeInOutTransitionAfterClip preparation(1);
         StartTest("InOutTransition: Right Clicking on TransitionLeftClipInterior selects the clip left of the transition.");
         TimelineOpenPopupMenuAt(TransitionLeftClipInterior(VideoClip(0,2)));
@@ -71,7 +71,7 @@ void TestUiTimelinePopupMenuRightClickSelection::testRightClickSelection()
         TimelineClosePopupMenu();
     }
     {
-        TimelineDeselectAllClips();
+        TimelineSelectClips({});
         MakeOutTransitionAfterClip preparation(1);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
         StartTest("OutTransition: Right Clicking on TransitionLeftClipInterior selects the clip left of the transition.");
@@ -88,7 +88,7 @@ void TestUiTimelinePopupMenuRightClickSelection::testRightClickSelection()
         TimelineClosePopupMenu();
     }
     {
-        TimelineDeselectAllClips();
+        TimelineSelectClips({});
         MakeInTransitionAfterClip preparation(1);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
         StartTest("InTransition: Right Clicking on TransitionRightClipInterior selects the clip right of the transition.");

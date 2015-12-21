@@ -48,7 +48,7 @@ void TestBugs::testHangupAfterResettingDetailsView()
 {
     StartTestSuite();
     TimelineLeftClick(VTopQuarterHCenter(VideoClip(0,2)));
-    TimelineDeselectAllClips();
+    TimelineSelectClips({});
 }
 
 void TestBugs::testDetailsNotShownAfterMovingTimelineCursor()
@@ -706,7 +706,7 @@ void TestBugs::testTrimAndExtendVideoAndAudioClipsThatBothHaveOutTransitions()
     TimelineDeleteClips({ VideoClip(0, 0), VideoClip(0, 2) });
     TimelineTrimRight(VideoClip(0,1), -100);
     TimelineTrimLeft(VideoClip(0,1), 100);
-    TimelineDeselectAllClips();
+    TimelineSelectClips({});
     MakeOutTransitionAfterClip preparationVideo(1);
     MakeOutTransitionAfterClip preparationAudio(1,true);
     MakeInTransitionAfterClip preparationVideoIn(0);
