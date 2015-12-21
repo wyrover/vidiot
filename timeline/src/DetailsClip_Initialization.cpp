@@ -351,7 +351,6 @@ DetailsClip::~DetailsClip()
     mTransitionClone = nullptr;
     mEditCommand = nullptr;
     mEditSpeedCommand = nullptr;
-    updateProjectEventBindings(); // Reset all bindings (unbind all)
 
     Unbind(wxEVT_SIZE, &DetailsClip::onSize, this);
     Unbind(wxEVT_SHOW, &DetailsClip::onShow, this);

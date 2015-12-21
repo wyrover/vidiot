@@ -396,6 +396,147 @@ void TestVideoKeyFrames::testRemoveLastKeyFrame()
     ASSERT(DefaultKeyFrame(VideoClip(0, 4)).Opacity(128).Scaling(model::VideoScalingCustom).ScalingFactor(rational64{ 1,2 }).Alignment(model::VideoAlignmentCustom).Position(wxPoint{ 111, 222 }).Rotation(90));
 }
 
+void TestVideoKeyFrames::testGetKeyFrameWithoutOffset()
+{
+    StartTestSuite();
+    TimelineZoomIn(2);
+    pixel InterpolatedPixel{ HCenter(VideoClip(0, 4)) };
+    pixel KeyFrame1Pixel{ InterpolatedPixel - 50 };
+    pixel KeyFrame2Pixel{ InterpolatedPixel + 50 };
+    TimelineSelectClips({ VideoClip(0,4) });
+    {
+        StartTest("Prepare key frames.");
+        TimelinePositionCursor(KeyFrame1Pixel);
+        ButtonTriggerPressed(DetailsClipView()->getVideoKeyFramesAddButton());
+        SetValue(DetailsClipView()->getRotationSpin(), -90.0);
+        TimelinePositionCursor(KeyFrame2Pixel);
+        ButtonTriggerPressed(DetailsClipView()->getVideoKeyFramesAddButton());
+        SetValue(DetailsClipView()->getRotationSpin(), +90.0);
+        ASSERT_EQUALS(2, getVideoClip(VideoClip(0, 4))->getKeyFramesOfPerceivedClip().size());
+        ASSERT_EQUALS(2, DetailsClipView()->getVideoKeyFrameButtonCount());
+    }
+    {
+        StartTest("Get rotation for first key frame");
+        ButtonTriggerPressed(DetailsClipView()->getVideoKeyFrameButton(0));
+        ASSERT(DetailsView(VideoClip(0, 4)).KeyFrameIndex(0).Rotation(-90));
+    }
+    {
+        StartTest("Get rotation before first key frame");
+        TimelinePositionCursor(LeftPixel(VideoClip(0, 4)) + 5);
+        ASSERT(DetailsView(VideoClip(0, 4)).Rotation(-90));
+    }
+    {
+        StartTest("Get rotation for second key frame");
+        ButtonTriggerPressed(DetailsClipView()->getVideoKeyFrameButton(1));
+        ASSERT(DetailsView(VideoClip(0, 4)).KeyFrameIndex(1).Rotation(90));
+    }
+    {
+        StartTest("Get rotation after second key frame");
+        TimelinePositionCursor(RightPixel(VideoClip(0, 4)) - 5);
+        ASSERT(DetailsView(VideoClip(0, 4)).Rotation(+90));
+    }
+    {
+        StartTest("Get rotation for interpolated frame");
+        TimelinePositionCursor(HCenter(VideoClip(0, 4)));
+        ASSERT(DetailsView(VideoClip(0, 4)).Rotation(0));
+    }
+}
+
+void TestVideoKeyFrames::testGetKeyFrameWithOffset()
+{
+    StartTestSuite();
+    TimelineZoomIn(2);
+    TimelineTrimLeft(VideoClip(0, 4), 50);
+    pixel InterpolatedPixel{ HCenter(VideoClip(0, 4)) };
+    pixel KeyFrame1Pixel{ InterpolatedPixel - 50 };
+    pixel KeyFrame2Pixel{ InterpolatedPixel + 50 };
+    TimelineSelectClips({ VideoClip(0,4) });
+    {
+        StartTest("Prepare key frames.");
+        TimelinePositionCursor(KeyFrame1Pixel);
+        ButtonTriggerPressed(DetailsClipView()->getVideoKeyFramesAddButton());
+        SetValue(DetailsClipView()->getRotationSpin(), -90.0);
+        TimelinePositionCursor(KeyFrame2Pixel);
+        ButtonTriggerPressed(DetailsClipView()->getVideoKeyFramesAddButton());
+        SetValue(DetailsClipView()->getRotationSpin(), +90.0);
+        ASSERT_EQUALS(2, getVideoClip(VideoClip(0, 4))->getKeyFramesOfPerceivedClip().size());
+        ASSERT_EQUALS(2, DetailsClipView()->getVideoKeyFrameButtonCount());
+    }
+    {
+        StartTest("Get rotation for first key frame");
+        ButtonTriggerPressed(DetailsClipView()->getVideoKeyFrameButton(0));
+        ASSERT(DetailsView(VideoClip(0, 4)).KeyFrameIndex(0).Rotation(-90));
+    }
+    {
+        StartTest("Get rotation before first key frame");
+        TimelinePositionCursor(LeftPixel(VideoClip(0, 4)) + 5);
+        ASSERT(DetailsView(VideoClip(0, 4)).Rotation(-90));
+    }
+    {
+        StartTest("Get rotation for second key frame");
+        ButtonTriggerPressed(DetailsClipView()->getVideoKeyFrameButton(1));
+        ASSERT(DetailsView(VideoClip(0, 4)).KeyFrameIndex(1).Rotation(90));
+    }
+    {
+        StartTest("Get rotation after second key frame");
+        TimelinePositionCursor(RightPixel(VideoClip(0, 4)) - 5);
+        ASSERT(DetailsView(VideoClip(0, 4)).Rotation(+90));
+    }
+    {
+        StartTest("Get rotation for interpolated frame");
+        TimelinePositionCursor(HCenter(VideoClip(0, 4)));
+        ASSERT(DetailsView(VideoClip(0, 4)).Rotation(0));
+    }
+}
+
+void TestVideoKeyFrames::testGetKeyFrameWithTransition()
+{
+    StartTestSuite();
+    TimelineZoomIn(2);
+    MakeInOutTransitionAfterClip prepare(3);
+    prepare.dontUndo();
+    pixel InterpolatedPixel{ HCenter(VideoClip(0, 5)) };
+    pixel KeyFrame1Pixel{ InterpolatedPixel - 50 };
+    pixel KeyFrame2Pixel{ InterpolatedPixel + 50 };
+    TimelineSelectClips({ VideoClip(0, 5) });
+    {
+        StartTest("Prepare key frames.");
+        TimelinePositionCursor(KeyFrame1Pixel);
+        ButtonTriggerPressed(DetailsClipView()->getVideoKeyFramesAddButton());
+        SetValue(DetailsClipView()->getRotationSpin(), -90.0);
+        TimelinePositionCursor(KeyFrame2Pixel);
+        ButtonTriggerPressed(DetailsClipView()->getVideoKeyFramesAddButton());
+        SetValue(DetailsClipView()->getRotationSpin(), +90.0);
+        ASSERT_EQUALS(2, getVideoClip(VideoClip(0, 5))->getKeyFramesOfPerceivedClip().size());
+        ASSERT_EQUALS(2, DetailsClipView()->getVideoKeyFrameButtonCount());
+    }
+    {
+        StartTest("Get rotation for first key frame");
+        ButtonTriggerPressed(DetailsClipView()->getVideoKeyFrameButton(0));
+        ASSERT(DetailsView(VideoClip(0, 5)).KeyFrameIndex(0).Rotation(-90));
+    }
+    {
+        StartTest("Get rotation before first key frame");
+        TimelinePositionCursor(LeftPixel(VideoClip(0, 4)) + 5);
+        ASSERT(DetailsView(VideoClip(0, 5)).Rotation(-90));
+    }
+    {
+        StartTest("Get rotation for second key frame");
+        ButtonTriggerPressed(DetailsClipView()->getVideoKeyFrameButton(1));
+        ASSERT(DetailsView(VideoClip(0, 5)).KeyFrameIndex(1).Rotation(90));
+    }
+    {
+        StartTest("Get rotation after second key frame");
+        TimelinePositionCursor(RightPixel(VideoClip(0, 5)) - 5);
+        ASSERT(DetailsView(VideoClip(0, 5)).Rotation(+90));
+    }
+    {
+        StartTest("Get rotation for interpolated frame");
+        TimelinePositionCursor(HCenter(VideoClip(0, 5)));
+        ASSERT(DetailsView(VideoClip(0, 5)).Rotation(0));
+    }
+}
+
 void TestVideoKeyFrames::testChangeClipSpeed()
 {
     StartTestSuite();
@@ -415,7 +556,6 @@ void TestVideoKeyFrames::testChangeClipSpeed()
         (gui::timeline::cmd::DeleteSelectedClips)
         (gui::timeline::cmd::EditClipDetails) // Add key frame
         (gui::timeline::cmd::EditClipDetails); // Rotate
-
     {
         StartTest("Increase speed and verify key frame");
         SetValue(DetailsClipView()->getSpeedSpin(), 10.0);

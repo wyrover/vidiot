@@ -52,13 +52,6 @@ rational64 DetailsClip::sliderValueToFactor(int slidervalue)
     return rational64(diff + 100, 100); // +100 ensures 10001 starts at 1.01. -(diff/100) ensures that 20000 is exactly 100.00 again.
 }
 
-struct Cleanup
-{
-    Cleanup(std::function<void()> _cleanup) : cleanup(_cleanup) {}
-    ~Cleanup() { cleanup(); }
-    std::function<void()> cleanup;
-};
-
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
@@ -192,7 +185,7 @@ model::VideoClipKeyFramePtr DetailsClip::getVideoKeyFrame() const
     return result;
 }
 
-void DetailsClip::submitEditCommandUponAudioVideoEdit(const wxString& message)
+void DetailsClip::submitEditCommandUponAudioVideoEdit(const wxString& message, std::function<void()> edit)
 {
     getPlayer()->stop(); // Stop iteration through the sequence, since the sequence is going to be changed.
 
@@ -214,7 +207,7 @@ void DetailsClip::submitEditCommandUponAudioVideoEdit(const wxString& message)
         // results in updating the preview window.
         // Note that the proper key frame is requested from the clip in the model,
         // hence the command must be submit first.
-        updateProjectEventBindings();
+//        updateProjectEventBindings(); todo remove these bindings AND these events completely!!!!
 
         mEditCommand->submit();
 
@@ -236,6 +229,10 @@ void DetailsClip::submitEditCommandUponAudioVideoEdit(const wxString& message)
             getTimeline().repaint(preview->getRect());
         }
     }
+    edit();
+    preview();
+    updateVideoKeyFrameControls();
+    updateAudioKeyFrameControls();
 }
 
 void DetailsClip::submitEditCommandUponTransitionEdit(const wxString& parameter)
@@ -282,13 +279,6 @@ void DetailsClip::createOrUpdateSpeedCommand(rational64 speed)
     mEditSpeedCommand = new cmd::EditClipSpeed(getSequence(), originalClip, mClip, speed);
     ASSERT_NONZERO(mEditSpeedCommand);
 
-    // Bind to the proper events before handling the command.
-    // This ensures that the project events are received which, in turn,
-    // results in updating the preview window.
-    // Note that the proper key frame is requested from the clip in the model,
-    // hence the command must be submit first.
-    updateProjectEventBindings();
-
     if (model::ProjectModification::submitIfPossible(mEditSpeedCommand))
     {
         mSpeedSpin->SetValue(boost::rational_cast<double>(mEditSpeedCommand->getActualSpeed()));
@@ -302,11 +292,13 @@ void DetailsClip::createOrUpdateSpeedCommand(rational64 speed)
         mSpeedSpin->SetValue(boost::rational_cast<double>(clipInterval->getSpeed()));
         mSpeedSlider->SetValue(factorToSliderValue(clipInterval->getSpeed()));
         mEditSpeedCommand = nullptr;
-        updateProjectEventBindings(); // Bind to the original clip again
     }
 
     getTimeline().endTransaction();
     getTimeline().Update();
+    // NOT: preview(); -- leave cursor at same position
+ //   updateVideoKeyFrameControls();
+    updateAudioKeyFrameControls();
 }
 
 void DetailsClip::preview()
@@ -604,6 +596,14 @@ void DetailsClip::updateVideoKeyFrameButtons()
     mVideoKeyFramesPanel->Layout();
 }
 
+void DetailsClip::updateAudioKeyFrameControls()
+{
+    if (!mClip) { return; }
+    model::AudioClipPtr audioclip{ getAudioClip(mClip) };
+    if (!audioclip) { return; }
+    mVolumeSlider->SetValue(audioclip->getVolume());
+    mVolumeSpin->SetValue(audioclip->getVolume());
+}
 
 void DetailsClip::moveCursorToKeyFrame(model::IClipPtr clip, pts offset)
 {
