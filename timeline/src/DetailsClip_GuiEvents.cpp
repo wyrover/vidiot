@@ -270,13 +270,18 @@ void DetailsClip::onVideoKeyFramesPrevButtonPressed(wxCommandEvent& event)
         std::map<pts, model::VideoClipKeyFramePtr> keyFrames{ getVideoKeyFrames() }; 
         ASSERT_NONZERO(keyFrames.size());
         pts offset{ 0 };
+        pts current{ getVideoKeyFrameOffset() };
         auto it{ keyFrames.begin() };
-        while (it != keyFrames.end() && it->first < getVideoKeyFrameOffset())
+        while (it != keyFrames.end() && it->first < current)
         {
             offset = it->first;
             ++it;
         }
-        ASSERT(it != keyFrames.end());
+        if (it == keyFrames.end())
+        {
+            // offset was beyond last key frame. Move to last key frame.
+            offset = keyFrames.rbegin()->first;
+        }
         moveCursorToKeyFrame(mClip, offset);
     });
     event.Skip();
@@ -291,13 +296,18 @@ void DetailsClip::onVideoKeyFramesNextButtonPressed(wxCommandEvent& event)
         std::map<pts, model::VideoClipKeyFramePtr> keyFrames{ getVideoKeyFrames() };
         ASSERT_NONZERO(keyFrames.size());
         pts offset{ 0 };
+        pts current{ getVideoKeyFrameOffset() };
         auto it{ keyFrames.rbegin() };
-        while (it != keyFrames.rend() && it->first > getVideoKeyFrameOffset())
+        while (it != keyFrames.rend() && it->first > current)
         {
             offset = it->first;
             ++it;
         }
-        ASSERT(it != keyFrames.rend());
+        if (it == keyFrames.rend())
+        {
+            // offset was before first key frame. Move to first key frame.
+            offset = keyFrames.begin()->first;
+        }
         moveCursorToKeyFrame(mClip, offset);
     });
     event.Skip();

@@ -34,7 +34,7 @@ model::VideoClipKeyFramePtr DefaultVideoKeyFrame(model::IClipPtr clip);
 /// \return the key frame at the given position
 /// \pre clip is a video clip
 /// \param position if < 0 then returns the value for the default key frame
-model::VideoClipKeyFramePtr VideoKeyFrame(model::IClipPtr clip, size_t index);
+std::pair<pts, model::VideoClipKeyFramePtr> VideoKeyFrame(model::IClipPtr clip, size_t index);
 
 /// \return the current opacity for the given (video) clip
 /// \pre clip is a video clip

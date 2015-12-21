@@ -173,7 +173,7 @@ void ClipInterval::adjustBegin(pts adjustment)
     mLength -= adjustment;
     ASSERT_MORE_THAN_EQUALS_ZERO(mOffset);
     ASSERT_LESS_THAN_EQUALS(mLength,getRenderLength() - mOffset)(adjustment)(mLength)(mRender->getLength())(mSpeed)(getRenderLength())(mOffset)(*this);
-    // todo remove keyframes that are 'outside' the visible region (which includes intransitions)
+    pruneKeyFrames();
     VAR_DEBUG(*this)(adjustment);
 }
 
@@ -201,7 +201,7 @@ void ClipInterval::adjustEnd(pts adjustment)
     ASSERT(!hasTrack())(getTrack()); // Otherwise, this action needs an event indicating the change to the track(view). Instead, tracks are updated by replacing clips.
     mLength += adjustment;
     ASSERT_LESS_THAN_EQUALS(mLength,getRenderLength() - mOffset)(adjustment)(mLength)(mRender->getLength())(mSpeed)(getRenderLength())(mOffset)(*this);
-    // todo remove keyframes that are 'outside' the visible region (which includes outtransitions)
+    pruneKeyFrames();
     VAR_DEBUG(*this)(adjustment);
 }
 
@@ -224,6 +224,8 @@ std::map<pts, KeyFramePtr> ClipInterval::getKeyFramesOfPerceivedClip() const // 
     }
     return result;
 }
+
+
 
 KeyFramePtr ClipInterval::getDefaultKeyFrame() const
 {
@@ -364,6 +366,31 @@ void ClipInterval::removeKeyFrameAt(pts offset)
 void ClipInterval::setDefaultKeyFrame(KeyFramePtr keyframe)
 {
     mDefaultKeyFrame = keyframe;
+}
+
+void ClipInterval::pruneKeyFrames()
+{
+    auto it{ mKeyFrames.begin() };
+    if (it != mKeyFrames.end())
+    {
+        pts lowerBound{ getPerceivedOffset() };
+        pts upperBound{ getPerceivedOffset() + getPerceivedLength() };
+        while (it != mKeyFrames.end())
+        {
+            pts adjustedForSpeed{ model::Convert::positionToNewSpeed(it->first, getSpeed(), 1) };
+            if (adjustedForSpeed >= lowerBound && adjustedForSpeed <= upperBound)
+            {
+                // Key frame is ok
+                ++it;
+            }
+            else
+            {
+                // Key frame no longer visible. Remove to ensure that interpolated frames at the begin and/or end
+                // use the parameters from the first and/or last key frames, respectively.
+                it = mKeyFrames.erase(it);
+            }
+        }
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////
