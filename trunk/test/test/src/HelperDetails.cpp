@@ -30,6 +30,7 @@ gui::timeline::DetailsClip* DetailsClipView()
 KeyFrameValues::KeyFrameValues(model::IClipPtr clip)
     : mClip(clip)
     , mKeyFrameIndex{ boost::none }
+    , mKeyFrameOffset{ boost::none }
     , mOpacity{ boost::none }
     , mScaling{ boost::none }
     , mScalingFactor{ boost::none }
@@ -41,7 +42,12 @@ KeyFrameValues::KeyFrameValues(model::IClipPtr clip)
 
 KeyFrame::operator bool() const
 {
-    model::VideoClipKeyFramePtr keyFrame{ mKeyFrameIndex ? VideoKeyFrame(mClip, *mKeyFrameIndex) : DefaultVideoKeyFrame(mClip) };
+    std::pair<pts, model::VideoClipKeyFramePtr> pos_frame{ mKeyFrameIndex ? VideoKeyFrame(mClip, *mKeyFrameIndex) : std::make_pair(-1, DefaultVideoKeyFrame(mClip)) };
+    model::VideoClipKeyFramePtr keyFrame{ pos_frame.second };
+    if (mKeyFrameOffset)
+    {
+        ASSERT_EQUALS(*mKeyFrameOffset, pos_frame.first);
+    }
     if (mOpacity)
     {
         ASSERT_EQUALS(*mOpacity, keyFrame->getOpacity());

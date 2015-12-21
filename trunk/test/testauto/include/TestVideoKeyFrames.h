@@ -42,11 +42,15 @@ public:
 
     void testRemoveKeyFrames();
 
+    void testNavigation();
+
     void testSelectKeyFrameInTimeline();
 
     /// Verify that the default key frame gets the parameters from the last
     /// remaining key frame.
     void testRemoveLastKeyFrame();
+
+    void testKeyFramesOnBeginAndEndOfClip();
 
     void testGetKeyFrameWithoutOffset();
 

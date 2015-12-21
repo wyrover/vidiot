@@ -138,12 +138,12 @@ pts DetailsClip::getVideoKeyFrameOffset() const
     if (cursor <= firstFrame)
     {
         // Cursor before clip: use first frame
-        result = firstFrame;
+        result = 0;
     }
     else if (cursor >= lastFrame)
     {
         // Cursor after clip : use last frame
-        result = lastFrame;
+        result = lastFrame - firstFrame;
     }
     else
     {

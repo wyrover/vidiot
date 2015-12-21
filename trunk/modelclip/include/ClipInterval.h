@@ -150,6 +150,9 @@ protected:
 
     virtual KeyFramePtr interpolate(KeyFramePtr before, KeyFramePtr after, pts positionBefore, pts position, pts positionAfter) const = 0;
 
+    /// Remove any key frames that are no longer in the 'perceived clip area'.
+    void pruneKeyFrames();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////
