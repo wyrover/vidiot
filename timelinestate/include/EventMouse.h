@@ -35,84 +35,84 @@ struct EvMotion
     : public EvMouse
     , public boost::statechart::event< EvMotion >
 { 
-    explicit EvMotion(const wxMouseState& wx);
+    using EvMouse::EvMouse;
 };
 
 struct EvLeftDown
     : public EvMouse
     , public boost::statechart::event< EvLeftDown >
 { 
-    explicit EvLeftDown(const wxMouseState& wx);
+    using EvMouse::EvMouse;
 };
 
 struct EvLeftUp
     : public EvMouse
     , public boost::statechart::event< EvLeftUp >
 { 
-    explicit EvLeftUp(const wxMouseState& wx);
+    using EvMouse::EvMouse;
 };
 
 struct EvLeftDouble
     : public EvMouse
     , public boost::statechart::event< EvLeftDouble >
 { 
-    explicit EvLeftDouble(const wxMouseState& wx);
+    using EvMouse::EvMouse;
 };
 
 struct EvMiddleDown
     : public EvMouse
     , public boost::statechart::event< EvMiddleDown >
 { 
-    explicit EvMiddleDown(const wxMouseState& wx);
+    using EvMouse::EvMouse;
 };
 
 struct EvMiddleUp
     : public EvMouse
     , public boost::statechart::event< EvMiddleUp >
 { 
-    explicit EvMiddleUp(const wxMouseState& wx);
+    using EvMouse::EvMouse;
 };
 
 struct EvMiddleDouble
     : public EvMouse
     , public boost::statechart::event< EvMiddleDouble >
 { 
-    explicit EvMiddleDouble(const wxMouseState& wx);
+    using EvMouse::EvMouse;
 };
 
 struct EvRightDown
     : public EvMouse
     , public boost::statechart::event< EvRightDown >
 { 
-    explicit EvRightDown(const wxMouseState& wx);
+    using EvMouse::EvMouse;
 };
 
 struct EvRightUp
     : public EvMouse
     , public boost::statechart::event< EvRightUp >
 { 
-    explicit EvRightUp(const wxMouseState& wx);
+    using EvMouse::EvMouse;
 };
 
 struct EvRightDouble
     : public EvMouse
     , public boost::statechart::event< EvRightDouble >
 { 
-    explicit EvRightDouble(const wxMouseState& wx);
+    using EvMouse::EvMouse;
 };
 
 struct EvEnter
     : public EvMouse
     , public boost::statechart::event< EvEnter >
 { 
-    explicit EvEnter(const wxMouseState& wx);
+    using EvMouse::EvMouse;
 };
 
 struct EvLeave
     : public EvMouse
     , public boost::statechart::event< EvLeave >
 { 
-    explicit EvLeave(const wxMouseState& wx);
+    using EvMouse::EvMouse;
 };
 
 }}} // namespace

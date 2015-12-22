@@ -859,4 +859,163 @@ void TestVideoKeyFrames::testOutTransition()
     }
 }
 
+void TestVideoKeyFrames::testImage()
+{
+    StartTestSuite();
+    TimelineZoomIn(8);
+    ExtendSequenceWithStillImage(getSequence());
+    pixel KeyFrame2Pixel = HCenter(VideoClip(0, 7));
+    pixel KeyFrame1Pixel = KeyFrame2Pixel - 50;
+    pixel KeyFrame3Pixel = KeyFrame2Pixel + 50;
+    {
+        StartTest("Create key frames");
+        TimelineSelectClips({ VideoClip(0, 7) });
+        TimelinePositionCursor(KeyFrame1Pixel);
+        ButtonTriggerPressed(DetailsClipView()->getVideoKeyFramesAddButton());
+        TimelinePositionCursor(KeyFrame2Pixel);
+        ButtonTriggerPressed(DetailsClipView()->getVideoKeyFramesAddButton());
+        TimelinePositionCursor(KeyFrame3Pixel);
+        ButtonTriggerPressed(DetailsClipView()->getVideoKeyFramesAddButton());
+        TimelineKeyPress('v');
+        ASSERT_HISTORY_END(gui::timeline::cmd::EditClipDetails)(gui::timeline::cmd::EditClipDetails)(gui::timeline::cmd::EditClipDetails);
+        ASSERT_EQUALS(DetailsClipView()->getVideoKeyFrameButtonCount(), 3);
+    }
+    {
+        StartTest("Change key frames");
+        ButtonTriggerPressed(DetailsClipView()->getVideoKeyFrameButton(0));
+        SetValue(DetailsClipView()->getRotationSpin(), -180);
+        ButtonTriggerPressed(DetailsClipView()->getVideoKeyFrameButton(1));
+        SetValue(DetailsClipView()->getPositionXSlider(), -100);
+        SetValue(DetailsClipView()->getPositionYSlider(), 100);
+        SetValue(DetailsClipView()->getOpacitySlider(), 100);
+        SetValue(DetailsClipView()->getScalingSpin(), 0.5);
+        ButtonTriggerPressed(DetailsClipView()->getVideoKeyFrameButton(2));
+        SetValue(DetailsClipView()->getRotationSpin(), +180);
+    }
+    {
+        StartTest("Playback");
+        Play(KeyFrame1Pixel - 10, 3000);
+    }
+}
+
+void TestVideoKeyFrames::testMovingKeyFramePosition()
+{
+    StartTestSuite();
+    TimelineZoomIn(2);
+    pixel KeyFrame2Pixel{ HCenter(VideoClip(0, 4)) };
+    pixel KeyFrame1Pixel{ KeyFrame2Pixel - 50 };
+    pixel KeyFrame3Pixel{ KeyFrame2Pixel + 50 };
+    TimelineSelectClips({ VideoClip(0, 4) });
+    TimelinePositionCursor(KeyFrame1Pixel);
+    ButtonTriggerPressed(DetailsClipView()->getVideoKeyFramesAddButton());
+    TimelinePositionCursor(KeyFrame2Pixel);
+    ButtonTriggerPressed(DetailsClipView()->getVideoKeyFramesAddButton());
+    TimelinePositionCursor(KeyFrame3Pixel);
+    ButtonTriggerPressed(DetailsClipView()->getVideoKeyFramesAddButton());
+    std::map<pts, model::KeyFramePtr> keyframes{ getVideoClip(VideoClip(0,4))->getKeyFramesOfPerceivedClip() };
+    ASSERT_EQUALS(keyframes.size(), 3);
+    std::map<pixel, pts> mapPixelToPts 
+    {
+        { KeyFrame1Pixel, keyframes.begin()->first },
+        { KeyFrame2Pixel, std::next(keyframes.begin())->first },
+        { KeyFrame3Pixel, std::next(keyframes.begin(), 2)->first },
+    };
+    std::map<pixel, size_t> mapPixelToIndex
+    {
+        { KeyFrame1Pixel, 0 },
+        { KeyFrame2Pixel, 1 },
+        { KeyFrame3Pixel, 2 },
+    };
+    pixel y{ BottomPixel(VideoClip(0, 4)) - 2 };
+
+    auto CHECK_MOVE = [this, mapPixelToPts, mapPixelToIndex, y](pixel from, pixel distance, pts target)
+    {
+        size_t index{ mapPixelToIndex.find(from)->second };
+        pts original{ mapPixelToPts.find(from)->second };
+        TimelineMove(wxPoint(from, y));
+        TimelineLeftDown();
+        ASSERT(DetailsView(VideoClip(0, 4)).KeyFrameIndex(index));
+        ASSERT(KeyFrame(VideoClip(0, 4)).KeyFrameIndex(index).KeyFrameOffset(original));
+        TimelineMove(wxPoint(from + distance, y));
+        ASSERT(DetailsView(VideoClip(0, 4)).KeyFrameIndex(index));
+        ASSERT(KeyFrame(VideoClip(0, 4)).KeyFrameIndex(index).KeyFrameOffset(target));
+        TimelineLeftUp();
+        ASSERT(DetailsView(VideoClip(0, 4)).KeyFrameIndex(index));
+        ASSERT(DetailsView(VideoClip(0, 4)).KeyFrameIndex(index).KeyFrameOffset(target));
+        Undo();
+        ASSERT(KeyFrame(VideoClip(0, 4)).KeyFrameIndex(index).KeyFrameOffset(original));
+        TimelineSelectClips({});
+        ASSERT(DetailsView(nullptr));
+    };
+    {
+        StartTest("Left key frame");
+        CHECK_MOVE(KeyFrame1Pixel,  -10, mapPixelToPts[KeyFrame1Pixel] + getTimeline().getZoom().pixelsToPts(-10));
+        CHECK_MOVE(KeyFrame1Pixel,  +10, mapPixelToPts[KeyFrame1Pixel] + getTimeline().getZoom().pixelsToPts(+10));
+        CHECK_MOVE(KeyFrame1Pixel, -200, 0);
+        CHECK_MOVE(KeyFrame1Pixel, +200, mapPixelToPts[KeyFrame2Pixel] - 1);
+    }
+    {
+        StartTest("Middle key frame");
+        CHECK_MOVE(KeyFrame2Pixel, -10, mapPixelToPts[KeyFrame2Pixel] + getTimeline().getZoom().pixelsToPts(-10));
+        CHECK_MOVE(KeyFrame2Pixel, +10, mapPixelToPts[KeyFrame2Pixel] + getTimeline().getZoom().pixelsToPts(+10));
+        CHECK_MOVE(KeyFrame2Pixel, -200, mapPixelToPts[KeyFrame1Pixel] + 1);
+        CHECK_MOVE(KeyFrame2Pixel, +200, mapPixelToPts[KeyFrame3Pixel] - 1);
+    }
+    {
+        StartTest("Right key frame");
+        CHECK_MOVE(KeyFrame3Pixel, -10, mapPixelToPts[KeyFrame3Pixel] + getTimeline().getZoom().pixelsToPts(-10));
+        CHECK_MOVE(KeyFrame3Pixel, +10, mapPixelToPts[KeyFrame3Pixel] + getTimeline().getZoom().pixelsToPts(+10));
+        CHECK_MOVE(KeyFrame3Pixel, -200, mapPixelToPts[KeyFrame2Pixel] + 1);
+        CHECK_MOVE(KeyFrame3Pixel, +200, VideoClip(0,4)->getPerceivedLength() - 1);
+    }
+}
+
+void TestVideoKeyFrames::testEditingAfterMoving()
+{
+    StartTestSuite();
+    TimelineZoomIn(2);
+    pixel KeyFramePixel{ HCenter(VideoClip(0, 4)) };
+    TimelineSelectClips({ VideoClip(0, 4) });
+    TimelinePositionCursor(KeyFramePixel);
+    ButtonTriggerPressed(DetailsClipView()->getVideoKeyFramesAddButton());
+    pixel y{ BottomPixel(VideoClip(0, 4)) - 2 };
+    TimelineMove(wxPoint(KeyFramePixel, y));
+    TimelineLeftDown();
+    ASSERT(DetailsView(VideoClip(0, 4)).KeyFrameIndex(0));
+    ASSERT(KeyFrame(VideoClip(0, 4)).KeyFrameIndex(0));
+    TimelineMove(wxPoint(KeyFramePixel + 56, y));
+    ASSERT(DetailsView(VideoClip(0, 4)).KeyFrameIndex(0));
+    ASSERT(KeyFrame(VideoClip(0, 4)).KeyFrameIndex(0));
+    TimelineLeftUp();
+    SetValue(DetailsClipView()->getRotationSpin(), 97.7);
+    ASSERT(KeyFrame(VideoClip(0, 4)).KeyFrameIndex(0).Rotation(rational64{ 977,10 }));
+}
+
+void TestVideoKeyFrames::testAbortMovingKeyFrame()
+{
+    StartTestSuite();
+    TimelineZoomIn(2);
+    pixel KeyFramePixel{ HCenter(VideoClip(0, 4)) };
+    TimelineSelectClips({ VideoClip(0, 4) });
+    TimelinePositionCursor(KeyFramePixel);
+    ButtonTriggerPressed(DetailsClipView()->getVideoKeyFramesAddButton());
+    std::map<pts, model::KeyFramePtr> keyframes{ getVideoClip(VideoClip(0,4))->getKeyFramesOfPerceivedClip() };
+    pts pos{ keyframes.begin()->first };
+    ASSERT(KeyFrame(VideoClip(0, 4)).KeyFrameIndex(0).KeyFrameOffset(pos));
+    pixel y{ BottomPixel(VideoClip(0, 4)) - 2 };
+    TimelineMove(wxPoint(KeyFramePixel, y));
+    TimelineLeftDown();
+    ASSERT(DetailsView(VideoClip(0, 4)).KeyFrameIndex(0));
+    ASSERT(KeyFrame(VideoClip(0, 4)).KeyFrameIndex(0));
+    TimelineMove(wxPoint(KeyFramePixel + 56, y));
+    ASSERT(DetailsView(VideoClip(0, 4)).KeyFrameIndex(0));
+    ASSERT(KeyFrame(VideoClip(0, 4)).KeyFrameIndex(0));
+    TimelineKeyPress(WXK_ESCAPE);
+    TimelineLeftUp();
+    ASSERT(KeyFrame(VideoClip(0, 4)).KeyFrameIndex(0).KeyFrameOffset(pos));
+    ASSERT(DetailsView(VideoClip(0, 4)));
+    ASSERT(!DetailsClipView()->getRotationSlider()->IsEnabled()); // No key frame
+    ASSERT(DetailsClipView()->getVideoKeyFramesAddButton()->IsEnabled());
+}
+
 } // namespace

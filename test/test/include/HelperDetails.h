@@ -68,7 +68,7 @@ struct DefaultKeyFrame : public KeyFrame
 
 struct DetailsView : public KeyFrameValues
 {
-    using KeyFrameValues::KeyFrameValues; // todo use this inheriting constructors pg.596 trick more often (for example for the state events)
+    using KeyFrameValues::KeyFrameValues;
     operator bool() const override;
 };
 

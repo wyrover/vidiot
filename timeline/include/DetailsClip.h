@@ -263,12 +263,6 @@ private:
     model::AudioClipPtr getAudioClip(const model::IClipPtr& clip) const;
     model::TransitionPtr getTransition(const model::IClipPtr& clip) const;
 
-    /// \return replacement clip and clone. 
-    /// The return value is used to ensure proper lifetime.
-    /// mClip only maintains a weak reference to its link, thus until the link
-    /// is being made part of a track we'll need to keep the link copy in scope.
-    std::pair<model::IClipPtr, model::IClipPtr> replaceClipWithClone();
-
     std::map<pts, model::VideoClipKeyFramePtr> getVideoKeyFrames() const;
     pts getVideoKeyFrameOffset() const;
     model::VideoClipKeyFramePtr getVideoKeyFrame() const;

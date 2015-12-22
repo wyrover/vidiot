@@ -203,6 +203,25 @@ bool AClipEdit::isInitialized()
 }
 
 //////////////////////////////////////////////////////////////////////////
+// HELPER METHODS FOR OTHER CLASSES
+//////////////////////////////////////////////////////////////////////////
+
+// static 
+std::pair<model::IClipPtr, model::IClipPtr> AClipEdit::clone(model::IClipPtr clip)
+{
+    ASSERT_NONZERO(clip);
+    model::IClipPtr clipClone{ make_cloned<model::IClip>(clip) };
+    model::IClipPtr linkClone{ clip->getLink() ? make_cloned<model::IClip>(clip->getLink()) : nullptr };
+    if (linkClone)
+    {
+        clipClone->setLink(linkClone);
+        linkClone->setLink(clipClone);
+    }
+
+    return std::make_pair(clipClone, linkClone);
+}
+
+//////////////////////////////////////////////////////////////////////////
 // HELPER METHODS FOR SUBCLASSES
 //////////////////////////////////////////////////////////////////////////
 

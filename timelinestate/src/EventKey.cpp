@@ -60,24 +60,4 @@ std::ostream& operator<<(std::ostream& os, const EvKey& obj)
     return os;
 }
 
-EvKeyDown::EvKeyDown(wxKeyEvent& event)
-    : EvKey(event)
-{
-}
-
-EvKeyDown::EvKeyDown(wxMouseState& state, int key)
-    : EvKey(state,key)
-{
-}
-
-EvKeyUp::EvKeyUp(wxKeyEvent& event)
-    : EvKey(event)
-{
-}
-
-EvKeyUp::EvKeyUp(wxMouseState& state, int key)
-    : EvKey(state, key)
-{
-}
-
 }}} // namespace

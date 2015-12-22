@@ -17,6 +17,7 @@
 
 #include "DetailsClip.h"
 
+#include "AClipEdit.h"
 #include "ClipPreview.h"
 #include "CommandProcessor.h"
 #include "EditClipDetails.h"
@@ -80,26 +81,6 @@ model::TransitionPtr DetailsClip::getTransition(const model::IClipPtr& clip) con
         !clip ? nullptr :
         clip->isA<model::Transition>() ? boost::dynamic_pointer_cast<model::Transition>(clip) :
         nullptr;
-}
-
-std::pair<model::IClipPtr, model::IClipPtr> DetailsClip::replaceClipWithClone()
-{
-    ASSERT_NONZERO(mClip);
-    model::IClipPtr clipClone{ make_cloned<model::IClip>(mClip) };
-    model::IClipPtr linkClone{ mClip->getLink() ? make_cloned<model::IClip>(mClip->getLink()) : nullptr };
-    if (linkClone)
-    {
-        clipClone->setLink(linkClone);
-        linkClone->setLink(clipClone);
-    }
-
-    // The submission of the command will result in a newly selected clip: the clone
-    // Storing that clone as the current clip serves two purposes:
-    // - The first 'selectClip' after the submission is ignored (since it's the clone).
-    // - Undo will actually cause mClip to be selected again.
-    mClip = clipClone;
-
-    return std::make_pair(clipClone, linkClone);
 }
 
 std::map<pts, model::VideoClipKeyFramePtr> DetailsClip::getVideoKeyFrames() const
@@ -197,7 +178,8 @@ void DetailsClip::submitEditCommandUponAudioVideoEdit(const wxString& message, s
     {
         // Use new clones for the new command
         model::IClipPtr originalClip{ mClip };
-        std::pair<model::IClipPtr, model::IClipPtr> clones{ replaceClipWithClone() }; // Keep clones in scope to avoid the new clip's link being destructed
+        std::pair<model::IClipPtr, model::IClipPtr> clones{ cmd::AClipEdit::clone(mClip) }; // Keep clones in scope to avoid the new clip's link being destructed
+        mClip = clones.first;
 
         // Create the command - which replaces the original clip(s) with their changed clones - and add it to the undo system.
         mEditCommand = new cmd::EditClipDetails(getSequence(), message, originalClip, mClip);
@@ -273,7 +255,8 @@ void DetailsClip::createOrUpdateSpeedCommand(rational64 speed)
     }
 
     model::IClipPtr originalClip{ mClip };
-    std::pair<model::IClipPtr, model::IClipPtr> clones{ replaceClipWithClone() }; // Keep clones in scope to avoid the new clip's link being destructed
+    std::pair<model::IClipPtr, model::IClipPtr> clones{ cmd::AClipEdit::clone(mClip) }; // Keep clones in scope to avoid the new clip's link being destructed
+    mClip = clones.first;
 
     mEditSpeedCommand = new cmd::EditClipSpeed(getSequence(), originalClip, mClip, speed);
     ASSERT_NONZERO(mEditSpeedCommand);

@@ -76,6 +76,20 @@ public:
     /// \note May be empty if there are no specific key frames.
     std::map<pts, KeyFramePtr> getKeyFramesOfPerceivedClip() const;
 
+    /// Return the minimum and maximum positions allowed for a key frame
+    /// \param index number of the key frame
+    /// \return (min,max) allowed positions (cannot move 'over' other key frames)
+    std::pair<pts, pts> getKeyFrameBoundaries(size_t index) const;
+
+    /// \return the position (replative to 'getPerceivedOffset()') of the given key frame
+    /// \param index number of the key frame
+    pts getKeyFramePosition(size_t index) const;
+
+    /// Move a key frame backward or forward in time
+    /// \param index number of the key frame to be moved
+    /// \param offset new position (relative to 'getPerceivedOffset()')
+    void setKeyFramePosition(size_t index, pts offset);
+
     /// \return the always present default key frame (the parameters used when there are no key frames)
     KeyFramePtr getDefaultKeyFrame() const;
 

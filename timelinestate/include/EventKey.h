@@ -46,16 +46,14 @@ struct EvKeyDown
     : public EvKey
     , public boost::statechart::event< EvKeyDown >
 {
-    explicit EvKeyDown(wxKeyEvent& event);
-    explicit EvKeyDown(wxMouseState& state, int key);
+    using EvKey::EvKey;
 };
 
 struct EvKeyUp
     : public EvKey
     , public boost::statechart::event< EvKeyUp >
 {
-    explicit EvKeyUp(wxKeyEvent& event);
-    explicit EvKeyUp(wxMouseState& state, int key);
+    using EvKey::EvKey;
 };
 
 }}} // namespace
