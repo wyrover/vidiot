@@ -68,6 +68,14 @@ public:
 
     void testOutTransition();
 
+    void testImage();
+
+    void testMovingKeyFramePosition();
+
+    void testEditingAfterMoving();
+
+    void testAbortMovingKeyFrame();
+
 private:
 
     FixtureProject mProjectFixture;

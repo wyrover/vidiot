@@ -209,7 +209,7 @@ void ClipInterval::adjustEnd(pts adjustment)
 // KEY FRAMES
 //////////////////////////////////////////////////////////////////////////
 
-std::map<pts, KeyFramePtr> ClipInterval::getKeyFramesOfPerceivedClip() const // todo test imageclip
+std::map<pts, KeyFramePtr> ClipInterval::getKeyFramesOfPerceivedClip() const
 {
     std::map<pts, KeyFramePtr> result;
     pts lowerBound{ getPerceivedOffset() };
@@ -225,7 +225,76 @@ std::map<pts, KeyFramePtr> ClipInterval::getKeyFramesOfPerceivedClip() const // 
     return result;
 }
 
+std::pair<pts, pts> ClipInterval::getKeyFrameBoundaries(size_t index) const // todo into movekeyframeposition never used outside
+{
+    std::map<pts, KeyFramePtr> keyFrames{ getKeyFramesOfPerceivedClip() };
 
+    auto it{ std::next(keyFrames.begin(), index) };
+    ASSERT(it != keyFrames.end())(index)(keyFrames)(*this);
+
+    pts current{ it->first };
+
+    pts left{ 0 }; // For first frame the default
+
+    if (it != keyFrames.begin())
+    {
+        left = std::max(left, std::prev(it)->first + 1); // +1: Ensure that there always remains a diff of at least '1' between two consecutive key frames
+    }
+
+    pts right{ getPerceivedLength() - 1}; // For last frame the default.
+
+    if (std::next(it) != keyFrames.end())
+    {
+        right = std::min(right, std::next(it)->first - 1); // -1: Ensure that there always remains a diff of at least '1' between two consecutive key frames
+    }
+
+    return std::make_pair(left, right);
+}
+
+pts ClipInterval::getKeyFramePosition(size_t index) const
+{
+    std::map<pts, KeyFramePtr> keyFrames{ getKeyFramesOfPerceivedClip() };
+    auto it{ std::next(keyFrames.begin(), index) };
+    ASSERT(it != keyFrames.end())(index)(*this);
+    return it->first;
+}
+
+void ClipInterval::setKeyFramePosition(size_t index, pts offset)
+{
+    ASSERT_MORE_THAN_EQUALS_ZERO(offset)(*this);
+    ASSERT_LESS_THAN_EQUALS(offset, getPerceivedOffset() + getPerceivedLength() - 1)(*this);
+
+    // Convert back to offset '0' (input time == no offset)
+    offset += getPerceivedOffset();
+
+    // Convert back to 1:1 speed
+    pts offsetWithSpeed{ model::Convert::positionToNewSpeed(offset, 1, getSpeed()) };
+
+    size_t nKeyFrames{ mKeyFrames.size() };
+    auto it{ std::next(mKeyFrames.begin(), index) };
+    ASSERT(it != mKeyFrames.end())(index)(offset)(*this);
+
+    if (it != mKeyFrames.begin())
+    {
+        ASSERT_MORE_THAN(offset, std::prev(it)->first)(index)(offset)(*this);
+    }
+    if (std::next(it) != mKeyFrames.end())
+    {
+        ASSERT_LESS_THAN(offset, std::next(it)->first)(index)(offset)(*this);
+    }
+    if (mKeyFrames.find(offset) != mKeyFrames.end())
+    {
+        // Can happen during moving from the timeline. Initial events with diff '0' are generated.
+        return;
+    }
+
+    model::KeyFramePtr keyFrame{ it->second };
+    mKeyFrames.erase(it);
+    mKeyFrames[offset] = keyFrame;
+    ASSERT_EQUALS(nKeyFrames, mKeyFrames.size())(index)(offset)(*this);
+    EventChangeClipKeyFrames event(0);
+    ProcessEvent(event);
+}
 
 KeyFramePtr ClipInterval::getDefaultKeyFrame() const
 {

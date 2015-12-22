@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-12-21 14:09+0100\n"
+"POT-Creation-Date: 2015-12-22 14:24+0100\n"
 "PO-Revision-Date: 2015-11-04 15:44+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -1242,14 +1242,14 @@ msgstr "Fehler im Video-Codec"
 msgid "There was an error when opening the video codec."
 msgstr "Es gab einen Fehler beim Öffnen der Video-Codec."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_GuiEvents.cpp:494
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_GuiEvents.cpp:504
 msgid ""
 "Could not execute the length change without messing up clips in other tracks."
 msgstr ""
 "Die Längenänderung wurde die ordnung von Clips in anderen Spuren "
 "Durcheinander bringen. Deshalb ist Sie nicht ausgeführt."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_GuiEvents.cpp:500
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_GuiEvents.cpp:510
 msgid "Set length of clip"
 msgstr "Einstellen der Länge vom Clip"
 

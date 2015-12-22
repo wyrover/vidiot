@@ -46,6 +46,7 @@
 #include "StateDragging.h"
 #include "StateLeftDown.h"
 #include "StateMoveDivider.h"
+#include "StateMoveKeyFrame.h"
 #include "StateMoveTrackDivider.h"
 #include "StateMovingCursor.h"
 #include "StatePlaying.h"
@@ -313,7 +314,11 @@ void Idle::updateMouseCursor()
         }
         else
         {
-            if (info.clip)
+            if (info.keyframe)
+            {
+                // Do not change cursor. Otherwise, it's hard to click on the key frame.
+            }
+            else if (info.clip)
             {
                 switch (info.logicalclipposition)
                 {
@@ -362,6 +367,7 @@ boost::statechart::result Idle::leftDown()
             auto it{ std::next(keyFrames.begin(), count) };
             ASSERT(it != keyFrames.end())(keyFrames)(count)(info);
             getCursor().setLogicalPosition(interval->getPerceivedLeftPts() + it->first);
+            return transit<MoveKeyFrame>(); // todo manual for key frames
         }
         else if (info.clip && !info.clip->isA<model::EmptyClip>())
         {

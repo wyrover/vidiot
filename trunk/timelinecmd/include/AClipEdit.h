@@ -119,6 +119,17 @@ public:
     /// before the command is actually submitted.
     void revert();
 
+    //////////////////////////////////////////////////////////////////////////
+    // HELPER METHODS FOR OTHER CLASSES
+    //////////////////////////////////////////////////////////////////////////
+
+    /// Make clones of the given clip and its link (if any).
+    /// If the clip is linked, then both the clip and its link are cloned.
+    /// In that case, the two clones are linked also.
+    /// \param clip clip to be cloned
+    /// \return clone of clip, and clone of the link of the clip (if any)
+    static std::pair<model::IClipPtr, model::IClipPtr> clone(model::IClipPtr clip);
+
 protected:
 
     //////////////////////////////////////////////////////////////////////////
