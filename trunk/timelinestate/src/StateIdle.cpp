@@ -367,7 +367,7 @@ boost::statechart::result Idle::leftDown()
             auto it{ std::next(keyFrames.begin(), count) };
             ASSERT(it != keyFrames.end())(keyFrames)(count)(info);
             getCursor().setLogicalPosition(interval->getPerceivedLeftPts() + it->first);
-            return transit<MoveKeyFrame>(); // todo manual for key frames
+            return transit<MoveKeyFrame>();
         }
         else if (info.clip && !info.clip->isA<model::EmptyClip>())
         {
