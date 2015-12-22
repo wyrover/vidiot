@@ -27,7 +27,6 @@
 #include "EventPart.h"
 #include "Mouse.h"
 #include "StateIdle.h"
-#include "UtilClone.h" // todo remove
 #include "UtilLog.h"
 #include "ViewMap.h"
 

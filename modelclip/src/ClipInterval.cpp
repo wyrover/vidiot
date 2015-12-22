@@ -225,7 +225,7 @@ std::map<pts, KeyFramePtr> ClipInterval::getKeyFramesOfPerceivedClip() const
     return result;
 }
 
-std::pair<pts, pts> ClipInterval::getKeyFrameBoundaries(size_t index) const // todo into movekeyframeposition never used outside
+std::pair<pts, pts> ClipInterval::getKeyFrameBoundaries(size_t index) const
 {
     std::map<pts, KeyFramePtr> keyFrames{ getKeyFramesOfPerceivedClip() };
 
