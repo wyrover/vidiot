@@ -479,7 +479,7 @@ void TestTimeline::testDividers()
     const pixel fixedX = 100; // Fixed x position on timeline
     const pixel moveToMiddleOfDivider = 2; // Click somewhere in the middle of a divider
 
-    auto DragDivider = [fixedX,moveToMiddleOfDivider](pixel from, pixel to)
+    auto DragDivider = [&](pixel from, pixel to)
     {
         wxPoint original(fixedX, from + moveToMiddleOfDivider);
         wxPoint adjusted(fixedX, to + moveToMiddleOfDivider);

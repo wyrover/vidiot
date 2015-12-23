@@ -24,16 +24,6 @@ namespace model {
 
 DEFINE_EVENT(EVENT_CLIPS_REPLACED,      EventClipsReplaced,     MoveParameter);
 
-MoveParameter::MoveParameter()
-:   addTrack()
-,   addPosition()
-,   addClips()
-,   removeTrack()
-,   removePosition()
-,   removeClips()
-{
-}
-
 MoveParameter::MoveParameter(const TrackPtr& _addTrack, const IClipPtr& _addPosition, const IClips& _addClips, const TrackPtr& _removeTrack, const IClipPtr& _removePosition, const IClips& _removeClips)
 :   addTrack(_addTrack)
 ,   addPosition(_addPosition)

@@ -56,7 +56,7 @@ struct MoveParameter
     IClips removeClips;
 
     /// Empty constructor (used to avoid 'no appropriate default ctor' error messages after I added the other constructor).
-    MoveParameter();
+    MoveParameter() = default;
 
     /// Helper constructor to initialize all members in one statement.
     MoveParameter(

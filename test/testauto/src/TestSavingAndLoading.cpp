@@ -208,7 +208,7 @@ void TestSavingAndLoading::testBackupBeforeSave()
     DirAndFile tempDir_fileName = SaveProject(tempDirProject);
     wxString ExpectedContents = getSavedFileContents(existingFile);
 
-    auto ASSERT_FILE_CREATED = [ExpectedContents](wxFileName prefix, int count)
+    auto ASSERT_FILE_CREATED = [&](wxFileName prefix, int count)
     {
         wxFileName filename = model::Project::createBackupFileName(prefix,count);
         ASSERT(wxFile::Exists(filename.GetFullPath()));

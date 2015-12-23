@@ -52,7 +52,7 @@ void TestTitles::testFileTypes()
 
     model::SequencePtr sequence = getSequence();
 
-    auto getPixel = [sequence](int x, int y) -> boost::tuple<int, int, int>
+    auto getPixel = [&](int x, int y) -> boost::tuple<int, int, int>
     {
         TimelinePositionCursor(0);
         return util::thread::RunInMainReturning<boost::tuple<int, int, int>>([sequence, x, y]() -> boost::tuple<int, int, int>
