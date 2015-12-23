@@ -53,83 +53,49 @@ const int File::LENGTH_UNDEFINED = std::numeric_limits<int>::max();
 //////////////////////////////////////////////////////////////////////////
 
 File::File()
-    : IFile()
-    , Node()
+    : IFile{}
+    , Node{}
     // Attributes
     , mPath()
     , mName()
     , mNumberOfFrames(boost::none)
-    , mHasVideo(false)
-    , mHasAudio(false)
-    // Status of opening
-    , mMetaDataKnown(false)
-    , mFileOpened(false)
-    , mFileOpenedOk(false)
-    , mReadingPackets(false)
-    , mEOF(false)
-    // AVCodec access
-    , mFileContext(0)
-    , mStreamIndex(STREAMINDEX_UNDEFINED)
     // Buffering
-    , mMaxBufferSize(0)
-    , mPackets(1)
-    , mBufferPacketsThreadPtr()
-    , mTwoInARow(0)
+    , mMaxBufferSize{ 0 }
+    , mPackets{ 1 }
 {
     VAR_DEBUG(this);
 }
 
 File::File(const wxFileName& path, int buffersize)
-    : IFile()
-    , Node()
+    : IFile{}
+    , Node{}
     // Attributes
     , mPath(path)
     , mName()
     , mNumberOfFrames(boost::none)
-    , mHasVideo(false)
-    , mHasAudio(false)
-    // Status of opening
-    , mMetaDataKnown(false)
-    , mFileOpened(false)
-    , mFileOpenedOk(false)
-    , mReadingPackets(false)
-    , mEOF(false)
-    // AVCodec access
-    , mFileContext(0)
-    , mStreamIndex(STREAMINDEX_UNDEFINED)
     // Buffering
     , mMaxBufferSize(buffersize)
     , mPackets(1)
-    , mBufferPacketsThreadPtr()
-    , mTwoInARow(0)
 {
     VAR_DEBUG(this);
     readMetaData();
 }
 
 File::File(const File& other)
-    : IFile()
-    , Node()
+    : IFile{}
+    , Node{}
     // Attributes
-    , mPath(other.mPath)
-    , mName(other.mName)
-    , mNumberOfFrames(other.mNumberOfFrames)
-    , mHasVideo(other.mHasVideo)
-    , mHasAudio(other.mHasAudio)
+    , mPath{ other.mPath }
+    , mName{ other.mName }
+    , mNumberOfFrames{ other.mNumberOfFrames }
+    , mHasVideo{ other.mHasVideo }
+    , mHasAudio{ other.mHasAudio }
     // Status of opening
-    , mMetaDataKnown(other.mMetaDataKnown)
-    , mFileOpened(false)
-    , mFileOpenedOk(other.mFileOpenedOk)
-    , mReadingPackets(false)
-    , mEOF(false)
-    // AVCodec access
-    , mFileContext(0)
-    , mStreamIndex(STREAMINDEX_UNDEFINED)
+    , mMetaDataKnown{ other.mMetaDataKnown }
+    , mFileOpenedOk{ other.mFileOpenedOk }
     // Buffering
-    , mMaxBufferSize(other.mMaxBufferSize)
-    , mPackets(1)
-    , mBufferPacketsThreadPtr()
-    , mTwoInARow(0)
+    , mMaxBufferSize{ other.mMaxBufferSize }
+    , mPackets{ 1 }
 {
     VAR_DEBUG(this);
 }

@@ -54,7 +54,7 @@ void TestDetailsClip::testChangeLength()
     ASSERT_SELECTION_SIZE(1); // Clip and link selected
     pts originalLength = VideoClip(0, 3)->getLength();
 
-    auto pressLengthButton = [this](wxToggleButton* button, bool enlarge, bool begin) -> int
+    auto pressLengthButton = [&](wxToggleButton* button, bool enlarge, bool begin) -> int
     {
         pts oldLength = VideoClip(0, 3)->getLength();
         std::ostringstream o;
@@ -173,7 +173,7 @@ void TestDetailsClip::testChangeLengthOfTransition()
     TimelineZoomIn(6);
     WindowTriggerMenu(ID_SHOW_PROJECT);
 
-    auto selectClipAndPressLengthButtons = [this] (std::vector<int> enabledButtons, std::vector<int> disabledButtons)
+    auto selectClipAndPressLengthButtons = [&] (std::vector<int> enabledButtons, std::vector<int> disabledButtons)
     {
         TimelineLeftClick(VTopQuarterHCenter(VideoClip(0,2))); // Select transition
         ASSERT(DetailsView(VideoClip(0,2)));
@@ -232,7 +232,7 @@ void TestDetailsClip::testChangeLengthAfterCreatingTransition()
     TimelineZoomIn(2);
     WindowTriggerMenu(ID_SHOW_PROJECT);
 
-    auto pressLengthButtons = [this] (std::string name, std::vector<int> enabledButtons, std::vector<int> disabledButtons)
+    auto pressLengthButtons = [&] (std::string name, std::vector<int> enabledButtons, std::vector<int> disabledButtons)
     {
         for (int index : disabledButtons)
         {
@@ -570,7 +570,7 @@ void TestDetailsClip::testChangeVolume()
         ASSERT_EQUALS(audioclip->getVolume(), 100);
     }
 
-    auto ASSERT_VOLUME = [parameters](model::AudioClipPtr audioclip, int32_t volume, model::AudioChunkPtr referenceChunk)
+    auto ASSERT_VOLUME = [&](model::AudioClipPtr audioclip, int32_t volume, model::AudioChunkPtr referenceChunk)
     {
         ASSERT_EQUALS(audioclip->getVolume(),volume);
         audioclip->moveTo(10);

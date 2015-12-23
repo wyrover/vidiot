@@ -74,7 +74,7 @@ void TestTrimming::testKeyboardTrimming()
     StartTestSuite();
     TimelineZoomIn(3);
 
-    auto TestBeginTrimSucceeds = [this](wxString title)
+    auto TestBeginTrimSucceeds = [&](wxString title)
     {
         StartTest(title);
         TimelinePositionCursor(HCenter(VideoClip(0,2)));
@@ -86,7 +86,7 @@ void TestTrimming::testKeyboardTrimming()
         ASSERT_EQUALS(getTimeline().getCursor().getLogicalPosition(), VideoClip(0,2)->getLeftPts());
     };
 
-    auto TestEndTrimSucceeds = [this](wxString title)
+    auto TestEndTrimSucceeds = [&](wxString title)
     {
         StartTest(title);
         TimelinePositionCursor(HCenter(VideoClip(0,2)));
@@ -98,14 +98,14 @@ void TestTrimming::testKeyboardTrimming()
         ASSERT_EQUALS(getTimeline().getCursor().getLogicalPosition(), VideoClip(0,2)->getRightPts());
     };
 
-    auto TestBeginTrimImpossible = [this](wxString title)
+    auto TestBeginTrimImpossible = [&](wxString title)
     {
         StartTest(title);
         TimelinePositionCursor(HCenter(VideoClip(0,2)));
         TimelineKeyPress('b');
     };
 
-    auto TestEndTrimImpossible = [this](wxString title)
+    auto TestEndTrimImpossible = [&](wxString title)
     {
         StartTest(title);
         TimelinePositionCursor(HCenter(VideoClip(0,2)));

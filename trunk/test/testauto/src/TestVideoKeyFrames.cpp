@@ -215,7 +215,7 @@ void TestVideoKeyFrames::testRemoveKeyFrames()
     pixel KeyFrame3Pixel{ KeyFrame2Pixel + 100 };
     TimelineSelectClips({ VideoClip(0,4) });
 
-    auto ASSERT_KEYFRAMES = [this](std::vector<pixel> positions)
+    auto ASSERT_KEYFRAMES = [&](std::vector<pixel> positions)
     {
         model::VideoClipPtr videoclip{ getVideoClip(VideoClip(0,4)) };
         std::map<pts, model::KeyFramePtr> keyFrames{ videoclip->getKeyFramesOfPerceivedClip() };
@@ -290,7 +290,7 @@ void TestVideoKeyFrames::testNavigation()
         ASSERT_EQUALS(3, getVideoClip(VideoClip(0, 4))->getKeyFramesOfPerceivedClip().size());
         ASSERT_EQUALS(3, DetailsClipView()->getVideoKeyFrameButtonCount());
     }
-    auto CHECK_BUTTON = [this](pixel from, wxButton* button, pixel to, size_t keyFrameIndex)
+    auto CHECK_BUTTON = [&](pixel from, wxButton* button, pixel to, size_t keyFrameIndex)
     {
         TimelinePositionCursor(from);
         ButtonTriggerPressed(button);
@@ -928,7 +928,7 @@ void TestVideoKeyFrames::testMovingKeyFramePosition()
     };
     pixel y{ BottomPixel(VideoClip(0, 4)) - 2 };
 
-    auto CHECK_MOVE = [this, mapPixelToPts, mapPixelToIndex, y](pixel from, pixel distance, pts target)
+    auto CHECK_MOVE = [&](pixel from, pixel distance, pts target)
     {
         size_t index{ mapPixelToIndex.find(from)->second };
         pts original{ mapPixelToPts.find(from)->second };

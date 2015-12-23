@@ -53,7 +53,7 @@ void TestScrolling::testScrollbarRepositioningAfterChangingZoom()
         getTimeline().getCursor().setLogicalPosition(center); 
     });
 
-    auto ASSERT_CURSOR_CENTERED = [this,center](rational64 zoom)
+    auto ASSERT_CURSOR_CENTERED = [&](rational64 zoom)
     {
         ASSERT_EQUALS(getTimeline().getZoom().getCurrent(), zoom);
         ASSERT_MORE_THAN_EQUALS(getTimeline().getScrolling().getCenterPts(), center - 1); // Adjust for rounding diffs

@@ -163,25 +163,25 @@ private:
     wxFileName mPath;
     wxString mName;
     mutable boost::optional<pts> mNumberOfFrames;
-    bool mHasVideo;
-    bool mHasAudio;
+    bool mHasVideo = false;
+    bool mHasAudio = false;
 
     // Status of opening
-    bool mMetaDataKnown;    ///< True if the meta data (file path exists, canBeOpened) has been retrieved.
-    bool mFileOpened;       ///< True if the file open has been done. Note: The file open may have failed.
-    bool mFileOpenedOk;     ///< True if the file has been opened, with success.
-    bool mReadingPackets;
-    bool mEOF;
+    bool mMetaDataKnown = false;    ///< True if the meta data (file path exists, canBeOpened) has been retrieved.
+    bool mFileOpened = false;       ///< True if the file open has been done. Note: The file open may have failed.
+    bool mFileOpenedOk = false;     ///< True if the file has been opened, with success.
+    bool mReadingPackets = false;
+    bool mEOF = false;
 
     // AVCodec access
-    AVFormatContext* mFileContext;
-    int mStreamIndex;
+    AVFormatContext* mFileContext = nullptr;
+    int mStreamIndex = STREAMINDEX_UNDEFINED;
 
     // Buffering
-    int mMaxBufferSize;
+    int mMaxBufferSize = 0;
     FifoPacket mPackets; ///< Holds retrieved packets until extracted with getNextPacket()
-    int mTwoInARow;
-    boost::scoped_ptr<boost::thread> mBufferPacketsThreadPtr;
+    int mTwoInARow = 0;
+    std::unique_ptr<boost::thread> mBufferPacketsThreadPtr = nullptr;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
