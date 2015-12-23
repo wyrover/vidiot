@@ -460,6 +460,7 @@ void DetailsClip::updateVideoKeyFrameControls()
     if (!videoclip) { return; }
     model::VideoClipKeyFramePtr videoKeyFrame{ getVideoKeyFrame() };
     ASSERT_NONZERO(videoKeyFrame);
+    std::map<pts, model::VideoClipKeyFramePtr> keyframes{ getVideoKeyFrames() };
 
     rational64 factor{ videoKeyFrame->getScalingFactor() };
     rational64 rotation{ videoKeyFrame->getRotation() };
@@ -475,6 +476,15 @@ void DetailsClip::updateVideoKeyFrameControls()
     mScalingSlider->SetValue(factorToSliderValue(factor));
     mScalingSpin->SetValue(boost::rational_cast<double>(factor));
 
+    // In case of no key frames, rotation ranges from -180 to 180.
+    // In case of key frames, multiple rotations can be set (to show a rotating clip).
+    int rotationMin{ keyframes.empty() ? sRotationMinNoKeyFrames : sRotationMinKeyFrames };
+    int rotationMax{ keyframes.empty() ? sRotationMaxNoKeyFrames : sRotationMaxKeyFrames };
+    mRotationSlider->SetMin(rotationMin);
+    mRotationSlider->SetMax(rotationMax);
+    mRotationSpin->SetRange(
+        static_cast<double>(rotationMin) / static_cast<double>(sRotationPrecisionFactor),
+        static_cast<double>(rotationMax) / static_cast<double>(sRotationPrecisionFactor));
     mRotationSlider->SetValue(boost::rational_cast<int>(rotation * sRotationPrecisionFactor));
     mRotationSpin->SetValue(boost::rational_cast<double>(rotation));
 
@@ -501,7 +511,6 @@ void DetailsClip::updateVideoKeyFrameControls()
     mPositionYSlider->Enable(!videoKeyFrame->isInterpolated());
     mPositionYSpin->Enable(!videoKeyFrame->isInterpolated());
 
-    std::map<pts, model::VideoClipKeyFramePtr> keyframes{ getVideoKeyFrames() };
     if (mVideoKeyFramesPanel->GetChildren().size() != keyframes.size())
     {
         for (auto button : mVideoKeyFrames) { button.second->Unbind(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, &DetailsClip::onVideoKeyFrameButtonPressed, this); }

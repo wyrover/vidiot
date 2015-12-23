@@ -58,8 +58,10 @@ public:
     static constexpr int sRotationPrecision = 2;
     static const int sRotationPrecisionFactor;
     static const int sRotationPageSize;
-    static const int sRotationMin;
-    static const int sRotationMax;
+    static const int sRotationMinNoKeyFrames;
+    static const int sRotationMaxNoKeyFrames;
+    static const int sRotationMinKeyFrames;
+    static const int sRotationMaxKeyFrames;
 
     static constexpr int sFactorPrecision = 2;
     static const int sFactorPrecisionFactor;
