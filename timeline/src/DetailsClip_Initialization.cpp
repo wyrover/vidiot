@@ -37,8 +37,10 @@ constexpr int sVolumePageSize = 10;
 
 const int DetailsClip::sRotationPrecisionFactor = static_cast<int>(pow(10.0, DetailsClip::sRotationPrecision)); ///< 10^sRotationPrecision
 const int DetailsClip::sRotationPageSize = DetailsClip::sRotationPrecisionFactor / 10; // 0.1
-const int DetailsClip::sRotationMin = -180 * DetailsClip::sRotationPrecisionFactor;
-const int DetailsClip::sRotationMax = 180 * DetailsClip::sRotationPrecisionFactor;
+const int DetailsClip::sRotationMinNoKeyFrames = -180 * DetailsClip::sRotationPrecisionFactor;
+const int DetailsClip::sRotationMaxNoKeyFrames = 180 * DetailsClip::sRotationPrecisionFactor;
+const int DetailsClip::sRotationMinKeyFrames = -1800 * DetailsClip::sRotationPrecisionFactor;
+const int DetailsClip::sRotationMaxKeyFrames = 1800 * DetailsClip::sRotationPrecisionFactor;
 
 const int DetailsClip::sFactorPrecisionFactor = static_cast<int>(pow(10.0, sFactorPrecision)); ///< 10^sFactorPrecision
 const int DetailsClip::sFactorPageSize = sFactorPrecision / 10; // 0.1
@@ -150,15 +152,15 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
 
     mRotationPanel = new wxPanel(this);
     wxBoxSizer* rotationsizer = new wxBoxSizer(wxHORIZONTAL);
-    mRotationSlider = new wxSlider(mRotationPanel,wxID_ANY, 1 * sRotationPrecisionFactor, sRotationMin, sRotationMax);
+    mRotationSlider = new wxSlider(mRotationPanel,wxID_ANY, 1 * sRotationPrecisionFactor, sRotationMinNoKeyFrames, sRotationMaxNoKeyFrames);
     mRotationSlider->SetPageSize(sRotationPageSize);
     mRotationSpin = new wxSpinCtrlDouble(mRotationPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(55,-1));
     mRotationSpin->SetWindowVariant( wxWINDOW_VARIANT_SMALL );
     mRotationSpin->SetDigits(sRotationPrecision);
     mRotationSpin->SetValue(0); // No rotation
     mRotationSpin->SetRange(
-        static_cast<double>(sRotationMin) / static_cast<double>(sRotationPrecisionFactor),
-        static_cast<double>(sRotationMax) / static_cast<double>(sRotationPrecisionFactor));
+        static_cast<double>(sRotationMinNoKeyFrames) / static_cast<double>(sRotationPrecisionFactor),
+        static_cast<double>(sRotationMaxNoKeyFrames) / static_cast<double>(sRotationPrecisionFactor));
     mRotationSpin->SetIncrement(sRotationIncrement);
     rotationsizer->Add(mRotationSlider, wxSizerFlags(1).Expand());
     rotationsizer->Add(mRotationSpin, wxSizerFlags(0));
