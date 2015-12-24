@@ -233,7 +233,7 @@ void save(Archive & ar, const wxDateTime & datetime, const unsigned int version)
 {
     try
     {
-        wxString date{datetime.FormatISOCombined()};
+        wxString date{ datetime.IsValid() ? datetime.FormatISOCombined() : wxDateTime::UNow().FormatISOCombined() };
         ar & boost::serialization::make_nvp(sDateTime.c_str(), date);
     }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
@@ -249,6 +249,10 @@ void load(Archive & ar, wxDateTime & datetime, const unsigned int version)
         wxString s;
         ar & boost::serialization::make_nvp(sDateTime.c_str(), s);
         datetime.ParseISOCombined(s);
+        if (!datetime.IsValid())
+        {
+            datetime = wxDateTime::UNow();
+        }
     }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
     catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
