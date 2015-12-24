@@ -251,7 +251,7 @@ DialogOptions::DialogOptions(wxWindow* win)
         mSelectLogLevel = new EnumSelector<LogLevel>(mPanel, LogLevelConverter::getMapToHumanReadibleString(), LogLevelConverter::readConfigValue(Config::sPathDebugLogLevel));
         addoption(_("Log level"), mSelectLogLevel);
 
-        mSelectLogLevelAvcodec = new EnumSelector<int>(mPanel, Avcodec::mapAvcodecLevels, UtilMap<int,wxString>(Avcodec::mapAvcodecLevels).reverseLookup(Config::ReadString(Config::sPathDebugLogLevelAvcodec), Avcodec::getDefaultLogLevel()));
+        mSelectLogLevelAvcodec = new EnumSelector<LogLevelAvcodec>(mPanel, LogLevelAvcodecConverter::getMapToHumanReadibleString(), LogLevelAvcodecConverter::readConfigValue(Config::sPathDebugLogLevelAvcodec));
         addoption(_("Avcodec log level") + sRestart, mSelectLogLevelAvcodec);
 
         mShowDebugInfoOnWidgets = new wxCheckBox(mPanel, wxID_ANY, _T(""));
@@ -294,7 +294,7 @@ DialogOptions::~DialogOptions()
         Config::WriteLong(Config::sPathMakeSequenceEmptyClipLength, mMakeSequenceEmptyLength->GetValue());
         Config::WriteLong(Config::sPathMakeSequencePrefixLength, mMakeSequencePrefixLength->GetValue());
         Config::WriteString(Config::sPathDebugLogLevel, LogLevel_toString(mSelectLogLevel->getValue()).c_str());
-        Config::WriteString(Config::sPathDebugLogLevelAvcodec, Avcodec::mapAvcodecLevels[mSelectLogLevelAvcodec->getValue()]);
+        Config::WriteString(Config::sPathDebugLogLevelAvcodec, LogLevelAvcodec_toString(mSelectLogLevelAvcodec->getValue()).c_str());
         Config::WriteBool(Config::sPathDebugShowDebugInfoOnWidgets, mShowDebugInfoOnWidgets->IsChecked());
         Config::WriteBool(Config::sPathDebugLogSequenceOnEdit, mLogSequenceOnEdit->IsChecked());
         Config::WriteString(Config::sPathVideoDefaultFrameRate, (FrameRate::getSupported()[mFrameRate->GetSelection()]).toString());

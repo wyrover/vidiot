@@ -17,8 +17,9 @@
 
 #pragma once
 
-#include "UtilEnumSelector.h"
 #include "Enums.h"
+#include "UtilEnumSelector.h"
+#include "UtilInitAvcodec.h"
 
 namespace gui {
 
@@ -67,7 +68,7 @@ private:
     wxListBox*              mLanguage;
 
     EnumSelector<LogLevel>* mSelectLogLevel;
-    EnumSelector<int>*      mSelectLogLevelAvcodec;
+    EnumSelector<LogLevelAvcodec>* mSelectLogLevelAvcodec;
     wxChoice*               mLogLevelAvcodec;
     wxCheckBox*             mShowDebugInfoOnWidgets;
     wxCheckBox*             mLogSequenceOnEdit;
