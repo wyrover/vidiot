@@ -244,12 +244,16 @@ void VideoDisplay::stop()
                 // That is probably caused by the stream not being
                 // fully stopped after aborting. Then, the subsequent
                 // Pa_CloseStream seems to trigger the crash/hangup.
-                PaError err = Pa_StopStream(mAudioOutputStream);
+                PaError err{ Pa_StopStream(mAudioOutputStream) };
                 ASSERT_EQUALS(err, paNoError)(Pa_GetErrorText(err));
             }
-            ASSERT_EQUALS(Pa_IsStreamStopped(mAudioOutputStream), 1);
+            if (Pa_IsStreamStopped(mAudioOutputStream) != 1)
+            {
+                PaError err{ Pa_IsStreamStopped(mAudioOutputStream) };
+                VAR_ERROR(err)(Pa_GetErrorText(err));
+            }
 
-            PaError err = Pa_CloseStream(mAudioOutputStream);
+            PaError err{ Pa_CloseStream(mAudioOutputStream) };
             ASSERT_EQUALS(err, paNoError)(Pa_GetErrorText(err));
         }
         mAudioOutputStream = nullptr;

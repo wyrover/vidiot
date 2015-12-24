@@ -24,10 +24,13 @@
 
 namespace model {
 
-struct FileMetaData
-{
-    FileMetaData() {}
-    explicit FileMetaData(wxDateTime lastmodified) : LastModified(lastmodified) {}
+    struct FileMetaData
+    {
+        FileMetaData() {}
+        explicit FileMetaData(wxDateTime lastmodified)
+            : LastModified{ lastmodified.IsValid() ? lastmodified : wxDateTime::UNow() } // !IsValid: Could happen if file was deleted just before the cache entry is created.
+    {
+    }
 
     wxDateTime LastModified;
     boost::optional<pts> Length = boost::none;
@@ -99,6 +102,7 @@ FileMetaDataPtr FileMetaDataCache::getDataForFile(const wxFileName& file)
         wxDateTime currentFileTime{ file.GetModificationTime() };
         ASSERT(currentFileTime.IsValid())(file);
         wxDateTime cachedFileTime{ data->LastModified };
+        ASSERT(cachedFileTime.IsValid())(file);
         currentFileTime.SetMillisecond(0); // Sometimes get 012 milliseconds changes within
         cachedFileTime.SetMillisecond(0);  // one test case. Ignore changes < 1 second.
         if (!currentFileTime.IsEqualTo(cachedFileTime))
