@@ -295,7 +295,7 @@ void FileWatcher::start()
     ASSERT(!mWatcher);
     mWatcher = new wxFileSystemWatcher();
     mWatcher->Bind(wxEVT_FSWATCHER, &FileWatcher::onChange, this);
-    VAR_DEBUG(*this)(mWatches);
+    VAR_DEBUG(mWatches)(*this);
     for ( MapFolderToNodes::value_type kv : mWatches )
     {
         mWatcher->Add(wxFileName(kv.first,""));

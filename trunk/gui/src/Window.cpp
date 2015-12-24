@@ -139,7 +139,7 @@ Window::Window()
     util::window::setIcons(this);
 
     mMenuFile = new wxMenu();
-    wxMenuItem * p2 = mMenuFile->Append(wxID_NEW);
+    mMenuFile->Append(wxID_NEW);
     mMenuFile->Append(wxID_OPEN);
     mMenuFile->Append(wxID_CLOSE);
 
@@ -958,9 +958,8 @@ void Window::triggerLayout()
 
 void Window::setSequenceMenu(wxMenu* menu, bool enabled)
 {
-    wxMenu* previous = 0;
-    bool enable = enabled;
-    if (menu == 0)
+    bool enable{ enabled };
+    if (menu == nullptr)
     {
         menu = mMenuSequence;
         enable = false;
@@ -968,7 +967,7 @@ void Window::setSequenceMenu(wxMenu* menu, bool enabled)
     if (mMenuBar->GetMenu(sSequenceMenuIndex) != menu)
     {
         // Only in case of changes. Otherwise wxWidgets asserts.
-        previous = mMenuBar->Replace(sSequenceMenuIndex, menu, _("Sequence"));
+        mMenuBar->Replace(sSequenceMenuIndex, menu, _("Sequence"));
     }
     mMenuBar->EnableTop(sSequenceMenuIndex,enable);
 }

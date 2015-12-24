@@ -76,7 +76,7 @@ const pixel Drag::Threshold{ 2 };
 class DummyView : public View
 {
 public:
-    DummyView(Timeline* timeline) : View(timeline) {}
+    explicit DummyView(Timeline* timeline) : View(timeline) {}
     ~DummyView() {}
     pixel getX() const override { return getSequenceView().getX(); }
     pixel getY() const override { return getSequenceView().getY(); }
@@ -573,7 +573,6 @@ void Drag::DragInfo::reset()
     mTempTrack.reset();
 
     // Determine boundaries for 'inside' drags
-    std::set<model::TrackPtr> selectedTracks;
     for ( model::IClipPtr clip : getSequence()->getSelectedClips() )
     {
         model::TrackPtr track = clip->getTrack();
@@ -867,7 +866,7 @@ void Drag::determinePossibleSnapPoints()
     }
 
     std::sort(mSnapPoints.begin(), mSnapPoints.end());
-    std::unique(mSnapPoints.begin(), mSnapPoints.end());
+    mSnapPoints.erase(std::unique(mSnapPoints.begin(), mSnapPoints.end()), mSnapPoints.end());
 
     VAR_DEBUG(mSnapPoints);
 }
@@ -883,7 +882,7 @@ void Drag::determinePossibleDragPoints()
     }
 
     std::sort(mDragPoints.begin(), mDragPoints.end());
-    std::unique(mDragPoints.begin(), mDragPoints.end());
+    mDragPoints.erase(std::unique(mDragPoints.begin(), mDragPoints.end()), mDragPoints.end());
     VAR_DEBUG(mDragPoints);
 }
 

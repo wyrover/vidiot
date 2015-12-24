@@ -43,9 +43,6 @@ void SplitAtCursorAndTrim(const model::SequencePtr& sequence, bool backwards)
 
     VAR_INFO(position)(backwards);
 
-    int nVideo = 0;
-    int nAudio = 0;
-    int nTransition = 0;
     model::IClipPtr videoClip;
     model::IClipPtr audioClip;
 
@@ -58,6 +55,9 @@ void SplitAtCursorAndTrim(const model::SequencePtr& sequence, bool backwards)
     }
     else
     {
+        int nVideo{ 0 };
+        int nAudio{ 0 };
+        int nTransition{ 0 };
         for ( model::TrackPtr track : sequence->getTracks() )
         {
             model::IClipPtr clip = backwards ? track->getClip(position - 1) : track->getClip(position);

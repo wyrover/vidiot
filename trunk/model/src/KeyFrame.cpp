@@ -37,7 +37,7 @@ KeyFrame::KeyFrame(const KeyFrame& other)
     : wxEvtHandler{}
     , mInterpolated{ other.mInterpolated }
 {
-    VAR_DEBUG(*this)(other);
+    VAR_DEBUG(other)(*this);
 }
 
 KeyFrame* KeyFrame::clone() const

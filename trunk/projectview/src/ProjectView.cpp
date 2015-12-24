@@ -73,7 +73,7 @@ ProjectView::ProjectView(wxWindow* parent)
     mModel->DecRef();
 
     mCtrl.EnableDropTarget( ProjectViewDataObject::sFormat );
-    wxDataViewColumn* nameColumn = mCtrl.AppendIconTextColumn("Name",       0, wxDATAVIEW_CELL_EDITABLE,    400, wxALIGN_LEFT,   wxDATAVIEW_COL_SORTABLE | wxDATAVIEW_COL_RESIZABLE | wxDATAVIEW_COL_REORDERABLE );
+    mCtrl.AppendIconTextColumn("Name",       0, wxDATAVIEW_CELL_EDITABLE,    400, wxALIGN_LEFT,   wxDATAVIEW_COL_SORTABLE | wxDATAVIEW_COL_RESIZABLE | wxDATAVIEW_COL_REORDERABLE );
 
     gui::Window::get().Bind(model::EVENT_OPEN_PROJECT,     &ProjectView::onOpenProject,             this);
     gui::Window::get().Bind(model::EVENT_CLOSE_PROJECT,    &ProjectView::onCloseProject,            this);
@@ -466,8 +466,6 @@ void ProjectView::onContextMenu(wxDataViewEvent &event)
         bool showOpenSequence = false;
         bool showDeleteUnused = false;
 
-        bool enableUpdateAutoFolder = true;
-
         bool enableNew = (nSelected == 1);
         bool enableDelete = (nSelected >= 1);
         bool enablePaste = (nSelected == 1);
@@ -696,7 +694,6 @@ void ProjectView::onDrop(wxDataViewEvent &event)
         model::FolderPtr folder = boost::dynamic_pointer_cast<model::Folder>(p);
         ASSERT(folder);
 
-        bool conflictingChildExists = false;
         for (model::NodePtr node : mDropSource.getData().getNodes())
         {
             if (findConflictingName(folder, node->getName(), NODETYPE_ANY))

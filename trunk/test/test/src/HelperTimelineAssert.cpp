@@ -55,7 +55,7 @@ void ClipTypeAsserter::ClipTypeMismatch(const std::type_info& expectedtype)
 
     std::string Expected = convert(expectedtype);
     std::string Got = mVideo ? convert(typeid(*VideoClip(TrackNumber,mClipNumber))) : convert(typeid(*AudioClip(TrackNumber, mClipNumber)));;
-    LogVar("Clip type error", __FILE__, __LINE__,__FUNCTION__).LOGVAR_A(TrackType)(TrackNumber)(mClipNumber)(Expected)(Got);
+    LogVar("Clip type error", __FILE__, __LINE__,__FUNCTION__).LOGVAR_A(TrackType)(TrackNumber)(ClipNumber)(Expected)(Got);
 }
 
 } // namespace

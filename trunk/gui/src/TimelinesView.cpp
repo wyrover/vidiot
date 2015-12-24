@@ -103,7 +103,7 @@ void TimelinesView::onSize(wxSizeEvent& event)
 {
     wxSize s = event.GetSize();
     // To avoid crashes in wxNotebook when one of the notebook dimensions becomes 0.
-    mNotebook.Show(s.GetHeight() >= 1 || s.GetHeight() >= 1);
+    mNotebook.Show(s.GetWidth() >= 1 && s.GetHeight() >= 1);
     event.Skip();
 }
 

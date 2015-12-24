@@ -104,7 +104,6 @@ void TimescaleView::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset
     overlap.Intersect(wxRect(getPosition()-offset, getSize()));
     wxRegionIterator upd(overlap);
 
-    int timelineWidth{ getTimeline().GetClientSize().GetWidth() };
     if (upd)
     {
         // Determine what to show
@@ -137,6 +136,8 @@ void TimescaleView::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset
         ASSERT(zoomToSteps.find(zoom) != zoomToSteps.end())(zoom)(zoomToSteps);
         TicksAndNumbers steps = zoomToSteps.find(zoom)->second;
 
+        int timelineWidth{ getTimeline().GetClientSize().GetWidth() };
+		
         // Draw timescale background
         // Note: Not use simply DrawRectangle. Given the size of the drawing (width of entire timeline)
         //       DrawRectangle sometimes fails to draw (particularly when zooming in fully).

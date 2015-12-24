@@ -108,11 +108,8 @@ void RunInMain(const std::function<void()>& method)
 
 void setCurrentThreadName(const char* name)
 {
-    bool isDebuggerRunning = false;
 #if (defined _MSC_VER)
-    isDebuggerRunning = wxIsDebuggerRunning();
-
-    if (isDebuggerRunning)
+    if (wxIsDebuggerRunning())
     {
         wxThreadIdType id = wxThread::GetCurrentId();
 

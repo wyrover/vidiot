@@ -448,7 +448,6 @@ void ClipView::drawForDragging(const wxPoint& position, int height, wxDC& dc, wx
     if (getDrag().contains(mClip) &&
         getW() > 0)
     {
-        int tmpBitmapHeight = height;
         if (mClip->isA<model::Transition>())
         {
             // Only the top halve of the track height is filled for transitions.
@@ -509,12 +508,6 @@ void ClipView::draw(wxBitmap& bitmap, bool drawDraggedClips, bool drawNotDragged
     //       height).
 
     wxMemoryDC dc(bitmap);
-
-    int w = bitmap.GetWidth();
-    int h = bitmap.GetHeight();
-    //int r = getRightPixel();
-    //int l = getLeftPixel();
-
 
     if (mClip->isA<model::EmptyClip>() ||
         (!drawDraggedClips && getDrag().contains(mClip)) ||

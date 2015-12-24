@@ -150,7 +150,7 @@ DialogOptions::DialogOptions(wxWindow* win)
              // Only if a project is opened use that project's frame rate
              framerate = model::Properties::get().getFrameRate();
          }
-         std::vector<pts> values = {
+         std::list<pts> values {
              { 1 },
              { 12 },
              { 1 * model::Convert::timeToPts(sSecond, framerate) },
@@ -163,8 +163,8 @@ DialogOptions::DialogOptions(wxWindow* win)
              { 1 * model::Convert::timeToPts(sMinute, framerate) },
              { initial },
          };
-         std::sort(values.begin(), values.end());
-         std::unique(values.begin(), values.end());
+		 values.sort();
+		 values.unique();
 
          wxArrayString choices;
          for ( pts value : values )
@@ -232,7 +232,6 @@ DialogOptions::DialogOptions(wxWindow* win)
 
         wxString currentLanguage{ Config::ReadString(Config::sPathWorkspaceLanguage) };
 
-        int count{ 0 };
         for (auto lang : getSupportedLanguages())
         {
             mLanguage->Append(lang.first);

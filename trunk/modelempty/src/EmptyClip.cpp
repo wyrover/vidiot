@@ -48,7 +48,7 @@ EmptyClip::EmptyClip(pts length)
     , mLength(length)
     , mProgress(0)
 {
-    VAR_DEBUG(*this)(length);
+    VAR_DEBUG(length)(*this);
 }
 
 EmptyClip::EmptyClip(const EmptyClip& other)
@@ -56,7 +56,7 @@ EmptyClip::EmptyClip(const EmptyClip& other)
     , mLength(other.mLength)
     , mProgress(0)
 {
-    VAR_DEBUG(*this)(other);
+    VAR_DEBUG(other)(*this);
 }
 
 EmptyClip* EmptyClip::clone() const
@@ -103,7 +103,7 @@ pts EmptyClip::getLength() const
 
 void EmptyClip::moveTo(pts position)
 {
-    VAR_DEBUG(*this)(position);
+    VAR_DEBUG(position)(*this);
     ASSERT_LESS_THAN(position, mLength);
     mProgress = position;
 }
@@ -146,7 +146,7 @@ void EmptyClip::adjustEnd(pts adjustment)
 {
     ASSERT(!getTrack())(getTrack()); // Otherwise, this action needs an event indicating the change to the track(view). Instead, tracks are updated by replacing clips.
     mLength += adjustment;
-    VAR_DEBUG(*this)(adjustment);
+    VAR_DEBUG(adjustment)(*this);
     ASSERT_MORE_THAN_EQUALS_ZERO(mLength)(adjustment);
 }
 

@@ -58,7 +58,7 @@ AudioClip::AudioClip(const AudioClip& other)
     , mVolume(other.mVolume)
     , mInputChunk()
 {
-    VAR_DEBUG(*this)(other);
+    VAR_DEBUG(other)(*this);
 }
 
 AudioClip* AudioClip::clone() const
@@ -156,7 +156,7 @@ AudioChunkPtr AudioClip::getNextAudio(const AudioCompositionParameters& paramete
                 }
             }
         }
-        VAR_DEBUG(*this)(mProgress)(requiredSamples);
+        VAR_DEBUG(mProgress)(requiredSamples)(*this);
 
         if (mVolume != sDefaultVolume)
         {
