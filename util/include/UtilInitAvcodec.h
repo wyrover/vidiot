@@ -19,12 +19,22 @@
 
 #include <cstdarg> // va_list
 
+#include "UtilEnum.h"
+
 struct AVRational;
 struct AVCodecContext;
 struct AVFormatContext;
 struct AVStream;
 struct AVPacket;
 struct AVOutputFormat;
+
+DECLAREENUM(LogLevelAvcodec, \
+    LogLevelAvcodecQuiet, \
+    LogLevelAvcodecFatal, \
+    LogLevelAvcodecError, \
+    LogLevelAvcodecWarning, \
+    LogLevelAvcodecInfo, \
+    LogLevelAvcodecVerbose);
 
 class Avcodec
 {
@@ -54,10 +64,6 @@ public:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    static int getDefaultLogLevel();
-    static wxString getDefaultLogLevelString();
-    static wxStrings getLogLevels();
-    static std::map<int, wxString> mapAvcodecLevels;
     static void configureLog();
     static wxString getMostRecentLogLine();
 

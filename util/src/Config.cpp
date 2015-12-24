@@ -119,6 +119,31 @@ void Config::init(const wxString& applicationName, const wxString& vendorName, b
     wxConfigBase::Set(new Config(applicationName, vendorName, ConfigFile));
     wxConfigBase::Get()->Write(Config::sPathTestCxxMode, inCxxTestMode);
 
+    // Initialize language before anything else to ensure that any strings initialized in the 'enum checks' lookups
+    // are properly translated. Example: Avcodec log level mapping.
+    setDefault(Config::sPathWorkspaceLanguage, getDefaultLanguage());
+    wxString Language{ getLanguageCode() };
+    std::vector<std::pair<wxString, wxString>> supported{ getSupportedLanguages() };
+    if (std::find_if(supported.begin(), supported.end(), [Language](std::pair<wxString, wxString> name_and_code) { return name_and_code.second == Language; }) == supported.end())
+    {
+        // Unsupported language code in config
+        Language = getDefaultLanguage();
+        if (std::find_if(supported.begin(), supported.end(), [Language](std::pair<wxString, wxString> name_and_code) { return name_and_code.second == Language; }) == supported.end())
+        {
+            // Unsupported default language
+            Language = "en";
+        }
+    }
+
+    wxLocale::AddCatalogLookupPathPrefix(util::path::getLanguagesPath().GetFullPath());
+    sLocale.reset(new wxLocale());
+    wxLanguage languageId{ getLanguageId(Language) };
+    bool LocaleInitialization = sLocale->Init(languageId, wxLOCALE_LOAD_DEFAULT);
+    bool WxTranslations = sLocale->AddCatalog("vidiotwx", languageId);
+    bool VidiotTranslations = sLocale->AddCatalog("vidiot", languageId); // Load last: This gives vidiot strings higher priority than wx strings (exmple the Copy string in 'nl_NL')
+    VAR_ERROR(Language)(LocaleInitialization)(VidiotTranslations)(WxTranslations);
+    WriteString(Config::sPathWorkspaceLanguage, Language);
+
     // Check values, delete from config if incorrect
     checkLong(Config::sPathMakeSequenceEmptyClipLength, 0, 100000);
     checkLong(Config::sPathMakeSequencePrefixLength, 1, 100);
@@ -137,7 +162,7 @@ void Config::init(const wxString& applicationName, const wxString& vendorName, b
     checkLong(Config::sPathAudioDefaultNumberOfChannels, 1, 2);
     checkEnum(Config::sPathDebugLogLevel, LogLevel);
     checkEnum(Config::sPathProjectDefaultNewProjectType, model::DefaultNewProjectWizardStart);
-    checkEnumFromMap(Config::sPathDebugLogLevelAvcodec, Avcodec::mapAvcodecLevels);
+    checkEnum(Config::sPathDebugLogLevelAvcodec, LogLevelAvcodec);
     checkLong(Config::sPathTimelineMarkerBeginAddition, 0, 10000);
     checkLong(Config::sPathTimelineMarkerEndAddition, 0, 10000);
     checkBool(Config::sPathDebugShowDebugInfoOnWidgets);
@@ -173,7 +198,7 @@ void Config::init(const wxString& applicationName, const wxString& vendorName, b
     setDefault(Config::sPathProjectLastOpened, "");
     setDefault(Config::sPathDebugLogLevel, LogLevel_toString(LogInfo));
     setDefault(Config::sPathProjectDefaultNewProjectType, model::DefaultNewProjectWizardStart_toString(model::DefaultNewProjectWizardStartFolder));
-    setDefault(Config::sPathDebugLogLevelAvcodec, Avcodec::getDefaultLogLevelString());
+    setDefault(Config::sPathDebugLogLevelAvcodec, LogLevelAvcodec_toString(LogLevelAvcodecError));
     setDefault(Config::sPathMakeSequenceEmptyClipLength, 0);
     setDefault(Config::sPathMakeSequencePrefixLength, 14);
     setDefault(Config::sPathTimelineMarkerBeginAddition, 0);
@@ -193,30 +218,6 @@ void Config::init(const wxString& applicationName, const wxString& vendorName, b
     setDefault(Config::sPathWorkspaceX, -1);
     setDefault(Config::sPathWorkspaceY, -1);
     setDefault(Config::sPathWorkspacePerspectiveCurrent,"");
-    setDefault(Config::sPathWorkspaceLanguage, getDefaultLanguage());
-
-    wxString Language{ getLanguageCode() };
-    std::vector<std::pair<wxString, wxString>> supported{ getSupportedLanguages() };
-    if (std::find_if(supported.begin(), supported.end(), [Language](std::pair<wxString, wxString> name_and_code) { return name_and_code.second == Language; }) == supported.end())
-    {
-         // Unsupported language code in config
-        Language = getDefaultLanguage();
-        if (std::find_if(supported.begin(), supported.end(), [Language](std::pair<wxString, wxString> name_and_code) { return name_and_code.second == Language; }) == supported.end())
-        {
-            // Unsupported default language
-            Language = "en";
-        }
-    }
-
-    wxLocale::AddCatalogLookupPathPrefix(util::path::getLanguagesPath().GetFullPath());
-    sLocale.reset(new wxLocale());
-    wxLanguage languageId{ getLanguageId(Language) };
-    bool LocaleInitialization = sLocale->Init(languageId, wxLOCALE_LOAD_DEFAULT);
-    bool WxTranslations = sLocale->AddCatalog("vidiotwx", languageId);
-    bool VidiotTranslations = sLocale->AddCatalog("vidiot", languageId); // Load last: This gives vidiot strings higher priority than wx strings (exmple the Copy string in 'nl_NL')
-    VAR_ERROR(Language)(LocaleInitialization)(VidiotTranslations)(WxTranslations);
-
-    WriteString(Config::sPathWorkspaceLanguage, Language);
 
     if (inCxxTestMode)
     {

@@ -18,28 +18,33 @@
 #include "UtilInitAvcodec.h"
 
 #include "Config.h"
-#include "UtilEnum.h"
 #include "UtilLog.h"
 #include "UtilLogAvcodec.h"
 #include "UtilMap.h"
 
-std::map<int, wxString> Avcodec::mapAvcodecLevels = {
-    { AV_LOG_QUIET, _("None") },
-    { AV_LOG_FATAL, _("Fatal") },
-    { AV_LOG_ERROR, _("Error") },
-    { AV_LOG_WARNING, _("Warning") },
-    { AV_LOG_INFO, _("Info") },
-    { AV_LOG_VERBOSE, _("Verbose") },
+IMPLEMENTENUM(LogLevelAvcodec);
+
+std::map<LogLevelAvcodec, wxString> LogLevelAvcodecConverter::getMapToHumanReadibleString()
+{
+    return
+    {
+        { LogLevelAvcodecQuiet, _("None") },
+        { LogLevelAvcodecFatal, _("Fatal") },
+        { LogLevelAvcodecError, _("Error") },
+        { LogLevelAvcodecWarning, _("Warning") },
+        { LogLevelAvcodecInfo, _("Info") },
+        { LogLevelAvcodecVerbose, _("Verbose") },
+    };
 };
 
 //////////////////////////////////////////////////////////////////////////
 // MEMBERS
 //////////////////////////////////////////////////////////////////////////
 
-const int Avcodec::sMaxLogSize = 500;
-char* Avcodec::sFixedBuffer = 0;
-int Avcodec::sLevel = AV_LOG_FATAL;
-wxString Avcodec::sMostRecentLogLine("Increase the avcodec logging level in the .ini file to get detailed information.");
+const int Avcodec::sMaxLogSize{ 500 };
+char* Avcodec::sFixedBuffer{ 0 };
+int Avcodec::sLevel{ AV_LOG_FATAL };
+wxString Avcodec::sMostRecentLogLine{ "Increase the avcodec logging level in the .ini file to get detailed information." };
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
@@ -67,27 +72,21 @@ boost::mutex Avcodec::sMutex;
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-//static
-int Avcodec::getDefaultLogLevel()
-{
-    return AV_LOG_ERROR;
-}
-
-//static
-wxString Avcodec::getDefaultLogLevelString()
-{
-    return mapAvcodecLevels.find(AV_LOG_ERROR)->second;
-}
-
-//static
-wxStrings Avcodec::getLogLevels()
-{
-	return UtilMap<int,wxString>(mapAvcodecLevels).values();
-}
-
 void Avcodec::configureLog()
 {
-	sLevel = UtilMap<int,wxString>(mapAvcodecLevels).reverseLookup(Config::ReadString(Config::sPathDebugLogLevelAvcodec),AV_LOG_ERROR);
+    static const std::map<LogLevelAvcodec, int> sMapEnumToAvLogLevel // todo much more local!
+    {
+        { LogLevelAvcodecQuiet, AV_LOG_QUIET },
+        { LogLevelAvcodecFatal, AV_LOG_FATAL },
+        { LogLevelAvcodecError, AV_LOG_ERROR },
+        { LogLevelAvcodecWarning, AV_LOG_WARNING },
+        { LogLevelAvcodecInfo, AV_LOG_INFO },
+        { LogLevelAvcodecVerbose, AV_LOG_VERBOSE },
+    };
+
+    LogLevelAvcodec level{ Config::ReadEnum<LogLevelAvcodec>(Config::sPathDebugLogLevelAvcodec) };
+    ASSERT_MAP_CONTAINS(sMapEnumToAvLogLevel, level);
+    sLevel = sMapEnumToAvLogLevel.find(level)->second;
     av_log_set_level(sLevel); // Only required for default avcodec log method
     av_log_set_callback(Avcodec::log);
 }
