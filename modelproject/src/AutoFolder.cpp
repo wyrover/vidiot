@@ -117,7 +117,7 @@ struct IndexAutoFolderWork
     }
 
     AutoFolderPtr mFolder;                 ///< Folder to be indexed
-    bool mDirExists;                       ///< true if the dir could be opened, false if not (then, assume that it was removed)
+    bool mDirExists = false;               ///< true if the dir could be opened, false if not (then, assume that it was removed)
     wxFileName mPath;                      ///< Path to the folder to be indexed
     std::vector<wxString> mCurrentEntries; ///< All entries known when the work was scheduled
     NodePtrs mAdd;                         ///< When done, holds the list of nodes that must be added

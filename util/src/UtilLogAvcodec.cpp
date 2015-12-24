@@ -195,7 +195,7 @@ std::ostream& operator<<(std::ostream& os, const AVPixelFormat& obj)
         LOGENUMVALUE(AV_PIX_FMT_BAYER_GBRG16BE);
         LOGENUMVALUE(AV_PIX_FMT_BAYER_GRBG16LE);
         LOGENUMVALUE(AV_PIX_FMT_BAYER_GRBG16BE);
-        os << "Unknown AVPixelFormat (" << static_cast<long>(obj) << ")";
+        default: os << "Unknown AVPixelFormat (" << static_cast<long>(obj) << ")";
     }
     return os;
 };

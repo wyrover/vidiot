@@ -65,7 +65,7 @@ AClipEdit::~AClipEdit()
 
 bool AClipEdit::Do()
 {
-    VAR_INFO(*this)(mInitialized);
+    VAR_INFO(mInitialized)(*this);
 
     doExtraBefore();
 
@@ -146,7 +146,7 @@ bool AClipEdit::Do()
 
 bool AClipEdit::Undo()
 {
-    VAR_INFO(*this)(mParamsUndo.size());
+    VAR_INFO(mParamsUndo.size())(*this);
     //NOT: ASSERT_NONZERO(mParamsUndo.size()); - Due to the use in 'Revert()'
 
     undoExtraBefore();

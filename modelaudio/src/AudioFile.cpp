@@ -231,10 +231,10 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
             }
 
             int decodedLineSize(0); // Will contain the number of bytes per plane
-            // decodeBuferInBytes contains the entire required buffer size:
+            // return value of av_samples_get_buffer_size (unused) contains the entire required buffer size:
             // - Contains ALL channel data
             // - Contains 32 bit alignment for all used data fields (one for packet, multiple for planar)
-            int decodeBufferInBytes = av_samples_get_buffer_size(&decodedLineSize, codec->channels, pFrame->nb_samples, codec->sample_fmt, 1);
+            av_samples_get_buffer_size(&decodedLineSize, codec->channels, pFrame->nb_samples, codec->sample_fmt, 1);
             for (int i = 0; i < mNrPlanes; ++i)
             {
                 memcpy(mAudioDecodeBuffer[i] + targetSizeInBytes, pFrame->extended_data[i], decodedLineSize);
@@ -262,7 +262,7 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
                     dec_channel_layout, codec->sample_fmt, pFrame->sample_rate, 0, 0);
                 ASSERT_NONZERO(mSoftwareResampleContext);
 
-                int result = swr_init(mSoftwareResampleContext);
+                int result { swr_init(mSoftwareResampleContext) };
                 ASSERT_ZERO(result)(avcodecErrorString(result));
             }
         }
@@ -295,7 +295,7 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
             memcpy(mAudioDecodeBuffer[i], frame.extended_data[i], decodedLineSize);
         }
 
-        targetSizeInBytes += decodedLineSize;
+        // targetSizeInBytes += decodedLineSize;
         nDecodedSamplesPerChannel += frame.nb_samples;
 
         ASSERT_IMPLIES(mNeedsResampling, mSoftwareResampleContext != 0); // Must have been initialized already

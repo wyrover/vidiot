@@ -34,7 +34,7 @@ TransitionParameter::TransitionParameter()
 
 TransitionParameter::TransitionParameter(const TransitionParameter& other)
 {
-    VAR_DEBUG(*this)(other);
+    VAR_DEBUG(other)(*this);
 }
 
 TransitionParameter::~TransitionParameter()

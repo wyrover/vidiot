@@ -146,7 +146,6 @@ void TimelineDrag(const DragParams& params)
     wxPoint to(0,0);
     if (params.mAlignLeft || params.mAlignRight)
     {
-        bool left = static_cast<bool>(params.mAlignLeft);
         pixel alignposition = params.mAlignLeft ? LeftPixel(DraggedClips()) : RightPixel(DraggedClips()); // Requires active drag
         pixel position = params.mAlignLeft ? *params.mAlignLeft : *params.mAlignRight;
         to = *params.mFrom; // The inital 'drag hotspot' position.

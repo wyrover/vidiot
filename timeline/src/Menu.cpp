@@ -310,8 +310,8 @@ void MenuHandler::onTriggerPopupMenu(wxCommandEvent& event)
         if (selection.size() == 2)
         {
             std::set< model::IClipPtr >::iterator it = selection.begin();
-            model::IClipPtr clip1 = *it++;
-            model::IClipPtr clip2 = *it;
+            model::IClipPtr clip1 = *it;
+            model::IClipPtr clip2 = *(++it);
             if (clip1->getLink() == clip2)
             {
                 ASSERT_EQUALS(clip1, clip2->getLink());

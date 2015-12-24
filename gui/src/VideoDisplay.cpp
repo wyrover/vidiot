@@ -169,12 +169,13 @@ void VideoDisplay::play()
         mAudioLatency = 0;
         mCurrentAudioChunk.reset();
 
-        unsigned long bufferSize = paFramesPerBufferUnspecified;
 #ifdef __GNUC__
         // On Linux (Ubuntu), the default buffer size is around 383.
         // Current implementation locks too much to keep up.
         // todo use less locking and use the default number of frames per buffer for linux also.
-        bufferSize = model::Convert::ptsToSamplesPerChannel(mAudioParameters->getSampleRate(), 2);
+        unsigned long bufferSize = model::Convert::ptsToSamplesPerChannel(mAudioParameters->getSampleRate(), 2);
+#else
+        unsigned long bufferSize = paFramesPerBufferUnspecified;
 #endif // __GNUC__
 
         auto verify = [this](PaError err, wxString message)
@@ -183,18 +184,30 @@ void VideoDisplay::play()
             wxString msg; msg << _("Could not initialize playback.") << "\n" << message << Pa_GetErrorText(err);
             VAR_ERROR(msg);
             gui::Dialog::get().getConfirmation("Error", msg);
-            mPlaying = true; // Ensure that 'stop' code is executed.
-            stop();
             return false;
         };
 
         PaError err = Pa_OpenDefaultStream( &mAudioOutputStream, 0, mAudioParameters->getNrChannels(), paInt16, mAudioParameters->getSampleRate(), bufferSize, portaudio_callback, this );
-        if (!verify(err, _("Opening audio stream failed:"))) { return; }
+        if (!verify(err, _("Opening audio stream failed:"))) 
+        { 
+            mAudioOutputStream = nullptr;
+            mPlaying = true; // Ensure that 'stop' code is executed.
+            stop();
+            return;
+        }
 
         mStartTime = Pa_GetStreamTime(mAudioOutputStream);
 
         err = Pa_StartStream( mAudioOutputStream );
-        if (!verify(err, _("Starting audio stream failed:"))) { return; }
+        if (!verify(err, _("Starting audio stream failed:"))) 
+        { 
+            PaError err{ Pa_CloseStream(mAudioOutputStream) };
+            VAR_ERROR(err)(Pa_GetErrorText(err));
+            mAudioOutputStream = nullptr;
+            mPlaying = true; // Ensure that 'stop' code is executed.
+            stop();
+            return;
+        }
 
         showNextFrame();
 
@@ -219,23 +232,27 @@ void VideoDisplay::stop()
         mVideoTimer.Stop();
 
         // Stop audio
-        if (0 == Pa_IsStreamStopped(mAudioOutputStream))
+        if (mAudioOutputStream != nullptr)
         {
-            // Do not use Pa_AbortStream here, that may lead to
-            // hangups/crashes. Just start playback and then hold
-            // the spacebar to continuously toggle playback start/stop.
-            // Eventually, a crash/hangup occurs.
-            //
-            // That is probably caused by the stream not being
-            // fully stopped after aborting. Then, the subsequent
-            // Pa_CloseStream seems to trigger the crash/hangup.
-            PaError err = Pa_StopStream(mAudioOutputStream);
-            ASSERT_EQUALS(err,paNoError)(Pa_GetErrorText(err));
-        }
-        ASSERT_EQUALS(Pa_IsStreamStopped(mAudioOutputStream),1);
+            if (0 == Pa_IsStreamStopped(mAudioOutputStream))
+            {
+                // Do not use Pa_AbortStream here, that may lead to
+                // hangups/crashes. Just start playback and then hold
+                // the spacebar to continuously toggle playback start/stop.
+                // Eventually, a crash/hangup occurs.
+                //
+                // That is probably caused by the stream not being
+                // fully stopped after aborting. Then, the subsequent
+                // Pa_CloseStream seems to trigger the crash/hangup.
+                PaError err = Pa_StopStream(mAudioOutputStream);
+                ASSERT_EQUALS(err, paNoError)(Pa_GetErrorText(err));
+            }
+            ASSERT_EQUALS(Pa_IsStreamStopped(mAudioOutputStream), 1);
 
-        PaError err = Pa_CloseStream(mAudioOutputStream);
-        ASSERT_EQUALS(err,paNoError)(Pa_GetErrorText(err));
+            PaError err = Pa_CloseStream(mAudioOutputStream);
+            ASSERT_EQUALS(err, paNoError)(Pa_GetErrorText(err));
+        }
+        mAudioOutputStream = nullptr;
 
         // End buffer threads
         mVideoFrames.flush(); // Unblock 'push()', if needed
@@ -375,7 +392,7 @@ samplecount VideoDisplay::receiveFromSoundTouch(model::AudioChunkPtr chunk, samp
         if ( f > M-1 ) { f = M - 1; }
         *t++ = static_cast<sample>(f);
     }
-    delete convertFrom;
+    delete[] convertFrom;
 #endif
     return nFrames * mAudioParameters->getNrChannels();
 }

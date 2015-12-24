@@ -96,9 +96,8 @@ void Cursor::prevCut()
 
 void Cursor::nextCut()
 {
-    std::set<pts> cuts = getSequence()->getCuts(); // std::set is stored in ordered fashion
     pts current = getLogicalPosition();
-    for ( pts position : getSequence()->getCuts() )
+    for ( pts position : getSequence()->getCuts() ) // std::set is stored in ordered fashion
     {
         if (position > current)
         {

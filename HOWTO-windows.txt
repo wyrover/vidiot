@@ -34,6 +34,9 @@ NOTE: <VIDIOT_DIR> is the dir in which all 'vidiot' work is done.
   - disable: gflags /p /disable Vidiot.exe
   - Or: use AppVerifier
 
+=================== CPPCHECK ===================
+* https://sourceforge.net/projects/cppcheck
+
 =================== VLD ===================
 * https://vld.codeplex.com/
 

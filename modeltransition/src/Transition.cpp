@@ -57,7 +57,7 @@ Transition::Transition(const Transition& other)
     , mFramesRight(other.mFramesRight)
     , mParameters(make_cloned<int, TransitionParameter>(other.mParameters))
 {
-    VAR_DEBUG(*this)(other);
+    VAR_DEBUG(other)(*this);
 }
 
 Transition::~Transition()
@@ -136,7 +136,7 @@ pts Transition::getMaxAdjustBegin() const
 
 void Transition::adjustBegin(pts adjustment)
 {
-    VAR_DEBUG(*this)(adjustment);
+    VAR_DEBUG(adjustment)(*this);
     ASSERT(!getTrack())(getTrack()); // Otherwise, this action needs an event indicating the change to the track(view). Instead, tracks are updated by replacing clips.
     ASSERT(mFramesLeft);
     mFramesLeft.reset(*mFramesLeft - adjustment);
@@ -171,7 +171,7 @@ pts Transition::getMaxAdjustEnd() const
 
 void Transition::adjustEnd(pts adjustment)
 {
-    VAR_DEBUG(*this)(adjustment);
+    VAR_DEBUG(adjustment)(*this);
     ASSERT(!getTrack())(getTrack()); // Otherwise, this action needs an event indicating the change to the track(view). Instead, tracks are updated by replacing clips.
     ASSERT(mFramesRight);
     mFramesRight.reset(*mFramesRight + adjustment);

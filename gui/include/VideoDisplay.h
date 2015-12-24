@@ -117,7 +117,7 @@ private:
     void audioBufferThread();
 
     /// Required for portaudio
-    void* mAudioOutputStream;
+    void* mAudioOutputStream = nullptr;
 
     /// Required for SoundTouch
     soundtouch::SoundTouch mSoundTouch;

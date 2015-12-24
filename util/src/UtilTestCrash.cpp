@@ -104,7 +104,7 @@ void triggerStdException()
 #pragma GCC diagnostic ignored "-Wformat-security"
 #endif
 // Apparently GCC detects this bug with a warning ;-)
-// BUt here, it's the bug that must be triggered...
+// BUT here, it's the bug that must be triggered...
 void triggerInvalidParameter()
 {
    char *formatString = 0;
@@ -122,7 +122,7 @@ void triggerInvalidParameter()
 struct Derived;
 struct Base
 {
-   Base(Derived *derived): mDerived(derived) {};
+   explicit Base(Derived *derived): mDerived(derived) {};
    ~Base();
    virtual void function(void) = 0;
    Derived* mDerived;

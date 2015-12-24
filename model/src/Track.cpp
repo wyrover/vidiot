@@ -156,21 +156,21 @@ bool Track::isEmpty() const
 
 void Track::addClips(const IClips& clips, const IClipPtr& position)
 {
-    VAR_DEBUG(*this)(position)(clips);
+    VAR_DEBUG(position)(clips)(*this);
     ASSERT_NONZERO(clips.size());
     replaceClips(model::IClips(), clips, position);
 }
 
 void Track::removeClips(const IClips& clips)
 {
-    VAR_DEBUG(*this)(clips);
+    VAR_DEBUG(clips)(*this);
     ASSERT_NONZERO(clips.size());
     replaceClips(clips, model::IClips(), model::IClipPtr());
 }
 
 void Track::replaceClips(const IClips& clipsRemoved, const IClips& clipsAdded, const IClipPtr& positionAdded)
 {
-    VAR_DEBUG(*this)(clipsRemoved)(clipsAdded)(positionAdded);
+    VAR_DEBUG(clipsRemoved)(clipsAdded)(positionAdded)(*this);
     ASSERT(!clipsRemoved.empty() || !clipsAdded.empty());
 
     IClipPtr positionRemoved = model::IClipPtr();

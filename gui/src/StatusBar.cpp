@@ -74,7 +74,7 @@ StatusBar::~StatusBar()
 void StatusBar::onSize(wxSizeEvent& event)
 {
     wxRect bb;
-    bool ok = GetFieldRect(sProgress,bb);
+    GetFieldRect(sProgress,bb);
     mProgress->SetPosition(bb.GetPosition());
     mProgress->SetSize(bb.GetSize());
 }

@@ -192,7 +192,6 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
     if (!result || !frameTimeOk(result->getPts()))
     {
         // Decode new frame
-        bool firstPacket = true;
         int frameFinished = 0;
         AVFrame* pDecodedFrame = av_frame_alloc();
         ASSERT_NONZERO(pDecodedFrame)(codec);

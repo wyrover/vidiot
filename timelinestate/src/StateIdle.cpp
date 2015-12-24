@@ -147,7 +147,6 @@ boost::statechart::result Idle::react( const EvKeyDown& evt)
         {
             evt.consumed();
             return start();
-            break;
         }
         case WXK_DELETE:
         {

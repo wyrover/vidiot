@@ -93,7 +93,7 @@ ExecuteDrop::ExecuteDrop(const model::SequencePtr& sequence, bool external)
     , mVideoClipDragged(false)
     , mAudioClipDragged(false)
 {
-    VAR_INFO(*this)(sequence)(external);
+    VAR_INFO(sequence)(external)(*this);
     mCommandName = _("Move clips");
 }
 
@@ -103,7 +103,7 @@ ExecuteDrop::~ExecuteDrop()
 
 void ExecuteDrop::onDragStart(const Drags& drags)
 {
-    VAR_INFO(*this)(drags);
+    VAR_INFO(drags)(*this);
 
     if (mExternal)
     {
@@ -209,14 +209,14 @@ model::TrackPtr ExecuteDrop::onAddTrack(bool video)
 {
     if (video && !mNewVideoTrack)
     {
-        VAR_INFO(*this)(video);
+        VAR_INFO(video)(*this);
         mNewVideoTrack = boost::make_shared<model::VideoTrack>();
         getSequence()->addVideoTracks({ mNewVideoTrack });
         return mNewVideoTrack;
     }
     else if (!video && !mNewAudioTrack)
     {
-        VAR_INFO(*this)(video);
+        VAR_INFO(video)(*this);
         mNewAudioTrack = boost::make_shared<model::AudioTrack>();
         getSequence()->addAudioTracks({ mNewAudioTrack });
         return mNewAudioTrack;
@@ -228,13 +228,13 @@ void ExecuteDrop::onRemoveAddedTrack(bool video)
 {
     if (video && mNewVideoTrack)
     {
-        VAR_INFO(*this)(video);
+        VAR_INFO(video)(*this);
         getSequence()->removeVideoTracks({ mNewVideoTrack });
         mNewVideoTrack.reset();
     }
     else if (!video && mNewAudioTrack)
     {
-        VAR_INFO(*this)(video);
+        VAR_INFO(video)(*this);
         getSequence()->removeAudioTracks({ mNewAudioTrack });
         mNewAudioTrack.reset();
     }
@@ -242,7 +242,7 @@ void ExecuteDrop::onRemoveAddedTrack(bool video)
 
 void ExecuteDrop::onDrop(const Drops& drops, const Shift& shift)
 {
-    VAR_INFO(*this)(drops)(shift);
+    VAR_INFO(drops)(shift)(*this);
     mDrops = drops;
     mShift = shift;
     for ( model::IClipPtr clip : getDrags() )

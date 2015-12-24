@@ -99,7 +99,7 @@ VideoClipKeyFrame::VideoClipKeyFrame(const VideoClipKeyFrame& other)
     , mAlignment{ other.mAlignment }
     , mPosition{ other.mPosition }
 {
-    VAR_DEBUG(*this)(other);
+    VAR_DEBUG(other)(*this);
 }
 
 VideoClipKeyFrame* VideoClipKeyFrame::clone() const
@@ -192,11 +192,11 @@ void VideoClipKeyFrame::setScaling(const VideoScaling& scaling, const boost::opt
         ASSERT_MORE_THAN_ZERO(*factor)(*factor);
         unsigned int w{ boost::rational_cast<unsigned int>(mInputSize.GetWidth() * *factor) };
         unsigned int h{ boost::rational_cast<unsigned int>(mInputSize.GetHeight() * *factor) };
-        if (w <= 0)
+        if (w == 0)
         {
             gui::StatusBar::get().timedInfoText(_("Width becomes 0."));
         }
-        else if (h <= 0)
+        else if (h == 0)
         {
             gui::StatusBar::get().timedInfoText(_("Height becomes 0."));
         }

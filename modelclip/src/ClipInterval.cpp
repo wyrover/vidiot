@@ -90,7 +90,7 @@ pts ClipInterval::getLength() const
 
 void ClipInterval::moveTo(pts position)
 {
-    VAR_DEBUG(*this)(position);
+    VAR_DEBUG(position)(*this);
     ASSERT_LESS_THAN(position,mLength);
     ASSERT_MORE_THAN_EQUALS_ZERO(position);
     setNewStartPosition(position);
@@ -174,7 +174,7 @@ void ClipInterval::adjustBegin(pts adjustment)
     ASSERT_MORE_THAN_EQUALS_ZERO(mOffset);
     ASSERT_LESS_THAN_EQUALS(mLength,getRenderLength() - mOffset)(adjustment)(mLength)(mRender->getLength())(mSpeed)(getRenderLength())(mOffset)(*this);
     pruneKeyFrames();
-    VAR_DEBUG(*this)(adjustment);
+    VAR_DEBUG(adjustment)(*this);
 }
 
 pts ClipInterval::getMinAdjustEnd() const
@@ -202,7 +202,7 @@ void ClipInterval::adjustEnd(pts adjustment)
     mLength += adjustment;
     ASSERT_LESS_THAN_EQUALS(mLength,getRenderLength() - mOffset)(adjustment)(mLength)(mRender->getLength())(mSpeed)(getRenderLength())(mOffset)(*this);
     pruneKeyFrames();
-    VAR_DEBUG(*this)(adjustment);
+    VAR_DEBUG(adjustment)(*this);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -374,7 +374,7 @@ void ClipInterval::addKeyFrameAt(pts offset, KeyFramePtr frame)
         // At least in the module test I succeeded in pressing the Add button twice consecutively,
         // without moving the cursor. To err on the safe side, ignore the second press here, in case
         // it's also 'user possible'.
-        VAR_WARNING(*this)(keyframes)(offset);
+        VAR_WARNING(keyframes)(offset)(*this);
         return;
     }
 
@@ -429,7 +429,7 @@ void ClipInterval::removeKeyFrameAt(pts offset)
     // At least in the module test I succeeded in pressing the Add button twice consecutively,
     // without moving the cursor. That may also be possible for the remove button.
     // To err on the safe side, ignore the second press here, in case it's also 'user possible'.
-    VAR_WARNING(*this)(keyframes)(offset);
+    VAR_WARNING(keyframes)(offset)(*this);
 }
 
 void ClipInterval::setDefaultKeyFrame(KeyFramePtr keyframe)

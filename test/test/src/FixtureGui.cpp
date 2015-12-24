@@ -183,7 +183,7 @@ void FixtureGui::mainThread()
     char* argv = strdup(gui::Application::sTestApplicationName);
     char *display = '\0';
     Display *mydisplay = XOpenDisplay(display);
-    int myscreen = DefaultScreen(mydisplay);
+    DefaultScreen(mydisplay);
     XSynchronize(mydisplay, 1);
     XInitThreads();
 #endif

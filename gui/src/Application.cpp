@@ -124,9 +124,8 @@ Application::Application(test::IEventLoopListener* eventLoopListener)
     // Typical example of that: logging the type of crash when generating a debugreport.
     Log::init();
 
-    int Revision(SubversionRevision);
     wxString Platform(wxPlatformInfo().GetOperatingSystemDescription());
-    VAR_ERROR(Revision)(Platform);
+    VAR_ERROR(SubversionRevision)(Platform);
 }
 
 Application::~Application()
