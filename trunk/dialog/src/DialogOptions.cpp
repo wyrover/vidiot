@@ -362,10 +362,7 @@ DialogOptions::~DialogOptions()
     {
         if (wxYES == gui::Dialog::get().getConfirmation(_("Restart required"), _("Some of the settings that were changed require Vidiot to be restarted. Do you want Vidiot to restart now?"), wxYES | wxNO))
         {
-            Config::WorkspacePerspectives::removeAll(); // todo ensure that workspace titles are also translated?
-            // todo 1. Load the perspective
-//                2. Obtain all panes array by calling wxAuiPaneInfoArray& wxAuiManager::GetAllPanes()
-  //              3. Iterate through that array and set the caption(by wxAuiPaneInfo::Caption(const wxString &c) to be _() of the untranslated, ie.current caption
+            Config::WorkspacePerspectives::removeAll();
             dynamic_cast<gui::Application*>(wxTheApp)->restart();
         }
     }
