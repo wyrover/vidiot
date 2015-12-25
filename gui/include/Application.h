@@ -53,6 +53,8 @@ public:
 
     static const wxString sTestApplicationName; ///< Fixed string used to determine if application is running in module test
 
+    void restart();
+
     //////////////////////////////////////////////////////////////////////////
     // IDLE HANDLING
     //////////////////////////////////////////////////////////////////////////
@@ -121,6 +123,7 @@ private:
     boost::condition_variable mConditionIdle;
     boost::mutex mMutexIdle;
     boost::shared_ptr<CommandLine> mCommandLine;
+    bool mRestartOnExit = false;
 };
 
 } // namespace

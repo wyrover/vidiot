@@ -27,7 +27,7 @@ std::map<AudioCodecParameterType, wxString> AudioCodecParameterTypeConverter::ge
 {
     return
     {
-        { AudioBitRate, "Bit rate" },
+        { AudioBitRate, _("Bit rate") },
     };
 }
 

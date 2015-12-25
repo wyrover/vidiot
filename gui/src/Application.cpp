@@ -133,6 +133,12 @@ Application::~Application()
     Log::exit();
 }
 
+void Application::restart()
+{
+    mRestartOnExit = true;
+    GetTopWindow()->Close();
+}
+
 //////////////////////////////////////////////////////////////////////////
 // IDLE HANDLING
 //////////////////////////////////////////////////////////////////////////
@@ -269,6 +275,11 @@ int Application::OnExit()
     PortAudio::exit();
     Avcodec::exit();
     Config::exit();
+
+    if (mRestartOnExit)
+    {
+        wxExecute(wxStandardPaths::Get().GetExecutablePath());
+    }
 
     return wxApp::OnExit();
 }

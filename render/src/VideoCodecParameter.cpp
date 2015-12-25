@@ -29,11 +29,11 @@ std::map<VideoCodecParameterType, wxString> VideoCodecParameterTypeConverter::ge
 {
     return
     {
-        { BitRate, "Bit rate" },
-        { BitRateTolerance, "Bit rate tolerance" },
-        { GopSize, "Gop size" },
-        { BFrames, "B Frames" },
-        { MacroBlockDecision, "Macro block decision" },
+        { BitRate, _("Bit rate") },
+        { BitRateTolerance, _("Bit rate tolerance") },
+        { GopSize, _("Gop size") },
+        { BFrames, _("B Frames") },
+        { MacroBlockDecision, _("Macro block decision") },
     };
 }
 
@@ -61,8 +61,8 @@ void VideoCodecParameterBFrames::set(AVCodecContext* codec)
 
 std::map<int, wxString> MacroBlockDecisionEnumMapping = {
     //(FF_MB_DECISION_SIMPLE, _("Simple - use mb_cmp (Not supported yet)"))
-    { FF_MB_DECISION_BITS, "Least bits" },
-    { FF_MB_DECISION_RD, "Rate distortion" }
+    { FF_MB_DECISION_BITS, _("Least bits") },
+    { FF_MB_DECISION_RD, _("Rate distortion") }
 };
 
 void VideoCodecParameterMacroBlockDecision::set(AVCodecContext* codec)
