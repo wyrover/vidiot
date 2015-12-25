@@ -17,6 +17,7 @@
 
 #include "DialogOptions.h"
 
+#include "Application.h"
 #include "Config.h"
 #include "Convert.h"
 #include "Enums.h"
@@ -269,6 +270,7 @@ DialogOptions::DialogOptions(wxWindow* win)
     ASSERT_EQUALS(icons.size(), GetBookCtrl()->GetPageCount()); // Ensure the proper amount of icons
     LayoutDialog();
     SetSize(wxSize(700, -1));
+    GetBookCtrl()->SetSelection(0); // Show first tab by default
 
     gui::Window::get().setDialogOpen(true);
 }
@@ -284,8 +286,23 @@ DialogOptions::~DialogOptions()
         return value;
     };
 
+    bool restartRequired{ false };
+
     if (GetReturnCode() == GetAffirmativeId())
     {
+        std::vector<wxString> settingsRequiringRestart
+        {
+            Config::sPathTimelineStripFromClipNames,
+            Config::sPathWorkspaceLanguage,
+            Config::sPathDebugLogLevelAvcodec,
+            Config::sPathDebugShowDebugInfoOnWidgets
+        };
+        std::map<wxString, wxString> originals;
+        for (wxString path : settingsRequiringRestart)
+        {
+            originals[path] = Config::ReadString(path);
+        }
+
         Config::holdWriteToDisk();
         Config::WriteBool(Config::sPathProjectAutoLoadEnabled, mLoadLast->IsChecked());
         Config::WriteBool(Config::sPathProjectBackupBeforeSaveEnabled, mBackupBeforeSave->IsChecked());
@@ -326,9 +343,32 @@ DialogOptions::~DialogOptions()
 
         // Use new values
         Log::setReportingLevel(LogLevelConverter::readConfigValue(Config::sPathDebugLogLevel));
+
+        for (wxString path : settingsRequiringRestart)
+        {
+            ASSERT_MAP_CONTAINS(originals, path);
+            if (originals[path] != Config::ReadString(path))
+            {
+                restartRequired = true;
+                break;
+            }
+        }
+
     }
 
     gui::Window::get().setDialogOpen(false);
+
+    if (restartRequired)
+    {
+        if (wxYES == gui::Dialog::get().getConfirmation(_("Restart required"), _("Some of the settings that were changed require Vidiot to be restarted. Do you want Vidiot to restart now?"), wxYES | wxNO))
+        {
+            Config::WorkspacePerspectives::removeAll(); // todo ensure that workspace titles are also translated?
+            // todo 1. Load the perspective
+//                2. Obtain all panes array by calling wxAuiPaneInfoArray& wxAuiManager::GetAllPanes()
+  //              3. Iterate through that array and set the caption(by wxAuiPaneInfo::Caption(const wxString &c) to be _() of the untranslated, ie.current caption
+            dynamic_cast<gui::Application*>(wxTheApp)->restart();
+        }
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////
