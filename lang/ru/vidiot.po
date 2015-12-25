@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-12-24 20:38+0100\n"
+"POT-Creation-Date: 2015-12-25 12:13+0100\n"
 "PO-Revision-Date: 2015-11-29 22:44+0300\n"
 "Last-Translator: Ted Mossolov <teodorrrro@gmail.com>\n"
 "Language-Team: Ted Mossolov <teodorrrro@gmail.com>\n"
@@ -36,7 +36,7 @@ msgid "Audio files"
 msgstr "Файлы аудио"
 
 #: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:74
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:138
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:139
 msgid "Images"
 msgstr "Изображения"
 
@@ -124,47 +124,47 @@ msgstr "&Готово"
 msgid "Found %d file(s)"
 msgstr "Найдено файлов: %d"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:61
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:62
 msgid "(requires restart)"
 msgstr "(нужен перезапуск)"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:63
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:64
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:123
 #: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:190
 msgid "Options"
 msgstr "Параметры"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:66
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:67
 msgid "Load/Save"
 msgstr "Общие"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:68
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:69
 msgid "Startup"
 msgstr "Запуск"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:72
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:73
 msgid "Load last project on startup"
 msgstr "Загружать последний проект при запуске"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:74
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:75
 #: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:196
 msgid "Save"
 msgstr "Сохранить"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:78
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:79
 msgid "Make backup of existing save file when overwriting"
 msgstr "Создавать копию существующего сохраненного файла перед перезаписью"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:82
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:83
 msgid "Maximum number of generated save files (0 - infinite)"
 msgstr "Максимум сохраняемых файлов (от 0 до бесконечности)"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:86
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:87
 msgid "Use absolute path to media files when saving projects"
 msgstr ""
 "Использовать абсолютный путь для файлов мультимедиа при сохранении проектов"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:87
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:88
 msgid ""
 "By using absolute paths, the project file can be moved without moving any "
 "media files in the project. Otherwise, project and media files must be moved "
@@ -174,24 +174,24 @@ msgstr ""
 "необходимости перемещать файлы мультимедиа. В противном случае файлы "
 "мультимедиа необходимо будет перемещать вместе с проектом."
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:90
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:91
 msgid "Project view"
 msgstr "Проект"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:92
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:93
 msgid "Make sequence: divide clips if clip's prefix differs"
 msgstr ""
 "Создание видеоряда: создание пауз между клипами с отличающимися именами"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:96
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:97
 msgid "Length of empty division (0 - disabled)"
 msgstr "Длительность пауз (0 - отключить)"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:100
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:101
 msgid "Length of name (prefix) to be matched"
 msgstr "Число символов от начала имени (префикс), которые должны совпадать"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:103
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:104
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogProjectProperties.cpp:43
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:111
 #: C:\Vidiot\vidiot_trunk\gui\src\EditProjectProperties.cpp:40
@@ -199,40 +199,40 @@ msgstr "Число символов от начала имени (префикс
 msgid "Video"
 msgstr "Видео"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:105
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:180
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:106
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:181
 msgid "New projects"
 msgstr "Новые проекты"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:121
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:122
 msgid "Framerate for new projects"
 msgstr "Частота кадров для новых проектов"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:125
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:126
 msgid "Default video width"
 msgstr "Ширина видео по умолчанию"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:129
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:130
 msgid "Default video height"
 msgstr "Высота видео по умолчанию"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:132
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:133
 msgid "Default video scaling"
 msgstr "Масштаб видео по умолчанию"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:135
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:136
 msgid "Default video alignment"
 msgstr "Выравнивание видео по умолчанию"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:140
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:141
 msgid "Size"
 msgstr "Размер"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:175
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:176
 msgid "Default length of still images (in frames)"
 msgstr "Длительность показа неподвижных изображений по умолчанию (в кадрах)"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:178
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:179
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogProjectProperties.cpp:70
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:117
 #: C:\Vidiot\vidiot_trunk\gui\src\EditProjectProperties.cpp:58
@@ -240,82 +240,92 @@ msgstr "Длительность показа неподвижных изобр�
 msgid "Audio"
 msgstr "Аудио"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:191
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:192
 msgid "Default audio sample rate"
 msgstr "Частота дискретизации аудио по умолчанию"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:201
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:202
 msgid "Default number of audio channels"
 msgstr "Количество каналов аудио по умолчанию"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:204
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:205
 msgid "Timeline"
 msgstr "Шкала"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:206
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:207
 msgid "Marking selection"
 msgstr "Выделение маркерами"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:210
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:211
 msgid "Begin marker expansion/contraction (s)."
 msgstr "Смещение начального маркера (сек.)"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:214
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:215
 msgid "End marker expansion/contraction (s)."
 msgstr "Смещение конечного маркера (сек.)"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:216
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:217
 msgid "Clips"
 msgstr "Клипы"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:218
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:219
 msgid "Text to remove from clip names - use '|' for multiple entries"
 msgstr ""
 "Текст, удаляемый из названий клипов (для разделения слов используйте \"|\")"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:220
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:221
 msgid "Behaviour"
 msgstr "Поведение"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:224
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:225
 msgid ""
 "Automatically add audio/video track when dragging beyond existing tracks"
 msgstr ""
 "Автоматически добавлять новую дорожку при перетаскивании за пределы "
 "существующих дорожек"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:227
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:228
 msgid "Application"
 msgstr "Приложение"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:229
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:244
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:230
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:245
 msgid "Language"
 msgstr "Язык"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:247
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:248
 msgid "Debug"
 msgstr "Отладка"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:249
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:250
 msgid "Logging"
 msgstr "Ведение журнала"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:252
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:253
 msgid "Log level"
 msgstr "Уровень ведения журнала"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:255
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:256
 msgid "Avcodec log level"
 msgstr "Уровень ведения журнала Avcodec"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:259
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:260
 msgid "Show debug info on widgets"
 msgstr "Отображать отладочную информацию в строке состояния"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:263
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:264
 msgid "Log the current sequence after each edit operation"
 msgstr "Добавлять запись в журнал после каждой операции редактирования"
+
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:363
+msgid "Restart required"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:363
+msgid ""
+"Some of the settings that were changed require Vidiot to be restarted. Do "
+"you want Vidiot to restart now?"
+msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogProjectProperties.cpp:34
 msgid "Properties"
@@ -1144,6 +1154,11 @@ msgstr "Рендеринг будет прерван."
 msgid "Could not deduce required sample format for audio."
 msgstr "Не удалось определить требуемый формат дискретизации аудио."
 
+#: C:\Vidiot\vidiot_trunk\render\src\AudioCodecParameter.cpp:30
+#: C:\Vidiot\vidiot_trunk\render\src\VideoCodecParameter.cpp:32
+msgid "Bit rate"
+msgstr ""
+
 #: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:304
 msgid "The following sequence(s) have not been scheduled"
 msgstr "Следующие видеоряды не были запланированы"
@@ -1237,6 +1252,32 @@ msgstr "Ошибка в видеокодеке"
 #: C:\Vidiot\vidiot_trunk\render\src\VideoCodec.cpp:152
 msgid "There was an error when opening the video codec."
 msgstr "При открытии видеокодека возникла ошибка."
+
+#: C:\Vidiot\vidiot_trunk\render\src\VideoCodecParameter.cpp:33
+msgid "Bit rate tolerance"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\render\src\VideoCodecParameter.cpp:34
+#, fuzzy
+msgid "Gop size"
+msgstr "Размер видео"
+
+#: C:\Vidiot\vidiot_trunk\render\src\VideoCodecParameter.cpp:35
+msgid "B Frames"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\render\src\VideoCodecParameter.cpp:36
+msgid "Macro block decision"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\render\src\VideoCodecParameter.cpp:64
+msgid "Least bits"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\render\src\VideoCodecParameter.cpp:65
+#, fuzzy
+msgid "Rate distortion"
+msgstr "Создать переход"
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_GuiEvents.cpp:504
 msgid ""

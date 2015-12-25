@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-12-24 20:38+0100\n"
-"PO-Revision-Date: 2015-12-24 20:41+0100\n"
+"POT-Creation-Date: 2015-12-25 12:13+0100\n"
+"PO-Revision-Date: 2015-12-25 12:20+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: nl_NL\n"
@@ -41,7 +41,7 @@ msgid "Audio files"
 msgstr "Audio bestanden"
 
 #: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:74
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:138
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:139
 msgid "Images"
 msgstr "Afbeeldingen"
 
@@ -128,47 +128,47 @@ msgstr "&Voltooien"
 msgid "Found %d file(s)"
 msgstr "%d bestanden gevonden."
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:61
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:62
 msgid "(requires restart)"
 msgstr "(vereist herstart)"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:63
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:64
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:123
 #: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:190
 msgid "Options"
 msgstr "Opties"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:66
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:67
 msgid "Load/Save"
 msgstr "Lezen/Opslaan"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:68
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:69
 msgid "Startup"
 msgstr "Opstarten"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:72
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:73
 msgid "Load last project on startup"
 msgstr "Laad meest recente project na opstarten."
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:74
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:75
 #: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:196
 msgid "Save"
 msgstr "Opslaan"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:78
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:79
 msgid "Make backup of existing save file when overwriting"
 msgstr "Maak een backup van het huidige project voor het opslaan"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:82
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:83
 msgid "Maximum number of generated save files (0 - infinite)"
 msgstr "Maximaal aantal project backups dat opgeslagen wordt (0 - oneindig)"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:86
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:87
 msgid "Use absolute path to media files when saving projects"
 msgstr ""
 "Gebruik een absolute referentie naar media bestanden in opgeslagen projecten."
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:87
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:88
 msgid ""
 "By using absolute paths, the project file can be moved without moving any "
 "media files in the project. Otherwise, project and media files must be moved "
@@ -179,27 +179,27 @@ msgstr ""
 "andere geval moeten (kunnen) het project en de media bestanden tegelijk "
 "verplaatst worden."
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:90
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:91
 msgid "Project view"
 msgstr "Project overzicht"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:92
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:93
 msgid "Make sequence: divide clips if clip's prefix differs"
 msgstr ""
 "Maak film: plaats lege ruimte wanneer de namen van twee opeenvolgende clips "
 "verschillend beginnen."
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:96
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:97
 msgid "Length of empty division (0 - disabled)"
 msgstr "Lengte van de lege ruimte (0 - uitgeschakeld)"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:100
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:101
 msgid "Length of name (prefix) to be matched"
 msgstr ""
 "Lengte van de naam (begin) die gelijk moet zijn om clips aaneengesloten te "
 "plaatsen"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:103
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:104
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogProjectProperties.cpp:43
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:111
 #: C:\Vidiot\vidiot_trunk\gui\src\EditProjectProperties.cpp:40
@@ -207,40 +207,40 @@ msgstr ""
 msgid "Video"
 msgstr "Video"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:105
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:180
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:106
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:181
 msgid "New projects"
 msgstr "Nieuwe projecten"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:121
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:122
 msgid "Framerate for new projects"
 msgstr "Framerate (weergave frequentie) voor nieuwe projecten"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:125
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:126
 msgid "Default video width"
 msgstr "Standaard video breedte"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:129
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:130
 msgid "Default video height"
 msgstr "Standaard video hoogte"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:132
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:133
 msgid "Default video scaling"
 msgstr "Standaard video schaling"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:135
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:136
 msgid "Default video alignment"
 msgstr "Standaard video positionering"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:140
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:141
 msgid "Size"
 msgstr "Grootte"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:175
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:176
 msgid "Default length of still images (in frames)"
 msgstr "Standaard lengte voor plaatjes (in frames)"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:178
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:179
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogProjectProperties.cpp:70
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:117
 #: C:\Vidiot\vidiot_trunk\gui\src\EditProjectProperties.cpp:58
@@ -248,83 +248,95 @@ msgstr "Standaard lengte voor plaatjes (in frames)"
 msgid "Audio"
 msgstr "Audio"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:191
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:192
 msgid "Default audio sample rate"
 msgstr "Standaard audio sample rate (sample frequentie)"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:201
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:202
 msgid "Default number of audio channels"
 msgstr "Standaard aantal audio kanalen"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:204
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:205
 msgid "Timeline"
 msgstr "Tijdlijn"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:206
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:207
 msgid "Marking selection"
 msgstr "Selectie markeren"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:210
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:211
 msgid "Begin marker expansion/contraction (s)."
 msgstr "Selectie begin verschuiving (s)"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:214
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:215
 msgid "End marker expansion/contraction (s)."
 msgstr "Selectie einde verschuiving (s)"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:216
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:217
 msgid "Clips"
 msgstr "Clips"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:218
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:219
 msgid "Text to remove from clip names - use '|' for multiple entries"
 msgstr ""
 "Gedeelte van de text van clip namen dat niet getoond hoeft te worden - "
 "gebruik '|' voor meer dan één optie."
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:220
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:221
 msgid "Behaviour"
 msgstr "Gedrag"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:224
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:225
 msgid ""
 "Automatically add audio/video track when dragging beyond existing tracks"
 msgstr ""
 "Automatisch audio/video spoor toevoegen bij het slepen buiten de bestaande "
 "sporen"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:227
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:228
 msgid "Application"
 msgstr "Toepassing"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:229
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:244
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:230
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:245
 msgid "Language"
 msgstr "Taal"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:247
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:248
 msgid "Debug"
 msgstr "Foutanalyse"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:249
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:250
 msgid "Logging"
 msgstr "Logging"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:252
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:253
 msgid "Log level"
 msgstr "Log niveau"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:255
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:256
 msgid "Avcodec log level"
 msgstr "Avcodec log niveau"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:259
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:260
 msgid "Show debug info on widgets"
 msgstr "Toon foutanalyse informatie op grafische elementen"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:263
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:264
 msgid "Log the current sequence after each edit operation"
 msgstr "Log informatie over de huidige tijdlijn na elke bewerking"
+
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:363
+msgid "Restart required"
+msgstr "Herstart vereist"
+
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:363
+msgid ""
+"Some of the settings that were changed require Vidiot to be restarted. Do "
+"you want Vidiot to restart now?"
+msgstr ""
+"Sommige van de aangepaste instellingen worden pas actief na een herstart. "
+"Wilt u Vidiot nu opnieuw opstarten?"
 
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogProjectProperties.cpp:34
 msgid "Properties"
@@ -1163,6 +1175,11 @@ msgstr "Generatie wordt afgebroken."
 msgid "Could not deduce required sample format for audio."
 msgstr "Kon het vereiste sample formaat voor audio niet bepalen."
 
+#: C:\Vidiot\vidiot_trunk\render\src\AudioCodecParameter.cpp:30
+#: C:\Vidiot\vidiot_trunk\render\src\VideoCodecParameter.cpp:32
+msgid "Bit rate"
+msgstr "Bit rate"
+
 #: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:304
 msgid "The following sequence(s) have not been scheduled"
 msgstr "De volgende film(s) zijn nog niet ingepland"
@@ -1256,6 +1273,30 @@ msgstr "Fout in video codec"
 #: C:\Vidiot\vidiot_trunk\render\src\VideoCodec.cpp:152
 msgid "There was an error when opening the video codec."
 msgstr "Er is een fout opgetreden bij het openen van de video codec."
+
+#: C:\Vidiot\vidiot_trunk\render\src\VideoCodecParameter.cpp:33
+msgid "Bit rate tolerance"
+msgstr "Bit rate tolerantie"
+
+#: C:\Vidiot\vidiot_trunk\render\src\VideoCodecParameter.cpp:34
+msgid "Gop size"
+msgstr "Afstand tussen volledige frames (GOP size)"
+
+#: C:\Vidiot\vidiot_trunk\render\src\VideoCodecParameter.cpp:35
+msgid "B Frames"
+msgstr "Bidirectionele beelden (B frames)"
+
+#: C:\Vidiot\vidiot_trunk\render\src\VideoCodecParameter.cpp:36
+msgid "Macro block decision"
+msgstr "Macro blok keuze"
+
+#: C:\Vidiot\vidiot_trunk\render\src\VideoCodecParameter.cpp:64
+msgid "Least bits"
+msgstr "Minste bits"
+
+#: C:\Vidiot\vidiot_trunk\render\src\VideoCodecParameter.cpp:65
+msgid "Rate distortion"
+msgstr "Snelheid vervorming"
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_GuiEvents.cpp:504
 msgid ""

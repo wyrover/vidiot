@@ -74,7 +74,7 @@ boost::mutex Avcodec::sMutex;
 
 void Avcodec::configureLog()
 {
-    static const std::map<LogLevelAvcodec, int> sMapEnumToAvLogLevel // todo much more local!
+    static const std::map<LogLevelAvcodec, int> sMapEnumToAvLogLevel
     {
         { LogLevelAvcodecQuiet, AV_LOG_QUIET },
         { LogLevelAvcodecFatal, AV_LOG_FATAL },
