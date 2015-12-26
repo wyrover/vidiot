@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-12-25 19:35+0100\n"
+"POT-Creation-Date: 2015-12-26 11:26+0100\n"
 "PO-Revision-Date: 2015-12-25 12:23+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -869,15 +869,15 @@ msgstr "Farbe"
 msgid "Missing file: "
 msgstr "Fehlende Datei: "
 
-#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoClipKeyFrame.cpp:200
+#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoKeyFrame.cpp:200
 msgid "Width becomes 0."
 msgstr "Breite wird 0."
 
-#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoClipKeyFrame.cpp:204
+#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoKeyFrame.cpp:204
 msgid "Height becomes 0."
 msgstr "Höhe wird 0."
 
-#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoClipKeyFrame.cpp:208
+#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoKeyFrame.cpp:208
 msgid "Image becomes too large."
 msgstr "Bild wird zu groß."
 
@@ -1294,7 +1294,7 @@ msgstr ""
 msgid "Set length of clip"
 msgstr "Einstellen der Länge vom Clip"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_HelperMethods.cpp:228
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_HelperMethods.cpp:225
 msgid "Change "
 msgstr "Änderung "
 

@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#include "VideoClipKeyFrame.h"
+#include "VideoKeyFrame.h"
 
 #include "Config.h"
 #include "Convert.h"
