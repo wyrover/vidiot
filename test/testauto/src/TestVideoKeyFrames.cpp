@@ -49,75 +49,39 @@ void TestVideoKeyFrames::testAddKeyFrames()
         StartTest("Cursor before clip: All keys disabled.");
         TimelinePositionCursor(HCenter(VideoClip(0, 1)));
         ASSERT_ZERO(getVideoClip(VideoClip(0, 4))->getKeyFramesOfPerceivedClip().size());
-        ASSERT(!DetailsClipView()->getVideoKeyFramesHomeButton()->IsEnabled());
-        ASSERT(!DetailsClipView()->getVideoKeyFramesPrevButton()->IsEnabled());
-        ASSERT(!DetailsClipView()->getVideoKeyFramesNextButton()->IsEnabled());
-        ASSERT(!DetailsClipView()->getVideoKeyFramesEndButton()->IsEnabled());
-        ASSERT(!DetailsClipView()->getVideoKeyFramesAddButton()->IsEnabled());
-        ASSERT(!DetailsClipView()->getVideoKeyFramesRemoveButton()->IsEnabled());
-        ASSERT_ZERO(DetailsClipView()->getVideoKeyFrameButtonCount());
+        ASSERT(DetailsView(VideoClip(0, 4)).VHome(false).VPrev(false).VNext(false).VEnd(false).VAdd(false).VRemove(false).VCount(0));
     }
     {
         StartTest("Cursor after clip: All keys disabled.");
         TimelinePositionCursor(HCenter(VideoClip(0, 6)));
         ASSERT_ZERO(getVideoClip(VideoClip(0, 4))->getKeyFramesOfPerceivedClip().size());
-        ASSERT(!DetailsClipView()->getVideoKeyFramesHomeButton()->IsEnabled());
-        ASSERT(!DetailsClipView()->getVideoKeyFramesPrevButton()->IsEnabled());
-        ASSERT(!DetailsClipView()->getVideoKeyFramesNextButton()->IsEnabled());
-        ASSERT(!DetailsClipView()->getVideoKeyFramesEndButton()->IsEnabled());
-        ASSERT(!DetailsClipView()->getVideoKeyFramesAddButton()->IsEnabled());
-        ASSERT(!DetailsClipView()->getVideoKeyFramesRemoveButton()->IsEnabled());
-        ASSERT_ZERO(DetailsClipView()->getVideoKeyFrameButtonCount());
+        ASSERT(DetailsView(VideoClip(0, 4)).VHome(false).VPrev(false).VNext(false).VEnd(false).VAdd(false).VRemove(false).VCount(0));
     }
     {
         StartTest("Cursor inside clip: Add button enabled.");
         TimelinePositionCursor(HCenter(VideoClip(0, 4)));
         ASSERT_ZERO(getVideoClip(VideoClip(0, 4))->getKeyFramesOfPerceivedClip().size());
-        ASSERT(!DetailsClipView()->getVideoKeyFramesHomeButton()->IsEnabled());
-        ASSERT(!DetailsClipView()->getVideoKeyFramesPrevButton()->IsEnabled());
-        ASSERT(!DetailsClipView()->getVideoKeyFramesNextButton()->IsEnabled());
-        ASSERT(!DetailsClipView()->getVideoKeyFramesEndButton()->IsEnabled());
-        ASSERT(DetailsClipView()->getVideoKeyFramesAddButton()->IsEnabled());
-        ASSERT(!DetailsClipView()->getVideoKeyFramesRemoveButton()->IsEnabled());
-        ASSERT_ZERO(DetailsClipView()->getVideoKeyFrameButtonCount());
+        ASSERT(DetailsView(VideoClip(0, 4)).VHome(false).VPrev(false).VNext(false).VEnd(false).VAdd(true).VRemove(false).VCount(0));
     }
     {
         StartTest("Add first key frame.");
         TimelinePositionCursor(KeyFrame2Pixel);
         ButtonTriggerPressed(DetailsClipView()->getVideoKeyFramesAddButton());
         ASSERT_EQUALS(1, getVideoClip(VideoClip(0, 4))->getKeyFramesOfPerceivedClip().size());
-        ASSERT(!DetailsClipView()->getVideoKeyFramesHomeButton()->IsEnabled());
-        ASSERT(!DetailsClipView()->getVideoKeyFramesPrevButton()->IsEnabled());
-        ASSERT(!DetailsClipView()->getVideoKeyFramesNextButton()->IsEnabled());
-        ASSERT(!DetailsClipView()->getVideoKeyFramesEndButton()->IsEnabled());
-        ASSERT(!DetailsClipView()->getVideoKeyFramesAddButton()->IsEnabled());
-        ASSERT(DetailsClipView()->getVideoKeyFramesRemoveButton()->IsEnabled());
-        ASSERT_EQUALS(1, DetailsClipView()->getVideoKeyFrameButtonCount());
+        ASSERT(DetailsView(VideoClip(0, 4)).VHome(false).VPrev(false).VNext(false).VEnd(false).VAdd(false).VRemove(true).VCount(1));
         ASSERT_HISTORY_END(cmd::ProjectViewCreateSequence)(gui::timeline::cmd::EditClipDetails);
     }
     {
         StartTest("Position after first key frame.");
         TimelinePositionCursor(KeyFrame2Pixel + 50);
         ASSERT_EQUALS(1, getVideoClip(VideoClip(0, 4))->getKeyFramesOfPerceivedClip().size());
-        ASSERT(DetailsClipView()->getVideoKeyFramesHomeButton()->IsEnabled());
-        ASSERT(DetailsClipView()->getVideoKeyFramesPrevButton()->IsEnabled());
-        ASSERT(!DetailsClipView()->getVideoKeyFramesNextButton()->IsEnabled());
-        ASSERT(!DetailsClipView()->getVideoKeyFramesEndButton()->IsEnabled());
-        ASSERT(DetailsClipView()->getVideoKeyFramesAddButton()->IsEnabled());
-        ASSERT(!DetailsClipView()->getVideoKeyFramesRemoveButton()->IsEnabled());
-        ASSERT_EQUALS(1, DetailsClipView()->getVideoKeyFrameButtonCount());
+        ASSERT(DetailsView(VideoClip(0, 4)).VHome(true).VPrev(true).VNext(false).VEnd(false).VAdd(true).VRemove(false).VCount(1));
     }
     {
         StartTest("Position before first key frame.");
         TimelinePositionCursor(KeyFrame2Pixel - 50);
         ASSERT_EQUALS(1, getVideoClip(VideoClip(0, 4))->getKeyFramesOfPerceivedClip().size());
-        ASSERT(!DetailsClipView()->getVideoKeyFramesHomeButton()->IsEnabled());
-        ASSERT(!DetailsClipView()->getVideoKeyFramesPrevButton()->IsEnabled());
-        ASSERT(DetailsClipView()->getVideoKeyFramesNextButton()->IsEnabled());
-        ASSERT(DetailsClipView()->getVideoKeyFramesEndButton()->IsEnabled());
-        ASSERT(DetailsClipView()->getVideoKeyFramesAddButton()->IsEnabled());
-        ASSERT(!DetailsClipView()->getVideoKeyFramesRemoveButton()->IsEnabled());
-        ASSERT_EQUALS(1, DetailsClipView()->getVideoKeyFrameButtonCount());
+        ASSERT(DetailsView(VideoClip(0, 4)).VHome(false).VPrev(false).VNext(true).VEnd(true).VAdd(true).VRemove(false).VCount(1));
     }
     {
         StartTest("Multiple key frames.");
@@ -133,11 +97,8 @@ void TestVideoKeyFrames::testAddKeyFrames()
     {
         StartTest("Use video key frames buttons and give frames specific parameters. Key frame 1: Rotation.");
         ButtonTriggerPressed(DetailsClipView()->getVideoKeyFrameButton(0));
-        ASSERT(DetailsClipView()->getVideoKeyFrameButton(0)->GetValue());
-        ASSERT(!DetailsClipView()->getVideoKeyFrameButton(1)->GetValue());
-        ASSERT(!DetailsClipView()->getVideoKeyFrameButton(2)->GetValue());
         ASSERT(KeyFrame(VideoClip(0, 4)).KeyFrameIndex(0).Opacity(255).Scaling(model::VideoScalingFitToFill).ScalingFactor(1).Alignment(model::VideoAlignmentCenter).Position(wxPoint{ 0,0 }).Rotation(0));
-        ASSERT(DetailsView(VideoClip(0, 4)).Opacity(255).Scaling(model::VideoScalingFitToFill).ScalingFactor(1).Alignment(model::VideoAlignmentCenter).Position(wxPoint{ 0,0 }).Rotation(0));
+        ASSERT(DetailsView(VideoClip(0, 4)).KeyFrameIndex(0).Opacity(255).Scaling(model::VideoScalingFitToFill).ScalingFactor(1).Alignment(model::VideoAlignmentCenter).Position(wxPoint{ 0,0 }).Rotation(0));
         SetValue(DetailsClipView()->getRotationSlider(), 9000); // 90 degrees
         ASSERT_HISTORY_END
             (gui::timeline::cmd::EditClipDetails) // Add key frame 1
@@ -150,11 +111,8 @@ void TestVideoKeyFrames::testAddKeyFrames()
     {
         StartTest("Use video key frames buttons and give frames specific parameters. Key frame 2: Scaling.");
         ButtonTriggerPressed(DetailsClipView()->getVideoKeyFrameButton(1));
-        ASSERT(!DetailsClipView()->getVideoKeyFrameButton(0)->GetValue());
-        ASSERT(DetailsClipView()->getVideoKeyFrameButton(1)->GetValue());
-        ASSERT(!DetailsClipView()->getVideoKeyFrameButton(2)->GetValue());
         ASSERT(KeyFrame(VideoClip(0, 4)).KeyFrameIndex(1).Opacity(255).Scaling(model::VideoScalingFitToFill).ScalingFactor(1).Alignment(model::VideoAlignmentCenter).Position(wxPoint{ 0,0 }).Rotation(0));
-        ASSERT(DetailsView(VideoClip(0, 4)).Opacity(255).Scaling(model::VideoScalingFitToFill).ScalingFactor(1).Alignment(model::VideoAlignmentCenter).Position(wxPoint{ 0,0 }).Rotation(0));
+        ASSERT(DetailsView(VideoClip(0, 4)).KeyFrameIndex(1).Opacity(255).Scaling(model::VideoScalingFitToFill).ScalingFactor(1).Alignment(model::VideoAlignmentCenter).Position(wxPoint{ 0,0 }).Rotation(0));
         SetValue(DetailsClipView()->getScalingSlider(), 5000); // scale to 50%
         ASSERT_HISTORY_END
             (gui::timeline::cmd::EditClipDetails) // Add key frame 1
@@ -169,11 +127,8 @@ void TestVideoKeyFrames::testAddKeyFrames()
     {
         StartTest("Use video key frames buttons and give frames specific parameters. Key frame 3: Opacity.");
         ButtonTriggerPressed(DetailsClipView()->getVideoKeyFrameButton(2));
-        ASSERT(!DetailsClipView()->getVideoKeyFrameButton(0)->GetValue());
-        ASSERT(!DetailsClipView()->getVideoKeyFrameButton(1)->GetValue());
-        ASSERT(DetailsClipView()->getVideoKeyFrameButton(2)->GetValue());
         ASSERT(KeyFrame(VideoClip(0, 4)).KeyFrameIndex(2).Opacity(255).Scaling(model::VideoScalingFitToFill).ScalingFactor(1).Alignment(model::VideoAlignmentCenter).Position(wxPoint{ 0,0 }).Rotation(0));
-        ASSERT(DetailsView(VideoClip(0, 4)).Opacity(255).Scaling(model::VideoScalingFitToFill).ScalingFactor(1).Alignment(model::VideoAlignmentCenter).Position(wxPoint{ 0,0 }).Rotation(0));
+        ASSERT(DetailsView(VideoClip(0, 4)).KeyFrameIndex(2).Opacity(255).Scaling(model::VideoScalingFitToFill).ScalingFactor(1).Alignment(model::VideoAlignmentCenter).Position(wxPoint{ 0,0 }).Rotation(0));
         SetValue(DetailsClipView()->getOpacitySlider(), 128); // 50% opaque
         ASSERT_HISTORY_END
             (gui::timeline::cmd::EditClipDetails) // Add key frame 1
@@ -288,6 +243,7 @@ void TestVideoKeyFrames::testNavigation()
         TimelinePositionCursor(KeyFrame3Pixel);
         ButtonTriggerPressed(DetailsClipView()->getVideoKeyFramesAddButton());
         ASSERT_EQUALS(3, getVideoClip(VideoClip(0, 4))->getKeyFramesOfPerceivedClip().size());
+        ASSERT(DetailsView(VideoClip(0, 4)).VCount(3));
         ASSERT_EQUALS(3, DetailsClipView()->getVideoKeyFrameButtonCount());
     }
     auto CHECK_BUTTON = [&](pixel from, wxButton* button, pixel to, size_t keyFrameIndex)
@@ -299,39 +255,21 @@ void TestVideoKeyFrames::testNavigation()
     {
         StartTest("Before first key frame");
         TimelinePositionCursor(BeforeKeyFrame1);
-        ASSERT(!DetailsClipView()->getVideoKeyFramesHomeButton()->IsEnabled());
-        ASSERT(!DetailsClipView()->getVideoKeyFramesPrevButton()->IsEnabled());
-        ASSERT(DetailsClipView()->getVideoKeyFramesNextButton()->IsEnabled());
-        ASSERT(DetailsClipView()->getVideoKeyFramesEndButton()->IsEnabled());
-        ASSERT(!DetailsClipView()->getVideoKeyFrameButton(0)->GetValue());
-        ASSERT(!DetailsClipView()->getVideoKeyFrameButton(1)->GetValue());
-        ASSERT(!DetailsClipView()->getVideoKeyFrameButton(2)->GetValue());
+        ASSERT(DetailsView(VideoClip(0, 4)).VHome(false).VPrev(false).VNext(true).VEnd(true).VAdd(true).VRemove(false).VCount(3).NoKeyframe());
         CHECK_BUTTON(BeforeKeyFrame1, DetailsClipView()->getVideoKeyFramesNextButton(), KeyFrame1Pixel, 0);
         CHECK_BUTTON(BeforeKeyFrame1, DetailsClipView()->getVideoKeyFramesEndButton(), KeyFrame3Pixel, 2);
     }
     {
         StartTest("On first key frame");
         TimelinePositionCursor(KeyFrame1Pixel);
-        ASSERT(!DetailsClipView()->getVideoKeyFramesHomeButton()->IsEnabled());
-        ASSERT(!DetailsClipView()->getVideoKeyFramesPrevButton()->IsEnabled());
-        ASSERT(DetailsClipView()->getVideoKeyFramesNextButton()->IsEnabled());
-        ASSERT(DetailsClipView()->getVideoKeyFramesEndButton()->IsEnabled());
-        ASSERT(DetailsClipView()->getVideoKeyFrameButton(0)->GetValue());
-        ASSERT(!DetailsClipView()->getVideoKeyFrameButton(1)->GetValue());
-        ASSERT(!DetailsClipView()->getVideoKeyFrameButton(2)->GetValue());
+        ASSERT(DetailsView(VideoClip(0, 4)).VHome(false).VPrev(false).VNext(true).VEnd(true).VAdd(false).VRemove(true).VCount(3).KeyFrameIndex(0));
         CHECK_BUTTON(KeyFrame1Pixel, DetailsClipView()->getVideoKeyFramesNextButton(), KeyFrame2Pixel, 1);
         CHECK_BUTTON(KeyFrame1Pixel, DetailsClipView()->getVideoKeyFramesEndButton(), KeyFrame3Pixel, 2);
     }
     {
         StartTest("Between key frame 1 and key frame 2");
         TimelinePositionCursor(BetweenKeyFrame1AndKeyFrame2);
-        ASSERT(DetailsClipView()->getVideoKeyFramesHomeButton()->IsEnabled());
-        ASSERT(DetailsClipView()->getVideoKeyFramesPrevButton()->IsEnabled());
-        ASSERT(DetailsClipView()->getVideoKeyFramesNextButton()->IsEnabled());
-        ASSERT(DetailsClipView()->getVideoKeyFramesEndButton()->IsEnabled());
-        ASSERT(!DetailsClipView()->getVideoKeyFrameButton(0)->GetValue());
-        ASSERT(!DetailsClipView()->getVideoKeyFrameButton(1)->GetValue());
-        ASSERT(!DetailsClipView()->getVideoKeyFrameButton(2)->GetValue());
+        ASSERT(DetailsView(VideoClip(0, 4)).VHome(true).VPrev(true).VNext(true).VEnd(true).VAdd(true).VRemove(false).VCount(3).NoKeyframe());
         CHECK_BUTTON(BetweenKeyFrame1AndKeyFrame2, DetailsClipView()->getVideoKeyFramesHomeButton(), KeyFrame1Pixel, 0);
         CHECK_BUTTON(BetweenKeyFrame1AndKeyFrame2, DetailsClipView()->getVideoKeyFramesPrevButton(), KeyFrame1Pixel, 0);
         CHECK_BUTTON(BetweenKeyFrame1AndKeyFrame2, DetailsClipView()->getVideoKeyFramesNextButton(), KeyFrame2Pixel, 1);
@@ -340,13 +278,7 @@ void TestVideoKeyFrames::testNavigation()
     {
         StartTest("On key frame 2");
         TimelinePositionCursor(KeyFrame2Pixel);
-        ASSERT(DetailsClipView()->getVideoKeyFramesHomeButton()->IsEnabled());
-        ASSERT(DetailsClipView()->getVideoKeyFramesPrevButton()->IsEnabled());
-        ASSERT(DetailsClipView()->getVideoKeyFramesNextButton()->IsEnabled());
-        ASSERT(DetailsClipView()->getVideoKeyFramesEndButton()->IsEnabled());
-        ASSERT(!DetailsClipView()->getVideoKeyFrameButton(0)->GetValue());
-        ASSERT(DetailsClipView()->getVideoKeyFrameButton(1)->GetValue());
-        ASSERT(!DetailsClipView()->getVideoKeyFrameButton(2)->GetValue());
+        ASSERT(DetailsView(VideoClip(0, 4)).VHome(true).VPrev(true).VNext(true).VEnd(true).VAdd(false).VRemove(true).VCount(3).KeyFrameIndex(1));
         CHECK_BUTTON(KeyFrame2Pixel, DetailsClipView()->getVideoKeyFramesHomeButton(), KeyFrame1Pixel, 0);
         CHECK_BUTTON(KeyFrame2Pixel, DetailsClipView()->getVideoKeyFramesPrevButton(), KeyFrame1Pixel, 0);
         CHECK_BUTTON(KeyFrame2Pixel, DetailsClipView()->getVideoKeyFramesNextButton(), KeyFrame3Pixel, 2);
@@ -355,13 +287,7 @@ void TestVideoKeyFrames::testNavigation()
     {
         StartTest("Between key frame 2 and key frame 3");
         TimelinePositionCursor(BetweenKeyFrame2AndKeyFrame3);
-        ASSERT(DetailsClipView()->getVideoKeyFramesHomeButton()->IsEnabled());
-        ASSERT(DetailsClipView()->getVideoKeyFramesPrevButton()->IsEnabled());
-        ASSERT(DetailsClipView()->getVideoKeyFramesNextButton()->IsEnabled());
-        ASSERT(DetailsClipView()->getVideoKeyFramesEndButton()->IsEnabled());
-        ASSERT(!DetailsClipView()->getVideoKeyFrameButton(0)->GetValue());
-        ASSERT(!DetailsClipView()->getVideoKeyFrameButton(1)->GetValue());
-        ASSERT(!DetailsClipView()->getVideoKeyFrameButton(2)->GetValue());
+        ASSERT(DetailsView(VideoClip(0, 4)).VHome(true).VPrev(true).VNext(true).VEnd(true).VAdd(true).VRemove(false).VCount(3).NoKeyframe());
         CHECK_BUTTON(BetweenKeyFrame2AndKeyFrame3, DetailsClipView()->getVideoKeyFramesHomeButton(), KeyFrame1Pixel, 0);
         CHECK_BUTTON(BetweenKeyFrame2AndKeyFrame3, DetailsClipView()->getVideoKeyFramesPrevButton(), KeyFrame2Pixel, 1);
         CHECK_BUTTON(BetweenKeyFrame2AndKeyFrame3, DetailsClipView()->getVideoKeyFramesNextButton(), KeyFrame3Pixel, 2);
@@ -370,26 +296,14 @@ void TestVideoKeyFrames::testNavigation()
     {
         StartTest("On key frame 3");
         TimelinePositionCursor(KeyFrame3Pixel);
-        ASSERT(DetailsClipView()->getVideoKeyFramesHomeButton()->IsEnabled());
-        ASSERT(DetailsClipView()->getVideoKeyFramesPrevButton()->IsEnabled());
-        ASSERT(!DetailsClipView()->getVideoKeyFramesNextButton()->IsEnabled());
-        ASSERT(!DetailsClipView()->getVideoKeyFramesEndButton()->IsEnabled());
-        ASSERT(!DetailsClipView()->getVideoKeyFrameButton(0)->GetValue());
-        ASSERT(!DetailsClipView()->getVideoKeyFrameButton(1)->GetValue());
-        ASSERT(DetailsClipView()->getVideoKeyFrameButton(2)->GetValue());
+        ASSERT(DetailsView(VideoClip(0, 4)).VHome(true).VPrev(true).VNext(false).VEnd(false).VAdd(false).VRemove(true).VCount(3).KeyFrameIndex(2));
         CHECK_BUTTON(KeyFrame3Pixel, DetailsClipView()->getVideoKeyFramesHomeButton(), KeyFrame1Pixel, 0);
         CHECK_BUTTON(KeyFrame3Pixel, DetailsClipView()->getVideoKeyFramesPrevButton(), KeyFrame2Pixel, 1);
     }
     {
         StartTest("After key frame 3");
         TimelinePositionCursor(AfterKeyFrame3);
-        ASSERT(DetailsClipView()->getVideoKeyFramesHomeButton()->IsEnabled());
-        ASSERT(DetailsClipView()->getVideoKeyFramesPrevButton()->IsEnabled());
-        ASSERT(!DetailsClipView()->getVideoKeyFramesNextButton()->IsEnabled());
-        ASSERT(!DetailsClipView()->getVideoKeyFramesEndButton()->IsEnabled());
-        ASSERT(!DetailsClipView()->getVideoKeyFrameButton(0)->GetValue());
-        ASSERT(!DetailsClipView()->getVideoKeyFrameButton(1)->GetValue());
-        ASSERT(!DetailsClipView()->getVideoKeyFrameButton(2)->GetValue());
+        ASSERT(DetailsView(VideoClip(0, 4)).VHome(true).VPrev(true).VNext(false).VEnd(false).VAdd(true).VRemove(false).VCount(3).NoKeyframe());
         CHECK_BUTTON(AfterKeyFrame3, DetailsClipView()->getVideoKeyFramesHomeButton(), KeyFrame1Pixel, 0);
         CHECK_BUTTON(AfterKeyFrame3, DetailsClipView()->getVideoKeyFramesPrevButton(), KeyFrame3Pixel, 2);
     }
@@ -474,28 +388,26 @@ void TestVideoKeyFrames::testKeyFramesOnBeginAndEndOfClip()
         StartTest("Prepare key frames.");
         TimelinePositionCursor(LeftPixel(VideoClip(0,1)));
         ButtonTriggerPressed(DetailsClipView()->getVideoKeyFramesAddButton());
-        ASSERT_EQUALS(DetailsClipView()->getVideoKeyFrameButtonCount(), 1);
+        ASSERT(DetailsView(VideoClip(0, 1)).VCount(1));
         TimelinePositionCursor(RightPixel(VideoClip(0, 1)));
         ButtonTriggerPressed(DetailsClipView()->getVideoKeyFramesAddButton());
-        ASSERT_EQUALS(DetailsClipView()->getVideoKeyFrameButtonCount(), 2);
+        ASSERT(DetailsView(VideoClip(0, 1)).VCount(2));
         ASSERT(KeyFrame(VideoClip(0, 1)).KeyFrameIndex(0).KeyFrameOffset(0));
         ASSERT(KeyFrame(VideoClip(0, 1)).KeyFrameIndex(1).KeyFrameOffset(VideoClip(0,1)->getLength() - 1));
     }
     {
-        StartTest("Cursor beyond clip span");
+        StartTest("Cursor after clip");
         TimelinePositionCursor(LeftPixel(VideoClip(0, 2)) + 5);
-        ASSERT(DetailsClipView()->getVideoKeyFramesHomeButton()->IsEnabled());
-        ASSERT(DetailsClipView()->getVideoKeyFramesPrevButton()->IsEnabled());
-        ButtonTriggerPressed(DetailsClipView()->getVideoKeyFramesPrevButton());
-        ASSERT(DetailsView(VideoClip(0, 1)).KeyFrameIndex(1));
-    }
-    {
-        StartTest("Cursor beyond clip span");
-        TimelinePositionCursor(RightPixel(VideoClip(0, 0)) - 5);
-        ASSERT(DetailsClipView()->getVideoKeyFramesNextButton()->IsEnabled());
-        ASSERT(DetailsClipView()->getVideoKeyFramesEndButton()->IsEnabled());
+        ASSERT(DetailsView(VideoClip(0, 1)).VHome(true).VPrev(true).VNext(false).VEnd(false).VAdd(false).VRemove(true).VCount(2).KeyFrameIndex(1));
         ButtonTriggerPressed(DetailsClipView()->getVideoKeyFramesPrevButton());
         ASSERT(DetailsView(VideoClip(0, 1)).KeyFrameIndex(0));
+    }
+    {
+        StartTest("Cursor before clip");
+        TimelinePositionCursor(RightPixel(VideoClip(0, 0)) - 5);
+        ASSERT(DetailsView(VideoClip(0, 1)).VHome(false).VPrev(false).VNext(true).VEnd(true).VAdd(false).VRemove(true).VCount(2).KeyFrameIndex(0));
+        ButtonTriggerPressed(DetailsClipView()->getVideoKeyFramesNextButton());
+        ASSERT(DetailsView(VideoClip(0, 1)).KeyFrameIndex(1));
     }
 }
 
@@ -516,7 +428,7 @@ void TestVideoKeyFrames::testGetKeyFrameWithoutOffset()
         ButtonTriggerPressed(DetailsClipView()->getVideoKeyFramesAddButton());
         SetValue(DetailsClipView()->getRotationSpin(), +90.0);
         ASSERT_EQUALS(2, getVideoClip(VideoClip(0, 4))->getKeyFramesOfPerceivedClip().size());
-        ASSERT_EQUALS(2, DetailsClipView()->getVideoKeyFrameButtonCount());
+        ASSERT(DetailsView(VideoClip(0, 4)).VCount(2));
     }
     {
         StartTest("Get rotation for first key frame");
@@ -563,7 +475,7 @@ void TestVideoKeyFrames::testGetKeyFrameWithOffset()
         ButtonTriggerPressed(DetailsClipView()->getVideoKeyFramesAddButton());
         SetValue(DetailsClipView()->getRotationSpin(), +90.0);
         ASSERT_EQUALS(2, getVideoClip(VideoClip(0, 4))->getKeyFramesOfPerceivedClip().size());
-        ASSERT_EQUALS(2, DetailsClipView()->getVideoKeyFrameButtonCount());
+        ASSERT(DetailsView(VideoClip(0, 4)).VCount(2));
     }
     {
         StartTest("Get rotation for first key frame");
@@ -611,7 +523,7 @@ void TestVideoKeyFrames::testGetKeyFrameWithTransition()
         ButtonTriggerPressed(DetailsClipView()->getVideoKeyFramesAddButton());
         SetValue(DetailsClipView()->getRotationSpin(), +90.0);
         ASSERT_EQUALS(2, getVideoClip(VideoClip(0, 5))->getKeyFramesOfPerceivedClip().size());
-        ASSERT_EQUALS(2, DetailsClipView()->getVideoKeyFrameButtonCount());
+        ASSERT(DetailsView(VideoClip(0, 5)).VCount(2));
     }
     {
         StartTest("Get rotation for first key frame");
@@ -662,11 +574,11 @@ void TestVideoKeyFrames::testChangeClipSpeed()
     {
         StartTest("Increase speed and verify key frame");
         SetValue(DetailsClipView()->getSpeedSpin(), 10.0);
-        ASSERT(!DetailsClipView()->getVideoKeyFrameButton(0)->GetValue());
+        ASSERT(DetailsView(VideoClip(0, 4)).NoKeyframe());
         ASSERT_CLIP_SPEED(VideoClip(0, 4), rational64(10, 1));
         ASSERT(KeyFrame(VideoClip(0, 4)).KeyFrameIndex(0).Rotation(90));
         TimelinePositionCursor(HCenter(VideoClip(0, 4)));
-        ASSERT(DetailsClipView()->getVideoKeyFrameButton(0)->GetValue());
+        ASSERT(DetailsView(VideoClip(0, 4)).KeyFrameIndex(0));
         ASSERT_HISTORY_END(gui::timeline::cmd::EditClipDetails)(gui::timeline::cmd::EditClipDetails)(gui::timeline::cmd::EditClipSpeed);
         Undo();
         ASSERT_HISTORY_END(gui::timeline::cmd::EditClipDetails)(gui::timeline::cmd::EditClipDetails);
@@ -674,11 +586,11 @@ void TestVideoKeyFrames::testChangeClipSpeed()
     {
         StartTest("Decrease speed and verify key frame");
         SetValue(DetailsClipView()->getSpeedSlider(), 5000); // 5000 'to the left' sets speed to 0.5
-        ASSERT(!DetailsClipView()->getVideoKeyFrameButton(0)->GetValue());
+        ASSERT(DetailsView(VideoClip(0, 4)).NoKeyframe());
         ASSERT_CLIP_SPEED(VideoClip(0, 4), rational64(1, 2));
         ASSERT(KeyFrame(VideoClip(0, 4)).KeyFrameIndex(0).Rotation(90));
         TimelinePositionCursor(HCenter(VideoClip(0, 4)));
-        ASSERT(DetailsClipView()->getVideoKeyFrameButton(0)->GetValue());
+        ASSERT(DetailsView(VideoClip(0, 4)).KeyFrameIndex(0));
         ASSERT_HISTORY_END(gui::timeline::cmd::EditClipDetails)(gui::timeline::cmd::EditClipDetails)(gui::timeline::cmd::EditClipSpeed);
         Undo();
         ASSERT_HISTORY_END(gui::timeline::cmd::EditClipDetails)(gui::timeline::cmd::EditClipDetails);
@@ -704,38 +616,38 @@ void TestVideoKeyFrames::testTrimAwayKeyFrames()
     {
         StartTest("Remove frame by begin trim");
         TimelineTrimLeft(VideoClip(0, 4), 100);
-        ASSERT_EQUALS(DetailsClipView()->getVideoKeyFrameButtonCount(), 2);
+        ASSERT(DetailsView(VideoClip(0, 4)).VCount(2));
         ASSERT_HISTORY_END(gui::timeline::cmd::TrimClip);
     }
     {
         StartTest("Add frame by begin trim (impossible)");
         TimelineTrimLeft(VideoClip(0, 4), -100);
-        ASSERT_EQUALS(DetailsClipView()->getVideoKeyFrameButtonCount(), 2);
+        ASSERT(DetailsView(VideoClip(0, 4)).VCount(2));
         ASSERT_HISTORY_END(gui::timeline::cmd::TrimClip)(gui::timeline::cmd::TrimClip);
     }
     {
         StartTest("Add frame again by Undoing");
         Undo(2);
         ASSERT_HISTORY_END(gui::timeline::cmd::EditClipDetails)(gui::timeline::cmd::EditClipDetails)(gui::timeline::cmd::EditClipDetails);
-        ASSERT_EQUALS(DetailsClipView()->getVideoKeyFrameButtonCount(), 3);
+        ASSERT(DetailsView(VideoClip(0, 4)).VCount(3));
     }
     {
         StartTest("Remove frame by end trim");
         TimelineTrimRight(VideoClip(0, 4), -100);
-        ASSERT_EQUALS(DetailsClipView()->getVideoKeyFrameButtonCount(), 2);
+        ASSERT(DetailsView(VideoClip(0, 4)).VCount(2));
         ASSERT_HISTORY_END(gui::timeline::cmd::TrimClip);
     }
     {
         StartTest("Add frame by end trim (impossible)");
         TimelineTrimRight(VideoClip(0, 4), 100);
-        ASSERT_EQUALS(DetailsClipView()->getVideoKeyFrameButtonCount(), 2);
+        ASSERT(DetailsView(VideoClip(0, 4)).VCount(2));
         ASSERT_HISTORY_END(gui::timeline::cmd::TrimClip)(gui::timeline::cmd::TrimClip);
     }
     {
         StartTest("Add frame again by Undoing");
         Undo(2);
         ASSERT_HISTORY_END(gui::timeline::cmd::EditClipDetails)(gui::timeline::cmd::EditClipDetails)(gui::timeline::cmd::EditClipDetails);
-        ASSERT_EQUALS(DetailsClipView()->getVideoKeyFrameButtonCount(), 3);
+        ASSERT(DetailsView(VideoClip(0, 4)).VCount(3));
     }
 }
 
@@ -750,13 +662,11 @@ void TestVideoKeyFrames::testBeginOffset()
         TimelinePositionCursor(LeftPixel(VideoClip(0, 3)) + 50);
         TimelineKeyPress('v');
         ButtonTriggerPressed(DetailsClipView()->getVideoKeyFramesAddButton());
-        ASSERT_EQUALS(DetailsClipView()->getVideoKeyFrameButtonCount(), 1);
         ASSERT(KeyFrame(VideoClip(0, 3)).KeyFrameIndex(0));
-        ASSERT(DetailsView(VideoClip(0, 3)).KeyFrameIndex(0));
+        ASSERT(DetailsView(VideoClip(0, 3)).VCount(1).KeyFrameIndex(0));
         ButtonTriggerPressed(DetailsClipView()->getVideoKeyFramesRemoveButton());
         ASSERT(KeyFrame(VideoClip(0, 3)));
-        ASSERT(DetailsView(VideoClip(0, 3)));
-        ASSERT_EQUALS(DetailsClipView()->getVideoKeyFrameButtonCount(), 0);
+        ASSERT(DetailsView(VideoClip(0, 3)).VCount(0).NoKeyframe());
     }
     {
         StartTest("Zoom 8");
@@ -765,13 +675,11 @@ void TestVideoKeyFrames::testBeginOffset()
         TimelinePositionCursor(LeftPixel(VideoClip(0, 3)) + 20);
         TimelineKeyPress('v');
         ButtonTriggerPressed(DetailsClipView()->getVideoKeyFramesAddButton());
-        ASSERT_EQUALS(DetailsClipView()->getVideoKeyFrameButtonCount(), 1);
         ASSERT(KeyFrame(VideoClip(0, 3)).KeyFrameIndex(0));
-        ASSERT(DetailsView(VideoClip(0, 3)).KeyFrameIndex(0));
+        ASSERT(DetailsView(VideoClip(0, 3)).VCount(1).KeyFrameIndex(0));
         ButtonTriggerPressed(DetailsClipView()->getVideoKeyFramesRemoveButton());
         ASSERT(KeyFrame(VideoClip(0, 3)));
-        ASSERT(DetailsView(VideoClip(0, 3)));
-        ASSERT_EQUALS(DetailsClipView()->getVideoKeyFrameButtonCount(), 0);
+        ASSERT(DetailsView(VideoClip(0, 3)).NoKeyframe().VCount(0));
     }
 }
 
@@ -829,19 +737,17 @@ void TestVideoKeyFrames::testOutTransition()
         TimelineKeyPress('v');
         TimelineSelectClips({ VideoClip(0, 4) });
         ButtonTriggerPressed(DetailsClipView()->getVideoKeyFramesAddButton());
-        ASSERT_EQUALS(DetailsClipView()->getVideoKeyFrameButtonCount(), 1);
+        ASSERT(DetailsView(VideoClip(0, 4)).VCount(1));
         TimelinePositionCursor(RightPixel(VideoClip(0, 4)) + 12);
         ButtonTriggerPressed(DetailsClipView()->getVideoKeyFramesAddButton());
-        ASSERT_EQUALS(DetailsClipView()->getVideoKeyFrameButtonCount(), 2);
+        ASSERT(DetailsView(VideoClip(0, 4)).VCount(2));
     }
     {
         StartTest("Cursor position maps onto key frames");
         TimelinePositionCursor(RightPixel(VideoClip(0, 4)) + 3);
-        ASSERT(DetailsClipView()->getVideoKeyFrameButton(0)->GetValue());
-        ASSERT(!DetailsClipView()->getVideoKeyFrameButton(1)->GetValue());
+        ASSERT(DetailsView(VideoClip(0, 4)).KeyFrameIndex(0));
         TimelinePositionCursor(RightPixel(VideoClip(0, 4)) + 12);
-        ASSERT(!DetailsClipView()->getVideoKeyFrameButton(0)->GetValue());
-        ASSERT(DetailsClipView()->getVideoKeyFrameButton(1)->GetValue());
+        ASSERT(DetailsView(VideoClip(0, 4)).KeyFrameIndex(1));
     }
     {
         StartTest("Change key frames");
@@ -914,7 +820,7 @@ void TestVideoKeyFrames::testMovingKeyFramePosition()
     ButtonTriggerPressed(DetailsClipView()->getVideoKeyFramesAddButton());
     std::map<pts, model::KeyFramePtr> keyframes{ getVideoClip(VideoClip(0,4))->getKeyFramesOfPerceivedClip() };
     ASSERT_EQUALS(keyframes.size(), 3);
-    std::map<pixel, pts> mapPixelToPts 
+    std::map<pixel, pts> mapPixelToPts
     {
         { KeyFrame1Pixel, keyframes.begin()->first },
         { KeyFrame2Pixel, std::next(keyframes.begin())->first },
@@ -1013,9 +919,8 @@ void TestVideoKeyFrames::testAbortMovingKeyFrame()
     TimelineKeyPress(WXK_ESCAPE);
     TimelineLeftUp();
     ASSERT(KeyFrame(VideoClip(0, 4)).KeyFrameIndex(0).KeyFrameOffset(pos));
-    ASSERT(DetailsView(VideoClip(0, 4)));
+    ASSERT(DetailsView(VideoClip(0, 4)).VAdd(true));
     ASSERT(!DetailsClipView()->getRotationSlider()->IsEnabled()); // No key frame
-    ASSERT(DetailsClipView()->getVideoKeyFramesAddButton()->IsEnabled());
 }
 
 } // namespace

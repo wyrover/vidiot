@@ -22,6 +22,7 @@
 #include "LinkReplacementMap.h"
 #include "Properties.h"
 #include "StatusBar.h"
+#include "UtilClone.h"
 #include "UtilLog.h"
 
 namespace gui { namespace timeline {

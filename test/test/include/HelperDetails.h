@@ -70,6 +70,27 @@ struct DetailsView : public KeyFrameValues
 {
     using KeyFrameValues::KeyFrameValues;
     operator bool() const override;
+
+    inline DetailsView& VHome(bool enabled) { mVideoKeyframeHomeButton.reset(enabled); return *this; };
+    inline DetailsView& VPrev(bool enabled) { mVideoKeyframePrevButton.reset(enabled); return *this; };
+    inline DetailsView& VNext(bool enabled) { mVideoKeyframeNextButton.reset(enabled); return *this; };
+    inline DetailsView& VEnd(bool enabled) { mVideoKeyframeEndButton.reset(enabled); return *this; };
+    inline DetailsView& VAdd(bool enabled) { mVideoKeyframeAddButton.reset(enabled); return *this; };
+    inline DetailsView& VRemove(bool enabled) { mVideoKeyframeRemoveButton.reset(enabled); return *this; };
+    inline DetailsView& VCount(size_t count) { mVideoKeyframeCount.reset(count); return *this; };
+    inline DetailsView& NoKeyframe() { mNoKeyFrame.reset(true); return *this; };
+
+private:
+
+    boost::optional<bool> mVideoKeyframeHomeButton = boost::none;
+    boost::optional<bool> mVideoKeyframePrevButton = boost::none;
+    boost::optional<bool> mVideoKeyframeNextButton = boost::none;
+    boost::optional<bool> mVideoKeyframeEndButton = boost::none;
+    boost::optional<bool> mVideoKeyframeAddButton = boost::none;
+    boost::optional<bool> mVideoKeyframeRemoveButton = boost::none;
+    boost::optional<size_t> mVideoKeyframeCount = boost::none;
+    boost::optional <bool> mNoKeyFrame = boost::none;
+
 };
 
 } // namespace

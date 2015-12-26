@@ -23,31 +23,34 @@
 #include "UtilRational.h"
 
 namespace model {
+    //todo rename file to videokeyframe.cpp
+class VideoKeyFrame;
+typedef std::map<pts, VideoKeyFramePtr> VideoKeyFrameMap;
 
-class VideoClipKeyFrame
+class VideoKeyFrame
     : public KeyFrame
 {
 public:
 
     static const rational64 sScalingMin;
     static const rational64 sScalingMax;
-    static const int sOpacityMin = wxIMAGE_ALPHA_TRANSPARENT;
-    static const int sOpacityMax = wxIMAGE_ALPHA_OPAQUE;
+    static const int sOpacityMin;
+    static const int sOpacityMax;
 
 
     //////////////////////////////////////////////////////////////////////////
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    VideoClipKeyFrame();
+    VideoKeyFrame();
 
-    VideoClipKeyFrame(const wxSize& size);
+    VideoKeyFrame(const wxSize& size);
 
-    VideoClipKeyFrame(VideoClipKeyFramePtr before, VideoClipKeyFramePtr after, pts positionBefore, pts position, pts positionAfter);
-    
-    virtual VideoClipKeyFrame* clone() const override;
+    VideoKeyFrame(VideoKeyFramePtr before, VideoKeyFramePtr after, pts positionBefore, pts position, pts positionAfter);
 
-    virtual ~VideoClipKeyFrame();
+    virtual VideoKeyFrame* clone() const override;
+
+    virtual ~VideoKeyFrame();
 
     //////////////////////////////////////////////////////////////////////////
     // GET/SET
@@ -81,7 +84,7 @@ protected:
 
     /// Copy constructor. Use make_cloned for making deep copies of objects.
     /// \see make_cloned
-    VideoClipKeyFrame(const VideoClipKeyFrame& other);
+    VideoKeyFrame(const VideoKeyFrame& other);
 
 private:
 
@@ -129,7 +132,7 @@ private:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<(std::ostream& os, const VideoClipKeyFrame& obj);
+    friend std::ostream& operator<<(std::ostream& os, const VideoKeyFrame& obj);
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION
@@ -142,5 +145,5 @@ private:
 
 } // namespace
 
-BOOST_CLASS_VERSION(model::VideoClipKeyFrame, 1)
-BOOST_CLASS_EXPORT_KEY(model::VideoClipKeyFrame)
+BOOST_CLASS_VERSION(model::VideoKeyFrame, 1)
+BOOST_CLASS_EXPORT_KEY(model::VideoKeyFrame)

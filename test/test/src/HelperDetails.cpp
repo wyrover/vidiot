@@ -42,8 +42,8 @@ KeyFrameValues::KeyFrameValues(model::IClipPtr clip)
 
 KeyFrame::operator bool() const
 {
-    std::pair<pts, model::VideoClipKeyFramePtr> pos_frame{ mKeyFrameIndex ? VideoKeyFrame(mClip, *mKeyFrameIndex) : std::make_pair(-1, DefaultVideoKeyFrame(mClip)) };
-    model::VideoClipKeyFramePtr keyFrame{ pos_frame.second };
+    std::pair<pts, model::VideoKeyFramePtr> pos_frame = mKeyFrameIndex ? VideoKeyFrame(mClip, *mKeyFrameIndex) : std::make_pair(-1l, DefaultVideoKeyFrame(mClip));
+    model::VideoKeyFramePtr keyFrame{ pos_frame.second };
     if (mKeyFrameOffset)
     {
         ASSERT_EQUALS(*mKeyFrameOffset, pos_frame.first);
@@ -92,6 +92,14 @@ DetailsView::operator bool() const
     int widget_rotationdigits{ 0 };
     double widget_rotationspin{ 0.0 };
     boost::optional<size_t> widget_activekeyframebutton{ boost::none };
+    bool widget_videohome{ false };
+    bool widget_videoprev{ false };
+    bool widget_videonext{ false };
+    bool widget_videoend{ false };
+    bool widget_videoadd{ false };
+    bool widget_videoremove{ false };
+    size_t widget_videocount{ 0 };
+
     util::thread::RunInMainAndWait([&]
     {
         wxWindow* current{ getTimeline().getDetails().getCurrent() };
@@ -112,7 +120,8 @@ DetailsView::operator bool() const
             widget_rotationdigits = detailsclip->getRotationSlider()->GetValue();
             widget_rotationspin = detailsclip->getRotationSpin()->GetValue();
 
-            for (size_t i = 0; i < detailsclip->getVideoKeyFrameButtonCount(); ++i)
+            widget_videocount = detailsclip->getVideoKeyFrameButtonCount();
+            for (size_t i = 0; i < widget_videocount; ++i)
             {
                 if (detailsclip->getVideoKeyFrameButton(i)->GetValue())
                 {
@@ -121,6 +130,13 @@ DetailsView::operator bool() const
                     // NOT: break; -- check that all other buttons have !GetValue()
                 }
             }
+
+            widget_videohome = detailsclip->getVideoKeyFramesHomeButton()->IsEnabled();
+            widget_videoprev = detailsclip->getVideoKeyFramesPrevButton()->IsEnabled();
+            widget_videonext = detailsclip->getVideoKeyFramesNextButton()->IsEnabled();
+            widget_videoend = detailsclip->getVideoKeyFramesEndButton()->IsEnabled();
+            widget_videoadd = detailsclip->getVideoKeyFramesAddButton()->IsEnabled();
+            widget_videoremove = detailsclip->getVideoKeyFramesRemoveButton()->IsEnabled();
         }
     });
 
@@ -162,7 +178,38 @@ DetailsView::operator bool() const
         ASSERT(widget_activekeyframebutton);
         ASSERT_EQUALS(*widget_activekeyframebutton, *mKeyFrameIndex);
     }
-
+    if (mNoKeyFrame)
+    {
+        ASSERT(!widget_activekeyframebutton);
+    }
+    if (mVideoKeyframeHomeButton)
+    {
+        ASSERT_EQUALS(*mVideoKeyframeHomeButton, widget_videohome);
+    }
+    if (mVideoKeyframePrevButton)
+    {
+        ASSERT_EQUALS(*mVideoKeyframePrevButton, widget_videoprev);
+    }
+    if (mVideoKeyframeNextButton)
+    {
+        ASSERT_EQUALS(*mVideoKeyframeNextButton, widget_videonext);
+    }
+    if (mVideoKeyframeEndButton)
+    {
+        ASSERT_EQUALS(*mVideoKeyframeEndButton, widget_videoend);
+    }
+    if (mVideoKeyframeAddButton)
+    {
+        ASSERT_EQUALS(*mVideoKeyframeAddButton, widget_videoadd);
+    }
+    if (mVideoKeyframeRemoveButton)
+    {
+        ASSERT_EQUALS(*mVideoKeyframeRemoveButton, widget_videoremove);
+    }
+    if (mVideoKeyframeCount)
+    {
+        ASSERT_EQUALS(*mVideoKeyframeCount, widget_videocount);
+    }
     return true;
 }
 

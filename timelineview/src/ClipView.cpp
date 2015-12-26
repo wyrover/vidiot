@@ -109,20 +109,20 @@ int determineDescriptionHeight()
     return determineFontHeight(wxFont{ wxSize(0, 11), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL }) + 2;
 }
 
-// static 
+// static
 int ClipView::getBorderSize()
 {
     return 2;
 }
 
-// static 
+// static
 int ClipView::getDescriptionHeight()
 {
     static int result{ determineDescriptionHeight() };
     return result;
 }
 
-// static 
+// static
 int ClipView::getTransitionHeight()
 {
     static int result{ getDescriptionHeight() + 4 };
@@ -186,7 +186,7 @@ void ClipView::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) con
                 {
                     getViewMap().getClipPreview(mClip)->draw(dc, region, offset);
 
-                    if (auto interval{ boost::dynamic_pointer_cast<model::ClipInterval>(mClip) })
+                    if (model::ClipIntervalPtr interval{ boost::dynamic_pointer_cast<model::ClipInterval>(mClip) })
                     {
                         std::map<pts, model::KeyFramePtr> keyframes{ interval->getKeyFramesOfPerceivedClip() };
                         wxBitmap& kfi{ getKeyFrameIndicator() };
@@ -411,7 +411,7 @@ void ClipView::getKeyframePositionInfo(const wxPoint& position, PointerPositionI
     ASSERT_EQUALS(info.getLogicalClip(), mClip)(info)(mClip);
 
     std::vector<wxRect> keyFrameRects;
-    if (auto interval{ boost::dynamic_pointer_cast<model::ClipInterval>(mClip) })
+    if (model::ClipIntervalPtr interval{ boost::dynamic_pointer_cast<model::ClipInterval>(mClip) })
     {
         std::map<pts, model::KeyFramePtr> keyframes{ interval->getKeyFramesOfPerceivedClip() };
         wxBitmap& kfi{ getKeyFrameIndicator() };
@@ -570,7 +570,7 @@ void ClipView::draw(wxBitmap& bitmap, bool drawDraggedClips, bool drawNotDragged
 wxBitmap& ClipView::getKeyFrameIndicator()
 {
     static wxBitmap result;
-    if (!result.IsOk()) 
+    if (!result.IsOk())
     {
         result.Create(8, 8);
         wxBitmap mask{ result.GetSize(), 1 };

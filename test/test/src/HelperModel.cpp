@@ -33,46 +33,46 @@ model::AudioClipPtr getAudioClip(model::IClipPtr clip)
     return audioclip;
 }
 
-model::VideoClipKeyFramePtr DefaultVideoKeyFrame(model::IClipPtr clip)
+model::VideoKeyFramePtr DefaultVideoKeyFrame(model::IClipPtr clip)
 {
-    return boost::dynamic_pointer_cast<model::VideoClipKeyFrame>(getVideoClip(clip)->getDefaultKeyFrame());
+    return boost::dynamic_pointer_cast<model::VideoKeyFrame>(getVideoClip(clip)->getDefaultKeyFrame());
 }
 
-std::pair<pts, model::VideoClipKeyFramePtr> VideoKeyFrame(model::IClipPtr clip, size_t index)
+std::pair<pts, model::VideoKeyFramePtr> VideoKeyFrame(model::IClipPtr clip, size_t index)
 {
     std::map<pts, model::KeyFramePtr> keyFrames{ getVideoClip(clip)->getKeyFramesOfPerceivedClip() };
     ASSERT_NONZERO(keyFrames.size());
-    auto it{ std::next(keyFrames.begin(), index) };
+    std::map<pts, model::KeyFramePtr>::const_iterator it{ std::next(keyFrames.begin(), index) };
     ASSERT(it != keyFrames.end())(keyFrames)(index);
-    return std::make_pair(it->first, boost::dynamic_pointer_cast<model::VideoClipKeyFrame>(it->second));
+    return std::make_pair(it->first, boost::dynamic_pointer_cast<model::VideoKeyFrame>(it->second));
 }
 
-int getOpacity(model::VideoClipKeyFramePtr keyframe)
+int getOpacity(model::VideoKeyFramePtr keyframe)
 {
     return keyframe->getOpacity();
 };
 
-rational64 getScalingFactor(model::VideoClipKeyFramePtr keyframe)
+rational64 getScalingFactor(model::VideoKeyFramePtr keyframe)
 {
     return keyframe->getScalingFactor();
 };
 
-model::VideoScaling getScaling(model::VideoClipKeyFramePtr keyframe)
+model::VideoScaling getScaling(model::VideoKeyFramePtr keyframe)
 {
     return keyframe->getScaling();
 };
 
-model::VideoAlignment getAlignment(model::VideoClipKeyFramePtr keyframe)
+model::VideoAlignment getAlignment(model::VideoKeyFramePtr keyframe)
 {
     return keyframe->getAlignment();
 }
 
-wxPoint getPosition(model::VideoClipKeyFramePtr keyframe)
+wxPoint getPosition(model::VideoKeyFramePtr keyframe)
 {
     return keyframe->getPosition();
 }
 
-rational64 getRotation(model::VideoClipKeyFramePtr keyframe)
+rational64 getRotation(model::VideoKeyFramePtr keyframe)
 {
     return keyframe->getRotation();
 }

@@ -22,6 +22,8 @@
 
 namespace model {
 
+typedef std::map<pts, KeyFramePtr> KeyFrameMap;
+
 /// Class responsible for handling clips that are (parts of) multimedia clips that have a fixed length.
 /// Those clips are audio/video files (but not images), and sequences.
 class ClipInterval
@@ -74,7 +76,7 @@ public:
     ///       Rationale: that allows proper 'target' ptses, but also allows having keyframes under transitions.
     /// \note returned pts'es include positions 'under' any adjacent transitions
     /// \note May be empty if there are no specific key frames.
-    std::map<pts, KeyFramePtr> getKeyFramesOfPerceivedClip() const;
+    KeyFrameMap getKeyFramesOfPerceivedClip() const;
 
     /// Return the minimum and maximum positions allowed for a key frame
     /// \param index number of the key frame
@@ -186,7 +188,7 @@ private:
     /// Rationale: This allows changing speed, and trimming without having to adjust this data structure for the trimming.
     /// Note that the data structure is adjusted during trimming, but only for removing 'invisible' key frames. 
     /// The adjustments are not required to maintain a correct key frame structure. 
-    std::map<pts, KeyFramePtr> mKeyFrames;
+    KeyFrameMap mKeyFrames;
 
     /// Parameters used when no keyframes are present
     KeyFramePtr mDefaultKeyFrame;

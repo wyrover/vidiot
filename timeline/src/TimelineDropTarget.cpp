@@ -19,6 +19,7 @@
 
 #include "EventDrag.h"
 #include "FileAnalyzer.h"
+#include "ProjectViewDropSource.h"
 #include "State.h"
 #include "TrackCreator.h"
 

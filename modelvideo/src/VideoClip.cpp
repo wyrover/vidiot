@@ -51,7 +51,7 @@ VideoClip::VideoClip(const VideoFilePtr& file)
     , mProgress(0)
 {
     VAR_DEBUG(*this);
-    setDefaultKeyFrame(boost::make_shared<VideoClipKeyFrame>(file->getSize()));
+    setDefaultKeyFrame(boost::make_shared<VideoKeyFrame>(file->getSize()));
 }
 
 VideoClip::VideoClip(const VideoClip& other)
@@ -125,7 +125,7 @@ VideoFramePtr VideoClip::getNextVideo(const VideoCompositionParameters& paramete
         }
         else
         {
-            VideoClipKeyFramePtr keyFrame{ boost::dynamic_pointer_cast<VideoClipKeyFrame>(getFrameAt(mProgress + getOffset() - getPerceivedOffset())) };
+            VideoKeyFramePtr keyFrame{ boost::dynamic_pointer_cast<VideoKeyFrame>(getFrameAt(mProgress + getOffset() - getPerceivedOffset())) };
 
             // Scale the clip's size and region of interest to the bounding box
             // Determine scaling for 'fitting' a clip with size 'projectSize' in a bounding box of size 'size'
@@ -214,7 +214,7 @@ wxSize VideoClip::getInputSize()
 
 KeyFramePtr VideoClip::interpolate(KeyFramePtr before, KeyFramePtr after, pts positionBefore, pts position, pts positionAfter) const
 {
-    return boost::make_shared<VideoClipKeyFrame>(boost::dynamic_pointer_cast<VideoClipKeyFrame>(before), boost::dynamic_pointer_cast<VideoClipKeyFrame>(after), positionBefore, position, positionAfter);
+    return boost::make_shared<VideoKeyFrame>(boost::dynamic_pointer_cast<VideoKeyFrame>(before), boost::dynamic_pointer_cast<VideoKeyFrame>(after), positionBefore, position, positionAfter);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -261,7 +261,7 @@ void VideoClip::serialize(Archive & ar, const unsigned int version)
             }
             ar & BOOST_SERIALIZATION_NVP(mAlignment);
             ar & BOOST_SERIALIZATION_NVP(mPosition);
-            VideoClipKeyFramePtr keyFrame{ boost::make_shared<VideoClipKeyFrame>(getInputSize()) };
+            VideoKeyFramePtr keyFrame{ boost::make_shared<VideoKeyFrame>(getInputSize()) };
             keyFrame->setOpacity(mOpacity);
             rational64 scalingFactor64{ mScalingFactor.numerator(), mScalingFactor.denominator() };
             keyFrame->setScaling(mScaling, scalingFactor64);

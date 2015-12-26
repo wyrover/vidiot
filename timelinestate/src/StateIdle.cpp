@@ -363,7 +363,7 @@ boost::statechart::result Idle::leftDown()
             ASSERT_NONZERO(interval);
             std::map<pts, model::KeyFramePtr> keyFrames{ interval->getKeyFramesOfPerceivedClip() };
             size_t count{ *info.keyframe };
-            auto it{ std::next(keyFrames.begin(), count) };
+            std::map<pts, model::KeyFramePtr>::const_iterator it{ std::next(keyFrames.begin(), count) };
             ASSERT(it != keyFrames.end())(keyFrames)(count)(info);
             getCursor().setLogicalPosition(interval->getPerceivedLeftPts() + it->first);
             return transit<MoveKeyFrame>();

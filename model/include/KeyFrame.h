@@ -18,8 +18,11 @@
 #pragma once
 
 #include "Enums.h"
+#include "UtilInt.h"
 
 namespace model {
+
+typedef std::map<pts, KeyFramePtr> KeyFrameMap;
 
 class KeyFrame
     : public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.

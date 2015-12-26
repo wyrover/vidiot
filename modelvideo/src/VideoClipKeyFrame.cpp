@@ -34,14 +34,17 @@
 
 namespace model {
 
+
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-const rational64 VideoClipKeyFrame::sScalingMin{ 1,100 }; // 0.01
-const rational64 VideoClipKeyFrame::sScalingMax{ 100,1 }; // 100
+const int VideoKeyFrame::sOpacityMin{ wxIMAGE_ALPHA_TRANSPARENT };
+const int VideoKeyFrame::sOpacityMax{ wxIMAGE_ALPHA_OPAQUE };
+const rational64 VideoKeyFrame::sScalingMin{ 1,100 }; // 0.01
+const rational64 VideoKeyFrame::sScalingMax{ 100,1 }; // 100
 
-VideoClipKeyFrame::VideoClipKeyFrame()
+VideoKeyFrame::VideoKeyFrame()
     : KeyFrame{ false }
     , mInputSize{ 0,0 }
     , mOpacity{ sOpacityMax }
@@ -55,7 +58,7 @@ VideoClipKeyFrame::VideoClipKeyFrame()
     VAR_DEBUG(*this);
 }
 
-VideoClipKeyFrame::VideoClipKeyFrame(const wxSize& size)
+VideoKeyFrame::VideoKeyFrame(const wxSize& size)
     : KeyFrame{ false }
 {
     VAR_DEBUG(*this);
@@ -66,7 +69,7 @@ VideoClipKeyFrame::VideoClipKeyFrame(const wxSize& size)
     updateAutomatedPositioning();
 }
 
-VideoClipKeyFrame::VideoClipKeyFrame(VideoClipKeyFramePtr before, VideoClipKeyFramePtr after, pts positionBefore, pts position, pts positionAfter)
+VideoKeyFrame::VideoKeyFrame(VideoKeyFramePtr before, VideoKeyFramePtr after, pts positionBefore, pts position, pts positionAfter)
     : KeyFrame{ false }
 {
     ASSERT_EQUALS(before->getSize(), after->getSize());
@@ -88,7 +91,7 @@ VideoClipKeyFrame::VideoClipKeyFrame(VideoClipKeyFramePtr before, VideoClipKeyFr
     updateAutomatedPositioning(); //Update mRotationPositionOffset
 }
 
-VideoClipKeyFrame::VideoClipKeyFrame(const VideoClipKeyFrame& other)
+VideoKeyFrame::VideoKeyFrame(const VideoKeyFrame& other)
     : KeyFrame{ other }
     , mInputSize{ other.mInputSize }
     , mOpacity{ other.mOpacity }
@@ -102,12 +105,12 @@ VideoClipKeyFrame::VideoClipKeyFrame(const VideoClipKeyFrame& other)
     VAR_DEBUG(other)(*this);
 }
 
-VideoClipKeyFrame* VideoClipKeyFrame::clone() const
+VideoKeyFrame* VideoKeyFrame::clone() const
 {
-    return new VideoClipKeyFrame(static_cast<const VideoClipKeyFrame&>(*this));
+    return new VideoKeyFrame(static_cast<const VideoKeyFrame&>(*this));
 }
 
-VideoClipKeyFrame::~VideoClipKeyFrame()
+VideoKeyFrame::~VideoKeyFrame()
 {
     VAR_DEBUG(this);
 }
@@ -116,48 +119,48 @@ VideoClipKeyFrame::~VideoClipKeyFrame()
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-int VideoClipKeyFrame::getOpacity() const
+int VideoKeyFrame::getOpacity() const
 {
     return mOpacity;
 }
 
-VideoScaling VideoClipKeyFrame::getScaling() const
+VideoScaling VideoKeyFrame::getScaling() const
 {
     return mScaling;
 }
 
-rational64 VideoClipKeyFrame::getScalingFactor() const
+rational64 VideoKeyFrame::getScalingFactor() const
 {
     return mScalingFactor;
 }
 
-rational64 VideoClipKeyFrame::getRotation() const
+rational64 VideoKeyFrame::getRotation() const
 {
     return mRotation;
 }
 
-wxPoint VideoClipKeyFrame::getRotationPositionOffset() const
+wxPoint VideoKeyFrame::getRotationPositionOffset() const
 {
     return mRotationPositionOffset;
 }
 
-VideoAlignment VideoClipKeyFrame::getAlignment() const
+VideoAlignment VideoKeyFrame::getAlignment() const
 {
     return mAlignment;
 }
 
-wxPoint VideoClipKeyFrame::getPosition() const
+wxPoint VideoKeyFrame::getPosition() const
 {
     return mPosition;
 }
 
-wxPoint VideoClipKeyFrame::getMinPosition()
+wxPoint VideoKeyFrame::getMinPosition()
 {
     wxSize boundingBox = getBoundingBox();
     return wxPoint(-boundingBox.x, -boundingBox.y);
 }
 
-wxPoint VideoClipKeyFrame::getMaxPosition()
+wxPoint VideoKeyFrame::getMaxPosition()
 {
     wxSize outputsize = Properties::get().getVideoSize();
     wxSize boundingBox = getBoundingBox();
@@ -166,7 +169,7 @@ wxPoint VideoClipKeyFrame::getMaxPosition()
     return wxPoint(maxX, maxY) + mRotationPositionOffset;
 }
 
-void VideoClipKeyFrame::setOpacity(int opacity)
+void VideoKeyFrame::setOpacity(int opacity)
 {
     ASSERT(!isInterpolated())(*this);
     if (mOpacity != opacity)
@@ -177,7 +180,7 @@ void VideoClipKeyFrame::setOpacity(int opacity)
     }
 }
 
-void VideoClipKeyFrame::setScaling(const VideoScaling& scaling, const boost::optional<rational64 >& factor)
+void VideoKeyFrame::setScaling(const VideoScaling& scaling, const boost::optional<rational64 >& factor)
 {
     ASSERT(!isInterpolated())(*this);
     VideoScaling oldScaling = mScaling;
@@ -214,7 +217,7 @@ void VideoClipKeyFrame::setScaling(const VideoScaling& scaling, const boost::opt
     updateAutomatedPositioning();
 }
 
-void VideoClipKeyFrame::setRotation(const rational64& rotation)
+void VideoKeyFrame::setRotation(const rational64& rotation)
 {
     ASSERT(!isInterpolated())(*this);
     rational64 oldRotation = mRotation;
@@ -227,12 +230,12 @@ void VideoClipKeyFrame::setRotation(const rational64& rotation)
     updateAutomatedPositioning();
 }
 
-void VideoClipKeyFrame::setRotationPositionOffset(wxPoint position)
+void VideoKeyFrame::setRotationPositionOffset(wxPoint position)
 {
     mRotationPositionOffset = position;
 }
 
-void VideoClipKeyFrame::setAlignment(const VideoAlignment& alignment)
+void VideoKeyFrame::setAlignment(const VideoAlignment& alignment)
 {
     ASSERT(!isInterpolated())(*this);
     VideoAlignment oldAlignment = mAlignment;
@@ -243,7 +246,7 @@ void VideoClipKeyFrame::setAlignment(const VideoAlignment& alignment)
     updateAutomatedPositioning();
 }
 
-void VideoClipKeyFrame::setPosition(const wxPoint& position)
+void VideoKeyFrame::setPosition(const wxPoint& position)
 {
     ASSERT(!isInterpolated())(*this);
     VAR_INFO(position);
@@ -257,7 +260,7 @@ void VideoClipKeyFrame::setPosition(const wxPoint& position)
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-wxSize VideoClipKeyFrame::getBoundingBox()
+wxSize VideoKeyFrame::getBoundingBox()
 {
     ASSERT_DIFFERS(mInputSize, wxSize(0, 0));
     wxSize scaledsize = Convert::scale(mInputSize, getScalingFactor());
@@ -271,7 +274,7 @@ wxSize VideoClipKeyFrame::getBoundingBox()
     return wxSize(boundingBoxWidth, boundingBoxHeight);
 }
 
-void VideoClipKeyFrame::updateAutomatedScaling()
+void VideoKeyFrame::updateAutomatedScaling()
 {
     wxSize outputsize{ Properties::get().getVideoSize() };
 
@@ -301,18 +304,18 @@ void VideoClipKeyFrame::updateAutomatedScaling()
     }
 
     // Ensure that automated scaling never causes the scaling to exceed on of the scaling bounds
-    if (mScalingFactor > VideoClipKeyFrame::sScalingMax)
+    if (mScalingFactor > VideoKeyFrame::sScalingMax)
     {
-        mScalingFactor = VideoClipKeyFrame::sScalingMax;
+        mScalingFactor = VideoKeyFrame::sScalingMax;
     }
-    if (mScalingFactor < VideoClipKeyFrame::sScalingMin)
+    if (mScalingFactor < VideoKeyFrame::sScalingMin)
     {
-        mScalingFactor = VideoClipKeyFrame::sScalingMin;
+        mScalingFactor = VideoKeyFrame::sScalingMin;
     }
     ASSERT_MORE_THAN_ZERO(mScalingFactor);
 }
 
-void VideoClipKeyFrame::updateAutomatedPositioning()
+void VideoKeyFrame::updateAutomatedPositioning()
 {
     ASSERT_DIFFERS(mInputSize, wxSize(0,0));
     wxSize scaledsize = Convert::scale(mInputSize, getScalingFactor());
@@ -355,7 +358,7 @@ void VideoClipKeyFrame::updateAutomatedPositioning()
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<(std::ostream& os, const VideoClipKeyFrame& obj)
+std::ostream& operator<<(std::ostream& os, const VideoKeyFrame& obj)
 {
     os << static_cast<const KeyFrame&>(obj) << '|'
         << std::setw(4) << obj.mInputSize << '|'
@@ -374,7 +377,7 @@ std::ostream& operator<<(std::ostream& os, const VideoClipKeyFrame& obj)
 //////////////////////////////////////////////////////////////////////////
 
 template<class Archive>
-void VideoClipKeyFrame::serialize(Archive & ar, const unsigned int version)
+void VideoKeyFrame::serialize(Archive & ar, const unsigned int version)
 {
     try
     {
@@ -392,9 +395,9 @@ void VideoClipKeyFrame::serialize(Archive & ar, const unsigned int version)
     catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
     catch (...)                                  { LOG_ERROR;                                   throw; }
 }
-template void VideoClipKeyFrame::serialize<boost::archive::xml_oarchive>(boost::archive::xml_oarchive& ar, const unsigned int archiveVersion);
-template void VideoClipKeyFrame::serialize<boost::archive::xml_iarchive>(boost::archive::xml_iarchive& ar, const unsigned int archiveVersion);
+template void VideoKeyFrame::serialize<boost::archive::xml_oarchive>(boost::archive::xml_oarchive& ar, const unsigned int archiveVersion);
+template void VideoKeyFrame::serialize<boost::archive::xml_iarchive>(boost::archive::xml_iarchive& ar, const unsigned int archiveVersion);
 
 } //namespace
 
-BOOST_CLASS_EXPORT_IMPLEMENT(model::VideoClipKeyFrame)
+BOOST_CLASS_EXPORT_IMPLEMENT(model::VideoKeyFrame)
