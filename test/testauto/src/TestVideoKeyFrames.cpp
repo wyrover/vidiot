@@ -694,20 +694,20 @@ void TestVideoKeyFrames::testInTransition()
         TimelinePositionCursor(LeftPixel(VideoClip(0, 5)) - 3);
         TimelineKeyPress('v');
         TimelineSelectClips({ VideoClip(0, 5) });
+        ASSERT(DetailsView(VideoClip(0,5)).VAdd(true));
         ButtonTriggerPressed(DetailsClipView()->getVideoKeyFramesAddButton());
-        ASSERT_EQUALS(DetailsClipView()->getVideoKeyFrameButtonCount(), 1);
+        ASSERT(DetailsView(VideoClip(0,5)).VAdd(false).VCount(1));
         TimelinePositionCursor(LeftPixel(VideoClip(0, 5)) - 12);
+        ASSERT(DetailsView(VideoClip(0,5)).VAdd(true).VCount(1));
         ButtonTriggerPressed(DetailsClipView()->getVideoKeyFramesAddButton());
-        ASSERT_EQUALS(DetailsClipView()->getVideoKeyFrameButtonCount(), 2);
+        ASSERT(DetailsView(VideoClip(0,5)).VAdd(false).VCount(2));
     }
     {
         StartTest("Cursor position maps onto key frames");
         TimelinePositionCursor(LeftPixel(VideoClip(0, 5)) - 3);
-        ASSERT(!DetailsClipView()->getVideoKeyFrameButton(0)->GetValue());
-        ASSERT(DetailsClipView()->getVideoKeyFrameButton(1)->GetValue());
+        ASSERT(DetailsView(VideoClip(0,5)).KeyFrameIndex(1));
         TimelinePositionCursor(LeftPixel(VideoClip(0, 5)) - 12);
-        ASSERT(DetailsClipView()->getVideoKeyFrameButton(0)->GetValue());
-        ASSERT(!DetailsClipView()->getVideoKeyFrameButton(1)->GetValue());
+        ASSERT(DetailsView(VideoClip(0,5)).KeyFrameIndex(0));
     }
     {
         StartTest("Change key frames");
