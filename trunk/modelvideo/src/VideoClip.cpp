@@ -27,10 +27,10 @@
 #include "UtilLogWxwidgets.h"
 #include "UtilSerializeBoost.h"
 #include "UtilSerializeWxwidgets.h"
-#include "VideoClipKeyFrame.h"
 #include "VideoCompositionParameters.h"
 #include "VideoFile.h"
 #include "VideoFrameLayer.h"
+#include "VideoKeyFrame.h"
 #include "VideoSkipFrame.h"
 
 namespace model {

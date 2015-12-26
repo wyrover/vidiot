@@ -22,8 +22,8 @@
 #include "UtilInitAvcodec.h"
 #include "UtilLogBoost.h"
 #include "UtilLogWxwidgets.h"
-#include "VideoClipKeyFrame.h"
 #include "VideoCompositionParameters.h"
+#include "VideoKeyFrame.h"
 
 namespace model {
 

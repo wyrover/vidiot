@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-12-25 19:35+0100\n"
+"POT-Creation-Date: 2015-12-26 11:26+0100\n"
 "PO-Revision-Date: 2015-12-25 12:20+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -883,15 +883,15 @@ msgstr "Kleur"
 msgid "Missing file: "
 msgstr "Bestand niet gevonden:"
 
-#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoClipKeyFrame.cpp:200
+#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoKeyFrame.cpp:200
 msgid "Width becomes 0."
 msgstr "Breedte wordt 0."
 
-#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoClipKeyFrame.cpp:204
+#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoKeyFrame.cpp:204
 msgid "Height becomes 0."
 msgstr "Hoogte wordt 0."
 
-#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoClipKeyFrame.cpp:208
+#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoKeyFrame.cpp:208
 msgid "Image becomes too large."
 msgstr "Beeld wordt te groot."
 
@@ -1308,7 +1308,7 @@ msgstr ""
 msgid "Set length of clip"
 msgstr "Zet lengte van clip"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_HelperMethods.cpp:228
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_HelperMethods.cpp:225
 msgid "Change "
 msgstr "Verander"
 

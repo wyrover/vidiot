@@ -23,8 +23,7 @@
 #include "UtilRational.h"
 
 namespace model {
-    //todo rename file to videokeyframe.cpp
-class VideoKeyFrame;
+
 typedef std::map<pts, VideoKeyFramePtr> VideoKeyFrameMap;
 
 class VideoKeyFrame

@@ -25,7 +25,7 @@
 #include "UtilException.h"
 #include "UtilLog.h"
 #include "VideoClip.h"
-#include "VideoClipKeyFrame.h"
+#include "VideoKeyFrame.h"
 
 namespace gui { namespace timeline {
 

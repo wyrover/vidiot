@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-12-25 19:35+0100\n"
+"POT-Creation-Date: 2015-12-26 11:29+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -821,15 +821,15 @@ msgstr ""
 msgid "Missing file: "
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoClipKeyFrame.cpp:200
+#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoKeyFrame.cpp:200
 msgid "Width becomes 0."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoClipKeyFrame.cpp:204
+#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoKeyFrame.cpp:204
 msgid "Height becomes 0."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoClipKeyFrame.cpp:208
+#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoKeyFrame.cpp:208
 msgid "Image becomes too large."
 msgstr ""
 
@@ -1235,7 +1235,7 @@ msgstr ""
 msgid "Set length of clip"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_HelperMethods.cpp:228
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_HelperMethods.cpp:225
 msgid "Change "
 msgstr ""
 
