@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-12-25 12:13+0100\n"
+"POT-Creation-Date: 2015-12-25 19:35+0100\n"
 "PO-Revision-Date: 2015-12-25 12:23+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -628,7 +628,7 @@ msgid "View"
 msgstr "Ansicht"
 
 #: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:218
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:970
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:975
 #: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:382
 #: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:568
 msgid "Sequence"
@@ -646,19 +646,19 @@ msgstr "Arbeitsfläche"
 msgid "Crash"
 msgstr "Absturz"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:377
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:385
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:382
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:390
 #: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:364
 #: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:365
 #: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:366
 msgid "Ctrl"
 msgstr "Ctrl"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:755
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:760
 msgid "Enter workspace name"
 msgstr "Geben Sie Name des Arbeitsfläche"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:755
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:760
 msgid ""
 "Enter name for the saved workspace.\n"
 "If this is an existing name it is overwritten."
@@ -666,31 +666,31 @@ msgstr ""
 "Geben Sie den Namen für den gespeicherten Arbeitsfläche.\n"
 "Wenn diesen Name schon besteht wird  Sie überschrieben."
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:772
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:777
 msgid "Select workspace"
 msgstr "Arbeitsfläche Wählen"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:778
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:783
 msgid "Select workspace to be restored."
 msgstr "Wählen Sie die Arbeitsfläche welche wiederhergestellt soll werden."
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:787
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:792
 msgid "Load workspace failed"
 msgstr "Wiederherstellen von der Arbeitsfläche ist fehlgeschlagen"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:787
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:792
 msgid "Something went wrong while trying to load the saved perspective. Sorry."
 msgstr "Wiederherstellen von der Arbeitsfläche ist fehlgeschlagen."
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:795
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:800
 msgid "Select workspace to be removed."
 msgstr "Wählen Sie Arbeitsfläche zu entfernen."
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:808
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:813
 msgid "Remove all saved workspaces"
 msgstr "Alle gespeicherten Arbeitsfläche entfernen"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:808
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:813
 msgid ""
 "This will remove all saved workspace layouts which cannot be undone.\n"
 "Are you sure?"
@@ -699,11 +699,11 @@ msgstr ""
 "gemacht werden.\n"
 "Sind Sie sicher?"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:866
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:871
 msgid "Attention"
 msgstr "Achtung"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:867
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:872
 msgid ""
 "Note that changing this file will not update the gui.\n"
 "Changed settings are applied only after restarting the application.\n"
@@ -869,15 +869,15 @@ msgstr "Farbe"
 msgid "Missing file: "
 msgstr "Fehlende Datei: "
 
-#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoClipKeyFrame.cpp:197
+#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoClipKeyFrame.cpp:200
 msgid "Width becomes 0."
 msgstr "Breite wird 0."
 
-#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoClipKeyFrame.cpp:201
+#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoClipKeyFrame.cpp:204
 msgid "Height becomes 0."
 msgstr "Höhe wird 0."
 
-#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoClipKeyFrame.cpp:205
+#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoClipKeyFrame.cpp:208
 msgid "Image becomes too large."
 msgstr "Bild wird zu groß."
 
@@ -1571,23 +1571,23 @@ msgstr "Del"
 msgid "Unlink audio and video clips"
 msgstr "Verknüpfung Audio- und Video-Clips löschen"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\TimelineDataObject.cpp:151
+#: C:\Vidiot\vidiot_trunk\timeline\src\TimelineDataObject.cpp:152
 msgid "Data in clipboard has incompatible properties."
 msgstr "Daten in Zwischenablage hat inkompatible Eigenschafte."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\TimelineDataObject.cpp:156
+#: C:\Vidiot\vidiot_trunk\timeline\src\TimelineDataObject.cpp:157
 msgid "Nothing to be pasted."
 msgstr "Nichts zum einfügen."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\TimelineDataObject.cpp:182
+#: C:\Vidiot\vidiot_trunk\timeline\src\TimelineDataObject.cpp:183
 msgid "Cannot paste: not enough video tracks."
 msgstr "Kann nicht einfügen: nicht genug Videospuren."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\TimelineDataObject.cpp:193
+#: C:\Vidiot\vidiot_trunk\timeline\src\TimelineDataObject.cpp:194
 msgid "Cannot paste: not enough audio tracks."
 msgstr "Kann nicht einfügen: nicht genug Audiospuren."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\TimelineDataObject.cpp:208
+#: C:\Vidiot\vidiot_trunk\timeline\src\TimelineDataObject.cpp:209
 msgid "Nothing to be stored in clipboard."
 msgstr "Nichts zum speichern in der Zwischenablage."
 

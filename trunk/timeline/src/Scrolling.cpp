@@ -18,6 +18,7 @@
 #include "Scrolling.h"
 
 #include "Cursor.h"
+#include "Mouse.h"
 #include "Timeline.h"
 #include "UtilLog.h"
 #include "Zoom.h"

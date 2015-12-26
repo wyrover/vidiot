@@ -139,11 +139,11 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
 
     mOpacityPanel = new wxPanel(this);
     wxBoxSizer* opacitysizer = new wxBoxSizer(wxHORIZONTAL);
-    mOpacitySlider = new wxSlider(mOpacityPanel, wxID_ANY, model::VideoClipKeyFrame::sOpacityMax, model::VideoClipKeyFrame::sOpacityMin, model::VideoClipKeyFrame::sOpacityMax );
+    mOpacitySlider = new wxSlider(mOpacityPanel, wxID_ANY, model::VideoKeyFrame::sOpacityMax, model::VideoKeyFrame::sOpacityMin, model::VideoKeyFrame::sOpacityMax );
     mOpacitySlider->SetPageSize(sOpacityPageSize);
     mOpacitySpin = new wxSpinCtrl(mOpacityPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(55,-1));
-    mOpacitySpin->SetRange(model::VideoClipKeyFrame::sOpacityMin, model::VideoClipKeyFrame::sOpacityMax);
-    mOpacitySpin->SetValue(model::VideoClipKeyFrame::sOpacityMax);
+    mOpacitySpin->SetRange(model::VideoKeyFrame::sOpacityMin, model::VideoKeyFrame::sOpacityMax);
+    mOpacitySpin->SetValue(model::VideoKeyFrame::sOpacityMax);
     mOpacitySpin->SetWindowVariant( wxWINDOW_VARIANT_SMALL );
     opacitysizer->Add(mOpacitySlider, wxSizerFlags(1).Expand());
     opacitysizer->Add(mOpacitySpin, wxSizerFlags(0));
@@ -171,13 +171,13 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     wxBoxSizer* scalingsizer = new wxBoxSizer(wxHORIZONTAL);
     mSelectScaling = new EnumSelector<model::VideoScaling>(mScalingPanel, model::VideoScalingConverter::getMapToHumanReadibleString(), model::VideoScalingNone);
     mSelectScaling->SetWindowVariant( wxWINDOW_VARIANT_SMALL );
-    mScalingSlider = new wxSlider(mScalingPanel,wxID_ANY, factorToSliderValue(model::VideoClipKeyFrame::sScalingMax), factorToSliderValue(model::VideoClipKeyFrame::sScalingMin), factorToSliderValue(model::VideoClipKeyFrame::sScalingMax));
+    mScalingSlider = new wxSlider(mScalingPanel,wxID_ANY, factorToSliderValue(model::VideoKeyFrame::sScalingMax), factorToSliderValue(model::VideoKeyFrame::sScalingMin), factorToSliderValue(model::VideoKeyFrame::sScalingMax));
     mScalingSlider->SetPageSize(sFactorPageSize);
     mScalingSpin = new wxSpinCtrlDouble(mScalingPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(55,-1));
     mScalingSpin->SetWindowVariant( wxWINDOW_VARIANT_SMALL );
     mScalingSpin->SetValue(1); // No scaling
     mScalingSpin->SetDigits(sFactorPrecision);
-    mScalingSpin->SetRange(boost::rational_cast<double>(model::VideoClipKeyFrame::sScalingMin), boost::rational_cast<double>(model::VideoClipKeyFrame::sScalingMax));
+    mScalingSpin->SetRange(boost::rational_cast<double>(model::VideoKeyFrame::sScalingMin), boost::rational_cast<double>(model::VideoKeyFrame::sScalingMax));
     mScalingSpin->SetIncrement(sFactorIncrement);
     scalingsizer->Add(mSelectScaling, wxSizerFlags(0).Left());
     scalingsizer->Add(mScalingSlider, wxSizerFlags(1).Expand());

@@ -17,6 +17,8 @@
 
 #pragma once
 
+#include "UtilLog.h" // todo only for the FATAL below, under gcc
+
 namespace gui { namespace timeline {
 
 class DetailsPanel;

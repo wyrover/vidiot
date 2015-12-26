@@ -748,7 +748,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	<item_version>0</item_version>
 																</mKeyFrames>
 																<mDefaultKeyFrame>
-																	<px class_id="60" class_name="model::VideoClipKeyFrame" tracking_level="1" version="1" object_id="_37">
+																	<px class_id="60" class_name="model::VideoKeyFrame" tracking_level="1" version="1" object_id="_37">
 																		<KeyFrame class_id="57" tracking_level="1" version="1" object_id="_38"></KeyFrame>
 																		<mInputSize class_id="61" tracking_level="0" version="0">
 																			<x>1280</x>

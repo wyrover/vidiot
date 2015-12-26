@@ -209,9 +209,9 @@ void ClipInterval::adjustEnd(pts adjustment)
 // KEY FRAMES
 //////////////////////////////////////////////////////////////////////////
 
-std::map<pts, KeyFramePtr> ClipInterval::getKeyFramesOfPerceivedClip() const
+KeyFrameMap ClipInterval::getKeyFramesOfPerceivedClip() const
 {
-    std::map<pts, KeyFramePtr> result;
+    KeyFrameMap result;
     pts lowerBound{ getPerceivedOffset() };
     pts upperBound{ getPerceivedOffset() + getPerceivedLength() };
     for (auto k : mKeyFrames)
@@ -227,9 +227,9 @@ std::map<pts, KeyFramePtr> ClipInterval::getKeyFramesOfPerceivedClip() const
 
 std::pair<pts, pts> ClipInterval::getKeyFrameBoundaries(size_t index) const
 {
-    std::map<pts, KeyFramePtr> keyFrames{ getKeyFramesOfPerceivedClip() };
+    KeyFrameMap keyFrames{ getKeyFramesOfPerceivedClip() };
 
-    auto it{ std::next(keyFrames.begin(), index) };
+    KeyFrameMap::const_iterator it{ std::next(keyFrames.begin(), index) };
     ASSERT(it != keyFrames.end())(index)(keyFrames)(*this);
 
     pts current{ it->first };
@@ -253,8 +253,8 @@ std::pair<pts, pts> ClipInterval::getKeyFrameBoundaries(size_t index) const
 
 pts ClipInterval::getKeyFramePosition(size_t index) const
 {
-    std::map<pts, KeyFramePtr> keyFrames{ getKeyFramesOfPerceivedClip() };
-    auto it{ std::next(keyFrames.begin(), index) };
+    KeyFrameMap keyFrames{ getKeyFramesOfPerceivedClip() };
+    KeyFrameMap::const_iterator it{ std::next(keyFrames.begin(), index) };
     ASSERT(it != keyFrames.end())(index)(*this);
     return it->first;
 }
@@ -271,7 +271,7 @@ void ClipInterval::setKeyFramePosition(size_t index, pts offset)
     pts offsetWithSpeed{ model::Convert::positionToNewSpeed(offset, 1, getSpeed()) };
 
     size_t nKeyFrames{ mKeyFrames.size() };
-    auto it{ std::next(mKeyFrames.begin(), index) };
+    KeyFrameMap::const_iterator it{ std::next(mKeyFrames.begin(), index) };
     ASSERT(it != mKeyFrames.end())(index)(offset)(*this);
 
     if (it != mKeyFrames.begin())
@@ -308,25 +308,25 @@ KeyFramePtr ClipInterval::getFrameAt(pts offset) const
 
     ASSERT_MORE_THAN_EQUALS_ZERO(offset);
 
-    std::map<pts, KeyFramePtr> keyFrames{ getKeyFramesOfPerceivedClip() };
+    KeyFrameMap keyFrames{ getKeyFramesOfPerceivedClip() };
 
     if (keyFrames.size() == 0)
     {
         // No key frames (visible) in current trim. Return the default frame.
         ASSERT_NONZERO(mDefaultKeyFrame);
-        return make_cloned<KeyFrame>(mDefaultKeyFrame); 
+        return make_cloned<KeyFrame>(mDefaultKeyFrame);
     }
 
-    auto itExact{ keyFrames.find(offset) };
+    KeyFrameMap::const_iterator itExact{ keyFrames.find(offset) };
     if (itExact != keyFrames.end())
     {
         // Exact key frame found. Return that.
         return make_cloned<KeyFrame>(itExact->second);
     }
 
-    // No exact frame possible. 
+    // No exact frame possible.
     // Return an interpolated key frame or a clone of the nearest key frame (only at begin and end).
-    auto it{ keyFrames.upper_bound(offset) }; // Points to first (visible) key frame 'beyond' position.
+    KeyFrameMap::const_iterator it{ keyFrames.upper_bound(offset) }; // Points to first (visible) key frame 'beyond' position.
     if (it == keyFrames.end())
     {
         // Position is after last key frame.
@@ -352,7 +352,7 @@ KeyFramePtr ClipInterval::getFrameAt(pts offset) const
         pts positionBefore{ it->first };
         KeyFramePtr before{ it->second };
         ASSERT_NONZERO(before)(offset)(keyFrames)(*this);
-        
+
         result = interpolate(before, after, positionBefore, offset, positionAfter);
     }
     result->setInterpolated(true);
@@ -368,7 +368,7 @@ void ClipInterval::addKeyFrameAt(pts offset, KeyFramePtr frame)
     offset += getPerceivedOffset();
 
     // Ensure that a key frame position not returned by 'getKeyFrames' was used
-    std::map<pts, KeyFramePtr> keyframes{ getKeyFramesOfPerceivedClip() };
+    KeyFrameMap keyframes{ getKeyFramesOfPerceivedClip() };
     if (keyframes.find(offset) != keyframes.end())
     {
         // At least in the module test I succeeded in pressing the Add button twice consecutively,
@@ -410,13 +410,13 @@ void ClipInterval::removeKeyFrameAt(pts offset)
     }
 
     // Ensure that a key frame position returned by 'getKeyFramesOfPerceivedClip' was used
-    std::map<pts, KeyFramePtr> keyframes{ getKeyFramesOfPerceivedClip() };
+    KeyFrameMap keyframes{ getKeyFramesOfPerceivedClip() };
     ASSERT_MAP_CONTAINS(keyframes, offset)(*this);
 
     // Convert back to offset '0' (input time == no offset)
     offset += getPerceivedOffset();
 
-    for (auto it{ mKeyFrames.begin() }; it != mKeyFrames.end(); ++it)
+    for (KeyFrameMap::const_iterator it{ mKeyFrames.begin() }; it != mKeyFrames.end(); ++it)
     {
         if (offset == model::Convert::positionToNewSpeed(it->first, getSpeed(), 1))
         {
@@ -439,7 +439,7 @@ void ClipInterval::setDefaultKeyFrame(KeyFramePtr keyframe)
 
 void ClipInterval::pruneKeyFrames()
 {
-    auto it{ mKeyFrames.begin() };
+    KeyFrameMap::const_iterator it{ mKeyFrames.begin() };
     if (it != mKeyFrames.end())
     {
         pts lowerBound{ getPerceivedOffset() };

@@ -30,7 +30,7 @@ class AudioClip
 {
 public:
 
-    static constexpr int sMinVolume = 1;
+    static constexpr int sMinVolume = 0;
     static constexpr int sMaxVolume = 200;
     static constexpr int sDefaultVolume = 100;
 

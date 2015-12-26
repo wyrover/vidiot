@@ -29,6 +29,10 @@
 
 namespace model {
 
+constexpr int AudioClip::sMinVolume;
+constexpr int AudioClip::sMaxVolume;
+constexpr int AudioClip::sDefaultVolume;
+
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
@@ -248,7 +252,7 @@ AudioPeaks AudioClip::getPeaks(const AudioCompositionParameters& parameters)
 
 KeyFramePtr AudioClip::interpolate(KeyFramePtr before, KeyFramePtr after, pts positionBefore, pts position, pts positionAfter) const
 {
-    // todo 
+    // todo
     return nullptr;
 }
 

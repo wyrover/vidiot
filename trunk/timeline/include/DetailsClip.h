@@ -21,6 +21,7 @@
 #include "Enums.h"
 #include "UtilEnumSelector.h"
 #include "UtilInt.h"
+#include "UtilRational.h"
 
 namespace model {
     class EventChangeAudioClipVolume;
@@ -34,9 +35,10 @@ namespace model {
     class EventChangeVideoClipScalingFactor;
     class EventTransitionParameterChanged;
     class EventTransitionParameterChanging;
+    typedef std::map<pts, VideoKeyFramePtr> VideoKeyFrameMap;
 }
 
-namespace gui { 
+namespace gui {
     class PlaybackPositionEvent;
 
     namespace timeline {
@@ -265,9 +267,9 @@ private:
     model::AudioClipPtr getAudioClip(const model::IClipPtr& clip) const;
     model::TransitionPtr getTransition(const model::IClipPtr& clip) const;
 
-    std::map<pts, model::VideoClipKeyFramePtr> getVideoKeyFrames() const;
+    model::VideoKeyFrameMap getVideoKeyFrames() const;
     pts getVideoKeyFrameOffset() const;
-    model::VideoClipKeyFramePtr getVideoKeyFrame() const;
+    model::VideoKeyFramePtr getVideoKeyFrame() const;
 
     void submitEditCommandUponAudioVideoEdit(const wxString& message, std::function<void()> edit);
     void submitEditCommandUponTransitionEdit(const wxString& parameter);

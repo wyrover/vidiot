@@ -83,19 +83,17 @@ model::TransitionPtr DetailsClip::getTransition(const model::IClipPtr& clip) con
         nullptr;
 }
 
-std::map<pts, model::VideoClipKeyFramePtr> DetailsClip::getVideoKeyFrames() const
+model::VideoKeyFrameMap DetailsClip::getVideoKeyFrames() const
 {
     model::VideoClipPtr videoclip{ getVideoClip(mClip) };
-    ASSERT_NONZERO(videoclip);
+    ASSERT_NONZERO(videoclip)(mClip);
+    ASSERT_NONZERO(videoclip->getTrack())(mClip);
 
-    model::ClipIntervalPtr interval{ boost::dynamic_pointer_cast<model::ClipInterval>(videoclip) };
-    ASSERT_NONZERO(interval);
+    model::VideoKeyFrameMap result;
 
-    std::map<pts, model::VideoClipKeyFramePtr> result;
-
-    for (auto kvp : interval->getKeyFramesOfPerceivedClip())
+    for (auto kvp : videoclip->getKeyFramesOfPerceivedClip())
     {
-        auto video{ boost::dynamic_pointer_cast<model::VideoClipKeyFrame>(kvp.second) };
+        model::VideoKeyFramePtr video{ boost::dynamic_pointer_cast<model::VideoKeyFrame>(kvp.second) };
         ASSERT_NONZERO(video);
         result[kvp.first] = video;
     }
@@ -106,10 +104,8 @@ std::map<pts, model::VideoClipKeyFramePtr> DetailsClip::getVideoKeyFrames() cons
 pts DetailsClip::getVideoKeyFrameOffset() const
 {
     model::VideoClipPtr videoclip{ getVideoClip(mClip) };
-    ASSERT_NONZERO(videoclip);
-
-    model::ClipIntervalPtr interval{ boost::dynamic_pointer_cast<model::ClipInterval>(videoclip) };
-    ASSERT_NONZERO(interval);
+    ASSERT_NONZERO(videoclip)(mClip);
+    ASSERT_NONZERO(videoclip->getTrack())(mClip);
 
     pts firstFrame{ videoclip->getPerceivedLeftPts() };
     pts lastFrame{ videoclip->getPerceivedRightPts() };
@@ -124,34 +120,35 @@ pts DetailsClip::getVideoKeyFrameOffset() const
     else if (cursor >= lastFrame)
     {
         // Cursor after clip : use last frame
-        result = lastFrame - firstFrame;
+        result = lastFrame - firstFrame - 1;
     }
     else
     {
         // Inside the clip being adjusted
         result = cursor - firstFrame;
     }
-    
+
     ASSERT_MORE_THAN_EQUALS_ZERO(result);
     return result;
 }
 
-model::VideoClipKeyFramePtr DetailsClip::getVideoKeyFrame() const
+model::VideoKeyFramePtr DetailsClip::getVideoKeyFrame() const
 {
     model::VideoClipPtr videoclip{ getVideoClip(mClip) };
-    if (!videoclip) { return nullptr; }
+    ASSERT_NONZERO(videoclip)(mClip);
+    ASSERT_NONZERO(videoclip->getTrack())(mClip);
 
-    model::VideoClipKeyFramePtr result{ nullptr };
+    model::VideoKeyFramePtr result{ nullptr };
     pts position{ getVideoKeyFrameOffset() };
-    std::map<pts, model::VideoClipKeyFramePtr> keyframes{ getVideoKeyFrames() };
+    model::VideoKeyFrameMap keyframes{ getVideoKeyFrames() };
     if (keyframes.empty())
     {
         // Clip without key frames. Use the default key frame for the overall clip settings
-        result = boost::dynamic_pointer_cast<model::VideoClipKeyFrame>(videoclip->getDefaultKeyFrame());
+        result = boost::dynamic_pointer_cast<model::VideoKeyFrame>(videoclip->getDefaultKeyFrame());
     }
     else
     {
-        auto it{ keyframes.find(position) };
+        model::VideoKeyFrameMap::const_iterator it{ keyframes.find(position) };
         if (it != keyframes.end())
         {
             result = it->second;
@@ -159,7 +156,7 @@ model::VideoClipKeyFramePtr DetailsClip::getVideoKeyFrame() const
         else
         {
             // Return interpolated frame (for previewing the values)
-            result = boost::dynamic_pointer_cast<model::VideoClipKeyFrame>(videoclip->getFrameAt(position));
+            result = boost::dynamic_pointer_cast<model::VideoKeyFrame>(videoclip->getFrameAt(position));
         }
     }
     ASSERT_NONZERO(result);
@@ -458,9 +455,11 @@ void DetailsClip::updateVideoKeyFrameControls()
     if (!mClip) { return; }
     model::VideoClipPtr videoclip{ getVideoClip(mClip) };
     if (!videoclip) { return; }
-    model::VideoClipKeyFramePtr videoKeyFrame{ getVideoKeyFrame() };
+    if (!videoclip->getTrack()) { return; }
+
+    model::VideoKeyFramePtr videoKeyFrame{ getVideoKeyFrame() };
     ASSERT_NONZERO(videoKeyFrame);
-    std::map<pts, model::VideoClipKeyFramePtr> keyframes{ getVideoKeyFrames() };
+    model::VideoKeyFrameMap keyframes{ getVideoKeyFrames() }; // todo typedef for this typ[e also
 
     rational64 factor{ videoKeyFrame->getScalingFactor() };
     rational64 rotation{ videoKeyFrame->getRotation() };
@@ -521,7 +520,7 @@ void DetailsClip::updateVideoKeyFrameControls()
         wxBoxSizer* sizer{ new wxBoxSizer{ wxHORIZONTAL } };
         for (size_t i{ 0 }; i < keyframes.size(); ++i)
         {
-            mVideoKeyFrames[i] = new wxToggleButton{ mVideoKeyFramesPanel, narrow_cast<int, size_t>(i), wxString::Format("%d", i + 1), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT };
+            mVideoKeyFrames[i] = new wxToggleButton{ mVideoKeyFramesPanel, narrow_cast<int, size_t>(i), wxString::Format("%ld", i + 1), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT };
             mVideoKeyFrames[i]->SetFont(mVideoKeyFrames[i]->GetFont().Smaller().Smaller());
             sizer->Add(mVideoKeyFrames[i], wxSizerFlags{ 1 });
         }
@@ -539,7 +538,7 @@ void DetailsClip::updateVideoKeyFrameControls()
     mVideoKeyFramesEndButton->Enable(!keyframes.empty() && videoKeyFrameOffset < keyframes.rbegin()->first);
     mVideoKeyFramesRemoveButton->Enable(!keyframes.empty() && keyframes.find(videoKeyFrameOffset) != keyframes.end());
     // Note: if there are no keyframes, there are no buttons to dis/enable.
-    auto it{ keyframes.begin() };
+    model::VideoKeyFrameMap::const_iterator it{ keyframes.begin() };
     for (size_t i{ 0 }; i < keyframes.size(); ++i)
     {
         mVideoKeyFrames[i]->SetValue(it->first == videoKeyFrameOffset);
@@ -559,29 +558,30 @@ void DetailsClip::updateVideoKeyFrameButtons()
     if (!mClip) { return; }
     model::VideoClipPtr videoclip{ getVideoClip(mClip) };
     if (!videoclip) { return; }
-    std::map<pts, model::VideoClipKeyFramePtr> keyframes{ getVideoKeyFrames() };
+    if (!videoclip->getTrack()) { return; }
+    model::VideoKeyFrameMap keyframes{ getVideoKeyFrames() };
     pts videoKeyFrameOffset{ getVideoKeyFrameOffset() };
-    int availableSize{ mVideoKeyFramesPanel->GetSize().x };
-    int requiredSize{ mVideoKeyFramesPanel->GetBestFittingSize().x };
+    size_t availableSize{ narrow_cast<size_t>(mVideoKeyFramesPanel->GetSize().x) };
+    size_t requiredSize{ narrow_cast<size_t>(mVideoKeyFramesPanel->GetEffectiveMinSize().x) };
     if (availableSize < requiredSize && mVideoKeyFrames.size() > 0)
     {
         // Not all the buttons will fit in the available space. Show as much buttons as possible,
         // while keeping the current video offset approximately centered.
-        int totalNumberOfButtons{ narrow_cast<int, size_t>(mVideoKeyFrames.size()) };
-        int buttonWidth{ requiredSize / totalNumberOfButtons };
-        int maxFittingButtons{ availableSize / buttonWidth };
-        int lastPossibleButton{ totalNumberOfButtons - 1 };
-        int middle{ std::distance(keyframes.begin(), std::find_if(keyframes.begin(), keyframes.end(), [videoKeyFrameOffset](auto kvp) { return kvp.first >= videoKeyFrameOffset; })) };
-        int move{ maxFittingButtons / 2 };
-        int first{ middle - move };
-        int last{ middle + move };
+        size_t totalNumberOfButtons{ mVideoKeyFrames.size() };
+        size_t buttonWidth{ requiredSize / totalNumberOfButtons };
+        size_t maxFittingButtons{ availableSize / buttonWidth };
+        size_t lastPossibleButton{ totalNumberOfButtons - 1 };
+        size_t middle{ narrow_cast<size_t>(std::distance(keyframes.begin(), std::find_if(keyframes.begin(), keyframes.end(), [videoKeyFrameOffset](auto kvp) { return kvp.first >= videoKeyFrameOffset; }))) };
+        size_t move{ maxFittingButtons / 2 };
+        size_t first{ middle - move };
+        size_t last{ middle + move };
         while (first < 0) { ++first; ++last; }
         while (last > lastPossibleButton) { --last; --first; }
         ASSERT_MORE_THAN_EQUALS_ZERO(first)(requiredSize)(availableSize)(totalNumberOfButtons)(buttonWidth)(maxFittingButtons)(lastPossibleButton)(middle)(first)(last);
         ASSERT_LESS_THAN_EQUALS(last, lastPossibleButton)(first)(requiredSize)(availableSize)(totalNumberOfButtons)(buttonWidth)(maxFittingButtons)(lastPossibleButton)(middle)(first)(last);
         for (size_t count{ 0 }; count < mVideoKeyFrames.size(); ++count)
         {
-            mVideoKeyFrames[count]->Show(narrow_cast<int, size_t>(count) >= first && narrow_cast<int, size_t>(count) <= last);
+            mVideoKeyFrames[count]->Show(count >= first && count <= last);
         }
     }
     mVideoKeyFramesPanel->Layout();
@@ -598,7 +598,7 @@ void DetailsClip::updateAudioKeyFrameControls()
 
 void DetailsClip::moveCursorToKeyFrame(model::IClipPtr clip, pts offset)
 {
-    std::map<pts, model::VideoClipKeyFramePtr> keyFrames{ getVideoKeyFrames() };
+    model::VideoKeyFrameMap keyFrames{ getVideoKeyFrames() };
     ASSERT_NONZERO(keyFrames.size());
     ASSERT_MAP_CONTAINS(keyFrames, offset);
     model::ClipIntervalPtr interval{ boost::dynamic_pointer_cast<model::ClipInterval>(clip) };

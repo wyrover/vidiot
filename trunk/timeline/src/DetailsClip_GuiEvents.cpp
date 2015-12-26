@@ -254,7 +254,7 @@ void DetailsClip::onVideoKeyFramesHomeButtonPressed(wxCommandEvent& event)
 {
     CatchExceptions([this]
     {
-        std::map<pts, model::VideoClipKeyFramePtr> keyFrames{ getVideoKeyFrames() };
+        model::VideoKeyFrameMap keyFrames{ getVideoKeyFrames() };
         ASSERT_NONZERO(keyFrames.size());
         moveCursorToKeyFrame(mClip, keyFrames.begin()->first);
     });
@@ -267,11 +267,11 @@ void DetailsClip::onVideoKeyFramesPrevButtonPressed(wxCommandEvent& event)
     {
         model::VideoClipPtr videoclip{ getVideoClip(mClip) };
         ASSERT_NONZERO(videoclip);
-        std::map<pts, model::VideoClipKeyFramePtr> keyFrames{ getVideoKeyFrames() }; 
+        model::VideoKeyFrameMap keyFrames{ getVideoKeyFrames() };
         ASSERT_NONZERO(keyFrames.size());
         pts offset{ 0 };
         pts current{ getVideoKeyFrameOffset() };
-        auto it{ keyFrames.begin() };
+        model::VideoKeyFrameMap::const_iterator it{ keyFrames.begin() };
         while (it != keyFrames.end() && it->first < current)
         {
             offset = it->first;
@@ -293,11 +293,11 @@ void DetailsClip::onVideoKeyFramesNextButtonPressed(wxCommandEvent& event)
     {
         model::VideoClipPtr videoclip{ getVideoClip(mClip) };
         ASSERT_NONZERO(videoclip);
-        std::map<pts, model::VideoClipKeyFramePtr> keyFrames{ getVideoKeyFrames() };
+        model::VideoKeyFrameMap keyFrames{ getVideoKeyFrames() };
         ASSERT_NONZERO(keyFrames.size());
         pts offset{ 0 };
         pts current{ getVideoKeyFrameOffset() };
-        auto it{ keyFrames.rbegin() };
+        model::VideoKeyFrameMap::const_reverse_iterator it{ keyFrames.rbegin() };
         while (it != keyFrames.rend() && it->first > current)
         {
             offset = it->first;
@@ -317,7 +317,7 @@ void DetailsClip::onVideoKeyFramesEndButtonPressed(wxCommandEvent& event)
 {
     CatchExceptions([this]
     {
-        std::map<pts, model::VideoClipKeyFramePtr> keyFrames{ getVideoKeyFrames() };
+        model::VideoKeyFrameMap keyFrames{ getVideoKeyFrames() };
         ASSERT_NONZERO(keyFrames.size());
         moveCursorToKeyFrame(mClip, keyFrames.rbegin()->first);
     });
@@ -333,7 +333,7 @@ void DetailsClip::onVideoKeyFramesAddButtonPressed(wxCommandEvent& event)
             model::VideoClipPtr videoclip{ getVideoClip(mClip) };
             ASSERT_NONZERO(videoclip);
             ASSERT_NONZERO(getVideoKeyFrame());
-            model::VideoClipKeyFramePtr keyFrame{ getVideoKeyFrame() };
+            model::VideoKeyFramePtr keyFrame{ getVideoKeyFrame() };
             videoclip->addKeyFrameAt(getVideoKeyFrameOffset(), keyFrame);
         });
         updateVideoKeyFrameControls(); // Update buttons
@@ -363,13 +363,13 @@ void DetailsClip::onVideoKeyFrameButtonPressed(wxCommandEvent& event)
     {
         model::VideoClipPtr videoclip{ getVideoClip(mClip) };
         ASSERT_NONZERO(videoclip);
-        std::map<pts, model::VideoClipKeyFramePtr> keyFrames{ getVideoKeyFrames() };
+        model::VideoKeyFrameMap keyFrames{ getVideoKeyFrames() };
         ASSERT_NONZERO(keyFrames.size());
         size_t buttonNumber{ narrow_cast<size_t,int>(event.GetId()) };
         ASSERT_MORE_THAN(keyFrames.size(), buttonNumber)(*videoclip);
 
         size_t index{ 0 };
-        auto it{ keyFrames.begin() };
+        model::VideoKeyFrameMap::const_iterator it{ keyFrames.begin() };
         for (; it != keyFrames.end() && index++ < buttonNumber; ++it);
         ASSERT(it != keyFrames.end());
         moveCursorToKeyFrame(mClip, it->first);
@@ -443,7 +443,7 @@ void DetailsClip::handleLengthButtonPressed(wxToggleButton* button)
     // When pressing keys in the timeline no checking is done whether a clip is already selected.
     // Furthermore, the - no clip selected - has already more than once caused crashes here.
     // So, if no clip selected, just ignore the request.
-    if (mClip == nullptr) { return; } 
+    if (mClip == nullptr) { return; }
     pts length = getLength(button);
     VAR_INFO(length);
     ASSERT(mTrimAtEnd.find(length) != mTrimAtEnd.end())(mTrimAtEnd)(length);
