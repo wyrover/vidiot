@@ -17,8 +17,6 @@
 
 #pragma once
 
-#include "UtilInt.h"
-
 namespace model { namespace calculate {
 
 pts combinedLength(const IClips& clips);

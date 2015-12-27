@@ -29,7 +29,6 @@
 #include "Sequence.h"
 #include "Timeline.h"
 #include "TimescaleView.h"
-#include "UtilLog.h"
 #include "VideoTrack.h"
 #include "VideoView.h"
 #include "Zoom.h"

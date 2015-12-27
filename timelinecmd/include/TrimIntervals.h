@@ -18,7 +18,6 @@
 #pragma once
 
 #include "AClipEdit.h"
-#include "UtilInt.h"
 
 namespace gui { namespace timeline {
 

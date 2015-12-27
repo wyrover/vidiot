@@ -18,8 +18,6 @@
 #pragma once
 
 #include "IAudio.h"
-#include "UtilInt.h"
-#include "UtilRational.h"
 
 namespace model {
 

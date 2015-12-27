@@ -17,7 +17,6 @@
 
 #include "CreateVideoTrack.h"
 
-#include "UtilLog.h"
 #include "Timeline.h"
 #include "Sequence.h"
 #include "VideoTrack.h"

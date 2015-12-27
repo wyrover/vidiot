@@ -17,9 +17,6 @@
 
 #include "AudioChunk.h"
 
-#include "UtilLog.h"
-#include "UtilLogBoost.h"
-
 namespace model {
 
 const int AudioChunk::sBytesPerSample = 2;

@@ -24,10 +24,6 @@
 #include "KeyFrame.h"
 #include "Track.h"
 #include "Transition.h"
-#include "UtilClone.h"
-#include "UtilLog.h"
-#include "UtilLogBoost.h"
-#include "UtilLogStl.h"
 #include "UtilSerializeBoost.h"
 
 namespace model {

@@ -17,8 +17,6 @@
 
 #pragma once
 
-#include "UtilInt.h"
-
 namespace model {
 
 class IControl

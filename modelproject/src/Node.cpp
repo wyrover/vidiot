@@ -19,7 +19,6 @@
 
 #include "NodeEvent.h"
 
-#include "UtilLog.h"
 #include "Window.h"
 #include "UtilVector.h"
 

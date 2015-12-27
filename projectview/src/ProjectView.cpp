@@ -43,8 +43,6 @@
 #include "StatusBar.h"
 #include "TimelinesView.h"
 #include "UtilException.h"
-#include "UtilLog.h"
-#include "UtilLogWxwidgets.h"
 #include "UtilPath.h"
 #include "UtilRecycle.h"
 #include "UtilVector.h"

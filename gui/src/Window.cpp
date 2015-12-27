@@ -38,7 +38,6 @@
 #include "ProjectViewAddAsset.h"
 #include "StatusBar.h"
 #include "TimelinesView.h"
-#include "UtilLog.h"
 #include "UtilTestCrash.h"
 #include "UtilWindow.h"
 #include "VideoTransitionFactory.h"

@@ -30,8 +30,6 @@
 #include "ProjectViewMoveAsset.h"
 #include "ProjectViewRenameAsset.h"
 #include "Sequence.h"
-#include "UtilLog.h"
-#include "UtilLogStl.h"
 #include "UtilPath.h"
 #include "UtilWindow.h"
 #include "Window.h"

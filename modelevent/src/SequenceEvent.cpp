@@ -17,7 +17,6 @@
 
 #include "SequenceEvent.h"
 
-#include "UtilLogStl.h"
 #include "Track.h"
 
 namespace model {

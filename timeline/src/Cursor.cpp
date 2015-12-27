@@ -23,7 +23,6 @@
 #include "Sequence.h"
 #include "SequenceView.h"
 #include "Timeline.h"
-#include "UtilLog.h"
 #include "VideoDisplayEvent.h"
 #include "Zoom.h"
 

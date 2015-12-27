@@ -22,7 +22,6 @@
 #include "ProjectViewCtrl.h"
 #include "ProjectViewDeleteAsset.h"
 #include "StatusBar.h"
-#include "UtilLog.h"
 
 namespace gui {
 

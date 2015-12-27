@@ -17,8 +17,6 @@
 
 #pragma once
 
-#include "UtilLog.h"
-
 template <class ITEMTYPE>
 class EnumSelector
     : public wxChoice

@@ -17,7 +17,6 @@
 
 #include "VideoCodecs.h"
 
-#include "UtilLog.h"
 #include "VideoCodec.h"
 #include "VideoCodecParameter.h"
 

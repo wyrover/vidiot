@@ -17,8 +17,6 @@
 
 #pragma once
 
-#include "UtilInt.h"
-
 namespace util {
 
 // Create wav of data being processed, without knowing the resulting data

@@ -27,7 +27,6 @@
 #include "EventPart.h"
 #include "Mouse.h"
 #include "StateIdle.h"
-#include "UtilLog.h"
 #include "ViewMap.h"
 
 namespace gui { namespace timeline { namespace state {

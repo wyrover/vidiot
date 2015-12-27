@@ -187,4 +187,16 @@ extern "C" {
 
 #include "Pointers.h"
 
+#include "UtilLog.h" // Used by other headers below
+#include "UtilLogAvcodec.h" // For logging codec ids. Still compiles without this include but then the title bar shows ints, not text for the codec name.
+#include "UtilLogBoost.h"
+#include "UtilLogStl.h"
+#include "UtilLogWxwidgets.h"
+
+#include "UtilClone.h"
+#include "UtilEvent.h"
+#include "UtilInt.h"
+#include "UtilRational.h"
+#include "UtilSelf.h"
+
 #endif // PRECOMPILED_H

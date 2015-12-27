@@ -21,7 +21,6 @@
 #include "AudioChunk.h"
 #include "Properties.h"
 #include "UtilFrameRate.h"
-#include "UtilLog.h"
 
 namespace model {
 

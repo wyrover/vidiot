@@ -17,10 +17,6 @@
 
 #include "EventKey.h"
 
-#include "UtilLogBoost.h"
-#include "UtilLog.h"
-#include "UtilLogWxwidgets.h"
-
 namespace gui { namespace timeline { namespace state {
 
 EvKey::EvKey(wxKeyEvent& wxEvent)

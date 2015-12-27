@@ -17,8 +17,6 @@
 
 #include "TransitionParameter.h"
 
-#include "UtilLog.h"
-
 namespace model {
 
 DEFINE_EVENT(EVENT_TRANSITION_PARAMETER_CHANGED, EventTransitionParameterChanged, wxString);

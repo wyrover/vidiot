@@ -31,7 +31,6 @@
 #include "TimelineDataObject.h"
 #include "Track.h"
 #include "TrackCreator.h"
-#include "UtilLog.h"
 #include "Window.h"
 #include "Zoom.h"
 

@@ -18,7 +18,6 @@
 #include "Work.h"
 
 #include "StatusBar.h"
-#include "UtilLog.h"
 #include "UtilThread.h"
 #include "WorkEvent.h"
 

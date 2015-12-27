@@ -18,7 +18,6 @@
 #pragma once
 
 #include "ATimelineCommand.h"
-#include "UtilInt.h"
 
 namespace gui { namespace timeline { namespace cmd {
 

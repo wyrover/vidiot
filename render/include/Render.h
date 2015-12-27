@@ -17,9 +17,6 @@
 
 #pragma once
 
-#include "UtilEvent.h"
-#include "UtilInt.h"
-
 namespace model { namespace render {
 
 class Render

@@ -18,8 +18,6 @@
 #include "ProjectViewCreateAutoFolder.h"
 
 #include "AutoFolder.h"
-#include "UtilLog.h"
-#include "UtilLogWxwidgets.h"
 #include "UtilPath.h"
 
 namespace cmd {

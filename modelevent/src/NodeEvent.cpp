@@ -18,8 +18,6 @@
 #include "NodeEvent.h"
 
 #include "INode.h"
-#include "UtilLog.h"
-#include "UtilLogStl.h"
 
 namespace model {
 

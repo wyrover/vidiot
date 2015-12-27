@@ -19,8 +19,6 @@
 
 #define BOOST_HAS_STDINT_H
 
-#include "UtilLog.h"
-
 template<class ELEMENT>
 class Fifo
 {

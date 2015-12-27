@@ -18,8 +18,6 @@
 #include "VideoTransition_CrossFade.h"
 
 #include "TransitionFactory.h"
-#include "UtilLog.h"
-#include "UtilLogWxwidgets.h"
 #include "VideoClip.h"
 #include "VideoComposition.h"
 #include "VideoCompositionParameters.h"

@@ -17,7 +17,6 @@
 
 #include "CreateAudioTrack.h"
 
-#include "UtilLog.h"
 #include "AudioTrack.h"
 #include "Timeline.h"
 #include "Sequence.h"

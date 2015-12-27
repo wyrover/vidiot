@@ -20,7 +20,6 @@
 #include "Folder.h"
 #include "Node.h"
 #include "Sequence.h"
-#include "UtilLog.h"
 
 namespace gui {
 

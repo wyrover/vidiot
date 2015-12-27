@@ -18,9 +18,6 @@
 #pragma once
 
 #include "Part.h"
-#include "UtilEvent.h"
-#include "UtilInt.h"
-#include "UtilRational.h"
 
 namespace gui { namespace timeline {
 

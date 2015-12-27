@@ -46,7 +46,6 @@
 #include "TrimClip.h"
 #include "UnlinkClips.h"
 #include "UtilException.h"
-#include "UtilLog.h"
 #include "VideoClip.h"
 #include "VideoDisplayEvent.h"
 #include "VideoTrack.h"

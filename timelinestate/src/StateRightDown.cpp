@@ -26,7 +26,6 @@
 #include "StateIdle.h"
 #include "StateScrolling.h"
 #include "Timeline.h"
-#include "UtilLog.h"
 #include "Zoom.h"
 
 namespace gui { namespace timeline { namespace state {

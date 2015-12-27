@@ -25,7 +25,6 @@
 #include "Sequence.h"
 #include "Timeline.h"
 #include "TimelinesView.h"
-#include "UtilLog.h"
 #include "VideoDisplay.h"
 #include "VideoDisplayEvent.h"
 #include "Window.h"

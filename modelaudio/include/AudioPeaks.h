@@ -17,8 +17,6 @@
 
 #pragma once
 
-#include "UtilInt.h"
-
 namespace model {
 
 typedef std::pair<sample,sample> AudioPeak;

@@ -18,7 +18,6 @@
 #include "FileMetaDataCache.h"
 
 #include <boost/serialization/map.hpp>
-#include "UtilLogWxwidgets.h"
 #include "UtilSerializeBoost.h"
 #include "UtilSerializeWxwidgets.h"
 

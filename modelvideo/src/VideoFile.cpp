@@ -24,9 +24,6 @@
 #include "Node.h"
 #include "Properties.h"
 #include "UtilInitAvcodec.h"
-#include "UtilLog.h"
-#include "UtilLogAvcodec.h"
-#include "UtilLogBoost.h"
 #include "VideoCompositionParameters.h"
 #include "VideoFrame.h"
 

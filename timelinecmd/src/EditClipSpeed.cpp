@@ -29,8 +29,6 @@
 #include "Track.h"
 #include "Transition.h"
 #include "Trim.h"
-#include "UtilClone.h"
-#include "UtilLog.h"
 #include "VideoClip.h"
 #include "Zoom.h"
 

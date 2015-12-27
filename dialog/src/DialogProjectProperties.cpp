@@ -21,7 +21,6 @@
 #include "Project.h"
 #include "ProjectModification.h"
 #include "Properties.h"
-#include "UtilLog.h"
 #include "UtilWindow.h"
 
 namespace gui {

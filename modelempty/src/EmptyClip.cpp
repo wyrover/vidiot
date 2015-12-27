@@ -24,9 +24,7 @@
 #include "EmptyFrame.h"
 #include "Properties.h"
 #include "AudioCompositionParameters.h"
-#include "UtilLog.h"
 #include "VideoCompositionParameters.h"
-#include "UtilLog.h"
 #include "VideoFrame.h"
 
 namespace model {

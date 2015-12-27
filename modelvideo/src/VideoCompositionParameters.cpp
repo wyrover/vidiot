@@ -17,8 +17,6 @@
 
 #include "VideoCompositionParameters.h"
 
-#include "UtilLogBoost.h"
-#include "UtilLogWxwidgets.h"
 #include "Config.h"
 
 namespace model {

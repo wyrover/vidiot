@@ -25,11 +25,7 @@
 #include "Timeline.h"
 #include "Track.h"
 #include "Transition.h"
-#include "UtilLog.h"
-#include "UtilLogBoost.h"
-#include "UtilLogStl.h"
 #include "VideoClip.h"
-#include "UtilLogWxwidgets.h"
 #include "VideoTransition.h"
 
 namespace gui { namespace timeline { namespace cmd {

@@ -18,9 +18,7 @@
 #pragma once
 
 #include "EventMouse.h"
-#include "UtilEnum.h"
 #include "Part.h"
-#include "UtilInt.h"
 
 class wxCursor;
 

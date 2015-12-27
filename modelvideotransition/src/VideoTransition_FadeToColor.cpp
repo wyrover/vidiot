@@ -23,8 +23,6 @@
 #include "TransitionFactory.h"
 #include "TransitionParameterColor.h"
 #include "UtilEnum.h"
-#include "UtilLog.h"
-#include "UtilLogWxwidgets.h"
 #include "VideoClip.h"
 #include "VideoComposition.h"
 #include "VideoCompositionParameters.h"

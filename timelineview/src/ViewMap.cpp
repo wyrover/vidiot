@@ -19,8 +19,6 @@
 
 #include <boost/range/algorithm/copy.hpp>
 #include <boost/range/adaptor/map.hpp>
-#include "UtilLog.h"
-#include "UtilLogStl.h"
 
 namespace gui { namespace timeline {
 

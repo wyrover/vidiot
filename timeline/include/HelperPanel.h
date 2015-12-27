@@ -17,8 +17,6 @@
 
 #pragma once
 
-#include "UtilLog.h"
-
 namespace gui { namespace timeline {
     class Timeline;
 

@@ -17,8 +17,6 @@
 
 #include "UtilWindow.h"
 
-#include "UtilLog.h"
-
 namespace util { namespace window {
 
 void setIcons(wxTopLevelWindow* window)

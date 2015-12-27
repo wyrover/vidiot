@@ -19,8 +19,6 @@
 
 #include "KeyFrame.h"
 #include "Enums.h"
-#include "UtilInt.h"
-#include "UtilRational.h"
 
 namespace model {
 

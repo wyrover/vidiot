@@ -25,7 +25,6 @@
 #include "Mouse.h"
 #include "SequenceView.h"
 #include "StateIdle.h"
-#include "UtilLog.h"
 
 namespace gui { namespace timeline { namespace state {
 

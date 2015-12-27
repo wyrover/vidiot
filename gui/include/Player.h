@@ -17,8 +17,6 @@
 
 #pragma once
 
-#include "UtilInt.h"
-
 class EventConfigUpdated;
 class wxMiniFrame;
 

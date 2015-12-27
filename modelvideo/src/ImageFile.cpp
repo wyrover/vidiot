@@ -19,8 +19,6 @@
 
 #include "Convert.h"
 #include "Properties.h"
-#include "UtilClone.h"
-#include "UtilLog.h"
 #include "VideoCompositionParameters.h"
 #include "VideoFrame.h"
 #include "VideoFrameLayer.h"

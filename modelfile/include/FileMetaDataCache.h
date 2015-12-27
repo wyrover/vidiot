@@ -20,7 +20,6 @@
 #include "UtilSingleInstance.h"
 
 #include "AudioPeaks.h"
-#include "UtilInt.h"
 
 namespace model {
 

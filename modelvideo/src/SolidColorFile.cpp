@@ -19,8 +19,6 @@
 //
 //#include "Constants.h"
 //#include "Convert.h"
-//#include "UtilClone.h"
-//#include "UtilLog.h"
 //#include "VideoCompositionParameters.h"
 //#include "VideoFrame.h"
 //#include "VideoFrameLayer.h"
@@ -137,4 +135,4 @@
 //
 //} //namespace
 //
-//BOOST_CLASS_EXPORT_IMPLEMENT(model::SolidColorFile)
+//BOOST_CLASS_EXPORT_IMPLEMENT(model::SolidColorFile) // todo remove files

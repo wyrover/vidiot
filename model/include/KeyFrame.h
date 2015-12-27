@@ -18,7 +18,6 @@
 #pragma once
 
 #include "Enums.h"
-#include "UtilInt.h"
 
 namespace model {
 

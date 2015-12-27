@@ -17,8 +17,6 @@
 
 #pragma once
 
-#include "UtilInt.h"
-
 namespace gui { namespace timeline {
 
 class Timeline;

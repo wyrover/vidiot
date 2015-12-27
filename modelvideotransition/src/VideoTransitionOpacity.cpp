@@ -17,8 +17,6 @@
 
 #include "VideoTransitionOpacity.h"
 
-#include "UtilInt.h"
-#include "UtilLog.h"
 #include "VideoClip.h"
 #include "VideoCompositionParameters.h"
 #include "VideoFrameLayer.h"

@@ -18,7 +18,6 @@
 #include "Application.h"
 
 #include "Dialog.h"
-#include "UtilLog.h"
 #include "UtilAssert.h"
 #include "UtilStackWalker.h"
 

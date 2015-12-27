@@ -25,7 +25,6 @@
 #include "EmptyChunk.h"
 #include "Node.h"
 #include "Transition.h"
-#include "UtilLog.h"
 
 namespace model {
 

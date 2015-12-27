@@ -21,9 +21,7 @@
 #include "Convert.h"
 #include "Transition.h"
 #include "TransitionParameter.h"
-#include "UtilClone.h"
 #include "UtilException.h"
-#include "UtilLog.h"
 #include "VideoClip.h"
 #include "VideoKeyFrame.h"
 

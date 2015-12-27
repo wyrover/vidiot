@@ -18,7 +18,6 @@
 #include "Dialog.h"
 
 #include "Config.h"
-#include "UtilLog.h"
 #include "UtilMail.h"
 #include "UtilPath.h"
 #include "UtilThread.h"

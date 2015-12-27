@@ -17,9 +17,6 @@
 
 #include "TransitionParameterColor.h"
 
-#include "UtilLog.h"
-#include "UtilLogStl.h"
-#include "UtilLogWxwidgets.h"
 #include "UtilSerializeWxwidgets.h"
 
 namespace model {

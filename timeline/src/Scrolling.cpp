@@ -20,7 +20,6 @@
 #include "Cursor.h"
 #include "Mouse.h"
 #include "Timeline.h"
-#include "UtilLog.h"
 #include "Zoom.h"
 
 namespace gui { namespace timeline {

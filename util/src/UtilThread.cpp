@@ -17,9 +17,6 @@
 
 #include "UtilThread.h"
 
-#include "UtilEvent.h"
-#include "UtilSelf.h"
-
 #ifdef __GNUC__
 #include <sys/prctl.h>
 #endif

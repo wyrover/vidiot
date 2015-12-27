@@ -26,8 +26,6 @@
 #include "Sequence.h"
 #include "Track.h"
 #include "StatusBar.h"
-#include "UtilLog.h"
-#include "UtilPath.h"
 #include "UtilRecycle.h"
 
 namespace cmd {

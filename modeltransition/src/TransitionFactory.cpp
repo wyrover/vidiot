@@ -18,9 +18,6 @@
 #include "TransitionFactory.h"
 
 #include "Transition.h"
-#include "UtilClone.h"
-#include "UtilLog.h"
-#include "UtilLogStl.h"
 
 namespace model {
 

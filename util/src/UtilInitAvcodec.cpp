@@ -18,8 +18,6 @@
 #include "UtilInitAvcodec.h"
 
 #include "Config.h"
-#include "UtilLog.h"
-#include "UtilLogAvcodec.h"
 #include "UtilMap.h"
 
 IMPLEMENTENUM(LogLevelAvcodec);

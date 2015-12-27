@@ -21,8 +21,6 @@
 #include "IClip.h"
 #include "Transition.h"
 #include "Trim.h"
-#include "UtilLog.h"
-#include "UtilLogWxwidgets.h"
 #include "VideoClip.h"
 #include "AudioClip.h"
 

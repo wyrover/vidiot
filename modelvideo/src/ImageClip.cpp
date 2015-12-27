@@ -19,7 +19,6 @@
 
 #include "Config.h"
 #include "ImageFile.h"
-#include "UtilLog.h"
 #include "VideoCompositionParameters.h"
 
 namespace model {

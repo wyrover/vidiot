@@ -17,8 +17,6 @@
 
 #pragma once
 
-#include "UtilEvent.h"
-
 namespace gui {
 
 DECLARE_EVENT(EVENT_PLAYBACK_POSITION, PlaybackPositionEvent, pts);

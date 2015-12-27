@@ -23,8 +23,6 @@
 #include "EmptyChunk.h"
 #include "FileMetaDataCache.h"
 #include "UtilInitAvcodec.h"
-#include "UtilLog.h"
-#include "UtilLogAvcodec.h"
 #include "UtilPath.h"
 
 namespace model

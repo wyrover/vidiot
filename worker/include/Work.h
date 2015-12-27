@@ -17,8 +17,6 @@
 
 #pragma once
 
-#include "UtilSelf.h"
-
 namespace worker {
 
 typedef std::function< void() > Callable;

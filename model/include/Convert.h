@@ -17,7 +17,6 @@
 
 #pragma once
 
-#include "UtilInt.h"
 #include "UtilFrameRate.h"
 
 namespace model {

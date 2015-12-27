@@ -17,8 +17,6 @@
 
 #pragma once
 
-#include "UtilEvent.h"
-
 namespace gui { namespace timeline {
 
 DECLARE_EVENT(EVENT_SELECTION_UPDATE, EventSelectionUpdate, int);

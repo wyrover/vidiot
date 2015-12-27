@@ -17,7 +17,6 @@
 
 #include "VideoTrack.h"
 
-#include "UtilLog.h"
 #include "VideoClip.h"
 #include "VideoFrame.h"
 

@@ -17,8 +17,6 @@
 
 #pragma once
 
-#include "UtilLog.h" // todo only for the FATAL below, under gcc
-
 namespace gui { namespace timeline {
 
 class DetailsPanel;
@@ -53,7 +51,7 @@ public:
                 return result;
             }
         }
-        FATAL("Not found");
+        FATAL("Not found")(typeid(DETAILS).name());
         return 0;
     }
 

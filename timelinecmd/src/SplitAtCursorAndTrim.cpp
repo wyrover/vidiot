@@ -25,7 +25,6 @@
 #include "TimelinesView.h"
 #include "Track.h"
 #include "TrimClip.h"
-#include "UtilLog.h"
 #include "Zoom.h"
 
 namespace gui { namespace timeline { namespace cmd {

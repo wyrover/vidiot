@@ -22,7 +22,6 @@
 #include "AudioCompositionParameters.h"
 #include "Convert.h"
 #include "TransitionFactory.h"
-#include "UtilLog.h"
 
 namespace model { namespace audio { namespace transition {
 

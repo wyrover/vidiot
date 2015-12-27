@@ -17,9 +17,6 @@
 
 #pragma once
 
-#include "UtilInt.h"
-#include "UtilRational.h"
-
 class FrameRate
     : public rational64
 {

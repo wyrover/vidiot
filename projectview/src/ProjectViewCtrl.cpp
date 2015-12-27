@@ -18,7 +18,6 @@
 #include "ProjectViewCtrl.h"
 
 #include "ProjectViewModel.h"
-#include "UtilLog.h"
 
 namespace gui {
 

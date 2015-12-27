@@ -22,8 +22,6 @@
 #include "IClip.h"
 #include "Sequence.h"
 #include "Trim.h"
-#include "UtilLog.h"
-#include "UtilLogWxwidgets.h"
 #include "VideoClip.h"
 #include "Window.h"
 

@@ -19,7 +19,6 @@
 
 #include <wx/msgdlg.h>
 #include "Config.h"
-#include "UtilLogWxwidgets.h"
 
 namespace util { namespace path {
 

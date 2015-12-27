@@ -19,8 +19,6 @@
 
 #include "EventMouse.h"
 #include "Part.h"
-#include "UtilEvent.h"
-#include "UtilInt.h"
 
 namespace gui { namespace timeline {
 

@@ -25,7 +25,6 @@
 #include "UtilFrameRate.h"
 #include "UtilInitAvcodec.h"
 #include "UtilLocale.h"
-#include "UtilLog.h"
 #include "UtilMap.h"
 #include "UtilWindow.h"
 

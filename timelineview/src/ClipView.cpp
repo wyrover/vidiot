@@ -29,8 +29,6 @@
 #include "Drag_Shift.h"
 #include "Track.h"
 #include "Transition.h"
-#include "UtilLog.h"
-#include "UtilLogWxwidgets.h"
 #include "UtilWindow.h"
 #include "VideoClip.h"
 #include "VideoFrame.h"

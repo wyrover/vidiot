@@ -57,8 +57,6 @@
 #include "TimelineClipboard.h"
 #include "Transition.h"
 #include "Track.h"
-#include "UtilLog.h"
-#include "UtilLogStl.h"
 #include "VideoTrack.h"
 #include "VideoTransitionFactory.h"
 #include "ViewMap.h"

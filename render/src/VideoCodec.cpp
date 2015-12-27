@@ -19,11 +19,7 @@
 
 #include "Dialog.h"
 #include "Properties.h"
-#include "UtilClone.h"
 #include "UtilInitAvcodec.h"
-#include "UtilLog.h"
-#include "UtilLogAvcodec.h"
-#include "UtilLogStl.h"
 #include "UtilVector.h"
 #include "VideoCodecParameter.h"
 #include "VideoCodecs.h"
