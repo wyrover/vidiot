@@ -24,9 +24,6 @@
 #include "Node.h"
 #include "ProjectModification.h"
 #include "TrackEvent.h"
-#include "UtilClone.h"
-#include "UtilLog.h"
-#include "UtilLogStl.h"
 #include "UtilSet.h"
 #include "UtilVector.h"
 

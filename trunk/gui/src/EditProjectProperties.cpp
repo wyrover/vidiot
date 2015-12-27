@@ -22,7 +22,6 @@
 #include "ProjectModification.h"
 #include "Properties.h"
 #include "UtilAudioRate.h"
-#include "UtilLog.h"
 #include "UtilWindow.h"
 
 namespace gui {

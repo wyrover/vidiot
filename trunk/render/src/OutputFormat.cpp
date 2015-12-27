@@ -19,9 +19,6 @@
 
 #include "AudioCodec.h"
 #include "AudioCodecs.h"
-#include "UtilClone.h"
-#include "UtilLog.h"
-#include "UtilLogStl.h"
 #include "UtilSerializeWxwidgets.h"
 #include "VideoCodec.h"
 #include "VideoCodecs.h"

@@ -17,8 +17,6 @@
 
 #pragma once
 
-#include "UtilEvent.h"
-
 namespace model {
 
 DECLARE_EVENT(EVENT_CHANGE_AUDIOCLIP_VOLUME,    EventChangeAudioClipVolume, int);

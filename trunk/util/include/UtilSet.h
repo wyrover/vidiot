@@ -17,9 +17,6 @@
 
 #pragma once
 
-#include "UtilLog.h"
-#include "UtilLogStl.h"
-
 template<class ELEMENT>
 class UtilSet
 {

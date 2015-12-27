@@ -19,7 +19,6 @@
 
 #include "Intervals.h"
 #include "Timeline.h"
-#include "UtilLog.h"
 #include "SequenceView.h"
 
 namespace gui { namespace timeline { namespace cmd {

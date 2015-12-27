@@ -27,8 +27,6 @@
 #include "Track.h"
 #include "Transition.h"
 #include "Trim.h"
-#include "UtilClone.h"
-#include "UtilLog.h"
 #include "Zoom.h"
 
 namespace gui { namespace timeline { namespace cmd {

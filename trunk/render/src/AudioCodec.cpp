@@ -21,10 +21,7 @@
 #include "AudioCodecs.h"
 #include "Dialog.h"
 #include "Properties.h"
-#include "UtilClone.h"
 #include "UtilInitAvcodec.h"
-#include "UtilLog.h"
-#include "UtilLogStl.h"
 #include "UtilVector.h"
 
 namespace model { namespace render {

@@ -18,8 +18,6 @@
 //#include "SolidColorClip.h"
 //
 //#include "Config.h"
-//#include "UtilLog.h"
-//#include "UtilLogWxwidgets.h"
 //#include "VideoCompositionParameters.h"
 //
 //namespace model {

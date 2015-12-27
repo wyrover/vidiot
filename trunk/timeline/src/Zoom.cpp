@@ -21,8 +21,6 @@
 #include "Cursor.h"
 #include "ProjectModification.h"
 #include "Scrolling.h"
-#include "UtilInt.h"
-#include "UtilLog.h"
 #include "UtilSerializeBoost.h"
 
 namespace gui { namespace timeline {

@@ -17,7 +17,6 @@
 
 #include "TrackEvent.h"
 
-#include "UtilLogStl.h"
 #include "IClip.h"
 
 namespace model {

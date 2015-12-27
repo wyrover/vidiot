@@ -22,7 +22,6 @@
 #include "Sequence.h"
 #include "TimelinesView.h"
 #include "TrackCreator.h"
-#include "UtilLog.h"
 #include "Window.h"
 
 namespace cmd {

@@ -15,8 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#include "UtilLog.h"
-
 #include "Dialog.h"
 #include "UtilAssert.h"
 #include "UtilFifo.h"

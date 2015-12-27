@@ -17,7 +17,6 @@
 
 #include "SplitAtCursor.h"
 
-#include "UtilLog.h"
 #include "Timeline.h"
 #include "Cursor.h"
 #include "Track.h"

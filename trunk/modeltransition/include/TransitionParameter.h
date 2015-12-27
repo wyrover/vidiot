@@ -17,8 +17,6 @@
 
 #pragma once
 
-#include "UtilEvent.h"
-
 namespace model {
 
 DECLARE_EVENT(EVENT_TRANSITION_PARAMETER_CHANGED, EventTransitionParameterChanged, wxString);

@@ -30,8 +30,6 @@
 #include "StateIdle.h"
 #include "ThumbnailView.h"
 #include "Track.h"
-
-#include "UtilLog.h"
 #include "VideoClip.h"
 #include "ViewMap.h"
 

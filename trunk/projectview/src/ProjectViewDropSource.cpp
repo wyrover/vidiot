@@ -18,7 +18,6 @@
 #include "ProjectViewDropSource.h"
 #include "ProjectViewModel.h"
 #include "Window.h"
-#include "UtilLog.h"
 #include "ProjectViewDataObject.h"
 #include "Node.h"
 

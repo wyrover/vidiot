@@ -17,8 +17,6 @@
 
 #include "LinkReplacementMap.h"
 
-#include "UtilLog.h"
-
 namespace gui { namespace timeline { namespace cmd {
 
 //////////////////////////////////////////////////////////////////////////

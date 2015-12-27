@@ -19,7 +19,6 @@
 
 #include "Part.h"
 #include "PositionInfo.h"
-#include "UtilInt.h"
 
 namespace gui {
     class EditDisplay;

@@ -17,8 +17,6 @@
 
 #include "UtilAssert.h"
 
-#include "UtilLog.h"
-
 void breakIntoDebugger()
 {
 #ifdef _MSC_VER

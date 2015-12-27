@@ -17,7 +17,6 @@
 
 #include "AudioTrack.h"
 
-#include "UtilLog.h"
 #include "AudioClip.h"
 
 namespace model {

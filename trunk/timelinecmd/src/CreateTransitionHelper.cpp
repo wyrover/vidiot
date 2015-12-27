@@ -28,9 +28,6 @@
 #include "Track.h"
 #include "Transition.h"
 #include "TrimClip.h"
-#include "UtilLog.h"
-#include "UtilLogStl.h"
-#include "UtilLogWxwidgets.h"
 #include "VideoClip.h"
 #include "VideoTransition.h"
 

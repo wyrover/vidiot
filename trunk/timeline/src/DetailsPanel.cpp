@@ -18,8 +18,6 @@
 #include "DetailsPanel.h"
 
 #include "Details.h"
-#include "UtilLog.h"
-#include "UtilLogStl.h"
 
 namespace gui { namespace timeline {
 

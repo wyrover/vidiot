@@ -23,7 +23,6 @@
 #include "EditClipDetails.h"
 #include "EditClipSpeed.h"
 #include "ProjectModification.h"
-#include "UtilLog.h"
 #include "VideoComposition.h"
 #include "VideoCompositionParameters.h"
 #include "VideoFrame.h"
@@ -459,7 +458,7 @@ void DetailsClip::updateVideoKeyFrameControls()
 
     model::VideoKeyFramePtr videoKeyFrame{ getVideoKeyFrame() };
     ASSERT_NONZERO(videoKeyFrame);
-    model::VideoKeyFrameMap keyframes{ getVideoKeyFrames() }; // todo typedef for this typ[e also
+    model::VideoKeyFrameMap keyframes{ getVideoKeyFrames() };
 
     rational64 factor{ videoKeyFrame->getScalingFactor() };
     rational64 rotation{ videoKeyFrame->getRotation() };

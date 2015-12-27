@@ -17,8 +17,6 @@
 
 #include "AudioTransition.h"
 
-#include "UtilInt.h"
-#include "UtilLog.h"
 #include "AudioClip.h"
 #include "AudioChunk.h"
 #include "Convert.h"

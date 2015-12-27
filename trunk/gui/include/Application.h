@@ -17,8 +17,6 @@
 
 #pragma once
 
-#include "UtilEvent.h"
-
 #include <wx/app.h>
 #include <wx/cmdline.h>
 #include <wx/evtloop.h>

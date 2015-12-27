@@ -18,9 +18,8 @@
 #pragma once
 
 #include "UtilFifo.h"
-#include "UtilInt.h"
 #include "UtilRTTI.h"
-#include <boost/noncopyable.hpp>
+
 namespace model {
 
 typedef Fifo<AudioChunkPtr> FifoAudio;

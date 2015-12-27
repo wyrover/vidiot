@@ -17,9 +17,6 @@
 
 #include "KeyFrame.h"
 
-#include "UtilClone.h"
-#include "UtilLog.h"
-
 namespace model {
 
 //////////////////////////////////////////////////////////////////////////

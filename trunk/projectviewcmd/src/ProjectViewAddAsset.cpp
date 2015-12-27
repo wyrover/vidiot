@@ -16,8 +16,6 @@
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
 #include "ProjectViewAddAsset.h"
-#include "UtilLog.h"
-#include "UtilLogStl.h"
 
 namespace cmd {
 

@@ -22,9 +22,6 @@
 #include "Selection.h"
 #include "Sequence.h"
 #include "Timeline.h"
-#include "UtilLog.h"
-#include "UtilLogStl.h"
-#include "UtilClone.h"
 
 namespace gui { namespace timeline { namespace cmd {
 

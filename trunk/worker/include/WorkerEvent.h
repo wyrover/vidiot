@@ -17,8 +17,6 @@
 
 #pragma once
 
-#include "UtilEvent.h"
-
 namespace worker {
 
 DECLARE_EVENT(EVENT_WORKER_QUEUE_SIZE, WorkerQueueSizeEvent, int);

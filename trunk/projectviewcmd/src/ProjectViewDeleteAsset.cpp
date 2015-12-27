@@ -18,8 +18,6 @@
 #include "ProjectViewDeleteAsset.h"
 
 #include "File.h"
-#include "UtilLog.h"
-#include "UtilLogStl.h"
 
 namespace cmd {
 

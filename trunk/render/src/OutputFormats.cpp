@@ -19,9 +19,6 @@
 
 #include "AudioCodecs.h"
 #include "OutputFormat.h"
-
-#include "UtilLog.h"
-#include "UtilLogAvcodec.h"
 #include "VideoCodecs.h"
 
 namespace model { namespace render {

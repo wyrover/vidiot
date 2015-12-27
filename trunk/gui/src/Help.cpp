@@ -23,8 +23,6 @@
 #include "TimelinesView.h"
 #include "Details.h"
 #include "UtilLocale.h"
-#include "UtilLog.h"
-#include "UtilLogWxwidgets.h"
 #include "UtilPath.h"
 #include "Window.h"
 

@@ -23,7 +23,6 @@
 #include "Dialog.h"
 #include "Properties.h"
 #include "Sequence.h"
-#include "UtilLog.h"
 #include "UtilThread.h"
 #include "VideoCompositionParameters.h"
 #include "VideoDisplayEvent.h"

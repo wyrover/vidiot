@@ -17,9 +17,6 @@
 
 #include "ProjectViewMoveAsset.h"
 
-#include "UtilLog.h"
-#include "UtilLogStl.h"
-
 namespace cmd {
 
 //////////////////////////////////////////////////////////////////////////

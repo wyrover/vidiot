@@ -18,7 +18,6 @@
 #pragma once
 
 #include "Clip.h"
-#include "UtilRational.h"
 
 namespace model {
 

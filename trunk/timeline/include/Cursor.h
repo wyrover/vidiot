@@ -18,7 +18,6 @@
 #pragma once
 
 #include "Part.h"
-#include "UtilInt.h"
 
 namespace gui { class PlaybackPositionEvent; }
 

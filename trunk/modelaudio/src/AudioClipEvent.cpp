@@ -17,8 +17,6 @@
 
 #include "AudioClipEvent.h"
 
-#include "UtilLogWxwidgets.h"
-
 namespace model {
 
 DEFINE_EVENT(EVENT_CHANGE_AUDIOCLIP_VOLUME, EventChangeAudioClipVolume, int);

@@ -18,7 +18,6 @@
 #pragma once
 
 #include "UtilRTTI.h"
-#include "UtilSelf.h"
 
 namespace model {
 

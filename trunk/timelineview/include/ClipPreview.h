@@ -17,7 +17,6 @@
 
 #pragma once
 
-#include "UtilRational.h"
 #include "View.h"
 #include "Work.h"
 

@@ -17,8 +17,6 @@
 
 #pragma once
 
-#include "UtilLog.h"
-
 /// Everywhere where shared_from_this is used,
 /// make sure that exceptions are caught for
 /// having the best stack trace.

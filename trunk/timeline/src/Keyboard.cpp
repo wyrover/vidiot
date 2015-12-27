@@ -17,8 +17,6 @@
 
 #include "Keyboard.h"
 
-#include "UtilLog.h"
-
 namespace gui { namespace timeline {
 
 //////////////////////////////////////////////////////////////////////////

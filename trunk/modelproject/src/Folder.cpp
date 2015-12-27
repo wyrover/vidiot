@@ -20,7 +20,6 @@
 #include "NodeEvent.h"
 #include "Project.h"
 #include "Window.h"
-#include "UtilLog.h"
 #include "UtilSerializeWxwidgets.h"
 
 namespace model {

@@ -29,8 +29,6 @@
 #include "Timeline.h"
 #include "Track.h"
 #include "TrackView.h"
-#include "UtilLog.h"
-#include "UtilLogWxwidgets.h"
 #include "UtilWindow.h"
 #include "VideoView.h"
 #include "ViewMap.h"

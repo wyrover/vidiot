@@ -36,8 +36,6 @@
 #include "TimelineClipboard.h"
 #include "Track.h"
 #include "Trim.h"
-#include "UtilLog.h"
-#include "UtilLogWxwidgets.h"
 #include "VideoView.h"
 #include "ViewMap.h"
 #include "Window.h"

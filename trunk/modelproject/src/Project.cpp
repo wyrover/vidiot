@@ -28,7 +28,6 @@
 #include "Properties.h"
 #include "Root.h"
 #include "StatusBar.h"
-#include "UtilLog.h"
 #include "UtilRecycle.h"
 
 namespace model {

@@ -20,8 +20,6 @@
 #include "Convert.h"
 #include "EmptyFrame.h"
 #include "Properties.h"
-#include "UtilLogStl.h"
-#include "UtilLogWxwidgets.h"
 #include "UtilVector.h"
 #include "VideoCompositionParameters.h"
 #include "VideoFrame.h"

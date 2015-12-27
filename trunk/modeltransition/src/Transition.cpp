@@ -21,10 +21,6 @@
 #include "Enums.h"
 #include "Track.h"
 #include "TransitionParameter.h"
-#include "UtilClone.h"
-#include "UtilLog.h"
-#include "UtilLogStl.h"
-#include "UtilLogBoost.h"
 #include "UtilSerializeBoost.h"
 
 namespace model {

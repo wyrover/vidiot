@@ -28,7 +28,6 @@
 #include "TrackView.h"
 #include "Transition.h"
 #include "Trim.h"
-#include "UtilLog.h"
 #include "ViewMap.h"
 
 namespace gui { namespace timeline {

@@ -25,9 +25,6 @@
 #include "ClipView.h"
 #include "Properties.h"
 #include "Transition.h"
-#include "UtilClone.h"
-#include "UtilLog.h"
-#include "UtilRational.h"
 #include "Zoom.h"
 
 namespace gui { namespace timeline {

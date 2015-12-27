@@ -20,8 +20,6 @@
 #include "DetailsPanel.h"
 #include "Enums.h"
 #include "UtilEnumSelector.h"
-#include "UtilInt.h"
-#include "UtilRational.h"
 
 namespace model {
     class EventChangeAudioClipVolume;

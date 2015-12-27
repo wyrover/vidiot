@@ -26,8 +26,6 @@
 #include "Timeline.h"
 #include "Track.h"
 #include "Transition.h"
-#include "UtilLog.h"
-#include "UtilLogStl.h"
 #include "UtilSet.h"
 
 namespace gui { namespace timeline { namespace cmd {

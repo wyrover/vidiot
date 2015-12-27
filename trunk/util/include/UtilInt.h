@@ -17,8 +17,6 @@
 
 #pragma once
 
-#include "UtilLog.h"
-
 typedef int pixel;
 typedef int64_t pts;
 typedef int64_t samplecount;

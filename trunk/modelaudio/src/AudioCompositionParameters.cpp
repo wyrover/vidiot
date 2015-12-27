@@ -20,7 +20,6 @@
 #include "Config.h"
 #include "Convert.h"
 #include "Properties.h"
-#include "UtilLogBoost.h"
 
 namespace model {
 

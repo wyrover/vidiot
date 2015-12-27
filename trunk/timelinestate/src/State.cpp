@@ -28,8 +28,6 @@
 #include "StateIdle.h"
 #include "Timeline.h"
 #include "UtilException.h"
-#include "UtilLog.h"
-#include "UtilLogWxwidgets.h"
 #include "VideoDisplayEvent.h"
 #include "Zoom.h"
 

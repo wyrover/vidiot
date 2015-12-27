@@ -18,7 +18,6 @@
 #include "View.h"
 
 #include "Timeline.h"
-#include "UtilLog.h"
 
 namespace gui { namespace timeline {
 

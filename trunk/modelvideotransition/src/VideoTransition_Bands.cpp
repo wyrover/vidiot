@@ -18,8 +18,6 @@
 #include "VideoTransition_Bands.h"
 
 #include "TransitionFactory.h"
-#include "UtilLog.h"
-#include "UtilLogWxwidgets.h"
 #include "UtilVector.h"
 #include "VideoClip.h"
 #include "VideoCompositionParameters.h"

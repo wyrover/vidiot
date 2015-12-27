@@ -19,7 +19,6 @@
 
 #include <wx/appprogress.h>
 #include "Config.h"
-#include "UtilLog.h"
 #include "Worker.h"
 #include "WorkerEvent.h"
 

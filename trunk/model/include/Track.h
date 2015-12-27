@@ -18,8 +18,6 @@
 #pragma once
 
 #include "IControl.h"
-#include "UtilLog.h"
-#include "UtilSelf.h"
 #include "UtilRTTI.h"
 
 namespace model {

@@ -19,7 +19,6 @@
 
 #include "UtilFifo.h"
 #include "UtilFrameRate.h"
-#include "UtilRational.h"
 #include "UtilRTTI.h"
 
 namespace model {

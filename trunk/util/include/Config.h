@@ -17,8 +17,6 @@
 
 #pragma once
 
-#include "UtilEvent.h"
-#include "UtilLog.h"
 #include "UtilSingleInstance.h"
 
 /// This class holds everything related to the persistence of global settings.

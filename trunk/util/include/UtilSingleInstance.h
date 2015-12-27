@@ -17,8 +17,6 @@
 
 #pragma once
 
-#include "UtilLog.h"
-
 /// This template gives a class a CLASS::get() method by which the one and only instantiated object of the class can be obtained.
 /// This only works if there's only one instance of the class.
 template <class INSTANCETYPE>

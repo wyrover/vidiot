@@ -20,7 +20,6 @@
 #include "AudioCodecParameter.h"
 #include "ICodecParameter.h"
 #include "UtilEnumSelector.h"
-#include "UtilInt.h"
 #include "UtilSingleInstance.h"
 #include "VideoCodecParameter.h"
 

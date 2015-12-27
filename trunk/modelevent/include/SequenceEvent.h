@@ -17,8 +17,6 @@
 
 #pragma once
 
-#include "UtilEvent.h"
-
 namespace model {
 
 struct TrackChange

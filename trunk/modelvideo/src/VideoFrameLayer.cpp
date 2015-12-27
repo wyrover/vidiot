@@ -20,8 +20,6 @@
 #include "Config.h"
 #include "Convert.h"
 #include "UtilInitAvcodec.h"
-#include "UtilLogBoost.h"
-#include "UtilLogWxwidgets.h"
 #include "VideoCompositionParameters.h"
 #include "VideoKeyFrame.h"
 

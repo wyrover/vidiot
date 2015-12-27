@@ -23,8 +23,6 @@
 #include "UtilFrameRate.h"
 #include "UtilInitAvcodec.h"
 #include "UtilLocale.h"
-#include "UtilLog.h"
-#include "UtilLogWxwidgets.h"
 #include "UtilPath.h"
 
 // static

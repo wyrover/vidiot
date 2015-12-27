@@ -19,7 +19,6 @@
 
 #include "AClipEdit.h"
 #include "PositionInfo.h"
-#include "UtilInt.h"
 
 namespace gui { namespace timeline { namespace cmd {
 
