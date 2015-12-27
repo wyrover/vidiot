@@ -68,6 +68,14 @@ By specifiying different settings per key frame, the settings (over time) of the
 </li>
 </ul>
 
+<p><b>Important</b><br>
+The first possible key frame position of a clip is the position BEFORE the first frame.
+The last possible key frame position of a clip is the position AFTER the last frame. 
+This has been chosen to ensure that interpolated values for the last frame are correct
+(it's the value at which the final animation/fade should END).
+Because the last frame of a clip ends when the first frame of the next clip is shown, 
+when editing this last key frame, the first frame of the next clip is shown.
+
 <h2>Trim details</h2>
 
 During trimming, the details view shows both the original and the resulting length (as a result of trimming) of the selected clip.
