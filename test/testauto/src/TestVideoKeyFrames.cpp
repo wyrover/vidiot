@@ -389,11 +389,11 @@ void TestVideoKeyFrames::testKeyFramesOnBeginAndEndOfClip()
         TimelinePositionCursor(LeftPixel(VideoClip(0,1)));
         ButtonTriggerPressed(DetailsClipView()->getVideoKeyFramesAddButton());
         ASSERT(DetailsView(VideoClip(0, 1)).VCount(1));
-        TimelinePositionCursor(RightPixel(VideoClip(0, 1)));
+        TimelinePositionCursor(LeftPixel(VideoClip(0, 2)));
         ButtonTriggerPressed(DetailsClipView()->getVideoKeyFramesAddButton());
         ASSERT(DetailsView(VideoClip(0, 1)).VCount(2));
         ASSERT(KeyFrame(VideoClip(0, 1)).KeyFrameIndex(0).KeyFrameOffset(0));
-        ASSERT(KeyFrame(VideoClip(0, 1)).KeyFrameIndex(1).KeyFrameOffset(VideoClip(0,1)->getLength() - 1));
+        ASSERT(KeyFrame(VideoClip(0, 1)).KeyFrameIndex(1).KeyFrameOffset(VideoClip(0,1)->getLength() - 1 + 1)); // +1: The rightmost key frame is AFTER the last key frame
     }
     {
         StartTest("Cursor after clip");
@@ -872,7 +872,7 @@ void TestVideoKeyFrames::testMovingKeyFramePosition()
         CHECK_MOVE(KeyFrame3Pixel, -10, mapPixelToPts[KeyFrame3Pixel] + getTimeline().getZoom().pixelsToPts(-10));
         CHECK_MOVE(KeyFrame3Pixel, +10, mapPixelToPts[KeyFrame3Pixel] + getTimeline().getZoom().pixelsToPts(+10));
         CHECK_MOVE(KeyFrame3Pixel, -200, mapPixelToPts[KeyFrame2Pixel] + 1);
-        CHECK_MOVE(KeyFrame3Pixel, +200, VideoClip(0,4)->getPerceivedLength() - 1);
+        CHECK_MOVE(KeyFrame3Pixel, +200, VideoClip(0,4)->getPerceivedLength() - 1 + 1); // +1: right most key frame position is AFTER the last frame position
     }
 }
 

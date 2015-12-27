@@ -106,8 +106,8 @@ pts DetailsClip::getVideoKeyFrameOffset() const
     ASSERT_NONZERO(videoclip)(mClip);
     ASSERT_NONZERO(videoclip->getTrack())(mClip);
 
-    pts firstFrame{ videoclip->getPerceivedLeftPts() };
-    pts lastFrame{ videoclip->getPerceivedRightPts() };
+    pts firstFrame{ videoclip->getPerceivedLeftPts() }; // This is the 'included' boundary
+    pts lastFrame{ videoclip->getPerceivedRightPts() }; // This is the 'excluded' boundary
 
     pts result{ -1 };
     pts cursor{ getCursor().getLogicalPosition() };
@@ -119,7 +119,7 @@ pts DetailsClip::getVideoKeyFrameOffset() const
     else if (cursor >= lastFrame)
     {
         // Cursor after clip : use last frame
-        result = lastFrame - firstFrame - 1;
+        result = lastFrame - firstFrame - 1 + 1; // The extra +1 ensures that the last key frame may be positioned AFTER the last visible frame of the clip(for proper interpolation for that last frame).
     }
     else
     {
@@ -286,7 +286,7 @@ void DetailsClip::preview()
     ASSERT_NONZERO(videoclip->getTrack())(videoclip);
     pts position{ getCursor().getLogicalPosition() }; // By default, show the frame under the cursor (which is already currently shown, typically)
     if ((position < videoclip->getPerceivedLeftPts()) ||
-        (position >= videoclip->getPerceivedRightPts()))
+        (position > videoclip->getPerceivedRightPts())) // == getPerceivedRightPts() is the key frame AFTER the last frame of the clip.
     {
         // The cursor is not positioned under the clip being adjusted. Move the cursor to the middle frame of that clip
         ASSERT_ZERO(videoclip->getKeyFramesOfPerceivedClip().size()); // This can only happen in case there are no keyframes.
@@ -546,7 +546,7 @@ void DetailsClip::updateVideoKeyFrameControls()
 
     // Only enable if cursor is 'inside' clip visible region
     pts cursor{ getCursor().getLogicalPosition() };
-    bool cursorInBetween{ mClip->getPerceivedLeftPts() <= cursor && mClip->getPerceivedRightPts() > cursor };
+    bool cursorInBetween{ mClip->getPerceivedLeftPts() <= cursor && mClip->getPerceivedRightPts() >= cursor }; // The inclusion on the right hand size (getPerceivedRightPts() >= cursor) is required for enabling a key frame AFTER the last frame position.
     mVideoKeyFramesAddButton->Enable(cursorInBetween && (keyframes.empty() || videoKeyFrame->isInterpolated()));
 
     updateVideoKeyFrameButtons();
@@ -560,27 +560,27 @@ void DetailsClip::updateVideoKeyFrameButtons()
     if (!videoclip->getTrack()) { return; }
     model::VideoKeyFrameMap keyframes{ getVideoKeyFrames() };
     pts videoKeyFrameOffset{ getVideoKeyFrameOffset() };
-    size_t availableSize{ narrow_cast<size_t>(mVideoKeyFramesPanel->GetSize().x) };
-    size_t requiredSize{ narrow_cast<size_t>(mVideoKeyFramesPanel->GetEffectiveMinSize().x) };
+    int availableSize{ mVideoKeyFramesPanel->GetSize().x };
+    int requiredSize{ mVideoKeyFramesPanel->GetEffectiveMinSize().x };
     if (availableSize < requiredSize && mVideoKeyFrames.size() > 0)
     {
         // Not all the buttons will fit in the available space. Show as much buttons as possible,
         // while keeping the current video offset approximately centered.
-        size_t totalNumberOfButtons{ mVideoKeyFrames.size() };
-        size_t buttonWidth{ requiredSize / totalNumberOfButtons };
-        size_t maxFittingButtons{ availableSize / buttonWidth };
-        size_t lastPossibleButton{ totalNumberOfButtons - 1 };
-        size_t middle{ narrow_cast<size_t>(std::distance(keyframes.begin(), std::find_if(keyframes.begin(), keyframes.end(), [videoKeyFrameOffset](auto kvp) { return kvp.first >= videoKeyFrameOffset; }))) };
-        size_t move{ maxFittingButtons / 2 };
-        size_t first{ middle - move };
-        size_t last{ middle + move };
+        int totalNumberOfButtons{ narrow_cast<int>(mVideoKeyFrames.size()) };
+        int buttonWidth{ requiredSize / totalNumberOfButtons };
+        int maxFittingButtons{ availableSize / buttonWidth };
+        int lastPossibleButton{ totalNumberOfButtons - 1 };
+        int middle{ std::distance(keyframes.begin(), std::find_if(keyframes.begin(), keyframes.end(), [videoKeyFrameOffset](auto kvp) { return kvp.first >= videoKeyFrameOffset; })) };
+        int move{ maxFittingButtons / 2 };
+        int first{ middle - move };
+        int last{ middle + move };
         while (first < 0) { ++first; ++last; }
         while (last > lastPossibleButton) { --last; --first; }
         ASSERT_MORE_THAN_EQUALS_ZERO(first)(requiredSize)(availableSize)(totalNumberOfButtons)(buttonWidth)(maxFittingButtons)(lastPossibleButton)(middle)(first)(last);
         ASSERT_LESS_THAN_EQUALS(last, lastPossibleButton)(first)(requiredSize)(availableSize)(totalNumberOfButtons)(buttonWidth)(maxFittingButtons)(lastPossibleButton)(middle)(first)(last);
         for (size_t count{ 0 }; count < mVideoKeyFrames.size(); ++count)
         {
-            mVideoKeyFrames[count]->Show(count >= first && count <= last);
+            mVideoKeyFrames[count]->Show(count >= narrow_cast<size_t>(first) && count <= narrow_cast<size_t>(last));
         }
     }
     mVideoKeyFramesPanel->Layout();

@@ -237,7 +237,7 @@ std::pair<pts, pts> ClipInterval::getKeyFrameBoundaries(size_t index) const
         left = std::max(left, std::prev(it)->first + 1); // +1: Ensure that there always remains a diff of at least '1' between two consecutive key frames
     }
 
-    pts right{ getPerceivedLength() - 1}; // For last frame the default.
+    pts right{ getPerceivedLength() - 1 + 1 }; // For last frame the default. The extra +1 ensures that the last key frame may be positioned AFTER the last visible frame of the clip (for proper interpolation for that last frame)
 
     if (std::next(it) != keyFrames.end())
     {
@@ -258,7 +258,7 @@ pts ClipInterval::getKeyFramePosition(size_t index) const
 void ClipInterval::setKeyFramePosition(size_t index, pts offset)
 {
     ASSERT_MORE_THAN_EQUALS_ZERO(offset)(*this);
-    ASSERT_LESS_THAN_EQUALS(offset, getPerceivedOffset() + getPerceivedLength() - 1)(*this);
+    ASSERT_LESS_THAN_EQUALS(offset, getPerceivedOffset() + getPerceivedLength() - 1 + 1)(*this); // The extra + 1 ensures that the last key frame may be positioned AFTER the last visible frame of the clip(for proper interpolation for that last frame)
 
     // Convert back to offset '0' (input time == no offset)
     offset += getPerceivedOffset();
@@ -439,7 +439,7 @@ void ClipInterval::pruneKeyFrames()
     if (it != mKeyFrames.end())
     {
         pts lowerBound{ getPerceivedOffset() };
-        pts upperBound{ getPerceivedOffset() + getPerceivedLength() };
+        pts upperBound{ getPerceivedOffset() + getPerceivedLength() + 1 }; // The extra +1 ensures that the last key frame may be positioned AFTER the last visible frame of the clip(for proper interpolation for that last frame)
         while (it != mKeyFrames.end())
         {
             pts adjustedForSpeed{ model::Convert::positionToNewSpeed(it->first, getSpeed(), 1) };

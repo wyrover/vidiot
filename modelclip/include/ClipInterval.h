@@ -183,10 +183,15 @@ private:
     mutable wxString mDescription;  ///< Stored for performance (cached) and for easier debugging.
 
     /// Keyframes are stored with a position relative to the input, using the input speed.
-    /// Thus, trimming has no effect on the (member) list of key frames.
+    /// Thus, trimming/changing speed has no effect on the (member) list of key frames.
     /// Rationale: This allows changing speed, and trimming without having to adjust this data structure for the trimming.
-    /// Note that the data structure is adjusted during trimming, but only for removing 'invisible' key frames. 
+    /// The data structure is adjusted during trimming, but only for removing 'invisible' key frames. 
     /// The adjustments are not required to maintain a correct key frame structure. 
+    ///
+    /// The maximum number of possible key frames is the perceived clip length +1.
+    /// The lowest possible key frame position is '0'; BEFORE the first frame is shown.
+    /// The highest possible key frame position is 'perceived length + 1'; AFTER the last frame is shown. 
+    /// That results in proper interpolation for the last frame.
     KeyFrameMap mKeyFrames;
 
     /// Parameters used when no keyframes are present

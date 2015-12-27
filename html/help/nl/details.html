@@ -34,7 +34,7 @@ Het volgende kan worden gewijzigd:
     <li>Vertikaal Gecentreerd<br>De clip wordt alleen vertikaal gecentreerd getoond in de resulterende film.
     <li>Aangepast<br> Stel de X- en Y-positie zelf in.
     </ul>
-<li> Voor audio clips, kan het volume worden gewijzigd van 0 tot 100.
+<li> Voor audio clips kan het volume worden gewijzigd van 0 tot 100.
 </ul>
     
 <h2>Sleutelbeelden</h2>
@@ -69,6 +69,14 @@ Door daarna per sleutelbeeld aparte instellingen te kiezen kunnen de instellinge
 	dan aangrenzende sleutelbeelden en de uiteinden van de clip.
 </li>
 </ul>
+
+<p><b>Belangrijk</b><br>
+Het eerst mogelijke sleutelbeeld van een clip is de positie v&oacute;&oacute;r het eerste beeld.
+Het laast mogelijke sleutelbeeld van een clip is de positie n&aacute; het laatste beeld.
+Dit is zo gekozen dat ge&iuml;nterpoleerde waarden voor het laatste beeld correct zijn
+(het is de waarde waarbij de uiteindelijke animatie/fade-out moet eindigen).
+Omdat het laatste beeld van een clip eindigt wanneer het eerste beeld van de volgende clip wordt getoond,
+wordt bij het bewerken van dit laatst mogelijke sleutelbeeld, het eerste frame van de volgende clip getoond.
 
 <h2>Bijknippen details</h2>
 
