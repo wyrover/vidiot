@@ -55,6 +55,9 @@ public:
     /// (typically boost::optionals containing width and/or height).
     virtual void invalidateRect() = 0;
 
+    /// Trigger a refresh of the area (of the timeline) covered by this View
+    void repaint();
+
     //////////////////////////////////////////////////////////////////////////
     // DRAWING
     //////////////////////////////////////////////////////////////////////////
@@ -71,11 +74,6 @@ protected:
     //////////////////////////////////////////////////////////////////////////
 
     View& getParent() const;
-
-protected:
-
-    /// Trigger a refresh of the area (of the timeline) covered by this View
-    void repaint();
 
 private:
 

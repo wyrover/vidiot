@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-12-27 11:42+0100\n"
+"POT-Creation-Date: 2015-12-27 20:32+0100\n"
 "PO-Revision-Date: 2015-12-25 12:20+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -1298,17 +1298,17 @@ msgstr "Minste bits"
 msgid "Rate distortion"
 msgstr "Snelheid vervorming"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_GuiEvents.cpp:504
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_GuiEvents.cpp:586
 msgid ""
 "Could not execute the length change without messing up clips in other tracks."
 msgstr ""
 "Kon de lengte niet veranderen zonder andere sporen in de war te brengen."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_GuiEvents.cpp:510
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_GuiEvents.cpp:592
 msgid "Set length of clip"
 msgstr "Zet lengte van clip"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_HelperMethods.cpp:224
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_HelperMethods.cpp:115
 msgid "Change "
 msgstr "Verander"
 
@@ -1402,35 +1402,46 @@ msgstr "Schaling"
 msgid "Position"
 msgstr "Positie"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:225
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:224
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:274
 msgid "Go to first key frame."
 msgstr "Ga naar eerste sleutelbeeld."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:226
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:225
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:275
 msgid "Go to previous key frame."
 msgstr "Ga naar vorig sleutelbeeld."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:227
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:226
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:276
 msgid "Go to next key frame."
 msgstr "Ga naar volgende sleutelbeeld."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:228
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:227
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:277
 msgid "Go to last key frame."
 msgstr "Ga naar laatste sleutelbeeld."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:229
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:228
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:278
 msgid "Add a key frame at the current position."
 msgstr "Voeg een sleutelbeeld toe op de huidige positive."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:230
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:229
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:279
 msgid "Remove the key frame at the current position."
 msgstr "Verwijder het sleutelbeeld op de huidige positive."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:250
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:248
 msgid "Video key frames"
 msgstr "Video sleutelbeelden"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:283
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:298
+#, fuzzy
+msgid "Audio key frames"
+msgstr "Video sleutelbeelden"
+
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:311
 msgid "Volume (%)"
 msgstr "Volume (%)"
 

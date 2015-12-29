@@ -18,6 +18,7 @@
 #include "DetailsClip.h"
 
 #include "AudioClip.h"
+#include "AudioKeyFrame.h"
 #include "Convert.h"
 #include "Transition.h"
 #include "TransitionParameter.h"
@@ -68,9 +69,9 @@ void DetailsClip::setClip(const model::IClipPtr& clip)
     mEditCommand = nullptr;
     mEditSpeedCommand = nullptr;
 
-    model::VideoClipPtr video{ getVideoClip(clip) };
-    model::AudioClipPtr audio{ getAudioClip(clip) };
-    model::TransitionPtr transition{ getTransition(clip) };
+    model::VideoClipPtr video{ getClipOfType<model::VideoClip>(clip) };
+    model::AudioClipPtr audio{ getClipOfType<model::AudioClip>(clip) };
+    model::TransitionPtr transition{ getClipOfType<model::Transition>(clip) };
 
     if (video != nullptr ||
         audio != nullptr ||
@@ -101,9 +102,6 @@ void DetailsClip::setClip(const model::IClipPtr& clip)
             }
         }
 
-        updateVideoKeyFrameControls();
-        updateAudioKeyFrameControls();
-
         if (transition)
         {
             mTransitionClone = make_cloned<model::Transition>(transition);
@@ -127,12 +125,8 @@ void DetailsClip::setClip(const model::IClipPtr& clip)
     // Therefore this has been placed here, to only dis/enable in the minimal number of cases.
     showOption(mLengthPanel, video != nullptr || audio  != nullptr || transition != nullptr);
     showOption(mSpeedPanel, video  != nullptr|| audio != nullptr);
-    showOption(mOpacityPanel, video != nullptr);
-    showOption(mScalingPanel, video != nullptr);
-    showOption(mRotationPanel, video != nullptr);
-    showOption(mAlignmentPanel, video != nullptr);
-    showOption(mVideoKeyFramesEditPanel, video != nullptr);
-    showOption(mVolumePanel, audio != nullptr);
+    mVideoKeyFrameControls->update();
+    mAudioKeyFrameControls->update();
 
     Layout();
 }

@@ -34,6 +34,7 @@ namespace model {
     class EventTransitionParameterChanged;
     class EventTransitionParameterChanging;
     typedef std::map<pts, VideoKeyFramePtr> VideoKeyFrameMap;
+    typedef std::map<pts, AudioKeyFramePtr> AudioeyFrameMap;
 }
 
 namespace gui {
@@ -49,6 +50,10 @@ namespace cmd {
 }
 
 struct Cleanup;
+
+struct KeyFrameControls;
+template <typename CLIPTYPE, typename KEYFRAMETYPE>
+struct KeyFrameControlsImpl;
 
 class DetailsClip
     : public DetailsPanel
@@ -126,14 +131,6 @@ public:
     void onPositionYSliderChanged(wxCommandEvent& event);
     void onPositionYSpinChanged(wxSpinEvent& event);
 
-    void onVideoKeyFramesHomeButtonPressed(wxCommandEvent& event);
-    void onVideoKeyFramesPrevButtonPressed(wxCommandEvent& event);
-    void onVideoKeyFramesNextButtonPressed(wxCommandEvent& event);
-    void onVideoKeyFramesEndButtonPressed(wxCommandEvent& event);
-    void onVideoKeyFramesAddButtonPressed(wxCommandEvent& event);
-    void onVideoKeyFramesRemoveButtonPressed(wxCommandEvent& event);
-    void onVideoKeyFrameButtonPressed(wxCommandEvent& event);
-
     void onVolumeSliderChanged(wxCommandEvent& event);
     void onVolumeSpinChanged(wxSpinEvent& event);
 
@@ -173,9 +170,6 @@ public:
     wxSlider* getPositionYSlider() const;
     wxSpinCtrl* getPositionYSpin() const;
 
-    wxSlider* getVolumeSlider() const;
-    wxSpinCtrl* getVolumeSpin() const;
-
     wxButton* getVideoKeyFramesHomeButton() const;
     wxButton* getVideoKeyFramesPrevButton() const;
     wxButton* getVideoKeyFramesNextButton() const;
@@ -184,6 +178,18 @@ public:
     wxButton* getVideoKeyFramesRemoveButton() const;
     size_t getVideoKeyFrameButtonCount() const;
     wxToggleButton* getVideoKeyFrameButton(size_t index) const;
+
+    wxSlider* getVolumeSlider() const;
+    wxSpinCtrl* getVolumeSpin() const;
+
+    wxButton* getAudioKeyFramesHomeButton() const;
+    wxButton* getAudioKeyFramesPrevButton() const;
+    wxButton* getAudioKeyFramesNextButton() const;
+    wxButton* getAudioKeyFramesEndButton() const;
+    wxButton* getAudioKeyFramesAddButton() const;
+    wxButton* getAudioKeyFramesRemoveButton() const;
+    size_t getAudioKeyFrameButtonCount() const;
+    wxToggleButton* getAudioKeyFrameButton(size_t index) const;
 
 private:
 
@@ -228,21 +234,7 @@ private:
     wxSpinCtrl* mPositionYSpin = nullptr;
     wxSlider* mPositionYSlider = nullptr;
 
-    wxPanel* mVideoKeyFramesEditPanel = nullptr;
-    wxButton* mVideoKeyFramesHomeButton = nullptr;
-    wxButton* mVideoKeyFramesPrevButton = nullptr;
-    wxButton* mVideoKeyFramesNextButton = nullptr;
-    wxButton* mVideoKeyFramesEndButton = nullptr;
-    wxButton* mVideoKeyFramesAddButton = nullptr;
-    wxButton* mVideoKeyFramesRemoveButton = nullptr;
-    wxPanel* mVideoKeyFramesPanel = nullptr;
-    std::map<size_t, wxToggleButton*> mVideoKeyFrames;
-    wxBitmap mBmpHome;
-    wxBitmap mBmpEnd;
-    wxBitmap mBmpNext;
-    wxBitmap mBmpPrevious;
-    wxBitmap mBmpPlus;
-    wxBitmap mBmpMinus;
+    std::shared_ptr<KeyFrameControlsImpl<model::VideoClip, model::VideoKeyFrame>> mVideoKeyFrameControls;
 
     pts mMinimumLengthWhenBeginTrimming = 0;
     pts mMaximumLengthWhenBeginTrimming = 0;
@@ -255,19 +247,15 @@ private:
     wxSpinCtrl* mVolumeSpin = nullptr;
     wxSlider* mVolumeSlider = nullptr;
 
+    std::shared_ptr<KeyFrameControlsImpl<model::AudioClip, model::AudioKeyFrame>> mAudioKeyFrameControls;
+
     wxFlexGridSizer* mTransitionBoxSizer = nullptr;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    model::VideoClipPtr getVideoClip(const model::IClipPtr& clip) const;
-    model::AudioClipPtr getAudioClip(const model::IClipPtr& clip) const;
-    model::TransitionPtr getTransition(const model::IClipPtr& clip) const;
-
-    model::VideoKeyFrameMap getVideoKeyFrames() const;
-    pts getVideoKeyFrameOffset() const;
-    model::VideoKeyFramePtr getVideoKeyFrame() const;
+    template <typename, typename> friend struct KeyFrameControlsImpl;
 
     void submitEditCommandUponAudioVideoEdit(const wxString& message, std::function<void()> edit);
     void submitEditCommandUponTransitionEdit(const wxString& parameter);
@@ -282,12 +270,6 @@ private:
     void determineClipSizeBounds();
 
     void updateLengthButtons();
-
-    void updateVideoKeyFrameControls();
-    void updateVideoKeyFrameButtons();
-    void updateAudioKeyFrameControls();
-
-    void moveCursorToKeyFrame(model::IClipPtr clip, pts offset);
 };
 
 }} // namespace

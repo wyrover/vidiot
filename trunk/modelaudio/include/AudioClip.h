@@ -30,10 +30,6 @@ class AudioClip
 {
 public:
 
-    static constexpr int sMinVolume = 0;
-    static constexpr int sMaxVolume = 200;
-    static constexpr int sDefaultVolume = 100;
-
     //////////////////////////////////////////////////////////////////////////
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
@@ -69,8 +65,6 @@ public:
     // AUDIOCLIP
     //////////////////////////////////////////////////////////////////////////
 
-    void setVolume(int volume);
-    int getVolume() const;
     AudioPeaks getPeaks(const AudioCompositionParameters& parameters);
 
 protected:
@@ -96,7 +90,6 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     pts mProgress; ///< Current render position
-    int mVolume;
 
     AudioChunkPtr mInputChunk;
 
@@ -117,5 +110,5 @@ private:
 
 } // namespace
 
-BOOST_CLASS_VERSION(model::AudioClip, 2)
+BOOST_CLASS_VERSION(model::AudioClip, 3)
 BOOST_CLASS_EXPORT_KEY(model::AudioClip)

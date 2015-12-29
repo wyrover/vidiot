@@ -47,6 +47,20 @@ std::pair<pts, model::VideoKeyFramePtr> VideoKeyFrame(model::IClipPtr clip, size
     return std::make_pair(it->first, boost::dynamic_pointer_cast<model::VideoKeyFrame>(it->second));
 }
 
+model::AudioKeyFramePtr DefaultAudioKeyFrame(model::IClipPtr clip)
+{
+    return boost::dynamic_pointer_cast<model::AudioKeyFrame>(getAudioClip(clip)->getDefaultKeyFrame());
+}
+
+std::pair<pts, model::AudioKeyFramePtr> AudioKeyFrame(model::IClipPtr clip, size_t index)
+{
+    std::map<pts, model::KeyFramePtr> keyFrames{ getAudioClip(clip)->getKeyFramesOfPerceivedClip() };
+    ASSERT_NONZERO(keyFrames.size());
+    std::map<pts, model::KeyFramePtr>::const_iterator it{ std::next(keyFrames.begin(), index) };
+    ASSERT(it != keyFrames.end())(keyFrames)(index);
+    return std::make_pair(it->first, boost::dynamic_pointer_cast<model::AudioKeyFrame>(it->second));
+}
+
 int getOpacity(model::VideoKeyFramePtr keyframe)
 {
     return keyframe->getOpacity();
@@ -59,7 +73,7 @@ rational64 getScalingFactor(model::VideoKeyFramePtr keyframe)
 
 model::VideoScaling getScaling(model::VideoKeyFramePtr keyframe)
 {
-    return keyframe->getScaling();
+    return keyframe->getScaling(); // todo this is all obsolete!!!
 };
 
 model::VideoAlignment getAlignment(model::VideoKeyFramePtr keyframe)
