@@ -61,36 +61,6 @@ std::pair<pts, model::AudioKeyFramePtr> AudioKeyFrame(model::IClipPtr clip, size
     return std::make_pair(it->first, boost::dynamic_pointer_cast<model::AudioKeyFrame>(it->second));
 }
 
-int getOpacity(model::VideoKeyFramePtr keyframe)
-{
-    return keyframe->getOpacity();
-};
-
-rational64 getScalingFactor(model::VideoKeyFramePtr keyframe)
-{
-    return keyframe->getScalingFactor();
-};
-
-model::VideoScaling getScaling(model::VideoKeyFramePtr keyframe)
-{
-    return keyframe->getScaling(); // todo this is all obsolete!!!
-};
-
-model::VideoAlignment getAlignment(model::VideoKeyFramePtr keyframe)
-{
-    return keyframe->getAlignment();
-}
-
-wxPoint getPosition(model::VideoKeyFramePtr keyframe)
-{
-    return keyframe->getPosition();
-}
-
-rational64 getRotation(model::VideoKeyFramePtr keyframe)
-{
-    return keyframe->getRotation();
-}
-
 void Unlink(model::IClipPtr clip)
 {
     model::SequencePtr sequence = getSequence();
