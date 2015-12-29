@@ -1226,7 +1226,7 @@ void TestTransition::testVideoTransitionTypes()
         TimelineLeftClick(Center(VideoClip(0,index)));
         SetValue(DetailsClipView()->getOpacitySlider(), opacity); // Same as WXK_PAGEUP
         ASSERT_HISTORY_END(gui::timeline::cmd::EditClipDetails); // Verify that only one command object was added to the undo history
-        ASSERT_EQUALS(getOpacity(DefaultVideoKeyFrame(VideoClip(0, index))), opacity);
+        ASSERT_EQUALS(DefaultVideoKeyFrame(VideoClip(0, index))->getOpacity(), opacity);
     };
 
     StartTestSuite();
