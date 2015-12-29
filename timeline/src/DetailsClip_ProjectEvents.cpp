@@ -72,8 +72,8 @@ void DetailsClip::onPlaybackPosition(PlaybackPositionEvent& event)
     LOG_DEBUG;
     CatchExceptions([this]
     {
-        updateVideoKeyFrameControls();
-        updateAudioKeyFrameControls();
+        mVideoKeyFrameControls->update();
+        mAudioKeyFrameControls->update();
     });
     event.Skip();
 }

@@ -20,6 +20,7 @@
 #include "AudioClipEvent.h"
 #include "AudioCompositionParameters.h"
 #include "AudioFile.h"
+#include "AudioKeyFrame.h"
 #include "AudioPeaks.h"
 #include "Convert.h"
 #include "EmptyChunk.h"
@@ -28,10 +29,6 @@
 
 namespace model {
 
-constexpr int AudioClip::sMinVolume;
-constexpr int AudioClip::sMaxVolume;
-constexpr int AudioClip::sDefaultVolume;
-
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
@@ -39,7 +36,6 @@ constexpr int AudioClip::sDefaultVolume;
 AudioClip::AudioClip()
     : ClipInterval()
     , mProgress(0)
-    , mVolume(sDefaultVolume)
     , mInputChunk()
 {
     VAR_DEBUG(*this);
@@ -48,17 +44,15 @@ AudioClip::AudioClip()
 AudioClip::AudioClip(const AudioFilePtr& file)
     : ClipInterval(file)
     , mProgress(0)
-    , mVolume(sDefaultVolume)
     , mInputChunk()
 {
     VAR_DEBUG(*this);
-    // todo setDefaultKeyFrame(boost::make_shared<AudioClipKeyFrame>(file->getSize()));
+    setDefaultKeyFrame(boost::make_shared<AudioKeyFrame>());
 }
 
 AudioClip::AudioClip(const AudioClip& other)
     : ClipInterval(other)
     , mProgress(0)
-    , mVolume(other.mVolume)
     , mInputChunk()
 {
     VAR_DEBUG(other)(*this);
@@ -161,13 +155,14 @@ AudioChunkPtr AudioClip::getNextAudio(const AudioCompositionParameters& paramete
         }
         VAR_DEBUG(mProgress)(requiredSamples)(*this);
 
-        if (mVolume != sDefaultVolume)
+        int mVolume{ boost::dynamic_pointer_cast<AudioKeyFrame>(getDefaultKeyFrame())->getVolume() };
+        if (mVolume != AudioKeyFrame::sVolumeDefault)
         {
             sample* sBegin = buffer;
             sample* sEnd = sBegin + requiredSamples;
             sample* s = sBegin;
             int32_t volume = static_cast<int32_t>(mVolume);
-            int32_t defaultVolume = static_cast<int32_t>(sDefaultVolume);
+            int32_t defaultVolume = static_cast<int32_t>(AudioKeyFrame::sVolumeDefault);
             while (s < sEnd)
             {
                 *s = static_cast<sample>(static_cast<int32_t>(*s) * volume / defaultVolume);
@@ -191,21 +186,6 @@ AudioChunkPtr AudioClip::getNextAudio(const AudioCompositionParameters& paramete
 // AUDIOCLIP
 //////////////////////////////////////////////////////////////////////////
 
-void AudioClip::setVolume(int volume)
-{
-    if (volume != mVolume)
-    {
-        mVolume = volume;
-        EventChangeAudioClipVolume event(volume);
-        ProcessEvent(event);
-    }
-}
-
-int AudioClip::getVolume() const
-{
-    return mVolume;
-}
-
 AudioPeaks AudioClip::getPeaks(const AudioCompositionParameters& parameters)
 {
     pts offset = getOffset();
@@ -224,12 +204,13 @@ AudioPeaks AudioClip::getPeaks(const AudioCompositionParameters& parameters)
         ASSERT_NONZERO(*right);
         length += *right;
     }
-    if (mVolume == sDefaultVolume)
+    int mVolume{ boost::dynamic_pointer_cast<AudioKeyFrame>(getDefaultKeyFrame())->getVolume() };
+    if (mVolume == AudioKeyFrame::sVolumeDefault)
     {
-        return getDataGenerator<AudioFile>()->getPeaks(parameters, Convert::positionToNormalSpeed(offset, getSpeed()),length);
+        return getDataGenerator<AudioFile>()->getPeaks(parameters, Convert::positionToNormalSpeed(offset, getSpeed()), length);
     }
     AudioPeaks result;
-    rational64 proportion{ mVolume, sDefaultVolume };
+    rational64 proportion{ mVolume, AudioKeyFrame::sVolumeDefault };
     ASSERT_MORE_THAN_EQUALS_ZERO(proportion);
     for (const AudioPeak& peak : getDataGenerator<AudioFile>()->getPeaks(parameters, Convert::positionToNormalSpeed(offset, getSpeed()), length))
     {
@@ -248,11 +229,9 @@ AudioPeaks AudioClip::getPeaks(const AudioCompositionParameters& parameters)
 // KEY FRAMES
 //////////////////////////////////////////////////////////////////////////
 
-
 KeyFramePtr AudioClip::interpolate(KeyFramePtr before, KeyFramePtr after, pts positionBefore, pts position, pts positionAfter) const
 {
-    // todo
-    return nullptr;
+    return boost::make_shared<AudioKeyFrame>(boost::dynamic_pointer_cast<AudioKeyFrame>(before), boost::dynamic_pointer_cast<AudioKeyFrame>(after), positionBefore, position, positionAfter);
 }
 
 
@@ -262,9 +241,8 @@ KeyFramePtr AudioClip::interpolate(KeyFramePtr before, KeyFramePtr after, pts po
 
 std::ostream& operator<<(std::ostream& os, const AudioClip& obj)
 {
-    os  << static_cast<const ClipInterval&>(obj) << '|'
-        << std::setw(8) << obj.mProgress
-        << std::setw(8) << obj.mVolume;
+    os << static_cast<const ClipInterval&>(obj) << '|'
+        << std::setw(8) << obj.mProgress;
     return os;
 }
 
@@ -279,11 +257,17 @@ void AudioClip::serialize(Archive & ar, const unsigned int version)
     {
         ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ClipInterval);
         ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(IAudio);
-        if (version > 1)
+        if (version < 3)
         {
-            ar & BOOST_SERIALIZATION_NVP(mVolume);
+            int mVolume{ 100 };
+            if (version > 1)
+            {
+                ar & BOOST_SERIALIZATION_NVP(mVolume);
+            }
+            AudioKeyFramePtr keyFrame{ boost::make_shared<AudioKeyFrame>() };
+            keyFrame->setVolume(mVolume);
+            setDefaultKeyFrame(keyFrame);
         }
-        // todo             setDefaultKeyFrame(keyFrame);
     }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
     catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }

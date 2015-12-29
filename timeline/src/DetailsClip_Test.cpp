@@ -98,6 +98,47 @@ wxSpinCtrl* DetailsClip::getPositionYSpin() const
     return mPositionYSpin;
 }
 
+wxButton* DetailsClip::getVideoKeyFramesHomeButton() const 
+{ 
+    return mVideoKeyFrameControls->mHomeButton; 
+}
+
+wxButton* DetailsClip::getVideoKeyFramesPrevButton() const 
+{ 
+    return mVideoKeyFrameControls->mPrevButton;
+}
+
+wxButton* DetailsClip::getVideoKeyFramesNextButton() const 
+{ 
+    return mVideoKeyFrameControls->mNextButton;
+}
+
+wxButton* DetailsClip::getVideoKeyFramesEndButton() const 
+{ 
+    return mVideoKeyFrameControls->mEndButton;
+}
+
+wxButton* DetailsClip::getVideoKeyFramesAddButton() const 
+{ 
+    return mVideoKeyFrameControls->mAddButton;
+}
+
+wxButton* DetailsClip::getVideoKeyFramesRemoveButton() const 
+{ 
+    return mVideoKeyFrameControls->mRemoveButton;
+}
+
+size_t DetailsClip::getVideoKeyFrameButtonCount() const
+{
+    return mVideoKeyFrameControls->mKeyFramesButtons.size();
+}
+
+wxToggleButton* DetailsClip::getVideoKeyFrameButton(size_t index) const 
+{ 
+    ASSERT_MAP_CONTAINS(mVideoKeyFrameControls->mKeyFramesButtons, index);
+    return mVideoKeyFrameControls->mKeyFramesButtons.find(index)->second;
+}
+
 wxSlider* DetailsClip::getVolumeSlider() const
 {
     return mVolumeSlider;
@@ -108,46 +149,45 @@ wxSpinCtrl* DetailsClip::getVolumeSpin() const
     return mVolumeSpin;
 }
 
-wxButton* DetailsClip::getVideoKeyFramesHomeButton() const 
-{ 
-    return mVideoKeyFramesHomeButton; 
-}
-
-wxButton* DetailsClip::getVideoKeyFramesPrevButton() const 
-{ 
-    return mVideoKeyFramesPrevButton; 
-}
-
-wxButton* DetailsClip::getVideoKeyFramesNextButton() const 
-{ 
-    return mVideoKeyFramesNextButton; 
-}
-
-wxButton* DetailsClip::getVideoKeyFramesEndButton() const 
-{ 
-    return mVideoKeyFramesEndButton; 
-}
-
-wxButton* DetailsClip::getVideoKeyFramesAddButton() const 
-{ 
-    return mVideoKeyFramesAddButton; 
-}
-
-wxButton* DetailsClip::getVideoKeyFramesRemoveButton() const 
-{ 
-    return mVideoKeyFramesRemoveButton; 
-}
-
-size_t DetailsClip::getVideoKeyFrameButtonCount() const
+wxButton* DetailsClip::getAudioKeyFramesHomeButton() const
 {
-    return mVideoKeyFrames.size();
+    return mAudioKeyFrameControls->mHomeButton;
 }
 
-wxToggleButton* DetailsClip::getVideoKeyFrameButton(size_t index) const 
-{ 
-    ASSERT_MAP_CONTAINS(mVideoKeyFrames, index);
-    return mVideoKeyFrames.find(index)->second; 
+wxButton* DetailsClip::getAudioKeyFramesPrevButton() const
+{
+    return mAudioKeyFrameControls->mPrevButton;
 }
 
+wxButton* DetailsClip::getAudioKeyFramesNextButton() const
+{
+    return mAudioKeyFrameControls->mNextButton;
+}
+
+wxButton* DetailsClip::getAudioKeyFramesEndButton() const
+{
+    return mAudioKeyFrameControls->mEndButton;
+}
+
+wxButton* DetailsClip::getAudioKeyFramesAddButton() const
+{
+    return mAudioKeyFrameControls->mAddButton;
+}
+
+wxButton* DetailsClip::getAudioKeyFramesRemoveButton() const
+{
+    return mAudioKeyFrameControls->mRemoveButton;
+}
+
+size_t DetailsClip::getAudioKeyFrameButtonCount() const
+{
+    return mAudioKeyFrameControls->mKeyFramesButtons.size();
+}
+
+wxToggleButton* DetailsClip::getAudioKeyFrameButton(size_t index) const
+{
+    ASSERT_MAP_CONTAINS(mAudioKeyFrameControls->mKeyFramesButtons, index);
+    return mAudioKeyFrameControls->mKeyFramesButtons.find(index)->second;
+}
 
 }} // namespace

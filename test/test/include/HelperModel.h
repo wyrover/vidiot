@@ -33,37 +33,38 @@ model::VideoKeyFramePtr DefaultVideoKeyFrame(model::IClipPtr clip);
 
 /// \return the key frame at the given position
 /// \pre clip is a video clip
-/// \param position if < 0 then returns the value for the default key frame
 std::pair<pts, model::VideoKeyFramePtr> VideoKeyFrame(model::IClipPtr clip, size_t index);
+
+/// \return the default key frame for a clip
+/// \pre clip is an audio clip
+model::AudioKeyFramePtr DefaultAudioKeyFrame(model::IClipPtr clip);
+
+/// \return the key frame at the given position
+/// \pre clip is an audio clip
+std::pair<pts, model::AudioKeyFramePtr> AudioKeyFrame(model::IClipPtr clip, size_t index);
 
 /// \return the current opacity for the given (video) clip
 /// \pre clip is a video clip
-/// \param position if < 0 then returns the value for the default key frame
 int getOpacity(model::VideoKeyFramePtr keyframe);
 
 /// \return the current scaling factor for the given (video) clip
 /// \pre clip is a video clip
-/// \param position if < 0 then returns the value for the default key frame
 rational64 getScalingFactor(model::VideoKeyFramePtr keyframe);
 
 /// \return the current scaling type for the given (video) clip
 /// \pre clip is a video clip
-/// \param position if < 0 then returns the value for the default key frame
 model::VideoScaling getScaling(model::VideoKeyFramePtr keyframe);
 
 /// \return the current alignment type for the given (video) clip
 /// \pre clip is a video clip
-/// \param position if < 0 then returns the value for the default key frame
 model::VideoAlignment getAlignment(model::VideoKeyFramePtr keyframe);
 
 /// \return the current position type for the given (video) clip
 /// \pre clip is a video clip
-/// \param position if < 0 then returns the value for the default key frame
 wxPoint getPosition(model::VideoKeyFramePtr keyframe);
 
 /// \return the current rotation for the given (video) clip
 /// \pre clip is a video clip
-/// \param position if < 0 then returns the value for the default key frame
 rational64 getRotation(model::VideoKeyFramePtr keyframe);
 
 /// Unlink the clip from it's link (and vice versa)

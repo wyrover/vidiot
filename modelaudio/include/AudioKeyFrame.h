@@ -1,4 +1,4 @@
-// Copyright 2013-2015 Eric Raijmakers.
+// Copyright 2015 Eric Raijmakers.
 //
 // This file is part of Vidiot.
 //
@@ -17,55 +17,40 @@
 
 #pragma once
 
-#include "ClipInterval.h"
-#include "IAudio.h"
+#include "KeyFrame.h"
+#include "Enums.h"
 
 namespace model {
 
-class AudioPeaks;
+typedef std::map<pts, AudioKeyFramePtr> AudioKeyFrameMap;
 
-class AudioClip
-    :   public ClipInterval
-    ,   public IAudio
+class AudioKeyFrame
+    : public KeyFrame
 {
 public:
+
+    static constexpr int sVolumeMin = 0;
+    static constexpr int sVolumeMax = 200;
+    static constexpr int sVolumeDefault = 100;
 
     //////////////////////////////////////////////////////////////////////////
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    AudioClip();
+    AudioKeyFrame();
 
-    AudioClip(const AudioFilePtr& clip);
+    AudioKeyFrame(AudioKeyFramePtr before, AudioKeyFramePtr after, pts positionBefore, pts position, pts positionAfter);
 
-    virtual AudioClip* clone() const override;
+    virtual AudioKeyFrame* clone() const override;
 
-    virtual ~AudioClip();
-
-    //////////////////////////////////////////////////////////////////////////
-    // ICONTROL
-    //////////////////////////////////////////////////////////////////////////
-
-    virtual void clean() override;
+    virtual ~AudioKeyFrame();
 
     //////////////////////////////////////////////////////////////////////////
-    // ICLIP
+    // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    virtual std::ostream& dump(std::ostream& os) const override;
-    virtual const char* getType() const override;
-
-    //////////////////////////////////////////////////////////////////////////
-    // IAUDIO
-    //////////////////////////////////////////////////////////////////////////
-
-    virtual AudioChunkPtr getNextAudio(const AudioCompositionParameters& parameters) override;
-
-    //////////////////////////////////////////////////////////////////////////
-    // AUDIOCLIP
-    //////////////////////////////////////////////////////////////////////////
-
-    AudioPeaks getPeaks(const AudioCompositionParameters& parameters);
+    void setVolume(int volume);
+    int getVolume() const;
 
 protected:
 
@@ -75,13 +60,7 @@ protected:
 
     /// Copy constructor. Use make_cloned for making deep copies of objects.
     /// \see make_cloned
-    AudioClip(const AudioClip& other);
-
-    //////////////////////////////////////////////////////////////////////////
-    // KEY FRAMES
-    //////////////////////////////////////////////////////////////////////////
-
-    KeyFramePtr interpolate(KeyFramePtr before, KeyFramePtr after, pts positionBefore, pts position, pts positionAfter) const override;
+    AudioKeyFrame(const AudioKeyFrame& other);
 
 private:
 
@@ -89,15 +68,13 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    pts mProgress; ///< Current render position
-
-    AudioChunkPtr mInputChunk;
+    int mVolume;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<(std::ostream& os, const AudioClip& obj);
+    friend std::ostream& operator<<(std::ostream& os, const AudioKeyFrame& obj);
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION
@@ -110,5 +87,5 @@ private:
 
 } // namespace
 
-BOOST_CLASS_VERSION(model::AudioClip, 3)
-BOOST_CLASS_EXPORT_KEY(model::AudioClip)
+BOOST_CLASS_VERSION(model::AudioKeyFrame, 1)
+BOOST_CLASS_EXPORT_KEY(model::AudioKeyFrame)

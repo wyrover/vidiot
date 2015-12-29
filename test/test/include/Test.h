@@ -40,6 +40,7 @@
 #include "AudioClip.h"
 #include "AudioCodecs.h"
 #include "AudioCompositionParameters.h"
+#include "AudioKeyFrame.h"
 #include "AudioTrack.h"
 #include "AudioView.h"
 #include "AutoFolder.h"

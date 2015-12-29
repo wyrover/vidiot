@@ -49,12 +49,8 @@ const rational64 DetailsClip::sFactorMax{ 100,1 }; // 100
 
 DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     : DetailsPanel(parent, timeline)
-    , mBmpHome(util::window::getIcon("icon-home.png"))
-    , mBmpEnd(util::window::getIcon("icon-end.png"))
-    , mBmpNext(util::window::getIcon("icon-next.png"))
-    , mBmpPrevious(util::window::getIcon("icon-previous.png"))
-    , mBmpPlus{ util::window::getIcon("icon-plus.png") }
-    , mBmpMinus{ util::window::getIcon("icon-minus.png") }
+    , mVideoKeyFrameControls(std::make_shared<KeyFrameControlsImpl<model::VideoClip, model::VideoKeyFrame>>(this))
+    , mAudioKeyFrameControls(std::make_shared<KeyFrameControlsImpl<model::AudioClip, model::AudioKeyFrame>>(this))
     , sVideo(_("Video"))
     , sAudio(_("Audio"))
     , sTransition(_("Transition"))
@@ -217,37 +213,7 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     mSelectAlignment->SetMinSize(wxSize(mSelectScaling->GetSize().x,-1));
     mSelectScaling->SetMinSize(wxSize(mSelectAlignment->GetSize().x,-1));
 
-    mVideoKeyFramesEditPanel = new wxPanel(this);
-    wxBoxSizer* videokeyframessizer = new wxBoxSizer(wxHORIZONTAL);
-
-    std::map<wxButton**, std::pair<wxBitmap, wxString>> buttons
-    { 
-        { &mVideoKeyFramesHomeButton, { mBmpHome, _("Go to first key frame.")} },
-        { &mVideoKeyFramesPrevButton, { mBmpPrevious, _("Go to previous key frame.") } },
-        { &mVideoKeyFramesNextButton, { mBmpNext, _("Go to next key frame.") } },
-        { &mVideoKeyFramesEndButton, { mBmpEnd, _("Go to last key frame.") } },
-        { &mVideoKeyFramesAddButton, { mBmpPlus, _("Add a key frame at the current position.") } },
-        { &mVideoKeyFramesRemoveButton, { mBmpMinus, _("Remove the key frame at the current position.") } },
-    };
-    for (std::pair<wxButton**, std::pair<wxBitmap, wxString>> button : buttons)
-    {
-        (*button.first) = new wxButton(mVideoKeyFramesEditPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
-        (*button.first)->SetBitmap(button.second.first);
-        (*button.first)->SetBitmapMargins(0, 0);
-        (*button.first)->SetMinSize(wxSize{ wxDefaultCoord, wxButton::GetDefaultSize().GetHeight() });
-        (*button.first)->SetToolTip(button.second.second);
-    }
-
-    videokeyframessizer->Add(mVideoKeyFramesHomeButton, wxSizerFlags(0));
-    videokeyframessizer->Add(mVideoKeyFramesPrevButton, wxSizerFlags(0));
-    mVideoKeyFramesPanel = new wxPanel(mVideoKeyFramesEditPanel);
-    videokeyframessizer->Add(mVideoKeyFramesPanel, wxSizerFlags(1));
-    videokeyframessizer->Add(mVideoKeyFramesNextButton, wxSizerFlags(0));
-    videokeyframessizer->Add(mVideoKeyFramesEndButton, wxSizerFlags(0));
-    videokeyframessizer->Add(mVideoKeyFramesAddButton, wxSizerFlags(0));
-    videokeyframessizer->Add(mVideoKeyFramesRemoveButton, wxSizerFlags(0));
-    mVideoKeyFramesEditPanel->SetSizer(videokeyframessizer);
-    addOption(_("Video key frames"), mVideoKeyFramesEditPanel);
+    addOption(_("Video key frames"), mVideoKeyFrameControls->mEditPanel);
 
     mOpacitySlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onOpacitySliderChanged, this);
     mOpacitySpin->Bind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onOpacitySpinChanged, this);
@@ -262,21 +228,14 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     mPositionYSlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onPositionYSliderChanged, this);
     mPositionYSpin->Bind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onPositionYSpinChanged, this);
 
-    mVideoKeyFramesHomeButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &DetailsClip::onVideoKeyFramesHomeButtonPressed, this);
-    mVideoKeyFramesPrevButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &DetailsClip::onVideoKeyFramesPrevButtonPressed, this);
-    mVideoKeyFramesNextButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &DetailsClip::onVideoKeyFramesNextButtonPressed, this);
-    mVideoKeyFramesEndButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &DetailsClip::onVideoKeyFramesEndButtonPressed, this);
-    mVideoKeyFramesAddButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &DetailsClip::onVideoKeyFramesAddButtonPressed, this);
-    mVideoKeyFramesRemoveButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &DetailsClip::onVideoKeyFramesRemoveButtonPressed, this);
-
     mVolumePanel = new wxPanel(this);
     wxBoxSizer* volumesizer = new wxBoxSizer(wxHORIZONTAL);
-    mVolumeSlider = new wxSlider(mVolumePanel, wxID_ANY, model::AudioClip::sDefaultVolume, model::AudioClip::sMinVolume, model::AudioClip::sMaxVolume );
+    mVolumeSlider = new wxSlider(mVolumePanel, wxID_ANY, model::AudioKeyFrame::sVolumeDefault, model::AudioKeyFrame::sVolumeMin, model::AudioKeyFrame::sVolumeMax );
     mVolumeSlider->SetPageSize(sVolumePageSize);
     mVolumeSpin = new wxSpinCtrl(mVolumePanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(55,-1));
     mVolumeSpin->SetWindowVariant( wxWINDOW_VARIANT_SMALL );
-    mVolumeSpin->SetRange(model::AudioClip::sMinVolume, model::AudioClip::sMaxVolume);
-    mVolumeSpin->SetValue(model::AudioClip::sMaxVolume);
+    mVolumeSpin->SetRange(model::AudioKeyFrame::sVolumeMin, model::AudioKeyFrame::sVolumeMax);
+    mVolumeSpin->SetValue(model::AudioKeyFrame::sVolumeDefault);
     volumesizer->Add(mVolumeSlider, wxSizerFlags(1).Expand());
     volumesizer->Add(mVolumeSpin, wxSizerFlags(0));
     mVolumePanel->SetSizer(volumesizer);
@@ -284,6 +243,8 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
 
     mVolumeSlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onVolumeSliderChanged, this);
     mVolumeSpin->Bind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onVolumeSpinChanged, this);
+
+    addOption(_("Audio key frames"), mAudioKeyFrameControls->mEditPanel);
 
     mTransitionBoxSizer = addBox(boost::none);
 
@@ -336,16 +297,6 @@ DetailsClip::~DetailsClip()
     mPositionXSpin->Unbind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onPositionXSpinChanged, this);
     mPositionYSlider->Unbind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onPositionYSliderChanged, this);
     mPositionYSpin->Unbind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onPositionYSpinChanged, this);
-    mVideoKeyFramesHomeButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &DetailsClip::onVideoKeyFramesHomeButtonPressed, this);
-    mVideoKeyFramesPrevButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &DetailsClip::onVideoKeyFramesPrevButtonPressed, this);
-    mVideoKeyFramesNextButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &DetailsClip::onVideoKeyFramesNextButtonPressed, this);
-    mVideoKeyFramesEndButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &DetailsClip::onVideoKeyFramesEndButtonPressed, this);
-    mVideoKeyFramesAddButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &DetailsClip::onVideoKeyFramesAddButtonPressed, this);
-    mVideoKeyFramesRemoveButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &DetailsClip::onVideoKeyFramesRemoveButtonPressed, this);
-    for (auto button : mVideoKeyFrames)
-    {
-        button.second->Unbind(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, &DetailsClip::onVideoKeyFrameButtonPressed, this);
-    }
     mVolumeSlider->Unbind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onVolumeSliderChanged, this);
     mVolumeSpin->Unbind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onVolumeSpinChanged, this);
 
