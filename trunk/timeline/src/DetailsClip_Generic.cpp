@@ -126,7 +126,7 @@ struct KeyFrameControlsImpl
             wxBoxSizer* sizer{ new wxBoxSizer{ wxHORIZONTAL } };
             for (size_t i{ 0 }; i < keyframes.size(); ++i)
             {
-                mKeyFramesButtons[i] = new wxToggleButton{ mPanel, narrow_cast<int, size_t>(i), wxString::Format("%ld", i + 1), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT };
+                mKeyFramesButtons[i] = new wxToggleButton{ mPanel, static_cast<int>(i), wxString::Format("%ld", i + 1), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT };
                 mKeyFramesButtons[i]->SetFont(mKeyFramesButtons[i]->GetFont().Smaller().Smaller());
                 sizer->Add(mKeyFramesButtons[i], wxSizerFlags{ 1 });
             }
@@ -166,7 +166,7 @@ struct KeyFrameControlsImpl
             // leading to disabling of a lot of buttons initially. Therefore, this algorithm is 
             // re-executed always, even if there's enough room for all buttons (because these buttons
 
-            int totalNumberOfButtons{ narrow_cast<int>(mKeyFramesButtons.size()) };
+            int totalNumberOfButtons{ static_cast<int>(mKeyFramesButtons.size()) };
             int buttonWidth{ requiredSize / totalNumberOfButtons };
             int maxFittingButtons{ availableSize / buttonWidth };
             int lastPossibleButton{ totalNumberOfButtons - 1 };
@@ -322,7 +322,7 @@ struct KeyFrameControlsImpl
 
     void onNumberedButton(wxCommandEvent& event)
     {
-        size_t buttonNumber{ narrow_cast<size_t,int>(event.GetId()) };
+        size_t buttonNumber{ static_cast<size_t>(event.GetId()) };
         moveCursor([&buttonNumber](const model::KeyFrameMap& keyFrames, pts current) -> pts
         {
             model::KeyFrameMap::const_iterator it{ keyFrames.begin() };
@@ -367,7 +367,7 @@ struct KeyFrameControlsImpl
     { 
         CatchExceptions([this] 
         { 
-            mParent->submitEditCommandUponAudioVideoEdit(mParent->sEditKeyFramesAdd, [this]
+            mParent->submitEditCommandUponAudioVideoEdit(mParent->sEditKeyFramesAdd, std::is_same<CLIPTYPE, model::VideoClip>::value, [this]
             {
                 getClip()->addKeyFrameAt(getKeyFrameOffset(), getKeyFrame());
             });
@@ -380,7 +380,7 @@ struct KeyFrameControlsImpl
     {
         CatchExceptions([this]
         {
-            mParent->submitEditCommandUponAudioVideoEdit(mParent->sEditKeyFramesRemove, [this]
+            mParent->submitEditCommandUponAudioVideoEdit(mParent->sEditKeyFramesRemove, std::is_same<CLIPTYPE, model::VideoClip>::value, [this]
             {
                 getClip()->removeKeyFrameAt(getKeyFrameOffset());
             });

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-12-27 20:32+0100\n"
+"POT-Creation-Date: 2015-12-29 14:26+0100\n"
 "PO-Revision-Date: 2015-11-29 22:44+0300\n"
 "Last-Translator: Ted Mossolov <teodorrrro@gmail.com>\n"
 "Language-Team: Ted Mossolov <teodorrrro@gmail.com>\n"
@@ -195,7 +195,7 @@ msgstr "Число символов от начала имени (префикс
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogProjectProperties.cpp:42
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:108
 #: C:\Vidiot\vidiot_trunk\gui\src\EditProjectProperties.cpp:39
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:58
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:54
 msgid "Video"
 msgstr "Видео"
 
@@ -236,7 +236,7 @@ msgstr "Длительность показа неподвижных изобр�
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogProjectProperties.cpp:69
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:114
 #: C:\Vidiot\vidiot_trunk\gui\src\EditProjectProperties.cpp:57
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:59
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:55
 msgid "Audio"
 msgstr "Аудио"
 
@@ -1279,76 +1279,101 @@ msgstr ""
 msgid "Rate distortion"
 msgstr "Создать переход"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_GuiEvents.cpp:586
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Generic.cpp:55
+msgid "Go to first key frame."
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Generic.cpp:56
+msgid "Go to previous key frame."
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Generic.cpp:57
+msgid "Go to next key frame."
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Generic.cpp:58
+msgid "Go to last key frame."
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Generic.cpp:59
+#, fuzzy
+msgid "Add a key frame at the current position."
+msgstr "Нельзя выполнить обрезку: на месте курсора уже разрезано."
+
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Generic.cpp:60
+msgid "Remove the key frame at the current position."
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_GuiEvents.cpp:375
 msgid ""
 "Could not execute the length change without messing up clips in other tracks."
 msgstr ""
 "Нельзя изменить длительность, так как это нарушит порядок клипов на других "
 "дорожках."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_GuiEvents.cpp:592
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_GuiEvents.cpp:381
 msgid "Set length of clip"
 msgstr "Задать длительность клипа"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_HelperMethods.cpp:115
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_HelperMethods.cpp:123
 msgid "Change "
 msgstr "Изменить "
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:60
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:56
 msgid "Transition"
 msgstr "Переход"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:61
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:57
 #, c-format
 msgid "Edit opacity of %s"
 msgstr "Изменить непрозрачность \"%s\""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:62
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:58
 #, c-format
 msgid "Edit automated scaling of %s"
 msgstr "Изменить автомасштаб \"%s\""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:63
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:59
 #, c-format
 msgid "Edit scaling of %s"
 msgstr "Изменить масштаб \"%s\""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:64
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:60
 #, c-format
 msgid "Edit rotation of %s"
 msgstr "Изменить поворот \"%s\""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:65
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:61
 #, c-format
 msgid "Edit automated alignment of %s"
 msgstr "Изменить автоматическое выравнивание \"%s\""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:66
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:62
 #, c-format
 msgid "Edit X position of %s"
 msgstr "Изменить положение по X \"%s\""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:67
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:63
 #, c-format
 msgid "Edit Y position of %s"
 msgstr "Изменить положение по Y \"%s\""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:68
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:64
 #, c-format
 msgid "Edit volume of %s"
 msgstr "Изменить громкость \"%s\""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:69
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:65
 #, fuzzy, c-format
 msgid "Add key frame to %s"
 msgstr "Добавить файл \"%s\""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:70
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:66
 #, fuzzy, c-format
 msgid "Remove key frame from %s"
 msgstr "Удалить пустые регионы"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:114
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:110
 msgid ""
 "Change the length of the clip to this length. Will shift other clips to "
 "avoid introducing a black area."
@@ -1356,78 +1381,47 @@ msgstr ""
 "Задать длительность клипа. Остальные клипы будут сдвинуты, чтобы не появился "
 "пустой промежуток."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:114
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:110
 msgid "Shortcut key"
 msgstr "Сочетание клавиш"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:120
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:116
 msgid "Fixed lengths (s)"
 msgstr "Заготовки (с.)"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:135
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:131
 msgid "Speed"
 msgstr "Скорость"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:151
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:147
 msgid "Opacity"
 msgstr "Непрозрачность"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:168
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:164
 msgid "Rotation"
 msgstr "Поворот"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:186
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:182
 msgid "Scaling"
 msgstr "Масштаб"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:214
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:210
 msgid "Position"
 msgstr "Положение"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:224
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:274
-msgid "Go to first key frame."
-msgstr ""
-
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:225
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:275
-msgid "Go to previous key frame."
-msgstr ""
-
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:226
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:276
-msgid "Go to next key frame."
-msgstr ""
-
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:227
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:277
-msgid "Go to last key frame."
-msgstr ""
-
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:228
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:278
-#, fuzzy
-msgid "Add a key frame at the current position."
-msgstr "Нельзя выполнить обрезку: на месте курсора уже разрезано."
-
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:229
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:279
-msgid "Remove the key frame at the current position."
-msgstr ""
-
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:248
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:216
 #, fuzzy
 msgid "Video key frames"
 msgstr "Файлы видео"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:298
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:242
+msgid "Volume (%)"
+msgstr "Громкость (%)"
+
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:247
 #, fuzzy
 msgid "Audio key frames"
 msgstr "Файлы видео"
-
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:311
-msgid "Volume (%)"
-msgstr "Громкость (%)"
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsTrim.cpp:40
 msgid "Notes"

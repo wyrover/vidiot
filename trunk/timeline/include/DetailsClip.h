@@ -257,7 +257,7 @@ private:
 
     template <typename, typename> friend struct KeyFrameControlsImpl;
 
-    void submitEditCommandUponAudioVideoEdit(const wxString& message, std::function<void()> edit);
+    void submitEditCommandUponAudioVideoEdit(const wxString& message, bool video, std::function<void()> edit);
     void submitEditCommandUponTransitionEdit(const wxString& parameter);
     void createOrUpdateSpeedCommand(rational64 speed);
 

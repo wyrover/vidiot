@@ -53,8 +53,9 @@ constexpr milliseconds sMinute = 60 * sSecond;          ///< Number of milliseco
 constexpr milliseconds sHour = 60 * sMinute;            ///< Number of milliseconds in one hour
  
 // From: http://www.stroustrup.com/Programming/std_lib_facilities.h                                                        
-// Run-time checked narrowing cast (type conversion):
-template<class R, class A> R narrow_cast(const A& a) // todo don't use for signed/unsigned casting as the assert will not be thrown (int(size_t(-19)) == -19)
+// Run-time checked narrowing cast (type conversion)
+// Don't use for signed/unsigned casting as the assert will not be thrown (int(size_t(-19)) == -19)
+template<class R, class A> R narrow_cast(const A& a)
 {
     R r = R(a);
     ASSERT_EQUALS(A(r), a);

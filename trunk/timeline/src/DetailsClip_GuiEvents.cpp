@@ -72,7 +72,7 @@ void DetailsClip::onSpeedSpinChanged(wxSpinDoubleEvent& event)
     VAR_INFO(value);
     CatchExceptions([this, value]
     {
-        int spinFactor{ narrow_cast<int>(floor(std::round(value * sFactorPrecisionFactor))) }; // This construct ensures that adding +0.01 is not ignored due to rounding issues
+        int spinFactor{ static_cast<int>(floor(std::round(value * sFactorPrecisionFactor))) }; // This construct ensures that adding +0.01 is not ignored due to rounding issues
         rational64 s(spinFactor, sFactorPrecisionFactor);
         createOrUpdateSpeedCommand(s);
     });
@@ -85,7 +85,7 @@ void DetailsClip::onOpacitySliderChanged(wxCommandEvent& event)
     VAR_ERROR(mOpacitySlider->GetValue());
     CatchExceptions([this]
     {
-        submitEditCommandUponAudioVideoEdit(sEditOpacity, [this]
+        submitEditCommandUponAudioVideoEdit(sEditOpacity, true, [this]
         {
             mVideoKeyFrameControls->getKeyFrame()->setOpacity(mOpacitySlider->GetValue());
         });
@@ -99,7 +99,7 @@ void DetailsClip::onOpacitySpinChanged(wxSpinEvent& event)
     CatchExceptions([this]
     {
         // Changes same clip aspect as the slider
-        submitEditCommandUponAudioVideoEdit(sEditOpacity, [this]
+        submitEditCommandUponAudioVideoEdit(sEditOpacity, true, [this]
         {
             mVideoKeyFrameControls->getKeyFrame()->setOpacity(mOpacitySpin->GetValue());
         });
@@ -112,7 +112,7 @@ void DetailsClip::onScalingChoiceChanged(wxCommandEvent& event)
     VAR_INFO(mSelectScaling->getValue());
     CatchExceptions([this]
     {
-        submitEditCommandUponAudioVideoEdit(sEditScalingType, [this]
+        submitEditCommandUponAudioVideoEdit(sEditScalingType, true, [this]
         {
             mVideoKeyFrameControls->getKeyFrame()->setScaling(mSelectScaling->getValue(), boost::none);
         });
@@ -125,7 +125,7 @@ void DetailsClip::onScalingSliderChanged(wxCommandEvent& event)
     VAR_INFO(mScalingSlider->GetValue());
     CatchExceptions([this]
     {
-        submitEditCommandUponAudioVideoEdit(sEditScaling, [this]
+        submitEditCommandUponAudioVideoEdit(sEditScaling, true, [this]
         {
             mVideoKeyFrameControls->getKeyFrame()->setScaling(model::VideoScalingCustom, boost::optional< rational64 >(sliderValueToFactor(mScalingSlider->GetValue())));
         });
@@ -142,7 +142,7 @@ void DetailsClip::onScalingSpinChanged(wxSpinDoubleEvent& event)
         int spinFactor{ narrow_cast<int>(floor(std::round(value * sFactorPrecisionFactor))) }; // This construct ensures that adding +0.01 is not ignored due to rounding issues
         rational64 r(spinFactor, sFactorPrecisionFactor);
         // Changes same clip aspect as the slider
-        submitEditCommandUponAudioVideoEdit(sEditScaling, [this, r]
+        submitEditCommandUponAudioVideoEdit(sEditScaling, true, [this, r]
         {
             mVideoKeyFrameControls->getKeyFrame()->setScaling(model::VideoScalingCustom, boost::optional< rational64 >(r));
         });
@@ -156,7 +156,7 @@ void DetailsClip::onRotationSliderChanged(wxCommandEvent& event)
     rational64 r(mRotationSlider->GetValue(), sRotationPrecisionFactor);
     CatchExceptions([this, r]
     {
-        submitEditCommandUponAudioVideoEdit(sEditRotation, [this, r]
+        submitEditCommandUponAudioVideoEdit(sEditRotation, true, [this, r]
         {
             mVideoKeyFrameControls->getKeyFrame()->setRotation(r);
         });
@@ -172,7 +172,7 @@ void DetailsClip::onRotationSpinChanged(wxSpinDoubleEvent& event)
     CatchExceptions([this,r]
     {
         // Changes same clip aspect as the slider
-        submitEditCommandUponAudioVideoEdit(sEditRotation, [this, r]
+        submitEditCommandUponAudioVideoEdit(sEditRotation, true, [this, r]
         {
             mVideoKeyFrameControls->getKeyFrame()->setRotation(r);
         });
@@ -185,7 +185,7 @@ void DetailsClip::onAlignmentChoiceChanged(wxCommandEvent& event)
     VAR_INFO(mSelectAlignment->getValue());
     CatchExceptions([this]
     {
-        submitEditCommandUponAudioVideoEdit(sEditAlignment, [this]
+        submitEditCommandUponAudioVideoEdit(sEditAlignment, true, [this]
         {
             mVideoKeyFrameControls->getKeyFrame()->setAlignment(mSelectAlignment->getValue());
         });
@@ -198,7 +198,7 @@ void DetailsClip::onPositionXSliderChanged(wxCommandEvent& event)
     VAR_INFO(mPositionXSlider->GetValue());
     CatchExceptions([this]
     {
-        submitEditCommandUponAudioVideoEdit(sEditX, [this]
+        submitEditCommandUponAudioVideoEdit(sEditX, true, [this]
         {
             updateAlignment(true);
             mVideoKeyFrameControls->getKeyFrame()->setPosition(wxPoint(mPositionXSlider->GetValue(), mPositionYSlider->GetValue()));
@@ -213,7 +213,7 @@ void DetailsClip::onPositionXSpinChanged(wxSpinEvent& event)
     CatchExceptions([this]
     {
         // Changes same clip aspect as the slider
-        submitEditCommandUponAudioVideoEdit(sEditX, [this]
+        submitEditCommandUponAudioVideoEdit(sEditX, true, [this]
         {
             updateAlignment(true);
             mVideoKeyFrameControls->getKeyFrame()->setPosition(wxPoint(mPositionXSpin->GetValue(), mPositionYSlider->GetValue()));
@@ -227,7 +227,7 @@ void DetailsClip::onPositionYSliderChanged(wxCommandEvent& event)
     VAR_INFO(mPositionYSlider->GetValue());
     CatchExceptions([this]
     {
-        submitEditCommandUponAudioVideoEdit(sEditY, [this]
+        submitEditCommandUponAudioVideoEdit(sEditY, true, [this]
         {
             updateAlignment(false);
             mVideoKeyFrameControls->getKeyFrame()->setPosition(wxPoint(mPositionXSlider->GetValue(), mPositionYSlider->GetValue()));
@@ -242,7 +242,7 @@ void DetailsClip::onPositionYSpinChanged(wxSpinEvent& event)
     CatchExceptions([this]
     {
         // Changes same clip aspect as the slider
-        submitEditCommandUponAudioVideoEdit(sEditY, [this]
+        submitEditCommandUponAudioVideoEdit(sEditY, true, [this]
         {
             updateAlignment(false);
             mVideoKeyFrameControls->getKeyFrame()->setPosition(wxPoint(mPositionXSlider->GetValue(), mPositionYSpin->GetValue()));
@@ -256,7 +256,7 @@ void DetailsClip::onVolumeSliderChanged(wxCommandEvent& event)
     VAR_INFO(mVolumeSlider->GetValue());
     CatchExceptions([this]
     {
-        submitEditCommandUponAudioVideoEdit(sEditOpacity, [this]
+        submitEditCommandUponAudioVideoEdit(sEditVolume, false, [this]
         {
             mAudioKeyFrameControls->getKeyFrame()->setVolume(mVolumeSlider->GetValue());
         });
@@ -270,7 +270,7 @@ void DetailsClip::onVolumeSpinChanged(wxSpinEvent& event)
     CatchExceptions([this]
     {
         // Changes same clip aspect as the slider
-        submitEditCommandUponAudioVideoEdit(sEditVolume, [this]
+        submitEditCommandUponAudioVideoEdit(sEditVolume, false, [this]
         {
             mAudioKeyFrameControls->getKeyFrame()->setVolume(mVolumeSpin->GetValue());
         });

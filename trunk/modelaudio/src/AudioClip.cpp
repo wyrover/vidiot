@@ -17,7 +17,6 @@
 
 #include "AudioClip.h"
 
-#include "AudioClipEvent.h"
 #include "AudioCompositionParameters.h"
 #include "AudioFile.h"
 #include "AudioKeyFrame.h"
