@@ -18,7 +18,6 @@
 #include "AudioPeakView.h"
 
 #include "AudioClip.h"
-#include "AudioClipEvent.h"
 #include "AudioCompositionParameters.h"
 #include "AudioFile.h"
 #include "AudioPeaks.h"
@@ -150,13 +149,11 @@ AudioPeakView::AudioPeakView(const model::IClipPtr& clip, View* parent)
     : ClipPreview(clip, parent)
 {
     ASSERT(mClip->isA<model::IAudio>())(mClip);
-    mClip->Bind(model::EVENT_CHANGE_AUDIOCLIP_VOLUME, &AudioPeakView::onVolumeChanged, this);
 
 }
 
 AudioPeakView::~AudioPeakView()
 {
-    mClip->Unbind(model::EVENT_CHANGE_AUDIOCLIP_VOLUME, &AudioPeakView::onVolumeChanged, this);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -179,17 +176,5 @@ wxSize AudioPeakView::getMinimumSize() const
     return wxSize(2,10);
 }
 
-
-//////////////////////////////////////////////////////////////////////////
-// AUDIOCLIP EVENTS
-//////////////////////////////////////////////////////////////////////////
-
-void AudioPeakView::onVolumeChanged(model::EventChangeAudioClipVolume& event)
-{
-    invalidateCachedBitmaps();
-    invalidateRect();
-    repaint();
-    event.Skip();
-}
 
 }} // namespace

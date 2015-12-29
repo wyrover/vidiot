@@ -85,14 +85,9 @@ int AudioKeyFrame::getVolume() const
 void AudioKeyFrame::setVolume(int volume)
 {
     ASSERT(!isInterpolated())(*this);
-    if (mVolume != volume)
-    {
-        ASSERT_MORE_THAN_EQUALS(volume, sVolumeMin);
-        ASSERT_LESS_THAN_EQUALS(volume, sVolumeMax);
-        mVolume = volume;
-        //EventChangeAudioClipVolume event(volume); // todo obsoleted now. remove
-
-    }
+    ASSERT_MORE_THAN_EQUALS(volume, sVolumeMin);
+    ASSERT_LESS_THAN_EQUALS(volume, sVolumeMax);
+    mVolume = volume;
 }
 
 //////////////////////////////////////////////////////////////////////////

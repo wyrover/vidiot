@@ -65,7 +65,7 @@ ClipInterval::ClipInterval(const ClipInterval& other)
     , mLength{ other.mLength }
     , mDescription{ other.mDescription }
     , mKeyFrames{ make_cloned<pts, KeyFrame>(other.mKeyFrames) }
-    , mDefaultKeyFrame{ other.mDefaultKeyFrame == nullptr ? nullptr : make_cloned<KeyFrame>(other.mDefaultKeyFrame) } // todo remove after adding audio key frames
+    , mDefaultKeyFrame{ make_cloned<KeyFrame>(other.mDefaultKeyFrame) }
 {
     // NOT: VAR_DEBUG(*this); -- Log in most derived class. Avoids duplicate logging AND avoids pure virtual calls (implemented in most derived class).
 }

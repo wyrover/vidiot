@@ -53,7 +53,7 @@ rational64 DetailsClip::sliderValueToFactor(int slidervalue)
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-void DetailsClip::submitEditCommandUponAudioVideoEdit(const wxString& message, std::function<void()> edit)
+void DetailsClip::submitEditCommandUponAudioVideoEdit(const wxString& message, bool video, std::function<void()> edit)
 {
     getPlayer()->stop(); // Stop iteration through the sequence, since the sequence is going to be changed.
 
@@ -89,24 +89,36 @@ void DetailsClip::submitEditCommandUponAudioVideoEdit(const wxString& message, s
     else
     {
         // Update the thumbnail/peaks (otherwise not updated, since only one edit command is done).
-        // todo only update audio upon audio edit and video upon video edit...
-        if (mClip && mClip->getTrack() != nullptr)
+        auto refreshclip = [this](model::IClipPtr clip)
         {
-            ClipPreview* preview{ getViewMap().getClipPreview(mClip) };
-            preview->invalidateCachedBitmaps();
-            preview->invalidateRect();
-            preview->repaint();
-        }
-        if (mClip->getLink() && mClip->getLink()->getTrack() != nullptr)
+            if (clip && clip->getTrack() != nullptr)
+            {
+                ClipPreview* preview{ getViewMap().getClipPreview(clip) };
+                preview->invalidateCachedBitmaps();
+                preview->invalidateRect();
+                preview->repaint();
+            }
+        };
+        if (video)
         {
-            ClipPreview* preview{ getViewMap().getClipPreview(mClip->getLink()) };
-            preview->invalidateCachedBitmaps();
-            preview->invalidateRect();
-            preview->repaint();
+            refreshclip(mVideoKeyFrameControls->getClip());
         }
+        else
+        {
+            refreshclip(mAudioKeyFrameControls->getClip());
+        };
     }
     edit();
-    preview();
+    if (video)
+    {
+        // For audio clips there is no preview only the updated clip preview (peaks).
+        // Note that this 'if' also prevents moving the cursor in the following case:
+        // - Move cursor to center of clip 'x + 1'
+        // - Select clip 'x'
+        // - Edit volume
+        // Changing the cursor now looks weird.
+        preview();
+    }
     mVideoKeyFrameControls->update();
     mAudioKeyFrameControls->update();
 }
@@ -181,15 +193,15 @@ void DetailsClip::preview()
     model::VideoClipPtr videoclip{ getClipOfType<model::VideoClip>(mClip) };
     if (!videoclip) { return; }
     ASSERT_NONZERO(videoclip->getTrack())(videoclip);
+
     pts position{ getCursor().getLogicalPosition() }; // By default, show the frame under the cursor (which is already currently shown, typically)
-    if ((position < videoclip->getPerceivedLeftPts()) || // todo thus if volume of audio is changed, cursor is moved if it's linked????
-        (position > videoclip->getPerceivedRightPts())) // == getPerceivedRightPts() is the key frame AFTER the last frame of the clip.
+    if ((videoclip->getKeyFramesOfPerceivedClip().size() == 0) && // Clip without key frames
+        ((position < videoclip->getPerceivedLeftPts()) ||
+            (position > videoclip->getPerceivedRightPts()))) // == getPerceivedRightPts() is the key frame AFTER the last frame of the clip.
     {
-        // The cursor is not positioned under the clip being adjusted. Move the cursor to the middle frame of that clip
-        ASSERT_ZERO(videoclip->getKeyFramesOfPerceivedClip().size()); // This can only happen in case there are no keyframes. todo assert fails if selected clip has key frames and cursor is after clip being edited and space is pressed. make test case for this!
-        position = videoclip->getPerceivedLeftPts() + (videoclip->getPerceivedLength() / 2); // Show the middle frame of the clip
-        VAR_DEBUG(position);
-        getCursor().setLogicalPosition(position); // ...and move the cursor to that position
+        // In case of a clip without key frames, there is only the default key frame.
+        // If the cursor is not yet 'inside' the clip, move it to the middle frame of that clip
+        getCursor().setLogicalPosition(videoclip->getPerceivedLeftPts() + (videoclip->getPerceivedLength() / 2)); // ...and move the cursor to that position
     }
     else
     {
