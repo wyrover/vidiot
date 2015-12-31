@@ -114,7 +114,7 @@ void DetailsClip::setClip(const model::IClipPtr& clip)
                 id_and_parameter.second->Bind(model::EVENT_TRANSITION_PARAMETER_CHANGED, &DetailsClip::onTransitionParameterChanged, this);
             }
         }
-
+        mLastEditKeyFrameOffset = -1;
     }
     else
     {

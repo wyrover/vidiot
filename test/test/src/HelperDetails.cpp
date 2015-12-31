@@ -29,48 +29,68 @@ gui::timeline::DetailsClip* DetailsClipView()
 
 KeyFrameValues::KeyFrameValues(model::IClipPtr clip)
     : mClip(clip)
-    , mKeyFrameIndex{ boost::none }
-    , mKeyFrameOffset{ boost::none }
-    , mOpacity{ boost::none }
-    , mScaling{ boost::none }
-    , mScalingFactor{ boost::none }
-    , mAlignment{ boost::none }
-    , mPosition{ boost::none }
-    , mRotation{ boost::none }
 {
 }
 
 KeyFrame::operator bool() const
 {
-    std::pair<pts, model::VideoKeyFramePtr> pos_frame = mKeyFrameIndex ? VideoKeyFrame(mClip, *mKeyFrameIndex) : std::make_pair(-1l, DefaultVideoKeyFrame(mClip));
-    model::VideoKeyFramePtr keyFrame{ pos_frame.second };
+    std::pair<pts, model::VideoKeyFramePtr> pos_frame_video{ std::make_pair(0, nullptr) };
+    std::pair<pts, model::AudioKeyFramePtr> pos_frame_audio{ std::make_pair(0, nullptr) };
+
+    pts pos{ -1 };
+    if (mClip->isA<model::VideoClip>())
+    {
+        pos_frame_video = mKeyFrameIndex ? VideoKeyFrame(mClip, *mKeyFrameIndex) : std::make_pair(-1l, DefaultVideoKeyFrame(mClip));
+        pos = pos_frame_video.first;
+    }
+    if (mClip->isA<model::AudioClip>())
+    {
+        pos_frame_audio = mKeyFrameIndex ? AudioKeyFrame(mClip, *mKeyFrameIndex) : std::make_pair(-1l, DefaultAudioKeyFrame(mClip));
+        pos = pos_frame_audio.first;
+    }
+
+    model::VideoKeyFramePtr keyFrameVideo{ pos_frame_video.second };
+    model::AudioKeyFramePtr keyFrameAudio{ pos_frame_audio.second };
+
     if (mKeyFrameOffset)
     {
-        ASSERT_EQUALS(*mKeyFrameOffset, pos_frame.first);
+        ASSERT(keyFrameVideo || keyFrameAudio);
+        ASSERT_EQUALS(*mKeyFrameOffset, pos);
     }
     if (mOpacity)
     {
-        ASSERT_EQUALS(*mOpacity, keyFrame->getOpacity());
+        ASSERT(keyFrameVideo);
+        ASSERT_EQUALS(*mOpacity, keyFrameVideo->getOpacity());
     }
     if (mScaling)
     {
-        ASSERT_EQUALS(*mScaling, keyFrame->getScaling());
+        ASSERT(keyFrameVideo);
+        ASSERT_EQUALS(*mScaling, keyFrameVideo->getScaling());
     }
     if (mScalingFactor)
     {
-        ASSERT_EQUALS(*mScalingFactor, keyFrame->getScalingFactor());
+        ASSERT(keyFrameVideo);
+        ASSERT_EQUALS(*mScalingFactor, keyFrameVideo->getScalingFactor());
     }
     if (mAlignment)
     {
-        ASSERT_EQUALS(*mAlignment, keyFrame->getAlignment());
+        ASSERT(keyFrameVideo);
+        ASSERT_EQUALS(*mAlignment, keyFrameVideo->getAlignment());
     }
     if (mPosition)
     {
-        ASSERT_EQUALS(*mPosition, keyFrame->getPosition());
+        ASSERT(keyFrameVideo);
+        ASSERT_EQUALS(*mPosition, keyFrameVideo->getPosition());
     }
     if (mRotation)
     {
-        ASSERT_EQUALS(*mRotation, keyFrame->getRotation());
+        ASSERT(keyFrameVideo);
+        ASSERT_EQUALS(*mRotation, keyFrameVideo->getRotation());
+    }
+    if (mVolume)
+    {
+        ASSERT(keyFrameAudio);
+        ASSERT_EQUALS(*mVolume, keyFrameAudio->getVolume());
     }
     return true;
 }
@@ -91,14 +111,16 @@ DetailsView::operator bool() const
     int widget_yspin{ 0 };
     int widget_rotationdigits{ 0 };
     double widget_rotationspin{ 0.0 };
+    int widget_volumeslider{ 0 };
+    int widget_volumespin{ 0 };
     boost::optional<size_t> widget_activekeyframebutton{ boost::none };
-    bool widget_videohome{ false };
-    bool widget_videoprev{ false };
-    bool widget_videonext{ false };
-    bool widget_videoend{ false };
-    bool widget_videoadd{ false };
-    bool widget_videoremove{ false };
-    size_t widget_videocount{ 0 };
+    bool widget_home{ false };
+    bool widget_prev{ false };
+    bool widget_next{ false };
+    bool widget_end{ false };
+    bool widget_add{ false };
+    bool widget_remove{ false };
+    size_t widget_buttoncount{ 0 };
 
     util::thread::RunInMainAndWait([&]
     {
@@ -107,36 +129,66 @@ DetailsView::operator bool() const
         if (detailsclip != nullptr)
         {
             selectedclip = detailsclip->getClip();
-            widget_opacityslider = detailsclip->getOpacitySlider()->GetValue();
-            widget_opacityspin = detailsclip->getOpacitySpin()->GetValue();
-            widget_scaling = detailsclip->getScalingSelector()->getValue();
-            widget_scalingdigits = detailsclip->getScalingSlider()->GetValue();
-            widget_scalingspin = detailsclip->getScalingSpin()->GetValue();
-            widget_alignment = detailsclip->getAlignmentSelector()->getValue();
-            widget_xslider = detailsclip->getPositionXSlider()->GetValue();
-            widget_xspin = detailsclip->getPositionXSpin()->GetValue();
-            widget_yslider = detailsclip->getPositionYSlider()->GetValue();
-            widget_yspin = detailsclip->getPositionYSpin()->GetValue();
-            widget_rotationdigits = detailsclip->getRotationSlider()->GetValue();
-            widget_rotationspin = detailsclip->getRotationSpin()->GetValue();
-
-            widget_videocount = detailsclip->getVideoKeyFrameButtonCount();
-            for (size_t i = 0; i < widget_videocount; ++i)
+            if (mClip->isA<model::VideoClip>() != selectedclip->isA<model::VideoClip>())
             {
-                if (detailsclip->getVideoKeyFrameButton(i)->GetValue())
-                {
-                    ASSERT(!widget_activekeyframebutton);
-                    widget_activekeyframebutton.reset(i);
-                    // NOT: break; -- check that all other buttons have !GetValue()
-                }
+                selectedclip = selectedclip->getLink();
             }
+            if (mClip->isA<model::VideoClip>())
+            {
+                widget_opacityslider = detailsclip->getOpacitySlider()->GetValue();
+                widget_opacityspin = detailsclip->getOpacitySpin()->GetValue();
+                widget_scaling = detailsclip->getScalingSelector()->getValue();
+                widget_scalingdigits = detailsclip->getScalingSlider()->GetValue();
+                widget_scalingspin = detailsclip->getScalingSpin()->GetValue();
+                widget_alignment = detailsclip->getAlignmentSelector()->getValue();
+                widget_xslider = detailsclip->getPositionXSlider()->GetValue();
+                widget_xspin = detailsclip->getPositionXSpin()->GetValue();
+                widget_yslider = detailsclip->getPositionYSlider()->GetValue();
+                widget_yspin = detailsclip->getPositionYSpin()->GetValue();
+                widget_rotationdigits = detailsclip->getRotationSlider()->GetValue();
+                widget_rotationspin = detailsclip->getRotationSpin()->GetValue();
 
-            widget_videohome = detailsclip->getVideoKeyFramesHomeButton()->IsEnabled();
-            widget_videoprev = detailsclip->getVideoKeyFramesPrevButton()->IsEnabled();
-            widget_videonext = detailsclip->getVideoKeyFramesNextButton()->IsEnabled();
-            widget_videoend = detailsclip->getVideoKeyFramesEndButton()->IsEnabled();
-            widget_videoadd = detailsclip->getVideoKeyFramesAddButton()->IsEnabled();
-            widget_videoremove = detailsclip->getVideoKeyFramesRemoveButton()->IsEnabled();
+                widget_buttoncount = detailsclip->getVideoKeyFrameButtonCount();
+                for (size_t i = 0; i < widget_buttoncount; ++i)
+                {
+                    if (detailsclip->getVideoKeyFrameButton(i)->GetValue())
+                    {
+                        ASSERT(!widget_activekeyframebutton);
+                        widget_activekeyframebutton.reset(i);
+                        // NOT: break; -- check that all other buttons have !GetValue()
+                    }
+                }
+
+                widget_home = detailsclip->getVideoKeyFramesHomeButton()->IsEnabled();
+                widget_prev = detailsclip->getVideoKeyFramesPrevButton()->IsEnabled();
+                widget_next = detailsclip->getVideoKeyFramesNextButton()->IsEnabled();
+                widget_end = detailsclip->getVideoKeyFramesEndButton()->IsEnabled();
+                widget_add = detailsclip->getVideoKeyFramesAddButton()->IsEnabled();
+                widget_remove = detailsclip->getVideoKeyFramesRemoveButton()->IsEnabled();
+            }
+            else
+            {
+                widget_volumeslider = detailsclip->getVolumeSlider()->GetValue();
+                widget_volumespin = detailsclip->getVolumeSpin()->GetValue();
+
+                widget_buttoncount = detailsclip->getAudioKeyFrameButtonCount();
+                for (size_t i = 0; i < widget_buttoncount; ++i)
+                {
+                    if (detailsclip->getAudioKeyFrameButton(i)->GetValue())
+                    {
+                        ASSERT(!widget_activekeyframebutton);
+                        widget_activekeyframebutton.reset(i);
+                        // NOT: break; -- check that all other buttons have !GetValue()
+                    }
+                }
+
+                widget_home = detailsclip->getAudioKeyFramesHomeButton()->IsEnabled();
+                widget_prev = detailsclip->getAudioKeyFramesPrevButton()->IsEnabled();
+                widget_next = detailsclip->getAudioKeyFramesNextButton()->IsEnabled();
+                widget_end = detailsclip->getAudioKeyFramesEndButton()->IsEnabled();
+                widget_add = detailsclip->getAudioKeyFramesAddButton()->IsEnabled();
+                widget_remove = detailsclip->getAudioKeyFramesRemoveButton()->IsEnabled();
+            }
         }
     });
 
@@ -173,6 +225,11 @@ DetailsView::operator bool() const
         ASSERT_EQUALS(rotationdigits, widget_rotationdigits);
         ASSERT_EQUALS(floor(boost::rational_cast<double>(*mRotation) * 100), floor(widget_rotationspin * 100)); // floor + *100 : ensure that only two digits are used
     }
+    if (mVolume)
+    {
+        ASSERT_EQUALS(*mVolume, widget_volumeslider);
+        ASSERT_EQUALS(*mVolume, widget_volumespin);
+    }
     if (mKeyFrameIndex)
     {
         ASSERT(widget_activekeyframebutton);
@@ -182,33 +239,33 @@ DetailsView::operator bool() const
     {
         ASSERT(!widget_activekeyframebutton);
     }
-    if (mVideoKeyframeHomeButton)
+    if (mKeyframeHomeButton)
     {
-        ASSERT_EQUALS(*mVideoKeyframeHomeButton, widget_videohome);
+        ASSERT_EQUALS(*mKeyframeHomeButton, widget_home);
     }
-    if (mVideoKeyframePrevButton)
+    if (mKeyframePrevButton)
     {
-        ASSERT_EQUALS(*mVideoKeyframePrevButton, widget_videoprev);
+        ASSERT_EQUALS(*mKeyframePrevButton, widget_prev);
     }
-    if (mVideoKeyframeNextButton)
+    if (mKeyframeNextButton)
     {
-        ASSERT_EQUALS(*mVideoKeyframeNextButton, widget_videonext);
+        ASSERT_EQUALS(*mKeyframeNextButton, widget_next);
     }
-    if (mVideoKeyframeEndButton)
+    if (mKeyframeEndButton)
     {
-        ASSERT_EQUALS(*mVideoKeyframeEndButton, widget_videoend);
+        ASSERT_EQUALS(*mKeyframeEndButton, widget_end);
     }
-    if (mVideoKeyframeAddButton)
+    if (mKeyframeAddButton)
     {
-        ASSERT_EQUALS(*mVideoKeyframeAddButton, widget_videoadd);
+        ASSERT_EQUALS(*mKeyframeAddButton, widget_add);
     }
-    if (mVideoKeyframeRemoveButton)
+    if (mKeyframeRemoveButton)
     {
-        ASSERT_EQUALS(*mVideoKeyframeRemoveButton, widget_videoremove);
+        ASSERT_EQUALS(*mKeyframeRemoveButton, widget_remove);
     }
-    if (mVideoKeyframeCount)
+    if (mKeyframeCount)
     {
-        ASSERT_EQUALS(*mVideoKeyframeCount, widget_videocount);
+        ASSERT_EQUALS(*mKeyframeCount, widget_buttoncount);
     }
     return true;
 }

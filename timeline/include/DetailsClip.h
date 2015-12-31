@@ -203,6 +203,7 @@ private:
 
     cmd::EditClipDetails* mEditCommand = nullptr;
     cmd::EditClipSpeed* mEditSpeedCommand = nullptr;
+    pts mLastEditKeyFrameOffset = -1;
 
     wxPanel* mLengthPanel = nullptr;
     std::vector<pts> mLengths;

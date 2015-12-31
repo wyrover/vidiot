@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-12-29 14:26+0100\n"
+"POT-Creation-Date: 2015-12-31 10:28+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1259,7 +1259,7 @@ msgstr ""
 msgid "Set length of clip"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_HelperMethods.cpp:123
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_HelperMethods.cpp:136
 msgid "Change "
 msgstr ""
 
@@ -1660,7 +1660,7 @@ msgstr ""
 msgid "Unlink clips"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timelinestate\src\StateMoveKeyFrame.cpp:78
+#: C:\Vidiot\vidiot_trunk\timelinestate\src\StateMoveKeyFrame.cpp:82
 msgid "Move key frame"
 msgstr ""
 

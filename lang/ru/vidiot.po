@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-12-29 14:26+0100\n"
+"POT-Creation-Date: 2015-12-31 10:28+0100\n"
 "PO-Revision-Date: 2015-11-29 22:44+0300\n"
 "Last-Translator: Ted Mossolov <teodorrrro@gmail.com>\n"
 "Language-Team: Ted Mossolov <teodorrrro@gmail.com>\n"
@@ -1315,7 +1315,7 @@ msgstr ""
 msgid "Set length of clip"
 msgstr "Задать длительность клипа"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_HelperMethods.cpp:123
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_HelperMethods.cpp:136
 msgid "Change "
 msgstr "Изменить "
 
@@ -1726,7 +1726,7 @@ msgstr "клипа"
 msgid "Unlink clips"
 msgstr "Отменить связь клипов"
 
-#: C:\Vidiot\vidiot_trunk\timelinestate\src\StateMoveKeyFrame.cpp:78
+#: C:\Vidiot\vidiot_trunk\timelinestate\src\StateMoveKeyFrame.cpp:82
 msgid "Move key frame"
 msgstr ""
 

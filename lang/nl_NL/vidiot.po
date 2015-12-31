@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-12-29 14:26+0100\n"
+"POT-Creation-Date: 2015-12-31 10:28+0100\n"
 "PO-Revision-Date: 2015-12-25 12:20+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -1332,7 +1332,7 @@ msgstr ""
 msgid "Set length of clip"
 msgstr "Zet lengte van clip"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_HelperMethods.cpp:123
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_HelperMethods.cpp:136
 msgid "Change "
 msgstr "Verander"
 
@@ -1742,7 +1742,7 @@ msgstr "clip"
 msgid "Unlink clips"
 msgstr "Ontkoppel clips"
 
-#: C:\Vidiot\vidiot_trunk\timelinestate\src\StateMoveKeyFrame.cpp:78
+#: C:\Vidiot\vidiot_trunk\timelinestate\src\StateMoveKeyFrame.cpp:82
 msgid "Move key frame"
 msgstr "Verplaats sleutelbeeld"
 

@@ -83,6 +83,8 @@ public:
 
     void invalidateCachedBitmaps();
 
+    void redrawNow();
+
 protected:
 
     //////////////////////////////////////////////////////////////////////////

@@ -39,20 +39,22 @@ struct KeyFrameValues
     inline KeyFrameValues& Alignment(model::VideoAlignment alignment) { mAlignment.reset(alignment); return *this; }
     inline KeyFrameValues& Position(wxPoint position) { mPosition.reset(position); return *this; }
     inline KeyFrameValues& Rotation(rational64 rotation) { mRotation.reset(rotation); return *this; }
+    inline KeyFrameValues& Volume(int volume) { mVolume.reset(volume); return *this; };
 
     virtual operator bool() const = 0;
 
 protected:
 
     model::IClipPtr mClip = nullptr;
-    boost::optional<size_t> mKeyFrameIndex;
-    boost::optional<pts> mKeyFrameOffset;
-    boost::optional<int> mOpacity;
-    boost::optional<model::VideoScaling> mScaling;
-    boost::optional<rational64> mScalingFactor;
-    boost::optional<model::VideoAlignment> mAlignment;
-    boost::optional<wxPoint> mPosition;
-    boost::optional<rational64> mRotation;
+    boost::optional<size_t> mKeyFrameIndex = boost::none;
+    boost::optional<pts> mKeyFrameOffset = boost::none;
+    boost::optional<int> mOpacity = boost::none;
+    boost::optional<model::VideoScaling> mScaling = boost::none;
+    boost::optional<rational64> mScalingFactor = boost::none;
+    boost::optional<model::VideoAlignment> mAlignment = boost::none;
+    boost::optional<wxPoint> mPosition = boost::none;
+    boost::optional<rational64> mRotation = boost::none;
+    boost::optional<int> mVolume = boost::none;
 };
 
 struct KeyFrame : public KeyFrameValues
@@ -71,24 +73,24 @@ struct DetailsView : public KeyFrameValues
     using KeyFrameValues::KeyFrameValues;
     operator bool() const override;
 
-    inline DetailsView& VHome(bool enabled) { mVideoKeyframeHomeButton.reset(enabled); return *this; };
-    inline DetailsView& VPrev(bool enabled) { mVideoKeyframePrevButton.reset(enabled); return *this; };
-    inline DetailsView& VNext(bool enabled) { mVideoKeyframeNextButton.reset(enabled); return *this; };
-    inline DetailsView& VEnd(bool enabled) { mVideoKeyframeEndButton.reset(enabled); return *this; };
-    inline DetailsView& VAdd(bool enabled) { mVideoKeyframeAddButton.reset(enabled); return *this; };
-    inline DetailsView& VRemove(bool enabled) { mVideoKeyframeRemoveButton.reset(enabled); return *this; };
-    inline DetailsView& VCount(size_t count) { mVideoKeyframeCount.reset(count); return *this; };
+    inline DetailsView& VHome(bool enabled) { mKeyframeHomeButton.reset(enabled); return *this; };
+    inline DetailsView& VPrev(bool enabled) { mKeyframePrevButton.reset(enabled); return *this; };
+    inline DetailsView& VNext(bool enabled) { mKeyframeNextButton.reset(enabled); return *this; };
+    inline DetailsView& VEnd(bool enabled) { mKeyframeEndButton.reset(enabled); return *this; };
+    inline DetailsView& VAdd(bool enabled) { mKeyframeAddButton.reset(enabled); return *this; };
+    inline DetailsView& VRemove(bool enabled) { mKeyframeRemoveButton.reset(enabled); return *this; };
+    inline DetailsView& VCount(size_t count) { mKeyframeCount.reset(count); return *this; };
     inline DetailsView& NoKeyframe() { mNoKeyFrame.reset(true); return *this; };
 
 private:
 
-    boost::optional<bool> mVideoKeyframeHomeButton = boost::none;
-    boost::optional<bool> mVideoKeyframePrevButton = boost::none;
-    boost::optional<bool> mVideoKeyframeNextButton = boost::none;
-    boost::optional<bool> mVideoKeyframeEndButton = boost::none;
-    boost::optional<bool> mVideoKeyframeAddButton = boost::none;
-    boost::optional<bool> mVideoKeyframeRemoveButton = boost::none;
-    boost::optional<size_t> mVideoKeyframeCount = boost::none;
+    boost::optional<bool> mKeyframeHomeButton = boost::none;
+    boost::optional<bool> mKeyframePrevButton = boost::none;
+    boost::optional<bool> mKeyframeNextButton = boost::none;
+    boost::optional<bool> mKeyframeEndButton = boost::none;
+    boost::optional<bool> mKeyframeAddButton = boost::none;
+    boost::optional<bool> mKeyframeRemoveButton = boost::none;
+    boost::optional<size_t> mKeyframeCount = boost::none;
     boost::optional <bool> mNoKeyFrame = boost::none;
 
 };

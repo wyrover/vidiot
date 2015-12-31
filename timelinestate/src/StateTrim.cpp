@@ -37,10 +37,12 @@ StateTrim::StateTrim( my_context ctx ) // entry
     , mShiftDown(getKeyboard().getShiftDown())
 {
     getTrim().start();
+    getSequenceView().setRealtimeRedrawing(true);
 }
 
 StateTrim::~StateTrim() // exit
 {
+    getSequenceView().setRealtimeRedrawing(false);
     getTrim().stop();
 }
 

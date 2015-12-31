@@ -88,6 +88,14 @@ public:
 
     wxSize getDefaultSize() const;
 
+    /// Set this to avoid scheduling clip previews on a separate thread.
+    /// During some operations, it's much more intuitive to have real-time
+    /// feedback, even in the timeline view. Examples are trimming (show proper
+    /// 'new' thumbnail) and moving audio key frame positions (update peak
+    /// view immediately).
+    inline void setRealtimeRedrawing(bool enable) { mRealtime = enable; };
+    inline bool getRealtimeRedrawing() const { return mRealtime; }
+
 private:
 
     //////////////////////////////////////////////////////////////////////////
@@ -99,6 +107,7 @@ private:
     DividerView* mDividerView;
     AudioView*  mAudioView;
     pts mMinimumLength;
+    bool mRealtime = false;
 };
 
 }} // namespace
