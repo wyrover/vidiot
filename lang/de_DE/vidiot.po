@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-12-31 10:28+0100\n"
-"PO-Revision-Date: 2015-12-25 12:23+0100\n"
+"PO-Revision-Date: 2015-12-31 13:07+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -1421,9 +1421,8 @@ msgid "Volume (%)"
 msgstr "Volume (%)"
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:247
-#, fuzzy
 msgid "Audio key frames"
-msgstr "Video Schlüsselbildern."
+msgstr "Audio Schlüsselbildern."
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsTrim.cpp:40
 msgid "Notes"
