@@ -579,10 +579,12 @@ void TestDetailsClip::testChangeVolume()
         sample* cur = audiochunk->getUnreadSamples();
         sample* ref = referenceChunk->getUnreadSamples();
         sample* last = cur + 100;
+        double v{ volume / 100.0 };
         while (cur < last)
         {
-            int32_t c = *cur;
-            int32_t r = *ref * volume / 100;
+            sample c = *cur;
+            sample r{ *ref };
+            model::adjustSampleVolume(v, r);
             ASSERT_EQUALS(c,r);
             cur++;
             ref++;

@@ -19,6 +19,7 @@
 
 #include "AClipEdit.h"
 #include "ClipInterval.h"
+#include "ClipPreview.h"
 #include "ClipView.h"
 #include "CommandProcessor.h"
 #include "EditClipDetails.h"
@@ -51,10 +52,13 @@ MoveKeyFrame::MoveKeyFrame( my_context ctx ) // entry
     ASSERT_NONZERO(interval);
     mBoundaries = interval->getKeyFrameBoundaries(mKeyFrameIndex);
     mKeyFramePosition = interval->getKeyFramePosition(mKeyFrameIndex);
+
+    getSequenceView().setRealtimeRedrawing(true);
 }
 
 MoveKeyFrame::~MoveKeyFrame() // exit
 {
+    getSequenceView().setRealtimeRedrawing(false);
     LOG_DEBUG;
 }
 
@@ -92,6 +96,12 @@ boost::statechart::result MoveKeyFrame::react( const EvMotion& evt )
     // Otherwise, the buttons enabling/disabling in details view is not in 
     // sync with the currently shown frame.
     getCursor().setLogicalPosition(interval->getPerceivedLeftPts() + newPos);
+    // Ensure the clip preview is updated
+    if (mClone->isA<model::AudioClip>())
+    {
+        // Updating the thumbnail for a video clip serves no purpose (it'll stay the same regardless of any move of a key frame)
+        getViewMap().getClipPreview(mClone)->redrawNow();
+    }
     return forward_event();
 }
 

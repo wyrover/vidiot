@@ -57,16 +57,20 @@ void DetailsClip::submitEditCommandUponAudioVideoEdit(const wxString& message, b
 {
     getPlayer()->stop(); // Stop iteration through the sequence, since the sequence is going to be changed.
 
+    pts offset{ video ? mVideoKeyFrameControls->getKeyFrameOffset() : mAudioKeyFrameControls->getKeyFrameOffset() };
+
     if (mEditCommand == nullptr || // No command submit yet
         mEditCommand != model::CommandProcessor::get().GetCurrentCommand() || // If another command was done inbetween
         mEditCommand->getMessage() != message ||  // Another aspect was changed
         message == sEditKeyFramesAdd || // A key frame addition is always a separate command
-        message == sEditKeyFramesRemove)  // A key frame removal is always a separate command
+        message == sEditKeyFramesRemove ||  // A key frame removal is always a separate command
+        mLastEditKeyFrameOffset != offset)  // If the same aspect is edited, but for a different key frame (position), use a separate command
     {
         // Use new clones for the new command
         model::IClipPtr originalClip{ mClip };
         std::pair<model::IClipPtr, model::IClipPtr> clones{ cmd::AClipEdit::clone(mClip) }; // Keep clones in scope to avoid the new clip's link being destructed
         mClip = clones.first;
+        mLastEditKeyFrameOffset = offset;
 
         // Create the command - which replaces the original clip(s) with their changed clones - and add it to the undo system.
         mEditCommand = new cmd::EditClipDetails(getSequence(), message, originalClip, mClip);
@@ -93,12 +97,10 @@ void DetailsClip::submitEditCommandUponAudioVideoEdit(const wxString& message, b
         {
             if (clip && clip->getTrack() != nullptr)
             {
-                ClipPreview* preview{ getViewMap().getClipPreview(clip) };
-                preview->invalidateCachedBitmaps();
-                preview->invalidateRect();
-                preview->repaint();
+                getViewMap().getClipPreview(clip)->redrawNow();
             }
         };
+        getSequenceView().setRealtimeRedrawing(true);
         if (video)
         {
             refreshclip(mVideoKeyFrameControls->getClip());
@@ -107,6 +109,8 @@ void DetailsClip::submitEditCommandUponAudioVideoEdit(const wxString& message, b
         {
             refreshclip(mAudioKeyFrameControls->getClip());
         };
+        getTimeline().Update();
+        getSequenceView().setRealtimeRedrawing(false);
     }
     edit();
     if (video)

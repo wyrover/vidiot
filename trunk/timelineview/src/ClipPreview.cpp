@@ -17,6 +17,7 @@
 
 #include "ClipPreview.h"
 
+#include "SequenceView.h"
 #include "Trim.h"
 #include "Worker.h"
 #include "WorkEvent.h"
@@ -139,12 +140,12 @@ void ClipPreview::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) 
     wxSize size(getSize());
     wxSize minimumSize(getMinimumSize());
 
-    if (getTrim().isActive() &&
+    if (getSequenceView().getRealtimeRedrawing() &&
         mImages.find(size) == mImages.end() &&
         getW() >=  minimumSize.x &&
         getH() >= minimumSize.y)
     {
-        // In case of trimming, update the clip preview immediately. Any newly created preview is the direct result of the trimming.
+        // In case of trimming/moving key frames, update the clip preview immediately. Any newly created preview is the direct result of the edit.
         // Do not schedule the rendering. That would cause a delay in showing the updated image.
         RenderClipPreviewWorkPtr work = render();
         work->execute(false);
@@ -224,6 +225,13 @@ void ClipPreview::invalidateCachedBitmaps()
     abortPendingWork();
     mImages.clear();
     mBitmaps.clear();
+}
+
+void ClipPreview::redrawNow()
+{
+    invalidateCachedBitmaps();
+    invalidateRect();
+    repaint();
 }
 
 //////////////////////////////////////////////////////////////////////////

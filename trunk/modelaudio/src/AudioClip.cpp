@@ -28,6 +28,31 @@
 
 namespace model {
 
+void adjustSampleVolume(const double& volume, sample& s)
+{
+    double base{ M_E };
+    double adjustedSample{ std::trunc((std::pow(base, volume) - 1) / (base - 1) * s) };
+    if (adjustedSample < std::numeric_limits<sample>::min())
+    {
+        adjustedSample = std::numeric_limits<sample>::min();
+    }
+    else if (adjustedSample > std::numeric_limits<sample>::max())
+    {
+        adjustedSample = std::numeric_limits<sample>::max();
+    }
+    s = narrow_cast<sample>(adjustedSample);
+};
+
+// todo volume methods:
+// - experiment with other volume methods?
+// - Make the 'base' of the default selectable? (10.0 for example)
+// - make interpolation selectable? 
+// - Also for fade in/out? 
+// - Add a default in config
+// http://stackoverflow.com/questions/1165026/what-algorithms-could-i-use-for-audio-volume-level
+//auto Linear = [](const double& volume, sample& s) { s = std::floor(volume * s); };
+//auto IncreasedLowVolumeSensitivity = [](const double& volume, sample& s) { s = std::floor(std::sin(volume * M_PI / 2) * s); }; // Note: Does not work for higher values (sine probably too far, resulting in lower volume instead of higher).
+
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
@@ -109,20 +134,20 @@ AudioChunkPtr AudioClip::getNextAudio(const AudioCompositionParameters& paramete
 
     AudioChunkPtr result;
 
-    pts length = getLength();
+    pts length{ getLength() };
 
     if (mProgress < length)
     {
 
-        samplecount requiredSamples = parameters.getChunkSize();
-        samplecount generatedSamples = 0;
+        samplecount requiredSamples{ parameters.getChunkSize() };
+        samplecount generatedSamples{ 0 };
 
         result = boost::make_shared<AudioChunk>(parameters.getNrChannels(), requiredSamples, true, false);
-        sample* buffer = result->getBuffer();
+        sample* buffer{ result->getBuffer() };
 
         while (generatedSamples < requiredSamples)
         {
-            samplecount remainingSamples = requiredSamples - generatedSamples;
+            samplecount remainingSamples{ requiredSamples - generatedSamples };
             if (mInputChunk &&
                 mInputChunk->getUnreadSampleCount() > 0)
             {
@@ -154,23 +179,32 @@ AudioChunkPtr AudioClip::getNextAudio(const AudioCompositionParameters& paramete
         }
         VAR_DEBUG(mProgress)(requiredSamples)(*this);
 
-        int mVolume{ boost::dynamic_pointer_cast<AudioKeyFrame>(getDefaultKeyFrame())->getVolume() };
-        if (mVolume != AudioKeyFrame::sVolumeDefault)
+        int volumeBefore{ boost::dynamic_pointer_cast<AudioKeyFrame>(getFrameAt(mProgress))->getVolume() };
+        int volumeAfter{ boost::dynamic_pointer_cast<AudioKeyFrame>(getFrameAt(mProgress + 1))->getVolume() };
+
+        if (volumeBefore != AudioKeyFrame::sVolumeDefault || volumeAfter != AudioKeyFrame::sVolumeDefault)
         {
-            sample* sBegin = buffer;
-            sample* sEnd = sBegin + requiredSamples;
-            sample* s = sBegin;
-            int32_t volume = static_cast<int32_t>(mVolume);
-            int32_t defaultVolume = static_cast<int32_t>(AudioKeyFrame::sVolumeDefault);
+            sample* sEnd{ buffer + requiredSamples };
+            sample* s{ buffer };
+            int64_t requiredFrames{ narrow_cast<int64_t>(requiredSamples) / parameters.getNrChannels() }; // divide the volume change over this many frames
+            int64_t count{ 0 };
+            rational64 beginVolume{ volumeBefore,100 };
+            rational64 endVolumeDiff{ volumeAfter - volumeBefore, 100 };
+
             while (s < sEnd)
             {
-                *s = static_cast<sample>(static_cast<int32_t>(*s) * volume / defaultVolume);
-                s++;
-                // NOT: *s++ = static_cast<int32_t>(*s) * volume / defaultVolume;
-                // Gives problems on Linux because operand s is used twice in the expression,
-                // see http://en.wikipedia.org/wiki/Increment_and_decrement_operators
+                double volume{ boost::rational_cast<double>(beginVolume + (endVolumeDiff * rational64{count, requiredFrames})) };
+                for (int c{ 0 }; c < parameters.getNrChannels(); ++c, ++s)
+                {
+                    adjustSampleVolume(volume, *s);
+                    // NOT: *s++
+                    // Gave problems on Linux because operand s is used twice in the expression,
+                    // see http://en.wikipedia.org/wiki/Increment_and_decrement_operators
+                }
+                count++;
             }
         }
+        // else: All samples the same default volume.
     }
 
     if (result)
@@ -187,8 +221,8 @@ AudioChunkPtr AudioClip::getNextAudio(const AudioCompositionParameters& paramete
 
 AudioPeaks AudioClip::getPeaks(const AudioCompositionParameters& parameters)
 {
-    pts offset = getOffset();
-    pts length = getLength();
+    pts offset{ getOffset() };
+    pts length{ getLength() };
     if (getInTransition())
     {
         boost::optional<pts> left{ getInTransition()->getRight() };
@@ -203,25 +237,28 @@ AudioPeaks AudioClip::getPeaks(const AudioCompositionParameters& parameters)
         ASSERT_NONZERO(*right);
         length += *right;
     }
-    int mVolume{ boost::dynamic_pointer_cast<AudioKeyFrame>(getDefaultKeyFrame())->getVolume() };
-    if (mVolume == AudioKeyFrame::sVolumeDefault)
-    {
-        return getDataGenerator<AudioFile>()->getPeaks(parameters, Convert::positionToNormalSpeed(offset, getSpeed()), length);
-    }
+
+    KeyFrameMap keyFrames{ getKeyFramesOfPerceivedClip() };
+    model::AudioPeaks peaks{ getDataGenerator<AudioFile>()->getPeaks(parameters, Convert::positionToNormalSpeed(offset, getSpeed()), length) };
     AudioPeaks result;
-    rational64 proportion{ mVolume, AudioKeyFrame::sVolumeDefault };
-    ASSERT_MORE_THAN_EQUALS_ZERO(proportion);
-    for (const AudioPeak& peak : getDataGenerator<AudioFile>()->getPeaks(parameters, Convert::positionToNormalSpeed(offset, getSpeed()), length))
+
+    if (keyFrames.empty() && boost::dynamic_pointer_cast<AudioKeyFrame>(getDefaultKeyFrame())->getVolume() == AudioKeyFrame::sVolumeDefault)
     {
-        int64_t negativePeak{ floor(rational64{peak.first} * proportion) };
-        int64_t positivePeak{ floor(rational64{peak.second} * proportion) };
-        sample n = (negativePeak > std::numeric_limits<sample>::min()) ? static_cast<sample>(negativePeak) : std::numeric_limits<sample>::min();
-        sample p = (positivePeak < std::numeric_limits<sample>::max()) ? static_cast<sample>(positivePeak) : std::numeric_limits<sample>::max();
-        ASSERT_LESS_THAN_EQUALS_ZERO(n);
-        ASSERT_MORE_THAN_EQUALS_ZERO(p);
-        result.emplace_back(n,p);
+        // Performance optimization for default case. Return unchanged peaks from the file.
+        return peaks;
     }
-    return result;
+
+    pts position{ 0 };
+    int volumeBefore{ boost::dynamic_pointer_cast<AudioKeyFrame>(getFrameAt(position))->getVolume() };
+    for (AudioPeak& peak : peaks)
+    {
+        int volumeAfter{ boost::dynamic_pointer_cast<AudioKeyFrame>(getFrameAt(++position))->getVolume() };
+        double volume{ (volumeBefore + volumeAfter) / 200.0 }; // /200: first /2 for the average of the two volumes. Then /100 to get a percentage.
+        adjustSampleVolume(volume, peak.first);
+        adjustSampleVolume(volume, peak.second);
+        volumeBefore = volumeAfter;
+    }
+    return peaks;
 }
 
 //////////////////////////////////////////////////////////////////////////

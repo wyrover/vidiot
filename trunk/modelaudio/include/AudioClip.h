@@ -24,6 +24,13 @@ namespace model {
 
 class AudioPeaks;
 
+/// Change the volume of the given sample
+/// To decrease the volume pass a value < 1.0
+/// To increase the volume pass a value > 1.0
+/// \param s sample to be adjusted
+/// \param volume percentage of original volume
+void adjustSampleVolume(const double& volume, sample& s);
+
 class AudioClip
     :   public ClipInterval
     ,   public IAudio
