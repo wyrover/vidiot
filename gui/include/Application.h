@@ -33,7 +33,7 @@ struct IEventLoopListener
 
 namespace gui {
 
-class CommandLine;
+struct CommandLine;
 
 DECLARE_EVENT(EVENT_IDLE_TRIGGER, EventIdleTrigger, wxString);
 

@@ -31,6 +31,7 @@
 #include "ids.h"
 #include "Intervals.h"
 #include "Mouse.h"
+#include "Player.h"
 #include "PositionInfo.h"
 #include "RemoveEmptyTracks.h"
 #include "Render.h"

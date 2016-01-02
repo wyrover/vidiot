@@ -17,6 +17,7 @@
 
 #include "Dialog.h"
 
+#include "CommandLine.h"
 #include "Config.h"
 #include "UtilMail.h"
 #include "UtilPath.h"
@@ -298,7 +299,7 @@ int generateDebugReport(bool doexit, bool addcontext, bool screenShot, const wxR
         boost::this_thread::sleep(boost::posix_time::milliseconds(250));
 
         wxFileName screenShotFile(wxStandardPaths::Get().GetTempDir(),""); // Store in TEMP
-        wxString nameWithProcessId; nameWithProcessId << "vidiot_screenshot_" << wxGetProcessId();
+        wxString nameWithProcessId; nameWithProcessId << "screenshot_" << wxGetProcessId();
         screenShotFile.SetName(nameWithProcessId);
         screenShotFile.SetExt("png");
         wxScreenDC screen;
@@ -341,7 +342,7 @@ int generateDebugReport(bool doexit, bool addcontext, bool screenShot, const wxR
         bool copyok = wxCopyFile(original, copy.GetLongPath(), false);
         if (copyok)
         {
-            util::mail::sendDebugReport(_("Vidiot crash report"), _("I'm sorry, but Vidiot crashed.\nBy sending this mail you'll provide me with helpful information for resolving the crash.\nThanks for your help.\n\nEric\n"), boost::optional<wxString>(copy.GetLongPath()));
+            util::mail::sendDebugReport(wxString::Format(_("%s crash report"), CommandLine::get().ExeName), wxString::Format(_("I'm sorry, but %1$s crashed.\nBy sending this mail you'll provide me with helpful information for resolving the crash.\nThanks for your help.\n\nEric\n"), CommandLine::get().ExeName), boost::optional<wxString>(copy.GetLongPath()));
         }
     }
     if (doexit)

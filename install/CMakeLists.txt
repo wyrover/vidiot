@@ -54,11 +54,11 @@ if (WIN32 AND NOT UNIX)
   set (CPACK_NSIS_MUI_UNIICON         "${CMAKE_SOURCE_DIR}\\\\images\\\\movie_all.ico")  #  Required for icon on installer AND uninstaller
 
    set (CPACK_NSIS_EXTRA_INSTALL_COMMANDS "!include FileAssoc.nsh
-      !insertmacro APP_ASSOCIATE 'vid' 'vidiot.projectfile' 'Vidiot project file' '$INSTDIR\\\\Vidiot.exe,0' 'Open with Vidiot' '$INSTDIR\\\\Vidiot.exe \\\"%1\\\"'
+      !insertmacro APP_ASSOCIATE 'vid' '${APPNAME_LOWER}.projectfile' '${APPNAME} project file' '$INSTDIR\\\\${APPNAME}.exe,0' 'Open with ${APPNAME}' '$INSTDIR\\\\${APPNAME}.exe \\\"%1\\\"'
       System::Call 'shell32.dll::SHChangeNotify(i, i, i, i) v (0x08000000, 0, 0, 0)'"
    )
 
-   set (CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "!insertmacro APP_UNASSOCIATE 'vid' 'vidiot.projectfile'
+   set (CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "!insertmacro APP_UNASSOCIATE 'vid' '${APPNAME_LOWER}.projectfile'
        System::Call 'shell32.dll::SHChangeNotify(i, i, i, i) v (0x08000000, 0, 0, 0)'"
    )
 
@@ -92,7 +92,8 @@ else ()
   set (CPACK_DEBIAN_PACKAGE_SECTION         "video")
   set (CPACK_DEBIAN_PACKAGE_PRIORITY        "optional")
   set (CPACK_DEBIAN_PACKAGE_DEPENDS         "libc6 (>=2.19), libgtk2.0-bin (>= 2.24.23), libopus0 (>= 1.1), libmp3lame0 (>= 3.99.5), libva1 (>= 1.3.0), libsoundtouch0 (>= 1.7.1), libportaudio2 (>= 19)")
-  set (CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA   "${PROJECT_SOURCE_DIR}/install/linux/postinst;${PROJECT_SOURCE_DIR}/install/linux/postrm")
+# Enable this line to include these scripts again (excluded now because they're empty)
+#  set (CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA   "${PROJECT_SOURCE_DIR}/install/linux/postinst;${PROJECT_SOURCE_DIR}/install/linux/postrm")
   
   # Install shared files used by application
   install (
@@ -134,6 +135,7 @@ else ()
     FILES ${PROJECT_SOURCE_DIR}/install/linux/vidiot.1.gz
     COMPONENT ${APPNAME_LOWER}
     DESTINATION share/man/man1
+    RENAME ${APPNAME_LOWER}.1.gz
     PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ )
   
   # Register vidiot application, .vid mime type, and icon in Nautilus
@@ -141,19 +143,27 @@ else ()
     FILES ${PROJECT_SOURCE_DIR}/install/linux/vidiot.desktop
     COMPONENT ${APPNAME_LOWER}
     DESTINATION share/applications
+    RENAME ${APPNAME_LOWER}.desktop
     PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ )
   install (
     FILES ${PROJECT_SOURCE_DIR}/install/linux/vidiot.xml
     COMPONENT ${APPNAME_LOWER}
     DESTINATION share/mime/packages
+    RENAME ${APPNAME_LOWER}.xml
     PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ )
   install (
     FILES ${PROJECT_SOURCE_DIR}/images/movie48.png
     COMPONENT ${APPNAME_LOWER}
     DESTINATION share/icons/hicolor/48x48/mimetypes
-    RENAME application-vidiot.png
+    RENAME application-${APPNAME_LOWER}.png
     PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ )
 
 endif ()
 
 include (CPack)
+
+#cpack_add_component(Vidiot DISPLAY_NAME displayname INSTALL_TYPES vidiot vidiot2)
+#cpack_add_install_type(vidiot DISPLAY_NAME Vidiot)
+#cpack_add_install_type(vidiot2 DISPLAY_NAME Vidiot2)
+
+

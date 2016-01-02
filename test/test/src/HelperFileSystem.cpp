@@ -49,7 +49,7 @@ RandomTempDir::RandomTempDir(bool cleanup)
     : mFileName(wxFileName::GetTempDir(), "")
     , mCleanup(cleanup)
 {
-    mFileName.AppendDir("Vidiot");
+    mFileName.AppendDir(gui::CommandLine::get().ExeName);
     if (!wxDirExists(mFileName.GetLongPath()))
     {
         mFileName.Mkdir();

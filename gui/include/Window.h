@@ -250,6 +250,7 @@ private:
 
     wxString            mDefaultPerspective;
 
+    wxString mTitle;
     bool mProjectOpen;
     std::atomic<bool> mDialogOpen;
 

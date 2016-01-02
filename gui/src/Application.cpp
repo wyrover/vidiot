@@ -104,7 +104,7 @@ Application::Application(test::IEventLoopListener* eventLoopListener)
     :   wxApp()
     ,   mEventLoopListener(eventLoopListener)
     ,   mEventLoopStarted(false)
-    ,   mCommandLine(boost::make_shared<CommandLine>())
+    ,   mCommandLine(boost::make_shared<CommandLine>(GetAppName()))
 {
     // NOT: wxHandleFatalExceptions();
     // These are handled via the exception handlers in Main.cpp.
@@ -112,7 +112,9 @@ Application::Application(test::IEventLoopListener* eventLoopListener)
 
     ::wxInitAllImageHandlers();
 
-    SetAppName(mEventLoopListener ? sTestApplicationName : "Vidiot");
+    wxString exeName{ GetAppName() };
+    if (mCommandLine->ExeName.Lower() == "vidiot") { mCommandLine->ExeName = "Vidiot"; }
+    SetAppName(mEventLoopListener ? sTestApplicationName : mCommandLine->ExeName);
     SetVendorName("Eric Raijmakers");
 
     // Logging initialization/termination is not made part of wxWidgets Init/Run/Exit
@@ -254,7 +256,7 @@ void Application::OnEventLoopEnter(wxEventLoopBase* loop)
 
     if (!mEventLoopStarted && loop->IsMain())
     {
-        util::thread::setCurrentThreadName("Vidiot"); // Required to show proper name in Ubuntu system monitor
+        util::thread::setCurrentThreadName(CommandLine::get().ExeName); // Required to show proper name in Ubuntu system monitor
         mEventLoopStarted = true;
         dynamic_cast<Window*>(GetTopWindow())->init();
     }
@@ -355,7 +357,7 @@ void Application::OnInitCmdLine (wxCmdLineParser &parser)
 {
     static const wxCmdLineEntryDesc cmdLineDesc[] =
     {
-        { wxCMD_LINE_PARAM, "file", "file to be opened", "vidiot project file (*." + model::Project::sFileExtension + ")", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
+        { wxCMD_LINE_PARAM, "file", "file to be opened", "project file (*." + model::Project::sFileExtension + ")", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
         { wxCMD_LINE_SWITCH, "h", "help", "show this help message" },
         { wxCMD_LINE_SWITCH, "v", "verbose", "be verbose (only required for development)" }, // Required for running debug (apparently for logging)
         { wxCMD_LINE_NONE }

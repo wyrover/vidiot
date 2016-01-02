@@ -389,8 +389,8 @@ BuildPackage()
     dpkg-deb --control ${package} fix_up_deb/DEBIAN
     rm ${package}
     chmod 0644 fix_up_deb/DEBIAN/md5sums
-    chmod 0755 fix_up_deb/DEBIAN/postinst
-    chmod 0755 fix_up_deb/DEBIAN/postrm
+#    chmod 0755 fix_up_deb/DEBIAN/postinst
+#    chmod 0755 fix_up_deb/DEBIAN/postrm
     find -type d -print0 |xargs -0 chmod 0755
     fakeroot dpkg -b fix_up_deb ${package}
 
