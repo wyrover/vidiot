@@ -359,7 +359,7 @@ DialogOptions::~DialogOptions()
 
     if (restartRequired)
     {
-        if (wxYES == gui::Dialog::get().getConfirmation(_("Restart required"), _("Some of the settings that were changed require Vidiot to be restarted. Do you want Vidiot to restart now?"), wxYES | wxNO))
+        if (wxYES == gui::Dialog::get().getConfirmation(_("Restart required"), wxString::Format(_("Some of the settings that were changed require %1$s to be restarted. Do you want %1$s to restart now?"), gui::CommandLine::get().ExeName), wxYES | wxNO))
         {
             Config::WorkspacePerspectives::removeAll();
             dynamic_cast<gui::Application*>(wxTheApp)->restart();

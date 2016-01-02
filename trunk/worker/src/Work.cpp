@@ -17,6 +17,7 @@
 
 #include "Work.h"
 
+#include "CommandLine.h"
 #include "StatusBar.h"
 #include "UtilThread.h"
 #include "WorkEvent.h"
@@ -127,7 +128,7 @@ void Work::showProgress(int value)
 void Work::setThreadName(const std::string& name)
 {
     std::ostringstream s;
-    s << "Vidiot Worker: " + name;
+    s << gui::CommandLine::get().ExeName.Mid(0,6) + ":" + name;
     util::thread::setCurrentThreadName(s.str().c_str());
 }
 

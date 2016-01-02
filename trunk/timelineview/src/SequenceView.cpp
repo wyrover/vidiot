@@ -38,7 +38,7 @@ namespace gui { namespace timeline {
 const pixel SequenceView::MinimalGreyAboveVideoTracksHeight{ 10 };
 const pixel SequenceView::MinimalGreyBelowAudioTracksHeight{ 10 };
 
-
+// todo bug: edit volume of clip (default key frame). Undo. Redo. The clip's previews (in timeline) are NOT updated!
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////

@@ -21,17 +21,16 @@
 
 namespace gui {
 
-class CommandLine
+struct CommandLine
     :   public SingleInstance<CommandLine>
 {
-public:
-
     //////////////////////////////////////////////////////////////////////////
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    CommandLine()
-        :   EditFile(boost::none)
+    CommandLine(const wxString& exeName)
+        : EditFile(boost::none)
+        , ExeName(exeName)
     {
     }
 
@@ -43,6 +42,7 @@ public:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
+    wxString ExeName;
     boost::optional<wxString> EditFile;
 };
 

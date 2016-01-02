@@ -91,15 +91,15 @@ IMPLEMENT_DYNAMIC_CLASS(ViewHelper, wxView);
 const int sStatusProcessing = 8;
 int Window::sSequenceMenuIndex = 0;
 #ifndef NDEBUG
-static const wxString sTitle{ "Vidiot (DEBUG)" };
+static const wxString sTitleDebug(" (DEBUG)");
 #else
-static const wxString sTitle{"Vidiot"};
+static const wxString sTitleDebug("");
 #endif
 
 Window::Window()
     : wxDocParentFrame()
     , mDocManager(new wxDocManager())
-    , mDocTemplate(new wxDocTemplate(mDocManager, _("Vidiot files"), "*." + model::Project::sFileExtension, "", model::Project::sFileExtension, _("Vidiot Project"), _("Vidiot Project View"), CLASSINFO(model::Project), CLASSINFO(ViewHelper)))
+    , mDocTemplate(new wxDocTemplate(mDocManager, wxString::Format(_("%s files"), CommandLine::get().ExeName), "*." + model::Project::sFileExtension, "", model::Project::sFileExtension, wxString::Format(_("%s Project"), CommandLine::get().ExeName), wxString::Format(_("%s Project View"), CommandLine::get().ExeName), CLASSINFO(model::Project), CLASSINFO(ViewHelper)))
     , mDialog(new Dialog())
     , mWatcher(0)
     , mVisibleWorker(0)
@@ -121,8 +121,9 @@ Window::Window()
     , sPaneCaptionDetails(_("Details"))
     , sPaneCaptionPreview(_("Preview"))
     , sPaneCaptionTimelines(_("Timelines"))
+    , mTitle{ CommandLine::get().ExeName + sTitleDebug }
 {
-    Create(mDocManager, 0, wxID_ANY, sTitle, wxDefaultPosition, wxSize(1000,700));
+    Create(mDocManager, 0, wxID_ANY, mTitle, wxDefaultPosition, wxSize(1000,700));
 
     DragAcceptFiles(true);
 
@@ -554,7 +555,7 @@ void Window::onCloseProject(model::EventCloseProject &event )
 	mMenuEdit->Enable(wxID_CUT,false);
 	mMenuEdit->Enable(wxID_COPY,false);
 	mMenuEdit->Enable(wxID_PASTE,false);
-    SetTitle(sTitle); // Remove the title
+    SetTitle(mTitle); // Remove the title
     mVisibleWorker->abort();
     mInvisibleWorker->abort();
     mProjectOpen = false;
@@ -864,17 +865,20 @@ void Window::onLog(wxCommandEvent& event)
 
 void Window::onConfig(wxCommandEvent& event)
 {
+#if !(wxUSE_PRINTF_POS_PARAMS == 1)
+#error wxUSE_PRINTF_POS_PARAMS must equal 1
+#endif
     static bool shown = false;
     if (!shown)
     {
         Dialog::get().getConfirmation(_("Attention"),
-            _("Note that changing this file will not update the gui.\n"
-            "Changed settings are applied only after restarting the application.\n"
-            "Note that Vidiot, when closing, also updates the file. Therefore, always\n"
-            "close Vidiot first, before editing and saving this file in a text editor.\n"
+            wxString::Format(_("Note that changing this file will not update the gui.\n"
+            "Changed settings are applied only after restarting %1$s.\n"
+            "Note that %1$s, when closing, also updates the file. Therefore, always\n"
+            "close %1$s first, before editing and saving this file in a text editor.\n"
             "\n\n"
-            "Incorrectly changed settings may cause the application to crash upon startup.\n"
-            "If that happens, delete the file from disk (or make the file empty) and restart Vidiot.\n"));
+            "Incorrectly changed settings may cause %1$s to crash upon startup.\n"
+            "If that happens, delete the file from disk (or make the file empty) and restart %1$s.\n"), CommandLine::get().ExeName));
         shown = true;
     }
     if (!wxLaunchDefaultApplication(util::path::getConfigFilePath().GetFullPath()))
@@ -982,7 +986,7 @@ void Window::setSequenceMenu(wxMenu* menu, bool enabled)
 
 void Window::setAdditionalTitle(const wxString& title)
 {
-    SetTitle(sTitle + ": " + title);
+    SetTitle(mTitle + ": " + title);
 }
 
 bool Window::isDialogOpen() const
@@ -1028,11 +1032,11 @@ void Window::updateTitle()
 {
     if (GetDocumentManager()->GetCurrentDocument() != 0)
     {
-        SetTitle(model::Project::get().getRoot()->getName() + " - " + sTitle);
+        SetTitle(model::Project::get().getRoot()->getName() + " - " + mTitle);
     }
     else
     {
-        SetTitle(sTitle);
+        SetTitle(mTitle);
     }
 }
 

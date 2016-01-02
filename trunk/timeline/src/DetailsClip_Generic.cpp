@@ -85,7 +85,7 @@ struct KeyFrameControlsImpl
         mRemoveButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &KeyFrameControlsImpl::onRemove, this);
 
     }
-    ~KeyFrameControlsImpl() 
+    ~KeyFrameControlsImpl()
     {
         mHomeButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &KeyFrameControlsImpl::onHome, this);
         mPrevButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &KeyFrameControlsImpl::onPrev, this);
@@ -93,9 +93,9 @@ struct KeyFrameControlsImpl
         mEndButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &KeyFrameControlsImpl::onEnd, this);
         mAddButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &KeyFrameControlsImpl::onAdd, this);
         mRemoveButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &KeyFrameControlsImpl::onRemove, this);
-        for (auto button : mKeyFramesButtons) 
-        { 
-            button.second->Unbind(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, &KeyFrameControlsImpl::onNumberedButton, this); 
+        for (auto button : mKeyFramesButtons)
+        {
+            button.second->Unbind(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, &KeyFrameControlsImpl::onNumberedButton, this);
         }
     }
 
@@ -163,14 +163,14 @@ struct KeyFrameControlsImpl
             // while keeping the current video offset approximately centered.
             //
             // Note that this algorithm is first called with a size '0' (first creation of details view)
-            // leading to disabling of a lot of buttons initially. Therefore, this algorithm is 
+            // leading to disabling of a lot of buttons initially. Therefore, this algorithm is
             // re-executed always, even if there's enough room for all buttons (because these buttons
 
             int totalNumberOfButtons{ static_cast<int>(mKeyFramesButtons.size()) };
             int buttonWidth{ requiredSize / totalNumberOfButtons };
             int maxFittingButtons{ availableSize / buttonWidth };
             int lastPossibleButton{ totalNumberOfButtons - 1 };
-            int middle{ std::distance(keyframes.begin(), std::find_if(keyframes.begin(), keyframes.end(), [keyFrameOffset](auto kvp) { return kvp.first >= keyFrameOffset; })) };
+            int middle{ static_cast<int>(std::distance(keyframes.begin(), std::find_if(keyframes.begin(), keyframes.end(), [keyFrameOffset](auto kvp) { return kvp.first >= keyFrameOffset; }))) };
             int move{ maxFittingButtons / 2 };
             int first{ middle - move };
             int last{ middle + move };
@@ -259,7 +259,7 @@ struct KeyFrameControlsImpl
         else
         {
             pts position{ getKeyFrameOffset() };
-            std::map<pts, boost::shared_ptr<KEYFRAMETYPE>>::const_iterator it{ keyframes.find(position) };
+            typename std::map<pts, boost::shared_ptr<KEYFRAMETYPE>>::const_iterator it{ keyframes.find(position) };
             if (it != keyframes.end())
             {
                 result = it->second;
@@ -292,9 +292,9 @@ struct KeyFrameControlsImpl
 
     void onHome(wxCommandEvent& event)
     {
-        moveCursor([](const model::KeyFrameMap& keyFrames, pts current) -> pts 
-        { 
-            return keyFrames.begin()->first; 
+        moveCursor([](const model::KeyFrameMap& keyFrames, pts current) -> pts
+        {
+            return keyFrames.begin()->first;
         });
         event.Skip();
     }
@@ -363,17 +363,17 @@ struct KeyFrameControlsImpl
         event.Skip();
     }
 
-    void onAdd(wxCommandEvent& event) 
-    { 
-        CatchExceptions([this] 
-        { 
+    void onAdd(wxCommandEvent& event)
+    {
+        CatchExceptions([this]
+        {
             mParent->submitEditCommandUponAudioVideoEdit(mParent->sEditKeyFramesAdd, std::is_same<CLIPTYPE, model::VideoClip>::value, [this]
             {
                 getClip()->addKeyFrameAt(getKeyFrameOffset(), getKeyFrame());
             });
             update();
         });
-        event.Skip(); 
+        event.Skip();
     };
 
     void onRemove(wxCommandEvent& event)
@@ -404,6 +404,7 @@ struct KeyFrameControlsImpl
 typedef KeyFrameControlsImpl < model::VideoClip, model::VideoKeyFrame > VideoKeyFrameControls;
 typedef KeyFrameControlsImpl < model::AudioClip, model::AudioKeyFrame > AudioKeyFrameControls;
 
+template <>
 void VideoKeyFrameControls::updateKeyFrameSettings()
 {
     model::VideoKeyFramePtr videoKeyFrame{ getKeyFrame() };
@@ -466,6 +467,7 @@ void VideoKeyFrameControls::updateKeyFrameSettings()
     mParent->mPositionYSpin->Enable(!videoKeyFrame->isInterpolated());
 }
 
+template <>
 void AudioKeyFrameControls::updateKeyFrameSettings()
 {
     model::AudioKeyFramePtr audioKeyFrame{ getKeyFrame() };

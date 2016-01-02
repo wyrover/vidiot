@@ -17,6 +17,7 @@
 
 #include "Project.h"
 
+#include "CommandLine.h"
 #include "CommandProcessor.h"
 #include "Config.h"
 #include "Dialog.h"
@@ -307,7 +308,7 @@ bool Project::DoOpenDocument(const wxString& file)
             // Memory leak of Properties. Causes crash when opening a new project.
             // ASSERT(mProperties.unique());
             LOG_ERROR;
-            gui::Dialog::get().getConfirmation(_("Open Failed"), wxString::Format(_("Could not read %s. \nVidiot must be restarted ((known bug that opening a project after this will fail)"), file));
+            gui::Dialog::get().getConfirmation(_("Open Failed"), wxString::Format(_("Could not read %s. \n%s must be restarted (known bug that opening a project after this will fail)"), file, gui::CommandLine::get().ExeName));
             Config::WriteBool(Config::sPathProjectAutoLoadEnabled, false); // Ensure that upon next startup not immediately a file is opened, possibly failing again.
             Config::get().Flush();
             gui::Window::get().GetEventHandler()->QueueEvent(new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED,wxID_EXIT));

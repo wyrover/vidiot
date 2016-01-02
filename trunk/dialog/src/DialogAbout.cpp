@@ -18,6 +18,7 @@
 #include "DialogAbout.h"
 
 #include "Application.h"
+#include "CommandLine.h"
 #include "Config.h"
 #include "UtilLocale.h"
 #include "UtilPath.h"
@@ -37,7 +38,7 @@ wxString sDebug("");
 #endif
 
 DialogAbout::DialogAbout()
-    :   wxDialog(&Window::get(),wxID_ANY, "Vidiot: " + _("About") + wxString::Format(wxT(" (%s - %d)%s"), Application::getVersion(), Application::getRevision(), sDebug),wxDefaultPosition,wxSize(550,550),wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER,wxDialogNameStr )
+    :   wxDialog(&Window::get(),wxID_ANY, CommandLine::get().ExeName + ": " + _("About") + wxString::Format(wxT(" (%s - %d)%s"), Application::getVersion(), Application::getRevision(), sDebug),wxDefaultPosition,wxSize(550,550),wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER,wxDialogNameStr )
     ,   mBack(0)
 {
     VAR_DEBUG(this);

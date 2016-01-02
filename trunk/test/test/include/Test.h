@@ -47,6 +47,7 @@
 #include "ClipCreator.h"
 #include "ClipView.h"
 #include "Combiner.h"
+#include "CommandLine.h"
 #include "CommandProcessor.h"
 #include "Config.h"
 #include "Convert.h"
