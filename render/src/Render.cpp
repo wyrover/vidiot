@@ -66,7 +66,7 @@ public:
         }
         VAR_INFO(sequence)(from)(to)(mFrom)(mLength);
         ASSERT_MORE_THAN_EQUALS_ZERO(mFrom);
-        ASSERT_MORE_THAN_ZERO(mLength);
+        ASSERT_MORE_THAN_EQUALS_ZERO(mLength);
         ASSERT_LESS_THAN_EQUALS(mFrom,sequence->getLength());
         ASSERT_LESS_THAN_EQUALS(mFrom + mLength,sequence->getLength());
 
