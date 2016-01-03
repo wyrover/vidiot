@@ -108,7 +108,7 @@ void DetailsPanel::showBox(const wxString& name, bool show)
 void DetailsPanel::addOption(const wxString& name, wxWindow* widget)
 {
     ASSERT(mBoxSizer);
-    wxStaticText* title = new wxStaticText(this, wxID_ANY, name, wxDefaultPosition, wxSize(100,-1));
+    wxStaticText* title = new wxStaticText(this, wxID_ANY, name, wxDefaultPosition, wxSize(120,-1), wxST_ELLIPSIZE_END);
     mBoxSizer->Add(title, wxSizerFlags(0).CenterVertical().Left());//, 0, wxALL|wxALIGN_TOP, 0);
     mBoxSizer->Add(widget, wxSizerFlags(1).Expand());
 

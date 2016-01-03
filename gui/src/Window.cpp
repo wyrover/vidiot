@@ -320,7 +320,7 @@ Window::Window()
     }
     // Ensure that the panes are properly translated. When loading a 'previous' perspective, the pane titles are read from the perspective as well.
     // As a result, changing the language has no effect on pane titles. Explicitly setting the titles here ensures that the proper translations are used.
-    mUiManager.GetPane(sPaneNameProject).Caption(sPaneCaptionHelp);
+    mUiManager.GetPane(sPaneNameProject).Caption(sPaneCaptionProject);
     mUiManager.GetPane(sPaneNameDetails).Caption(sPaneCaptionDetails); // Also ensure that any specific details name (from a previous session) is replaced with the default.
     mUiManager.GetPane(sPaneNamePreview).Caption(sPaneCaptionPreview);
     mUiManager.GetPane(sPaneNameTimelines).Caption(sPaneCaptionTimelines);
