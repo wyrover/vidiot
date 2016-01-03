@@ -158,4 +158,13 @@ void TestRender::testRenderingTransformedClip()
     RenderAndPlaybackCurrentTimeline();
 }
 
+void TestRender::testRenderEmptySequence()
+{
+    StartTestSuite();
+    TimelineDeleteClips({ VideoClip(0,0), VideoClip(0,1), VideoClip(0,2), VideoClip(0,3), VideoClip(0,4), VideoClip(0,5), VideoClip(0,6) });
+    std::pair< RandomTempDirPtr, wxFileName > tempdir_and_filename = OpenRenderDialogAndSetFilename();
+    ButtonTriggerPressed(gui::DialogRenderSettings::get().getRenderButton());
+    WaitUntilDialogOpen(false);
+}
+
 } // namespace

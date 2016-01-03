@@ -53,6 +53,11 @@ public:
 
     void testRenderingTransformedClip();
 
+    /// Generating an empty sequence should not lead to errors.
+    /// Generated output is not really relevant, however the application should
+    /// not crash.
+    void testRenderEmptySequence();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////
