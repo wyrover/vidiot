@@ -293,7 +293,20 @@ void Application::OnAssertFailure(const wxChar *file, int Line, const wxChar *fu
     VAR_ERROR(File)(Line)(Function)(Condition)(Message);
     LOG_STACKTRACE;
     breakIntoDebugger();
-    Dialog::get().getDebugReport(true, wxThread::IsMain()); // Adding context fails on secondary thread on Windows.
+    // NOT: Dialog::get().getDebugReport(true, wxThread::IsMain()); // Adding context fails on secondary thread on Windows.
+    //
+    // wxASSERT_MSG (as an example) should only be used for debugging, not in production (see wxASSERT_MSG help)
+    // Example scenario:
+    // Configure dutch language on a Windows system which has the decimal separator set to ';' (semicolon).
+    // One of the asserts of wx is to check that the system decimal separator equals the wx decimal separator.
+    //
+    // src/common/intl.cpp (1539):
+    // wxASSERT_MSG
+    //        wxString::Format("%.3f", 1.23).find(str) != wxString::npos,
+    //        "Decimal separator mismatch -- did you use setlocale()?"
+    //        "If so, use wxLocale to change the locale instead."
+    //
+    // However, this message is not fatal as Vidiot works fine afterwards.
 }
 
 #if wxUSE_EXCEPTIONS
