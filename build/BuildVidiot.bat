@@ -1,6 +1,6 @@
 @echo off
 
-REM Copyright 2013-2015 Eric Raijmakers.
+REM Copyright 2013-2016 Eric Raijmakers.
 REM
 REM This file is part of Vidiot.
 REM
