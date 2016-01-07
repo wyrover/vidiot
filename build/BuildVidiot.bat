@@ -149,8 +149,10 @@ REM ============================== BUILD ==============================
 REM === UPDATE TRANSLATIONS FILES ===
 
 REM Remove and ~ files
-dir /s /o /b %SOURCE%\*~ > %TEMP%\files.txt
-for /f "delims=" %%f in (%TEMP%\files.txt) do del "%%f"
+dir /s /o /b %SOURCE%\*~ > %TEMP%\files.txt 2>nul
+if exist %TEMP%\files.txt (
+	for /f "delims=" %%f in (%TEMP%\files.txt) do del "%%f"
+)
 
 set LANGTOOLSDIR=C:\Program Files (x86)\Poedit\Gettexttools\bin
 set LANGDIR=%SOURCE%\lang
@@ -159,12 +161,15 @@ dir /b /s *.cpp *.h > "%TMP%/files.txt"
 popd
 if not exist "%LANGTOOLSDIR%" goto:NOPO
 echo Updating "%LANGDIR%\vidiot.pot" template
-"%LANGTOOLSDIR%\xgettext.exe" -f "%TMP%/files.txt" --output=%LANGDIR%\vidiot.pot --keyword=_
+"%LANGTOOLSDIR%\xgettext.exe" -f "%TMP%/files.txt" --output=%LANGDIR%\vidiot.pot --keyword=_ --add-comments=" TRANSLATORS"
 
 REM Update all translations 
 for /f "tokens=*" %%L in ('dir /b/o "%%LANGDIR%%"') do (
     if exist "%LANGDIR%\%%L\vidiot.po" (
-        echo Updating language %%L
+	    
+		set LANG=%%L
+		set LANG=!LANG:~0,2!
+        echo Updating %%L ^(!LANG!^)
 
         echo Updating "%LANGDIR%\%%L\vidiot.po" from "%LANGDIR%\vidiot.pot"
         "%LANGTOOLSDIR%\msgmerge.exe" -U "%LANGDIR%\%%L\vidiot.po" "%LANGDIR%\vidiot.pot"
@@ -172,14 +177,19 @@ for /f "tokens=*" %%L in ('dir /b/o "%%LANGDIR%%"') do (
         echo Compiling "%LANGDIR%\%%L\vidiot.po"
         "%LANGTOOLSDIR%\msgfmt.exe" "%LANGDIR%\%%L\vidiot.po" --output-file="%LANGDIR%\%%L\vidiot.mo"
 
-        if exist "%VIDIOT_DIR%\wxWidgets\locale\%%L.po" (
-		
-            echo Updating wxwidgets %%L.po into "%LANGDIR%\%%L\vidiotwx.po"
-            copy "%VIDIOT_DIR%\wxWidgets\locale\%%L.po" "%LANGDIR%\%%L\vidiotwx.po"
-
-            echo Compiling "%LANGDIR%\%%L\vidiotwx.po"
-            "%LANGTOOLSDIR%\msgfmt.exe" "%LANGDIR%\%%L\vidiotwx.po" --output-file="%LANGDIR%\%%L\vidiotwx.mo"
-        )
+		set WXLANG_OUT=%LANGDIR%\%%L\vidiotwx.po
+		set WXLANG_INP=%VIDIOT_DIR%\wxWidgets\locale\!LANG!.po
+		if not exist !WXLANG_INP! set WXLANG_INP="%VIDIOT_DIR%\wxWidgets\locale\!LANG:~0,2!.po"
+		if exist "!WXLANG_OUT!"  (
+			if exist "!WXLANG_INP!" (
+				echo Updating "!WXLANG_OUT!" from "!WXLANG_INP!"
+				"%LANGTOOLSDIR%\msgmerge.exe" -U "!WXLANG_OUT!" "!WXLANG_INP!"
+			)
+		)
+		if exist "!WXLANG_OUT!" (
+			echo Compiling "!WXLANG_OUT!"
+			"%LANGTOOLSDIR%\msgfmt.exe" "!WXLANG_OUT!" --output-file="%LANGDIR%\%%L\vidiotwx.mo"
+		)
     )
 )
 

@@ -113,6 +113,7 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
         mLengthButtons.push_back(button);
     }
     updateLengthButtons();
+    // TRANSLATORS: Do not let the string exceed 20 characters.
     addOption(_("Fixed lengths (s)"), mLengthPanel);
 
     mSpeedPanel = new wxPanel(this);
@@ -128,6 +129,7 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     speedsizer->Add(mSpeedSlider, wxSizerFlags(1).Expand());
     speedsizer->Add(mSpeedSpin, wxSizerFlags(0));
     mSpeedPanel->SetSizer(speedsizer);
+    // TRANSLATORS: Do not let the string exceed 20 characters.
     addOption(_("Speed"), mSpeedPanel);
 
     mSpeedSlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onSpeedSliderChanged, this);
@@ -144,6 +146,7 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     opacitysizer->Add(mOpacitySlider, wxSizerFlags(1).Expand());
     opacitysizer->Add(mOpacitySpin, wxSizerFlags(0));
     mOpacityPanel->SetSizer(opacitysizer);
+    // TRANSLATORS: Do not let the string exceed 20 characters.
     addOption(_("Opacity"), mOpacityPanel);
 
     mRotationPanel = new wxPanel(this);
@@ -161,6 +164,7 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     rotationsizer->Add(mRotationSlider, wxSizerFlags(1).Expand());
     rotationsizer->Add(mRotationSpin, wxSizerFlags(0));
     mRotationPanel->SetSizer(rotationsizer);
+    // TRANSLATORS: Do not let the string exceed 20 characters.
     addOption(_("Rotation"), mRotationPanel);
 
     mScalingPanel = new wxPanel(this);
@@ -179,6 +183,7 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     scalingsizer->Add(mScalingSlider, wxSizerFlags(1).Expand());
     scalingsizer->Add(mScalingSpin, wxSizerFlags(0));
     mScalingPanel->SetSizer(scalingsizer);
+    // TRANSLATORS: Do not let the string exceed 20 characters.
     addOption(_("Scaling"), mScalingPanel);
 
     mAlignmentPanel = new wxPanel(this);
@@ -207,12 +212,14 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     alignmentsizer->Add(mPositionYSlider, wxSizerFlags(1000));
     alignmentsizer->Add(mPositionYSpin, wxSizerFlags(0).Expand());
     mAlignmentPanel->SetSizer(alignmentsizer);
+    // TRANSLATORS: Do not let the string exceed 20 characters.
     addOption(_("Position"), mAlignmentPanel);
 
     // Give these two the same width
     mSelectAlignment->SetMinSize(wxSize(mSelectScaling->GetSize().x,-1));
     mSelectScaling->SetMinSize(wxSize(mSelectAlignment->GetSize().x,-1));
 
+    // TRANSLATORS: Do not let the string exceed 20 characters.
     addOption(_("Video key frames"), mVideoKeyFrameControls->mEditPanel);
 
     mOpacitySlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onOpacitySliderChanged, this);
@@ -239,11 +246,13 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     volumesizer->Add(mVolumeSlider, wxSizerFlags(1).Expand());
     volumesizer->Add(mVolumeSpin, wxSizerFlags(0));
     mVolumePanel->SetSizer(volumesizer);
+    // TRANSLATORS: Do not let the string exceed 20 characters.
     addOption(_("Volume (%)"), mVolumePanel);
 
     mVolumeSlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onVolumeSliderChanged, this);
     mVolumeSpin->Bind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onVolumeSpinChanged, this);
 
+    // TRANSLATORS: Do not let the string exceed 20 characters.
     addOption(_("Audio key frames"), mAudioKeyFrameControls->mEditPanel);
 
     mTransitionBoxSizer = addBox(boost::none);

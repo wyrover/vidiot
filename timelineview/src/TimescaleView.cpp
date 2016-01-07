@@ -212,8 +212,16 @@ void TimescaleView::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset
         {
             dc.SetTextForeground(wxColour{ 0, 255, 0 });
             dc.SetFont(wxFont(wxSize(0,11),wxFONTFAMILY_DEFAULT,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL));
-            wxString s; s << "Zoom:" << zoom.numerator() << "/" << zoom.denominator();
-            dc.DrawText( s, scrolledAndShiftedPosition + wxPoint(25, TimeScaleSecondHeight - 5));
+
+            wxString s; s << _("Zoom") << ": " << zoom.numerator() << "/" << zoom.denominator();
+            wxSize bbox{ dc.GetTextExtent(s) };
+            dc.SetBackground(wxColour{ 0,128,128 });
+            dc.SetBrush(wxBrush{ wxColour{0,128,128}, wxBRUSHSTYLE_SOLID });
+            dc.SetPen(wxPen{ wxColour{ 0, 128, 128 }, 1 });
+
+            wxPoint textPosition = scrolledAndShiftedPosition + wxPoint(25, TimeScaleSecondHeight - 5);
+            dc.DrawRectangle(textPosition, bbox);
+            dc.DrawText(s, textPosition);
         }
     }
 }

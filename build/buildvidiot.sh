@@ -264,7 +264,7 @@ UpdateLanguageFiles()
     languages_root=${SOURCE}/lang
     find -L ${SOURCE} -name *.cpp -o -name *.h > /tmp/files
 	echo Updating template lang/vidiot.pot
-	xgettext -f /tmp/files --output=${languages_root}/vidiot.pot --keyword=_
+	xgettext -f /tmp/files --output=${languages_root}/vidiot.pot --keyword=_ --add-comments=" TRANSLATORS"
 
     for subdir in `ls -d ${languages_root}/*/`; do
     	language=`basename ${subdir}`
@@ -281,20 +281,23 @@ UpdateLanguageFiles()
 	        echo Compiling lang/${language}/vidiot.po
 	        msgfmt ${languagedir}/vidiot.po --output-file=${languagedir}/vidiot.mo
 
-            wxlang=${WXSRC_DIR}/locale/${language}.po
-            if [ ! -f ${wxlang} ]; then
+			wxlang_out=${languagedir}/vidiotwx.po
+            wxlang_inp=${WXSRC_DIR}/locale/${language}.po
+            if [ ! -f ${wxlang_inp} ]; then
                 # from nl_NL take 'nl'
-                wxlang=${WXSRC_DIR}/locale/${languageonly}.po
+                wxlang_inp=${WXSRC_DIR}/locale/${languageonly}.po
             fi
 
-	        if [ -f ${wxlang} ]; then
+			if [ -f ${wxlang_out} ]; then
+				if [ -f ${wxlang_inp} ]; then
 
-	            echo Updating lang/${language}/vidotwx.po
-	            cp ${wxlang} ${languagedir}/vidiotwx.po
+					echo Updating ${wxlang_out}
+					msgmerge -U ${wxlang_inp} ${wxlang_out}
 
-	            echo Compiling lang/${language}/vidotwx.po
-	            msgfmt ${wxlang} --output-file=${languagedir}/vidiotwx.mo
-	        fi
+					echo Compiling ${wxlang_out}
+					msgfmt ${wxlang_out} --output-file=${languagedir}/vidiotwx.mo
+				fi
+			fi
 		fi
    	done
    	# Delete all po~ files

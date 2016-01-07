@@ -324,6 +324,7 @@ Window::Window()
     mUiManager.GetPane(sPaneNameDetails).Caption(sPaneCaptionDetails); // Also ensure that any specific details name (from a previous session) is replaced with the default.
     mUiManager.GetPane(sPaneNamePreview).Caption(sPaneCaptionPreview);
     mUiManager.GetPane(sPaneNameTimelines).Caption(sPaneCaptionTimelines);
+    mUiManager.GetPane(sPaneNameHelp).Caption(sPaneCaptionHelp);
     updateViewMenu();
 
     Bind(model::EVENT_OPEN_PROJECT,     &Window::onOpenProject,     this);
@@ -856,9 +857,7 @@ void Window::onLog(wxCommandEvent& event)
 
     if (!wxLaunchDefaultApplication(util::path::getLogFilePath().GetFullPath()))
     {
-        wxString msg;
-        msg << "Failed to open log file '" << util::path::getLogFilePath().GetFullPath() << "'.";
-        Dialog::get().getConfirmation("Failed to open file", msg);
+        Dialog::get().getConfirmation(_("Failed to open file"), wxString::Format(_("Failed to open '%s'"), util::path::getLogFilePath().GetFullPath()));
     }
     event.Skip();
 }
@@ -883,9 +882,7 @@ void Window::onConfig(wxCommandEvent& event)
     }
     if (!wxLaunchDefaultApplication(util::path::getConfigFilePath().GetFullPath()))
     {
-        wxString msg;
-        msg << "Failed to open config file '" << util::path::getConfigFilePath().GetFullPath() << "'.";
-        Dialog::get().getConfirmation("Failed to open file", msg);
+        Dialog::get().getConfirmation(_("Failed to open file"), wxString::Format(_("Failed to open '%s'"), util::path::getConfigFilePath().GetFullPath()));
     }
     event.Skip();
 }
