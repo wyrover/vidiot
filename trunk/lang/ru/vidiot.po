@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-02 20:00+0100\n"
+"POT-Creation-Date: 2016-01-07 19:35+0100\n"
 "PO-Revision-Date: 2015-11-29 22:44+0300\n"
 "Last-Translator: Ted Mossolov <teodorrrro@gmail.com>\n"
 "Language-Team: Ted Mossolov <teodorrrro@gmail.com>\n"
@@ -894,6 +894,10 @@ msgstr "Переход от цвета"
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_FadeToColor.cpp:116
 msgid "Fade to color"
 msgstr "Переход в цвет"
+
+#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:74
+msgid "Name"
+msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:309
 msgid "file"

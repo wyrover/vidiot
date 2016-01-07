@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-02 20:00+0100\n"
+"POT-Creation-Date: 2016-01-07 19:35+0100\n"
 "PO-Revision-Date: 2016-01-01 19:35+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -915,6 +915,10 @@ msgstr "Vervagen van kleur"
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_FadeToColor.cpp:116
 msgid "Fade to color"
 msgstr "Vervagen naar kleur"
+
+#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:74
+msgid "Name"
+msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:309
 msgid "file"
