@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-07 19:35+0100\n"
+"POT-Creation-Date: 2016-01-07 21:27+0100\n"
 "PO-Revision-Date: 2015-11-01 11:44+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -1337,39 +1337,48 @@ msgstr ""
 msgid "Shortcut key"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:116
+#. TRANSLATORS: Do not let the string exceed 20 characters.
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:117
 msgid "Fixed lengths (s)"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:131
+#. TRANSLATORS: Do not let the string exceed 20 characters.
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:133
 msgid "Speed"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:147
+#. TRANSLATORS: Do not let the string exceed 20 characters.
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:150
 msgid "Opacity"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:164
+#. TRANSLATORS: Do not let the string exceed 20 characters.
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:168
 msgid "Rotation"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:182
+#. TRANSLATORS: Do not let the string exceed 20 characters.
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:187
 msgid "Scaling"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:210
+#. TRANSLATORS: Do not let the string exceed 20 characters.
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:216
 msgid "Position"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:216
+#. TRANSLATORS: Do not let the string exceed 20 characters.
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:223
 msgid "Video key frames"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:242
+#. TRANSLATORS: Do not let the string exceed 20 characters.
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:250
 msgid "Volume (%)"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:247
+#. TRANSLATORS: Do not let the string exceed 20 characters.
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:256
 msgid "Audio key frames"
 msgstr ""
 
