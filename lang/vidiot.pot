@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-07 22:43+0100\n"
+"POT-Creation-Date: 2016-01-08 17:09+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1265,6 +1265,12 @@ msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Generic.cpp:61
 msgid "Remove the key frame at the current position."
+msgstr ""
+
+#. TRANSLATORS: This is used in the details header to indicate 'clip name and length in seconds': "Clip name (42.000s)"
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_GetSet.cpp:86
+#, c-format
+msgid "%s (%ss)"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_GuiEvents.cpp:375
