@@ -20,7 +20,7 @@ msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-01-07 22:22+0100\n"
-"PO-Revision-Date: 2016-01-01 19:35+0100\n"
+"PO-Revision-Date: 2016-01-08 16:00+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: nl_NL\n"
@@ -941,7 +941,7 @@ msgstr "Vervagen naar kleur"
 
 #: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:74
 msgid "Name"
-msgstr ""
+msgstr "Naam"
 
 #: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:309
 msgid "file"
@@ -1784,7 +1784,7 @@ msgstr "Verplaats sleutelbeeld"
 
 #: C:\Vidiot\vidiot_trunk\timelineview\src\TimescaleView.cpp:216
 msgid "Zoom"
-msgstr ""
+msgstr "Zoom"
 
 #: C:\Vidiot\vidiot_trunk\util\src\UtilInitAvcodec.cpp:29
 msgid "None"
