@@ -82,7 +82,8 @@ void DetailsClip::setClip(const model::IClipPtr& clip)
 
         // Must be done before adding/showing/hiding controls, because the computation for key frames buttons (which buttons to show)
         // depend on calculating the required widget size. Required widget size is not updated if the entire panel is hidden.
-        requestShow(true, mClip->getDescription() + " (" + model::Convert::ptsToHumanReadibleString(mClip->getPerceivedLength()) + "s)");
+        // TRANSLATORS: This is used in the details header to indicate 'clip name and length in seconds': "Clip name (42.000s)"
+        requestShow(true, wxString::Format(_("%s (%ss)"), mClip->getDescription(), model::Convert::ptsToHumanReadibleString(mClip->getPerceivedLength())));
 
         // Length/speed
         // For audio/video clips and transitions, the length can be edited.

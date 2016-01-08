@@ -20,7 +20,7 @@ msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-01-07 22:22+0100\n"
-"PO-Revision-Date: 2016-01-01 19:19+0100\n"
+"PO-Revision-Date: 2016-01-08 16:01+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -933,7 +933,7 @@ msgstr "Überblendung zu Farbe"
 
 #: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:74
 msgid "Name"
-msgstr ""
+msgstr "Name"
 
 #: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:309
 msgid "file"
