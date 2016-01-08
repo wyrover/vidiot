@@ -19,6 +19,7 @@
 
 #include "AudioClip.h"
 #include "AudioKeyFrame.h"
+#include "UtilException.h"
 #include "VideoClip.h"
 #include "VideoKeyFrame.h"
 
