@@ -276,7 +276,7 @@ UpdateLanguageFiles()
 		if [ -f ${languagedir}/vidiot.po ]; then
 
             echo Updating lang/${language}/vidiot.po from template
-            msgmerge -U ${languagedir}/vidiot.po ${languages_root}/vidiot.pot
+            msgmerge -U ${languagedir}/vidiot.po --no-fuzzy-matching ${languages_root}/vidiot.pot
 
 	        echo Compiling lang/${language}/vidiot.po
 	        msgfmt ${languagedir}/vidiot.po --output-file=${languagedir}/vidiot.mo
@@ -292,7 +292,7 @@ UpdateLanguageFiles()
 				if [ -f ${wxlang_inp} ]; then
 
 					echo Updating ${wxlang_out}
-					msgmerge -U ${wxlang_inp} ${wxlang_out}
+					msgmerge -U ${wxlang_inp} --no-fuzzy-matching ${wxlang_out}
 
 					echo Compiling ${wxlang_out}
 					msgfmt ${wxlang_out} --output-file=${languagedir}/vidiotwx.mo

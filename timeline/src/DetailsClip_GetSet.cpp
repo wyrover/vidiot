@@ -22,7 +22,6 @@
 #include "Convert.h"
 #include "Transition.h"
 #include "TransitionParameter.h"
-#include "UtilException.h"
 #include "VideoClip.h"
 #include "VideoKeyFrame.h"
 

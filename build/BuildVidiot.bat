@@ -172,7 +172,7 @@ for /f "tokens=*" %%L in ('dir /b/o "%%LANGDIR%%"') do (
         echo Updating %%L ^(!LANG!^)
 
         echo Updating "%LANGDIR%\%%L\vidiot.po" from "%LANGDIR%\vidiot.pot"
-        "%LANGTOOLSDIR%\msgmerge.exe" -U "%LANGDIR%\%%L\vidiot.po" "%LANGDIR%\vidiot.pot"
+        "%LANGTOOLSDIR%\msgmerge.exe" -U "%LANGDIR%\%%L\vidiot.po" --no-fuzzy-matching "%LANGDIR%\vidiot.pot" 
         
         echo Compiling "%LANGDIR%\%%L\vidiot.po"
         "%LANGTOOLSDIR%\msgfmt.exe" "%LANGDIR%\%%L\vidiot.po" --output-file="%LANGDIR%\%%L\vidiot.mo"
@@ -183,7 +183,7 @@ for /f "tokens=*" %%L in ('dir /b/o "%%LANGDIR%%"') do (
 		if exist "!WXLANG_OUT!"  (
 			if exist "!WXLANG_INP!" (
 				echo Updating "!WXLANG_OUT!" from "!WXLANG_INP!"
-				"%LANGTOOLSDIR%\msgmerge.exe" -U "!WXLANG_OUT!" "!WXLANG_INP!"
+				"%LANGTOOLSDIR%\msgmerge.exe" -U "!WXLANG_OUT!" --no-fuzzy-matching "!WXLANG_INP!"
 			)
 		)
 		if exist "!WXLANG_OUT!" (

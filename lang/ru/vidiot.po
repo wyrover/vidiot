@@ -1,9 +1,26 @@
+# This file is part of Vidiot.
+#
+# Vidiot is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Vidiot is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
+#
+# Translators:
+# - Ted Mossolov
 msgid ""
 msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-07 21:27+0100\n"
-"PO-Revision-Date: 2015-11-29 22:44+0300\n"
+"POT-Creation-Date: 2016-01-07 22:36+0100\n"
+"PO-Revision-Date: 2016-01-07 15:38+0300\n"
 "Last-Translator: Ted Mossolov <teodorrrro@gmail.com>\n"
 "Language-Team: Ted Mossolov <teodorrrro@gmail.com>\n"
 "Language: ru\n"
@@ -321,7 +338,7 @@ msgstr "Добавлять запись в журнал после каждой 
 
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:362
 msgid "Restart required"
-msgstr ""
+msgstr "Необходим перезапуск программы"
 
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:362
 #, c-format
@@ -329,6 +346,8 @@ msgid ""
 "Some of the settings that were changed require %1$s to be restarted. Do you "
 "want %1$s to restart now?"
 msgstr ""
+"Для применения некоторых настроек необходим перезапуск %1$s. Перезапустить "
+"%1$s?"
 
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogProjectProperties.cpp:33
 msgid "Properties"
@@ -633,7 +652,7 @@ msgid "View"
 msgstr "Вид"
 
 #: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:218
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:978
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:975
 #: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:380
 #: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:566
 msgid "Sequence"
@@ -651,19 +670,19 @@ msgstr "Рабочая среда"
 msgid "Crash"
 msgstr "Сбой"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:382
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:390
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:383
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:391
 #: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:364
 #: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:365
 #: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:366
 msgid "Ctrl"
 msgstr "Ctrl"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:760
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:761
 msgid "Enter workspace name"
 msgstr "Назовите рабочую среду"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:760
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:761
 msgid ""
 "Enter name for the saved workspace.\n"
 "If this is an existing name it is overwritten."
@@ -671,32 +690,32 @@ msgstr ""
 "Назовите сохраняемую рабочую среду.\n"
 "При совпадении имен предыдущая среда будет перезаписана."
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:777
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:778
 msgid "Select workspace"
 msgstr "Выберите рабочую среду"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:783
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:784
 msgid "Select workspace to be restored."
 msgstr "Выберите загружаемую рабочую среду."
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:792
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:793
 msgid "Load workspace failed"
 msgstr "Не удалось загрузить рабочую среду"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:792
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:793
 msgid "Something went wrong while trying to load the saved perspective. Sorry."
 msgstr ""
 "При загрузке сохраненной рабочей среды что-то пошло не так. Простите..."
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:800
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:801
 msgid "Select workspace to be removed."
 msgstr "Выберите удаляемую рабочую среду."
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:813
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:814
 msgid "Remove all saved workspaces"
 msgstr "Удалить все сохраненные рабочие среды"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:813
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:814
 msgid ""
 "This will remove all saved workspace layouts which cannot be undone.\n"
 "Are you sure?"
@@ -704,11 +723,23 @@ msgstr ""
 "Будут удалены все сохраненные рабочие среды; это действие нельзя отменить.\n"
 "Вы уверены?"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:874
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:860
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:885
+#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:568
+msgid "Failed to open file"
+msgstr "Не удалось открыть файл"
+
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:860
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:885
+#, c-format
+msgid "Failed to open '%s'"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:873
 msgid "Attention"
 msgstr "Внимание"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:875
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:874
 #, c-format
 msgid ""
 "Note that changing this file will not update the gui.\n"
@@ -869,15 +900,15 @@ msgstr "Отсутствует файл: "
 
 #: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoKeyFrame.cpp:197
 msgid "Width becomes 0."
-msgstr ""
+msgstr "Ширина станет 0."
 
 #: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoKeyFrame.cpp:201
 msgid "Height becomes 0."
-msgstr ""
+msgstr "Высота станет 0."
 
 #: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoKeyFrame.cpp:205
 msgid "Image becomes too large."
-msgstr ""
+msgstr "Изображение станет слишком большим."
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_Bands.cpp:62
 msgid "Bands"
@@ -1165,7 +1196,7 @@ msgstr "Не удалось определить требуемый формат
 #: C:\Vidiot\vidiot_trunk\render\src\AudioCodecParameter.cpp:30
 #: C:\Vidiot\vidiot_trunk\render\src\VideoCodecParameter.cpp:32
 msgid "Bit rate"
-msgstr ""
+msgstr "Битрейт"
 
 #: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:300
 msgid "The following sequence(s) have not been scheduled"
@@ -1220,10 +1251,6 @@ msgstr "Не удалось инициализировать передискр�
 msgid "Failed to allocate memory for resampling"
 msgstr "Не удалось выделить память на передискретизацию"
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:568
-msgid "Failed to open file"
-msgstr "Не удалось открыть файл"
-
 #: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:599
 #, c-format
 msgid "Frame %1$<PRId64> out of %2$<PRId64>"
@@ -1263,54 +1290,51 @@ msgstr "При открытии видеокодека возникла ошиб
 
 #: C:\Vidiot\vidiot_trunk\render\src\VideoCodecParameter.cpp:33
 msgid "Bit rate tolerance"
-msgstr ""
+msgstr "Допустимый битрейт"
 
 #: C:\Vidiot\vidiot_trunk\render\src\VideoCodecParameter.cpp:34
-#, fuzzy
 msgid "Gop size"
-msgstr "Размер видео"
+msgstr "Размер группы кадров (GOP)"
 
 #: C:\Vidiot\vidiot_trunk\render\src\VideoCodecParameter.cpp:35
 msgid "B Frames"
-msgstr ""
+msgstr "B-кадров"
 
 #: C:\Vidiot\vidiot_trunk\render\src\VideoCodecParameter.cpp:36
 msgid "Macro block decision"
-msgstr ""
+msgstr "Разрешение макроблока"
 
 #: C:\Vidiot\vidiot_trunk\render\src\VideoCodecParameter.cpp:64
 msgid "Least bits"
-msgstr ""
+msgstr "Младшие биты"
 
 #: C:\Vidiot\vidiot_trunk\render\src\VideoCodecParameter.cpp:65
-#, fuzzy
 msgid "Rate distortion"
-msgstr "Создать переход"
-
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Generic.cpp:55
-msgid "Go to first key frame."
-msgstr ""
+msgstr "Искажение частоты"
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Generic.cpp:56
-msgid "Go to previous key frame."
-msgstr ""
+msgid "Go to first key frame."
+msgstr "Перейти к первому ключевому кадру."
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Generic.cpp:57
-msgid "Go to next key frame."
-msgstr ""
+msgid "Go to previous key frame."
+msgstr "Перейти к предыдущему ключевому кадру."
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Generic.cpp:58
-msgid "Go to last key frame."
-msgstr ""
+msgid "Go to next key frame."
+msgstr "Перейти к следующему ключевому кадру."
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Generic.cpp:59
-#, fuzzy
-msgid "Add a key frame at the current position."
-msgstr "Нельзя выполнить обрезку: на месте курсора уже разрезано."
+msgid "Go to last key frame."
+msgstr "Перейти к последнему ключевому кадру."
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Generic.cpp:60
+msgid "Add a key frame at the current position."
+msgstr "Добавить ключевой кадр на месте курсора."
+
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Generic.cpp:61
 msgid "Remove the key frame at the current position."
-msgstr ""
+msgstr "Удалить ключевой кадр на месте курсора."
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_GuiEvents.cpp:375
 msgid ""
@@ -1372,14 +1396,14 @@ msgid "Edit volume of %s"
 msgstr "Изменить громкость \"%s\""
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:65
-#, fuzzy, c-format
+#, c-format
 msgid "Add key frame to %s"
-msgstr "Добавить файл \"%s\""
+msgstr "Добавить ключевой кадр в %s"
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:66
-#, fuzzy, c-format
+#, c-format
 msgid "Remove key frame from %s"
-msgstr "Удалить пустые регионы"
+msgstr "Удалить ключевой кадр из %s"
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:110
 msgid ""
@@ -1425,9 +1449,8 @@ msgstr "Положение"
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:223
-#, fuzzy
 msgid "Video key frames"
-msgstr "Файлы видео"
+msgstr "Кл. кадры видео"
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:250
@@ -1436,9 +1459,8 @@ msgstr "Громкость (%)"
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:256
-#, fuzzy
 msgid "Audio key frames"
-msgstr "Файлы видео"
+msgstr "Кл. кадры аудио"
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsTrim.cpp:40
 msgid "Notes"
@@ -1745,6 +1767,10 @@ msgstr "Отменить связь клипов"
 
 #: C:\Vidiot\vidiot_trunk\timelinestate\src\StateMoveKeyFrame.cpp:82
 msgid "Move key frame"
+msgstr "Переместить ключевой кадр"
+
+#: C:\Vidiot\vidiot_trunk\timelineview\src\TimescaleView.cpp:216
+msgid "Zoom"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\util\src\UtilInitAvcodec.cpp:29
@@ -1773,19 +1799,19 @@ msgstr "Подробно"
 
 #: C:\Vidiot\vidiot_trunk\util\src\UtilLocale.cpp:29
 msgid "English"
-msgstr ""
+msgstr "Английский"
 
 #: C:\Vidiot\vidiot_trunk\util\src\UtilLocale.cpp:30
 msgid "German"
-msgstr ""
+msgstr "Немецкий"
 
 #: C:\Vidiot\vidiot_trunk\util\src\UtilLocale.cpp:31
 msgid "Dutch"
-msgstr ""
+msgstr "Нидерландский"
 
 #: C:\Vidiot\vidiot_trunk\util\src\UtilLocale.cpp:32
 msgid "Russian"
-msgstr ""
+msgstr "Русский"
 
 #: C:\Vidiot\vidiot_trunk\util\src\UtilLog.cpp:46
 msgid "Errors"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-07 21:34+0100\n"
+"POT-Creation-Date: 2016-01-07 22:43+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -610,7 +610,7 @@ msgid "View"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:218
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:978
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:975
 #: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:380
 #: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:566
 msgid "Sequence"
@@ -628,59 +628,71 @@ msgstr ""
 msgid "Crash"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:382
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:390
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:383
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:391
 #: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:364
 #: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:365
 #: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:366
 msgid "Ctrl"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:760
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:761
 msgid "Enter workspace name"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:760
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:761
 msgid ""
 "Enter name for the saved workspace.\n"
 "If this is an existing name it is overwritten."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:777
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:778
 msgid "Select workspace"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:783
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:784
 msgid "Select workspace to be restored."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:792
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:793
 msgid "Load workspace failed"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:792
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:793
 msgid "Something went wrong while trying to load the saved perspective. Sorry."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:800
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:801
 msgid "Select workspace to be removed."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:813
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:814
 msgid "Remove all saved workspaces"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:813
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:814
 msgid ""
 "This will remove all saved workspace layouts which cannot be undone.\n"
 "Are you sure?"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:874
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:860
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:885
+#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:568
+msgid "Failed to open file"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:860
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:885
+#, c-format
+msgid "Failed to open '%s'"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:873
 msgid "Attention"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:875
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:874
 #, c-format
 msgid ""
 "Note that changing this file will not update the gui.\n"
@@ -1170,10 +1182,6 @@ msgstr ""
 msgid "Failed to allocate memory for resampling"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:568
-msgid "Failed to open file"
-msgstr ""
-
 #: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:599
 #, c-format
 msgid "Frame %1$<PRId64> out of %2$<PRId64>"
@@ -1235,27 +1243,27 @@ msgstr ""
 msgid "Rate distortion"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Generic.cpp:55
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Generic.cpp:56
 msgid "Go to first key frame."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Generic.cpp:56
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Generic.cpp:57
 msgid "Go to previous key frame."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Generic.cpp:57
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Generic.cpp:58
 msgid "Go to next key frame."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Generic.cpp:58
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Generic.cpp:59
 msgid "Go to last key frame."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Generic.cpp:59
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Generic.cpp:60
 msgid "Add a key frame at the current position."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Generic.cpp:60
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Generic.cpp:61
 msgid "Remove the key frame at the current position."
 msgstr ""
 
@@ -1680,6 +1688,10 @@ msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\timelinestate\src\StateMoveKeyFrame.cpp:82
 msgid "Move key frame"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\timelineview\src\TimescaleView.cpp:216
+msgid "Zoom"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\util\src\UtilInitAvcodec.cpp:29
