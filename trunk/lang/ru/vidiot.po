@@ -19,7 +19,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-07 22:36+0100\n"
+"POT-Creation-Date: 2016-01-08 17:09+0100\n"
 "PO-Revision-Date: 2016-01-07 15:38+0300\n"
 "Last-Translator: Ted Mossolov <teodorrrro@gmail.com>\n"
 "Language-Team: Ted Mossolov <teodorrrro@gmail.com>\n"
@@ -1335,6 +1335,12 @@ msgstr "Добавить ключевой кадр на месте курсор�
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Generic.cpp:61
 msgid "Remove the key frame at the current position."
 msgstr "Удалить ключевой кадр на месте курсора."
+
+#. TRANSLATORS: This is used in the details header to indicate 'clip name and length in seconds': "Clip name (42.000s)"
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_GetSet.cpp:86
+#, c-format
+msgid "%s (%ss)"
+msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_GuiEvents.cpp:375
 msgid ""
