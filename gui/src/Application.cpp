@@ -125,7 +125,8 @@ Application::Application(test::IEventLoopListener* eventLoopListener)
     Log::init();
 
     wxString Platform(wxPlatformInfo().GetOperatingSystemDescription());
-    VAR_ERROR(SubversionRevision)(Platform);
+    int Revision{ SubversionRevision };
+    VAR_ERROR(Revision)(Platform);
 }
 
 Application::~Application()
