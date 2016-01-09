@@ -374,6 +374,22 @@ Window::Window()
     GetDocumentManager()->SetMaxDocsOpen(1);
     GetDocumentManager()->FileHistoryUseMenu(mMenuFile);
     GetDocumentManager()->FileHistoryLoad(Config::get());
+    wxFileHistory* history{ GetDocumentManager()->GetFileHistory() };
+    size_t n{ 0 };
+    while (n < history->GetCount())
+    {
+        wxString file{ history->GetHistoryFile(n) };
+        if (util::path::toFileName(file).FileExists())
+        {
+            // File exists, continue with the next file.
+            ++n;
+        }
+        else
+        {
+            // File does not exist. Remove, and try the next file (which now has the same index).
+            history->RemoveFileFromHistory(n);
+        }
+    }
 
     for (wxMenuItem* item : mMenuFile->GetMenuItems())
     {
