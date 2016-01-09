@@ -40,35 +40,36 @@ void TestSplitting::tearDown()
 void TestSplitting::testSplitting()
 {
     StartTestSuite();
+    {
+        TimelinePositionCursor(HCenter(VideoClip(0, 2)));
+        TimelineKeyPress('s');
+        ASSERT_SELECTION({ VideoClip(0,2), AudioClip(0,2) });
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(AudioClip)(AudioClip);
+        ASSERT_EQUALS(VideoClip(0, 4)->getLeftPts(), mProjectFixture.OriginalPtsOfVideoClip(0, 3));
+        ASSERT_EQUALS(AudioClip(0, 4)->getLeftPts(), mProjectFixture.OriginalPtsOfAudioClip(0, 3));
+        Undo();
+    }
     MakeInOutTransitionAfterClip preparation(1);
     {
         TimelinePositionCursor(HCenter(VideoClip(0,2)));
         TimelineKeyPress('s');
-        ASSERT(!VideoClip(0,0)->isA<model::Transition>());
-        ASSERT(!VideoClip(0,1)->isA<model::Transition>());
-        ASSERT(!VideoClip(0,2)->isA<model::Transition>());
-        ASSERT(!VideoClip(0,3)->isA<model::Transition>());
-        ASSERT(!VideoClip(0,4)->isA<model::Transition>());
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(AudioClip)(AudioClip);
         Undo();
     }
     {
         TimelinePositionCursor(LeftPixel(VideoClip(0,2)));
         TimelineKeyPress('s');
-        ASSERT(!VideoClip(0,0)->isA<model::Transition>());
-        ASSERT(!VideoClip(0,1)->isA<model::Transition>());
-        ASSERT(!VideoClip(0,2)->isA<model::Transition>());
-        ASSERT(!VideoClip(0,3)->isA<model::Transition>());
-        ASSERT(!VideoClip(0,4)->isA<model::Transition>());
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(AudioClip)(AudioClip);
         Undo();
     }
     {
         TimelinePositionCursor(RightPixel(VideoClip(0,2)));
         TimelineKeyPress('s');
-        ASSERT(!VideoClip(0,0)->isA<model::Transition>());
-        ASSERT(!VideoClip(0,1)->isA<model::Transition>());
-        ASSERT(!VideoClip(0,2)->isA<model::Transition>());
-        ASSERT(!VideoClip(0,3)->isA<model::Transition>());
-        ASSERT(!VideoClip(0,4)->isA<model::Transition>());
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(AudioClip)(AudioClip);
         Undo();
     }
 }
@@ -90,6 +91,7 @@ void TestSplitting::testSplittingDuringPlayback()
     stopped.wait();
     startedAgain.wait();
 
+    ASSERT_SELECTION({ VideoClip(0,4), AudioClip(0,4) });
     ASSERT_EQUALS(VideoClip(0,3)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,3));
     ASSERT_EQUALS(VideoClip(0,4)->getLength() + VideoClip(0,5)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,4));
     ASSERT_EQUALS(VideoClip(0,6)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,5));

@@ -20,6 +20,7 @@
 #include "Timeline.h"
 #include "Cursor.h"
 #include "Track.h"
+#include "Selection.h"
 #include "Sequence.h"
 #include "Zoom.h"
 
@@ -62,6 +63,33 @@ void SplitAtCursor::splittrack(model::Tracks tracks, pts position)
     {
         split(track, position);
     }
+}
+
+void SplitAtCursor::doExtraBefore()
+{
+    storeSelection();
+}
+
+void SplitAtCursor::doExtraAfter()
+{
+    // Select clips just before the split
+    model::IClips clipsBeforeSplit;
+    for (model::TrackPtr track : getSequence()->getTracks())
+    {
+        model::IClipPtr clip{ track->getClip(getTimeline().getCursor().getLogicalPosition()) };
+        if (clip &&
+            clip->getPrev() &&
+            !clip->getPrev()->isA<model::EmptyClip>())
+        {
+            clipsBeforeSplit.push_back(clip->getPrev());
+        }
+    }
+    getTimeline().getSelection().change(clipsBeforeSplit);
+}
+
+void SplitAtCursor::undoExtraAfter()
+{
+    restoreSelection();
 }
 
 //////////////////////////////////////////////////////////////////////////
