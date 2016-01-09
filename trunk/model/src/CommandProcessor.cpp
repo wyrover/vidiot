@@ -25,6 +25,7 @@ namespace model {
 
 bool CommandProcessor::Redo()
 {
+    LOG_INFO;
     ASSERT_MORE_THAN_ZERO(mRedo);
     mRedo--;
     return wxCommandProcessor::Redo();
@@ -32,12 +33,14 @@ bool CommandProcessor::Redo()
 
 bool CommandProcessor::Submit(wxCommand *command, bool storeIt)
 {
+    VAR_INFO(command)(storeIt);
     mRedo = 0;
     return wxCommandProcessor::Submit(command,storeIt);
 }
 
 bool CommandProcessor::Undo()
 {
+    LOG_INFO;
     mRedo++;
     return wxCommandProcessor::Undo();
 }
