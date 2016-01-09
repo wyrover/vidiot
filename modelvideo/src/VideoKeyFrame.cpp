@@ -69,6 +69,8 @@ VideoKeyFrame::VideoKeyFrame(const wxSize& size)
 VideoKeyFrame::VideoKeyFrame(VideoKeyFramePtr before, VideoKeyFramePtr after, pts positionBefore, pts position, pts positionAfter)
     : KeyFrame{ false }
 {
+    ASSERT_NONZERO(before);
+    ASSERT_NONZERO(after);
     ASSERT_EQUALS(before->getSize(), after->getSize());
     ASSERT_LESS_THAN(positionBefore, position);
     ASSERT_LESS_THAN(position, positionAfter);

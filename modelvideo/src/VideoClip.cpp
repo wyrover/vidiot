@@ -123,6 +123,7 @@ VideoFramePtr VideoClip::getNextVideo(const VideoCompositionParameters& paramete
         else
         {
             VideoKeyFramePtr keyFrame{ boost::dynamic_pointer_cast<VideoKeyFrame>(getFrameAt(mProgress + getOffset() - getPerceivedOffset())) };
+            ASSERT_NONZERO(keyFrame);
 
             // Scale the clip's size and region of interest to the bounding box
             // Determine scaling for 'fitting' a clip with size 'projectSize' in a bounding box of size 'size'
@@ -157,7 +158,7 @@ VideoFramePtr VideoClip::getNextVideo(const VideoCompositionParameters& paramete
                 VideoFramePtr fileFrame = generator->getNextVideo(fileparameters);
                 if (fileFrame)
                 {
-                    if (parameters.getSkip()) // No need to apply any transformation, since the returned frame is a skip  frame anyway.
+                    if (parameters.getSkip()) // No need to apply any transformation, since the returned frame is a skip frame anyway.
                     {
                         videoFrame = fileFrame;
                     }
@@ -221,7 +222,8 @@ KeyFramePtr VideoClip::interpolate(KeyFramePtr before, KeyFramePtr after, pts po
 std::ostream& operator<<(std::ostream& os, const VideoClip& obj)
 {
     os << static_cast<const ClipInterval&>(obj) << '|'
-        << std::setw(4) << obj.mProgress;
+        << std::setw(4) << obj.mProgress << '|';
+    obj.logKeyFramesAs<VideoKeyFrame>(os);
     return os;
 }
 
