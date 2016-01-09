@@ -28,7 +28,7 @@
 #include "VideoDisplay.h"
 #include "VideoDisplayEvent.h"
 #include "Window.h"
-#include <wx/minifram.h>
+#include <wx/popupwin.h>
 
 namespace gui {
 
@@ -39,16 +39,6 @@ namespace gui {
 Player::Player(wxWindow *parent, model::SequencePtr sequence, wxWindow* focus)
 : wxPanel(parent, wxID_ANY)
 , mFocus(focus)
-, mLength(0)
-, mPosition(0)
-, mHomeButton(0)
-, mPreviousButton(0)
-, mPlayButton(0)
-, mNextButton(0)
-, mEndButton(0)
-, mSpeedButton(0)
-, mSpeedSliderFrame(0)
-, mSpeedSlider(0)
 , mBmpHome(util::window::getIcon("icon-home.png"))
 , mBmpEnd(util::window::getIcon("icon-end.png"))
 , mBmpNext(util::window::getIcon("icon-next.png"))
@@ -130,6 +120,26 @@ Player::Player(wxWindow *parent, model::SequencePtr sequence, wxWindow* focus)
     SetSizerAndFit(sizer);
 
     updateLength();
+
+    //////////////////////////////////////////////////////////////////////////
+    // Speed popup window
+
+    mSpeedSliderFrame = new wxPopupTransientWindow(this);
+    mSpeedSliderFrame->SetSizer(new wxBoxSizer{ wxVERTICAL });
+    mSpeedSlider = new wxSlider(mSpeedSliderFrame, wxID_ANY, VideoDisplay::sDefaultSpeed, VideoDisplay::sMinimumSpeed, VideoDisplay::sMaximumSpeed, wxDefaultPosition, wxDefaultSize, wxSL_VERTICAL | wxSL_INVERSE);
+    mSpeedSlider->SetThumbLength(5);
+    mSpeed100 = new wxButton(mSpeedSliderFrame, wxID_ANY, "100");
+    mSpeedSliderFrame->SetBackgroundColour(mSpeedButton->GetBackgroundColour());
+    mSpeedSlider->SetBackgroundColour(mSpeedButton->GetBackgroundColour());
+    mSpeed100->SetBackgroundColour(mSpeedButton->GetBackgroundColour());
+    mSpeedSliderFrame->GetSizer()->Add(mSpeed100, wxSizerFlags(0).Center());
+    mSpeedSliderFrame->GetSizer()->Add(new wxStaticText(mSpeedSliderFrame, wxID_ANY, wxString::Format("%d", VideoDisplay::sMaximumSpeed)), wxSizerFlags(0).Center());
+    mSpeedSliderFrame->GetSizer()->Add(mSpeedSlider, wxSizerFlags(1).Expand());
+    mSpeedSliderFrame->GetSizer()->Add(new wxStaticText(mSpeedSliderFrame, wxID_ANY, wxString::Format("%d", VideoDisplay::sMinimumSpeed)), wxSizerFlags(0).Center());
+    mSpeedSliderFrame->Fit();
+    mSpeedSliderFrame->SetSize(wxSize(40, 160));
+    mSpeed100->Bind(wxEVT_BUTTON, &Player::onSpeed100, this);
+    mSpeedSlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED, &Player::onSpeedSliderUpdate, this);
 }
 
 Player::~Player()
@@ -138,12 +148,16 @@ Player::~Player()
 
     Config::get().Unbind(EVENT_CONFIG_UPDATED, &Player::onConfigUpdated, this);
 
-    mHomeButton     ->Unbind(wxEVT_COMMAND_BUTTON_CLICKED,        &Player::onHome,     this);
-    mPreviousButton ->Unbind(wxEVT_COMMAND_BUTTON_CLICKED,        &Player::onPrevious, this);
-    mPlayButton     ->Unbind(wxEVT_COMMAND_BUTTON_CLICKED,        &Player::onPlay,     this);
-    mNextButton     ->Unbind(wxEVT_COMMAND_BUTTON_CLICKED,        &Player::onNext,     this);
-    mEndButton      ->Unbind(wxEVT_COMMAND_BUTTON_CLICKED,        &Player::onEnd,      this);
-    mSpeedButton    ->Unbind(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED,  &Player::onSpeed,    this);
+    mSpeed100->Unbind(wxEVT_BUTTON, &Player::onSpeed100, this);
+    mSpeedSlider->Unbind(wxEVT_COMMAND_SLIDER_UPDATED, &Player::onSpeedSliderUpdate, this);
+    delete mSpeedSliderFrame;
+
+    mHomeButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &Player::onHome, this);
+    mPreviousButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &Player::onPrevious, this);
+    mPlayButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &Player::onPlay, this);
+    mNextButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &Player::onNext, this);
+    mEndButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &Player::onEnd, this);
+    mSpeedButton->Unbind(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, &Player::onSpeed, this);
 
     ASSERT(mDisplay);
     ASSERT(mEdit);
@@ -293,81 +307,29 @@ void Player::onEnd(wxCommandEvent& event)
 void Player::onSpeed(wxCommandEvent& event)
 {
     LOG_INFO;
-
-    mSpeedSliderFrame = new wxMiniFrame(this, wxID_ANY, "title", wxDefaultPosition, wxDefaultSize, 0);
-
-    wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
-
-    mSpeedSlider = new wxSlider(mSpeedSliderFrame, wxID_ANY, mDisplay->getSpeed(), VideoDisplay::sMinimumSpeed, VideoDisplay::sMaximumSpeed, wxDefaultPosition, wxDefaultSize, wxSL_VERTICAL | wxSL_INVERSE);
-    sizer->Add(new wxStaticText(mSpeedSliderFrame,wxID_ANY, wxString::Format("%d", VideoDisplay::sMaximumSpeed)), wxSizerFlags(0).Center());
-    sizer->Add(mSpeedSlider, wxSizerFlags(1).Expand());
-    sizer->Add(new wxStaticText(mSpeedSliderFrame,wxID_ANY, wxString::Format("%d", VideoDisplay::sMinimumSpeed)), wxSizerFlags(0).Center());
-
-    mSpeedSliderFrame->SetSizerAndFit(sizer);
-    mSpeedSliderFrame->SetSize(wxSize(40,160));
-
-    wxPoint pos = mSpeedButton->GetScreenPosition();
-    wxSize buttonSize = mSpeedButton->GetSize();
-    wxSize frameSize = mSpeedSliderFrame->GetSize();
-
-    pos.x += (buttonSize.GetWidth() - frameSize.GetWidth())/2;
+    wxPoint pos{ mSpeedButton->GetScreenPosition() };
+    wxSize buttonSize{ mSpeedButton->GetSize() };
+    wxSize frameSize{ mSpeedSliderFrame->GetSize() };
+    pos.x += (buttonSize.GetWidth() - frameSize.GetWidth()) / 2;
     pos.y -= frameSize.GetHeight();
-
-    mSpeedSliderFrame->SetBackgroundColour(mSpeedButton->GetBackgroundColour());
-    mSpeedSlider->SetBackgroundColour(mSpeedButton->GetBackgroundColour());
-
-    mSpeedSlider->SetThumbLength(5);
-
     mSpeedSliderFrame->Move(pos);
-    mSpeedSliderFrame->Show();
-
-    mSpeedSlider->SetFocus();
-    mSpeedSlider->Bind(wxEVT_KILL_FOCUS,                &Player::onSpeedSliderFocusKill,     this);
-    mSpeedSlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED,    &Player::onSpeedSliderUpdate,        this);
-    mSpeedButton->Bind(wxEVT_LEFT_DOWN,                 &Player::onLeftDown,                 this);
+    mSpeedSlider->SetValue(mDisplay->getSpeed());
+    mSpeedSliderFrame->Popup();
+    event.Skip();
 }
 
-void Player::onSpeedSliderUpdate( wxCommandEvent& event )
+void Player::onSpeed100(wxCommandEvent& event)
+{
+    LOG_INFO;
+    setSpeed(VideoDisplay::sDefaultSpeed);
+    mSpeedSliderFrame->Dismiss();
+    event.Skip();
+}
+
+void Player::onSpeedSliderUpdate(wxCommandEvent& event)
 {
     VAR_INFO(mSpeedSlider->GetValue());
     setSpeed(mSpeedSlider->GetValue());
-}
-
-void Player::onSpeedSliderFocusKill(wxFocusEvent& event)
-{
-    mSpeedSliderFrame->Hide();
-    mSpeedSlider->Unbind(wxEVT_KILL_FOCUS,                &Player::onSpeedSliderFocusKill,     this);
-    mSpeedSlider->Unbind(wxEVT_COMMAND_SLIDER_UPDATED,    &Player::onSpeedSliderUpdate,        this);
-    mSpeedButton->Unbind(wxEVT_LEFT_DOWN,                 &Player::onLeftDown,                 this);
-    delete mSpeedSliderFrame;
-    mSpeedSliderFrame = 0;
-    Bind(wxEVT_IDLE, &Player::onIdleAfterCloseSpeedSliderFrame, this);
-}
-
-void Player::onLeftDown(wxMouseEvent& event)
-{
-    // NOT: event.Skip();
-    // By not calling Skip, the event handling for the toggle button is blocked
-    // here. The speed frame can now be closed/ended by two methods:
-    // 1. Click outside speed frame
-    // 2. Press toggle button again.
-    // All attempts to handle this via 'outoffocus' for case 1, and the regular
-    // toggle button event ('OnSpeed' again) didn't work. This was caused by
-    // first handling the 'outoffocus' event when the button is pressed
-    // (then first the speed frame goes out of focus) and subsequently, another
-    // press event was generated, which would be done on the now depressed
-    // button that had been closed in handling 'outoffocus'.
-    //
-    // Now, all exit handling is done via the 'outoffocus' method, and the
-    // extra button press is suppressed here. Since the button must be
-    // enabled again, the Idle event handling was introduced.
-}
-
-void Player::onIdleAfterCloseSpeedSliderFrame(wxIdleEvent& event)
-{
-    mSpeedButton->SetValue(false);
-    Unbind(wxEVT_IDLE, &Player::onIdleAfterCloseSpeedSliderFrame, this);
-    mFocus->SetFocus();
     event.Skip();
 }
 
