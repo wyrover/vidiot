@@ -531,11 +531,10 @@ wxString ClipInterval::stripDescription(const wxString& description)
 std::ostream& operator<<(std::ostream& os, const ClipInterval& obj)
 {
     // Keep order same as Transition and EmptyClip for 'dump' method
-    os  << static_cast<const Clip&>(obj) << '|'
+    os << static_cast<const Clip&>(obj) << '|'
         << obj.mSpeed << '|'
         << std::setw(6) << obj.mOffset << '|'
-        << std::setw(6) << obj.mLength << '|'
-        << obj.mKeyFrames;
+        << std::setw(6) << obj.mLength;
     return os;
 }
 

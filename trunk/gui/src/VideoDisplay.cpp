@@ -23,6 +23,7 @@
 #include "Dialog.h"
 #include "Properties.h"
 #include "Sequence.h"
+#include "UtilException.h"
 #include "UtilThread.h"
 #include "VideoCompositionParameters.h"
 #include "VideoDisplayEvent.h"
@@ -403,50 +404,60 @@ samplecount VideoDisplay::receiveFromSoundTouch(model::AudioChunkPtr chunk, samp
 void VideoDisplay::audioBufferThread()
 {
     util::thread::setCurrentThreadName("AudioBufferThread");
-    model::AudioChunkPtr inputChunk;
-    if (mSpeed == sDefaultSpeed)
+    LOG_INFO;
+    CatchExceptions([this]
     {
-        while (!mAbortThreads)
+        model::AudioChunkPtr inputChunk;
+        if (mSpeed == sDefaultSpeed)
         {
-            model::AudioCompositionParameters parameters(*mAudioParameters);
-            mAudioChunks.push(mSequence->getNextAudio(parameters)); // No speed change. Just insert chunk.
-        }
-    }
-    else
-    {
-        bool atEnd = false;
-        pts outputPts = mStartPts;
-        while (!mAbortThreads)
-        {
-            samplecount chunksize = model::AudioCompositionParameters(*mAudioParameters).setPts(outputPts).determineChunkSize().getChunkSize();
-            model::AudioChunkPtr outputChunk = boost::make_shared<model::AudioChunk>(mAudioParameters->getNrChannels(), chunksize, true, false);
-            samplecount writtenSamples = 0;
-            while (writtenSamples < chunksize)
+            while (!mAbortThreads)
             {
-                if (!mSoundTouch.isEmpty())
+                model::AudioCompositionParameters parameters(*mAudioParameters);
+                mAudioChunks.push(mSequence->getNextAudio(parameters)); // No speed change. Just insert chunk.
+            }
+        }
+        else
+        {
+            bool atEnd = false;
+            pts outputPts = mStartPts;
+            while (!mAbortThreads)
+            {
+                samplecount chunksize = model::AudioCompositionParameters(*mAudioParameters).setPts(outputPts).determineChunkSize().getChunkSize();
+                model::AudioChunkPtr outputChunk = boost::make_shared<model::AudioChunk>(mAudioParameters->getNrChannels(), chunksize, true, false);
+                samplecount writtenSamples = 0;
+                while (writtenSamples < chunksize)
                 {
-                    writtenSamples += receiveFromSoundTouch(outputChunk, writtenSamples, chunksize - writtenSamples);
-                }
-                else if (atEnd)
-                {
-                    mAudioChunks.push(model::AudioChunkPtr()); // Signal end
-                    return;
-                }
-                else
-                {
-                    model::AudioCompositionParameters parameters(*mAudioParameters);
-                    model::AudioChunkPtr chunk = mSequence->getNextAudio(parameters);
-                    atEnd = chunk == nullptr;
-                    if (!atEnd)
+                    if (!mSoundTouch.isEmpty())
                     {
-                        sendToSoundTouch(chunk);
+                        writtenSamples += receiveFromSoundTouch(outputChunk, writtenSamples, chunksize - writtenSamples);
+                    }
+                    else if (atEnd)
+                    {
+                        mAudioChunks.push(model::AudioChunkPtr()); // Signal end
+                        return;
+                    }
+                    else
+                    {
+                        model::AudioCompositionParameters parameters(*mAudioParameters);
+                        model::AudioChunkPtr chunk = mSequence->getNextAudio(parameters);
+                        atEnd = chunk == nullptr;
+                        if (!atEnd)
+                        {
+                            sendToSoundTouch(chunk);
+                        }
                     }
                 }
+                outputChunk->setPts(outputPts++);
+                mAudioChunks.push(outputChunk);
             }
-            outputChunk->setPts(outputPts++);
-            mAudioChunks.push(outputChunk);
         }
-    }
+    }, [this]
+    {
+        mAbortThreads = true; // Avoid new video chunks, abort other buffer thread
+        mVideoFrames.flush(); // Unblock 'push()', if needed
+        mAudioChunks.push(model::AudioChunkPtr()); // Unblock 'pop()', if needed
+        mVideoFrames.push(model::VideoFramePtr()); // Unblock 'pop()', if needed
+    });
 }
 
 bool VideoDisplay::audioRequested(void *buffer, const unsigned long& frames, double playtime)
@@ -505,21 +516,40 @@ void VideoDisplay::videoBufferThread()
 {
     util::thread::setCurrentThreadName("VideoBufferThread");
     LOG_INFO;
-    while (!mAbortThreads)
+    CatchExceptions([this]
     {
-        int nSkip = mSkipFrames.load();
-        bool skip = nSkip > 0;
-        model::VideoFramePtr videoFrame = mSequence->getNextVideo(mVideoParameters->setBoundingBox(wxSize(mWidth,mHeight)).setSkip(skip));
-        if (!skip)
+        while (!mAbortThreads)
         {
-            // NOT: videoFrame->getBitmap(); // put in cache (avoid having to draw in GUI thread) -- Don't do this anymore since this is a gdi object in a separate thread.
-            mVideoFrames.push(videoFrame);
+            int nSkip = mSkipFrames.load();
+            bool skip = nSkip > 0;
+            model::VideoFramePtr videoFrame = mSequence->getNextVideo(mVideoParameters->setBoundingBox(wxSize(mWidth, mHeight)).setSkip(skip));
+            if (!skip)
+            {
+                // NOT: videoFrame->getBitmap(); // put in cache (avoid having to draw in GUI thread) -- Don't do this anymore since this is a gdi object in a separate thread.
+                mVideoFrames.push(videoFrame);
+            }
+            else
+            {
+                mSkipFrames.store(nSkip - 1);
+            }
+
+                //static int f{ 0 };
+                //f++;
+                //if (f > 100)
+                //{
+                //    // todo add this test to the crash menu!
+                //    struct Crasher { virtual void nonexist() = 0; };
+                //    Crasher* crash = 0;
+                //    crash->nonexist();
+                //}
         }
-        else
-        {
-            mSkipFrames.store(nSkip - 1);
-        }
-    }
+    }, [this]
+    {
+        mAbortThreads = true; // Avoid new audio chunks, abort other buffer thread
+        mAudioChunks.flush(); // Unblock 'push()', if needed
+        mAudioChunks.push(model::AudioChunkPtr()); // Unblock 'pop()', if needed
+        mVideoFrames.push(model::VideoFramePtr()); // Unblock 'pop()', if needed
+    });
 }
 
 void VideoDisplay::showNextFrame()

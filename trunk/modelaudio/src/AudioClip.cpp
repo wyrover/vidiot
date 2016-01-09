@@ -278,7 +278,8 @@ KeyFramePtr AudioClip::interpolate(KeyFramePtr before, KeyFramePtr after, pts po
 std::ostream& operator<<(std::ostream& os, const AudioClip& obj)
 {
     os << static_cast<const ClipInterval&>(obj) << '|'
-        << std::setw(8) << obj.mProgress;
+        << std::setw(8) << obj.mProgress << '|';
+    obj.logKeyFramesAs<AudioKeyFrame>(os);
     return os;
 }
 

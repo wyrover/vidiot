@@ -18,7 +18,7 @@
 #pragma once
 
 template <typename F>
-void CatchExceptions(F f)
+void CatchExceptions(F f, std::function<void()> onException = nullptr)
 {
     try
     {
@@ -26,14 +26,26 @@ void CatchExceptions(F f)
     }
     catch (boost::exception &e)                  
     { 
+        if (onException) 
+        { 
+            onException(); 
+        }
         FATAL(boost::diagnostic_information(e)); 
     }
     catch (std::exception& e)                    
     { 
+        if (onException)
+        {
+            onException();
+        }
         FATAL(e.what());
     }
     catch (...)
     {
+        if (onException)
+        {
+            onException();
+        }
         FATAL;
     }
 }

@@ -168,11 +168,19 @@ protected:
     /// Remove any key frames that are no longer in the 'perceived clip area'.
     void pruneKeyFrames();
 
-private:
+    template <typename DERIVED>
+    std::ostream& logKeyFramesAs(std::ostream& os) const
+    {
+        logAs<DERIVED>(os, mDefaultKeyFrame) << '|';
+        logAs<DERIVED>(os, mKeyFrames);
+        return os;
+    }
 
     //////////////////////////////////////////////////////////////////////////
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
+
+private:
 
     IFilePtr mRender;   ///< The producer of audiovisual data for this clip
 
