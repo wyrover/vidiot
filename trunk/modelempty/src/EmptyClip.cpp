@@ -215,7 +215,7 @@ std::ostream& operator<<(std::ostream& os, const EmptyClip& obj)
 {
     // Keep order same as Transition and ClipInterval for 'dump' method
     os << static_cast<const Clip&>(obj) << '|'
-        << std::setw(6) << ' ' << '|'
+        << std::setw(10) << ' ' << '|'
         << std::setw(6) << obj.mLength;
     return os;
 }
