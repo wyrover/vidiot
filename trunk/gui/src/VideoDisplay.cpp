@@ -449,6 +449,9 @@ void VideoDisplay::audioBufferThread()
                 }
                 outputChunk->setPts(outputPts++);
                 mAudioChunks.push(outputChunk);
+
+                // Test for verifying that debug report can be properly generated while playback is active
+                //static int f{ 0 }; if (f++ > 100) { struct Crasher { virtual void nonexist() = 0; }; Crasher* crash { 0 }; crash->nonexist(); }
             }
         }
     }, [this]
@@ -533,15 +536,8 @@ void VideoDisplay::videoBufferThread()
                 mSkipFrames.store(nSkip - 1);
             }
 
-                //static int f{ 0 };
-                //f++;
-                //if (f > 100)
-                //{
-                //    // todo add this test to the crash menu!
-                //    struct Crasher { virtual void nonexist() = 0; };
-                //    Crasher* crash = 0;
-                //    crash->nonexist();
-                //}
+            // Test for verifying that debug report can be properly generated while playback is active
+            //static int f{ 0 }; if (f++ > 100) { struct Crasher { virtual void nonexist() = 0; }; Crasher* crash { 0 }; crash->nonexist(); }
         }
     }, [this]
     {
