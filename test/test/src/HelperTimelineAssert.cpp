@@ -34,6 +34,16 @@ void AssertSelectionSize(int size)
     ASSERT_EQUALS(getSelectedClipsCount(),2 * size); // * 2 since AudioClips are selected also
 }
 
+void AssertSelection(model::IClips expected)
+{
+    std::set<model::IClipPtr> current{ getSequence()->getSelectedClips() };
+    model::IClips actual; 
+    actual.assign(current.begin(), current.end());
+    std::sort(actual.begin(), actual.end());
+    std::sort(expected.begin(), expected.end());
+    ASSERT_EQUALS(actual, expected);
+}
+
 //////////////////////////////////////////////////////////////////////////
 // CLIPTYPEASSERTER
 //////////////////////////////////////////////////////////////////////////

@@ -31,6 +31,9 @@ void AssertNoTransitionsInVideoTrack(int trackindex = 0);
 void AssertSelectionSize(int size);
 #define ASSERT_SELECTION_SIZE AssertSelectionSize
 
+void AssertSelection(model::IClips expected);
+#define ASSERT_SELECTION AssertSelection
+
 //////////////////////////////////////////////////////////////////////////
 // CLIPTYPEASSERTER
 //////////////////////////////////////////////////////////////////////////
