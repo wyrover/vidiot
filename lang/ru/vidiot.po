@@ -19,7 +19,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-08 19:53+0100\n"
+"POT-Creation-Date: 2016-01-09 16:00+0100\n"
 "PO-Revision-Date: 2016-01-07 15:38+0300\n"
 "Last-Translator: Ted Mossolov <teodorrrro@gmail.com>\n"
 "Language-Team: Ted Mossolov <teodorrrro@gmail.com>\n"
@@ -499,20 +499,24 @@ msgstr "Указатель"
 msgid "Forward"
 msgstr "Вперед"
 
+#: C:\Vidiot\vidiot_trunk\gui\src\Player.cpp:131
+msgid "100%"
+msgstr ""
+
 #: C:\Vidiot\vidiot_trunk\gui\src\StatusBar.cpp:93
 #, c-format
 msgid "%d item(s) queued"
 msgstr "Элементов в очереди: %d"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\VideoDisplay.cpp:183
+#: C:\Vidiot\vidiot_trunk\gui\src\VideoDisplay.cpp:184
 msgid "Could not initialize playback."
 msgstr "Не удалось инициализировать воспроизведение."
 
-#: C:\Vidiot\vidiot_trunk\gui\src\VideoDisplay.cpp:190
+#: C:\Vidiot\vidiot_trunk\gui\src\VideoDisplay.cpp:191
 msgid "Opening audio stream failed:"
 msgstr "Не удалось открыть аудиопоток:"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\VideoDisplay.cpp:201
+#: C:\Vidiot\vidiot_trunk\gui\src\VideoDisplay.cpp:202
 msgid "Starting audio stream failed:"
 msgstr "Не удалось начать аудиопоток:"
 
@@ -898,15 +902,15 @@ msgstr "Цвет"
 msgid "Missing file: "
 msgstr "Отсутствует файл: "
 
-#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoKeyFrame.cpp:197
+#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoKeyFrame.cpp:199
 msgid "Width becomes 0."
 msgstr "Ширина станет 0."
 
-#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoKeyFrame.cpp:201
+#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoKeyFrame.cpp:203
 msgid "Height becomes 0."
 msgstr "Высота станет 0."
 
-#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoKeyFrame.cpp:205
+#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoKeyFrame.cpp:207
 msgid "Image becomes too large."
 msgstr "Изображение станет слишком большим."
 

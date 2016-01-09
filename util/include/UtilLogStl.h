@@ -60,24 +60,3 @@ std::ostream& operator<<(std::ostream& os, const std::pair<T,U>& obj)
     os << "("<< obj.first << "," << obj.second << ")";
     return os;
 }
-
-template <typename DERIVED, typename BASE>
-std::ostream& logAs(std::ostream& os, const boost::shared_ptr<BASE>& obj)
-{
-    os << *(boost::dynamic_pointer_cast<DERIVED>(obj));
-    return os;
-}
-
-template <typename DERIVED, typename BASE, typename KEY>
-std::ostream& logAs(std::ostream& os, const std::map<KEY, boost::shared_ptr<BASE> >& obj)
-{
-    os << '{';
-    for (auto kvp : obj)
-    {
-        os << '(' << kvp.first << ',';
-        logAs<DERIVED>(os, kvp.second);
-        os << ')';
-    }
-    os << '}';
-    return os;
-}

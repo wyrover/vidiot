@@ -18,6 +18,7 @@
 #pragma once
 
 #include "Clip.h"
+#include "UtilLogDerived.h"
 
 namespace model {
 
@@ -171,8 +172,9 @@ protected:
     template <typename DERIVED>
     std::ostream& logKeyFramesAs(std::ostream& os) const
     {
-        logAs<DERIVED>(os, mDefaultKeyFrame) << '|';
-        logAs<DERIVED>(os, mKeyFrames);
+        logAs<DERIVED>(os, mDefaultKeyFrame);
+        os << '|';
+        logAs<DERIVED, KeyFrame, pts>(os, mKeyFrames);
         return os;
     }
 
@@ -193,12 +195,12 @@ private:
     /// Keyframes are stored with a position relative to the input, using the input speed.
     /// Thus, trimming/changing speed has no effect on the (member) list of key frames.
     /// Rationale: This allows changing speed, and trimming without having to adjust this data structure for the trimming.
-    /// The data structure is adjusted during trimming, but only for removing 'invisible' key frames. 
-    /// The adjustments are not required to maintain a correct key frame structure. 
+    /// The data structure is adjusted during trimming, but only for removing 'invisible' key frames.
+    /// The adjustments are not required to maintain a correct key frame structure.
     ///
     /// The maximum number of possible key frames is the perceived clip length +1.
     /// The lowest possible key frame position is '0'; BEFORE the first frame is shown.
-    /// The highest possible key frame position is 'perceived length + 1'; AFTER the last frame is shown. 
+    /// The highest possible key frame position is 'perceived length + 1'; AFTER the last frame is shown.
     /// That results in proper interpolation for the last frame.
     KeyFrameMap mKeyFrames;
 

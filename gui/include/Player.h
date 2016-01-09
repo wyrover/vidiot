@@ -18,7 +18,7 @@
 #pragma once
 
 class EventConfigUpdated;
-class wxMiniFrame;
+class wxPopupTransientWindow;
 
 namespace gui {
 
@@ -80,12 +80,12 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    wxWindow* mFocus;
-    VideoDisplay* mDisplay;
-    EditDisplay* mEdit;
-    wxTextCtrl* mStatus;
-    pts mLength; ///< Length of sequence
-    pts mPosition;
+    wxWindow* mFocus = nullptr;
+    VideoDisplay* mDisplay = nullptr;
+    EditDisplay* mEdit = nullptr;
+    wxTextCtrl* mStatus = nullptr;
+    pts mLength = 0; ///< Length of sequence
+    pts mPosition = 0;
 
     //////////////////////////////////////////////////////////////////////////
     // BUTTONS & BITMAPS
@@ -97,25 +97,24 @@ private:
     wxBitmap mBmpPrevious;
     wxBitmap mBmpPausePlay;
 
-    wxButton* mHomeButton;
-    wxButton* mPreviousButton;
-    wxButton* mPlayButton;
-    wxButton* mNextButton;
-    wxButton* mEndButton;
-    wxToggleButton* mSpeedButton;
+    wxButton* mHomeButton = nullptr;
+    wxButton* mPreviousButton = nullptr;
+    wxButton* mPlayButton = nullptr;
+    wxButton* mNextButton = nullptr;
+    wxButton* mEndButton = nullptr;
+    wxToggleButton* mSpeedButton = nullptr;
 
     //////////////////////////////////////////////////////////////////////////
     // SPEED SLIDER
     //////////////////////////////////////////////////////////////////////////
 
 
-    wxMiniFrame* mSpeedSliderFrame;
-    wxSlider* mSpeedSlider;
+    wxPopupTransientWindow* mSpeedSliderFrame = nullptr;
+    wxButton* mSpeed100 = nullptr;
+    wxSlider* mSpeedSlider = nullptr;
 
-    void onSpeedSliderFocusKill(wxFocusEvent& event);
+    void onSpeed100(wxCommandEvent& event);
     void onSpeedSliderUpdate( wxCommandEvent& event);
-    void onIdleAfterCloseSpeedSliderFrame(wxIdleEvent& event);
-    void onLeftDown(wxMouseEvent& event);
 
     void updateSpeedButton();
 
