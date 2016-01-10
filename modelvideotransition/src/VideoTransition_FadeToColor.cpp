@@ -49,7 +49,7 @@ FadeToColor::FadeToColor()
     : CrossFade()
 {
     VAR_DEBUG(this);
-    addParameter(FadeToColorColor, boost::make_shared<TransitionParameterColor>(wxColour{ 255, 255, 255 }));// todo in config a default
+    addParameter(FadeToColorColor, boost::make_shared<TransitionParameterColor>(wxColour{ 255, 255, 255 }));
 }
 
 FadeToColor::FadeToColor(const FadeToColor& other)

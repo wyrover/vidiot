@@ -19,7 +19,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-09 16:00+0100\n"
+"POT-Creation-Date: 2016-01-10 20:11+0100\n"
 "PO-Revision-Date: 2016-01-09 16:35+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -504,10 +504,6 @@ msgstr "Index"
 msgid "Forward"
 msgstr "Volgende"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Player.cpp:131
-msgid "100%"
-msgstr ""
-
 #: C:\Vidiot\vidiot_trunk\gui\src\StatusBar.cpp:93
 #, c-format
 msgid "%d item(s) queued"
@@ -661,7 +657,7 @@ msgid "View"
 msgstr "Beeld"
 
 #: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:218
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:975
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:991
 #: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:380
 #: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:566
 msgid "Sequence"
@@ -679,19 +675,19 @@ msgstr "Omgeving"
 msgid "Crash"
 msgstr "Crash"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:383
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:391
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:399
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:407
 #: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:364
 #: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:365
 #: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:366
 msgid "Ctrl"
 msgstr "Ctrl"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:761
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:777
 msgid "Enter workspace name"
 msgstr "Kies naam  voor venster indeling"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:761
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:777
 msgid ""
 "Enter name for the saved workspace.\n"
 "If this is an existing name it is overwritten."
@@ -699,32 +695,32 @@ msgstr ""
 "Kies een naam voor de opgeslagen venster indeling.\n"
 "Wanneer deze naam al in gebruik is wordt deze overschreven."
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:778
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:794
 msgid "Select workspace"
 msgstr "Kies venster indeling"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:784
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:800
 msgid "Select workspace to be restored."
 msgstr "Kies venster indeling om te activeren"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:793
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:809
 msgid "Load workspace failed"
 msgstr "Venster indeling activeren is mislukt"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:793
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:809
 msgid "Something went wrong while trying to load the saved perspective. Sorry."
 msgstr ""
 "Er is iets fout gegaan met het activeren van de venster indeling. Sorry."
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:801
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:817
 msgid "Select workspace to be removed."
 msgstr "Kies venster indeling om te verwijderen."
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:814
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:830
 msgid "Remove all saved workspaces"
 msgstr "Verwijder alle venster indelingen"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:814
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:830
 msgid ""
 "This will remove all saved workspace layouts which cannot be undone.\n"
 "Are you sure?"
@@ -733,23 +729,23 @@ msgstr ""
 "Dit kan niet ongedaan gemaakt worden.\n"
 "Weet je het zeker?"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:860
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:885
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:876
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:901
 #: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:568
 msgid "Failed to open file"
 msgstr "Het openen van het bestand is mislukt"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:860
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:885
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:876
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:901
 #, c-format
 msgid "Failed to open '%s'"
 msgstr "Kon '%s' niet openen"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:873
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:889
 msgid "Attention"
 msgstr "Belangrijk"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:874
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:890
 #, c-format
 msgid ""
 "Note that changing this file will not update the gui.\n"
@@ -1733,7 +1729,7 @@ msgstr "Verwijder interval selectie"
 msgid "Remove all markers"
 msgstr "Verwijder alle geselecteerde intervals"
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\SplitAtCursor.cpp:36
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\SplitAtCursor.cpp:37
 msgid "Split at cursor"
 msgstr "Maak snede bij cursor"
 
