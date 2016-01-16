@@ -27,24 +27,21 @@ namespace model {
 
 TransitionParameterColor::TransitionParameterColor()
     : TransitionParameter()
-    , mColor{ 0, 0, 0 }
-    , mControl{ nullptr }
+    , mValue{ 0, 0, 0 }
 {
     VAR_DEBUG(*this);
 }
 
 TransitionParameterColor::TransitionParameterColor(const wxColour& colour)
     : TransitionParameter()
-    , mColor{ colour }
-    , mControl{ nullptr }
+    , mValue{ colour }
 {
     VAR_DEBUG(*this);
 }
 
 TransitionParameterColor::TransitionParameterColor(const TransitionParameterColor& other)
     : TransitionParameter(other)
-    , mColor{ other.mColor }
-    , mControl{ nullptr }
+    , mValue{ other.mValue }
 {
     VAR_DEBUG(*this);
 }
@@ -63,15 +60,19 @@ TransitionParameterColor::~TransitionParameterColor()
 // TRANSITIONPARAMETER
 //////////////////////////////////////////////////////////////////////////
 
-wxString TransitionParameterColor::getName() 
-{ 
-    return _("Color"); 
-};
+void TransitionParameterColor::copyValue(TransitionParameterPtr other)
+{
+    auto typed{ boost::dynamic_pointer_cast<TransitionParameterColor>(other) };
+    if (typed)
+    {
+        setValue(typed->getValue());
+    }
+}
 
 wxWindow* TransitionParameterColor::makeWidget(wxWindow *parent) 
 {
-    ASSERT_EQUALS(mControl, 0);
-    mControl = new wxColourPickerCtrl(parent, wxID_ANY, mColor, wxDefaultPosition, wxDefaultSize, wxCLRP_USE_TEXTCTRL | wxCLRP_SHOW_LABEL);
+    ASSERT_EQUALS(mControl, 0);      // todo color name in color picker not translated
+    mControl = new wxColourPickerCtrl(parent, wxID_ANY, mValue, wxDefaultPosition, wxDefaultSize, wxCLRP_USE_TEXTCTRL | wxCLRP_SHOW_LABEL);
     mControl->Bind(wxEVT_COLOURPICKER_CHANGED, &TransitionParameterColor::onColor, this);
     return mControl;
 }
@@ -84,23 +85,14 @@ void TransitionParameterColor::destroyWidget()
 }
 
 //////////////////////////////////////////////////////////////////////////
-// GET/SET
-//////////////////////////////////////////////////////////////////////////
-
-wxColour TransitionParameterColor::getColor() const
-{
-    return mColor;
-}
-
-//////////////////////////////////////////////////////////////////////////
 // GUI EVENTS
 //////////////////////////////////////////////////////////////////////////
 
 void TransitionParameterColor::onColor(wxColourPickerEvent& event)
 {
-    if (mColor != event.GetColour())
+    if (mValue != event.GetColour())
     {
-        signalUpdate([this, event] { mColor = event.GetColour(); });
+        signalUpdate([this, event] { mValue = event.GetColour(); });
     }
     event.Skip();
 }
@@ -111,7 +103,7 @@ void TransitionParameterColor::onColor(wxColourPickerEvent& event)
 
 std::ostream& operator<<(std::ostream& os, const TransitionParameterColor& obj)
 {
-    os << obj.mColor;
+    os << obj.mValue;
     return os;
 }
 
@@ -125,7 +117,14 @@ void TransitionParameterColor::serialize(Archive & ar, const unsigned int versio
     try
     {
         ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(TransitionParameter);
-        ar & BOOST_SERIALIZATION_NVP(mColor);
+        if (version == 1)
+        {
+            ar & boost::serialization::make_nvp("mColor", mValue);
+        }
+        else
+        {
+            ar & BOOST_SERIALIZATION_NVP(mValue);
+        }
     }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
     catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }

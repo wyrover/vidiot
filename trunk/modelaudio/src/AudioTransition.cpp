@@ -93,8 +93,6 @@ void AudioTransition::clean()
             mRightClip->moveTo(mProgress);
         }
 
-        reset();
-
         ASSERT(!mLeftClip || !mRightClip || mLeftClip->getLength() == mRightClip->getLength());
     }
 

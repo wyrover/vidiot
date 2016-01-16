@@ -17,86 +17,30 @@
 
 #include "VideoTransition_FadeToColor.h"
 
-#include "Config.h"
 #include "ImageClip.h"
 #include "ImageFile.h"
-#include "TransitionFactory.h"
 #include "TransitionParameterColor.h"
-#include "UtilEnum.h"
-#include "VideoClip.h"
-#include "VideoComposition.h"
-#include "VideoCompositionParameters.h"
-#include "VideoFrame.h"
 
 namespace model { namespace video { namespace transition {
 
-DECLAREENUM(FadeToColorParameters, \
-    FadeToColorColor, FadeToColorDummy);
-IMPLEMENTENUM(FadeToColorParameters);
-std::map<FadeToColorParameters, wxString> FadeToColorParametersConverter::getMapToHumanReadibleString()
-{
-    return
-    {
-        { FadeToColorColor, _("Color") },
-    };
-}
+//////////////////////////////////////////////////////////////////////////
+// PARAMETERS
+//////////////////////////////////////////////////////////////////////////
+
+wxString FadeToColor::sParameterColor{ "color" };
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
-
-FadeToColor::FadeToColor()
-    : CrossFade()
-{
-    VAR_DEBUG(this);
-    addParameter(FadeToColorColor, boost::make_shared<TransitionParameterColor>(wxColour{ 255, 255, 255 }));
-}
-
-FadeToColor::FadeToColor(const FadeToColor& other)
-    : CrossFade(other)
-{
-    VAR_DEBUG(*this);
-}
 
 FadeToColor* FadeToColor::clone() const
 {
     return new FadeToColor(static_cast<const FadeToColor&>(*this));
 }
 
-FadeToColor::~FadeToColor()
-{
-    VAR_DEBUG(this);
-}
-
 //////////////////////////////////////////////////////////////////////////
 // TRANSITION
 //////////////////////////////////////////////////////////////////////////
-
-model::IClipPtr FadeToColor::makeLeftClip()
-{
-    if (getLeft())
-    {
-        return Transition::makeLeftClip();
-    }
-    wxColour color{ boost::dynamic_pointer_cast<TransitionParameterColor>(getParameter(FadeToColorColor))->getColor() };
-    model::IClipPtr result = boost::make_shared<model::ImageClip>(boost::make_shared<model::ImageFile>(color));
-    result->adjustBegin(result->getLength());
-    result->adjustEnd(getLength());
-    return result;
-}
-
-model::IClipPtr FadeToColor::makeRightClip()
-{
-    if (getRight())
-    {
-        return Transition::makeRightClip();
-    }
-    wxColour color{ boost::dynamic_pointer_cast<TransitionParameterColor>(getParameter(FadeToColorColor))->getColor() };
-    model::IClipPtr result = boost::make_shared<model::ImageClip>(boost::make_shared<model::ImageFile>(color));
-    result->adjustEnd(-result->getLength());
-    result->adjustBegin(-getLength());
-    return result;
-}
 
 bool FadeToColor::supports(TransitionType type) const
 {
@@ -104,6 +48,15 @@ bool FadeToColor::supports(TransitionType type) const
         type == TransitionTypeFadeIn ||
         type == TransitionTypeFadeOut;
 }
+
+std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> FadeToColor::getParameters() const
+{
+    return
+    {
+        std::make_tuple(sParameterColor, _("Color"), boost::make_shared<TransitionParameterColor>(wxColour{ 255, 255, 255 })),
+    };
+}
+
 
 wxString FadeToColor::getDescription(TransitionType type) const
 {
@@ -118,13 +71,33 @@ wxString FadeToColor::getDescription(TransitionType type) const
 }
 
 //////////////////////////////////////////////////////////////////////////
-// LOGGING
+// CROSSFADE
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<(std::ostream& os, const FadeToColor& obj)
+model::IClipPtr FadeToColor::makeLeftClip()
 {
-    os << static_cast<const VideoTransition&>(obj);
-    return os;
+    if (getLeft())
+    {
+        return Transition::makeLeftClip();
+    }
+    wxColour color{ getParameter<TransitionParameterColor>(sParameterColor)->getValue() };
+    model::IClipPtr result = boost::make_shared<model::ImageClip>(boost::make_shared<model::ImageFile>(color));
+    result->adjustBegin(result->getLength());
+    result->adjustEnd(getLength());
+    return result;
+}
+
+model::IClipPtr FadeToColor::makeRightClip()
+{
+    if (getRight())
+    {
+        return Transition::makeRightClip();
+    }
+    wxColour color{ getParameter<TransitionParameterColor>(sParameterColor)->getValue() };
+    model::IClipPtr result = boost::make_shared<model::ImageClip>(boost::make_shared<model::ImageFile>(color));
+    result->adjustEnd(-result->getLength());
+    result->adjustBegin(-getLength());
+    return result;
 }
 
 //////////////////////////////////////////////////////////////////////////

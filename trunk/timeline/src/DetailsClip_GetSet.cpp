@@ -55,10 +55,10 @@ void DetailsClip::setClip(const model::IClipPtr& clip)
                 widget->Destroy();
             }
         }
-        for (auto id_and_parameter : mTransitionClone->getParameters())
+        for (auto parameter : mTransitionClone->getAllParameters())
         {
-            id_and_parameter.second->Unbind(model::EVENT_TRANSITION_PARAMETER_CHANGED, &DetailsClip::onTransitionParameterChanged, this);
-            id_and_parameter.second->destroyWidget();
+            parameter->Unbind(model::EVENT_TRANSITION_PARAMETER_CHANGED, &DetailsClip::onTransitionParameterChanged, this);
+            parameter->destroyWidget();
         }
     }
 
@@ -106,12 +106,10 @@ void DetailsClip::setClip(const model::IClipPtr& clip)
         {
             mTransitionClone = make_cloned<model::Transition>(transition);
             setBox(mTransitionBoxSizer);
-            for (auto id_and_parameter : mTransitionClone->getParameters())
+            for (auto parameter : mTransitionClone->getAllParameters())
             {
-                addOption(
-                    id_and_parameter.second->getName(),
-                    id_and_parameter.second->makeWidget(this));
-                id_and_parameter.second->Bind(model::EVENT_TRANSITION_PARAMETER_CHANGED, &DetailsClip::onTransitionParameterChanged, this);
+                addOption(parameter->getDescription(), parameter->makeWidget(this));
+                parameter->Bind(model::EVENT_TRANSITION_PARAMETER_CHANGED, &DetailsClip::onTransitionParameterChanged, this);
             }
         }
         mLastEditKeyFrameOffset = -1;

@@ -25,27 +25,6 @@
 namespace model {
 
 //////////////////////////////////////////////////////////////////////////
-// INITIALIZATION
-//////////////////////////////////////////////////////////////////////////
-
-VideoTransitionOpacity::VideoTransitionOpacity()
-    :	VideoTransition()
-{
-    VAR_DEBUG(this);
-}
-
-VideoTransitionOpacity::VideoTransitionOpacity(const VideoTransitionOpacity& other)
-    :   VideoTransition(other)
-{
-    VAR_DEBUG(*this);
-}
-
-VideoTransitionOpacity::~VideoTransitionOpacity()
-{
-    VAR_DEBUG(this);
-}
-
-//////////////////////////////////////////////////////////////////////////
 // IMPLEMENTATION OF TRANSITION
 //////////////////////////////////////////////////////////////////////////
 
@@ -96,8 +75,16 @@ VideoFramePtr VideoTransitionOpacity::getVideo(pts position, const IClipPtr& lef
 
     };
 
-    applyStep(leftClip, true);
-    applyStep(rightClip, false);
+    if (getLeftOnTop())
+    {
+        applyStep(leftClip, true);
+        applyStep(rightClip, false);
+    }
+    else
+    {
+        applyStep(rightClip, false);
+        applyStep(leftClip, true);
+    }
 
     return result;
 };
@@ -145,4 +132,19 @@ void VideoTransitionOpacity::applyToFirstLineThenCopy(const wxImagePtr& image, c
     }
 }
 
-} //namespace
+void VideoTransitionOpacity::handleFullyOpaqueImage(const wxImagePtr& image, const std::function<float(int, int)>& f) const
+{
+    applyToAllPixels(image, f);
+}
+
+void VideoTransitionOpacity::handleImageWithAlpha(const wxImagePtr& image, const std::function<float(int, int)>& f) const
+{
+    applyToAllPixels(image, f);
+}
+
+std::function<float(int, int)> VideoTransitionOpacity::getLeftMethod(const wxImagePtr& image, const float& factor) const
+{
+    return [](int x, int y) -> float { return 1.0; };
+}
+
+} // namespace

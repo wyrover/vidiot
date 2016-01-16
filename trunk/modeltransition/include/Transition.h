@@ -126,11 +126,14 @@ public:
     // PARAMETERS
     //////////////////////////////////////////////////////////////////////////
 
-    void addParameter(int index, TransitionParameterPtr parameters);
-    TransitionParameterPtr getParameter(int index) const;
+    void initParameters();
 
-    std::map<int, TransitionParameterPtr> getParameters() const;
-    void setParameters(std::map<int, TransitionParameterPtr> parameters);
+    virtual std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> getParameters() const = 0;
+
+    std::vector<TransitionParameterPtr> getAllParameters() const;
+
+    template <typename PARAMETERTYPE>
+    boost::shared_ptr<PARAMETERTYPE> getParameter(wxString name) const;
 
 protected:
 
@@ -154,7 +157,7 @@ private:
     ///
     /// Crossfading transition:
     ///     Number of frames visible (from user point of view)
-    ////    to the left of the cut between the two clips.
+    ///     to the left of the cut between the two clips.
     ///
     /// Can be a 'set' optional with value '0':
     ///     Left clip IS part of the transition but from a user point
@@ -166,7 +169,7 @@ private:
     ///
     /// Crossfading transition:
     ///     Number of frames visible (from user point of view)
-    ////    to the right of the cut between the two clips.
+    ///     to the right of the cut between the two clips.
     ///
     /// Can be a 'set' optional with value '0':
     ///     Right clip IS part of the transition but from a user point
@@ -174,7 +177,7 @@ private:
     boost::optional<pts> mFramesRight;
 
     /// All parameters relevant for this transition.
-    std::map<int, TransitionParameterPtr> mParameters;
+    std::map<wxString, TransitionParameterPtr> mParameters;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING
@@ -193,5 +196,5 @@ private:
 
 } // namespace
 
-BOOST_CLASS_VERSION(model::Transition, 3)
+BOOST_CLASS_VERSION(model::Transition, 4)
 BOOST_CLASS_EXPORT_KEY(model::Transition)

@@ -237,6 +237,7 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
                     // then see http://blog.tomaka17.com/2012/03/libavcodeclibavformat-tutorial/
                     // for the cases listed below 'The "isFrameAvailable" and "processedLength" variables are very important.'.
                     // One case is missing here (0 < len1 < packet.size)
+                    // todo http://samples.ffmpeg.org
                 }
             }
 

@@ -19,7 +19,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-10 20:11+0100\n"
+"POT-Creation-Date: 2016-01-16 11:06+0100\n"
 "PO-Revision-Date: 2016-01-07 15:38+0300\n"
 "Last-Translator: Ted Mossolov <teodorrrro@gmail.com>\n"
 "Language-Team: Ted Mossolov <teodorrrro@gmail.com>\n"
@@ -794,7 +794,7 @@ msgstr "По центру по вертикали"
 msgid "Track"
 msgstr "Дорожка"
 
-#: C:\Vidiot\vidiot_trunk\modelaudio\src\AudioTransition_CrossFade.cpp:60
+#: C:\Vidiot\vidiot_trunk\modelaudio\src\AudioTransition_CrossFade.cpp:43
 msgid "Audio crossfade"
 msgstr "Переход аудио"
 
@@ -889,10 +889,37 @@ msgstr ""
 "Необходим перезапуск %s (это известная ошибка: сейчас открыть проект не "
 "получится)"
 
-#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterColor.cpp:68
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_FadeToColor.cpp:40
-msgid "Color"
-msgstr "Цвет"
+#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection.cpp:31
+msgid "Top left to bottom right"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection.cpp:32
+msgid "Top to bottom"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection.cpp:33
+msgid "Top right to bottom left"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection.cpp:34
+msgid "Right to left"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection.cpp:35
+msgid "Bottom right to top left"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection.cpp:36
+msgid "Bottom to top"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection.cpp:37
+msgid "Bottom left to top right"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection.cpp:38
+msgid "Left to right"
+msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\modelvideo\src\ErrorImage.cpp:32
 msgid "Missing file: "
@@ -910,21 +937,52 @@ msgstr "Высота станет 0."
 msgid "Image becomes too large."
 msgstr "Изображение станет слишком большим."
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_Bands.cpp:62
-msgid "Bands"
-msgstr "Группы"
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_Bands.cpp:57
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_SwipeArc.cpp:58
+msgid "Number of bands"
+msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_CrossFade.cpp:60
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_Bands.cpp:58
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_SwipeArc.cpp:59
+msgid "Direction"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_Bands.cpp:64
+msgid "Swipe Straight"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_CrossFade.cpp:37
 msgid "Video crossfade"
 msgstr "Переход видео"
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_FadeToColor.cpp:112
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_FadeToColor.cpp:56
+msgid "Color"
+msgstr "Цвет"
+
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_FadeToColor.cpp:65
 msgid "Fade from color"
 msgstr "Переход от цвета"
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_FadeToColor.cpp:116
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_FadeToColor.cpp:69
 msgid "Fade to color"
 msgstr "Переход в цвет"
+
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_SwipeArc.cpp:60
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_SwipeCircle.cpp:59
+msgid "Inversed"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_SwipeArc.cpp:66
+msgid "Swipe Arcs"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_SwipeCircle.cpp:58
+msgid "Number of circles"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_SwipeCircle.cpp:65
+msgid "Swipe Circle"
+msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:74
 msgid "Name"
@@ -1863,6 +1921,9 @@ msgstr "Нажмите \"OK\" для выхода."
 #: C:\Vidiot\vidiot_trunk\util\src\UtilPath.cpp:284
 msgid "Resources not found"
 msgstr "Ресурсы не найдены"
+
+#~ msgid "Bands"
+#~ msgstr "Группы"
 
 #~ msgid "Vidiot files"
 #~ msgstr "Файлы Vidiot"

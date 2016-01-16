@@ -60,6 +60,7 @@ Properties::Properties(const FrameRate& fr)
 // - test edit props during playback (should stop all playback then?)
 // - When properties are updated (audio sample rate), invalidate all entries for peaks in metadatacache,
 //   and redraw all peaks.
+// Update: no same as config: read from mulitple threads ok (use atomics!) and then ensure writing only done in main thread
 
 Properties::Properties(const Properties& other)
     : mFrameRate(other.mFrameRate)

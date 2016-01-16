@@ -53,7 +53,7 @@ private:
     /// Open the given document and perform some basic tests to ensure that
     /// the document could be read properly.
     /// \param path full path to given file.
-    void checkDocument(wxString path);
+    void checkDocument(wxFileName path);
 
 };
 

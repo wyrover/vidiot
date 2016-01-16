@@ -61,6 +61,7 @@ TransitionPtr TransitionFactory::getDefault()
 void TransitionFactory::add(const TransitionPtr& transition)
 {
     mTransitions.push_back(transition);
+    transition->initParameters();
 }
 
 //////////////////////////////////////////////////////////////////////////

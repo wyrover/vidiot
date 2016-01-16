@@ -78,11 +78,7 @@ public:
     /// Test what happens when a split is made exactly along that side.
     void testSplitNearZeroLengthEdgeOfTransition();
 
-    void testAudioTransitions();
-
     void testCreateTransitionAfterLastClip();
-
-    void testVideoTransitionTypes();
 
 private:
 

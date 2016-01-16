@@ -31,22 +31,25 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     /// Constructor for recovery from disk and for creating a new parameter.
-    TransitionParameter();
+    TransitionParameter() = default;
 
     /// Used for making deep copies (clones)
     virtual TransitionParameter* clone() const = 0;
     void onCloned() {};
 
-    virtual ~TransitionParameter();
+    virtual ~TransitionParameter() = default;
 
     //////////////////////////////////////////////////////////////////////////
     // INTERFACE
     //////////////////////////////////////////////////////////////////////////
-
-    virtual wxString getName() = 0;
+    
+    virtual void copyValue(TransitionParameterPtr other) = 0;
 
     virtual wxWindow* makeWidget(wxWindow *parent) = 0;
     virtual void destroyWidget() = 0;
+
+    wxString getDescription() { return mDescription; }
+    void setDescription(wxString description) { mDescription = description; }
 
 protected:
 
@@ -63,7 +66,7 @@ protected:
     //////////////////////////////////////////////////////////////////////////
 
     /// Must be called to set the data.
-    /// This ensure that proper events are generated.
+    /// This ensures events are generated.
     void signalUpdate(std::function<void()> update);
 
 private:
@@ -71,6 +74,8 @@ private:
     //////////////////////////////////////////////////////////////////////////
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
+
+    wxString mDescription; // Never serialize this
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING
@@ -86,6 +91,7 @@ private:
     template<class Archive>
     void serialize(Archive & ar, const unsigned int version);
 };
+
 } // namespace
 
 BOOST_CLASS_VERSION(model::TransitionParameter, 1)

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-10 20:11+0100\n"
+"POT-Creation-Date: 2016-01-16 11:06+0100\n"
 "PO-Revision-Date: 2015-11-01 11:44+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -740,7 +740,7 @@ msgstr ""
 msgid "Track"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\modelaudio\src\AudioTransition_CrossFade.cpp:60
+#: C:\Vidiot\vidiot_trunk\modelaudio\src\AudioTransition_CrossFade.cpp:43
 msgid "Audio crossfade"
 msgstr ""
 
@@ -830,9 +830,36 @@ msgid ""
 "%s must be restarted (known bug that opening a project after this will fail)"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterColor.cpp:68
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_FadeToColor.cpp:40
-msgid "Color"
+#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection.cpp:31
+msgid "Top left to bottom right"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection.cpp:32
+msgid "Top to bottom"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection.cpp:33
+msgid "Top right to bottom left"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection.cpp:34
+msgid "Right to left"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection.cpp:35
+msgid "Bottom right to top left"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection.cpp:36
+msgid "Bottom to top"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection.cpp:37
+msgid "Bottom left to top right"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection.cpp:38
+msgid "Left to right"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\modelvideo\src\ErrorImage.cpp:32
@@ -851,20 +878,51 @@ msgstr ""
 msgid "Image becomes too large."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_Bands.cpp:62
-msgid "Bands"
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_Bands.cpp:57
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_SwipeArc.cpp:58
+msgid "Number of bands"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_CrossFade.cpp:60
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_Bands.cpp:58
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_SwipeArc.cpp:59
+msgid "Direction"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_Bands.cpp:64
+msgid "Swipe Straight"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_CrossFade.cpp:37
 msgid "Video crossfade"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_FadeToColor.cpp:112
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_FadeToColor.cpp:56
+msgid "Color"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_FadeToColor.cpp:65
 msgid "Fade from color"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_FadeToColor.cpp:116
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_FadeToColor.cpp:69
 msgid "Fade to color"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_SwipeArc.cpp:60
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_SwipeCircle.cpp:59
+msgid "Inversed"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_SwipeArc.cpp:66
+msgid "Swipe Arcs"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_SwipeCircle.cpp:58
+msgid "Number of circles"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_SwipeCircle.cpp:65
+msgid "Swipe Circle"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:74
