@@ -25,19 +25,9 @@ DEFINE_EVENT(EVENT_TRANSITION_PARAMETER_CHANGED, EventTransitionParameterChanged
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-TransitionParameter::TransitionParameter()
-{
-    VAR_DEBUG(*this);
-}
-
 TransitionParameter::TransitionParameter(const TransitionParameter& other)
+    : mDescription{ other.mDescription }
 {
-    VAR_DEBUG(other)(*this);
-}
-
-TransitionParameter::~TransitionParameter()
-{
-    VAR_DEBUG(this);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -47,7 +37,7 @@ TransitionParameter::~TransitionParameter()
 void TransitionParameter::signalUpdate(std::function<void()> update)
 {
     update();
-    EventTransitionParameterChanged changedEvent{ getName() };
+    EventTransitionParameterChanged changedEvent{ "" };       // todo should be called goingtochange
     ProcessEvent(changedEvent);
 }
 
@@ -69,6 +59,7 @@ void TransitionParameter::serialize(Archive & ar, const unsigned int version)
 {
     try
     {
+        // NOT: mDescription; -- should never be persisted.
     }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
     catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }

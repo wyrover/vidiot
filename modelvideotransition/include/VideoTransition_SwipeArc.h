@@ -1,4 +1,4 @@
-// Copyright 2015-2016 Eric Raijmakers.
+// Copyright 2016 Eric Raijmakers.
 //
 // This file is part of Vidiot.
 //
@@ -17,12 +17,12 @@
 
 #pragma once
 
-#include "VideoTransition_CrossFade.h"
+#include "VideoTransitionOpacity.h"
 
 namespace model { namespace video { namespace transition {
 
-class FadeToColor
-    :   public CrossFade
+class SwipeArc
+    :   public VideoTransitionOpacity
 {
 public:
 
@@ -30,17 +30,19 @@ public:
     // PARAMETERS
     //////////////////////////////////////////////////////////////////////////
 
-    static wxString sParameterColor;
+    static wxString sParameterCount;
+    static wxString sParameterDirection;
+    static wxString sParameterInverse;
 
     //////////////////////////////////////////////////////////////////////////
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    FadeToColor() = default;
+    SwipeArc() = default;
 
-    FadeToColor* clone() const override;
+    SwipeArc* clone() const override;
 
-    virtual ~FadeToColor() = default;
+    virtual ~SwipeArc() = default;
 
     //////////////////////////////////////////////////////////////////////////
     // TRANSITION
@@ -53,11 +55,10 @@ public:
     wxString getDescription(TransitionType type) const override;
 
     //////////////////////////////////////////////////////////////////////////
-    // CROSSFADE
+    // VIDEOTRANSITIONOPACITY
     //////////////////////////////////////////////////////////////////////////
 
-    model::IClipPtr makeLeftClip() override;
-    model::IClipPtr makeRightClip() override;
+    std::function<float (int,int)> getRightMethod(const wxImagePtr& image, const float& factor) const override;
 
 protected:
 
@@ -67,7 +68,7 @@ protected:
 
     /// Copy constructor. Use make_cloned for making deep copies of objects.
     /// \see make_cloned
-    FadeToColor(const FadeToColor& other) = default;
+    SwipeArc(const SwipeArc& other) = default;
 
 private:
 
@@ -82,5 +83,5 @@ private:
 
 }}} // namespace
 
-BOOST_CLASS_VERSION(model::video::transition::FadeToColor, 1)
-BOOST_CLASS_EXPORT_KEY(model::video::transition::FadeToColor)
+BOOST_CLASS_VERSION(model::video::transition::SwipeArc, 1)
+BOOST_CLASS_EXPORT_KEY(model::video::transition::SwipeArc)

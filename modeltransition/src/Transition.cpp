@@ -21,6 +21,10 @@
 #include "Enums.h"
 #include "Track.h"
 #include "TransitionParameter.h"
+#include "TransitionParameterBool.h"
+#include "TransitionParameterColor.h"
+#include "TransitionParameterDirection.h"
+#include "TransitionParameterInt.h"
 #include "UtilSerializeBoost.h"
 
 namespace model {
@@ -44,6 +48,8 @@ void Transition::init(boost::optional<pts> nFramesLeft, boost::optional<pts> nFr
     mFramesRight = nFramesRight;
     ASSERT_MORE_THAN_ZERO(getLength());
 
+    initParameters();
+
     VAR_DEBUG(this)(nFramesLeft)(nFramesRight);
 }
 
@@ -51,7 +57,7 @@ Transition::Transition(const Transition& other)
     : Clip(other)
     , mFramesLeft(other.mFramesLeft)
     , mFramesRight(other.mFramesRight)
-    , mParameters(make_cloned<int, TransitionParameter>(other.mParameters))
+    , mParameters(make_cloned<wxString, TransitionParameter>(other.mParameters))
 {
     VAR_DEBUG(other)(*this);
 }
@@ -252,28 +258,53 @@ bool Transition::supports(TransitionType type) const
 // PARAMETERS
 //////////////////////////////////////////////////////////////////////////
 
-void Transition::addParameter(int index, TransitionParameterPtr parameter)
+void Transition::initParameters()
 {
-    ASSERT_MAP_CONTAINS_NOT(mParameters,index);
-    mParameters[index] = parameter;
+    std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> known{ getParameters() };
+    std::map<wxString, TransitionParameterPtr> currentValues{ mParameters }; // For retrieving the values from the save file
+
+    mParameters.clear(); // Start with nothing
+    for (auto tuple : getParameters())
+    {
+        wxString name{ std::get<0>(tuple) };
+        wxString description{ std::get<1>(tuple) };
+        model::TransitionParameterPtr parameter{ std::get<2>(tuple) };
+
+        parameter->setDescription(description);
+
+        if (currentValues.find(name) != currentValues.end())
+        {
+            parameter->copyValue(currentValues.find(name)->second);
+        }
+
+        mParameters[name] = parameter;
+    }
 }
 
-TransitionParameterPtr Transition::getParameter(int index) const
+std::vector<TransitionParameterPtr> Transition::getAllParameters() const
 {
-    ASSERT_MAP_CONTAINS(mParameters,index);
-    return mParameters.find(index)->second;
-}
-
-std::map<int, TransitionParameterPtr> Transition::getParameters() const
-{
-    return mParameters;
+    std::vector<TransitionParameterPtr> result;
+    for (auto kvp : mParameters)
+    {
+        result.push_back(kvp.second);
+    }
+    return result;
 }
     
-void Transition::setParameters(std::map<int, TransitionParameterPtr> parameters)
+template <typename PARAMETERTYPE>
+boost::shared_ptr<PARAMETERTYPE> Transition::getParameter(wxString name) const
 {
-    ASSERT_EQUALS(parameters.size(), mParameters.size());
-    mParameters = parameters;
+    ASSERT_MAP_CONTAINS(mParameters, name);
+    boost::shared_ptr<TransitionParameter> parameter{ mParameters.find(name)->second };
+    boost::shared_ptr<PARAMETERTYPE> result{ boost::dynamic_pointer_cast<PARAMETERTYPE>(parameter) };
+    ASSERT_NONZERO(result)(parameter);
+    return result;
 }
+
+template boost::shared_ptr<TransitionParameterBool> Transition::getParameter<TransitionParameterBool>(wxString name) const;
+template boost::shared_ptr<TransitionParameterInt> Transition::getParameter<TransitionParameterInt>(wxString name) const;
+template boost::shared_ptr<TransitionParameterColor> Transition::getParameter<TransitionParameterColor>(wxString name) const;
+template boost::shared_ptr<TransitionParameterDirection> Transition::getParameter<TransitionParameterDirection>(wxString name) const;
 
 //////////////////////////////////////////////////////////////////////////
 // LOGGING
@@ -327,12 +358,26 @@ void Transition::serialize(Archive & ar, const unsigned int version)
             ar & BOOST_SERIALIZATION_NVP(mFramesLeft);
             ar & BOOST_SERIALIZATION_NVP(mFramesRight);
         }
-        if (version >= 3)
+        if (version == 3)
+        {
+            std::map<int, TransitionParameterPtr> parameters;
+            ar & boost::serialization::make_nvp("mParameters", parameters);
+            for (auto kvp : parameters)
+            {
+                mParameters.insert(std::make_pair("color", kvp.second));
+            }
+        }
+        if (version > 3)
         {
             ar & BOOST_SERIALIZATION_NVP(mParameters);
         }
         ASSERT_MORE_THAN_ZERO(getLength());
         // NOT: mSelected. After loading, nothing is selected.
+        if (Archive::is_loading::value)
+        {
+
+            initParameters();
+        }
     }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
     catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }

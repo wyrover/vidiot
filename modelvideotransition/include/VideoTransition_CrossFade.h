@@ -31,15 +31,17 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    CrossFade();
+    CrossFade() = default;
 
-    virtual CrossFade* clone() const;
+    CrossFade* clone() const override;
 
-    virtual ~CrossFade();
+    virtual ~CrossFade() = default;
 
     //////////////////////////////////////////////////////////////////////////
     // TRANSITION
     //////////////////////////////////////////////////////////////////////////
+
+    std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> getParameters() const override { return{}; };
 
     wxString getDescription(TransitionType type) const override;
 
@@ -48,9 +50,9 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     void handleFullyOpaqueImage(const wxImagePtr& image, const std::function<float (int, int)>& f) const override;
-    void handleImageWithAlpha(const wxImagePtr& image, const std::function<float (int, int)>& f) const override;
 
-    std::function<float (int,int)> getLeftMethod(const wxImagePtr& image, const float& factor) const override;
+    std::function<float(int, int)> getLeftMethod(const wxImagePtr& image, const float& factor) const override;
+
     std::function<float (int,int)> getRightMethod(const wxImagePtr& image, const float& factor) const override;
 
 protected:
@@ -61,15 +63,9 @@ protected:
 
     /// Copy constructor. Use make_cloned for making deep copies of objects.
     /// \see make_cloned
-    CrossFade(const CrossFade& other);
+    CrossFade(const CrossFade& other) = default;
 
 private:
-
-    //////////////////////////////////////////////////////////////////////////
-    // LOGGING
-    //////////////////////////////////////////////////////////////////////////
-
-    friend std::ostream& operator<<(std::ostream& os, const CrossFade& obj);
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

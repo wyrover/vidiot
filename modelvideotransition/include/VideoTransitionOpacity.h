@@ -33,9 +33,9 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    VideoTransitionOpacity();
+    VideoTransitionOpacity() = default;
 
-    virtual ~VideoTransitionOpacity();
+    virtual ~VideoTransitionOpacity() = default;
 
 protected:
 
@@ -45,11 +45,15 @@ protected:
 
     /// Copy constructor. Use make_cloned for making deep copies of objects.
     /// \see make_cloned
-    VideoTransitionOpacity(const VideoTransitionOpacity& other);
+    VideoTransitionOpacity(const VideoTransitionOpacity& other) = default;
 
     //////////////////////////////////////////////////////////////////////////
     // IMPLEMENTATION OF TRANSITION
     //////////////////////////////////////////////////////////////////////////
+
+    /// By default, the left image is layered 'on top of' the right image.
+    /// By overriding this method, this order can be changed.
+    virtual bool getLeftOnTop() { return true; }
 
     VideoFramePtr getVideo(pts position, const IClipPtr& leftClip, const IClipPtr& rightClip, const VideoCompositionParameters& parameters) override;
 
@@ -69,13 +73,13 @@ protected:
     /// When the image is fully opaque a more efficient implementation than iterating
     /// over all pixels may be possible.
     /// \param image on the opacity of this image the given method is applied
-    virtual void handleFullyOpaqueImage(const wxImagePtr& image, const std::function<float (int, int)>& f) const = 0;
+    virtual void handleFullyOpaqueImage(const wxImagePtr& image, const std::function<float (int, int)>& f) const;
 
     /// To be implemented by derived classes.
     /// The image contains alpha data. Therefore, an optimized implementation might
     /// not be possible.
     /// \param image on the opacity of this image the given method is applied
-    virtual void handleImageWithAlpha(const wxImagePtr& image, const std::function<float (int, int)>& f) const = 0;
+    virtual void handleImageWithAlpha(const wxImagePtr& image, const std::function<float (int, int)>& f) const;
 
     /// To be implemented by derived classes.
     /// Resulting factor for pixels of the left image.
@@ -83,7 +87,7 @@ protected:
     /// Input factor of 1 indicates right image fully visible.
     /// \param image on the opacity of this image the given method is applied
     /// \param factor factor that indicates the progress of the transition 0.0 <= factor <= 1.0
-    virtual std::function<float (int,int)> getLeftMethod(const wxImagePtr& image, const float& factor) const = 0;
+    virtual std::function<float (int,int)> getLeftMethod(const wxImagePtr& image, const float& factor) const;
 
     /// To be implemented by derived classes.
     /// Resulting factor for pixels of the right image.

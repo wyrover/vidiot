@@ -32,6 +32,8 @@ std::unique_ptr<wxLocale> Config::sLocale = nullptr;
 
 DEFINE_EVENT(EVENT_CONFIG_UPDATED, EventConfigUpdated, wxString);
 
+// todo make thread-safe for reading (cache all values), ensure writing done in main thread, and re-read upon change
+
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////

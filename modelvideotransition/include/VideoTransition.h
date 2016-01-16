@@ -17,8 +17,8 @@
 
 #pragma once
 
-#include "Transition.h"
 #include "IVideo.h"
+#include "Transition.h"
 
 namespace model {
 
@@ -32,9 +32,8 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    VideoTransition();
-
-    virtual ~VideoTransition();
+    VideoTransition() = default;
+    virtual ~VideoTransition() = default;
 
     //////////////////////////////////////////////////////////////////////////
     // ICONTROL
@@ -70,9 +69,9 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    pts mProgress;          ///< Last rendered position
-    IClipPtr mLeftClip;     ///< Clip generating 'left' side. NOTE: Only used for generating frames, not for querying. That should be done by inspecting 'IClip::getPrev'
-    IClipPtr mRightClip;    ///< Clip generating 'right' side. NOTE: Only used for generating frames, not for querying. That should be done by inspecting 'IClip::getNext'
+    pts mProgress = -1;             ///< Last rendered position
+    IClipPtr mLeftClip = nullptr;   ///< Clip generating 'left' side. NOTE: Only used for generating frames, not for querying. That should be done by inspecting 'IClip::getPrev'
+    IClipPtr mRightClip = nullptr;  ///< Clip generating 'right' side. NOTE: Only used for generating frames, not for querying. That should be done by inspecting 'IClip::getNext'
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

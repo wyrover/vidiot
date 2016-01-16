@@ -20,22 +20,13 @@
 #include "VideoClip.h"
 #include "VideoCompositionParameters.h"
 #include "VideoFrame.h"
+#include "VideoTransitionHelpers.h"
 
 namespace model {
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
-
-VideoTransition::VideoTransition()
-    :	Transition()
-    ,   IVideo()
-    ,   mProgress(-1)
-    ,   mLeftClip()
-    ,   mRightClip()
-{
-    VAR_DEBUG(this);
-}
 
 VideoTransition::VideoTransition(const VideoTransition& other)
     :   Transition(other)
@@ -45,11 +36,6 @@ VideoTransition::VideoTransition(const VideoTransition& other)
     ,   mRightClip()
 {
     VAR_DEBUG(*this);
-}
-
-VideoTransition::~VideoTransition()
-{
-    VAR_DEBUG(this);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -133,6 +119,6 @@ void VideoTransition::serialize(Archive & ar, const unsigned int version)
 template void VideoTransition::serialize<boost::archive::xml_oarchive>(boost::archive::xml_oarchive& ar, const unsigned int archiveVersion);
 template void VideoTransition::serialize<boost::archive::xml_iarchive>(boost::archive::xml_iarchive& ar, const unsigned int archiveVersion);
 
-} //namespace
+} // namespace
 
 BOOST_CLASS_EXPORT_IMPLEMENT(model::VideoTransition)

@@ -1,4 +1,4 @@
-// Copyright 2015-2016 Eric Raijmakers.
+// Copyright 2016 Eric Raijmakers.
 //
 // This file is part of Vidiot.
 //
@@ -17,12 +17,27 @@
 
 #pragma once
 
+#include "TransitionParameter.h"
+
+#include "UtilEnum.h"
+#include "UtilEnumSelector.h"
+
 namespace model {
 
-DECLARE_EVENT(EVENT_TRANSITION_PARAMETER_CHANGED, EventTransitionParameterChanged, wxString);
+DECLAREENUM(Direction, \
+    DirectionTopLeftToBottomRight, \
+    DirectionTopToBottom, \
+    DirectionTopRightToBottomLeft, \
+    DirectionRightToLeft, \
+    DirectionBottomRightToTopLeft, \
+    DirectionBottomToTop, \
+    DirectionBottomLeftToTopRight, \
+    DirectionLeftToRight);
 
-class TransitionParameter
-    :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
+typedef EnumSelector<Direction> DirectionSelector;
+
+class TransitionParameterDirection
+    : public TransitionParameter
 {
 public:
 
@@ -30,26 +45,33 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    /// Constructor for recovery from disk and for creating a new parameter.
-    TransitionParameter() = default;
+    /// Constructor for recovery from disk.
+    TransitionParameterDirection();
+
+    /// Constructor for creating a new parameter.
+    explicit TransitionParameterDirection(const Direction& direction);
 
     /// Used for making deep copies (clones)
-    virtual TransitionParameter* clone() const = 0;
-    void onCloned() {};
+    virtual TransitionParameterDirection* clone() const override;
 
-    virtual ~TransitionParameter() = default;
+    virtual ~TransitionParameterDirection();
 
     //////////////////////////////////////////////////////////////////////////
-    // INTERFACE
+    // TRANSITIONPARAMETER
     //////////////////////////////////////////////////////////////////////////
-    
-    virtual void copyValue(TransitionParameterPtr other) = 0;
 
-    virtual wxWindow* makeWidget(wxWindow *parent) = 0;
-    virtual void destroyWidget() = 0;
+    void copyValue(TransitionParameterPtr other) override;
 
-    wxString getDescription() { return mDescription; }
-    void setDescription(wxString description) { mDescription = description; }
+    wxWindow* makeWidget(wxWindow *parent) override;
+
+    void destroyWidget() override;
+
+    //////////////////////////////////////////////////////////////////////////
+    // GET/SET
+    //////////////////////////////////////////////////////////////////////////
+
+    inline Direction getValue() const { return mValue; }
+    inline void setValue(Direction value) { mValue = value; }
 
 protected:
 
@@ -59,29 +81,28 @@ protected:
 
     /// Copy constructor. Use make_cloned for making deep copies of objects.
     /// \see make_cloned
-    TransitionParameter(const TransitionParameter& other);
-
-    //////////////////////////////////////////////////////////////////////////
-    // TO BE CALLED WHEN THE DATA CHANGES
-    //////////////////////////////////////////////////////////////////////////
-
-    /// Must be called to set the data.
-    /// This ensures events are generated.
-    void signalUpdate(std::function<void()> update);
+    TransitionParameterDirection(const TransitionParameterDirection& other);
 
 private:
+
+    //////////////////////////////////////////////////////////////////////////
+    // GUI EVENTS
+    //////////////////////////////////////////////////////////////////////////
+
+    void onDirection(wxCommandEvent& event);
 
     //////////////////////////////////////////////////////////////////////////
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    wxString mDescription; // Never serialize this
+    DirectionSelector* mControl = nullptr;
+    Direction mValue = Direction_MAX;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<(std::ostream& os, const TransitionParameter& obj);
+    friend std::ostream& operator<<(std::ostream& os, const TransitionParameterDirection& obj);
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION
@@ -91,8 +112,7 @@ private:
     template<class Archive>
     void serialize(Archive & ar, const unsigned int version);
 };
-
 } // namespace
 
-BOOST_CLASS_VERSION(model::TransitionParameter, 1)
-BOOST_CLASS_EXPORT_KEY(model::TransitionParameter)
+BOOST_CLASS_VERSION(model::TransitionParameterDirection, 1)
+BOOST_CLASS_EXPORT_KEY(model::TransitionParameterDirection)

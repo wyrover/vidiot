@@ -29,26 +29,9 @@ namespace model { namespace audio { namespace transition {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-CrossFade::CrossFade()
-    :	AudioTransition()
-{
-    VAR_DEBUG(this);
-}
-
-CrossFade::CrossFade(const CrossFade& other)
-    :   AudioTransition(other)
-{
-    VAR_DEBUG(*this);
-}
-
 CrossFade* CrossFade::clone() const
 {
     return new CrossFade(static_cast<const CrossFade&>(*this));
-}
-
-CrossFade::~CrossFade()
-{
-    VAR_DEBUG(this);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -63,10 +46,6 @@ wxString CrossFade::getDescription(TransitionType type) const
 //////////////////////////////////////////////////////////////////////////
 // AUDIOTRANSITION
 //////////////////////////////////////////////////////////////////////////
-
-void CrossFade::reset()
-{
-}
 
 AudioChunkPtr CrossFade::getAudio(pts position, const IClipPtr& leftClip, const IClipPtr& rightClip, const AudioCompositionParameters& parameters)
 {
@@ -120,16 +99,6 @@ AudioChunkPtr CrossFade::getAudio(pts position, const IClipPtr& leftClip, const 
     VAR_DEBUG(*result);
 
     return result;
-}
-
-//////////////////////////////////////////////////////////////////////////
-// LOGGING
-//////////////////////////////////////////////////////////////////////////
-
-std::ostream& operator<<(std::ostream& os, const CrossFade& obj)
-{
-    os << static_cast<const AudioTransition&>(obj) << '|';
-    return os;
 }
 
 //////////////////////////////////////////////////////////////////////////

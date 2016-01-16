@@ -17,47 +17,45 @@
 
 #pragma once
 
-#include "VideoTransition_CrossFade.h"
+#include "TransitionParameter.h"
 
-namespace model { namespace video { namespace transition {
+namespace model {
 
-class FadeToColor
-    :   public CrossFade
+class TransitionParameterInt
+    : public TransitionParameter
 {
 public:
-
-    //////////////////////////////////////////////////////////////////////////
-    // PARAMETERS
-    //////////////////////////////////////////////////////////////////////////
-
-    static wxString sParameterColor;
 
     //////////////////////////////////////////////////////////////////////////
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    FadeToColor() = default;
+    /// Constructor for recovery from disk.
+    TransitionParameterInt();
 
-    FadeToColor* clone() const override;
+    /// Constructor for creating a new parameter.
+    explicit TransitionParameterInt(int value, int min, int max);
 
-    virtual ~FadeToColor() = default;
+    /// Used for making deep copies (clones)
+    virtual TransitionParameterInt* clone() const override;
 
-    //////////////////////////////////////////////////////////////////////////
-    // TRANSITION
-    //////////////////////////////////////////////////////////////////////////
-
-    bool supports(TransitionType type) const override;
-
-    std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> getParameters() const override;
-
-    wxString getDescription(TransitionType type) const override;
+    virtual ~TransitionParameterInt();
 
     //////////////////////////////////////////////////////////////////////////
-    // CROSSFADE
+    // TRANSITIONPARAMETER
     //////////////////////////////////////////////////////////////////////////
 
-    model::IClipPtr makeLeftClip() override;
-    model::IClipPtr makeRightClip() override;
+    void copyValue(TransitionParameterPtr other) override;
+
+    wxWindow* makeWidget(wxWindow *parent) override;
+    void destroyWidget() override;
+
+    //////////////////////////////////////////////////////////////////////////
+    // GET/SET
+    //////////////////////////////////////////////////////////////////////////
+
+    inline int getValue() const { return mValue; }
+    inline void setValue(int value) { mValue = value; }
 
 protected:
 
@@ -67,9 +65,35 @@ protected:
 
     /// Copy constructor. Use make_cloned for making deep copies of objects.
     /// \see make_cloned
-    FadeToColor(const FadeToColor& other) = default;
+    TransitionParameterInt(const TransitionParameterInt& other);
 
 private:
+
+    //////////////////////////////////////////////////////////////////////////
+    // GUI EVENTS
+    //////////////////////////////////////////////////////////////////////////
+
+    void onChange(int value);
+
+    void onSlider(wxCommandEvent& event);
+    void onSpin(wxSpinEvent& event);
+
+    //////////////////////////////////////////////////////////////////////////
+    // MEMBERS
+    //////////////////////////////////////////////////////////////////////////
+
+    wxPanel* mPanel = nullptr;
+    wxSlider* mSlider = nullptr;
+    wxSpinCtrl* mSpin = nullptr;
+    int mValue = 0;
+    int mMin = 0;
+    int mMax = 0;
+
+    //////////////////////////////////////////////////////////////////////////
+    // LOGGING
+    //////////////////////////////////////////////////////////////////////////
+
+    friend std::ostream& operator<<(std::ostream& os, const TransitionParameterInt& obj);
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION
@@ -79,8 +103,7 @@ private:
     template<class Archive>
     void serialize(Archive & ar, const unsigned int version);
 };
+} // namespace
 
-}}} // namespace
-
-BOOST_CLASS_VERSION(model::video::transition::FadeToColor, 1)
-BOOST_CLASS_EXPORT_KEY(model::video::transition::FadeToColor)
+BOOST_CLASS_VERSION(model::TransitionParameterInt, 1)
+BOOST_CLASS_EXPORT_KEY(model::TransitionParameterInt)

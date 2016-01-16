@@ -30,15 +30,17 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    CrossFade();
+    CrossFade() = default;
 
     virtual CrossFade* clone() const;
 
-    virtual ~CrossFade();
+    virtual ~CrossFade() = default;
 
     //////////////////////////////////////////////////////////////////////////
     // TRANSITION
     //////////////////////////////////////////////////////////////////////////
+
+    std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> getParameters() const override { return{}; };
 
     wxString getDescription(TransitionType type) const override;
 
@@ -46,7 +48,6 @@ public:
     // AUDIOTRANSITION
     //////////////////////////////////////////////////////////////////////////
 
-    virtual void reset();
     virtual AudioChunkPtr getAudio(pts position, const IClipPtr& leftClip, const IClipPtr& rightClip, const AudioCompositionParameters& parameters) override;
 
 protected:
@@ -57,19 +58,9 @@ protected:
 
     /// Copy constructor. Use make_cloned for making deep copies of objects.
     /// \see make_cloned
-    CrossFade(const CrossFade& other);
+    CrossFade(const CrossFade& other) = default;
 
 private:
-
-    //////////////////////////////////////////////////////////////////////////
-    // MEMBERS
-    //////////////////////////////////////////////////////////////////////////
-
-    //////////////////////////////////////////////////////////////////////////
-    // LOGGING
-    //////////////////////////////////////////////////////////////////////////
-
-    friend std::ostream& operator<<(std::ostream& os, const CrossFade& obj);
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

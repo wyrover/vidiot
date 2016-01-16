@@ -27,18 +27,29 @@ class Bands
 public:
 
     //////////////////////////////////////////////////////////////////////////
+    // PARAMETERS
+    //////////////////////////////////////////////////////////////////////////
+
+    static wxString sParameterCount;
+    static wxString sParameterDirection;
+
+    //////////////////////////////////////////////////////////////////////////
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    Bands();
+    Bands() = default;
 
-    virtual Bands* clone() const;
+    Bands* clone() const override;
 
-    virtual ~Bands();
-
+    virtual ~Bands() = default;
+    
     //////////////////////////////////////////////////////////////////////////
     // TRANSITION
     //////////////////////////////////////////////////////////////////////////
+
+    bool supports(TransitionType type) const override;
+
+    std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> getParameters() const override;
 
     wxString getDescription(TransitionType type) const override;
 
@@ -46,10 +57,6 @@ public:
     // VIDEOTRANSITIONOPACITY
     //////////////////////////////////////////////////////////////////////////
 
-    void handleFullyOpaqueImage(const wxImagePtr& image, const std::function<float (int, int)>& f) const override;
-    void handleImageWithAlpha(const wxImagePtr& image, const std::function<float (int, int)>& f) const override;
-
-    std::function<float (int,int)> getLeftMethod(const wxImagePtr& image, const float& factor) const override;
     std::function<float (int,int)> getRightMethod(const wxImagePtr& image, const float& factor) const override;
 
 protected:
@@ -60,21 +67,9 @@ protected:
 
     /// Copy constructor. Use make_cloned for making deep copies of objects.
     /// \see make_cloned
-    Bands(const Bands& other);
+    Bands(const Bands& other) = default;
 
 private:
-
-    //////////////////////////////////////////////////////////////////////////
-    // MEMBERS
-    //////////////////////////////////////////////////////////////////////////
-
-    int mBands;
-
-    //////////////////////////////////////////////////////////////////////////
-    // LOGGING
-    //////////////////////////////////////////////////////////////////////////
-
-    friend std::ostream& operator<<(std::ostream& os, const Bands& obj);
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

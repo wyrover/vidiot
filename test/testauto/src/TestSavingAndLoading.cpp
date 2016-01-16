@@ -158,7 +158,7 @@ void TestSavingAndLoading::testSaveAndLoad()
 
     //////////////////////////////////////////////////////////////////////////
 
-    checkDocument(tempDir_fileName.second.GetFullPath());
+    checkDocument(tempDir_fileName.second);
 
     bool ok = wxRemoveFile(tempDir_fileName.second.GetFullPath());
     ASSERT(ok)(tempDir_fileName.second.GetFullPath());
@@ -186,7 +186,7 @@ void TestSavingAndLoading::testLoadOldVersions()
 			StartTest(filename.c_str());
             wxFileName vidFileName(referenceDirName);
             vidFileName.SetFullName(filename);
-            checkDocument(vidFileName.GetFullPath());
+            checkDocument(vidFileName);
         }
     }
 }
@@ -271,10 +271,10 @@ void TestSavingAndLoading::testRevert()
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-void TestSavingAndLoading::checkDocument(wxString path)
+void TestSavingAndLoading::checkDocument(wxFileName path)
 {
-    StartTest("Load document");
-    OpenProject(path);
+    StartTest(path.GetName() + ": "  + "Load document");
+    OpenProject(path.GetFullPath());
 
     // Checks on loaded document
     // Must wait for Idle twice, since the timeline class uses
@@ -282,10 +282,9 @@ void TestSavingAndLoading::checkDocument(wxString path)
     // See the use of Timeline::mExecuteOnIdle
     WaitForIdle;
     WaitForIdle;
-    StartTest("Cursor position");
-    util::thread::RunInMainAndWait([]()
+    StartTest(path.GetName() + ": " + "Cursor position");
+    util::thread::RunInMainAndWait([path]()
     {
-        StartTest("Scroll offset");
         ASSERT_EQUALS(getTimeline().getCursor().getLogicalPosition(), getSequence()->getLength() / 2);
         ASSERT_EQUALS(getTimeline().getScrolling().getCenterPts(), getSequence()->getLength() / 2);
     });
@@ -295,11 +294,11 @@ void TestSavingAndLoading::checkDocument(wxString path)
         // First move to the left so that all the move actions succeed
         getTimeline().getScrolling().align(0,0);
     });
-    util::thread::RunInMainAndWait([]()
+    util::thread::RunInMainAndWait([path]()
     {
         // Known bug at some point: mLastModified not known for a recently opened file (in the project view).
         // The method geteLastModified was accessed when the date column comes into view.
-        StartTest("Open folder");
+        StartTest(path.GetName() + ": " + "Open folder");
         wxString s = util::path::toPath(util::path::normalize(getTestFilesPath().GetFullPath()));
         gui::ProjectView::get().expand(getRoot()->find(s).front());
     });
@@ -308,12 +307,12 @@ void TestSavingAndLoading::checkDocument(wxString path)
         gui::ProjectView::get().scrollToRight();
     });
     {
-        StartTest("Trim clip"); // Known bug at some point: a crash due to improper initialization of File class members upon loading (mNumberOfFrames not initialized)
+        StartTest(path.GetName() + ": " + "Trim clip"); // Known bug at some point: a crash due to improper initialization of File class members upon loading (mNumberOfFrames not initialized)
         TimelineTrimLeft(VideoClip(0,1),20);
         Undo();
     }
     {
-        StartTest("Enlarge sequence"); // Known bug at some point: enlarging the sequence did not cause an update of the timeline virtual size due to missing event binding
+        StartTest(path.GetName() + ": " + "Enlarge sequence"); // Known bug at some point: enlarging the sequence did not cause an update of the timeline virtual size due to missing event binding
         wxSize paneSize = getTimeline().GetVirtualSize();
         wxSize size = getTimeline().getSequenceView().getSize();
         ExtendSequenceWithRepeatedClips(getSequence(), getListOfInputPaths(), 1);
@@ -321,11 +320,11 @@ void TestSavingAndLoading::checkDocument(wxString path)
         ASSERT_DIFFERS(getTimeline().GetVirtualSize(), paneSize);
     }
     {
-        StartTest("Scrub");
+        StartTest(path.GetName() + ": " + "Scrub");
         Scrub(HCenter(VideoClip(0,3)),HCenter(VideoClip(0,3)) + 20);
     }
     {
-        StartTest("Open render settings"); // Known bug at some point: loading the project went ok, but when opening the render dialog a crash occurred.
+        StartTest(path.GetName() + ": " + "Open render settings"); // Known bug at some point: loading the project went ok, but when opening the render dialog a crash occurred.
         WindowTriggerMenu(ID_RENDERSETTINGS);
         ButtonTriggerPressed(gui::DialogRenderSettings::get().getCancelButton());
     }

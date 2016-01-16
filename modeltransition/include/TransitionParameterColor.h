@@ -45,7 +45,7 @@ public:
     // TRANSITIONPARAMETER
     //////////////////////////////////////////////////////////////////////////
 
-    wxString getName() override;
+    void copyValue(TransitionParameterPtr other) override;
 
     wxWindow* makeWidget(wxWindow *parent) override;
     void destroyWidget() override;
@@ -54,7 +54,8 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    wxColour getColor() const;
+    inline wxColour getValue() const { return mValue; }
+    inline void setValue(wxColour value) { mValue = value; }
 
 protected:
 
@@ -78,8 +79,8 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    wxColourPickerCtrl* mControl; 
-    wxColour mColor;
+    wxColourPickerCtrl* mControl = nullptr;
+    wxColour mValue;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING
@@ -97,5 +98,5 @@ private:
 };
 } // namespace
 
-BOOST_CLASS_VERSION(model::TransitionParameterColor, 1)
+BOOST_CLASS_VERSION(model::TransitionParameterColor, 2)
 BOOST_CLASS_EXPORT_KEY(model::TransitionParameterColor)

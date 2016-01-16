@@ -17,38 +17,15 @@
 
 #include "VideoTransition_CrossFade.h"
 
-#include "TransitionFactory.h"
-#include "VideoClip.h"
-#include "VideoComposition.h"
-#include "VideoCompositionParameters.h"
-#include "VideoFrame.h"
-
 namespace model { namespace video { namespace transition {
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-CrossFade::CrossFade()
-    :	VideoTransitionOpacity()
-{
-    VAR_DEBUG(this);
-}
-
-CrossFade::CrossFade(const CrossFade& other)
-    :   VideoTransitionOpacity(other)
-{
-    VAR_DEBUG(*this);
-}
-
 CrossFade* CrossFade::clone() const
 {
     return new CrossFade(static_cast<const CrossFade&>(*this));
-}
-
-CrossFade::~CrossFade()
-{
-    VAR_DEBUG(this);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -69,37 +46,20 @@ void CrossFade::handleFullyOpaqueImage(const wxImagePtr& image, const std::funct
     applyToFirstLineThenCopy(image,f);
 }
 
-void CrossFade::handleImageWithAlpha(const wxImagePtr& image, const std::function<float (int, int)>& f) const
-{
-    applyToAllPixels(image,f);
-}
-
 std::function<float (int,int)> CrossFade::getLeftMethod(const wxImagePtr& image, const float& factor) const
 {
-    std::function<float (int,int)> f = [factor](int x, int y) -> float
+    return [factor](int x, int y) -> float
     {
         return 1.0 - factor;
     };
-    return f;
 }
 
 std::function<float (int,int)> CrossFade::getRightMethod(const wxImagePtr& image, const float& factor) const
 {
-    std::function<float (int,int)> f =[factor](int x, int y) -> float
+    return [factor](int x, int y) -> float
     {
         return factor;
     };
-    return f;
-}
-
-//////////////////////////////////////////////////////////////////////////
-// LOGGING
-//////////////////////////////////////////////////////////////////////////
-
-std::ostream& operator<<(std::ostream& os, const CrossFade& obj)
-{
-    os << static_cast<const VideoTransition&>(obj);
-    return os;
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -1,4 +1,4 @@
-// Copyright 2015-2016 Eric Raijmakers.
+// Copyright 2016 Eric Raijmakers.
 //
 // This file is part of Vidiot.
 //
@@ -17,47 +17,46 @@
 
 #pragma once
 
-#include "VideoTransition_CrossFade.h"
+#include "TransitionParameter.h"
 
-namespace model { namespace video { namespace transition {
+namespace model {
 
-class FadeToColor
-    :   public CrossFade
+class TransitionParameterBool
+    : public TransitionParameter
 {
 public:
-
-    //////////////////////////////////////////////////////////////////////////
-    // PARAMETERS
-    //////////////////////////////////////////////////////////////////////////
-
-    static wxString sParameterColor;
 
     //////////////////////////////////////////////////////////////////////////
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    FadeToColor() = default;
+    /// Constructor for recovery from disk.
+    TransitionParameterBool() = default;
 
-    FadeToColor* clone() const override;
+    /// Constructor for creating a new parameter.
+    explicit TransitionParameterBool(bool value);
 
-    virtual ~FadeToColor() = default;
+    /// Used for making deep copies (clones)
+    virtual TransitionParameterBool* clone() const override;
 
-    //////////////////////////////////////////////////////////////////////////
-    // TRANSITION
-    //////////////////////////////////////////////////////////////////////////
-
-    bool supports(TransitionType type) const override;
-
-    std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> getParameters() const override;
-
-    wxString getDescription(TransitionType type) const override;
+    virtual ~TransitionParameterBool() = default;
 
     //////////////////////////////////////////////////////////////////////////
-    // CROSSFADE
+    // TRANSITIONPARAMETER
     //////////////////////////////////////////////////////////////////////////
 
-    model::IClipPtr makeLeftClip() override;
-    model::IClipPtr makeRightClip() override;
+    void copyValue(TransitionParameterPtr other) override;
+
+    wxWindow* makeWidget(wxWindow *parent) override;
+
+    void destroyWidget() override;
+
+    //////////////////////////////////////////////////////////////////////////
+    // GET/SET
+    //////////////////////////////////////////////////////////////////////////
+
+    inline bool getValue() const { return mValue; }
+    inline void setValue(bool value) { mValue = value; }
 
 protected:
 
@@ -67,9 +66,28 @@ protected:
 
     /// Copy constructor. Use make_cloned for making deep copies of objects.
     /// \see make_cloned
-    FadeToColor(const FadeToColor& other) = default;
+    TransitionParameterBool(const TransitionParameterBool& other);
 
 private:
+
+    //////////////////////////////////////////////////////////////////////////
+    // GUI EVENTS
+    //////////////////////////////////////////////////////////////////////////
+
+    void onCheck(wxCommandEvent& event);
+
+    //////////////////////////////////////////////////////////////////////////
+    // MEMBERS
+    //////////////////////////////////////////////////////////////////////////
+
+    wxCheckBox* mCheck = nullptr;
+    bool mValue = false;
+
+    //////////////////////////////////////////////////////////////////////////
+    // LOGGING
+    //////////////////////////////////////////////////////////////////////////
+
+    friend std::ostream& operator<<(std::ostream& os, const TransitionParameterBool& obj);
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION
@@ -79,8 +97,7 @@ private:
     template<class Archive>
     void serialize(Archive & ar, const unsigned int version);
 };
+} // namespace
 
-}}} // namespace
-
-BOOST_CLASS_VERSION(model::video::transition::FadeToColor, 1)
-BOOST_CLASS_EXPORT_KEY(model::video::transition::FadeToColor)
+BOOST_CLASS_VERSION(model::TransitionParameterBool, 1)
+BOOST_CLASS_EXPORT_KEY(model::TransitionParameterBool)

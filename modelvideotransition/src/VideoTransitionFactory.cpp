@@ -20,6 +20,8 @@
 #include "VideoTransition_CrossFade.h"
 #include "VideoTransition_Bands.h"
 #include "VideoTransition_FadeToColor.h"
+#include "VideoTransition_SwipeArc.h"
+#include "VideoTransition_SwipeCircle.h"
 
 namespace model { namespace video {
 
@@ -28,6 +30,8 @@ VideoTransitionFactory::VideoTransitionFactory()
 {
     add(boost::make_shared<model::video::transition::CrossFade>());
     add(boost::make_shared<model::video::transition::Bands>());
+    add(boost::make_shared<model::video::transition::SwipeArc>());
+    add(boost::make_shared<model::video::transition::SwipeCircle>());
     add(boost::make_shared<model::video::transition::FadeToColor>());
 }
 
