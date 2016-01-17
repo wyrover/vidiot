@@ -26,7 +26,14 @@ namespace model { namespace video { namespace transition {
 double pythagoras(double x, double y);
 
 /// Determine the distance between two points
-int distance(int x_origin, int y_origin, int x, int y);
+int euclidianDistance(int x_origin, int y_origin, int x, int y);
+
+/// Determine the angular distance of a point
+/// This is the difference in angle between the lines
+/// (x_origin, y_origin) -> (x_origin,0), AND
+/// (x_origin, y_origin) -> (x,y)
+/// Thus, the clockwise angular distance from 12:00.
+int angularDistance(int x_origin, int y_origin, int x, int y);
 
 /// Compute the factor, given a bandsize and a length.
 /// \param bandsize length of the total band
@@ -34,6 +41,6 @@ int distance(int x_origin, int y_origin, int x, int y);
 /// \param factor transition progress (0 < factor < 1)
 /// \param reversed_animation if true, reverse the result
 /// \return opacity factor to be applied
-float getFactor(int bandsize, int distance, double factor, bool reversed_animation);
+float getFactor(int bandsize, int distance, double factor, bool reversed_animation, bool smooth);
 
 }}} // namespace

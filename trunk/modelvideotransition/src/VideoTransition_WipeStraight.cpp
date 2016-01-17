@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#include "VideoTransition_Bands.h"
+#include "VideoTransition_WipeStraight.h"
 
 #include "TransitionParameterDirection.h"
 #include "TransitionParameterInt.h"
@@ -26,49 +26,52 @@ namespace model { namespace video { namespace transition {
 // PARAMETERS
 //////////////////////////////////////////////////////////////////////////
 
-wxString Bands::sParameterCount{ "count" };
-wxString Bands::sParameterDirection{ "direction" };
+wxString WipeStraight::sParameterCount{ "count" };
+wxString WipeStraight::sParameterDirection{ "direction" };
+wxString WipeStraight::sParameterSoftenEdges{ "smooth" };
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
 // todo rename to StraightWipe
-Bands* Bands::clone() const
+WipeStraight* WipeStraight::clone() const
 {
-    return new Bands(static_cast<const Bands&>(*this));   // todo use BaseCRTP pattern from http://stackoverflow.com/questions/12255546/c-deep-copying-a-base-class-pointer
+    return new WipeStraight(static_cast<const WipeStraight&>(*this));   // todo use BaseCRTP pattern from http://stackoverflow.com/questions/12255546/c-deep-copying-a-base-class-pointer
 }
 
 //////////////////////////////////////////////////////////////////////////
 // TRANSITION
 //////////////////////////////////////////////////////////////////////////
 
-bool Bands::supports(TransitionType type) const
+bool WipeStraight::supports(TransitionType type) const
 {
     return
         type == TransitionTypeFadeInFromPrevious ||
         type == TransitionTypeFadeOutToNext;
 }
 
-std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> Bands::getParameters() const
+std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> WipeStraight::getParameters() const
 {
     return
     {
-        std::make_tuple(sParameterCount, _("Number of bands"), boost::make_shared<TransitionParameterInt>(1, 1, 100)),
+        std::make_tuple(sParameterCount, _("Number of lines"), boost::make_shared<TransitionParameterInt>(1, 1, 100)),
         std::make_tuple(sParameterDirection, _("Direction"), boost::make_shared<TransitionParameterDirection>(DirectionLeftToRight)),
+        std::make_tuple(sParameterSoftenEdges, _("Soften edges"), boost::make_shared<TransitionParameterBool>(true)),
     };
 }
 
-wxString Bands::getDescription(TransitionType type) const
+wxString WipeStraight::getDescription(TransitionType type) const
 {
-    return _("Swipe Straight");
+    return _("Wipe Straight");
 }
 
 //////////////////////////////////////////////////////////////////////////
 // VIDEOTRANSITIONOPACITY
 //////////////////////////////////////////////////////////////////////////
 
-// todo "clock swipe"
+// todo 'image wipe'
+// todo when changing transition, preview is not updated.
 // todo show preview of transition when editing?
 // todo in edit clip show a drop down box for changing the transition type.
 // todo all parameters of transitions have configurable defaults (extra tab in options)
@@ -77,30 +80,31 @@ wxString Bands::getDescription(TransitionType type) const
 /// \param h height of image
 /// \param a 'a' part of equation describing the diagonal
 /// \param b 'b' part of equation describing the diagonal
-/// \param nBands number of bands
+/// \param nWipeStraight number of WipeStraight
 /// \param factor how 'far' along is the transition?
 /// \param reversed_animation if true, start the animation from the 'other end' of a band
-std::function<float(int, int)> getDiagonalMethod(double w, double h, double a, double b, int nBands, double factor, bool reversed_animation)
+std::function<float(int, int)> getDiagonalMethod(double w, double h, double a, double b, int nWipeStraight, double factor, bool reversed_animation, bool smooth)
 {
     double diagonal_length{ pythagoras(w, h) };
-    int bandSize{ static_cast<int>(std::floor(diagonal_length) / nBands) };
+    int WipeStraightize{ static_cast<int>(std::floor(diagonal_length) / nWipeStraight) };
     double a_inverse = 1 / a;
     bool cross_diagonal{ a < 0 }; // false: diagonal animation axis is from top-left to bottom-right. true: axis is from bottom-left to top-right.
     double Q{ (cross_diagonal ? -1 : 1) * (w * h) / (h * h + w * w) };
-    return [w, h, a, b, factor, cross_diagonal, reversed_animation, bandSize, a_inverse, Q](int x0, int y0) -> float
+    return [w, h, a, b, factor, cross_diagonal, reversed_animation, smooth, WipeStraightize, a_inverse, Q](int x0, int y0) -> float
     {
         double x_intersect{ (a_inverse * static_cast<double>(x0) + static_cast<double>(y0) - b) * Q };
         double y_intersect{ a * x_intersect + b };
         int length_intersect{ static_cast<int>(std::floor(pythagoras(x_intersect, cross_diagonal ? h - y_intersect : y_intersect))) };
-        int distance{ length_intersect % bandSize };
-        return getFactor(bandSize, distance, factor, reversed_animation);
+        int distance{ length_intersect % WipeStraightize };
+        return getFactor(WipeStraightize, distance, factor, reversed_animation, smooth);
     };
 }
 
-std::function<float (int,int)> Bands::getRightMethod(const wxImagePtr& image, const float& factor) const
+std::function<float (int,int)> WipeStraight::getRightMethod(const wxImagePtr& image, const float& factor) const
 {
-    int nBands{ getParameter<TransitionParameterInt>(sParameterCount)->getValue() };
+    int nWipeStraight{ getParameter<TransitionParameterInt>(sParameterCount)->getValue() };
     Direction direction{ getParameter<TransitionParameterDirection>(sParameterDirection)->getValue() };
+    bool soften{ getParameter<TransitionParameterBool>(sParameterSoftenEdges)->getValue() };
 
     double w{ static_cast<double>(image->GetWidth()) };
     double h{ static_cast<double>(image->GetHeight()) };
@@ -111,19 +115,19 @@ std::function<float (int,int)> Bands::getRightMethod(const wxImagePtr& image, co
         case DirectionLeftToRight:
         case DirectionRightToLeft:
         {
-            int bandsize{ image->GetWidth() / nBands };
-            return [bandsize, factor, direction](int x, int y) -> float
+            int WipeStraightize{ image->GetWidth() / nWipeStraight };
+            return [WipeStraightize, factor, direction, soften](int x, int y) -> float
             {
-                return getFactor(bandsize, x % bandsize, factor, direction == DirectionRightToLeft);
+                return getFactor(WipeStraightize, x % WipeStraightize, factor, direction == DirectionRightToLeft, soften);
             };
         }
         case DirectionTopToBottom:
         case DirectionBottomToTop:
         {
-            int bandsize{ image->GetHeight() / nBands };
-            return [bandsize, factor, direction](int x, int y) -> float
+            int WipeStraightize{ image->GetHeight() / nWipeStraight };
+            return [WipeStraightize, factor, direction, soften](int x, int y) -> float
             {
-                return getFactor(bandsize, y % bandsize, factor, direction == DirectionBottomToTop);
+                return getFactor(WipeStraightize, y % WipeStraightize, factor, direction == DirectionBottomToTop, soften);
             };
         }
         case DirectionTopLeftToBottomRight:
@@ -149,7 +153,7 @@ std::function<float (int,int)> Bands::getRightMethod(const wxImagePtr& image, co
             // DirectionBottomRightToTopLeft: same algo (goes 'along' the same line), except with a reversed animation.
             double a{ h / w };
             double b{ 0 };
-            return getDiagonalMethod(w, h, a, b, nBands, factor, direction == DirectionBottomRightToTopLeft);
+            return getDiagonalMethod(w, h, a, b, nWipeStraight, factor, direction == DirectionBottomRightToTopLeft, soften);
             break;
         }
         case DirectionBottomLeftToTopRight:
@@ -175,7 +179,7 @@ std::function<float (int,int)> Bands::getRightMethod(const wxImagePtr& image, co
             // DirectionTopRightToBottomLeft: same algo (goes 'along' the same line), except with a reversed animation.
             double a{ -1 * h / w };
             double b{ h };
-            return getDiagonalMethod(w, h, a, b, nBands, factor, direction == DirectionTopRightToBottomLeft);
+            return getDiagonalMethod(w, h, a, b, nWipeStraight, factor, direction == DirectionTopRightToBottomLeft, soften);
             break;
         }
     }
@@ -188,7 +192,7 @@ std::function<float (int,int)> Bands::getRightMethod(const wxImagePtr& image, co
 //////////////////////////////////////////////////////////////////////////
 
 template<class Archive>
-void Bands::serialize(Archive & ar, const unsigned int version)
+void WipeStraight::serialize(Archive & ar, const unsigned int version)
 {
     try
     {
@@ -198,9 +202,22 @@ void Bands::serialize(Archive & ar, const unsigned int version)
     catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
     catch (...)                                  { LOG_ERROR;                                   throw; }
 }
-template void Bands::serialize<boost::archive::xml_oarchive>(boost::archive::xml_oarchive& ar, const unsigned int archiveVersion);
-template void Bands::serialize<boost::archive::xml_iarchive>(boost::archive::xml_iarchive& ar, const unsigned int archiveVersion);
+//template void WipeStraight::serialize<boost::archive::xml_oarchive>(boost::archive::xml_oarchive& ar, const unsigned int archiveVersion);    // todo no longer required due to exports?
+//template void WipeStraight::serialize<boost::archive::xml_iarchive>(boost::archive::xml_iarchive& ar, const unsigned int archiveVersion);
+
+template<class Archive>
+void Bands::serialize(Archive & ar, const unsigned int version)
+{
+    try
+    {
+        ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(VideoTransition);
+    }
+    catch (boost::exception &e) { VAR_ERROR(boost::diagnostic_information(e)); throw; }
+    catch (std::exception& e) { VAR_ERROR(e.what());                         throw; }
+    catch (...) { LOG_ERROR;                                   throw; }
+}
 
 }}} //namespace
 
+BOOST_CLASS_EXPORT_IMPLEMENT(model::video::transition::WipeStraight)
 BOOST_CLASS_EXPORT_IMPLEMENT(model::video::transition::Bands)

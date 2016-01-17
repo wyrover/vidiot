@@ -176,7 +176,7 @@ void Config::init(const wxString& applicationName, const wxString& vendorName, b
     checkBool(Config::sPathDebugLogSequenceOnEdit);
 
     // Set all defaults here
-    setDefault(Config::sPathProjectAutoLoadEnabled, false);
+    setDefault(Config::sPathProjectAutoLoadEnabled, true);
     setDefault(Config::sPathProjectBackupBeforeSaveEnabled, true);
     setDefault(Config::sPathProjectBackupBeforeSaveMaximum, 10);
     setDefault(Config::sPathProjectSavePathsRelativeToProject, true);

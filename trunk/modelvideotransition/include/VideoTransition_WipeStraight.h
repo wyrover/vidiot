@@ -1,4 +1,4 @@
-// Copyright 2016 Eric Raijmakers.
+// Copyright 2013-2016 Eric Raijmakers.
 //
 // This file is part of Vidiot.
 //
@@ -21,7 +21,7 @@
 
 namespace model { namespace video { namespace transition {
 
-class SwipeArc
+class WipeStraight
     :   public VideoTransitionOpacity
 {
 public:
@@ -32,18 +32,22 @@ public:
 
     static wxString sParameterCount;
     static wxString sParameterDirection;
-    static wxString sParameterInverse;
+    static wxString sParameterSoftenEdges;
 
     //////////////////////////////////////////////////////////////////////////
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    SwipeArc() = default;
+    WipeStraight() = default;
 
-    SwipeArc* clone() const override;
+    WipeStraight* clone() const override;
 
-    virtual ~SwipeArc() = default;
+    virtual ~WipeStraight() = default;
 
+    WipeStraight& operator =(WipeStraight b)
+    {
+        return *this; //todo
+    }
     //////////////////////////////////////////////////////////////////////////
     // TRANSITION
     //////////////////////////////////////////////////////////////////////////
@@ -65,10 +69,10 @@ protected:
     //////////////////////////////////////////////////////////////////////////
     // COPY CONSTRUCTOR
     //////////////////////////////////////////////////////////////////////////
-
+public:
     /// Copy constructor. Use make_cloned for making deep copies of objects.
     /// \see make_cloned
-    SwipeArc(const SwipeArc& other) = default;
+    WipeStraight(const WipeStraight& other) = default;
 
 private:
 
@@ -81,7 +85,16 @@ private:
     void serialize(Archive & ar, const unsigned int version);
 };
 
+// For loading old files
+class Bands :  public WipeStraight 
+{
+    friend class boost::serialization::access;
+    template<class Archive>                         
+    void serialize(Archive & ar, const unsigned int version);
+};
+
 }}} // namespace
 
-BOOST_CLASS_VERSION(model::video::transition::SwipeArc, 1)
-BOOST_CLASS_EXPORT_KEY(model::video::transition::SwipeArc)
+BOOST_CLASS_VERSION(model::video::transition::WipeStraight, 1)
+BOOST_CLASS_EXPORT_KEY(model::video::transition::WipeStraight)
+BOOST_CLASS_EXPORT_KEY(model::video::transition::Bands)

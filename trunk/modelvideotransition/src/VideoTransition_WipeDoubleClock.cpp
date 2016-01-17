@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#include "VideoTransition_SwipeCircle.h"
+#include "VideoTransition_WipeDoubleClock.h"
 
 #include "TransitionParameterBool.h"
 #include "TransitionParameterInt.h"
@@ -26,59 +26,66 @@ namespace model { namespace video { namespace transition {
 // PARAMETERS
 //////////////////////////////////////////////////////////////////////////
 
-wxString SwipeCircle::sParameterCount{ "count" };
-wxString SwipeCircle::sParameterInverse{ "inversed" };
+wxString WipeDoubleClock::sParameterAngle{ "angle" };
+wxString WipeDoubleClock::sParameterSoftenEdges{ "smooth" };
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-SwipeCircle* SwipeCircle::clone() const
+WipeDoubleClock* WipeDoubleClock::clone() const
 {
-    return new SwipeCircle(static_cast<const SwipeCircle&>(*this));
+    return new WipeDoubleClock(static_cast<const WipeDoubleClock&>(*this));
 }
-
-// todo play with changing the inversed flag, and redoing. sometimes the detailsclip is outofsync with the actual value!
 
 //////////////////////////////////////////////////////////////////////////
 // TRANSITION
 //////////////////////////////////////////////////////////////////////////
 
-bool SwipeCircle::supports(TransitionType type) const
+bool WipeDoubleClock::supports(TransitionType type) const
 {
     return
         type == TransitionTypeFadeInFromPrevious ||
         type == TransitionTypeFadeOutToNext;
 }
 
-std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> SwipeCircle::getParameters() const
+std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> WipeDoubleClock::getParameters() const
 {
     return
     {
-        std::make_tuple(sParameterCount, _("Number of circles"), boost::make_shared<TransitionParameterInt>(1, 1, 100)),     
-        std::make_tuple(sParameterInverse, _("Inversed"), boost::make_shared<TransitionParameterBool>(false)),
+        std::make_tuple(sParameterAngle, _("Angle"), boost::make_shared<TransitionParameterInt>(0, 0, 360)),
+        std::make_tuple(sParameterSoftenEdges, _("Soften edges"), boost::make_shared<TransitionParameterBool>(true)),
     };
 }
 
-wxString SwipeCircle::getDescription(TransitionType type) const
+wxString WipeDoubleClock::getDescription(TransitionType type) const
 {
-    return _("Swipe Circle");
+    return _("Wipe Double Clock");
 }
 
 //////////////////////////////////////////////////////////////////////////
 // VIDEOTRANSITIONOPACITY
 //////////////////////////////////////////////////////////////////////////
 
-std::function<float (int,int)> SwipeCircle::getRightMethod(const wxImagePtr& image, const float& factor) const
+std::function<float (int,int)> WipeDoubleClock::getRightMethod(const wxImagePtr& image, const float& factor) const
 {
-    int nBands{ getParameter<TransitionParameterInt>(sParameterCount)->getValue() };
-    bool inverse{ getParameter<TransitionParameterBool>(sParameterInverse)->getValue() };
-    int w{ image->GetWidth() };
-    int h{ image->GetHeight() };
-    int bandsize{ static_cast<int>(std::max(w, h)) / nBands };
-    return [bandsize, factor, w, h, inverse](int x, int y) -> float
+    int angle{ getParameter<TransitionParameterInt>(sParameterAngle)->getValue() };
+    bool soften{ getParameter<TransitionParameterBool>(sParameterSoftenEdges)->getValue() };
+    int x_origin{ image->GetWidth() / 2};
+    int y_origin{ image->GetHeight() / 2};
+    // todo do a div by 0 here,. then catch with util::catchexceptions and throw again to be caugt by m$ code. then ms code also logs divide by zero?
+
+    auto calcdist = [angle, x_origin, y_origin](int x, int y) -> int
     {
-        return getFactor(bandsize, distance(w / 2, h / 2, x, y) % bandsize, factor, inverse);
+        int r{ angularDistance(x_origin, y_origin, x, y) - angle };
+        if (r < 0) { r += 360; }
+        if (r > 180) { r = 360 - r; }
+        return r;
+    };
+
+    return [factor, calcdist, soften](int x, int y) -> float
+    {
+        return getFactor(180, calcdist(x,y), factor, false, soften);
     };
 }
 
@@ -87,7 +94,7 @@ std::function<float (int,int)> SwipeCircle::getRightMethod(const wxImagePtr& ima
 //////////////////////////////////////////////////////////////////////////
 
 template<class Archive>
-void SwipeCircle::serialize(Archive & ar, const unsigned int version)
+void WipeDoubleClock::serialize(Archive & ar, const unsigned int version)
 {
     try
     {
@@ -97,9 +104,9 @@ void SwipeCircle::serialize(Archive & ar, const unsigned int version)
     catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
     catch (...)                                  { LOG_ERROR;                                   throw; }
 }
-template void SwipeCircle::serialize<boost::archive::xml_oarchive>(boost::archive::xml_oarchive& ar, const unsigned int archiveVersion);
-template void SwipeCircle::serialize<boost::archive::xml_iarchive>(boost::archive::xml_iarchive& ar, const unsigned int archiveVersion);
+template void WipeDoubleClock::serialize<boost::archive::xml_oarchive>(boost::archive::xml_oarchive& ar, const unsigned int archiveVersion);
+template void WipeDoubleClock::serialize<boost::archive::xml_iarchive>(boost::archive::xml_iarchive& ar, const unsigned int archiveVersion);
 
 }}} //namespace
 
-BOOST_CLASS_EXPORT_IMPLEMENT(model::video::transition::SwipeCircle)
+BOOST_CLASS_EXPORT_IMPLEMENT(model::video::transition::WipeDoubleClock)

@@ -1,4 +1,4 @@
-// Copyright 2013-2016 Eric Raijmakers.
+// Copyright 2016 Eric Raijmakers.
 //
 // This file is part of Vidiot.
 //
@@ -21,7 +21,7 @@
 
 namespace model { namespace video { namespace transition {
 
-class Bands
+class WipeArc
     :   public VideoTransitionOpacity
 {
 public:
@@ -32,17 +32,19 @@ public:
 
     static wxString sParameterCount;
     static wxString sParameterDirection;
+    static wxString sParameterInverse;
+    static wxString sParameterSoftenEdges;
 
     //////////////////////////////////////////////////////////////////////////
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    Bands() = default;
+    WipeArc() = default;
 
-    Bands* clone() const override;
+    WipeArc* clone() const override;
 
-    virtual ~Bands() = default;
-    
+    virtual ~WipeArc() = default;
+
     //////////////////////////////////////////////////////////////////////////
     // TRANSITION
     //////////////////////////////////////////////////////////////////////////
@@ -67,7 +69,7 @@ protected:
 
     /// Copy constructor. Use make_cloned for making deep copies of objects.
     /// \see make_cloned
-    Bands(const Bands& other) = default;
+    WipeArc(const WipeArc& other) = default;
 
 private:
 
@@ -82,5 +84,5 @@ private:
 
 }}} // namespace
 
-BOOST_CLASS_VERSION(model::video::transition::Bands, 1)
-BOOST_CLASS_EXPORT_KEY(model::video::transition::Bands)
+BOOST_CLASS_VERSION(model::video::transition::WipeArc, 1)
+BOOST_CLASS_EXPORT_KEY(model::video::transition::WipeArc)

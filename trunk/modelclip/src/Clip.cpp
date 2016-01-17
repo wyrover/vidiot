@@ -314,7 +314,7 @@ void Clip::serialize(Archive & ar, const unsigned int version)
 
         if (version == 1)
         {
-            ar & BOOST_SERIALIZATION_NVP(mTrack);
+            ar & BOOST_SERIALIZATION_NVP(mTrack); // todo why is all the track info saved? Can be recreated after reading?
             ar & BOOST_SERIALIZATION_NVP(mNext);
             ar & BOOST_SERIALIZATION_NVP(mPrev);
             ar & BOOST_SERIALIZATION_NVP(mLeftPtsInTrack);
