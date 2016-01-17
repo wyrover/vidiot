@@ -127,7 +127,7 @@ void TransitionParameterColor::serialize(Archive & ar, const unsigned int versio
         }
     }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
-    catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
+    catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }         // todo use utilcatchexceptions?
     catch (...)                                  { LOG_ERROR;                                   throw; }
 }
 template void TransitionParameterColor::serialize<boost::archive::xml_oarchive>(boost::archive::xml_oarchive& ar, const unsigned int archiveVersion);

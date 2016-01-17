@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#include "VideoTransition_SwipeArc.h"
+#include "VideoTransition_WipeArc.h"
 
 #include "TransitionParameterBool.h"
 #include "TransitionParameterDirection.h"
@@ -27,54 +27,57 @@ namespace model { namespace video { namespace transition {
 // PARAMETERS
 //////////////////////////////////////////////////////////////////////////
 
-wxString SwipeArc::sParameterCount{ "count" };
-wxString SwipeArc::sParameterDirection{ "direction" };
-wxString SwipeArc::sParameterInverse{ "inversed" };
+wxString WipeArc::sParameterCount{ "count" };
+wxString WipeArc::sParameterDirection{ "direction" };
+wxString WipeArc::sParameterInverse{ "inversed" };
+wxString WipeArc::sParameterSoftenEdges{ "softenedges" };
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-SwipeArc* SwipeArc::clone() const
+WipeArc* WipeArc::clone() const
 {
-    return new SwipeArc(static_cast<const SwipeArc&>(*this));
+    return new WipeArc(static_cast<const WipeArc&>(*this));
 }
 
 //////////////////////////////////////////////////////////////////////////
 // TRANSITION
 //////////////////////////////////////////////////////////////////////////
 
-bool SwipeArc::supports(TransitionType type) const
+bool WipeArc::supports(TransitionType type) const
 {
     return
         type == TransitionTypeFadeInFromPrevious ||
         type == TransitionTypeFadeOutToNext;
 }
 
-std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> SwipeArc::getParameters() const
+std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> WipeArc::getParameters() const
 {
     return
     {
         std::make_tuple(sParameterCount, _("Number of bands"), boost::make_shared<TransitionParameterInt>(1, 1, 100)),
         std::make_tuple(sParameterDirection, _("Direction"), boost::make_shared<TransitionParameterDirection>(DirectionLeftToRight)),
         std::make_tuple(sParameterInverse, _("Inversed"), boost::make_shared<TransitionParameterBool>(false)),
+        std::make_tuple(sParameterSoftenEdges, _("Soften edges"), boost::make_shared<TransitionParameterBool>(true)),
     };
 }
 
-wxString SwipeArc::getDescription(TransitionType type) const
+wxString WipeArc::getDescription(TransitionType type) const
 {
-    return _("Swipe Arcs");
+    return _("Wipe Arc");
 }
 
 //////////////////////////////////////////////////////////////////////////
 // VIDEOTRANSITIONOPACITY
 //////////////////////////////////////////////////////////////////////////
 
-std::function<float (int,int)> SwipeArc::getRightMethod(const wxImagePtr& image, const float& factor) const
+std::function<float (int,int)> WipeArc::getRightMethod(const wxImagePtr& image, const float& factor) const
 {
     int nBands{ getParameter<TransitionParameterInt>(sParameterCount)->getValue() };
     Direction direction{ getParameter<TransitionParameterDirection>(sParameterDirection)->getValue() };
     bool inverse{ getParameter<TransitionParameterBool>(sParameterInverse)->getValue() };
+    bool soften{ getParameter<TransitionParameterBool>(sParameterSoftenEdges)->getValue() };
     int w{ image->GetWidth() };
     int h{ image->GetHeight() };
     int diagonal_length{ static_cast<int>(std::floor(pythagoras(w, h))) };
@@ -96,9 +99,9 @@ std::function<float (int,int)> SwipeArc::getRightMethod(const wxImagePtr& image,
     // Example: Set nBands to 1, and use the left to right direction.
     //          Pixels farther away than width of image are shown too soon.
     int bandsize{ static_cast<int>(std::floor(diagonal_length)) / nBands };
-    return [inverse, bandsize, factor, direction, w, h, x_origin, y_origin](int x, int y) -> float
+    return [inverse, soften, bandsize, factor, direction, w, h, x_origin, y_origin](int x, int y) -> float
     {
-        return getFactor(bandsize, distance(x_origin, y_origin, x, y) % bandsize, factor, inverse);
+        return getFactor(bandsize, euclidianDistance(x_origin, y_origin, x, y) % bandsize, factor, inverse, soften);
     };
 }
 
@@ -107,7 +110,7 @@ std::function<float (int,int)> SwipeArc::getRightMethod(const wxImagePtr& image,
 //////////////////////////////////////////////////////////////////////////
 
 template<class Archive>
-void SwipeArc::serialize(Archive & ar, const unsigned int version)
+void WipeArc::serialize(Archive & ar, const unsigned int version)
 {
     try
     {
@@ -117,9 +120,9 @@ void SwipeArc::serialize(Archive & ar, const unsigned int version)
     catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
     catch (...)                                  { LOG_ERROR;                                   throw; }
 }
-template void SwipeArc::serialize<boost::archive::xml_oarchive>(boost::archive::xml_oarchive& ar, const unsigned int archiveVersion);
-template void SwipeArc::serialize<boost::archive::xml_iarchive>(boost::archive::xml_iarchive& ar, const unsigned int archiveVersion);
+template void WipeArc::serialize<boost::archive::xml_oarchive>(boost::archive::xml_oarchive& ar, const unsigned int archiveVersion);
+template void WipeArc::serialize<boost::archive::xml_iarchive>(boost::archive::xml_iarchive& ar, const unsigned int archiveVersion);
 
 }}} //namespace
 
-BOOST_CLASS_EXPORT_IMPLEMENT(model::video::transition::SwipeArc)
+BOOST_CLASS_EXPORT_IMPLEMENT(model::video::transition::WipeArc)

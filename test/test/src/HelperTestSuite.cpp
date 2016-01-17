@@ -22,9 +22,7 @@
 namespace test {
 
 std::vector<std::string> SuitesWithoutGui = {
-    { "TestConvert::testTimeConversions" },
-    { "TestConvert::testIntegerConversions" },
-    { "TestConvert::testSpeedSliderConversions" },
+    { "TestConvert" },
     { "TestUtilPath::testEquals" },
     { "TestWithoutGui" }
 };

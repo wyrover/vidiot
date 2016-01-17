@@ -23,30 +23,78 @@ namespace model { namespace video { namespace transition {
 /// \param x side 1
 /// \param y side 2
 /// \return length of hypothenusa
-inline double pythagoras(double x, double y)
+double pythagoras(double x, double y)
 {
     return std::sqrt(x * x + y * y);
 };
 
 /// Determine the distance between two points
-inline int distance(int x_origin, int y_origin, int x, int y)
+int euclidianDistance(int x_origin, int y_origin, int x, int y)
 {
     return static_cast<int>(std::floor(pythagoras(x_origin - x, y_origin - y)));
 };
 
+int angularDistance(int x_origin, int y_origin, int x, int y)
+{
+    int diffx{ x - x_origin };
+    int diffy{ y_origin - y };
+    int result{ 0 };
+    if (diffx != 0 || diffy != 0)
+    {
+        result = static_cast<int>(std::floor(std::atan2(diffx, diffy) * 180 / M_PI));
+    }
+    while (result < 0) { result += 360; }
+    while (result >= 360) { result -= 360; }
+    return result;
+}
+
 /// Compute the factor, given a bandsize and a length.
 /// \param bandsize length of the total band
-/// \param distance part of the band that is covered currently for a given point
+/// \param distance distance of a given point wrt transition progress
 /// \param factor transition progress (0 < factor < 1)
 /// \param reversed_animation if true, reverse the result
+/// \param smooth apply smoothing if true
 /// \return opacity factor to be applied
-inline float getFactor(int bandsize, int distance, double factor, bool reversed_animation)
+float getFactor(int bandsize, int distance, double factor, bool reversed_animation, bool smooth)
 {
     if (reversed_animation)
     {
         distance = bandsize - distance;
     }
-    return (distance <= factor * bandsize) ? 1.0 : 0.0; // todo also make bands which return the not 0 and 1 but the quotient
+
+    if (smooth)
+    {
+        double smooth_factor{ 0.01 }; // 0.01 == 1%
+
+        // Slow the transition a bit such that the smoothed area gets time to 'fade in'.
+        // Normally, the first fully opaque pixels area shown in the first frame.
+        // However, I want the smoothed area also to enter gradually.
+        // Without this, when the first transition frame is shown, the entire smooted area is shown, immediately.
+        double distance_with_smooth_in_front{ (double)distance + (double)bandsize * smooth_factor };
+
+        // Speed up the transition such that the end time remains the same.
+        factor *= 1.0 + smooth_factor;
+
+        double end{ factor * (double)bandsize };
+        if (distance_with_smooth_in_front <= end)
+        {
+            return 1.0;
+        }
+
+        double smooth_area{ (double)bandsize * smooth_factor };
+        double smooth_area_end{ end + smooth_area };
+        if (distance_with_smooth_in_front <= smooth_area_end)
+        {
+            // This is the smoothed region
+            return (smooth_area_end - distance_with_smooth_in_front) / smooth_area;
+        }
+        return 0.0;
+    }
+    else
+    {
+        double end{ factor * bandsize };
+        return distance <= end ? 1.0 : 0.0;
+    }
 }
 
 }}} // namespace

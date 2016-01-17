@@ -17,6 +17,8 @@
 
 #include "TestConvert.h"
 
+#include "VideoTransitionHelpers.h"
+
 namespace test {
 
 //////////////////////////////////////////////////////////////////////////
@@ -77,6 +79,45 @@ void TestConvert::testFactorSliderConversions()
     ASSERT_EQUALS(gui::timeline::DetailsClip::factorToSliderValue(rational64(1,2)), 5000);
     ASSERT_EQUALS(gui::timeline::DetailsClip::factorToSliderValue(rational64(1,5)), 2000);
     ASSERT_EQUALS(gui::timeline::DetailsClip::factorToSliderValue(rational64(1,100)), 100);
+}
+
+void TestConvert::testAngleComputation()
+{
+    StartTestSuite();
+
+    ASSERT_EQUALS(model::video::transition::angularDistance(100, 100, 100, 0), 0);
+    ASSERT_EQUALS(model::video::transition::angularDistance(100, 100, 100, 50), 0);
+
+    ASSERT_EQUALS(model::video::transition::angularDistance(100, 100, 200, 0), 45);
+    ASSERT_EQUALS(model::video::transition::angularDistance(100, 100, 150, 50), 45);
+
+    ASSERT_EQUALS(model::video::transition::angularDistance(100, 100, 200, 100), 90);
+    ASSERT_EQUALS(model::video::transition::angularDistance(100, 100, 150, 100), 90);
+
+    ASSERT_EQUALS(model::video::transition::angularDistance(100, 100, 200, 200), 135);
+    ASSERT_EQUALS(model::video::transition::angularDistance(100, 100, 150, 150), 135);
+
+    ASSERT_EQUALS(model::video::transition::angularDistance(100, 100, 100, 200), 180);
+    ASSERT_EQUALS(model::video::transition::angularDistance(100, 100, 100, 150), 180);
+
+    ASSERT_EQUALS(model::video::transition::angularDistance(100, 100, 0, 200), 225);
+    ASSERT_EQUALS(model::video::transition::angularDistance(100, 100, 50, 150), 225);
+
+    ASSERT_EQUALS(model::video::transition::angularDistance(100, 100, 0, 100), 270);
+    ASSERT_EQUALS(model::video::transition::angularDistance(100, 100, 50, 100), 270);
+
+    ASSERT_EQUALS(model::video::transition::angularDistance(100, 100, 0, 0), 315);
+    ASSERT_EQUALS(model::video::transition::angularDistance(100, 100, 50, 50), 315);
+
+    for (int x = 0; x < 200; ++x)
+    {
+        for (int y = 0; y < 200; ++y)
+        {
+            int distance{ model::video::transition::angularDistance(100,100,x,y) };
+            ASSERT_LESS_THAN(distance, 360);
+            ASSERT_MORE_THAN_EQUALS(distance, -1);
+        }
+    }
 }
 
 } // namespace

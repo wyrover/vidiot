@@ -18,10 +18,12 @@
 #include "VideoTransitionFactory.h"
 
 #include "VideoTransition_CrossFade.h"
-#include "VideoTransition_Bands.h"
 #include "VideoTransition_FadeToColor.h"
-#include "VideoTransition_SwipeArc.h"
-#include "VideoTransition_SwipeCircle.h"
+#include "VideoTransition_WipeArc.h"
+#include "VideoTransition_WipeCircle.h"
+#include "VideoTransition_WipeDoubleClock.h"
+#include "VideoTransition_WipeClock.h"
+#include "VideoTransition_WipeStraight.h"
 
 namespace model { namespace video {
 
@@ -29,10 +31,12 @@ VideoTransitionFactory::VideoTransitionFactory()
     : TransitionFactory("Video")
 {
     add(boost::make_shared<model::video::transition::CrossFade>());
-    add(boost::make_shared<model::video::transition::Bands>());
-    add(boost::make_shared<model::video::transition::SwipeArc>());
-    add(boost::make_shared<model::video::transition::SwipeCircle>());
     add(boost::make_shared<model::video::transition::FadeToColor>());
+    add(boost::make_shared<model::video::transition::WipeArc>());
+    add(boost::make_shared<model::video::transition::WipeCircle>());
+    add(boost::make_shared<model::video::transition::WipeDoubleClock>());
+    add(boost::make_shared<model::video::transition::WipeClock>());
+    add(boost::make_shared<model::video::transition::WipeStraight>());
 }
 
 }} //namespace

@@ -21,8 +21,8 @@
 
 namespace model { namespace video { namespace transition {
 
-class SwipeCircle
-    :   public VideoTransitionOpacity
+class WipeClock
+    : public VideoTransitionOpacity
 {
 public:
 
@@ -30,18 +30,20 @@ public:
     // PARAMETERS
     //////////////////////////////////////////////////////////////////////////
 
+    static wxString sParameterAngle;
     static wxString sParameterCount;
     static wxString sParameterInverse;
+    static wxString sParameterSoftenEdges;
 
     //////////////////////////////////////////////////////////////////////////
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    SwipeCircle() = default;
+    WipeClock() = default;
 
-    SwipeCircle* clone() const override;
+    WipeClock* clone() const override;
 
-    virtual ~SwipeCircle() = default;
+    virtual ~WipeClock() = default;
 
     //////////////////////////////////////////////////////////////////////////
     // TRANSITION
@@ -67,7 +69,7 @@ protected:
 
     /// Copy constructor. Use make_cloned for making deep copies of objects.
     /// \see make_cloned
-    SwipeCircle(const SwipeCircle& other) = default;
+    WipeClock(const WipeClock& other) = default;
 
 private:
 
@@ -82,5 +84,5 @@ private:
 
 }}} // namespace
 
-BOOST_CLASS_VERSION(model::video::transition::SwipeCircle, 1)
-BOOST_CLASS_EXPORT_KEY(model::video::transition::SwipeCircle)
+BOOST_CLASS_VERSION(model::video::transition::WipeClock, 1)
+BOOST_CLASS_EXPORT_KEY(model::video::transition::WipeClock)

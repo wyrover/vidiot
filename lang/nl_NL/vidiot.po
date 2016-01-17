@@ -19,7 +19,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-16 11:06+0100\n"
+"POT-Creation-Date: 2016-01-16 14:13+0100\n"
 "PO-Revision-Date: 2016-01-14 22:55+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -950,20 +950,6 @@ msgstr "Hoogte wordt 0."
 msgid "Image becomes too large."
 msgstr "Beeld wordt te groot."
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_Bands.cpp:57
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_SwipeArc.cpp:58
-msgid "Number of bands"
-msgstr ""
-
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_Bands.cpp:58
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_SwipeArc.cpp:59
-msgid "Direction"
-msgstr ""
-
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_Bands.cpp:64
-msgid "Swipe Straight"
-msgstr ""
-
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_CrossFade.cpp:37
 msgid "Video crossfade"
 msgstr "Video overgang (cross dissolve)"
@@ -980,21 +966,52 @@ msgstr "Vervagen van kleur"
 msgid "Fade to color"
 msgstr "Vervagen naar kleur"
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_SwipeArc.cpp:60
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_SwipeCircle.cpp:59
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeArc.cpp:58
+msgid "Number of bands"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeArc.cpp:59
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeStraight.cpp:58
+msgid "Direction"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeArc.cpp:60
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeCircle.cpp:59
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeClock.cpp:59
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeDoubleClock.cpp:59
 msgid "Inversed"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_SwipeArc.cpp:66
-msgid "Swipe Arcs"
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeArc.cpp:66
+msgid "Wipe Arc"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_SwipeCircle.cpp:58
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeCircle.cpp:58
 msgid "Number of circles"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_SwipeCircle.cpp:65
-msgid "Swipe Circle"
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeCircle.cpp:65
+msgid "Wipe Circle"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeClock.cpp:57
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeDoubleClock.cpp:57
+msgid "Angle"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeClock.cpp:58
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeDoubleClock.cpp:58
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeStraight.cpp:57
+msgid "Number of lines"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeClock.cpp:65
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeDoubleClock.cpp:65
+msgid "Wipe Clock"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeStraight.cpp:64
+msgid "Wipe Straight"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:74

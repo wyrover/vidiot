@@ -274,7 +274,15 @@ void Transition::initParameters()
 
         if (currentValues.find(name) != currentValues.end())
         {
+            // Use the value from the save file, if present
             parameter->copyValue(currentValues.find(name)->second);
+        }
+        // else if: use the config value. todo
+        // - Add method getConfigName(Transition, name) which mangles the param name per transition
+        // - todo how to check for proper config'ed values upon startup?
+        else
+        {
+            // Use the default value
         }
 
         mParameters[name] = parameter;
