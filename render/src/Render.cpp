@@ -70,7 +70,7 @@ public:
         ASSERT_LESS_THAN_EQUALS(mFrom,sequence->getLength());
         ASSERT_LESS_THAN_EQUALS(mFrom + mLength,sequence->getLength());
 
-        if (Config::get().Exists(Config::sPathVideoOverruleFourCC))
+        if (Config::get().exists(Config::sPathVideoOverruleFourCC))
         {
             mFourCC.reset(Config::get().read<wxString>(Config::sPathVideoOverruleFourCC));
         }

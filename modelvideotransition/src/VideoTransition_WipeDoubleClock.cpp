@@ -73,7 +73,6 @@ std::function<float (int,int)> WipeDoubleClock::getRightMethod(const wxImagePtr&
     bool soften{ getParameter<TransitionParameterBool>(sParameterSoftenEdges)->getValue() };
     int x_origin{ image->GetWidth() / 2};
     int y_origin{ image->GetHeight() / 2};
-    // todo do a div by 0 here,. then catch with util::catchexceptions and throw again to be caugt by m$ code. then ms code also logs divide by zero?
 
     auto calcdist = [angle, x_origin, y_origin](int x, int y) -> int
     {

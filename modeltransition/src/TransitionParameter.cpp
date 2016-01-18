@@ -37,7 +37,7 @@ TransitionParameter::TransitionParameter(const TransitionParameter& other)
 void TransitionParameter::signalUpdate(std::function<void()> update)
 {
     update();
-    EventTransitionParameterChanged changedEvent{ "" };       // todo should be called goingtochange
+    EventTransitionParameterChanged changedEvent{ "" };
     ProcessEvent(changedEvent);
 }
 

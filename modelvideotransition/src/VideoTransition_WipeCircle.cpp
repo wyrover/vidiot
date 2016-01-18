@@ -39,8 +39,6 @@ WipeCircle* WipeCircle::clone() const
     return new WipeCircle(static_cast<const WipeCircle&>(*this));
 }
 
-// todo play with changing the inversed flag, and redoing. sometimes the detailsclip is outofsync with the actual value!
-
 //////////////////////////////////////////////////////////////////////////
 // TRANSITION
 //////////////////////////////////////////////////////////////////////////

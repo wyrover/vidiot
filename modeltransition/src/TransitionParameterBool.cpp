@@ -60,7 +60,7 @@ wxWindow* TransitionParameterBool::makeWidget(wxWindow *parent)
     ASSERT_ZERO(mCheck);
 
     mCheck = new wxCheckBox(parent, wxID_ANY, "");
-    mCheck->SetValue(mValue); // todo check initial values for others
+    mCheck->SetValue(mValue);
     mCheck->Bind(wxEVT_CHECKBOX, &TransitionParameterBool::onCheck, this);
     
     return mCheck;

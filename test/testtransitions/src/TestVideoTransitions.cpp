@@ -75,6 +75,7 @@ void TestVideoTransitions::testVideoTransitions()
                 StartTest(model::TransitionType_toString(tt) + " " + t->getDescription());
                 util::thread::RunInMainAndWait([t, tt]() { gui::timeline::cmd::createTransition(getSequence(), VideoClip(0, 1), tt, t); });
                 ASSERT(VideoClip(0, ti)->isA<model::Transition>());
+                TimelineLeftClick(Center(VideoClip(0, ti))); // Open properties
                 Scrub(-2 + LeftPixel(VideoClip(0, ti)), RightPixel(VideoClip(0, ti)) + 2);
                 Play(-2 + LeftPixel(VideoClip(0, ti)), 250);
                 StartTest(model::TransitionType_toString(tt) + " " + t->getDescription() + " (opacity)");
@@ -86,8 +87,6 @@ void TestVideoTransitions::testVideoTransitions()
                 //            Some transitions used calls that were not allowed in a secondary thread (config calls).
                 Play(-2 + LeftPixel(VideoClip(0, ti)), 250);
                 Undo(3);
-
-                // todo open properties for all transitions (click on them)
             }
         }
     }
