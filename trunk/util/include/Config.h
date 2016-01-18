@@ -57,7 +57,7 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    bool     Exists(const wxString& key) const;
+    bool exists(const wxString& key) const;
 
     template <typename T>
     T read(const wxString& key) const;

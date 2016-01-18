@@ -73,7 +73,6 @@ wxString WipeStraight::getDescription(TransitionType type) const
 // todo when changing transition, preview is not updated.
 // todo show preview of transition when editing?
 // todo in edit clip show a drop down box for changing the transition type.
-// todo all parameters of transitions have configurable defaults (extra tab in options)
 
 /// \param w width of image
 /// \param h height of image

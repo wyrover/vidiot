@@ -71,8 +71,9 @@ void TransitionParameterColor::copyValue(TransitionParameterPtr other)
 
 wxWindow* TransitionParameterColor::makeWidget(wxWindow *parent) 
 {
-    ASSERT_EQUALS(mControl, 0);      // todo color name in color picker not translated
-    mControl = new wxColourPickerCtrl(parent, wxID_ANY, mValue, wxDefaultPosition, wxDefaultSize, wxCLRP_USE_TEXTCTRL | wxCLRP_SHOW_LABEL);
+    ASSERT_EQUALS(mControl, 0);      
+    mControl = new wxColourPickerCtrl(parent, wxID_ANY, mValue, wxDefaultPosition, wxDefaultSize);
+    mControl->SetColour(mValue);
     mControl->Bind(wxEVT_COLOURPICKER_CHANGED, &TransitionParameterColor::onColor, this);
     return mControl;
 }
@@ -117,6 +118,7 @@ void TransitionParameterColor::serialize(Archive & ar, const unsigned int versio
     try
     {
         ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(TransitionParameter);
+
         if (version == 1)
         {
             ar & boost::serialization::make_nvp("mColor", mValue);
@@ -127,7 +129,7 @@ void TransitionParameterColor::serialize(Archive & ar, const unsigned int versio
         }
     }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
-    catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }         // todo use utilcatchexceptions?
+    catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
     catch (...)                                  { LOG_ERROR;                                   throw; }
 }
 template void TransitionParameterColor::serialize<boost::archive::xml_oarchive>(boost::archive::xml_oarchive& ar, const unsigned int archiveVersion);

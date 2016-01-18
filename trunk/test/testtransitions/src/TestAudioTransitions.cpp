@@ -42,11 +42,10 @@ void TestAudioTransitions::testAudioTransitions()
     StartTestSuite();
     TimelineZoomIn(3);
     {
-        // todo open properties for all transitions (click on them)
-
         MakeInOutTransitionAfterClip preparation(1,true);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip);
         ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(Transition)(AudioClip);
+        TimelineLeftClick(Center(AudioClip(0, 2)));
         Scrub(LeftPixel(AudioClip(0,2)) - 5,RightPixel(AudioClip(0,2)) + 5);
         Play(HCenter(AudioClip(0,2)), 250);
     }
@@ -54,6 +53,7 @@ void TestAudioTransitions::testAudioTransitions()
         MakeInTransitionAfterClip preparation(1,true);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip);
         ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(Transition)(AudioClip);
+        TimelineLeftClick(Center(AudioClip(0, 2)));
         Scrub(LeftPixel(AudioClip(0,2)) - 5,RightPixel(AudioClip(0,2)) + 5);
         Play(HCenter(AudioClip(0,2)), 250);
     }
@@ -61,6 +61,7 @@ void TestAudioTransitions::testAudioTransitions()
         MakeOutTransitionAfterClip preparation(1,true);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip);
         ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(Transition)(AudioClip);
+        TimelineLeftClick(Center(AudioClip(0, 2)));
         Scrub(LeftPixel(AudioClip(0,2)) - 5,RightPixel(AudioClip(0,2)) + 5);
         Play(HCenter(AudioClip(0,2)), 250);
     }
@@ -69,6 +70,7 @@ void TestAudioTransitions::testAudioTransitions()
         MakeInOutTransitionAfterClip preparationVideo(1);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
         ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(Transition)(AudioClip);
+        TimelineLeftClick(Center(AudioClip(0, 2)));
         Scrub(LeftPixel(AudioClip(0,2)) - 5,RightPixel(AudioClip(0,2)) + 5);
         Play(HCenter(AudioClip(0,2)), 250);
     }

@@ -42,10 +42,11 @@ void CatchExceptions(F f, std::function<void()> onException = nullptr)
     }
     catch (...)
     {
+        LOG_ERROR;
         if (onException)
         {
             onException();
         }
-        FATAL;
+        throw; // rethrow to allow the main exception handler to catch this and provide extra info (example: divide by zero error)
     }
 }

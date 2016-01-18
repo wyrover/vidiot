@@ -39,8 +39,6 @@ template <> void Config::write(const wxString& key, const wxString& value);
 
 DEFINE_EVENT(EVENT_CONFIG_UPDATED, EventConfigUpdated, wxString);
 
-// todo make thread-safe for reading (cache all values), ensure writing done in main thread, and re-read upon change
-
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
@@ -265,7 +263,7 @@ void Config::exit()
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-bool Config::Exists(const wxString& key) const         // todo rename
+bool Config::exists(const wxString& key) const
 {
     boost::mutex::scoped_lock lock(mCacheMutex);
     return mCache.find(key) != mCache.end();
@@ -401,7 +399,7 @@ Config::Perspectives Config::getWorkspacePerspectives()
     {
         wxString pathName{ sPathWorkspacePerspectiveName + wxString::Format("%d",i) };
         wxString pathSaved{ sPathWorkspacePerspectiveSaved + wxString::Format("%d",i) };
-        if (!Exists(pathName) || !Exists(pathSaved))
+        if (!exists(pathName) || !exists(pathSaved))
         {
             break;
         }
