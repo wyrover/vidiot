@@ -34,7 +34,6 @@ wxString WipeStraight::sParameterSoftenEdges{ "smooth" };
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-// todo rename to StraightWipe
 WipeStraight* WipeStraight::clone() const
 {
     return new WipeStraight(static_cast<const WipeStraight&>(*this));   // todo use BaseCRTP pattern from http://stackoverflow.com/questions/12255546/c-deep-copying-a-base-class-pointer

@@ -71,7 +71,7 @@ wxString getDefaultLanguage()
 
 wxString getLanguageCode()
 {
-    return Config::ReadString(Config::sPathWorkspaceLanguage);
+    return wxConfigBase::Get()->Read(Config::sPathWorkspaceLanguage, getDefaultLanguage());
 }
 
 wxLanguage getLanguageId(wxString languageCode)

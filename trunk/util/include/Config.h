@@ -19,6 +19,10 @@
 
 #include "UtilSingleInstance.h"
 
+#include <wx/fileconf.h> // All config handling must be done via this file, for thread safety
+
+DECLARE_EVENT(EVENT_CONFIG_UPDATED, EventConfigUpdated, wxString);
+
 /// This class holds everything related to the persistence of global settings.
 /// Global settings include the application options but also checked menu items
 /// that are preserved upon application restart.
@@ -26,10 +30,10 @@
 /// The class also specifies getters values stored in the config file. Since default
 /// values are always filled in during 'init()', the use of default values
 /// is not neccesary, and therefore these methods are provided (which do not require
-// defaults).
-
-DECLARE_EVENT(EVENT_CONFIG_UPDATED, EventConfigUpdated, wxString);
-
+/// defaults).
+///
+/// Accessing config items via the Config::Read* methods is thread safe.
+/// Config items are cached, and the access to the cache is thread safe.
 class Config
     : public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
     , public wxFileConfig
@@ -52,20 +56,26 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    static bool     Exists(const wxString& key);
+    bool     Exists(const wxString& key) const;
 
-    static bool     ReadBool  (const wxString& key);
-    static long     ReadLong  (const wxString& key);
-    static double   ReadDouble(const wxString& key);
-    static wxString ReadString(const wxString& key);
-    static wxColour ReadColour(const wxString& key);
+    template <typename T>
+    T read(const wxString& key) const;
+
+    bool     ReadBool(const wxString& key) const;
+    long     ReadLong(const wxString& key) const;
+    double   ReadDouble(const wxString& key) const;
+    wxString ReadString(const wxString& key) const;
+    wxColour ReadColour(const wxString& key) const;
 
     template <class TYPE>
-    static TYPE     ReadEnum  (const wxString& key)
+    TYPE ReadEnum(const wxString& key) const
     {
         wxString result = ReadString(key);
-        return Enum_fromConfig(result,TYPE());
+        return Enum_fromConfig(result, TYPE());
     }
+
+    template <typename T>
+    void write(const wxString& key, const T& value);
 
     static void WriteBool(const wxString& key, bool value);
     static void WriteLong(const wxString& key, const long& value);
@@ -97,8 +107,8 @@ public:
     // DISK ACCESS
     //////////////////////////////////////////////////////////////////////////
 
-    static void holdWriteToDisk();
-    static void releaseWriteToDisk();
+    void holdWriteToDisk();
+    void releaseWriteToDisk();
 
     //////////////////////////////////////////////////////////////////////////
     // CONFIG PATHS
@@ -164,4 +174,15 @@ private:
     static bool sShowDebugInfo;
 
     static bool sHold;
+
+    std::map<wxString, wxString> mCache;
+    mutable boost::mutex mCacheMutex;
+
+    //////////////////////////////////////////////////////////////////////////
+    // HELPER METHDOS
+    //////////////////////////////////////////////////////////////////////////
+
+    void indexEntries();
+    void updateCache();
+
 };

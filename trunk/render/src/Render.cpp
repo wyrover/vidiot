@@ -58,7 +58,7 @@ public:
     ,   mSequence(sequence)
     ,   mFrom(from)
     {
-        pts maxLength = Convert::timeToPts(Config::ReadLong(Config::sPathDebugMaxRenderLength) *  sSecond);
+        pts maxLength = Convert::timeToPts(Config::get().ReadLong(Config::sPathDebugMaxRenderLength) *  sSecond);
         mLength = to - from;
         if (maxLength > 0 && maxLength < mLength)
         {
@@ -70,9 +70,9 @@ public:
         ASSERT_LESS_THAN_EQUALS(mFrom,sequence->getLength());
         ASSERT_LESS_THAN_EQUALS(mFrom + mLength,sequence->getLength());
 
-        if (Config::Exists(Config::sPathVideoOverruleFourCC))
+        if (Config::get().Exists(Config::sPathVideoOverruleFourCC))
         {
-            mFourCC.reset(Config::ReadString(Config::sPathVideoOverruleFourCC));
+            mFourCC.reset(Config::get().ReadString(Config::sPathVideoOverruleFourCC));
         }
     }
 

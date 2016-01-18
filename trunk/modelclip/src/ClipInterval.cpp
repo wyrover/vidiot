@@ -511,7 +511,7 @@ pts ClipInterval::getRenderSourceLength() const
 wxString ClipInterval::stripDescription(const wxString& description)
 {
     wxString result{ description };
-    static wxString strip = Config::ReadString(Config::sPathTimelineStripFromClipNames);
+    static wxString strip = Config::get().ReadString(Config::sPathTimelineStripFromClipNames);
     wxStringTokenizer t(strip, "|");
     while (t.HasMoreTokens())
     {

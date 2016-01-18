@@ -225,7 +225,7 @@ void TestSavingAndLoading::testBackupBeforeSave()
         ASSERT(model::Project::createBackupFileName(existingFile,count).Exists())(count);
         ASSERT_FILE_CREATED(existingFile,count);
 
-        for (int j = 0; j < count - ConfigRead<long>(Config::sPathProjectBackupBeforeSaveMaximum); ++j)
+        for (int j = 0; j < count - Config::get().read<long>(Config::sPathProjectBackupBeforeSaveMaximum); ++j)
         {
             ASSERT(!model::Project::createBackupFileName(existingFile,j).Exists())(count)(j)(tempDir_fileName);
         }

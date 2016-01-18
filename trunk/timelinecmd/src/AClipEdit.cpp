@@ -75,7 +75,7 @@ bool AClipEdit::Do()
         avoidDanglingLinks();
 
         mReplacements->replace();
-        if (Config::ReadBool(Config::sPathTestCxxMode))
+        if (Config::get().ReadBool(Config::sPathTestCxxMode))
         {
             // Only in test mode: verify all links.
             for (model::TrackPtr track : getSequence()->getTracks())
@@ -133,7 +133,7 @@ bool AClipEdit::Do()
         getTimeline().modelChanged();
     }
 
-    if (Config::ReadBool(Config::sPathDebugLogSequenceOnEdit))
+    if (Config::get().ReadBool(Config::sPathDebugLogSequenceOnEdit))
     {
         LOG_INFO << model::dump(getSequence(),1);
     }
@@ -162,7 +162,7 @@ bool AClipEdit::Undo()
         getTimeline().modelChanged();
     }
 
-    if (Config::ReadBool(Config::sPathDebugLogSequenceOnEdit))
+    if (Config::get().ReadBool(Config::sPathDebugLogSequenceOnEdit))
     {
         LOG_INFO << model::dump(getSequence(),1);
     }

@@ -97,7 +97,7 @@ pts DefaultTransitionLength()
 {
     static pts result{ util::thread::RunInMainReturning<pts>([]
     {
-        return Config::ReadLong(Config::sPathTimelineDefaultTransitionLength);
+        return Config::get().ReadLong(Config::sPathTimelineDefaultTransitionLength);
     }) };
     return result;
 }

@@ -40,8 +40,8 @@ TrackCreator::TrackCreator(const model::NodePtrs& assets)
 ,   mAudio(boost::make_shared<model::AudioTrack>())
 {
     wxString previousPrefix("");
-    int prefixLength = Config::ReadLong(Config::sPathMakeSequencePrefixLength);
-    int emptyLength = Config::ReadLong(Config::sPathMakeSequenceEmptyClipLength);
+    int prefixLength = Config::get().ReadLong(Config::sPathMakeSequencePrefixLength);
+    int emptyLength = Config::get().ReadLong(Config::sPathMakeSequenceEmptyClipLength);
 
     for ( model::NodePtr asset : mAssets )
     {

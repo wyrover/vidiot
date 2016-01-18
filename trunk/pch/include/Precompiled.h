@@ -140,7 +140,6 @@ extern "C" {
 #include <wx/docview.h>
 #include <wx/event.h>
 #include <wx/evtloop.h>
-#include <wx/fileconf.h>
 #include <wx/filename.h>
 #include <wx/font.h>
 #include <wx/frame.h>
