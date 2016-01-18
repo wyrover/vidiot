@@ -130,4 +130,4 @@ std::ostream& operator<<(std::ostream& os, const ENUMNAME& obj) { os << ENUMNAME
 wxString ENUMNAME ## _toString( const ENUMNAME& value ) { return ENUMNAME ## Converter::sConverter.toString(value); }; \
 ENUMNAME ENUMNAME ## _fromString( const wxString& value ) { return ENUMNAME ## Converter::sConverter.fromString(value); }; \
 ENUMNAME Enum_fromConfig(const wxString& value, const ENUMNAME& unused) { return ENUMNAME ## _fromString(wxString(value.mb_str())); }; \
-ENUMNAME ENUMNAME ## Converter::readConfigValue(const wxString& path) { return ENUMNAME ## _fromString(wxString(Config::get().ReadString(path).mb_str())); };
+ENUMNAME ENUMNAME ## Converter::readConfigValue(const wxString& path) { return ENUMNAME ## _fromString(wxString(Config::get().read<wxString>(path).mb_str())); };

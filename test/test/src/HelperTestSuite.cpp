@@ -143,7 +143,7 @@ bool HelperTestSuite::startTestSuite(const char* suite)
         updateTitle();
         util::thread::RunInMainAndWait([this]
         {
-           Config::WriteString( Config::sPathTestRunCurrent, currentCxxTest() ); // Set
+           Config::get().write<wxString>( Config::sPathTestRunCurrent, currentCxxTest() ); // Set
         });
     }
     return true;
@@ -170,7 +170,7 @@ void HelperTestSuite::testSuiteDone()
         {
             util::thread::RunInMainAndWait([this]
             {
-                Config::WriteString(Config::sPathTestRunCurrent, ""); // Reset
+                Config::get().write<wxString>(Config::sPathTestRunCurrent, ""); // Reset
             });
         }
 

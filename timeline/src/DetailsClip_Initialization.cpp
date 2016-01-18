@@ -71,7 +71,7 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
 
     {
         // Read lengths from config
-        wxString lengthButtons = Config::get().ReadString(Config::sPathTimelineLengthButtons);
+        wxString lengthButtons = Config::get().read<wxString>(Config::sPathTimelineLengthButtons);
         wxStringTokenizer t(lengthButtons, ",", wxTOKEN_STRTOK);
         while (t.HasMoreTokens() && mLengths.size() < 9) // Keys/Buttons 1-9 may be customized.
         {
@@ -89,7 +89,7 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
             mLengths = { 250, 500, 1000, 1500, 2000, 2500, 3000, 5000, 10000 }; // Keep in sync with defaults in Config. The defaults in config ensure that after startup the setting is present in the file.
             wxString configValue;
             for (int i : mLengths) { configValue << i << ','; }
-            Config::WriteString(Config::sPathTimelineLengthButtons, configValue);
+            Config::get().write<wxString>(Config::sPathTimelineLengthButtons, configValue);
             Config::get().Flush();
         }
     }

@@ -45,12 +45,13 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    Config(const wxString& appName, const wxString& vendorName, const wxString& localFilename);
+    Config(const wxString& applicationName, const wxString& vendorName, const wxString& configFile);
+    void init(bool inCxxTestMode);
+    void exit();
     Config(const Config&) = delete;
     Config& operator=(const Config&) = delete;
 
     static void init(const wxString& applicationName, const wxString& vendorName, bool inCxxTestMode);
-    static void exit();
 
     //////////////////////////////////////////////////////////////////////////
     // GET/SET
@@ -61,28 +62,16 @@ public:
     template <typename T>
     T read(const wxString& key) const;
 
-    bool     ReadBool(const wxString& key) const;
-    long     ReadLong(const wxString& key) const;
-    double   ReadDouble(const wxString& key) const;
-    wxString ReadString(const wxString& key) const;
-    wxColour ReadColour(const wxString& key) const;
-
     template <class TYPE>
     TYPE ReadEnum(const wxString& key) const
     {
-        wxString result = ReadString(key);
-        return Enum_fromConfig(result, TYPE());
+        return Enum_fromConfig(read<wxString>(key), TYPE());
     }
 
     template <typename T>
     void write(const wxString& key, const T& value);
 
-    static void WriteBool(const wxString& key, bool value);
-    static void WriteLong(const wxString& key, const long& value);
-    static void WriteDouble(const wxString& key, double value);
-    static void WriteString(const wxString& key, const wxString& value);
-
-    static void OnWrite(const wxString& key);
+    void onWrite(const wxString& key);
 
     // Specific getters for dedicated attributes are only cached for performance
     static bool getShowDebugInfo();
@@ -94,14 +83,11 @@ public:
 
     typedef std::map<wxString,wxString> Perspectives;
 
-    struct WorkspacePerspectives
-    {
-        static Perspectives get();
-        static void add(const wxString& name, const wxString& perspective);
-        static void remove(const wxString& name);
-        static void removeAll();
-        static void save(const Perspectives& perspectives);
-    };
+    Perspectives getWorkspacePerspectives();
+    void addWorkspacePerspective(const wxString& name, const wxString& perspective);
+    void removeWorkspacePerspective(const wxString& name);
+    void removeAllWorkspacePerspectives();
+    void saveWorkspacePerspectives(const Perspectives& perspectives);
 
     //////////////////////////////////////////////////////////////////////////
     // DISK ACCESS
@@ -169,7 +155,7 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    static std::unique_ptr<wxLocale> sLocale;
+    std::unique_ptr<wxLocale> mLocale = nullptr;
 
     static bool sShowDebugInfo;
 

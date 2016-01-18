@@ -275,7 +275,7 @@ int Application::OnExit()
     boost::mutex::scoped_lock lock(mMutexIdle); // Wait until all idle handling done
     PortAudio::exit();
     Avcodec::exit();
-    Config::exit();
+    Config::get().exit();
 
     if (mRestartOnExit)
     {

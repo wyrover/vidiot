@@ -225,7 +225,7 @@ void DialogRenderSettings::onFileButtonPressed(wxCommandEvent& event)
 
     wxString defaultpath = mNew->getFileName().IsOk() ? mNew->getFileName().GetPath() : "";
     wxString defaultfile = mNew->getFileName().IsOk() ? mNew->getFileName().GetFullName() : "";
-    wxString defaultextension = mNew->getFileName().IsOk() ? mNew->getFileName().GetExt() : Config::get().ReadString(Config::sPathFileDefaultExtension);
+    wxString defaultextension = mNew->getFileName().IsOk() ? mNew->getFileName().GetExt() : Config::get().read<wxString>(Config::sPathFileDefaultExtension);
     wxString selected = gui::Dialog::get().getSaveFile(_("Select output file"),filetypes,defaultpath,defaultfile,defaultextension);
 
     if (!selected.IsEmpty())
@@ -241,7 +241,7 @@ void DialogRenderSettings::onFileButtonPressed(wxCommandEvent& event)
                 model::render::OutputFormatPtr format;
                 format =  model::render::OutputFormats::getByExtension(newName.GetExt());
                 ASSERT(format)(newName);
-                Config::WriteString(Config::sPathFileDefaultExtension, newName.GetExt());
+                Config::get().write<wxString>(Config::sPathFileDefaultExtension, newName.GetExt());
                 mFile->ChangeValue(newName.GetFullPath()); // ChangeValue() does not trigger event for text ctrl
                 mVideoCodec->select(format->getDefaultVideoCodec());
                 mAudioCodec->select(format->getDefaultAudioCodec());

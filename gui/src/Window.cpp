@@ -172,12 +172,12 @@ Window::Window()
 
     mMenuView = new wxMenu();
     mMenuView->AppendCheckItem(ID_SNAP_CLIPS, _("Snap to clips"));
-    mMenuView->Check(ID_SNAP_CLIPS, Config::get().ReadBool(Config::sPathTimelineSnapClips));
+    mMenuView->Check(ID_SNAP_CLIPS, Config::get().read<bool>(Config::sPathTimelineSnapClips));
     mMenuView->AppendCheckItem(ID_SNAP_CURSOR, _("Snap to cursor"));
-    mMenuView->Check(ID_SNAP_CURSOR, Config::get().ReadBool(Config::sPathTimelineSnapCursor));
+    mMenuView->Check(ID_SNAP_CURSOR, Config::get().read<bool>(Config::sPathTimelineSnapCursor));
     mMenuView->AppendSeparator();
     mMenuView->AppendCheckItem(ID_SHOW_BOUNDINGBOX, _("Show bounding box"));
-    mMenuView->Check(ID_SHOW_BOUNDINGBOX, Config::get().ReadBool(Config::sPathVideoShowBoundingBox));
+    mMenuView->Check(ID_SHOW_BOUNDINGBOX, Config::get().read<bool>(Config::sPathVideoShowBoundingBox));
     mMenuView->AppendSeparator();
     mMenuView->AppendCheckItem(ID_SHOW_PROJECT, sPaneCaptionProject);
     mMenuView->AppendCheckItem(ID_SHOW_DETAILS, sPaneCaptionDetails);
@@ -219,7 +219,7 @@ Window::Window()
     sSequenceMenuIndex = 3;
     mMenuBar->Append(menutools,    _("Tools"));
     mMenuBar->Append(mMenuWorkspace,_("Workspace"));
-    if (Config::get().ReadBool(Config::sPathDebugShowCrashMenu))
+    if (Config::get().read<bool>(Config::sPathDebugShowCrashMenu))
     {
         mTestCrash = new util::TestCrash(this);
         mMenuBar->Append(mTestCrash->getMenu(), _("Crash"));
@@ -311,10 +311,10 @@ Window::Window()
 
     mDefaultPerspective = mUiManager.SavePerspective();
 
-    wxString previous = Config::get().ReadString(Config::sPathWorkspacePerspectiveCurrent);
-    if (!Config::get().ReadBool(Config::sPathTestCxxMode) && !previous.IsSameAs(""))
+    wxString previous = Config::get().read<wxString>(Config::sPathWorkspacePerspectiveCurrent);
+    if (!Config::get().read<bool>(Config::sPathTestCxxMode) && !previous.IsSameAs(""))
     {
-        Config::WriteString(Config::sPathWorkspacePerspectiveCurrent, ""); // If this perspective causes problems, a restart will fix it. Upon closing the current perspective is saved again.
+        Config::get().write<wxString>(Config::sPathWorkspacePerspectiveCurrent, ""); // If this perspective causes problems, a restart will fix it. Upon closing the current perspective is saved again.
         mUiManager.LoadPerspective(previous);
         mUiManager.Update();
     }
@@ -408,7 +408,7 @@ Window::Window()
         }
     }
 
-    if (Config::get().ReadBool(Config::sPathTestCxxMode))
+    if (Config::get().read<bool>(Config::sPathTestCxxMode))
     {
         wxSize screenSize = wxGetDisplaySize();
         wxSize winSize = GetSize();
@@ -416,11 +416,11 @@ Window::Window()
     }
     else
     {
-        int x = Config::get().ReadLong(Config::sPathWorkspaceX);
-        int y = Config::get().ReadLong(Config::sPathWorkspaceY);
-        int w = Config::get().ReadLong(Config::sPathWorkspaceW);
-        int h = Config::get().ReadLong(Config::sPathWorkspaceH);
-        bool m = Config::get().ReadBool(Config::sPathWorkspaceMaximized);
+        int x = Config::get().read<long>(Config::sPathWorkspaceX);
+        int y = Config::get().read<long>(Config::sPathWorkspaceY);
+        int w = Config::get().read<long>(Config::sPathWorkspaceW);
+        int h = Config::get().read<long>(Config::sPathWorkspaceH);
+        bool m = Config::get().read<bool>(Config::sPathWorkspaceMaximized);
 
         if (x != -1 && y != -1 && w != -1 && h != -1)
         {
@@ -442,7 +442,7 @@ void Window::init()
     }
     else
     {
-        if (Config::get().ReadBool(Config::sPathProjectAutoLoadEnabled))
+        if (Config::get().read<bool>(Config::sPathProjectAutoLoadEnabled))
         {
             wxFileHistory* history = GetDocumentManager()->GetFileHistory();
             if (history->GetCount() > 0)
@@ -597,9 +597,9 @@ void Window::onMove(wxMoveEvent& event)
     if (!IsMaximized())
     {
         wxPoint p = GetScreenPosition();
-        Config::WriteBool(Config::sPathWorkspaceMaximized,false);
-        Config::WriteLong(Config::sPathWorkspaceX,p.x); // Don't use event.GetPosition since that results in a slightly
-        Config::WriteLong(Config::sPathWorkspaceY,p.y); // moved window upon the next startup.
+        Config::get().write<bool>(Config::sPathWorkspaceMaximized,false);
+        Config::get().write<long>(Config::sPathWorkspaceX,p.x); // Don't use event.GetPosition since that results in a slightly
+        Config::get().write<long>(Config::sPathWorkspaceY,p.y); // moved window upon the next startup.
         Dialog::get().mScreenRect = GetScreenRect();
     }
     event.Skip();
@@ -609,9 +609,9 @@ void Window::onSize(wxSizeEvent& event)
 {
     if (!IsMaximized())
     {
-        Config::WriteBool(Config::sPathWorkspaceMaximized,false);
-        Config::WriteLong(Config::sPathWorkspaceW,event.GetSize().GetWidth());
-        Config::WriteLong(Config::sPathWorkspaceH,event.GetSize().GetHeight());
+        Config::get().write<bool>(Config::sPathWorkspaceMaximized,false);
+        Config::get().write<long>(Config::sPathWorkspaceW,event.GetSize().GetWidth());
+        Config::get().write<long>(Config::sPathWorkspaceH,event.GetSize().GetHeight());
         Dialog::get().mScreenRect = GetScreenRect();
     }
     event.Skip();
@@ -619,14 +619,14 @@ void Window::onSize(wxSizeEvent& event)
 
 void Window::onMaximize(wxMaximizeEvent& event)
 {
-    Config::WriteBool(Config::sPathWorkspaceMaximized,true);
+    Config::get().write<bool>(Config::sPathWorkspaceMaximized,true);
     Dialog::get().mScreenRect = GetScreenRect();
     event.Skip();
 }
 
 void Window::onClose(wxCloseEvent& event)
 {
-    Config::WriteString(Config::sPathWorkspacePerspectiveCurrent, mUiManager.SavePerspective());
+    Config::get().write<wxString>(Config::sPathWorkspacePerspectiveCurrent, mUiManager.SavePerspective());
     mVisibleWorker->abort();
     mInvisibleWorker->abort();
     event.Skip();
@@ -707,19 +707,19 @@ void Window::onExit(wxCommandEvent &event)
 
 void Window::onSnapClips(wxCommandEvent& event)
 {
-    Config::WriteBool(Config::sPathTimelineSnapClips, event.IsChecked());
+    Config::get().write<bool>(Config::sPathTimelineSnapClips, event.IsChecked());
     event.Skip();
 }
 
 void Window::onSnapCursor(wxCommandEvent& event)
 {
-    Config::WriteBool(Config::sPathTimelineSnapCursor, event.IsChecked());
+    Config::get().write<bool>(Config::sPathTimelineSnapCursor, event.IsChecked());
     event.Skip();
 }
 
 void Window::onShowBoundingBox(wxCommandEvent& event)
 {
-    Config::WriteBool(Config::sPathVideoShowBoundingBox, event.IsChecked());
+    Config::get().write<bool>(Config::sPathVideoShowBoundingBox, event.IsChecked());
     event.Skip();
 }
 
@@ -777,7 +777,7 @@ void Window::onWorkspaceSave(wxCommandEvent& event)
     wxString name = Dialog::get().getText(_("Enter workspace name"),_("Enter name for the saved workspace.\nIf this is an existing name it is overwritten."), "");
     if (!name.IsEmpty())
     {
-        Config::WorkspacePerspectives::add(name,mUiManager.SavePerspective());
+        Config::get().addWorkspacePerspective(name,mUiManager.SavePerspective());
         updateWorkspaceMenu();
     }
     event.Skip();
@@ -785,7 +785,7 @@ void Window::onWorkspaceSave(wxCommandEvent& event)
 
 wxString selectWorkspace(wxString text)
 {
-    Config::Perspectives perspectives = Config::WorkspacePerspectives::get();
+    Config::Perspectives perspectives{ Config::get().getWorkspacePerspectives() };
     wxStrings entries;
     for ( Config::Perspectives::value_type name_perspective : perspectives )
     {
@@ -800,7 +800,7 @@ void Window::onWorkspaceLoad(wxCommandEvent& event)
     wxString name = selectWorkspace(_("Select workspace to be restored."));
     if (!name.IsEmpty())
     {
-        Config::Perspectives perspectives = Config::WorkspacePerspectives::get();
+        Config::Perspectives perspectives{ Config::get().getWorkspacePerspectives() };
         ASSERT_MAP_CONTAINS(perspectives,name);
         bool success = mUiManager.LoadPerspective(perspectives[name]);
         mUiManager.Update();
@@ -817,9 +817,9 @@ void Window::onWorkspaceDelete(wxCommandEvent& event)
     wxString name = selectWorkspace(_("Select workspace to be removed."));
     if (!name.IsEmpty())
     {
-        Config::Perspectives perspectives = Config::WorkspacePerspectives::get();
+        Config::Perspectives perspectives{ Config::get().getWorkspacePerspectives() };
         ASSERT_MAP_CONTAINS(perspectives,name);
-        Config::WorkspacePerspectives::remove(name);
+        Config::get().removeWorkspacePerspective(name);
         updateWorkspaceMenu();
     }
     event.Skip();
@@ -829,7 +829,7 @@ void Window::onWorkspaceDeleteAll(wxCommandEvent& event)
 {
     if (wxYES == Dialog::get().getConfirmation(_("Remove all saved workspaces"), _("This will remove all saved workspace layouts which cannot be undone.\nAre you sure?"), wxYES | wxNO))
     {
-        Config::WorkspacePerspectives::removeAll();
+        Config::get().removeAllWorkspacePerspectives();
         updateWorkspaceMenu();
     }
     event.Skip();
@@ -1035,7 +1035,7 @@ void Window::updateViewMenu()
 
 void Window::updateWorkspaceMenu()
 {
-    bool enable = ! Config::WorkspacePerspectives::get().empty();
+    bool enable{ !Config::get().getWorkspacePerspectives().empty() };
     mMenuWorkspace->Enable(ID_WORKSPACE_LOAD, enable);
     mMenuWorkspace->Enable(ID_WORKSPACE_DELETE, enable);
     mMenuWorkspace->Enable(ID_WORKSPACE_DELETEALL, enable);
