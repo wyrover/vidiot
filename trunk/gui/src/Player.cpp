@@ -362,7 +362,7 @@ void Player::updateStatus()
     milliseconds time = model::Convert::ptsToTime(mPosition);
     bool showHours =  time >= sHour;
     wxString s = model::Convert::ptsToHumanReadibleString(mPosition, true, showHours) + " / " + model::Convert::ptsToHumanReadibleString(mLength, true, showHours);
-    if (Config::get().ReadBool(Config::sPathDebugShowFrameNumbers))
+    if (Config::get().read<bool>(Config::sPathDebugShowFrameNumbers))
     {
         s += wxString::Format(" [%10" PRId64 "]", mPosition);
     }

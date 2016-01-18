@@ -212,7 +212,7 @@ bool Project::DoSaveDocument(const wxString& file)
     mSaveFolder = util::path::normalize(saveFolder).GetLongPath();
     gui::StatusBar::get().pushInfoText(wxString::Format(_("Saving %s"), saveFileName.GetFullName()) + " ...");
     if (saveFileName.Exists() &&
-        Config::get().ReadBool(Config::sPathProjectBackupBeforeSaveEnabled))
+        Config::get().read<bool>(Config::sPathProjectBackupBeforeSaveEnabled))
     {
         // Find all existing backup files
         wxArrayString existingBackupFiles;
@@ -248,7 +248,7 @@ bool Project::DoSaveDocument(const wxString& file)
 
         // If configured, remove a backup file to ensure that the number of backups will not exceed the maximum
         // Note: if for some reason the number of backups exceeds the maximum then still only one is deleted (no goldplating...).
-        int maximumNumberOfFiles = Config::get().ReadLong(Config::sPathProjectBackupBeforeSaveMaximum);
+        int maximumNumberOfFiles = Config::get().read<long>(Config::sPathProjectBackupBeforeSaveMaximum);
         if (maximumNumberOfFiles > 0 && nExistingBackupFiles >= maximumNumberOfFiles)
         {
             wxFileName backup = createBackupFileName(saveFileName, lowestNumber);
@@ -309,7 +309,7 @@ bool Project::DoOpenDocument(const wxString& file)
             // ASSERT(mProperties.unique());
             LOG_ERROR;
             gui::Dialog::get().getConfirmation(_("Open Failed"), wxString::Format(_("Could not read %s. \n%s must be restarted (known bug that opening a project after this will fail)"), file, gui::CommandLine::get().ExeName));
-            Config::WriteBool(Config::sPathProjectAutoLoadEnabled, false); // Ensure that upon next startup not immediately a file is opened, possibly failing again.
+            Config::get().write<bool>(Config::sPathProjectAutoLoadEnabled, false); // Ensure that upon next startup not immediately a file is opened, possibly failing again.
             Config::get().Flush();
             gui::Window::get().GetEventHandler()->QueueEvent(new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED,wxID_EXIT));
         }
@@ -354,7 +354,7 @@ wxFileName Project::convertPathForSaving(const wxFileName& path) const
 {
     ASSERT(path.IsAbsolute());
     wxFileName result(path);
-    if (Config::get().ReadLong(Config::sPathProjectSavePathsRelativeToProject))
+    if (Config::get().read<long>(Config::sPathProjectSavePathsRelativeToProject))
     {
         result.MakeRelativeTo(mSaveFolder);
     }

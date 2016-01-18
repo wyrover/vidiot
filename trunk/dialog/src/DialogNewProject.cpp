@@ -323,7 +323,7 @@ void DialogNewProject::onFinish(wxWizardEvent& event)
         mButtonFolder->GetValue() ? model::DefaultNewProjectWizardStartFolder :
         mButtonFiles->GetValue() ? model::DefaultNewProjectWizardStartFiles :
         model::DefaultNewProjectWizardStartBlank;
-    Config::WriteString(Config::sPathProjectDefaultNewProjectType, model::DefaultNewProjectWizardStart_toString(defaultType));
+    Config::get().write<wxString>(Config::sPathProjectDefaultNewProjectType, model::DefaultNewProjectWizardStart_toString(defaultType));
 
     if (mFileAnalyzer)
     {

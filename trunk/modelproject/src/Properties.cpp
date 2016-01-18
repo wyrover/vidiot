@@ -29,11 +29,11 @@ namespace model {
 //////////////////////////////////////////////////////////////////////////
 
 Properties::Properties()
-:   mFrameRate(Config::get().ReadString(Config::sPathVideoDefaultFrameRate))
-,   mVideoWidth(Config::get().ReadLong(Config::sPathVideoDefaultWidth))
-,   mVideoHeight(Config::get().ReadLong(Config::sPathVideoDefaultHeight))
-,   mAudioChannels(Config::get().ReadLong(Config::sPathAudioDefaultNumberOfChannels))
-,   mAudioSampleRate(Config::get().ReadLong(Config::sPathAudioDefaultSampleRate))
+:   mFrameRate(Config::get().read<wxString>(Config::sPathVideoDefaultFrameRate))
+,   mVideoWidth(Config::get().read<long>(Config::sPathVideoDefaultWidth))
+,   mVideoHeight(Config::get().read<long>(Config::sPathVideoDefaultHeight))
+,   mAudioChannels(Config::get().read<long>(Config::sPathAudioDefaultNumberOfChannels))
+,   mAudioSampleRate(Config::get().read<long>(Config::sPathAudioDefaultSampleRate))
 ,   mDefaultRender(boost::make_shared<model::render::Render>())
 {
     VAR_DEBUG(this);

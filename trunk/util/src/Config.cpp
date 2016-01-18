@@ -26,7 +26,16 @@
 // static
 bool Config::sShowDebugInfo(false);
 bool Config::sHold(false);
-std::unique_ptr<wxLocale> Config::sLocale = nullptr;
+
+template <> wxString Config::read(const wxString& key) const;
+template <> long Config::read(const wxString& key) const;
+template <> bool Config::read(const wxString& key) const;
+template <> double Config::read(const wxString& key) const;
+template <> wxColour Config::read(const wxString& key) const;
+template <> void Config::write(const wxString& key, const bool& value);
+template <> void Config::write(const wxString& key, const long& value);
+template <> void Config::write(const wxString& key, const double& value);
+template <> void Config::write(const wxString& key, const wxString& value);
 
 DEFINE_EVENT(EVENT_CONFIG_UPDATED, EventConfigUpdated, wxString);
 
@@ -36,9 +45,9 @@ DEFINE_EVENT(EVENT_CONFIG_UPDATED, EventConfigUpdated, wxString);
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-Config::Config(const wxString& appName, const wxString& vendorName, const wxString& localFilename)
+Config::Config(const wxString& appName, const wxString& vendorName, const wxString& configFile)
     : wxEvtHandler()
-    , wxFileConfig(appName,vendorName,localFilename)
+    , wxFileConfig(appName, vendorName, configFile)
 {
 }
 
@@ -114,8 +123,14 @@ void Config::init(const wxString& applicationName, const wxString& vendorName, b
     // Initialize config object. Will be destructed by wxWidgets at the end of the application
     wxString ConfigFile(util::path::getConfigFilePath().GetFullPath());
     VAR_ERROR(ConfigFile);
-    wxConfigBase::Set(new Config(applicationName, vendorName, ConfigFile));
-    wxConfigBase::Get()->Write(Config::sPathTestCxxMode, inCxxTestMode);
+    Config* config{ new Config(applicationName, vendorName, ConfigFile) };
+    wxConfigBase::Set(config);
+    config->init(inCxxTestMode);
+}
+
+void Config::init(bool inCxxTestMode)
+{
+    write<bool>(Config::sPathTestCxxMode, inCxxTestMode);
 
     // Initialize language before anything else to ensure that any strings initialized in the 'enum checks' lookups
     // are properly translated. Example: Avcodec log level mapping.
@@ -134,13 +149,13 @@ void Config::init(const wxString& applicationName, const wxString& vendorName, b
     }
 
     wxLocale::AddCatalogLookupPathPrefix(util::path::getLanguagesPath().GetFullPath());
-    sLocale.reset(new wxLocale());
+    mLocale.reset(new wxLocale());
     wxLanguage languageId{ getLanguageId(Language) };
-    bool LocaleInitialization = sLocale->Init(languageId, wxLOCALE_LOAD_DEFAULT);
-    bool WxTranslations = sLocale->AddCatalog("vidiotwx", languageId);
-    bool VidiotTranslations = sLocale->AddCatalog("vidiot", languageId); // Load last: This gives vidiot strings higher priority than wx strings (exmple the Copy string in 'nl_NL')
+    bool LocaleInitialization{ mLocale->Init(languageId, wxLOCALE_LOAD_DEFAULT) };
+    bool WxTranslations{ mLocale->AddCatalog("vidiotwx", languageId) };
+    bool VidiotTranslations{ mLocale->AddCatalog("vidiot", languageId) }; // Load last: This gives vidiot strings higher priority than wx strings (exmple the Copy string in 'nl_NL')
     VAR_ERROR(Language)(LocaleInitialization)(VidiotTranslations)(WxTranslations);
-    WriteString(Config::sPathWorkspaceLanguage, Language);
+    write<wxString>(Config::sPathWorkspaceLanguage, Language);
 
     // Check values, delete from config if incorrect
     checkLong(Config::sPathMakeSequenceEmptyClipLength, 0, 100000);
@@ -210,6 +225,7 @@ void Config::init(const wxString& applicationName, const wxString& vendorName, b
     setDefault(Config::sPathTestRunCurrent, "");
     setDefault(Config::sPathTestRunFrom, "");
     setDefault(Config::sPathTestRunOnly, "");
+    setDefault(Config::sPathVideoDefaultFrameRate, "");
     setDefault(Config::sPathWorkspaceH, -1);
     setDefault(Config::sPathWorkspaceMaximized, false);
     setDefault(Config::sPathWorkspaceW, -1);
@@ -219,92 +235,43 @@ void Config::init(const wxString& applicationName, const wxString& vendorName, b
 
     if (inCxxTestMode)
     {
-        WriteString(Config::sPathProjectDefaultNewProjectType, model::DefaultNewProjectWizardStart_toString(model::DefaultNewProjectWizardStartNone));
+        write<wxString>(Config::sPathProjectDefaultNewProjectType, model::DefaultNewProjectWizardStart_toString(model::DefaultNewProjectWizardStartNone));
     }
 
     // Special cases checking and default handling
-    wxString frameRate = wxConfigBase::Get()->Read(Config::sPathVideoDefaultFrameRate, "");
+    wxString frameRate{ read<wxString>(Config::sPathVideoDefaultFrameRate) };
     FrameRate fr(frameRate);
     if (!fr.toString().IsSameAs(frameRate))
     {
-        WriteString(Config::sPathVideoDefaultFrameRate, fr.toString());
+        write<wxString>(Config::sPathVideoDefaultFrameRate, fr.toString());
     }
 
-    Config::get().updateCache();
     wxConfigBase::Get()->Flush();
 
     // Read cached values here
+    updateCache();
     Log::setReportingLevel(LogLevelConverter::readConfigValue(Config::sPathDebugLogLevel));
-    sShowDebugInfo = Config::get().ReadBool(Config::sPathDebugShowDebugInfoOnWidgets);
+    sShowDebugInfo = Config::get().read<bool>(Config::sPathDebugShowDebugInfoOnWidgets);
 
     Avcodec::configureLog();
 }
 
-// static
 void Config::exit()
 {
-    sLocale.reset();
+    mLocale.reset();
 }
 
 //////////////////////////////////////////////////////////////////////////
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-bool Config::Exists(const wxString& key) const
+bool Config::Exists(const wxString& key) const         // todo rename
 {
     boost::mutex::scoped_lock lock(mCacheMutex);
     return mCache.find(key) != mCache.end();
 }
 
-template <> bool Config::read(const wxString& key) const
-{
-    return ReadBool(key);
-}
-
-template <> long Config::read(const wxString& key) const
-{
-    return ReadLong(key);
-}
-
-template <> double Config::read(const wxString& key) const
-{
-    return ReadDouble(key);
-}
-
 template <> wxString Config::read(const wxString& key) const
-{
-    return ReadString(key);
-}
-
-template <> wxColour Config::read(const wxString& key) const
-{
-    return ReadColour(key);
-}
-
-bool Config::ReadBool(const wxString& key) const // todo obsolete use templated methods
-{
-    return ReadLong(key) == 1;
-}
-
-long Config::ReadLong(const wxString& key) const
-{
-    wxString value{ ReadString(key) };
-    long result{ 0 };
-    bool ok{ value.ToLong(&result) };
-    ASSERT(ok)(value)(key);
-    return result;
-}
-
-double Config::ReadDouble(const wxString& key) const
-{
-    wxString value{ ReadString(key) };
-    double result{ 0.0 };
-    bool ok{ value.ToDouble(&result) };
-    ASSERT(ok)(value)(key);
-    return result;
-}
-
-wxString Config::ReadString(const wxString& key) const
 {
     wxString value;
     {
@@ -315,82 +282,81 @@ wxString Config::ReadString(const wxString& key) const
     return value;
 }
 
-wxColour Config::ReadColour(const wxString& key) const
+template <> long Config::read(const wxString& key) const
 {
-    wxString s{ ReadString(key) };  
+    wxString value{ read<wxString>(key) };
+    long result{ 0 };
+    bool ok{ value.ToLong(&result) };
+    ASSERT(ok)(value)(key);
+    return result;
+}
+
+template <> bool Config::read(const wxString& key) const
+{
+    return read<long>(key) == 1;
+}
+
+template <> double Config::read(const wxString& key) const
+{
+    wxString value{ read<wxString>(key) };
+    double result{ 0.0 };
+    bool ok{ value.ToDouble(&result) };
+    ASSERT(ok)(value)(key);
+    return result;
+}
+
+template <> wxColour Config::read(const wxString& key) const
+{
+    wxString s{ read<wxString>(key) };
     wxRegEx reColourDecimal{ "^([[:digit:]][[:digit:]]?[[:digit:]]?),([[:digit:]][[:digit:]]?[[:digit:]]?),([[:digit:]][[:digit:]]?[[:digit:]]?)$" };
     ASSERT(reColourDecimal.IsValid());
     ASSERT(reColourDecimal.Matches(s))(key)(s);
     int r{ wxAtoi(reColourDecimal.GetMatch(s, 1)) };
     int g{ wxAtoi(reColourDecimal.GetMatch(s, 2)) };
     int b{ wxAtoi(reColourDecimal.GetMatch(s, 3)) };
-    ASSERT_MORE_THAN_EQUALS(r,0);
-    ASSERT_LESS_THAN_EQUALS(r,255);
-    ASSERT_MORE_THAN_EQUALS(g,0);
-    ASSERT_LESS_THAN_EQUALS(g,255);
-    ASSERT_MORE_THAN_EQUALS(b,0);
-    ASSERT_LESS_THAN_EQUALS(b,255);
+    ASSERT_MORE_THAN_EQUALS(r, 0);
+    ASSERT_LESS_THAN_EQUALS(r, 255);
+    ASSERT_MORE_THAN_EQUALS(g, 0);
+    ASSERT_LESS_THAN_EQUALS(g, 255);
+    ASSERT_MORE_THAN_EQUALS(b, 0);
+    ASSERT_LESS_THAN_EQUALS(b, 255);
     return wxColour{ static_cast<unsigned char>(r), static_cast<unsigned char>(g), static_cast<unsigned char>(b) };
 }
 
 template <> void Config::write(const wxString& key, const bool& value)
 {
-    WriteBool(key, value);
+    ASSERT(wxThread::IsMain());
+    bool result{ wxConfigBase::Get()->Write(key, value) };
+    ASSERT(result);
+    onWrite(key);
 }
 
 template <> void Config::write(const wxString& key, const long& value)
 {
-    WriteLong(key, value);
+    ASSERT(wxThread::IsMain());
+    bool result{ wxConfigBase::Get()->Write(key, value) };
+    ASSERT(result);
+    onWrite(key);
 }
 
 template <> void Config::write(const wxString& key, const double& value)
 {
-    WriteDouble(key, value);
+    ASSERT(wxThread::IsMain());
+    bool result{ wxConfigBase::Get()->Write(key, value) };
+    ASSERT(result);
+    onWrite(key);
 }
 
 template <> void Config::write(const wxString& key, const wxString& value)
 {
-    WriteString(key, value);
-}
-
-// static
-void Config::WriteBool(const wxString& key, bool value)
-{
     ASSERT(wxThread::IsMain());
-    bool result = wxConfigBase::Get()->Write(key, value);
+    bool result{ wxConfigBase::Get()->Write(key, value) };
     ASSERT(result);
-    OnWrite(key);
+    onWrite(key);
 }
 
 // static
-void Config::WriteLong(const wxString& key, const long& value)
-{
-    ASSERT(wxThread::IsMain());
-    bool result = wxConfigBase::Get()->Write(key, value);
-    ASSERT(result);
-    OnWrite(key);
-}
-
-// static
-void Config::WriteDouble(const wxString& key, double value)
-{
-    ASSERT(wxThread::IsMain());
-    bool result = wxConfigBase::Get()->Write(key, value);
-    ASSERT(result);
-    OnWrite(key);
-}
-
-// static
-void Config::WriteString(const wxString& key, const wxString& value)
-{
-    ASSERT(wxThread::IsMain());
-    bool result = wxConfigBase::Get()->Write(key, value);
-    ASSERT(result);
-    OnWrite(key);
-}
-
-// static
-void Config::OnWrite(const wxString& key)
+void Config::onWrite(const wxString& key)
 {
     ASSERT(wxThread::IsMain());
     Config* cfg = dynamic_cast<Config*>(wxConfigBase::Get());
@@ -427,65 +393,65 @@ void Config::setShowDebugInfo(bool show)
 // WORKSPACE PERSPECTIVES
 //////////////////////////////////////////////////////////////////////////
 
-Config::Perspectives Config::WorkspacePerspectives::get()
+Config::Perspectives Config::getWorkspacePerspectives()
 {
     ASSERT(wxThread::IsMain());
     Config::Perspectives result;
     for (int i = 1; i < 100; ++i) // More than 100 not supported
     {
-        wxString pathName = sPathWorkspacePerspectiveName + wxString::Format("%d",i);
-        wxString pathSaved = sPathWorkspacePerspectiveSaved + wxString::Format("%d",i);
-        if (!Config::get().Exists(pathName) || !Config::get().Exists(pathSaved))
+        wxString pathName{ sPathWorkspacePerspectiveName + wxString::Format("%d",i) };
+        wxString pathSaved{ sPathWorkspacePerspectiveSaved + wxString::Format("%d",i) };
+        if (!Exists(pathName) || !Exists(pathSaved))
         {
             break;
         }
-        result[Config::get().ReadString(pathName)] = Config::get().ReadString(pathSaved); // Also avoids duplicates
+        result[read<wxString>(pathName)] = read<wxString>(pathSaved); // Also avoids duplicates
     }
     return result;
 }
 
-void Config::WorkspacePerspectives::add(const wxString& name, const wxString& perspective)
+void Config::addWorkspacePerspective(const wxString& name, const wxString& perspective)
 {
     ASSERT(wxThread::IsMain());
-    Config::Perspectives perspectives = get();
+    Config::Perspectives perspectives{ getWorkspacePerspectives() };
     perspectives[name] = perspective;
-    save(perspectives);
+    saveWorkspacePerspectives(perspectives);
 }
 
-void Config::WorkspacePerspectives::remove(const wxString& name)
+void Config::removeWorkspacePerspective(const wxString& name)
 {
     ASSERT(wxThread::IsMain());
-    Config::Perspectives perspectives = get();
+    Config::Perspectives perspectives{ getWorkspacePerspectives() };
     perspectives.erase(name);
-    save(perspectives);
+    saveWorkspacePerspectives(perspectives);
 }
 
-void Config::WorkspacePerspectives::removeAll()
+void Config::removeAllWorkspacePerspectives()
 {
     ASSERT(wxThread::IsMain());
     for (int i = 1; i < 100; ++i) // More than 100 not supported
     {
-        wxConfigBase::Get()->DeleteEntry(sPathWorkspacePerspectiveName + wxString::Format("%d",i));
-        wxConfigBase::Get()->DeleteEntry(sPathWorkspacePerspectiveSaved + wxString::Format("%d",i));
+        DeleteEntry(sPathWorkspacePerspectiveName + wxString::Format("%d",i));
+        DeleteEntry(sPathWorkspacePerspectiveSaved + wxString::Format("%d",i));
     }
-    Config::get().updateCache();
+    updateCache();
     wxConfigBase::Get()->Flush();
 }
 
-void Config::WorkspacePerspectives::save(const Perspectives& perspectives)
+void Config::saveWorkspacePerspectives(const Perspectives& perspectives)
 {
     ASSERT(wxThread::IsMain());
-    removeAll();
+    removeAllWorkspacePerspectives();
     int i = 1;
     for ( Config::Perspectives::value_type name_perspective : perspectives )
     {
-        wxString pathName = sPathWorkspacePerspectiveName + wxString::Format("%d",i);
-        wxString pathSaved = sPathWorkspacePerspectiveSaved + wxString::Format("%d",i);
-        WriteString(pathName, name_perspective.first);
-        WriteString(pathSaved, name_perspective.second);
+        wxString pathName{ sPathWorkspacePerspectiveName + wxString::Format("%d",i) };
+        wxString pathSaved{ sPathWorkspacePerspectiveSaved + wxString::Format("%d",i) };
+        write<wxString>(pathName, name_perspective.first);
+        write<wxString>(pathSaved, name_perspective.second);
         ++i;
     }
-    Config::get().updateCache();
+    updateCache();
     wxConfigBase::Get()->Flush();
 }
 

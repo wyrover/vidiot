@@ -472,7 +472,7 @@ void Trim::determinePossibleSnapPoints(const model::IClipPtr& originalclip)
         max = originalclip->getRightPts() + originalclip->getMaxAdjustEnd();
     }
     mSnapPoints.clear();
-    if (Config::get().ReadBool(Config::sPathTimelineSnapClips))
+    if (Config::get().read<bool>(Config::sPathTimelineSnapClips))
     {
         std::set<model::IClipPtr> exclude = { originalclip, originalclip->getLink() };
         std::vector<pts> all;
@@ -480,7 +480,7 @@ void Trim::determinePossibleSnapPoints(const model::IClipPtr& originalclip)
         // Copy everything between [min,max), discard everything else
         mSnapPoints.insert(mSnapPoints.begin(), std::lower_bound(all.begin(), all.end(), min), std::upper_bound(all.begin(), all.end(), max));
     }
-    if (Config::get().ReadBool(Config::sPathTimelineSnapCursor))
+    if (Config::get().read<bool>(Config::sPathTimelineSnapCursor))
     {
         mSnapPoints.push_back(getCursor().getLogicalPosition());
     }

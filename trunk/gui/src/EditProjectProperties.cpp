@@ -73,7 +73,7 @@ EditProjectProperties::EditProjectProperties(wxWindow* win)
     wxArrayString channelChoices;
     channelChoices.Add("1");
     channelChoices.Add("2");
-    initial = Config::get().ReadLong(Config::sPathAudioDefaultNumberOfChannels);
+    initial = Config::get().read<long>(Config::sPathAudioDefaultNumberOfChannels);
     mAudioNumberOfChannels = new wxComboBox(this, wxID_ANY, wxString::Format("%d", initial),  wxDefaultPosition, wxDefaultSize, channelChoices, 0, channelValidator);
     addoption(_("Audio channels"), mAudioNumberOfChannels);
 

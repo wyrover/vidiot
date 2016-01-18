@@ -702,7 +702,7 @@ void VideoDisplay::updateParameters()
     ASSERT(wxThread::IsMain());
     mAudioParameters = std::make_unique<model::AudioCompositionParameters>();
     mVideoParameters = std::make_unique<model::VideoCompositionParameters>();
-    mVideoParameters->setDrawBoundingBox(Config::get().ReadBool(Config::sPathVideoShowBoundingBox));
+    mVideoParameters->setDrawBoundingBox(Config::get().read<bool>(Config::sPathVideoShowBoundingBox));
 }
 
 } // namespace

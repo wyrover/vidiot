@@ -43,7 +43,7 @@ Dialog::Dialog()
     ,   mText(boost::none)
     ,   mButton(boost::none)
     ,   mStringsSelection(boost::none)
-    ,   mIncludeScreenshot(Config::get().ReadBool(Config::sPathDebugIncludeScreenShotInDump))
+    ,   mIncludeScreenshot(Config::get().read<bool>(Config::sPathDebugIncludeScreenShotInDump))
     ,   mDebugReportGenerated(false)
 {
 }
