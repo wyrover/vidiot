@@ -225,7 +225,7 @@ void DialogRenderSettings::onFileButtonPressed(wxCommandEvent& event)
 
     wxString defaultpath = mNew->getFileName().IsOk() ? mNew->getFileName().GetPath() : "";
     wxString defaultfile = mNew->getFileName().IsOk() ? mNew->getFileName().GetFullName() : "";
-    wxString defaultextension = mNew->getFileName().IsOk() ? mNew->getFileName().GetExt() : Config::ReadString(Config::sPathFileDefaultExtension);
+    wxString defaultextension = mNew->getFileName().IsOk() ? mNew->getFileName().GetExt() : Config::get().ReadString(Config::sPathFileDefaultExtension);
     wxString selected = gui::Dialog::get().getSaveFile(_("Select output file"),filetypes,defaultpath,defaultfile,defaultextension);
 
     if (!selected.IsEmpty())

@@ -60,8 +60,8 @@ VideoKeyFrame::VideoKeyFrame(const wxSize& size)
 {
     VAR_DEBUG(*this);
     mInputSize = size;
-    mScaling = Config::ReadEnum<VideoScaling>(Config::sPathVideoDefaultScaling);
-    mAlignment = Config::ReadEnum<VideoAlignment>(Config::sPathVideoDefaultAlignment);
+    mScaling = Config::get().ReadEnum<VideoScaling>(Config::sPathVideoDefaultScaling);
+    mAlignment = Config::get().ReadEnum<VideoAlignment>(Config::sPathVideoDefaultAlignment);
     updateAutomatedScaling();
     updateAutomatedPositioning();
 }

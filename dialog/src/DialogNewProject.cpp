@@ -40,7 +40,7 @@ boost::optional<wxStrings> DialogNewProject::sDroppedFiles = boost::none;
 
 DialogNewProject::DialogNewProject()
     : wxWizard()
-    , mDefaultType(Config::ReadEnum<model::DefaultNewProjectWizardStart>(Config::sPathProjectDefaultNewProjectType))
+    , mDefaultType(Config::get().ReadEnum<model::DefaultNewProjectWizardStart>(Config::sPathProjectDefaultNewProjectType))
     , mFolderPath("")
     , sTitle(_("Create new project"))
     , sNoFiles(_("No media files found."))
@@ -235,7 +235,7 @@ DialogNewProject::~DialogNewProject()
 // static
 bool DialogNewProject::runWizard()
 {
-    if (Config::ReadEnum<model::DefaultNewProjectWizardStart>(Config::sPathProjectDefaultNewProjectType) == model::DefaultNewProjectWizardStartNone)
+    if (Config::get().ReadEnum<model::DefaultNewProjectWizardStart>(Config::sPathProjectDefaultNewProjectType) == model::DefaultNewProjectWizardStartNone)
     {
         return true;
     }

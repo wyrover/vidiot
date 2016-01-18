@@ -172,12 +172,12 @@ Window::Window()
 
     mMenuView = new wxMenu();
     mMenuView->AppendCheckItem(ID_SNAP_CLIPS, _("Snap to clips"));
-    mMenuView->Check(ID_SNAP_CLIPS, Config::ReadBool(Config::sPathTimelineSnapClips));
+    mMenuView->Check(ID_SNAP_CLIPS, Config::get().ReadBool(Config::sPathTimelineSnapClips));
     mMenuView->AppendCheckItem(ID_SNAP_CURSOR, _("Snap to cursor"));
-    mMenuView->Check(ID_SNAP_CURSOR, Config::ReadBool(Config::sPathTimelineSnapCursor));
+    mMenuView->Check(ID_SNAP_CURSOR, Config::get().ReadBool(Config::sPathTimelineSnapCursor));
     mMenuView->AppendSeparator();
     mMenuView->AppendCheckItem(ID_SHOW_BOUNDINGBOX, _("Show bounding box"));
-    mMenuView->Check(ID_SHOW_BOUNDINGBOX, Config::ReadBool(Config::sPathVideoShowBoundingBox));
+    mMenuView->Check(ID_SHOW_BOUNDINGBOX, Config::get().ReadBool(Config::sPathVideoShowBoundingBox));
     mMenuView->AppendSeparator();
     mMenuView->AppendCheckItem(ID_SHOW_PROJECT, sPaneCaptionProject);
     mMenuView->AppendCheckItem(ID_SHOW_DETAILS, sPaneCaptionDetails);
@@ -219,7 +219,7 @@ Window::Window()
     sSequenceMenuIndex = 3;
     mMenuBar->Append(menutools,    _("Tools"));
     mMenuBar->Append(mMenuWorkspace,_("Workspace"));
-    if (Config::ReadBool(Config::sPathDebugShowCrashMenu))
+    if (Config::get().ReadBool(Config::sPathDebugShowCrashMenu))
     {
         mTestCrash = new util::TestCrash(this);
         mMenuBar->Append(mTestCrash->getMenu(), _("Crash"));
@@ -311,8 +311,8 @@ Window::Window()
 
     mDefaultPerspective = mUiManager.SavePerspective();
 
-    wxString previous = Config::ReadString(Config::sPathWorkspacePerspectiveCurrent);
-    if (!Config::ReadBool(Config::sPathTestCxxMode) && !previous.IsSameAs(""))
+    wxString previous = Config::get().ReadString(Config::sPathWorkspacePerspectiveCurrent);
+    if (!Config::get().ReadBool(Config::sPathTestCxxMode) && !previous.IsSameAs(""))
     {
         Config::WriteString(Config::sPathWorkspacePerspectiveCurrent, ""); // If this perspective causes problems, a restart will fix it. Upon closing the current perspective is saved again.
         mUiManager.LoadPerspective(previous);
@@ -408,7 +408,7 @@ Window::Window()
         }
     }
 
-    if (Config::ReadBool(Config::sPathTestCxxMode))
+    if (Config::get().ReadBool(Config::sPathTestCxxMode))
     {
         wxSize screenSize = wxGetDisplaySize();
         wxSize winSize = GetSize();
@@ -416,11 +416,11 @@ Window::Window()
     }
     else
     {
-        int x = Config::ReadLong(Config::sPathWorkspaceX);
-        int y = Config::ReadLong(Config::sPathWorkspaceY);
-        int w = Config::ReadLong(Config::sPathWorkspaceW);
-        int h = Config::ReadLong(Config::sPathWorkspaceH);
-        bool m = Config::ReadBool(Config::sPathWorkspaceMaximized);
+        int x = Config::get().ReadLong(Config::sPathWorkspaceX);
+        int y = Config::get().ReadLong(Config::sPathWorkspaceY);
+        int w = Config::get().ReadLong(Config::sPathWorkspaceW);
+        int h = Config::get().ReadLong(Config::sPathWorkspaceH);
+        bool m = Config::get().ReadBool(Config::sPathWorkspaceMaximized);
 
         if (x != -1 && y != -1 && w != -1 && h != -1)
         {
@@ -442,7 +442,7 @@ void Window::init()
     }
     else
     {
-        if (Config::ReadBool(Config::sPathProjectAutoLoadEnabled))
+        if (Config::get().ReadBool(Config::sPathProjectAutoLoadEnabled))
         {
             wxFileHistory* history = GetDocumentManager()->GetFileHistory();
             if (history->GetCount() > 0)
@@ -582,7 +582,7 @@ void Window::onCloseProject(model::EventCloseProject &event )
 void Window::onRenameProject(model::EventRenameProject &event )
 {
     GetDocumentManager()->AddFileToHistory(model::Project::get().GetFilename());
-    GetDocumentManager()->FileHistorySave(*wxConfigBase::Get());
+    GetDocumentManager()->FileHistorySave(Config::get());
     Config::get().Flush();
     updateTitle();
     event.Skip();

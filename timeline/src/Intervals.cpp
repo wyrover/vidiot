@@ -125,8 +125,8 @@ void Intervals::addBeginMarker()
 {
     pts cursor = determineSnap(getCursor().getLogicalPosition());
     mNewIntervalActive = true;
-    mNewIntervalBegin = cursor + model::Convert::timeToPts(Config::ReadDouble(Config::sPathTimelineMarkerBeginAddition) * sSecond);
-    mNewIntervalEnd = cursor + model::Convert::timeToPts(Config::ReadDouble(Config::sPathTimelineMarkerEndAddition)   * sSecond);
+    mNewIntervalBegin = cursor + model::Convert::timeToPts(Config::get().ReadDouble(Config::sPathTimelineMarkerBeginAddition) * sSecond);
+    mNewIntervalEnd = cursor + model::Convert::timeToPts(Config::get().ReadDouble(Config::sPathTimelineMarkerEndAddition)   * sSecond);
 }
 
 void Intervals::addEndMarker()
@@ -168,7 +168,7 @@ void Intervals::update(pts newCursorPosition)
     VAR_DEBUG(cursor)(getCursor().getLogicalPosition());
     if (mNewIntervalActive)
     {
-        mNewIntervalEnd = cursor +  model::Convert::timeToPts(Config::ReadDouble(Config::sPathTimelineMarkerEndAddition) * sSecond);
+        mNewIntervalEnd = cursor +  model::Convert::timeToPts(Config::get().ReadDouble(Config::sPathTimelineMarkerEndAddition) * sSecond);
         refreshInterval(makeInterval(mNewIntervalBegin,mNewIntervalEnd));
     }
     if (mToggleActive)
@@ -280,7 +280,7 @@ void Intervals::deleteEmptyClip(const model::IClipPtr& clip)
 
 pts Intervals::determineSnap(pts position) const
 {
-    if (!Config::ReadBool(Config::sPathTimelineSnapClips))
+    if (!Config::get().ReadBool(Config::sPathTimelineSnapClips))
     {
         return position;
     }

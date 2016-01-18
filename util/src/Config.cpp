@@ -17,8 +17,6 @@
 
 #include "Config.h"
 
-#include <wx/confbase.h> // All config handling must be done via this file, for thread safety
-#include <wx/config.h> // All config handling must be done via this file, for thread safety
 #include "Enums.h"
 #include "UtilFrameRate.h"
 #include "UtilInitAvcodec.h"
@@ -176,7 +174,7 @@ void Config::init(const wxString& applicationName, const wxString& vendorName, b
     checkBool(Config::sPathDebugLogSequenceOnEdit);
 
     // Set all defaults here
-    setDefault(Config::sPathProjectAutoLoadEnabled, true);
+    setDefault(Config::sPathProjectAutoLoadEnabled, !inCxxTestMode); // Only in non-test mode auto load is allowed.
     setDefault(Config::sPathProjectBackupBeforeSaveEnabled, true);
     setDefault(Config::sPathProjectBackupBeforeSaveMaximum, 10);
     setDefault(Config::sPathProjectSavePathsRelativeToProject, true);
@@ -232,11 +230,12 @@ void Config::init(const wxString& applicationName, const wxString& vendorName, b
         WriteString(Config::sPathVideoDefaultFrameRate, fr.toString());
     }
 
+    Config::get().updateCache();
     wxConfigBase::Get()->Flush();
 
     // Read cached values here
     Log::setReportingLevel(LogLevelConverter::readConfigValue(Config::sPathDebugLogLevel));
-    sShowDebugInfo = Config::ReadBool(Config::sPathDebugShowDebugInfoOnWidgets);
+    sShowDebugInfo = Config::get().ReadBool(Config::sPathDebugShowDebugInfoOnWidgets);
 
     Avcodec::configureLog();
 }
@@ -251,55 +250,74 @@ void Config::exit()
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-template <class T>
-T readWithoutDefault(const wxString& path)
+bool Config::Exists(const wxString& key) const
 {
-    T result = T();
-    T dummy = T();
-    bool found = wxConfigBase::Get()->Read(path, &result, dummy);
-    ASSERT(found)(path);
+    boost::mutex::scoped_lock lock(mCacheMutex);
+    return mCache.find(key) != mCache.end();
+}
+
+template <> bool Config::read(const wxString& key) const
+{
+    return ReadBool(key);
+}
+
+template <> long Config::read(const wxString& key) const
+{
+    return ReadLong(key);
+}
+
+template <> double Config::read(const wxString& key) const
+{
+    return ReadDouble(key);
+}
+
+template <> wxString Config::read(const wxString& key) const
+{
+    return ReadString(key);
+}
+
+template <> wxColour Config::read(const wxString& key) const
+{
+    return ReadColour(key);
+}
+
+bool Config::ReadBool(const wxString& key) const // todo obsolete use templated methods
+{
+    return ReadLong(key) == 1;
+}
+
+long Config::ReadLong(const wxString& key) const
+{
+    wxString value{ ReadString(key) };
+    long result{ 0 };
+    bool ok{ value.ToLong(&result) };
+    ASSERT(ok)(value)(key);
     return result;
 }
 
-//static
-bool Config::Exists(const wxString& key)
+double Config::ReadDouble(const wxString& key) const
 {
-    return wxConfigBase::Get()->Exists(key);
+    wxString value{ ReadString(key) };
+    double result{ 0.0 };
+    bool ok{ value.ToDouble(&result) };
+    ASSERT(ok)(value)(key);
+    return result;
 }
 
-// static
-bool Config::ReadBool(const wxString& key)
+wxString Config::ReadString(const wxString& key) const
 {
-    ASSERT(wxThread::IsMain());
-    return readWithoutDefault<bool>(key);
+    wxString value;
+    {
+        boost::mutex::scoped_lock lock(mCacheMutex);
+        ASSERT_MAP_CONTAINS(mCache, key);
+        value = mCache.find(key)->second;
+    }
+    return value;
 }
 
-// static
-long Config::ReadLong(const wxString& key)
+wxColour Config::ReadColour(const wxString& key) const
 {
-    ASSERT(wxThread::IsMain());
-    return readWithoutDefault<long>(key);
-}
-
-// static
-double Config::ReadDouble(const wxString& key)
-{
-    ASSERT(wxThread::IsMain());
-    return readWithoutDefault<double>(key);
-}
-
-// static
-wxString Config::ReadString(const wxString& key)
-{
-    ASSERT(wxThread::IsMain());
-    return readWithoutDefault<wxString>(key);
-}
-
-// static
-wxColour Config::ReadColour(const wxString& key)
-{
-    ASSERT(wxThread::IsMain());
-    wxString s{ ReadString(key) };
+    wxString s{ ReadString(key) };  
     wxRegEx reColourDecimal{ "^([[:digit:]][[:digit:]]?[[:digit:]]?),([[:digit:]][[:digit:]]?[[:digit:]]?),([[:digit:]][[:digit:]]?[[:digit:]]?)$" };
     ASSERT(reColourDecimal.IsValid());
     ASSERT(reColourDecimal.Matches(s))(key)(s);
@@ -313,6 +331,26 @@ wxColour Config::ReadColour(const wxString& key)
     ASSERT_MORE_THAN_EQUALS(b,0);
     ASSERT_LESS_THAN_EQUALS(b,255);
     return wxColour{ static_cast<unsigned char>(r), static_cast<unsigned char>(g), static_cast<unsigned char>(b) };
+}
+
+template <> void Config::write(const wxString& key, const bool& value)
+{
+    WriteBool(key, value);
+}
+
+template <> void Config::write(const wxString& key, const long& value)
+{
+    WriteLong(key, value);
+}
+
+template <> void Config::write(const wxString& key, const double& value)
+{
+    WriteDouble(key, value);
+}
+
+template <> void Config::write(const wxString& key, const wxString& value)
+{
+    WriteString(key, value);
 }
 
 // static
@@ -360,6 +398,8 @@ void Config::OnWrite(const wxString& key)
     cfg->QueueEvent(new EventConfigUpdated(key));
     if (!sHold)
     {
+        Config::get().updateCache();
+
         // Do not check if writing succeeded:
         // Typical case in which writing the config file may fail:
         // Open a lot of Vidiot windows, then close all those windows
@@ -395,11 +435,11 @@ Config::Perspectives Config::WorkspacePerspectives::get()
     {
         wxString pathName = sPathWorkspacePerspectiveName + wxString::Format("%d",i);
         wxString pathSaved = sPathWorkspacePerspectiveSaved + wxString::Format("%d",i);
-        if (!Exists(pathName) || !Exists(pathSaved))
+        if (!Config::get().Exists(pathName) || !Config::get().Exists(pathSaved))
         {
             break;
         }
-        result[ReadString(pathName)] = ReadString(pathSaved); // Also avoids duplicates
+        result[Config::get().ReadString(pathName)] = Config::get().ReadString(pathSaved); // Also avoids duplicates
     }
     return result;
 }
@@ -428,6 +468,7 @@ void Config::WorkspacePerspectives::removeAll()
         wxConfigBase::Get()->DeleteEntry(sPathWorkspacePerspectiveName + wxString::Format("%d",i));
         wxConfigBase::Get()->DeleteEntry(sPathWorkspacePerspectiveSaved + wxString::Format("%d",i));
     }
+    Config::get().updateCache();
     wxConfigBase::Get()->Flush();
 }
 
@@ -444,6 +485,7 @@ void Config::WorkspacePerspectives::save(const Perspectives& perspectives)
         WriteString(pathSaved, name_perspective.second);
         ++i;
     }
+    Config::get().updateCache();
     wxConfigBase::Get()->Flush();
 }
 
@@ -465,6 +507,7 @@ void Config::releaseWriteToDisk()
     ASSERT(wxThread::IsMain());
     ASSERT(sHold);
     sHold = false;
+    updateCache();
     bool result = wxConfigBase::Get()->Flush();
     ASSERT(result);
 }
@@ -521,3 +564,42 @@ const wxString Config::sPathWorkspaceW("/Workspace/W");
 const wxString Config::sPathWorkspaceX("/Workspace/X");
 const wxString Config::sPathWorkspaceY("/Workspace/Y");
 const wxString Config::sPathWorkspacePerspectiveCurrent("/Workspace/PerspectiveCurrent");
+
+//////////////////////////////////////////////////////////////////////////
+// HELPER METHDOS
+//////////////////////////////////////////////////////////////////////////
+
+void Config::indexEntries()
+{
+    wxString key;
+    wxString value;
+    long cookie{ 88 };
+    bool cont{ GetFirstEntry(key, cookie) };
+    while (cont)
+    {
+        bool ok{ Read(key, &value) };
+        mCache[GetPath() + "/" + key] = value;
+        cont = GetNextEntry(key, cookie);
+    }
+
+    wxString group;
+    cont = GetFirstGroup(group, cookie);
+    while (cont)
+    {
+        wxString path{ GetPath() };
+        SetPath(path + "/" + group);
+        indexEntries();
+        SetPath(path);
+        cont = GetNextGroup(group, cookie);
+    }
+}
+
+void Config::updateCache()
+{
+    ASSERT(wxThread::IsMain());
+    mCache.clear();
+    SetPath("");
+    indexEntries();
+    VAR_ERROR(mCache);
+}
+

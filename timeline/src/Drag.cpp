@@ -238,7 +238,7 @@ void Drag::move(wxPoint position)
     else if (!info.track || info.track == mDropTrack)
     {
         model::TrackPtr addedTrack = nullptr;
-        if (Config::ReadBool(Config::sPathTimelineAutoAddEmptyTrackWhenDragging))
+        if (Config::get().ReadBool(Config::sPathTimelineAutoAddEmptyTrackWhenDragging))
         {
             if (!info.track && position.y < getSequenceView().getVideo().getRect().GetTop())
             {
@@ -853,11 +853,11 @@ void Drag::determineSnapOffset()
 void Drag::determinePossibleSnapPoints()
 {
     mSnapPoints.clear();
-    if (mSnappingEnabled && Config::ReadBool(Config::sPathTimelineSnapClips))
+    if (mSnappingEnabled && Config::get().ReadBool(Config::sPathTimelineSnapClips))
     {
         UtilVector<pts>(mSnapPoints).addElements(getSequence()->getCuts(mCommand->getDrags()));
     }
-    if (mSnappingEnabled && Config::ReadBool(Config::sPathTimelineSnapCursor))
+    if (mSnappingEnabled && Config::get().ReadBool(Config::sPathTimelineSnapCursor))
     {
         mSnapPoints.push_back(getCursor().getLogicalPosition());
     }

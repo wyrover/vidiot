@@ -52,7 +52,7 @@ void createTransition(const model::SequencePtr& sequence, const model::IClipPtr&
         if (leftClip && rightClip &&
             ((type == model::TransitionTypeFadeInFromPrevious || type == model::TransitionTypeFadeOutToNext)))
         {
-            pts defaultSize = Config::ReadLong(Config::sPathTimelineDefaultTransitionLength);
+            pts defaultSize = Config::get().ReadLong(Config::sPathTimelineDefaultTransitionLength);
 
             // Ensure that the transition can be made by shortening the clips, if required (and, if possible)
             model::TrackPtr track = clip->getTrack();

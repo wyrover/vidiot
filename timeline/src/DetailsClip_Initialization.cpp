@@ -71,7 +71,7 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
 
     {
         // Read lengths from config
-        wxString lengthButtons = Config::ReadString(Config::sPathTimelineLengthButtons);
+        wxString lengthButtons = Config::get().ReadString(Config::sPathTimelineLengthButtons);
         wxStringTokenizer t(lengthButtons, ",", wxTOKEN_STRTOK);
         while (t.HasMoreTokens() && mLengths.size() < 9) // Keys/Buttons 1-9 may be customized.
         {

@@ -21,20 +21,6 @@
 
 namespace test {
 
-/// Read a config value. Ensures that the proper thread is used for reading the value.
-template <typename TYPE>
-TYPE ConfigRead(wxString key)
-{
-    return util::thread::RunInMainReturning<TYPE>([key]
-    {
-        TYPE result = TYPE();
-        TYPE dummy = TYPE();
-        bool found = wxConfigBase::Get()->Read(key, &result, dummy);
-        ASSERT(found)(key);
-        return result;
-    });
-}
-
 /// Creating an overrule object temporarily overrules the value of a Config setting.
 /// When the object is created, the temporary value is set.
 /// When the object is destroyed, the original value is reset.
@@ -45,21 +31,15 @@ class ConfigOverrule
 public:
     ConfigOverrule(wxString path, TYPE temporaryvalue)
         : mPath(path)
-        , mOriginalValue(ConfigRead<TYPE>(path))
+        , mOriginalValue(Config::get().read<TYPE>(path))
         , mTemporaryValue(temporaryvalue)
     {
-        util::thread::RunInMainAndWait([this]
-        {
-            wxConfigBase::Get()->Write(mPath, mTemporaryValue);
-        });
+        util::thread::RunInMainAndWait([this] { Config::get().write(mPath, mTemporaryValue); });
     }
 
     ~ConfigOverrule()
     {
-        util::thread::RunInMainAndWait([this]
-        {
-            wxConfigBase::Get()->Write(mPath, mOriginalValue);
-        });
+        util::thread::RunInMainAndWait([this] { Config::get().write(mPath, mOriginalValue); });
     }
 private:
     wxString mPath;
@@ -72,7 +52,7 @@ void CheckConfigEnum(wxString key, ENUM expected)
 {
     ENUM current = util::thread::RunInMainReturning<ENUM>([key]
     {
-        return Config::ReadEnum<ENUM>(key);
+        return Config::get().ReadEnum<ENUM>(key);
     });
     ASSERT_EQUALS(current, expected)(key);
 }

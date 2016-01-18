@@ -82,7 +82,7 @@ void Avcodec::configureLog()
         { LogLevelAvcodecVerbose, AV_LOG_VERBOSE },
     };
 
-    LogLevelAvcodec level{ Config::ReadEnum<LogLevelAvcodec>(Config::sPathDebugLogLevelAvcodec) };
+    LogLevelAvcodec level{ Config::get().ReadEnum<LogLevelAvcodec>(Config::sPathDebugLogLevelAvcodec) };
     ASSERT_MAP_CONTAINS(sMapEnumToAvLogLevel, level);
     sLevel = sMapEnumToAvLogLevel.find(level)->second;
     av_log_set_level(sLevel); // Only required for default avcodec log method
