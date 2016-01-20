@@ -80,21 +80,21 @@ TransitionParameterDirection::~TransitionParameterDirection()
 
 void TransitionParameterDirection::copyValue(TransitionParameterPtr other)
 {
-    auto typed{ boost::dynamic_pointer_cast<TransitionParameterDirection>(other) };
-    if (typed)
+    boost::shared_ptr<TransitionParameterDirection> typed{ boost::dynamic_pointer_cast<TransitionParameterDirection>(other) };
+    if (typed) // todo make templated method?
     {
         setValue(typed->getValue());
     }
 }
 
-wxWindow* TransitionParameterDirection::makeWidget(wxWindow *parent) 
+wxWindow* TransitionParameterDirection::makeWidget(wxWindow *parent)
 {
     ASSERT_EQUALS(mControl, 0);
     mControl = new DirectionSelector(parent, DirectionConverter::getMapToHumanReadibleString(), mValue);
     mControl->Bind(wxEVT_CHOICE, &TransitionParameterDirection::onDirection, this);
     return mControl;
 }
-void TransitionParameterDirection::destroyWidget() 
+void TransitionParameterDirection::destroyWidget()
 {
     ASSERT_DIFFERS(mControl, 0);
     mControl->Unbind(wxEVT_CHOICE, &TransitionParameterDirection::onDirection, this);

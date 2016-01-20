@@ -42,7 +42,7 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    /// \return position new position in sequence where cursor must is positioned
+    /// \return position position in sequence of cursor
     pts getLogicalPosition() const;
 
     /// Move cursor AND update player position

@@ -51,6 +51,8 @@ public:
 
     void testPlaybackWithDifferentSpeed();
 
+    // todo add testPreviewTransition
+
 private:
 
     //////////////////////////////////////////////////////////////////////////

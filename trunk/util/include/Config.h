@@ -110,6 +110,7 @@ public:
     static const wxString sPathDebugShowCrashMenu;
     static const wxString sPathDebugShowDebugInfoOnWidgets;
     static const wxString sPathDebugShowFrameNumbers;
+    static const wxString sPathEditAutoStartPlayback;
     static const wxString sPathFileDefaultExtension;
     static const wxString sPathMakeSequenceEmptyClipLength;
     static const wxString sPathMakeSequencePrefixLength;

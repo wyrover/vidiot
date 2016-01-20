@@ -118,6 +118,9 @@ public:
     void onSpeedSliderChanged(wxCommandEvent& event);
     void onSpeedSpinChanged(wxSpinDoubleEvent& event);
 
+    void onPlayButtonPressed(wxCommandEvent& event);
+    void onAutoPlayToggled(wxCommandEvent& event);
+
     void onOpacitySliderChanged(wxCommandEvent& event);
     void onOpacitySpinChanged(wxSpinEvent& event);
     void onScalingChoiceChanged(wxCommandEvent& event);
@@ -211,6 +214,11 @@ private:
     std::map<pts, pts> mTrimAtBegin;
     std::map<pts, pts> mTrimAtEnd;
 
+    wxPanel* mPlaybackPanel = nullptr;
+    wxButton* mPlayButton = nullptr;
+    wxCheckBox* mAutoPlayButton = nullptr;
+    bool mPlaybackActive = false;
+
     wxPanel*  mSpeedPanel = nullptr;
     wxSpinCtrlDouble* mSpeedSpin = nullptr;
     wxSlider* mSpeedSlider = nullptr;
@@ -262,6 +270,7 @@ private:
     void submitEditCommandUponTransitionEdit(const wxString& parameter);
     void createOrUpdateSpeedCommand(rational64 speed);
 
+    void startPlayback(bool start);
     void preview();
 
     /// When a slider or spin control is changed for one of the position values, then update

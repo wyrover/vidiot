@@ -62,22 +62,22 @@ TransitionParameterColor::~TransitionParameterColor()
 
 void TransitionParameterColor::copyValue(TransitionParameterPtr other)
 {
-    auto typed{ boost::dynamic_pointer_cast<TransitionParameterColor>(other) };
+    boost::shared_ptr<TransitionParameterColor> typed{ boost::dynamic_pointer_cast<TransitionParameterColor>(other) };
     if (typed)
     {
         setValue(typed->getValue());
     }
 }
 
-wxWindow* TransitionParameterColor::makeWidget(wxWindow *parent) 
+wxWindow* TransitionParameterColor::makeWidget(wxWindow *parent)
 {
-    ASSERT_EQUALS(mControl, 0);      
+    ASSERT_EQUALS(mControl, 0);
     mControl = new wxColourPickerCtrl(parent, wxID_ANY, mValue, wxDefaultPosition, wxDefaultSize);
     mControl->SetColour(mValue);
     mControl->Bind(wxEVT_COLOURPICKER_CHANGED, &TransitionParameterColor::onColor, this);
     return mControl;
 }
-void TransitionParameterColor::destroyWidget() 
+void TransitionParameterColor::destroyWidget()
 {
     ASSERT_DIFFERS(mControl, 0);
     mControl->Unbind(wxEVT_COLOURPICKER_CHANGED, &TransitionParameterColor::onColor, this);
