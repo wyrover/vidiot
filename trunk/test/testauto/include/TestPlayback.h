@@ -51,7 +51,8 @@ public:
 
     void testPlaybackWithDifferentSpeed();
 
-    // todo add testPreviewTransition
+    /// Caused crashes due to not properly (re)initializing playback.
+    void testPlaybackAfterRangedPlayback();
 
 private:
 

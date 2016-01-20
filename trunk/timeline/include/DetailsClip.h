@@ -160,6 +160,8 @@ public:
     wxSlider* getSpeedSlider() const;
     wxSpinCtrlDouble* getSpeedSpin() const;
 
+    wxButton* getPlayButton() const;
+
     wxSlider* getOpacitySlider() const;
     wxSpinCtrl* getOpacitySpin() const;
     EnumSelector<model::VideoScaling>* getScalingSelector() const;

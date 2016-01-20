@@ -105,4 +105,19 @@ void TestPlayback::testPlaybackWithDifferentSpeed()
     Play(1000);
 }
 
+void TestPlayback::testPlaybackAfterRangedPlayback()
+{
+    StartTestSuite();
+    MakeInOutTransitionAfterClip preparation(3);
+    TimelineLeftClick(Center(VideoClip(0, 4))); // Open properties
+    WaitForPlaybackStarted started;
+    ButtonTriggerPressed(DetailsClipView()->getPlayButton());
+    started.wait();
+    pause(1000);
+    WaitForPlaybackStopped stopped;
+    TimelinePositionCursor(HCenter(VideoClip(0, 6)));
+    Play(1000);
+    stopped.wait();
+}
+
 } // namespace
