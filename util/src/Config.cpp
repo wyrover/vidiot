@@ -132,7 +132,7 @@ void Config::init(bool inCxxTestMode)
 
     // Initialize language before anything else to ensure that any strings initialized in the 'enum checks' lookups
     // are properly translated. Example: Avcodec log level mapping.
-    setDefault(Config::sPathWorkspaceLanguage, getDefaultLanguage());
+    setDefault(sPathWorkspaceLanguage, getDefaultLanguage());
     wxString Language{ getLanguageCode() };
     std::vector<std::pair<wxString, wxString>> supported{ getSupportedLanguages() };
     if (std::find_if(supported.begin(), supported.end(), [Language](std::pair<wxString, wxString> name_and_code) { return name_and_code.second == Language; }) == supported.end())
@@ -153,103 +153,106 @@ void Config::init(bool inCxxTestMode)
     bool WxTranslations{ mLocale->AddCatalog("vidiotwx", languageId) };
     bool VidiotTranslations{ mLocale->AddCatalog("vidiot", languageId) }; // Load last: This gives vidiot strings higher priority than wx strings (exmple the Copy string in 'nl_NL')
     VAR_ERROR(Language)(LocaleInitialization)(VidiotTranslations)(WxTranslations);
-    write<wxString>(Config::sPathWorkspaceLanguage, Language);
+    write<wxString>(sPathWorkspaceLanguage, Language);
 
     // Check values, delete from config if incorrect
-    checkLong(Config::sPathMakeSequenceEmptyClipLength, 0, 100000);
-    checkLong(Config::sPathMakeSequencePrefixLength, 1, 100);
-    checkBool(Config::sPathProjectAutoLoadEnabled);
-    checkBool(Config::sPathProjectBackupBeforeSaveEnabled);
-    checkLong(Config::sPathProjectBackupBeforeSaveMaximum, 0, 10000);
-    checkBool(Config::sPathProjectSavePathsRelativeToProject);
-    checkBool(Config::sPathTimelineAutoAddEmptyTrackWhenDragging);
-    checkLong(Config::sPathTimelineDefaultStillImageLength, 1, 10000);
-    checkLong(Config::sPathTimelineDefaultTransitionLength, 4, 10000);
-    checkLong(Config::sPathVideoDefaultWidth, 10, 10000);
-    checkLong(Config::sPathVideoDefaultHeight, 10, 10000);
-    checkEnum(Config::sPathVideoDefaultScaling, model::VideoScaling);
-    checkEnum(Config::sPathVideoDefaultAlignment, model::VideoAlignment);
-    checkLong(Config::sPathAudioDefaultSampleRate, 100, 100000);
-    checkLong(Config::sPathAudioDefaultNumberOfChannels, 1, 2);
-    checkEnum(Config::sPathDebugLogLevel, LogLevel);
-    checkEnum(Config::sPathProjectDefaultNewProjectType, model::DefaultNewProjectWizardStart);
-    checkEnum(Config::sPathDebugLogLevelAvcodec, LogLevelAvcodec);
-    checkLong(Config::sPathTimelineMarkerBeginAddition, 0, 10000);
-    checkLong(Config::sPathTimelineMarkerEndAddition, 0, 10000);
-    checkBool(Config::sPathDebugShowDebugInfoOnWidgets);
-    checkBool(Config::sPathTimelineSnapClips);
-    checkBool(Config::sPathTimelineSnapCursor);
-    checkBool(Config::sPathVideoShowBoundingBox);
-    checkLong(Config::sPathDebugMaxRenderLength, 0, 1000000);
-    checkBool(Config::sPathDebugShowCrashMenu);
-    checkBool(Config::sPathDebugShowFrameNumbers);
-    checkBool(Config::sPathDebugIncludeScreenShotInDump);
-    checkBool(Config::sPathDebugLogSequenceOnEdit);
+    checkLong(sPathMakeSequenceEmptyClipLength, 0, 100000);
+    checkLong(sPathMakeSequencePrefixLength, 1, 100);
+    checkBool(sPathProjectAutoLoadEnabled);
+    checkBool(sPathProjectBackupBeforeSaveEnabled);
+    checkLong(sPathProjectBackupBeforeSaveMaximum, 0, 10000);
+    checkBool(sPathProjectSavePathsRelativeToProject);
+    checkBool(sPathTimelineAutoAddEmptyTrackWhenDragging);
+    checkLong(sPathTimelineDefaultStillImageLength, 1, 10000);
+    checkLong(sPathTimelineDefaultTransitionLength, 4, 10000);
+    checkLong(sPathVideoDefaultWidth, 10, 10000);
+    checkLong(sPathVideoDefaultHeight, 10, 10000);
+    checkEnum(sPathVideoDefaultScaling, model::VideoScaling);
+    checkEnum(sPathVideoDefaultAlignment, model::VideoAlignment);
+    checkLong(sPathAudioDefaultSampleRate, 100, 100000);
+    checkLong(sPathAudioDefaultNumberOfChannels, 1, 2);
+    checkEnum(sPathDebugLogLevel, LogLevel);
+    checkEnum(sPathProjectDefaultNewProjectType, model::DefaultNewProjectWizardStart);
+    checkEnum(sPathDebugLogLevelAvcodec, LogLevelAvcodec);
+    checkLong(sPathTimelineMarkerBeginAddition, 0, 10000);
+    checkLong(sPathTimelineMarkerEndAddition, 0, 10000);
+    checkBool(sPathDebugShowDebugInfoOnWidgets);
+    checkBool(sPathTimelineSnapClips);
+    checkBool(sPathTimelineSnapCursor);
+    checkBool(sPathVideoShowBoundingBox);
+    checkBool(sPathEditAutoStartPlayback);
+    checkLong(sPathDebugMaxRenderLength, 0, 1000000);
+    checkBool(sPathDebugShowCrashMenu);
+    checkBool(sPathDebugShowFrameNumbers);
+    checkBool(sPathDebugIncludeScreenShotInDump);
+    checkBool(sPathDebugLogSequenceOnEdit);
 
     // Set all defaults here
-    setDefault(Config::sPathProjectAutoLoadEnabled, !inCxxTestMode); // Only in non-test mode auto load is allowed.
-    setDefault(Config::sPathProjectBackupBeforeSaveEnabled, true);
-    setDefault(Config::sPathProjectBackupBeforeSaveMaximum, 10);
-    setDefault(Config::sPathProjectSavePathsRelativeToProject, true);
-    setDefault(Config::sPathDebugIncludeScreenShotInDump, true);
-    setDefault(Config::sPathDebugLogSequenceOnEdit, false);
-    setDefault(Config::sPathDebugMaxRenderLength, 0); // Per default, render all
-    setDefault(Config::sPathDebugShowCrashMenu, false);
-    setDefault(Config::sPathDebugShowFrameNumbers, false);
-    setDefault(Config::sPathAudioDefaultNumberOfChannels, 2);
-    setDefault(Config::sPathAudioDefaultSampleRate, 44100);
-    setDefault(Config::sPathFileDefaultExtension, "avi");
-    setDefault(Config::sPathTimelineAutoAddEmptyTrackWhenDragging, true);
-    setDefault(Config::sPathTimelineDefaultStillImageLength, 150);
-    setDefault(Config::sPathTimelineDefaultTransitionLength, 20); // Divisible by 4 for automated tests
-    setDefault(Config::sPathVideoDefaultAlignment, model::VideoAlignment_toString(model::VideoAlignmentCenter));
-    setDefault(Config::sPathVideoDefaultHeight, 720);
-    setDefault(Config::sPathVideoDefaultScaling, model::VideoScaling_toString(model::VideoScalingFitToFill));
-    setDefault(Config::sPathVideoDefaultWidth, 1280);
-    setDefault(Config::sPathProjectLastOpened, "");
-    setDefault(Config::sPathDebugLogLevel, LogLevel_toString(LogInfo));
-    setDefault(Config::sPathProjectDefaultNewProjectType, model::DefaultNewProjectWizardStart_toString(model::DefaultNewProjectWizardStartFolder));
-    setDefault(Config::sPathDebugLogLevelAvcodec, LogLevelAvcodec_toString(LogLevelAvcodecError));
-    setDefault(Config::sPathMakeSequenceEmptyClipLength, 0);
-    setDefault(Config::sPathMakeSequencePrefixLength, 14);
-    setDefault(Config::sPathTimelineMarkerBeginAddition, 0);
-    setDefault(Config::sPathTimelineMarkerEndAddition, 0);
-    setDefault(Config::sPathTimelineLengthButtons, "250,500,1000,1500,2000,2500,3000,5000,10000"); // Keep in sync with defaults in DetailsClip
-    setDefault(Config::sPathVideoShowBoundingBox, true);
-    setDefault(Config::sPathDebugShowDebugInfoOnWidgets, false);
-    setDefault(Config::sPathTimelineSnapClips, true);
-    setDefault(Config::sPathTimelineSnapCursor, true);
-    setDefault(Config::sPathTimelineStripFromClipNames, "scene'2012");
-    setDefault(Config::sPathTestRunCurrent, "");
-    setDefault(Config::sPathTestRunFrom, "");
-    setDefault(Config::sPathTestRunOnly, "");
-    setDefault(Config::sPathVideoDefaultFrameRate, "");
-    setDefault(Config::sPathWorkspaceH, -1);
-    setDefault(Config::sPathWorkspaceMaximized, false);
-    setDefault(Config::sPathWorkspaceW, -1);
-    setDefault(Config::sPathWorkspaceX, -1);
-    setDefault(Config::sPathWorkspaceY, -1);
-    setDefault(Config::sPathWorkspacePerspectiveCurrent,"");
+    setDefault(sPathProjectAutoLoadEnabled, !inCxxTestMode); // Only in non-test mode auto load is allowed.
+    setDefault(sPathProjectBackupBeforeSaveEnabled, true);
+    setDefault(sPathProjectBackupBeforeSaveMaximum, 10);
+    setDefault(sPathProjectSavePathsRelativeToProject, true);
+    setDefault(sPathDebugIncludeScreenShotInDump, true);
+    setDefault(sPathDebugLogSequenceOnEdit, false);
+    setDefault(sPathDebugMaxRenderLength, 0); // Per default, render all
+    setDefault(sPathDebugShowCrashMenu, false);
+    setDefault(sPathDebugShowFrameNumbers, false);
+    setDefault(sPathEditAutoStartPlayback, false);
+    setDefault(sPathAudioDefaultNumberOfChannels, 2);
+    setDefault(sPathAudioDefaultSampleRate, 44100);
+    setDefault(sPathFileDefaultExtension, "avi");
+    setDefault(sPathTimelineAutoAddEmptyTrackWhenDragging, true);
+    setDefault(sPathTimelineDefaultStillImageLength, 150);
+    setDefault(sPathTimelineDefaultTransitionLength, 20); // Divisible by 4 for automated tests
+    setDefault(sPathVideoDefaultAlignment, model::VideoAlignment_toString(model::VideoAlignmentCenter));
+    setDefault(sPathVideoDefaultHeight, 720);
+    setDefault(sPathVideoDefaultScaling, model::VideoScaling_toString(model::VideoScalingFitToFill));
+    setDefault(sPathVideoDefaultWidth, 1280);
+    setDefault(sPathProjectLastOpened, "");
+    setDefault(sPathDebugLogLevel, LogLevel_toString(LogInfo));
+    setDefault(sPathProjectDefaultNewProjectType, model::DefaultNewProjectWizardStart_toString(model::DefaultNewProjectWizardStartFolder));
+    setDefault(sPathDebugLogLevelAvcodec, LogLevelAvcodec_toString(LogLevelAvcodecError));
+    setDefault(sPathMakeSequenceEmptyClipLength, 0);
+    setDefault(sPathMakeSequencePrefixLength, 14);
+    setDefault(sPathTimelineMarkerBeginAddition, 0);
+    setDefault(sPathTimelineMarkerEndAddition, 0);
+    setDefault(sPathTimelineLengthButtons, "250,500,1000,1500,2000,2500,3000,5000,10000"); // Keep in sync with defaults in DetailsClip
+    setDefault(sPathVideoShowBoundingBox, true);
+    setDefault(sPathDebugShowDebugInfoOnWidgets, false);
+    setDefault(sPathTimelineSnapClips, true);
+    setDefault(sPathTimelineSnapCursor, true);
+    setDefault(sPathTimelineStripFromClipNames, "scene'2012");
+    setDefault(sPathTestRunCurrent, "");
+    setDefault(sPathTestRunFrom, "");
+    setDefault(sPathTestRunOnly, "");
+    setDefault(sPathVideoDefaultFrameRate, "");
+    setDefault(sPathWorkspaceH, -1);
+    setDefault(sPathWorkspaceMaximized, false);
+    setDefault(sPathWorkspaceW, -1);
+    setDefault(sPathWorkspaceX, -1);
+    setDefault(sPathWorkspaceY, -1);
+    setDefault(sPathWorkspacePerspectiveCurrent,"");
 
     if (inCxxTestMode)
     {
-        write<wxString>(Config::sPathProjectDefaultNewProjectType, model::DefaultNewProjectWizardStart_toString(model::DefaultNewProjectWizardStartNone));
+        write<wxString>(sPathProjectDefaultNewProjectType, model::DefaultNewProjectWizardStart_toString(model::DefaultNewProjectWizardStartNone));
     }
 
+    updateCache();
+
     // Special cases checking and default handling
-    wxString frameRate{ read<wxString>(Config::sPathVideoDefaultFrameRate) };
+    wxString frameRate{ read<wxString>(sPathVideoDefaultFrameRate) };
     FrameRate fr(frameRate);
     if (!fr.toString().IsSameAs(frameRate))
     {
-        write<wxString>(Config::sPathVideoDefaultFrameRate, fr.toString());
+        write<wxString>(sPathVideoDefaultFrameRate, fr.toString());
     }
 
     wxConfigBase::Get()->Flush();
 
     // Read cached values here
-    updateCache();
-    Log::setReportingLevel(LogLevelConverter::readConfigValue(Config::sPathDebugLogLevel));
-    sShowDebugInfo = Config::get().read<bool>(Config::sPathDebugShowDebugInfoOnWidgets);
+    Log::setReportingLevel(LogLevelConverter::readConfigValue(sPathDebugLogLevel));
+    sShowDebugInfo = get().read<bool>(sPathDebugShowDebugInfoOnWidgets);
 
     Avcodec::configureLog();
 }
@@ -491,6 +494,7 @@ const wxString Config::sPathDebugShowCrashMenu("/Debug/ShowCrashMenu");
 const wxString Config::sPathDebugShowDebugInfoOnWidgets("/Debug/ShowDebugInfoOnWidgets");
 const wxString Config::sPathDebugShowFrameNumbers("/Debug/ShowFrameNumbers");
 const wxString Config::sPathFileDefaultExtension("/File/DefaultExtension");
+const wxString Config::sPathEditAutoStartPlayback("/Edit/AutoStartPlayback");
 const wxString Config::sPathMakeSequenceEmptyClipLength("/MakeSequence/EmptyClipLength");
 const wxString Config::sPathMakeSequencePrefixLength("/MakeSequence/PrefixLength");
 const wxString Config::sPathProjectAutoLoadEnabled("/Project/AutoLoadEnabled");

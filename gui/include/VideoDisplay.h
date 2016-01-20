@@ -57,6 +57,8 @@ public:
     bool isPlaying() const;
     model::SequencePtr getSequence() const;
 
+    void playRange(pts from, pts to);
+
     //////////////////////////////////////////////////////////////////////////
     // AUDIO
     //////////////////////////////////////////////////////////////////////////
@@ -99,9 +101,11 @@ private:
     double mAudioLatency;
 
     /// Holds the pts at which the playback was started (thus, the 0-point timewise)
-    int mStartPts;
+    pts mStartPts;
 
     std::atomic<int> mSkipFrames;
+
+    boost::optional< std::pair<pts, pts> > mRange = boost::none;
 
     //////////////////////////////////////////////////////////////////////////
     // AUDIO

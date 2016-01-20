@@ -22,6 +22,7 @@
 #include "Convert.h"
 #include "Transition.h"
 #include "TransitionParameter.h"
+#include "Config.h"
 #include "VideoClip.h"
 #include "VideoKeyFrame.h"
 
@@ -67,6 +68,7 @@ void DetailsClip::setClip(const model::IClipPtr& clip)
     mTransitionClone = nullptr;
     mEditCommand = nullptr;
     mEditSpeedCommand = nullptr;
+    startPlayback(false);
 
     model::VideoClipPtr video{ getClipOfType<model::VideoClip>(clip) };
     model::AudioClipPtr audio{ getClipOfType<model::AudioClip>(clip) };
@@ -106,6 +108,7 @@ void DetailsClip::setClip(const model::IClipPtr& clip)
         {
             mTransitionClone = make_cloned<model::Transition>(transition);
             setBox(mTransitionBoxSizer);
+                //todo add select transition type button
             for (auto parameter : mTransitionClone->getAllParameters())
             {
                 addOption(parameter->getDescription(), parameter->makeWidget(this));
@@ -122,11 +125,16 @@ void DetailsClip::setClip(const model::IClipPtr& clip)
     // Note: disabling a control and then enabling it again can cause extra events (value changed).
     // Therefore this has been placed here, to only dis/enable in the minimal number of cases.
     showOption(mLengthPanel, video != nullptr || audio  != nullptr || transition != nullptr);
+    showOption(mPlaybackPanel, transition != nullptr && transition->isA<model::IVideo>());
     showOption(mSpeedPanel, video  != nullptr|| audio != nullptr);
     mVideoKeyFrameControls->update();
     mAudioKeyFrameControls->update();
 
     Layout();
+
+    bool autoStartPlayback{ Config::get().read<bool>(Config::sPathEditAutoStartPlayback) };
+    mAutoPlayButton->SetValue(autoStartPlayback);
+    startPlayback(autoStartPlayback && transition != nullptr && transition->isA<model::IVideo>());
 }
 
 pts DetailsClip::getLength(wxToggleButton* button) const

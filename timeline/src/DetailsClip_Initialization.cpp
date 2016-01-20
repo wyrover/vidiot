@@ -135,6 +135,20 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     mSpeedSlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onSpeedSliderChanged, this);
     mSpeedSpin->Bind(wxEVT_COMMAND_SPINCTRLDOUBLE_UPDATED, &DetailsClip::onSpeedSpinChanged, this);
 
+    mPlaybackPanel = new wxPanel(this);
+    wxBoxSizer* playbacksizer = new wxBoxSizer(wxHORIZONTAL);
+    mPlayButton = new wxButton(mPlaybackPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+    mPlayButton->SetBitmap(util::window::getIcon("icon-pauseplay.png"), wxTOP);
+    mAutoPlayButton = new wxCheckBox(mPlaybackPanel, wxID_ANY, _("Start automatically"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+    playbacksizer->Add(mPlayButton, wxSizerFlags(0));
+    playbacksizer->Add(mAutoPlayButton, wxSizerFlags(0).CenterVertical());
+    mPlaybackPanel->SetSizer(playbacksizer);
+    // TRANSLATORS: Do not let the string exceed 20 characters.
+    addOption(_("Preview"), mPlaybackPanel);
+
+    mPlayButton->Bind(wxEVT_BUTTON, &DetailsClip::onPlayButtonPressed, this);
+    mAutoPlayButton->Bind(wxEVT_CHECKBOX, &DetailsClip::onAutoPlayToggled, this);
+
     mOpacityPanel = new wxPanel(this);
     wxBoxSizer* opacitysizer = new wxBoxSizer(wxHORIZONTAL);
     mOpacitySlider = new wxSlider(mOpacityPanel, wxID_ANY, model::VideoKeyFrame::sOpacityMax, model::VideoKeyFrame::sOpacityMin, model::VideoKeyFrame::sOpacityMax );
@@ -294,6 +308,8 @@ DetailsClip::~DetailsClip()
 
     mSpeedSlider->Unbind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onSpeedSliderChanged, this);
     mSpeedSpin->Unbind(wxEVT_COMMAND_SPINCTRLDOUBLE_UPDATED, &DetailsClip::onSpeedSpinChanged, this);
+    mPlayButton->Unbind(wxEVT_BUTTON, &DetailsClip::onPlayButtonPressed, this);
+    mAutoPlayButton->Unbind(wxEVT_CHECKBOX, &DetailsClip::onAutoPlayToggled, this);
     mOpacitySlider->Unbind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onOpacitySliderChanged, this);
     mOpacitySpin->Unbind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onOpacitySpinChanged, this);
     mSelectScaling->Unbind(wxEVT_COMMAND_CHOICE_SELECTED, &DetailsClip::onScalingChoiceChanged, this);

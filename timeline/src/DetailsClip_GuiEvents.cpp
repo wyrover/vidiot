@@ -79,6 +79,26 @@ void DetailsClip::onSpeedSpinChanged(wxSpinDoubleEvent& event)
     event.Skip();
 }
 
+void DetailsClip::onPlayButtonPressed(wxCommandEvent& event)
+{
+    LOG_INFO;
+    CatchExceptions([this]
+    {
+        startPlayback(!mPlaybackActive);
+    });
+}
+
+void DetailsClip::onAutoPlayToggled(wxCommandEvent& event)
+{
+    VAR_INFO(mAutoPlayButton->GetValue());
+    CatchExceptions([this]
+    {
+        bool autoStartPlayback{ mAutoPlayButton->GetValue() };
+        Config::get().write<bool>(Config::sPathEditAutoStartPlayback, autoStartPlayback);
+        startPlayback(autoStartPlayback);
+    });
+}
+
 void DetailsClip::onOpacitySliderChanged(wxCommandEvent& event)
 {
     VAR_INFO(mOpacitySlider->GetValue());

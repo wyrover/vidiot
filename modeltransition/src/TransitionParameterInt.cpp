@@ -66,16 +66,16 @@ TransitionParameterInt::~TransitionParameterInt()
 // TRANSITIONPARAMETER
 //////////////////////////////////////////////////////////////////////////
 
-void TransitionParameterInt::copyValue(TransitionParameterPtr other) 
+void TransitionParameterInt::copyValue(TransitionParameterPtr other)
 {
-    auto typed{ boost::dynamic_pointer_cast<TransitionParameterInt>(other) };
+    boost::shared_ptr<TransitionParameterInt> typed{ boost::dynamic_pointer_cast<TransitionParameterInt>(other) };
     if (typed)
     {
         setValue(typed->getValue());
     }
 }
 
-wxWindow* TransitionParameterInt::makeWidget(wxWindow *parent) 
+wxWindow* TransitionParameterInt::makeWidget(wxWindow *parent)
 {
     ASSERT_ZERO(mPanel);
     ASSERT_ZERO(mSlider);
@@ -95,10 +95,10 @@ wxWindow* TransitionParameterInt::makeWidget(wxWindow *parent)
 
     mSlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED, &TransitionParameterInt::onSlider, this);
     mSpin->Bind(wxEVT_COMMAND_SPINCTRL_UPDATED, &TransitionParameterInt::onSpin, this);
-    
+
     return mPanel;
 }
-void TransitionParameterInt::destroyWidget() 
+void TransitionParameterInt::destroyWidget()
 {
     mSlider->Unbind(wxEVT_COMMAND_SLIDER_UPDATED, &TransitionParameterInt::onSlider, this);
     mSpin->Unbind(wxEVT_COMMAND_SPINCTRL_UPDATED, &TransitionParameterInt::onSpin, this);
@@ -106,7 +106,7 @@ void TransitionParameterInt::destroyWidget()
     ASSERT_NONZERO(mPanel);
     ASSERT_NONZERO(mSlider);
     ASSERT_NONZERO(mSpin);
-    
+
     mPanel->Destroy();
     mPanel = nullptr;
     mSlider = nullptr;

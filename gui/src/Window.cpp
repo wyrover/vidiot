@@ -444,11 +444,13 @@ void Window::init()
     {
         if (Config::get().read<bool>(Config::sPathProjectAutoLoadEnabled))
         {
+            Config::get().write<bool>(Config::sPathProjectAutoLoadEnabled, false); // If loading fails, then the next startup won't load by default.
             wxFileHistory* history = GetDocumentManager()->GetFileHistory();
             if (history->GetCount() > 0)
             {
                 GetDocumentManager()->CreateDocument(history->GetHistoryFile(0), wxDOC_SILENT);
             }
+            Config::get().write<bool>(Config::sPathProjectAutoLoadEnabled, true); // Loading ok, reset bool for next startup
         }
     }
 }

@@ -46,27 +46,27 @@ TransitionParameterBool* TransitionParameterBool::clone() const
 // TRANSITIONPARAMETER
 //////////////////////////////////////////////////////////////////////////
 
-void TransitionParameterBool::copyValue(TransitionParameterPtr other) 
+void TransitionParameterBool::copyValue(TransitionParameterPtr other)
 {
-    auto typed{ boost::dynamic_pointer_cast<TransitionParameterBool>(other) };
+    boost::shared_ptr<TransitionParameterBool> typed{ boost::dynamic_pointer_cast<TransitionParameterBool>(other) };
     if (typed)
     {
         setValue(typed->getValue());
     }
 }
 
-wxWindow* TransitionParameterBool::makeWidget(wxWindow *parent) 
+wxWindow* TransitionParameterBool::makeWidget(wxWindow *parent)
 {
     ASSERT_ZERO(mCheck);
 
     mCheck = new wxCheckBox(parent, wxID_ANY, "");
     mCheck->SetValue(mValue);
     mCheck->Bind(wxEVT_CHECKBOX, &TransitionParameterBool::onCheck, this);
-    
+
     return mCheck;
 }
 
-void TransitionParameterBool::destroyWidget() 
+void TransitionParameterBool::destroyWidget()
 {
     mCheck->Unbind(wxEVT_CHECKBOX, &TransitionParameterBool::onCheck, this);
 

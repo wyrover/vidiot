@@ -202,6 +202,7 @@ void Player::stop()
 void Player::moveTo(pts position)
 {
     VAR_INFO(this)(position);
+    // todo make test case: select transition, wait for auto range playback, then move cursor to 'further on' in the timeline and start playback via playpause
     mDisplay->moveTo(position);
 }
 
@@ -219,7 +220,7 @@ void Player::showPlayer()
     if (GetSizer()->IsShown(mEdit))
     {
         // Ensure that the proper frame is shown in the player, after editing (and previewing)
-        mDisplay->moveTo(mPosition); 
+        mDisplay->moveTo(mPosition);
         endEdit();
     }
 }
@@ -241,8 +242,16 @@ void Player::updateLength()
 
 void Player::setSpeed(int speed)
 {
+    stop();
     mDisplay->setSpeed(speed);
     updateSpeedButton();
+}
+
+void Player::playRange(pts from, pts to)
+{
+    VAR_DEBUG(from)(to);
+    stop();
+    mDisplay->playRange(from, to);
 }
 
 //////////////////////////////////////////////////////////////////////////

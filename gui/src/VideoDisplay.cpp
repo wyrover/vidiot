@@ -135,6 +135,8 @@ void VideoDisplay::play()
         // Ensure that the to-be-started threads do not immediately stop
         mAbortThreads = false;
 
+        bool startAudio{ !mRange };
+
         updateParameters();
 
         // SoundTouch must be initialized before starting the audio buffer thread
@@ -158,7 +160,7 @@ void VideoDisplay::play()
         // Start buffering ASAP
         try
         {
-            mAudioBufferThreadPtr.reset(new boost::thread(std::bind(&VideoDisplay::audioBufferThread,this)));
+            if (startAudio) { mAudioBufferThreadPtr.reset(new boost::thread(std::bind(&VideoDisplay::audioBufferThread, this))); }
             mVideoBufferThreadPtr.reset(new boost::thread(std::bind(&VideoDisplay::videoBufferThread,this)));
         }
         catch (boost::exception &e)
@@ -187,6 +189,7 @@ void VideoDisplay::play()
             return false;
         };
 
+        // Done always, regardless of 'startAudio'. The audio stream time is used for synchronization.
         PaError err = Pa_OpenDefaultStream( &mAudioOutputStream, 0, mAudioParameters->getNrChannels(), paInt16, mAudioParameters->getSampleRate(), bufferSize, portaudio_callback, this );
         if (!verify(err, _("Opening audio stream failed:"))) 
         { 
@@ -198,15 +201,18 @@ void VideoDisplay::play()
 
         mStartTime = Pa_GetStreamTime(mAudioOutputStream);
 
-        err = Pa_StartStream( mAudioOutputStream );
-        if (!verify(err, _("Starting audio stream failed:"))) 
-        { 
-            PaError err{ Pa_CloseStream(mAudioOutputStream) };
-            VAR_ERROR(err)(Pa_GetErrorText(err));
-            mAudioOutputStream = nullptr;
-            mPlaying = true; // Ensure that 'stop' code is executed.
-            stop();
-            return;
+        if (startAudio)
+        {
+            err = Pa_StartStream(mAudioOutputStream);
+            if (!verify(err, _("Starting audio stream failed:")))
+            {
+                PaError err{ Pa_CloseStream(mAudioOutputStream) };
+                VAR_ERROR(err)(Pa_GetErrorText(err));
+                mAudioOutputStream = nullptr;
+                mPlaying = true; // Ensure that 'stop' code is executed.
+                stop();
+                return;
+            }
         }
 
         showNextFrame();
@@ -261,13 +267,25 @@ void VideoDisplay::stop()
         // End buffer threads
         mVideoFrames.flush(); // Unblock 'push()', if needed
         mAudioChunks.flush(); // Unblock 'push()', if needed
-        mVideoBufferThreadPtr->join(); // One extra frame may have been inserted by 'push()'
-        mAudioBufferThreadPtr->join(); // One extra chunk may have been inserted by 'push()'
+        if (mVideoBufferThreadPtr != nullptr)
+        {
+            mVideoBufferThreadPtr->join(); // One extra frame may have been inserted by 'push()'
+        }
+        if (mAudioBufferThreadPtr != nullptr)
+        {
+            mAudioBufferThreadPtr->join(); // One extra chunk may have been inserted by 'push()'
+        }
 
         mSoundTouch.clear(); // Must be done after joining the audio buffer thread.
 
-        mAudioChunks.push(model::AudioChunkPtr()); // Unblock 'pop()', if needed
-        mVideoFrames.push(model::VideoFramePtr()); // Unblock 'pop()', if needed
+        if (mAudioBufferThreadPtr != nullptr)
+        {
+            mAudioChunks.push(model::AudioChunkPtr()); // Unblock 'pop()', if needed.
+        }
+        if (mVideoBufferThreadPtr != nullptr)
+        {
+            mVideoFrames.push(model::VideoFramePtr()); // Unblock 'pop()', if needed
+        }
 
         // Playback can be stopped (moveTo) before the first audioRequested is done by portaudio.
         // That shouldn't block the videoDisplayThread (which blocks until audioRequested signals
@@ -292,6 +310,9 @@ void VideoDisplay::moveTo(pts position)
 {
     VAR_DEBUG(this)(position);
     ASSERT(wxThread::IsMain());
+
+    // Remove any range-based playing 
+    mRange.reset();
 
     stop(); // Stop playback
 
@@ -348,6 +369,16 @@ bool VideoDisplay::isPlaying() const
 model::SequencePtr VideoDisplay::getSequence() const
 {
     return mSequence;
+}
+
+void VideoDisplay::playRange(pts from, pts to)
+{
+    ASSERT(wxThread::IsMain());
+    VAR_INFO(from)(to);
+    ASSERT_LESS_THAN(from,to);
+    moveTo(from);
+    mRange.reset(std::make_pair(from, to));
+    play();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -461,6 +492,7 @@ void VideoDisplay::audioBufferThread()
         mAudioChunks.push(model::AudioChunkPtr()); // Unblock 'pop()', if needed
         mVideoFrames.push(model::VideoFramePtr()); // Unblock 'pop()', if needed
     });
+    LOG_INFO;
 }
 
 bool VideoDisplay::audioRequested(void *buffer, const unsigned long& frames, double playtime)
@@ -546,6 +578,7 @@ void VideoDisplay::videoBufferThread()
         mAudioChunks.push(model::AudioChunkPtr()); // Unblock 'pop()', if needed
         mVideoFrames.push(model::VideoFramePtr()); // Unblock 'pop()', if needed
     });
+    LOG_INFO;
 }
 
 void VideoDisplay::showNextFrame()
@@ -563,7 +596,21 @@ void VideoDisplay::showNextFrame()
     }
 
     double elapsed = Pa_GetStreamTime(mAudioOutputStream) - mStartTime - mAudioLatency; // Elapsed time since playback started
-    double next = static_cast<double>(model::Convert::ptsToSeconds(videoFrame->getPts() - mStartPts)) * mSpeedFactor; // time at which the frame must be shown; /1000.0: convert ms to s
+    pts position{ videoFrame->getPts() };
+    if (mRange)
+    {
+        std::pair<pts, pts> range{ *mRange };
+        if (position > range.second)
+        {
+            // Restart at begin of range.
+            moveTo(range.first);
+            mRange.reset(range);
+            play();
+            return;
+        }
+    }
+
+    double next = static_cast<double>(model::Convert::ptsToSeconds(position - mStartPts)) * mSpeedFactor; // time at which the frame must be shown; /1000.0: convert ms to s
     int sleep = static_cast<int>(floor((next - elapsed) * 1000.0));
 
     //LOG_ERROR << "Current time: " << std::fixed << elapsed;

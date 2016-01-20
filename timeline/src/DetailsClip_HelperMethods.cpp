@@ -150,6 +150,13 @@ void DetailsClip::submitEditCommandUponTransitionEdit(const wxString& parameter)
         // If a clip aspect is edited twice, simply adjust the clone twice,
         // but the command may only be submitted once.
     }
+
+    // todo upon undo the transition looks selected again, but the playback is not started.
+    if (mPlaybackActive)
+    {
+        // Restart the playback after the edit
+        startPlayback(true);
+    }
 }
 
 void DetailsClip::createOrUpdateSpeedCommand(rational64 speed)
@@ -190,6 +197,22 @@ void DetailsClip::createOrUpdateSpeedCommand(rational64 speed)
     getTimeline().endTransaction();
     getTimeline().Update();
     // NOT: preview(); -- leave cursor at same position
+}
+
+void DetailsClip::startPlayback(bool start)
+{
+    if (start && 
+        mClip && 
+        mClip->getTrack() != nullptr)
+    {
+        mPlaybackActive = true;
+        getPlayer()->playRange(mClip->getLeftPts(), mClip->getRightPts());
+    }
+    else
+    {
+        mPlaybackActive = false;
+        getPlayer()->stop();
+    }
 }
 
 void DetailsClip::preview()
