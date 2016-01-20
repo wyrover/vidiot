@@ -38,6 +38,11 @@ wxSpinCtrlDouble* DetailsClip::getSpeedSpin() const
     return mSpeedSpin;
 }
 
+wxButton* DetailsClip::getPlayButton() const
+{
+    return mPlayButton;
+}
+
 wxSlider* DetailsClip::getOpacitySlider() const
 {
     return mOpacitySlider;

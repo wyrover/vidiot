@@ -81,7 +81,7 @@ TransitionParameterDirection::~TransitionParameterDirection()
 void TransitionParameterDirection::copyValue(TransitionParameterPtr other)
 {
     boost::shared_ptr<TransitionParameterDirection> typed{ boost::dynamic_pointer_cast<TransitionParameterDirection>(other) };
-    if (typed) // todo make templated method?
+    if (typed)
     {
         setValue(typed->getValue());
     }
