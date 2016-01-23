@@ -22,6 +22,7 @@
 #include "ProjectModification.h"
 #include "Properties.h"
 #include "UtilWindow.h"
+#include "Worker.h"
 
 namespace gui {
 
@@ -36,6 +37,7 @@ DialogProjectProperties::DialogProjectProperties(wxWindow* win)
     util::window::setIcons(this);
 
     bool hasSequences = model::Project::get().getRoot()->hasSequences();
+    bool activeTasks{ worker::VisibleWorker::get().isActive() };
 
     SetSizer(new wxBoxSizer(wxVERTICAL));
 
@@ -55,15 +57,17 @@ DialogProjectProperties::DialogProjectProperties(wxWindow* win)
     }
     mVideoFrameRate = new wxRadioBox(this, wxID_ANY, wxT(""),wxPoint(10,10), wxDefaultSize, choices, 1, wxRA_SPECIFY_COLS );
     mVideoFrameRate->SetSelection(selection);
-    mVideoFrameRate->Enable(!hasSequences);
+    mVideoFrameRate->Enable(!hasSequences && !activeTasks);
     addoption(_("Framerate"), mVideoFrameRate);
 
     long initial = model::Properties::get().getVideoSize().GetWidth();
     mVideoWidth = new wxSpinCtrl(this, wxID_ANY, wxString::Format("%ld", initial), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, 20, 10000, initial);
+    mVideoWidth->Enable(!activeTasks);
     addoption(_("Video width"), mVideoWidth);
 
     initial = model::Properties::get().getVideoSize().GetHeight();
     mVideoHeight = new wxSpinCtrl(this, wxID_ANY, wxString::Format("%ld", initial), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, 20, 10000, initial);
+    mVideoHeight->Enable(!activeTasks);
     addoption(_("Video height"), mVideoHeight);
 
     addbox(_("Audio"));
@@ -77,7 +81,7 @@ DialogProjectProperties::DialogProjectProperties(wxWindow* win)
     sampleRateValidator.SetMax(1000);
     initial = model::Properties::get().getAudioSampleRate();
     mAudioSampleRate = new wxComboBox(this, wxID_ANY, wxString::Format("%ld", initial),  wxDefaultPosition, wxDefaultSize, sampleRateChoices, 0, sampleRateValidator);
-    mAudioSampleRate->Enable(!hasSequences);
+    mAudioSampleRate->Enable(!hasSequences && !activeTasks);
     addoption(_("Audio sample rate"), mAudioSampleRate);
 
     wxIntegerValidator<int> channelValidator;
@@ -88,13 +92,19 @@ DialogProjectProperties::DialogProjectProperties(wxWindow* win)
     channelChoices.Add("2");
     initial = Config::get().read<long>(Config::sPathAudioDefaultNumberOfChannels);
     mAudioNumberOfChannels = new wxComboBox(this, wxID_ANY, wxString::Format("%ld", initial),  wxDefaultPosition, wxDefaultSize, channelChoices, 0, channelValidator);
+    mAudioNumberOfChannels->Enable(!activeTasks);
     addoption(_("Audio channels"), mAudioNumberOfChannels);
 
-    if (hasSequences)
+    if (hasSequences || activeTasks)
     {
         mBoxSizer = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, _("Note:")), wxVERTICAL );
         GetSizer()->Add(mBoxSizer, 0, wxALIGN_CENTRE|wxALL, 5 );
-        wxStaticText* note = new wxStaticText(this, wxID_ANY, _("Some options cannot be changed because the project already contains sequences."), wxDefaultPosition,wxDefaultSize, wxST_NO_AUTORESIZE|wxALIGN_LEFT);
+        wxString sNote{ _("Some options cannot be changed because the project already contains sequences.") };
+        if (activeTasks)
+        {
+            sNote = _("Can't change options now. They may be in use by the running background task(s).");
+        }
+        wxStaticText* note = new wxStaticText(this, wxID_ANY, sNote, wxDefaultPosition, wxDefaultSize, wxST_NO_AUTORESIZE | wxALIGN_LEFT);
         note->SetFont(note->GetFont().MakeItalic());
         note->Wrap(300);
         wxBoxSizer* hSizer = new wxBoxSizer( wxHORIZONTAL );
@@ -103,6 +113,8 @@ DialogProjectProperties::DialogProjectProperties(wxWindow* win)
     }
 
     GetSizer()->Add(CreateButtonSizer(wxOK | wxCANCEL),0,wxALIGN_RIGHT);
+
+    FindWindowById(wxID_OK)->Enable(!activeTasks);
 
     Fit();
 

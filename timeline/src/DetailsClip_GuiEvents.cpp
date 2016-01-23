@@ -99,6 +99,16 @@ void DetailsClip::onAutoPlayToggled(wxCommandEvent& event)
     });
 }
 
+void DetailsClip::onTransitionType(wxCommandEvent& event)
+{
+    VAR_INFO(mTransitionType->GetSelection());
+    CatchExceptions([this]
+    {
+        std::map<int, model::TransitionPtr> all{ getPossibleVideoTransitions() };
+        submitEditCommandUponTransitionTypeChange(all.find(mTransitionType->GetSelection())->second);
+    });
+}
+
 void DetailsClip::onOpacitySliderChanged(wxCommandEvent& event)
 {
     VAR_INFO(mOpacitySlider->GetValue());

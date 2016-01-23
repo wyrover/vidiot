@@ -50,18 +50,6 @@ Properties::Properties(const FrameRate& fr)
     VAR_DEBUG(this);
 }
 
-// todo threading problems. Properties must only be accessed in main thread.
-// - all getters check for this alike Config.
-// - then model::Convert must be adjusted to never use the framerate et.al. from Properties singleton
-// - then if properties changed during rendering/playback, the original values are still used.
-// - Maybe all access to 'singleinstance' only allowed in main thread. Then, pass (for example)
-//   composition parameters around in secondary threads, which contain values copied
-//   during start of playback/rendering.
-// - test edit props during playback (should stop all playback then?)
-// - When properties are updated (audio sample rate), invalidate all entries for peaks in metadatacache,
-//   and redraw all peaks.
-// Update: no same as config: read from mulitple threads ok (use atomics!) and then ensure writing only done in main thread
-
 Properties::Properties(const Properties& other)
     : mFrameRate(other.mFrameRate)
     , mVideoWidth(other.mVideoWidth)
@@ -89,6 +77,7 @@ FrameRate Properties::getFrameRate() const
 
 void Properties::setFrameRate(FrameRate frameRate)
 {
+    ASSERT(wxThread::IsMain());
     mFrameRate = frameRate;
 }
 
@@ -99,6 +88,7 @@ wxSize Properties::getVideoSize() const
 
 void Properties::setVideoSize(wxSize size)
 {
+    ASSERT(wxThread::IsMain());
     mVideoWidth = size.GetWidth();
     mVideoHeight = size.GetHeight();
 }
@@ -110,6 +100,7 @@ int Properties::getAudioNumberOfChannels() const
 
 void Properties::setAudioNumberOfChannels(int channels)
 {
+    ASSERT(wxThread::IsMain());
     mAudioChannels = channels;
 }
 
@@ -120,6 +111,7 @@ int Properties::getAudioSampleRate() const
 
 void Properties::setAudioSampleRate(int audioFrameRate)
 {
+    ASSERT(wxThread::IsMain());
     mAudioSampleRate = audioFrameRate;
 }
 
@@ -130,6 +122,7 @@ render::RenderPtr Properties::getDefaultRender() const
 
 void Properties::setDefaultRender(const render::RenderPtr& render)
 {
+    ASSERT(wxThread::IsMain());
     mDefaultRender = make_cloned<render::Render>(render);
 }
 

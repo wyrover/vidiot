@@ -46,7 +46,10 @@ public:
     /// Abort any pending work and avoid new work being scheduled
     void abort();
 
-    virtual ~Worker();
+    /// \return true if scheduled work is in progress
+    bool isActive() const;
+
+    virtual ~Worker() = default;
 
     //////////////////////////////////////////////////////////////////////////
     // NEW WORK
@@ -71,6 +74,7 @@ private:
     const bool mVisibleProgress;
     std::atomic<bool> mEnabled;
     std::atomic<bool> mRunning;
+    std::atomic<int> mPending;
     boost::scoped_ptr<boost::thread> mThread;
     FifoWork mFifo;
     WorkPtr mCurrent;

@@ -149,6 +149,16 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     mPlayButton->Bind(wxEVT_BUTTON, &DetailsClip::onPlayButtonPressed, this);
     mAutoPlayButton->Bind(wxEVT_CHECKBOX, &DetailsClip::onAutoPlayToggled, this);
 
+    mTransitionTypePanel = new wxPanel(this);
+    wxBoxSizer* transitiontypesizer = new wxBoxSizer(wxHORIZONTAL);
+    mTransitionType = new wxChoice(mTransitionTypePanel, wxID_ANY);
+    transitiontypesizer->Add(mTransitionType, wxSizerFlags(1));
+    mTransitionTypePanel->SetSizer(transitiontypesizer);
+    // TRANSLATORS: Do not let the string exceed 20 characters.
+    addOption(_("Type"), mTransitionTypePanel);
+
+    mTransitionType->Bind(wxEVT_CHOICE, &DetailsClip::onTransitionType, this);
+
     mOpacityPanel = new wxPanel(this);
     wxBoxSizer* opacitysizer = new wxBoxSizer(wxHORIZONTAL);
     mOpacitySlider = new wxSlider(mOpacityPanel, wxID_ANY, model::VideoKeyFrame::sOpacityMax, model::VideoKeyFrame::sOpacityMin, model::VideoKeyFrame::sOpacityMax );
@@ -269,7 +279,11 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     // TRANSLATORS: Do not let the string exceed 20 characters.
     addOption(_("Audio key frames"), mAudioKeyFrameControls->mEditPanel);
 
-    mTransitionBoxSizer = addBox(boost::none);
+    mTransitionPanel = new wxPanel(this);
+    mTransitionBoxSizer = new wxFlexGridSizer(2, 0, 0);
+    mTransitionBoxSizer->AddGrowableCol(1);
+    mTransitionPanel->SetSizer(mTransitionBoxSizer);
+    addWidget(mTransitionPanel);
 
     Bind(wxEVT_SHOW, &DetailsClip::onShow, this);
     Bind(wxEVT_SIZE, &DetailsClip::onSize, this);
@@ -310,6 +324,7 @@ DetailsClip::~DetailsClip()
     mSpeedSpin->Unbind(wxEVT_COMMAND_SPINCTRLDOUBLE_UPDATED, &DetailsClip::onSpeedSpinChanged, this);
     mPlayButton->Unbind(wxEVT_BUTTON, &DetailsClip::onPlayButtonPressed, this);
     mAutoPlayButton->Unbind(wxEVT_CHECKBOX, &DetailsClip::onAutoPlayToggled, this);
+    mTransitionType->Unbind(wxEVT_CHOICE, &DetailsClip::onTransitionType, this);
     mOpacitySlider->Unbind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onOpacitySliderChanged, this);
     mOpacitySpin->Unbind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onOpacitySpinChanged, this);
     mSelectScaling->Unbind(wxEVT_COMMAND_CHOICE_SELECTED, &DetailsClip::onScalingChoiceChanged, this);

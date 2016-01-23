@@ -35,6 +35,7 @@ Worker::Worker(const char* name, bool progress)
     , mVisibleProgress(progress)
     , mEnabled(true)
     , mRunning(false)
+    , mPending(0)
     , mFifo(sMaximumBufferedWork)
     , mExecuted(0)
     , mExecutedLimit(0)
@@ -84,8 +85,9 @@ void Worker::abort()
     mFifo.flush();
 }
 
-Worker::~Worker()
+bool Worker::isActive() const
 {
+    return mPending > 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -101,6 +103,7 @@ void Worker::schedule(const WorkPtr& work)
             return;
         }
     }
+    ++mPending;
     if (!mVisibleProgress)
     {
         work->stopShowingProgress();
@@ -167,6 +170,7 @@ void Worker::thread()
                 }
             }
         }
+        --mPending;
     }
     mRunning = false;
 }

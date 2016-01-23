@@ -44,24 +44,7 @@ void DetailsClip::setClip(const model::IClipPtr& clip)
     // Avoid useless updating. The position check ensures updating after moving a clip in the timeline (DND).
     if (mClip == clip && (!mClip || mClip->getLeftPts() == mClipPosition)) return;
 
-    if (mTransitionClone)
-    {
-        while (mTransitionBoxSizer->GetItemCount() > 0)
-        {
-            wxWindow* widget = mTransitionBoxSizer->GetItem(static_cast<size_t>(0))->GetWindow();
-            mTransitionBoxSizer->Detach(0);
-            if (dynamic_cast<wxStaticText*>(widget) != 0)
-            {
-                // It's a title. Must be removed also.
-                widget->Destroy();
-            }
-        }
-        for (auto parameter : mTransitionClone->getAllParameters())
-        {
-            parameter->Unbind(model::EVENT_TRANSITION_PARAMETER_CHANGED, &DetailsClip::onTransitionParameterChanged, this);
-            parameter->destroyWidget();
-        }
-    }
+    destroyTransitionParameterWidgets();
 
     mClip = nullptr;
     mClipPosition = 0;
@@ -84,8 +67,7 @@ void DetailsClip::setClip(const model::IClipPtr& clip)
 
         // Must be done before adding/showing/hiding controls, because the computation for key frames buttons (which buttons to show)
         // depend on calculating the required widget size. Required widget size is not updated if the entire panel is hidden.
-        // TRANSLATORS: This is used in the details header to indicate 'clip name and length in seconds': "Clip name (42.000s)"
-        requestShow(true, wxString::Format(_("%s (%ss)"), mClip->getDescription(), model::Convert::ptsToHumanReadibleString(mClip->getPerceivedLength())));
+        requestShowAndUpdateTitle();
 
         // Length/speed
         // For audio/video clips and transitions, the length can be edited.
@@ -106,15 +88,9 @@ void DetailsClip::setClip(const model::IClipPtr& clip)
 
         if (transition)
         {
-            mTransitionClone = make_cloned<model::Transition>(transition);
-            setBox(mTransitionBoxSizer);
-                //todo add select transition type button
-            for (auto parameter : mTransitionClone->getAllParameters())
-            {
-                addOption(parameter->getDescription(), parameter->makeWidget(this));
-                parameter->Bind(model::EVENT_TRANSITION_PARAMETER_CHANGED, &DetailsClip::onTransitionParameterChanged, this);
-            }
+            makeTransitionCloneAndCreateTransitionParameterWidgets(mClip);
         }
+
         mLastEditKeyFrameOffset = -1;
     }
     else
@@ -126,6 +102,8 @@ void DetailsClip::setClip(const model::IClipPtr& clip)
     // Therefore this has been placed here, to only dis/enable in the minimal number of cases.
     showOption(mLengthPanel, video != nullptr || audio  != nullptr || transition != nullptr);
     showOption(mPlaybackPanel, transition != nullptr && transition->isA<model::IVideo>());
+    showOption(mTransitionTypePanel, transition != nullptr && transition->isA<model::IVideo>());
+    mTransitionPanel->Show(transition != nullptr && transition->isA<model::IVideo>());
     showOption(mSpeedPanel, video  != nullptr|| audio != nullptr);
     mVideoKeyFrameControls->update();
     mAudioKeyFrameControls->update();

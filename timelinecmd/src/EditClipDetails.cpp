@@ -27,18 +27,17 @@ namespace gui { namespace timeline { namespace cmd {
 
 EditClipDetails::EditClipDetails(
     const model::SequencePtr& sequence,
-        const wxString& message,
+    const wxString& message,
     const model::IClipPtr& clip,
     const model::IClipPtr& clipClone)
     : AClipEdit(sequence)
-    , mMessage(message)
     , mClip(clip)
     , mClipClone(clipClone)
     , mLink(clip->getLink())
     , mLinkClone(clipClone->getLink())
 {
     VAR_INFO(this)(mClip)(mLink);
-    mCommandName = wxString::Format(message, mClip->getDescription());
+    mCommandName = message;
 }
 
 EditClipDetails::~EditClipDetails()
@@ -81,7 +80,7 @@ void EditClipDetails::undoExtraAfter()
 
 wxString EditClipDetails::getMessage() const
 {
-    return mMessage;
+    return mCommandName;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -91,7 +90,7 @@ wxString EditClipDetails::getMessage() const
 std::ostream& operator<<(std::ostream& os, const EditClipDetails& obj)
 {
     os  << static_cast<const AClipEdit&>(obj) << '|' 
-        << obj.mMessage << '|'
+        << obj.mCommandName << '|'
         << obj.mClip << '|' 
         << obj.mClipClone << '|'
         << obj.mLink << '|'

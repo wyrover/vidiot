@@ -86,6 +86,13 @@ wxFlexGridSizer* DetailsPanel::addBox(boost::optional<wxString> name, int vgap)
 
     mTopSizer->Layout();
     return mBoxSizer;
+}            // todo what about auto trnasition playback during transition trimming?
+
+
+void DetailsPanel::addWidget(wxWindow* window)
+{
+    ASSERT(mTopSizer);
+    mTopSizer->Add(window, wxSizerFlags(0).Expand());
 }
 
 void DetailsPanel::setBox(wxFlexGridSizer* box)
@@ -97,6 +104,11 @@ void DetailsPanel::setBoxTitle(const wxString& boxname, const wxString& title)
 {
     ASSERT_MAP_CONTAINS(mBoxes,boxname);
     mBoxes[boxname]->GetStaticBox()->SetLabel(title);
+}
+
+void DetailsPanel::show(wxWindow* window, bool show)
+{
+    mTopSizer->Show(window, show);
 }
 
 void DetailsPanel::showBox(const wxString& name, bool show)

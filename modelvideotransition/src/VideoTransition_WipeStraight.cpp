@@ -70,8 +70,9 @@ wxString WipeStraight::getDescription(TransitionType type) const
 //////////////////////////////////////////////////////////////////////////
 
 // todo 'image wipe'
-// todo when changing transition, preview is not updated.
-// todo in edit clip show a drop down box for changing the transition type.
+// todo test edit clip show a drop down box for changing the transition type.
+// todo remove additional transition menus
+// todo select video transition after creating
 
 /// \param w width of image
 /// \param h height of image

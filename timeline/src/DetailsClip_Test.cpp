@@ -43,6 +43,11 @@ wxButton* DetailsClip::getPlayButton() const
     return mPlayButton;
 }
 
+wxChoice* DetailsClip::getTransitionTypeSelector() const
+{
+    return mTransitionType;
+}
+
 wxSlider* DetailsClip::getOpacitySlider() const
 {
     return mOpacitySlider;

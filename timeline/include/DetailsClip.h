@@ -121,6 +121,8 @@ public:
     void onPlayButtonPressed(wxCommandEvent& event);
     void onAutoPlayToggled(wxCommandEvent& event);
 
+    void onTransitionType(wxCommandEvent& event);
+
     void onOpacitySliderChanged(wxCommandEvent& event);
     void onOpacitySpinChanged(wxSpinEvent& event);
     void onScalingChoiceChanged(wxCommandEvent& event);
@@ -161,6 +163,8 @@ public:
     wxSpinCtrlDouble* getSpeedSpin() const;
 
     wxButton* getPlayButton() const;
+
+    wxChoice* getTransitionTypeSelector() const;
 
     wxSlider* getOpacitySlider() const;
     wxSpinCtrl* getOpacitySpin() const;
@@ -221,6 +225,9 @@ private:
     wxCheckBox* mAutoPlayButton = nullptr;
     bool mPlaybackActive = false;
 
+    wxPanel* mTransitionTypePanel = nullptr;
+    wxChoice* mTransitionType = nullptr;
+
     wxPanel*  mSpeedPanel = nullptr;
     wxSpinCtrlDouble* mSpeedSpin = nullptr;
     wxSlider* mSpeedSlider = nullptr;
@@ -260,16 +267,20 @@ private:
 
     std::shared_ptr<KeyFrameControlsImpl<model::AudioClip, model::AudioKeyFrame>> mAudioKeyFrameControls;
 
+    wxPanel* mTransitionPanel = nullptr;
     wxFlexGridSizer* mTransitionBoxSizer = nullptr;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
+    void requestShowAndUpdateTitle();
+
     template <typename, typename> friend struct KeyFrameControlsImpl;
 
     void submitEditCommandUponAudioVideoEdit(const wxString& message, bool video, std::function<void()> edit);
     void submitEditCommandUponTransitionEdit(const wxString& parameter);
+    void submitEditCommandUponTransitionTypeChange(model::TransitionPtr transition);
     void createOrUpdateSpeedCommand(rational64 speed);
 
     void startPlayback(bool start);
@@ -282,6 +293,11 @@ private:
     void determineClipSizeBounds();
 
     void updateLengthButtons();
+
+    void makeTransitionCloneAndCreateTransitionParameterWidgets(model::IClipPtr clip);
+    void createTransitionParameterWidgets();
+    void destroyTransitionParameterWidgets();
+    std::map<int, model::TransitionPtr> getPossibleVideoTransitions() const;
 };
 
 }} // namespace

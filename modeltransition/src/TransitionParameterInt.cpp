@@ -69,7 +69,9 @@ TransitionParameterInt::~TransitionParameterInt()
 void TransitionParameterInt::copyValue(TransitionParameterPtr other)
 {
     boost::shared_ptr<TransitionParameterInt> typed{ boost::dynamic_pointer_cast<TransitionParameterInt>(other) };
-    if (typed)
+    if (typed && 
+        typed->getValue() >= mMin && 
+        typed->getValue() <= mMax)
     {
         setValue(typed->getValue());
     }

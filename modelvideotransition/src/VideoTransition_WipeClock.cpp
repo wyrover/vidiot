@@ -29,7 +29,7 @@ namespace model { namespace video { namespace transition {
 wxString WipeClock::sParameterAngle{ "angle" };
 wxString WipeClock::sParameterCount{ "count" };
 wxString WipeClock::sParameterInverse{ "inversed" };
-wxString WipeClock::sParameterSoftenEdges{ "smooth" };
+wxString WipeClock::sParameterSoftenEdges{ "smooth" }; // todo move generic parameters to TransitionParamBool class to ensure they're 'taken over' when changing the transition type
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
