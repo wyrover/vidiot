@@ -17,7 +17,7 @@
 
 #pragma once
 
-#include "TestTransitions.h"
+#include "Test.h"
 
 namespace test
 {

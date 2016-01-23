@@ -17,7 +17,7 @@
 
 #pragma once
 
-#include "TestAuto.h"
+#include "Test.h"
 
 namespace test
 {
