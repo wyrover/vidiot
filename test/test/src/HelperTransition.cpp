@@ -122,10 +122,10 @@ void MakeTransitionAfterClip::dontUndo()
 
 void MakeTransitionAfterClip::makeTransition()
 {
-    ASSERT_SELECTION_SIZE(0); // Done to avoid 'leaving' selected clips which cause other tests to fail
     storeVariablesBeforeMakingTransition();
     TimelinePositionCursor(LeftPixel(GetClip(0,clipNumberAfterTransition)));
     moveMouseAndCreateTransition(clipNumberAfterTransition);
+    ASSERT_EQUALS(getSelectedClipsCount(), 1); // The transition is selected
     storeVariablesAfterMakingTransition();
 }
 

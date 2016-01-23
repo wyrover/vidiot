@@ -70,7 +70,6 @@ wxString WipeStraight::getDescription(TransitionType type) const
 //////////////////////////////////////////////////////////////////////////
 
 // todo 'image wipe'
-// todo test edit clip show a drop down box for changing the transition type.
 // todo remove additional transition menus
 // todo select video transition after creating
 

@@ -153,6 +153,23 @@ void CreateTransition::initialize()
     addTransition(mLeft,mRight,mTransition);
 }
 
+void CreateTransition::doExtraBefore()
+{
+    storeSelection();
+}
+
+void CreateTransition::doExtraAfter()
+{
+    // Select the newly created transition
+    getTimeline().getSelection().change({ mTransition });
+}
+
+void CreateTransition::undoExtraAfter()
+{
+    restoreSelection();
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
