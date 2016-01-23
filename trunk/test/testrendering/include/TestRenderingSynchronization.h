@@ -17,7 +17,7 @@
 
 #pragma once
 
-#include "TestRendering.h"
+#include "Test.h"
 
 namespace test
 {

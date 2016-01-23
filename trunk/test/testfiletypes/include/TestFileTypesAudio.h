@@ -17,7 +17,7 @@
 
 #pragma once
 
-#include "TestFileTypes.h"
+#include "Test.h"
 
 namespace test {
 

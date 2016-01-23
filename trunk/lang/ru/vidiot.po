@@ -19,7 +19,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-20 18:02+0100\n"
+"POT-Creation-Date: 2016-01-23 16:14+0100\n"
 "PO-Revision-Date: 2016-01-07 15:38+0300\n"
 "Last-Translator: Ted Mossolov <teodorrrro@gmail.com>\n"
 "Language-Team: Ted Mossolov <teodorrrro@gmail.com>\n"
@@ -211,7 +211,7 @@ msgid "Length of name (prefix) to be matched"
 msgstr "Число символов от начала имени (префикс), которые должны совпадать"
 
 #: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogOptions.cpp:103
-#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogProjectProperties.cpp:42
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogProjectProperties.cpp:44
 #: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogRenderSettings.cpp:108
 #: /home/doortjeric/vidiot/vidiot_trunk/gui/src/EditProjectProperties.cpp:39
 #: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:54
@@ -252,7 +252,7 @@ msgid "Default length of still images (in frames)"
 msgstr "Длительность показа неподвижных изображений по умолчанию (в кадрах)"
 
 #: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogOptions.cpp:178
-#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogProjectProperties.cpp:69
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogProjectProperties.cpp:73
 #: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogRenderSettings.cpp:114
 #: /home/doortjeric/vidiot/vidiot_trunk/gui/src/EditProjectProperties.cpp:57
 #: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:55
@@ -349,47 +349,53 @@ msgstr ""
 "Для применения некоторых настроек необходим перезапуск %1$s. Перезапустить "
 "%1$s?"
 
-#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogProjectProperties.cpp:33
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogProjectProperties.cpp:34
 msgid "Properties"
 msgstr "Свойства"
 
-#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogProjectProperties.cpp:59
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogProjectProperties.cpp:61
 #: /home/doortjeric/vidiot/vidiot_trunk/gui/src/EditProjectProperties.cpp:47
 msgid "Framerate"
 msgstr "Частота кадров"
 
-#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogProjectProperties.cpp:63
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogProjectProperties.cpp:66
 #: /home/doortjeric/vidiot/vidiot_trunk/gui/src/EditProjectProperties.cpp:51
 msgid "Video width"
 msgstr "Ширина видео"
 
-#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogProjectProperties.cpp:67
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogProjectProperties.cpp:71
 #: /home/doortjeric/vidiot/vidiot_trunk/gui/src/EditProjectProperties.cpp:55
 msgid "Video height"
 msgstr "Высота видео"
 
-#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogProjectProperties.cpp:81
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogProjectProperties.cpp:85
 #: /home/doortjeric/vidiot/vidiot_trunk/gui/src/EditProjectProperties.cpp:68
 msgid "Audio sample rate"
 msgstr "Частота аудио"
 
-#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogProjectProperties.cpp:91
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogProjectProperties.cpp:96
 #: /home/doortjeric/vidiot/vidiot_trunk/gui/src/EditProjectProperties.cpp:78
 msgid "Audio channels"
 msgstr "Каналов аудио"
 
-#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogProjectProperties.cpp:95
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogProjectProperties.cpp:100
 #: /home/doortjeric/vidiot/vidiot_trunk/gui/src/EditProjectProperties.cpp:80
 msgid "Note:"
 msgstr "Примечание:"
 
-#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogProjectProperties.cpp:97
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogProjectProperties.cpp:102
 #: /home/doortjeric/vidiot/vidiot_trunk/gui/src/EditProjectProperties.cpp:132
 msgid ""
 "Some options cannot be changed because the project already contains "
 "sequences."
 msgstr ""
 "Некоторые параметры нельзя изменить, так как проект уже содержит видеоряд."
+
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogProjectProperties.cpp:105
+msgid ""
+"Can't change options now. They may be in use by the running background "
+"task(s)."
+msgstr ""
 
 #: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogRenderSettings.cpp:57
 msgid "Render sequence"
@@ -1422,26 +1428,31 @@ msgstr "Добавить ключевой кадр на месте курсор�
 msgid "Remove the key frame at the current position."
 msgstr "Удалить ключевой кадр на месте курсора."
 
-#. TRANSLATORS: This is used in the details header to indicate 'clip name and length in seconds': "Clip name (42.000s)"
-#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_GetSet.cpp:88
-#, c-format
-msgid "%s (%ss)"
-msgstr ""
-
-#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_GuiEvents.cpp:395
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_GuiEvents.cpp:405
 msgid ""
 "Could not execute the length change without messing up clips in other tracks."
 msgstr ""
 "Нельзя изменить длительность, так как это нарушит порядок клипов на других "
 "дорожках."
 
-#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_GuiEvents.cpp:401
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_GuiEvents.cpp:411
 msgid "Set length of clip"
 msgstr "Задать длительность клипа"
 
-#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_HelperMethods.cpp:139
-msgid "Change "
-msgstr "Изменить "
+#. TRANSLATORS: This is used in the details header to indicate 'clip name and length in seconds': "Clip name (42.000s)"
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_HelperMethods.cpp:61
+#, c-format
+msgid "%s (%ss)"
+msgstr ""
+
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_HelperMethods.cpp:144
+#, c-format
+msgid "Change %s (%s)"
+msgstr ""
+
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_HelperMethods.cpp:189
+msgid "Change transition type"
+msgstr ""
 
 #: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:56
 msgid "Transition"
@@ -1524,37 +1535,42 @@ msgid "Start automatically"
 msgstr ""
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
-#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:164
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:158
+msgid "Type"
+msgstr ""
+
+#. TRANSLATORS: Do not let the string exceed 20 characters.
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:174
 msgid "Opacity"
 msgstr "Непрозрачность"
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
-#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:182
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:192
 msgid "Rotation"
 msgstr "Поворот"
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
-#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:201
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:211
 msgid "Scaling"
 msgstr "Масштаб"
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
-#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:230
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:240
 msgid "Position"
 msgstr "Положение"
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
-#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:237
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:247
 msgid "Video key frames"
 msgstr "Кл. кадры видео"
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
-#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:264
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:274
 msgid "Volume (%)"
 msgstr "Громкость (%)"
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
-#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:270
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:280
 msgid "Audio key frames"
 msgstr "Кл. кадры аудио"
 
@@ -1953,6 +1969,9 @@ msgstr "Нажмите \"OK\" для выхода."
 #: /home/doortjeric/vidiot/vidiot_trunk/util/src/UtilPath.cpp:284
 msgid "Resources not found"
 msgstr "Ресурсы не найдены"
+
+#~ msgid "Change "
+#~ msgstr "Изменить "
 
 #~ msgid "Bands"
 #~ msgstr "Группы"

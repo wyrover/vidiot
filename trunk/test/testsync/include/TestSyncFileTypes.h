@@ -17,7 +17,7 @@
 
 #pragma once
 
-#include "TestSync.h"
+#include "Test.h"
 
 namespace test {
 

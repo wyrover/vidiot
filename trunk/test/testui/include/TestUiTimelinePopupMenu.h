@@ -17,7 +17,7 @@
 
 #pragma once
 
-#include "TestUi.h"
+#include "Test.h"
 
 namespace test
 {
