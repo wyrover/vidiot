@@ -48,6 +48,19 @@ std::vector<model::TransitionPtr> TransitionFactory::getAllPossibleTransitions()
     return result;
 }
 
+std::vector<model::TransitionPtr> TransitionFactory::getAllPossibleTransitionsOfType(model::TransitionType type) const
+{
+    std::vector<model::TransitionPtr> result;
+    for (auto t : mTransitions)
+    {
+        if (t->supports(type))
+        {
+            result.push_back(make_cloned<model::Transition>(t));
+        }
+    }
+    return result;
+}
+
 TransitionPtr TransitionFactory::getDefault()
 {
     ASSERT_NONZERO(mTransitions.size());

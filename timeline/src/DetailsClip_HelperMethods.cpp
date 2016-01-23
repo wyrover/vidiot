@@ -515,13 +515,10 @@ std::map<int, model::TransitionPtr> DetailsClip::getPossibleVideoTransitions() c
         mClip->isA<model::IVideo>())
     {
         int n{ 0 };
-        for (model::TransitionPtr transition : model::video::VideoTransitionFactory::get().getAllPossibleTransitions())
+        for (model::TransitionPtr transition : model::video::VideoTransitionFactory::get().getAllPossibleTransitionsOfType(mTransitionClone->getTransitionType()))
         {
-            if (transition->supports(mTransitionClone->getTransitionType()))
-            {
-                result[n] = transition;
-                ++n;
-            }
+            result[n] = transition;
+            ++n;
         }
     }
     return result;
