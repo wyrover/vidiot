@@ -53,18 +53,6 @@ void SplitAtCursor::initialize()
     splittrack(getTimeline().getSequence()->getAudioTracks(), position);
 }
 
-//////////////////////////////////////////////////////////////////////////
-// HELPER METHODS
-//////////////////////////////////////////////////////////////////////////
-
-void SplitAtCursor::splittrack(model::Tracks tracks, pts position)
-{
-    for ( model::TrackPtr track : tracks )
-    {
-        split(track, position);
-    }
-}
-
 void SplitAtCursor::doExtraBefore()
 {
     storeSelection();
@@ -90,6 +78,18 @@ void SplitAtCursor::doExtraAfter()
 void SplitAtCursor::undoExtraAfter()
 {
     restoreSelection();
+}
+
+//////////////////////////////////////////////////////////////////////////
+// HELPER METHODS
+//////////////////////////////////////////////////////////////////////////
+
+void SplitAtCursor::splittrack(model::Tracks tracks, pts position)
+{
+    for ( model::TrackPtr track : tracks )
+    {
+        split(track, position);
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////

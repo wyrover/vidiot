@@ -215,8 +215,6 @@ void DetailsClip::submitEditCommandUponTransitionTypeChange(model::TransitionPtr
     {
         preview();
     }
-
-    // todo blink in edit panel when chaning param type (soften edges shown briefly on the top left, sometimes)
 }
 
 void DetailsClip::createOrUpdateSpeedCommand(rational64 speed)
