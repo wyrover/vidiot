@@ -17,6 +17,8 @@
 
 #pragma once
 
+#include "Enums.h"
+
 namespace model {
 
 class TransitionFactory
@@ -36,6 +38,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     std::vector<model::TransitionPtr> getAllPossibleTransitions() const;
+    std::vector<model::TransitionPtr> getAllPossibleTransitionsOfType(model::TransitionType type) const;
     TransitionPtr getDefault();
 
 protected:
