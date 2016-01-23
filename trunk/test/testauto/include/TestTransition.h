@@ -80,6 +80,8 @@ public:
 
     void testCreateTransitionAfterLastClip();
 
+    void testChangeTransitionType();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////

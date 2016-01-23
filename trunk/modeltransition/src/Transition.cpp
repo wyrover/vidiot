@@ -48,7 +48,7 @@ void Transition::init(boost::optional<pts> nFramesLeft, boost::optional<pts> nFr
     mFramesRight = nFramesRight;
     ASSERT_MORE_THAN_ZERO(getLength());
 
-    initParameters();
+    initParameters(getCurrentParameters());
 
     VAR_DEBUG(this)(nFramesLeft)(nFramesRight);
 }
@@ -223,6 +223,14 @@ boost::optional<pts> Transition::getRight() const
     return mFramesRight;
 }
 
+TransitionType Transition::getTransitionType() const
+{
+    return
+        mFramesLeft && mFramesRight ? TransitionTypeFadeOutToNext :
+        mFramesLeft ? TransitionTypeFadeOut :
+        TransitionTypeFadeIn;
+}
+
 model::IClipPtr Transition::makeLeftClip()
 {
     model::IClipPtr result;
@@ -258,10 +266,9 @@ bool Transition::supports(TransitionType type) const
 // PARAMETERS
 //////////////////////////////////////////////////////////////////////////
 
-void Transition::initParameters()
+void Transition::initParameters(std::map<wxString, TransitionParameterPtr> currentValues)
 {
     std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> known{ getParameters() };
-    std::map<wxString, TransitionParameterPtr> currentValues{ mParameters }; // For retrieving the values from the save file
 
     mParameters.clear(); // Start with nothing
     for (auto tuple : getParameters())
@@ -286,14 +293,9 @@ void Transition::initParameters()
     }
 }
 
-std::vector<TransitionParameterPtr> Transition::getAllParameters() const
+std::map<wxString, TransitionParameterPtr> Transition::getCurrentParameters() const
 {
-    std::vector<TransitionParameterPtr> result;
-    for (auto kvp : mParameters)
-    {
-        result.push_back(kvp.second);
-    }
-    return result;
+    return mParameters;
 }
     
 template <typename PARAMETERTYPE>
@@ -380,8 +382,7 @@ void Transition::serialize(Archive & ar, const unsigned int version)
         // NOT: mSelected. After loading, nothing is selected.
         if (Archive::is_loading::value)
         {
-
-            initParameters();
+            initParameters(mParameters);
         }
     }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }

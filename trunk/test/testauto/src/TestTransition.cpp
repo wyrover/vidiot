@@ -1180,4 +1180,59 @@ void TestTransition::testCreateTransitionAfterLastClip()
     }
 }
 
+
+void TestTransition::testChangeTransitionType()
+{
+    StartTestSuite();
+    TimelineZoomIn(4);
+    {
+        // todo more checks?
+        StartTest("InOutTransitions");
+        MakeInOutTransitionAfterClip preparation{ 2 };
+
+        for (model::TransitionPtr transition : model::video::VideoTransitionFactory::get().getAllPossibleTransitions())
+        {
+            TimelineSelectClips({ VideoClip(0,3) });
+            if (transition->supports(model::TransitionTypeFadeOutToNext))
+            {
+                SetValue(DetailsClipView()->getTransitionTypeSelector(), transition->getDescription(model::TransitionTypeFadeOutToNext));
+                ASSERT_EQUALS(VideoClip(0, 3)->getDescription(), transition->getDescription(model::TransitionTypeFadeOutToNext));
+                Play(-2 + LeftPixel(VideoClip(0, 3)), 250);
+                Undo();
+            }
+        }
+    }
+    {
+        StartTest("InTransitions");
+        MakeInTransitionAfterClip preparation{ 2 };
+        for (model::TransitionPtr transition : model::video::VideoTransitionFactory::get().getAllPossibleTransitions())
+        {
+            TimelineSelectClips({ VideoClip(0,3) });
+            if (transition->supports(model::TransitionTypeFadeIn))
+            {
+                SetValue(DetailsClipView()->getTransitionTypeSelector(), transition->getDescription(model::TransitionTypeFadeIn));
+                ASSERT_EQUALS(VideoClip(0, 3)->getDescription(), transition->getDescription(model::TransitionTypeFadeIn));
+                Play(-2 + LeftPixel(VideoClip(0, 3)), 250);
+                Undo();
+            }
+        }
+    }
+    {
+        StartTest("OutTransitions");
+        MakeOutTransitionAfterClip preparation{ 2 };
+        for (model::TransitionPtr transition : model::video::VideoTransitionFactory::get().getAllPossibleTransitions())
+        {
+            TimelineSelectClips({ VideoClip(0,3) });
+            if (transition->supports(model::TransitionTypeFadeOut))         // todo make this if type selection part of the factory result. used more often.
+            {
+                SetValue(DetailsClipView()->getTransitionTypeSelector(), transition->getDescription(model::TransitionTypeFadeOut));
+                ASSERT_EQUALS(VideoClip(0, 3)->getDescription(), transition->getDescription(model::TransitionTypeFadeOut));
+                Play(-2 + LeftPixel(VideoClip(0, 3)), 250);
+                Undo();
+            }
+        }
+    }
+}
+
+
 } // namespace

@@ -90,6 +90,16 @@ void SetValue(wxCheckBox* widget, bool value)
     });
 }
 
+void SetValue(wxChoice* widget, wxString value)
+{
+    util::thread::RunInMainAndWait([widget, value]
+    {
+        widget->SetStringSelection(value);
+        wxCommandEvent event{ wxEVT_CHOICE, 0 };
+        widget->GetEventHandler()->ProcessEvent(event);
+    });
+}
+
 void ButtonTriggerPressed(wxButton* button)
 {
     // Using QueueEvent (without RunInMainAndWait) did not work.

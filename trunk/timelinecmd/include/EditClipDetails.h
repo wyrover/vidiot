@@ -70,7 +70,6 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    wxString mMessage;
     model::IClipPtr mClip;
     model::IClipPtr mClipClone;
     model::IClipPtr mLink; // Must be kept as member to avoid ref count reaching 0

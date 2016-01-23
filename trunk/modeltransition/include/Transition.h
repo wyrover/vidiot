@@ -94,6 +94,8 @@ public:
     /// \see mFramesRight
     boost::optional<pts> getRight() const;
 
+    TransitionType getTransitionType() const;
+
     std::vector<wxWindow*> makeParameterWidgets(wxWindow* parent);
     void destroyParameterWidgets();
 
@@ -126,11 +128,14 @@ public:
     // PARAMETERS
     //////////////////////////////////////////////////////////////////////////
 
-    void initParameters();
+    /// Initalize all parameters with proper values.
+    /// Default param is a copy of the current parameter list.
+    /// This is used for initialization after reading from disk.
+    void initParameters(std::map<wxString, TransitionParameterPtr> currentValues);
 
     virtual std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> getParameters() const = 0;
 
-    std::vector<TransitionParameterPtr> getAllParameters() const;
+    std::map<wxString, TransitionParameterPtr> getCurrentParameters() const;
 
     template <typename PARAMETERTYPE>
     boost::shared_ptr<PARAMETERTYPE> getParameter(wxString name) const;

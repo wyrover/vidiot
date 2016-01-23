@@ -23,6 +23,7 @@
 #include "EditClipDetails.h"
 #include "EditClipSpeed.h"
 #include "ProjectModification.h"
+#include "VideoTransitionFactory.h"
 #include "ViewMap.h"
 
 namespace gui { namespace timeline {
@@ -52,6 +53,13 @@ rational64 DetailsClip::sliderValueToFactor(int slidervalue)
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
+
+void DetailsClip::requestShowAndUpdateTitle()
+{
+    ASSERT_NONZERO(mClip);
+    // TRANSLATORS: This is used in the details header to indicate 'clip name and length in seconds': "Clip name (42.000s)"
+    requestShow(true, wxString::Format(_("%s (%ss)"), mClip->getDescription(), model::Convert::ptsToHumanReadibleString(mClip->getPerceivedLength())));
+}
 
 void DetailsClip::submitEditCommandUponAudioVideoEdit(const wxString& message, bool video, std::function<void()> edit)
 {
@@ -133,10 +141,14 @@ void DetailsClip::submitEditCommandUponTransitionEdit(const wxString& parameter)
 
     ASSERT_NONZERO(mTransitionClone);
 
-    if (mEditCommand == nullptr)
+    wxString message{ wxString::Format(_("Change %s (%s)"), mClip->getDescription(), parameter) };
+
+    if (mEditCommand == nullptr || // No command submit yet
+        mEditCommand != model::CommandProcessor::get().GetCurrentCommand() || // If another command was done inbetween
+        mEditCommand->getMessage() != message) // Another aspect was changed
     {
         // Create the command - which replaces the original clip(s) with their changed clones - and add it to the undo system.
-        mEditCommand = new cmd::EditClipDetails(getSequence(), _("Change "), mClip, mTransitionClone);
+        mEditCommand = new cmd::EditClipDetails(getSequence(), message, mClip, mTransitionClone);
 
         // The submission of the command will result in a newly selected clip: the clone
         // Storing that clone as the current clip serves two purposes:
@@ -157,6 +169,54 @@ void DetailsClip::submitEditCommandUponTransitionEdit(const wxString& parameter)
         // Restart the playback after the edit
         startPlayback(true);
     }
+    else
+    {
+        preview();
+    }
+}
+
+void DetailsClip::submitEditCommandUponTransitionTypeChange(model::TransitionPtr transition)
+{
+    getPlayer()->stop(); // Stop iteration through the sequence, since the sequence is going to be changed.
+    model::TransitionPtr original{ boost::dynamic_pointer_cast<model::Transition>(mClip) };
+    ASSERT(original)(mClip);
+
+    // Give the new transition the same parameters as the original transition, as much as possible.
+    transition->init(original->getLeft(), original->getRight());
+    transition->initParameters(original->getCurrentParameters()); // Parameters with same name are copied
+
+    // Create the command - which replaces the original clip(s) with their changed clones - and add it to the undo system.
+    mEditCommand = new cmd::EditClipDetails(getSequence(), _("Change transition type"), mClip, transition);
+
+    destroyTransitionParameterWidgets();
+
+    // The submission of the command will result in a newly selected clip: the clone
+    // Storing that clone as the current clip serves two purposes:
+    // - The first 'selectClip' after the submission is ignored (since it's the clone).
+    // - Undo will actually cause mClip to be selected again.
+    mClip = transition;
+
+    makeTransitionCloneAndCreateTransitionParameterWidgets(mClip);
+
+    mEditCommand->submit();
+
+    requestShowAndUpdateTitle(); // Particularly for the update title
+
+    // Do not reset mEditCommand: required for checking subsequent edits.
+    // If a clip aspect is edited twice, simply adjust the clone twice,
+    // but the command may only be submitted once.
+
+    if (mPlaybackActive)
+    {
+        // Restart the playback after the edit
+        startPlayback(true);
+    }
+    else
+    {
+        preview();
+    }
+
+    // todo blink in edit panel when chaning param type (soften edges shown briefly on the top left, sometimes)
 }
 
 void DetailsClip::createOrUpdateSpeedCommand(rational64 speed)
@@ -217,22 +277,31 @@ void DetailsClip::startPlayback(bool start)
 
 void DetailsClip::preview()
 {
-    model::VideoClipPtr videoclip{ getClipOfType<model::VideoClip>(mClip) };
-    if (!videoclip) { return; }
-    ASSERT_NONZERO(videoclip->getTrack())(videoclip);
+    if (mClip->isA<model::IVideo>())
+    {
+        model::VideoClipPtr videoclip{ getClipOfType<model::VideoClip>(mClip) };
+        model::TransitionPtr transition{ boost::dynamic_pointer_cast<model::Transition>(mClip) };
+        ASSERT_NONZERO(mClip->getTrack())(mClip);
 
-    pts position{ getCursor().getLogicalPosition() }; // By default, show the frame under the cursor (which is already currently shown, typically)
-    if ((videoclip->getKeyFramesOfPerceivedClip().size() == 0) && // Clip without key frames
-        ((position < videoclip->getPerceivedLeftPts()) ||
-            (position > videoclip->getPerceivedRightPts()))) // == getPerceivedRightPts() is the key frame AFTER the last frame of the clip.
-    {
-        // In case of a clip without key frames, there is only the default key frame.
-        // If the cursor is not yet 'inside' the clip, move it to the middle frame of that clip
-        getCursor().setLogicalPosition(videoclip->getPerceivedLeftPts() + (videoclip->getPerceivedLength() / 2)); // ...and move the cursor to that position
-    }
-    else
-    {
-        getPlayer()->moveTo(getCursor().getLogicalPosition());
+        pts position{ getCursor().getLogicalPosition() }; // By default, show the frame under the cursor (which is already currently shown, typically)
+
+        bool showCenterFrame{ position < mClip->getPerceivedLeftPts() || position > mClip->getPerceivedRightPts() }; // == getPerceivedRightPts() is the key frame AFTER the last frame of the clip.
+
+        if (videoclip && videoclip->getKeyFramesOfPerceivedClip().size() > 0)
+        {
+            showCenterFrame = false;
+        }
+
+        if (showCenterFrame)
+        {
+            // In case of a clip without key frames, there is only the default key frame.
+            // If the cursor is not yet 'inside' the clip, move it to the middle frame of that clip
+            getCursor().setLogicalPosition(mClip->getPerceivedLeftPts() + (mClip->getPerceivedLength() / 2)); // ...and move the cursor to that position
+        }
+        else
+        {
+            getPlayer()->moveTo(getCursor().getLogicalPosition());
+        }
     }
 }
 
@@ -383,6 +452,81 @@ void DetailsClip::updateLengthButtons()
             button->Enable();
         }
     }
+}
+
+void DetailsClip::makeTransitionCloneAndCreateTransitionParameterWidgets(model::IClipPtr clip)
+{
+    model::TransitionPtr transition{ boost::dynamic_pointer_cast<model::Transition>(clip) };
+    if (transition)
+    {
+        mTransitionClone = make_cloned<model::Transition>(transition);
+        createTransitionParameterWidgets();
+    }
+}
+
+void DetailsClip::createTransitionParameterWidgets()
+{
+    if (mTransitionClone)
+    {
+        mTransitionType->Clear();
+        for (auto n_and_transition : getPossibleVideoTransitions())
+        {
+            mTransitionType->Append(n_and_transition.second->getDescription(mTransitionClone->getTransitionType()));
+        }
+        mTransitionType->SetStringSelection(mTransitionClone->getDescription());
+
+        for (auto name_and_parameter : mTransitionClone->getCurrentParameters())
+        {
+            model::TransitionParameterPtr parameter{ name_and_parameter.second };
+            wxStaticText* title{ new wxStaticText(mTransitionPanel, wxID_ANY, parameter->getDescription(), wxDefaultPosition, wxSize(120, -1), wxST_ELLIPSIZE_END) };
+            mTransitionBoxSizer->Add(title, wxSizerFlags(0).CenterVertical().Left());//, 0, wxALL|wxALIGN_TOP, 0);
+            mTransitionBoxSizer->Add(parameter->makeWidget(mTransitionPanel), wxSizerFlags(1).Expand());
+            parameter->Bind(model::EVENT_TRANSITION_PARAMETER_CHANGED, &DetailsClip::onTransitionParameterChanged, this);
+        }
+        mTransitionPanel->Layout();
+        mTransitionPanel->Update();
+        mTransitionBoxSizer->Layout();
+        Update();
+
+        show(mTransitionPanel, true);
+    }
+}
+
+void DetailsClip::destroyTransitionParameterWidgets()
+{
+    show(mTransitionPanel, false);
+
+    if (mTransitionClone)
+    {
+        for (auto name_and_parameter : mTransitionClone->getCurrentParameters())
+        {
+            model::TransitionParameterPtr parameter{ name_and_parameter.second };
+            parameter->Unbind(model::EVENT_TRANSITION_PARAMETER_CHANGED, &DetailsClip::onTransitionParameterChanged, this);
+            parameter->destroyWidget();
+        }
+        mTransitionBoxSizer->Clear(true); // Destroy all the titles also.
+    }
+}
+
+std::map<int, model::TransitionPtr> DetailsClip::getPossibleVideoTransitions() const
+{
+
+    std::map<int, model::TransitionPtr> result;
+    if (mClip &&
+        mClip->isA<model::Transition>() &&
+        mClip->isA<model::IVideo>())
+    {
+        int n{ 0 };
+        for (model::TransitionPtr transition : model::video::VideoTransitionFactory::get().getAllPossibleTransitions())
+        {
+            if (transition->supports(mTransitionClone->getTransitionType()))
+            {
+                result[n] = transition;
+                ++n;
+            }
+        }
+    }
+    return result;
 }
 
 }} // namespace

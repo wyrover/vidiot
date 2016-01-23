@@ -202,7 +202,6 @@ void Player::stop()
 void Player::moveTo(pts position)
 {
     VAR_INFO(this)(position);
-    // todo make test case: select transition, wait for auto range playback, then move cursor to 'further on' in the timeline and start playback via playpause
     mDisplay->moveTo(position);
 }
 
