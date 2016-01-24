@@ -28,7 +28,7 @@ namespace model { namespace video { namespace transition {
 
 WipeStraight* WipeStraight::clone() const
 {
-    return new WipeStraight(static_cast<const WipeStraight&>(*this));   // todo use BaseCRTP pattern from http://stackoverflow.com/questions/12255546/c-deep-copying-a-base-class-pointer
+    return new WipeStraight(static_cast<const WipeStraight&>(*this));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -62,8 +62,6 @@ wxString WipeStraight::getDescription(TransitionType type) const
 //////////////////////////////////////////////////////////////////////////
 
 // todo 'image wipe'
-// todo remove additional transition menus
-// todo select video transition after creating
 
 /// \param w width of image
 /// \param h height of image
