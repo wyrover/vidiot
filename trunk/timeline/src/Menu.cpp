@@ -255,14 +255,6 @@ void MenuHandler::onTriggerPopupMenu(wxCommandEvent& event)
         static wxString sFadeOut(_("Fade out"));
         static wxString sFadePrev(_("Fade from previous"));
         static wxString sFadeNext(_("Fade to next"));
-        static wxString sMore(_("more"));
-        std::map<model::TransitionType, wxString> transitionMenuEntry
-        {
-            { model::TransitionTypeFadeIn, sFadeIn + " (" + sMore + ")" },
-            { model::TransitionTypeFadeOut, sFadeOut + " (" + sMore + ")" },
-            { model::TransitionTypeFadeInFromPrevious, sFadePrev + " (" + sMore + ")" },
-            { model::TransitionTypeFadeOutToNext, sFadeNext + " (" + sMore + ")" },
-        };
 
         if (clickedClip)
         {
@@ -327,38 +319,6 @@ void MenuHandler::onTriggerPopupMenu(wxCommandEvent& event)
             add(menu, ID_ADD_OUTTRANSITION, sFadeOut + "\t" + "&o", clickedOnMediaClip, isSupported[model::TransitionTypeFadeOut], false);
             add(menu, ID_ADD_INOUTTRANSITION, sFadePrev + "\t" + "&p", clickedOnMediaClip, isSupported[model::TransitionTypeFadeInFromPrevious], false);
             add(menu, ID_ADD_OUTINTRANSITION, sFadeNext + "\t" + "&n", clickedOnMediaClip, isSupported[model::TransitionTypeFadeOutToNext], false);
-        }
-        std::map<int, model::TransitionType> mapMenuItemToTransitionType;
-        std::map<int, model::TransitionPtr> mapMenuItemToTransition;
-        if (clickedOnVideoClip) // For audio clips there is only the crossfade
-        {
-            std::map<model::TransitionType, wxMenu*> transitionMenus
-            {
-                { model::TransitionTypeFadeIn, new wxMenu },  // On heap, destroyed when toplevel menu destroyed
-                { model::TransitionTypeFadeOut, new wxMenu },
-                { model::TransitionTypeFadeInFromPrevious, new wxMenu },
-                { model::TransitionTypeFadeOutToNext, new wxMenu }
-            };
-
-            int id = ID_POPUP_END;
-
-            menu.AppendSeparator();
-            for (auto type_and_menu : transitionMenus)
-            {
-                model::TransitionType type{ type_and_menu.first };
-                for (model::TransitionPtr transition : model::video::VideoTransitionFactory::get().getAllPossibleTransitions())
-                {
-                    if (transition->supports(type))
-                    {
-                        add(*type_and_menu.second, id, transition->getDescription(type), clickedOnMediaClip, isSupported[type], false);
-                        mapMenuItemToTransitionType[id] = type;
-                        mapMenuItemToTransition[id] = transition;
-                        id++;
-                    }
-                }
-                int id{ menu.AppendSubMenu(type_and_menu.second, transitionMenuEntry[type])->GetId() };
-                menu.Enable(id, isSupported[type]);
-            }
         }
 
         add(menu, wxID_CUT, _("Cut") + "\t" + _("Ctrl") + "-X", true, selectedMediaClip, true);
@@ -435,13 +395,6 @@ void MenuHandler::onTriggerPopupMenu(wxCommandEvent& event)
                 (new cmd::UnlinkClips(getSequence(), unlink))->submit();
                 break;
                 default:
-                if (clickedOnVideoClip && result >= ID_POPUP_END)
-                {
-                    // Selected one of the video transitions
-                    ASSERT_MAP_CONTAINS(mapMenuItemToTransitionType, result);
-                    ASSERT_MAP_CONTAINS(mapMenuItemToTransition, result);
-                    cmd::createTransition(getSequence(), info.getLogicalClip(), mapMenuItemToTransitionType[result], mapMenuItemToTransition[result]);
-                }
                 break;
             }
         }
