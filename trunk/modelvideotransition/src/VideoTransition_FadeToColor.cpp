@@ -24,12 +24,6 @@
 namespace model { namespace video { namespace transition {
 
 //////////////////////////////////////////////////////////////////////////
-// PARAMETERS
-//////////////////////////////////////////////////////////////////////////
-
-wxString FadeToColor::sParameterColor{ "color" };
-
-//////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
@@ -53,7 +47,7 @@ std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> FadeToColor:
 {
     return
     {
-        std::make_tuple(sParameterColor, _("Color"), boost::make_shared<TransitionParameterColor>(wxColour{ 255, 255, 255 })),
+        std::make_tuple(TransitionParameterColor::sParameterColor, _("Color"), boost::make_shared<TransitionParameterColor>(wxColour{ 255, 255, 255 })),
     };
 }
 
@@ -80,7 +74,7 @@ model::IClipPtr FadeToColor::makeLeftClip()
     {
         return Transition::makeLeftClip();
     }
-    wxColour color{ getParameter<TransitionParameterColor>(sParameterColor)->getValue() };
+    wxColour color{ getParameter<TransitionParameterColor>(TransitionParameterColor::sParameterColor)->getValue() };
     model::IClipPtr result = boost::make_shared<model::ImageClip>(boost::make_shared<model::ImageFile>(color));
     result->adjustBegin(result->getLength());
     result->adjustEnd(getLength());
@@ -93,7 +87,7 @@ model::IClipPtr FadeToColor::makeRightClip()
     {
         return Transition::makeRightClip();
     }
-    wxColour color{ getParameter<TransitionParameterColor>(sParameterColor)->getValue() };
+    wxColour color{ getParameter<TransitionParameterColor>(TransitionParameterColor::sParameterColor)->getValue() };
     model::IClipPtr result = boost::make_shared<model::ImageClip>(boost::make_shared<model::ImageFile>(color));
     result->adjustEnd(-result->getLength());
     result->adjustBegin(-getLength());

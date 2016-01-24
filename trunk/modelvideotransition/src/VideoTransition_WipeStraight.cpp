@@ -23,14 +23,6 @@
 namespace model { namespace video { namespace transition {
 
 //////////////////////////////////////////////////////////////////////////
-// PARAMETERS
-//////////////////////////////////////////////////////////////////////////
-
-wxString WipeStraight::sParameterCount{ "count" };
-wxString WipeStraight::sParameterDirection{ "direction" };
-wxString WipeStraight::sParameterSoftenEdges{ "smooth" };
-
-//////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
@@ -54,9 +46,9 @@ std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> WipeStraight
 {
     return
     {
-        std::make_tuple(sParameterCount, _("Number of lines"), boost::make_shared<TransitionParameterInt>(1, 1, 100)),
-        std::make_tuple(sParameterDirection, _("Direction"), boost::make_shared<TransitionParameterDirection>(DirectionLeftToRight)),
-        std::make_tuple(sParameterSoftenEdges, _("Soften edges"), boost::make_shared<TransitionParameterBool>(true)),
+        std::make_tuple(TransitionParameterInt::sParameterBandsCount, _("Number of lines"), boost::make_shared<TransitionParameterInt>(1, 1, 100)),
+        std::make_tuple(TransitionParameterDirection::sParameterDirection, _("Direction"), boost::make_shared<TransitionParameterDirection>(DirectionLeftToRight)),
+        std::make_tuple(TransitionParameterBool::sParameterSoftenEdges, _("Soften edges"), boost::make_shared<TransitionParameterBool>(true)),
     };
 }
 
@@ -99,9 +91,9 @@ std::function<float(int, int)> getDiagonalMethod(double w, double h, double a, d
 
 std::function<float (int,int)> WipeStraight::getRightMethod(const wxImagePtr& image, const float& factor) const
 {
-    int nWipeStraight{ getParameter<TransitionParameterInt>(sParameterCount)->getValue() };
-    Direction direction{ getParameter<TransitionParameterDirection>(sParameterDirection)->getValue() };
-    bool soften{ getParameter<TransitionParameterBool>(sParameterSoftenEdges)->getValue() };
+    int nWipeStraight{ getParameter<TransitionParameterInt>(TransitionParameterInt::sParameterBandsCount)->getValue() };
+    Direction direction{ getParameter<TransitionParameterDirection>(TransitionParameterDirection::sParameterDirection)->getValue() };
+    bool soften{ getParameter<TransitionParameterBool>(TransitionParameterBool::sParameterSoftenEdges)->getValue() };
 
     double w{ static_cast<double>(image->GetWidth()) };
     double h{ static_cast<double>(image->GetHeight()) };

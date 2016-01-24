@@ -23,14 +23,6 @@
 namespace model { namespace video { namespace transition {
 
 //////////////////////////////////////////////////////////////////////////
-// PARAMETERS
-//////////////////////////////////////////////////////////////////////////
-
-wxString WipeCircle::sParameterCount{ "count" };
-wxString WipeCircle::sParameterInverse{ "inversed" };
-wxString WipeCircle::sParameterSoftenEdges{ "smooth" };
-
-//////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
@@ -54,9 +46,9 @@ std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> WipeCircle::
 {
     return
     {
-        std::make_tuple(sParameterCount, _("Number of circles"), boost::make_shared<TransitionParameterInt>(1, 1, 100)),     
-        std::make_tuple(sParameterInverse, _("Inversed"), boost::make_shared<TransitionParameterBool>(false)),
-        std::make_tuple(sParameterSoftenEdges, _("Soften edges"), boost::make_shared<TransitionParameterBool>(true)),
+        std::make_tuple(TransitionParameterInt::sParameterBandsCount, _("Number of circles"), boost::make_shared<TransitionParameterInt>(1, 1, 100)),
+        std::make_tuple(TransitionParameterBool::sParameterInversed, _("Inversed"), boost::make_shared<TransitionParameterBool>(false)),
+        std::make_tuple(TransitionParameterBool::sParameterSoftenEdges, _("Soften edges"), boost::make_shared<TransitionParameterBool>(true)),
     };
 }
 
@@ -71,9 +63,9 @@ wxString WipeCircle::getDescription(TransitionType type) const
 
 std::function<float (int,int)> WipeCircle::getRightMethod(const wxImagePtr& image, const float& factor) const
 {
-    int nBands{ getParameter<TransitionParameterInt>(sParameterCount)->getValue() };
-    bool inverse{ getParameter<TransitionParameterBool>(sParameterInverse)->getValue() };
-    bool soften{ getParameter<TransitionParameterBool>(sParameterSoftenEdges)->getValue() };
+    int nBands{ getParameter<TransitionParameterInt>(TransitionParameterInt::sParameterBandsCount)->getValue() };
+    bool inverse{ getParameter<TransitionParameterBool>(TransitionParameterBool::sParameterInversed)->getValue() };
+    bool soften{ getParameter<TransitionParameterBool>(TransitionParameterBool::sParameterSoftenEdges)->getValue() };
     int w{ image->GetWidth() };
     int h{ image->GetHeight() };
     int bandsize{ euclidianDistance(w / 2, h / 2, 0, 0) / nBands };

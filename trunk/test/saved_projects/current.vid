@@ -2872,7 +2872,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																		<item_version>0</item_version>
 																		<item>
 																			<first>
-																				<string>count</string>
+																				<string>bandscount</string>
 																			</first>
 																			<second>
 																				<px class_id="77" class_name="model::TransitionParameterInt" tracking_level="1" version="1" object_id="_199">
@@ -3071,7 +3071,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																		<item_version>0</item_version>
 																		<item>
 																			<first>
-																				<string>count</string>
+																				<string>bandscount</string>
 																			</first>
 																			<second>
 																				<px class_id_reference="77" object_id="_214">
@@ -3093,7 +3093,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																		</item>
 																		<item>
 																			<first>
-																				<string>smooth</string>
+																				<string>softenedges</string>
 																			</first>
 																			<second>
 																				<px class_id_reference="79" object_id="_216">
@@ -3384,7 +3384,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																		<item_version>0</item_version>
 																		<item>
 																			<first>
-																				<string>count</string>
+																				<string>bandscount</string>
 																			</first>
 																			<second>
 																				<px class_id_reference="77" object_id="_238">
@@ -3406,7 +3406,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																		</item>
 																		<item>
 																			<first>
-																				<string>smooth</string>
+																				<string>softenedges</string>
 																			</first>
 																			<second>
 																				<px class_id_reference="79" object_id="_240">
@@ -3583,7 +3583,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																		</item>
 																		<item>
 																			<first>
-																				<string>smooth</string>
+																				<string>softenedges</string>
 																			</first>
 																			<second>
 																				<px class_id_reference="79" object_id="_253">
@@ -3885,7 +3885,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																		</item>
 																		<item>
 																			<first>
-																				<string>smooth</string>
+																				<string>softenedges</string>
 																			</first>
 																			<second>
 																				<px class_id_reference="79" object_id="_276">
@@ -4062,7 +4062,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																		</item>
 																		<item>
 																			<first>
-																				<string>count</string>
+																				<string>bandscount</string>
 																			</first>
 																			<second>
 																				<px class_id_reference="77" object_id="_289">
@@ -4084,7 +4084,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																		</item>
 																		<item>
 																			<first>
-																				<string>smooth</string>
+																				<string>softenedges</string>
 																			</first>
 																			<second>
 																				<px class_id_reference="79" object_id="_291">
@@ -4386,7 +4386,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																		</item>
 																		<item>
 																			<first>
-																				<string>count</string>
+																				<string>bandscount</string>
 																			</first>
 																			<second>
 																				<px class_id_reference="77" object_id="_314">
@@ -4408,7 +4408,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																		</item>
 																		<item>
 																			<first>
-																				<string>smooth</string>
+																				<string>softenedges</string>
 																			</first>
 																			<second>
 																				<px class_id_reference="79" object_id="_316">
@@ -4574,7 +4574,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																		<item_version>0</item_version>
 																		<item>
 																			<first>
-																				<string>count</string>
+																				<string>bandscount</string>
 																			</first>
 																			<second>
 																				<px class_id_reference="77" object_id="_328">
@@ -4596,7 +4596,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																		</item>
 																		<item>
 																			<first>
-																				<string>smooth</string>
+																				<string>softenedges</string>
 																			</first>
 																			<second>
 																				<px class_id_reference="79" object_id="_330">
@@ -4887,7 +4887,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																		<item_version>0</item_version>
 																		<item>
 																			<first>
-																				<string>count</string>
+																				<string>bandscount</string>
 																			</first>
 																			<second>
 																				<px class_id_reference="77" object_id="_352">
@@ -4909,7 +4909,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																		</item>
 																		<item>
 																			<first>
-																				<string>smooth</string>
+																				<string>softenedges</string>
 																			</first>
 																			<second>
 																				<px class_id_reference="79" object_id="_354">

@@ -24,15 +24,6 @@
 namespace model { namespace video { namespace transition {
 
 //////////////////////////////////////////////////////////////////////////
-// PARAMETERS
-//////////////////////////////////////////////////////////////////////////
-
-wxString WipeArc::sParameterCount{ "count" };
-wxString WipeArc::sParameterDirection{ "direction" };
-wxString WipeArc::sParameterInverse{ "inversed" };
-wxString WipeArc::sParameterSoftenEdges{ "softenedges" };
-
-//////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
@@ -56,10 +47,10 @@ std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> WipeArc::get
 {
     return
     {
-        std::make_tuple(sParameterCount, _("Number of bands"), boost::make_shared<TransitionParameterInt>(1, 1, 100)),
-        std::make_tuple(sParameterDirection, _("Direction"), boost::make_shared<TransitionParameterDirection>(DirectionLeftToRight)),
-        std::make_tuple(sParameterInverse, _("Inversed"), boost::make_shared<TransitionParameterBool>(false)),
-        std::make_tuple(sParameterSoftenEdges, _("Soften edges"), boost::make_shared<TransitionParameterBool>(true)),
+        std::make_tuple(TransitionParameterInt::sParameterBandsCount, _("Number of bands"), boost::make_shared<TransitionParameterInt>(1, 1, 100)),
+        std::make_tuple(TransitionParameterDirection::sParameterDirection, _("Direction"), boost::make_shared<TransitionParameterDirection>(DirectionLeftToRight)),
+        std::make_tuple(TransitionParameterBool::sParameterInversed, _("Inversed"), boost::make_shared<TransitionParameterBool>(false)),
+        std::make_tuple(TransitionParameterBool::sParameterSoftenEdges, _("Soften edges"), boost::make_shared<TransitionParameterBool>(true)),
     };
 }
 
@@ -74,10 +65,10 @@ wxString WipeArc::getDescription(TransitionType type) const
 
 std::function<float (int,int)> WipeArc::getRightMethod(const wxImagePtr& image, const float& factor) const
 {
-    int nBands{ getParameter<TransitionParameterInt>(sParameterCount)->getValue() };
-    Direction direction{ getParameter<TransitionParameterDirection>(sParameterDirection)->getValue() };
-    bool inverse{ getParameter<TransitionParameterBool>(sParameterInverse)->getValue() };
-    bool soften{ getParameter<TransitionParameterBool>(sParameterSoftenEdges)->getValue() };
+    int nBands{ getParameter<TransitionParameterInt>(TransitionParameterInt::sParameterBandsCount)->getValue() };
+    Direction direction{ getParameter<TransitionParameterDirection>(TransitionParameterDirection::sParameterDirection)->getValue() };
+    bool inverse{ getParameter<TransitionParameterBool>(TransitionParameterBool::sParameterInversed)->getValue() };
+    bool soften{ getParameter<TransitionParameterBool>(TransitionParameterBool::sParameterSoftenEdges)->getValue() };
     int w{ image->GetWidth() };
     int h{ image->GetHeight() };
     int diagonal_length{ static_cast<int>(std::floor(pythagoras(w, h))) };
