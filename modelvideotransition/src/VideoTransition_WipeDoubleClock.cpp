@@ -23,13 +23,6 @@
 namespace model { namespace video { namespace transition {
 
 //////////////////////////////////////////////////////////////////////////
-// PARAMETERS
-//////////////////////////////////////////////////////////////////////////
-
-wxString WipeDoubleClock::sParameterAngle{ "angle" };
-wxString WipeDoubleClock::sParameterSoftenEdges{ "smooth" };
-
-//////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
@@ -53,8 +46,8 @@ std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> WipeDoubleCl
 {
     return
     {
-        std::make_tuple(sParameterAngle, _("Angle"), boost::make_shared<TransitionParameterInt>(0, 0, 360)),
-        std::make_tuple(sParameterSoftenEdges, _("Soften edges"), boost::make_shared<TransitionParameterBool>(true)),
+        std::make_tuple(TransitionParameterInt::sParameterAngle, _("Angle"), boost::make_shared<TransitionParameterInt>(0, 0, 360)),
+        std::make_tuple(TransitionParameterBool::sParameterSoftenEdges, _("Soften edges"), boost::make_shared<TransitionParameterBool>(true)),
     };
 }
 
@@ -69,8 +62,8 @@ wxString WipeDoubleClock::getDescription(TransitionType type) const
 
 std::function<float (int,int)> WipeDoubleClock::getRightMethod(const wxImagePtr& image, const float& factor) const
 {
-    int angle{ getParameter<TransitionParameterInt>(sParameterAngle)->getValue() };
-    bool soften{ getParameter<TransitionParameterBool>(sParameterSoftenEdges)->getValue() };
+    int angle{ getParameter<TransitionParameterInt>(TransitionParameterInt::sParameterAngle)->getValue() };
+    bool soften{ getParameter<TransitionParameterBool>(TransitionParameterBool::sParameterSoftenEdges)->getValue() };
     int x_origin{ image->GetWidth() / 2};
     int y_origin{ image->GetHeight() / 2};
 

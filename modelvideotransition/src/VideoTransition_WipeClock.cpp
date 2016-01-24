@@ -23,15 +23,6 @@
 namespace model { namespace video { namespace transition {
 
 //////////////////////////////////////////////////////////////////////////
-// PARAMETERS
-//////////////////////////////////////////////////////////////////////////
-
-wxString WipeClock::sParameterAngle{ "angle" };
-wxString WipeClock::sParameterCount{ "count" };
-wxString WipeClock::sParameterInverse{ "inversed" };
-wxString WipeClock::sParameterSoftenEdges{ "smooth" }; // todo move generic parameters to TransitionParamBool class to ensure they're 'taken over' when changing the transition type
-
-//////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
@@ -55,10 +46,10 @@ std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> WipeClock::g
 {
     return
     {
-        std::make_tuple(sParameterAngle, _("Angle"), boost::make_shared<TransitionParameterInt>(0, 0, 360)),
-        std::make_tuple(sParameterCount, _("Number of lines"), boost::make_shared<TransitionParameterInt>(1, 1, 100)),
-        std::make_tuple(sParameterInverse, _("Inversed"), boost::make_shared<TransitionParameterBool>(false)),
-        std::make_tuple(sParameterSoftenEdges, _("Soften edges"), boost::make_shared<TransitionParameterBool>(true)),
+        std::make_tuple(TransitionParameterInt::sParameterAngle, _("Angle"), boost::make_shared<TransitionParameterInt>(0, 0, 360)),
+        std::make_tuple(TransitionParameterInt::sParameterBandsCount, _("Number of lines"), boost::make_shared<TransitionParameterInt>(1, 1, 100)),
+        std::make_tuple(TransitionParameterBool::sParameterInversed, _("Inversed"), boost::make_shared<TransitionParameterBool>(false)),
+        std::make_tuple(TransitionParameterBool::sParameterSoftenEdges, _("Soften edges"), boost::make_shared<TransitionParameterBool>(true)),
     };
 }
 
@@ -73,10 +64,10 @@ wxString WipeClock::getDescription(TransitionType type) const
 
 std::function<float (int,int)> WipeClock::getRightMethod(const wxImagePtr& image, const float& factor) const
 {
-    int angle{ getParameter<TransitionParameterInt>(sParameterAngle)->getValue() };
-    int nBands{ getParameter<TransitionParameterInt>(sParameterCount)->getValue() };
-    bool inverse{ getParameter<TransitionParameterBool>(sParameterInverse)->getValue() };
-    bool soften{ getParameter<TransitionParameterBool>(sParameterSoftenEdges)->getValue() };
+    int angle{ getParameter<TransitionParameterInt>(TransitionParameterInt::sParameterAngle)->getValue() };
+    int nBands{ getParameter<TransitionParameterInt>(TransitionParameterInt::sParameterBandsCount)->getValue() };
+    bool inverse{ getParameter<TransitionParameterBool>(TransitionParameterBool::sParameterInversed)->getValue() };
+    bool soften{ getParameter<TransitionParameterBool>(TransitionParameterBool::sParameterSoftenEdges)->getValue() };
     int x_origin{ image->GetWidth() / 2};
     int y_origin{ image->GetHeight() / 2};
     int bandsize{ 360 / nBands };

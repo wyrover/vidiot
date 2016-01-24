@@ -26,6 +26,12 @@ class TransitionParameterInt
 {
 public:
 
+    // Generic settings used by multiple transitions.
+    // Defining them here ensures that these parameters are maintained when
+    // changing the transition type.
+    static wxString sParameterAngle;
+    static wxString sParameterBandsCount;
+
     //////////////////////////////////////////////////////////////////////////
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
