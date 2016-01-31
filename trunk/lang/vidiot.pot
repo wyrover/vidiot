@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-30 15:33+0100\n"
+"POT-Creation-Date: 2016-01-31 22:21+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -840,47 +840,47 @@ msgid ""
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection.cpp:31
-#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterRotationDirection.cpp:31
 msgid "Top left to bottom right"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection.cpp:32
-#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterRotationDirection.cpp:32
 msgid "Top to bottom"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection.cpp:33
-#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterRotationDirection.cpp:33
 msgid "Top right to bottom left"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection.cpp:34
-#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterRotationDirection.cpp:34
 msgid "Right to left"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection.cpp:35
-#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterRotationDirection.cpp:35
 msgid "Bottom right to top left"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection.cpp:36
-#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterRotationDirection.cpp:36
 msgid "Bottom to top"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection.cpp:37
-#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterRotationDirection.cpp:37
 msgid "Bottom left to top right"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection.cpp:38
-#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterRotationDirection.cpp:38
 msgid "Left to right"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterImage.cpp:148
 msgid "Select image"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterRotationDirection.cpp:31
+msgid "Clockwise"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterRotationDirection.cpp:32
+msgid "Counterclockwise"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\modelvideo\src\ErrorImage.cpp:32
@@ -916,39 +916,20 @@ msgid "Fade to color"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_ImageGradient.cpp:49
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_ImageZoom.cpp:78
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:75
 msgid "Image"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_ImageGradient.cpp:50
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_ImageZoom.cpp:81
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeArc.cpp:52
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeCircle.cpp:50
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeClock.cpp:51
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:79
 msgid "Inversed"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_ImageGradient.cpp:56
 msgid "Image gradient"
-msgstr ""
-
-#. TRANSLATORS: Do not let the string exceed 20 characters.
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_ImageZoom.cpp:79
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:211
-msgid "Scaling"
-msgstr ""
-
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_ImageZoom.cpp:80
-msgid "Rotations"
-msgstr ""
-
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_ImageZoom.cpp:87
-msgid "Zoom Image"
-msgstr ""
-
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_ImageZoom.cpp:222
-#, c-format
-msgid "Missing %s at %s."
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeArc.cpp:50
@@ -996,6 +977,24 @@ msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeDoubleClock.cpp:56
 msgid "Wipe Double Clock"
+msgstr ""
+
+#. TRANSLATORS: Do not let the string exceed 20 characters.
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:76
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:211
+msgid "Scaling"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:77
+msgid "Rotations"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:78
+msgid "Rotation direction"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:85
+msgid "Zoom Image"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeStraight.cpp:57
