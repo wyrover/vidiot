@@ -15,63 +15,63 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#include "TransitionParameterDirection.h"
+#include "TransitionParameterDirection8.h"
 
 #include "Config.h"
 #include "UtilException.h"
-                                              //todo rename to direction8
+
 namespace model {
 
-IMPLEMENTENUM(Direction);
+IMPLEMENTENUM(Direction8);
 
-std::map<Direction, wxString> DirectionConverter::getMapToHumanReadibleString()
+std::map<Direction8, wxString> Direction8Converter::getMapToHumanReadibleString()
 {
     return
     {
-        { DirectionTopLeftToBottomRight, _("Top left to bottom right") },
-        { DirectionTopToBottom, _("Top to bottom") },
-        { DirectionTopRightToBottomLeft, _("Top right to bottom left") },
-        { DirectionRightToLeft, _("Right to left") },
-        { DirectionBottomRightToTopLeft, _("Bottom right to top left") },
-        { DirectionBottomToTop, _("Bottom to top") },
-        { DirectionBottomLeftToTopRight, _("Bottom left to top right") },
-        { DirectionLeftToRight, _("Left to right") },
+        { Direction8TopLeftToBottomRight, _("Top left to bottom right") },
+        { Direction8TopToBottom, _("Top to bottom") },
+        { Direction8TopRightToBottomLeft, _("Top right to bottom left") },
+        { Direction8RightToLeft, _("Right to left") },
+        { Direction8BottomRightToTopLeft, _("Bottom right to top left") },
+        { Direction8BottomToTop, _("Bottom to top") },
+        { Direction8BottomLeftToTopRight, _("Bottom left to top right") },
+        { Direction8LeftToRight, _("Left to right") },
     };
 }
 
-wxString TransitionParameterDirection::sParameterDirection{ "direction" };
+wxString TransitionParameterDirection8::sParameterDirection8{ "direction8" };
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-TransitionParameterDirection::TransitionParameterDirection()
+TransitionParameterDirection8::TransitionParameterDirection8()
     : TransitionParameter()
-    , mValue{ DirectionLeftToRight }
+    , mValue{ Direction8LeftToRight }
 {
     VAR_DEBUG(*this);
 }
 
-TransitionParameterDirection::TransitionParameterDirection(const Direction& direction)
+TransitionParameterDirection8::TransitionParameterDirection8(const Direction8& direction)
     : TransitionParameter()
     , mValue{ direction }
 {
     VAR_DEBUG(*this);
 }
 
-TransitionParameterDirection::TransitionParameterDirection(const TransitionParameterDirection& other)
+TransitionParameterDirection8::TransitionParameterDirection8(const TransitionParameterDirection8& other)
     : TransitionParameter(other)
     , mValue{ other.mValue }
 {
     VAR_DEBUG(*this);
 }
 
-TransitionParameterDirection* TransitionParameterDirection::clone() const
+TransitionParameterDirection8* TransitionParameterDirection8::clone() const
 {
-    return new TransitionParameterDirection(static_cast<const TransitionParameterDirection&>(*this));
+    return new TransitionParameterDirection8(static_cast<const TransitionParameterDirection8&>(*this));
 }
 
-TransitionParameterDirection::~TransitionParameterDirection()
+TransitionParameterDirection8::~TransitionParameterDirection8()
 {
     VAR_DEBUG(this);
 }
@@ -80,26 +80,26 @@ TransitionParameterDirection::~TransitionParameterDirection()
 // TRANSITIONPARAMETER
 //////////////////////////////////////////////////////////////////////////
 
-void TransitionParameterDirection::copyValue(TransitionParameterPtr other)
+void TransitionParameterDirection8::copyValue(TransitionParameterPtr other)
 {
-    boost::shared_ptr<TransitionParameterDirection> typed{ boost::dynamic_pointer_cast<TransitionParameterDirection>(other) };
+    boost::shared_ptr<TransitionParameterDirection8> typed{ boost::dynamic_pointer_cast<TransitionParameterDirection8>(other) };
     if (typed)
     {
         setValue(typed->getValue());
     }
 }
 
-wxWindow* TransitionParameterDirection::makeWidget(wxWindow *parent)
+wxWindow* TransitionParameterDirection8::makeWidget(wxWindow *parent)
 {
     ASSERT_EQUALS(mControl, 0);
-    mControl = new DirectionSelector(parent, DirectionConverter::getMapToHumanReadibleString(), mValue);
-    mControl->Bind(wxEVT_CHOICE, &TransitionParameterDirection::onDirection, this);
+    mControl = new Direction8Selector(parent, Direction8Converter::getMapToHumanReadibleString(), mValue);
+    mControl->Bind(wxEVT_CHOICE, &TransitionParameterDirection8::onDirection, this);
     return mControl;
 }
-void TransitionParameterDirection::destroyWidget()
+void TransitionParameterDirection8::destroyWidget()
 {
     ASSERT_DIFFERS(mControl, 0);
-    mControl->Unbind(wxEVT_CHOICE, &TransitionParameterDirection::onDirection, this);
+    mControl->Unbind(wxEVT_CHOICE, &TransitionParameterDirection8::onDirection, this);
     mControl->Destroy();
     mControl = nullptr;
 }
@@ -108,12 +108,12 @@ void TransitionParameterDirection::destroyWidget()
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-Direction TransitionParameterDirection::getValue() const 
+Direction8 TransitionParameterDirection8::getValue() const 
 { 
     return mValue; 
 }
 
-void TransitionParameterDirection::setValue(Direction value) 
+void TransitionParameterDirection8::setValue(Direction8 value) 
 { 
     if (mValue != value)
     {
@@ -131,7 +131,7 @@ void TransitionParameterDirection::setValue(Direction value)
 // GUI EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void TransitionParameterDirection::onDirection(wxCommandEvent& event)
+void TransitionParameterDirection8::onDirection(wxCommandEvent& event)
 {
     CatchExceptions([this]
     {
@@ -144,7 +144,7 @@ void TransitionParameterDirection::onDirection(wxCommandEvent& event)
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<(std::ostream& os, const TransitionParameterDirection& obj)
+std::ostream& operator<<(std::ostream& os, const TransitionParameterDirection8& obj)
 {
     os << obj.mValue;
     return os;
@@ -155,7 +155,7 @@ std::ostream& operator<<(std::ostream& os, const TransitionParameterDirection& o
 //////////////////////////////////////////////////////////////////////////
 
 template<class Archive>
-void TransitionParameterDirection::serialize(Archive & ar, const unsigned int version)
+void TransitionParameterDirection8::serialize(Archive & ar, const unsigned int version)
 {
     try
     {
@@ -166,9 +166,9 @@ void TransitionParameterDirection::serialize(Archive & ar, const unsigned int ve
     catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
     catch (...)                                  { LOG_ERROR;                                   throw; }
 }
-template void TransitionParameterDirection::serialize<boost::archive::xml_oarchive>(boost::archive::xml_oarchive& ar, const unsigned int archiveVersion);
-template void TransitionParameterDirection::serialize<boost::archive::xml_iarchive>(boost::archive::xml_iarchive& ar, const unsigned int archiveVersion);
+template void TransitionParameterDirection8::serialize<boost::archive::xml_oarchive>(boost::archive::xml_oarchive& ar, const unsigned int archiveVersion);
+template void TransitionParameterDirection8::serialize<boost::archive::xml_iarchive>(boost::archive::xml_iarchive& ar, const unsigned int archiveVersion);
 
 } //namespace
 
-BOOST_CLASS_EXPORT_IMPLEMENT(model::TransitionParameterDirection)
+BOOST_CLASS_EXPORT_IMPLEMENT(model::TransitionParameterDirection8)

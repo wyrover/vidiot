@@ -17,7 +17,7 @@
 
 #include "VideoTransition_WipeStraight.h"
 
-#include "TransitionParameterDirection.h"
+#include "TransitionParameterDirection8.h"
 #include "TransitionParameterInt.h"
 
 namespace model { namespace video { namespace transition {
@@ -47,7 +47,7 @@ std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> WipeStraight
     return
     {
         std::make_tuple(TransitionParameterInt::sParameterBandsCount, _("Number of lines"), boost::make_shared<TransitionParameterInt>(1, 1, 100)),
-        std::make_tuple(TransitionParameterDirection::sParameterDirection, _("Direction"), boost::make_shared<TransitionParameterDirection>(DirectionLeftToRight)),
+        std::make_tuple(TransitionParameterDirection8::sParameterDirection8, _("Direction"), boost::make_shared<TransitionParameterDirection8>(Direction8LeftToRight)),
         std::make_tuple(TransitionParameterBool::sParameterSoftenEdges, _("Soften edges"), boost::make_shared<TransitionParameterBool>(true)),
     };
 }
@@ -90,7 +90,7 @@ std::function<float(int, int)> getDiagonalMethod(double w, double h, double a, d
 std::function<float (int,int)> WipeStraight::getRightMethod(const wxImagePtr& image, const float& factor) const
 {
     int nWipeStraight{ getParameter<TransitionParameterInt>(TransitionParameterInt::sParameterBandsCount)->getValue() };
-    Direction direction{ getParameter<TransitionParameterDirection>(TransitionParameterDirection::sParameterDirection)->getValue() };
+    Direction8 direction{ getParameter<TransitionParameterDirection8>(TransitionParameterDirection8::sParameterDirection8)->getValue() };
     bool soften{ getParameter<TransitionParameterBool>(TransitionParameterBool::sParameterSoftenEdges)->getValue() };
 
     double w{ static_cast<double>(image->GetWidth()) };
@@ -99,26 +99,26 @@ std::function<float (int,int)> WipeStraight::getRightMethod(const wxImagePtr& im
 
     switch (direction)
     {
-        case DirectionLeftToRight:
-        case DirectionRightToLeft:
+        case Direction8LeftToRight:
+        case Direction8RightToLeft:
         {
             int WipeStraightize{ image->GetWidth() / nWipeStraight };
             return [WipeStraightize, factor, direction, soften](int x, int y) -> float
             {
-                return getFactor(WipeStraightize, x % WipeStraightize, factor, direction == DirectionRightToLeft, soften);
+                return getFactor(WipeStraightize, x % WipeStraightize, factor, direction == Direction8RightToLeft, soften);
             };
         }
-        case DirectionTopToBottom:
-        case DirectionBottomToTop:
+        case Direction8TopToBottom:
+        case Direction8BottomToTop:
         {
             int WipeStraightize{ image->GetHeight() / nWipeStraight };
             return [WipeStraightize, factor, direction, soften](int x, int y) -> float
             {
-                return getFactor(WipeStraightize, y % WipeStraightize, factor, direction == DirectionBottomToTop, soften);
+                return getFactor(WipeStraightize, y % WipeStraightize, factor, direction == Direction8BottomToTop, soften);
             };
         }
-        case DirectionTopLeftToBottomRight:
-        case DirectionBottomRightToTopLeft:
+        case Direction8TopLeftToBottomRight:
+        case Direction8BottomRightToTopLeft:
         {
             // Normal slope (along this line the length is checked): 
             //
@@ -140,11 +140,11 @@ std::function<float (int,int)> WipeStraight::getRightMethod(const wxImagePtr& im
             // DirectionBottomRightToTopLeft: same algo (goes 'along' the same line), except with a reversed animation.
             double a{ h / w };
             double b{ 0 };
-            return getDiagonalMethod(w, h, a, b, nWipeStraight, factor, direction == DirectionBottomRightToTopLeft, soften);
+            return getDiagonalMethod(w, h, a, b, nWipeStraight, factor, direction == Direction8BottomRightToTopLeft, soften);
             break;
         }
-        case DirectionBottomLeftToTopRight:
-        case DirectionTopRightToBottomLeft:
+        case Direction8BottomLeftToTopRight:
+        case Direction8TopRightToBottomLeft:
         {
             // Normal slope (along this line the length is checked): 
             //
@@ -166,7 +166,7 @@ std::function<float (int,int)> WipeStraight::getRightMethod(const wxImagePtr& im
             // DirectionTopRightToBottomLeft: same algo (goes 'along' the same line), except with a reversed animation.
             double a{ -1 * h / w };
             double b{ h };
-            return getDiagonalMethod(w, h, a, b, nWipeStraight, factor, direction == DirectionTopRightToBottomLeft, soften);
+            return getDiagonalMethod(w, h, a, b, nWipeStraight, factor, direction == Direction8TopRightToBottomLeft, soften);
             break;
         }
     }

@@ -28,7 +28,11 @@
 
 namespace model {
 
-void adjustSampleVolume(const double& volume, sample& s)
+// http://stackoverflow.com/questions/1165026/what-algorithms-could-i-use-for-audio-volume-level
+//auto Linear = [](const double& volume, sample& s) { s = std::floor(volume * s); };
+//auto IncreasedLowVolumeSensitivity = [](const double& volume, sample& s) { s = std::floor(std::sin(volume * M_PI / 2) * s); }; // Note: Does not work for higher values (sine probably too far, resulting in lower volume instead of higher).
+
+    void adjustSampleVolume(const double& volume, sample& s)
 {
     double base{ M_E };
     double adjustedSample{ std::trunc((std::pow(base, volume) - 1) / (base - 1) * s) };
@@ -42,16 +46,6 @@ void adjustSampleVolume(const double& volume, sample& s)
     }
     s = narrow_cast<sample>(adjustedSample);
 };
-
-// todo volume methods:
-// - experiment with other volume methods?
-// - Make the 'base' of the default selectable? (10.0 for example)
-// - make interpolation selectable? 
-// - Also for fade in/out? 
-// - Add a default in config
-// http://stackoverflow.com/questions/1165026/what-algorithms-could-i-use-for-audio-volume-level
-//auto Linear = [](const double& volume, sample& s) { s = std::floor(volume * s); };
-//auto IncreasedLowVolumeSensitivity = [](const double& volume, sample& s) { s = std::floor(std::sin(volume * M_PI / 2) * s); }; // Note: Does not work for higher values (sine probably too far, resulting in lower volume instead of higher).
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
