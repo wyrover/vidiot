@@ -80,22 +80,37 @@ void TransitionParameterBool::destroyWidget()
 }
 
 //////////////////////////////////////////////////////////////////////////
+// GET/SET
+//////////////////////////////////////////////////////////////////////////
+
+bool TransitionParameterBool::getValue() const 
+{ 
+    return mValue; 
+}
+
+void TransitionParameterBool::setValue(bool value) 
+{ 
+    if (value != mValue)
+    {
+        VAR_INFO(value);
+        mValue = value;
+        if (mCheck != nullptr)
+        {
+            mCheck->SetValue(mValue);
+        }
+        signalUpdate();
+    }
+}
+
+//////////////////////////////////////////////////////////////////////////
 // GUI EVENTS
 //////////////////////////////////////////////////////////////////////////
 
 void TransitionParameterBool::onCheck(wxCommandEvent& event)
 {
-    bool value{ mCheck->GetValue() };
-    VAR_INFO(value);
-    CatchExceptions([this, value]
+    CatchExceptions([this]
     {
-        if (value != mValue)
-        {
-            signalUpdate([this, value]
-            {
-                mValue = value;
-            });
-        }
+        setValue(mCheck->GetValue());
     });
     event.Skip();
 }

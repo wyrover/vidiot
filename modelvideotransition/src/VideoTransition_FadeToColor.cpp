@@ -43,7 +43,7 @@ bool FadeToColor::supports(TransitionType type) const
         type == TransitionTypeFadeOut;
 }
 
-std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> FadeToColor::getParameters() const
+std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> FadeToColor::getAvailableParameters() const
 {
     return
     {

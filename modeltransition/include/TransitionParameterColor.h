@@ -59,8 +59,8 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    inline wxColour getValue() const { return mValue; }
-    inline void setValue(wxColour value) { mValue = value; }
+    wxColour getValue() const;
+    void setValue(wxColour value);
 
 protected:
 

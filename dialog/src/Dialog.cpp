@@ -38,13 +38,14 @@ namespace gui {
 //////////////////////////////////////////////////////////////////////////
 
 Dialog::Dialog()
-    :   mDir(boost::none)
-    ,   mFiles(boost::none)
-    ,   mText(boost::none)
-    ,   mButton(boost::none)
-    ,   mStringsSelection(boost::none)
-    ,   mIncludeScreenshot(Config::get().read<bool>(Config::sPathDebugIncludeScreenShotInDump))
-    ,   mDebugReportGenerated(false)
+    : mDir(boost::none)
+    , mFile(boost::none)
+    , mFiles(boost::none)
+    , mText(boost::none)
+    , mButton(boost::none)
+    , mStringsSelection(boost::none)
+    , mIncludeScreenshot(Config::get().read<bool>(Config::sPathDebugIncludeScreenShotInDump))
+    , mDebugReportGenerated(false)
 {
 }
 
@@ -53,6 +54,7 @@ Dialog::~Dialog()
     // Asserts to ensure that no dialogs are missing
     ASSERT(!mDir);
     ASSERT(!mSaveFile);
+    ASSERT(!mFile);
     ASSERT(!mFiles);
     ASSERT(!mText);
     ASSERT(!mButton);
@@ -120,6 +122,26 @@ wxString Dialog::getSaveFile(const wxString& message, const wxString& filetypes,
 
 //////////////////////////////////////////////////////////////////////////
 
+void Dialog::setFile(const wxString& file)
+{
+    ASSERT(!mFile);
+    mFile = boost::optional<wxString>(file);
+}
+
+wxString Dialog::getFile(const wxString& message, const wxString& defaultPath, const wxString& filetypes, wxWindow* parent)
+{
+    if (mFile)
+    {
+        wxString result = *mFile;
+        mFile.reset();
+        return result;
+    }
+    if (!parent) { parent = &Window::get(); }
+    return util::thread::RunInMainReturning<wxString>(std::bind(&wxFileSelector, message, defaultPath, wxEmptyString, wxEmptyString, filetypes, wxFD_FILE_MUST_EXIST | wxFD_OPEN, parent, wxDefaultCoord, wxDefaultCoord));
+}
+
+//////////////////////////////////////////////////////////////////////////
+
 void Dialog::setFiles(const wxStrings& files)
 {
     ASSERT(!mFiles);
@@ -130,13 +152,13 @@ wxStrings getFilesList(const wxString& message, const wxString& filetypes, wxWin
 {
     if (!parent) { parent = &Window::get(); }
     wxStrings result;
-    wxString wildcards = wxString::Format(filetypes,wxFileSelectorDefaultWildcardStr,wxFileSelectorDefaultWildcardStr);
-    wxFileDialog dialog(&gui::Window::get(), message, wxEmptyString, wxEmptyString, wildcards, wxFD_OPEN|wxFD_MULTIPLE);
+    wxString wildcards = wxString::Format(filetypes, wxFileSelectorDefaultWildcardStr, wxFileSelectorDefaultWildcardStr);
+    wxFileDialog dialog(&gui::Window::get(), message, wxEmptyString, wxEmptyString, wildcards, wxFD_OPEN | wxFD_MULTIPLE);
     if (dialog.ShowModal() == wxID_OK)
     {
         wxArrayString paths;
         dialog.GetPaths(paths);
-        for ( wxString path : paths )
+        for (wxString path : paths)
         {
             result.push_back(path);
         }

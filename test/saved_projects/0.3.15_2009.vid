@@ -654,7 +654,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 											<Track class_id="44" tracking_level="1" version="2" object_id="_30">
 												<mIndex>0</mIndex>
 												<mClips class_id="46" tracking_level="0" version="0">
-													<count>65</count>
+													<count>67</count>
 													<item_version>1</item_version>
 													<item class_id="47" tracking_level="0" version="1">
 														<px class_id="48" class_name="model::VideoClip" tracking_level="1" version="4" object_id="_31">
@@ -2847,7 +2847,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 														</px>
 													</item>
 													<item>
-														<px class_id="76" class_name="model::video::transition::WipeArc" tracking_level="1" version="1" object_id="_198">
+														<px class_id="76" class_name="model::video::transition::ImageZoom" tracking_level="1" version="1" object_id="_198">
 															<VideoTransition>
 																<Transition>
 																	<Clip>
@@ -2868,27 +2868,20 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																		<value>10</value>
 																	</mFramesRight>
 																	<mParameters>
-																		<count>4</count>
+																		<count>5</count>
 																		<item_version>0</item_version>
 																		<item>
 																			<first>
-																				<string>bandscount</string>
+																				<string>imagefilename</string>
 																			</first>
 																			<second>
-																				<px class_id="77" class_name="model::TransitionParameterInt" tracking_level="1" version="1" object_id="_199">
+																				<px class_id="77" class_name="model::TransitionParameterImage" tracking_level="1" version="1" object_id="_199">
 																					<TransitionParameter></TransitionParameter>
-																					<mValue>1</mValue>
-																				</px>
-																			</second>
-																		</item>
-																		<item>
-																			<first>
-																				<string>direction</string>
-																			</first>
-																			<second>
-																				<px class_id="78" class_name="model::TransitionParameterDirection" tracking_level="1" version="1" object_id="_200">
-																					<TransitionParameter></TransitionParameter>
-																					<mValue>7</mValue>
+																					<mValue>
+																						<filename>
+																							<string></string>
+																						</filename>
+																					</mValue>
 																				</px>
 																			</second>
 																		</item>
@@ -2897,7 +2890,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																				<string>inversed</string>
 																			</first>
 																			<second>
-																				<px class_id="79" class_name="model::TransitionParameterBool" tracking_level="1" version="1" object_id="_201">
+																				<px class_id="78" class_name="model::TransitionParameterBool" tracking_level="1" version="1" object_id="_200">
 																					<TransitionParameter></TransitionParameter>
 																					<mValue>0</mValue>
 																				</px>
@@ -2905,12 +2898,34 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																		</item>
 																		<item>
 																			<first>
-																				<string>softenedges</string>
+																				<string>rotationdirection</string>
 																			</first>
 																			<second>
-																				<px class_id_reference="79" object_id="_202">
+																				<px class_id="79" class_name="model::TransitionParameterRotationDirection" tracking_level="1" version="1" object_id="_201">
 																					<TransitionParameter></TransitionParameter>
-																					<mValue>1</mValue>
+																					<mValue>0</mValue>
+																				</px>
+																			</second>
+																		</item>
+																		<item>
+																			<first>
+																				<string>rotations</string>
+																			</first>
+																			<second>
+																				<px class_id="80" class_name="model::TransitionParameterInt" tracking_level="1" version="1" object_id="_202">
+																					<TransitionParameter></TransitionParameter>
+																					<mValue>0</mValue>
+																				</px>
+																			</second>
+																		</item>
+																		<item>
+																			<first>
+																				<string>scaling</string>
+																			</first>
+																			<second>
+																				<px class_id="81" class_name="model::TransitionParameterDouble" tracking_level="1" version="1" object_id="_203">
+																					<TransitionParameter></TransitionParameter>
+																					<mValue>1.00000000000000000e+00</mValue>
 																				</px>
 																			</second>
 																		</item>
@@ -2921,23 +2936,23 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="48" object_id="_203">
+														<px class_id_reference="48" object_id="_204">
 															<ClipInterval>
 																<Clip>
 																	<mLink>
 																		<ptr>
-																			<px class_id_reference="52" object_id="_204">
+																			<px class_id_reference="52" object_id="_205">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
 																							<ptr>
-																								<px class_id_reference="48" object_id_reference="_203"></px>
+																								<px class_id_reference="48" object_id_reference="_204"></px>
 																							</ptr>
 																						</mLink>
 																					</Clip>
 																					<mRender>
-																						<px class_id_reference="54" object_id="_205">
-																							<File object_id="_206">
+																						<px class_id_reference="54" object_id="_206">
+																							<File object_id="_207">
 																								<Node>
 																									<INode></INode>
 																									<parent>
@@ -2969,8 +2984,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																						<item_version>0</item_version>
 																					</mKeyFrames>
 																					<mDefaultKeyFrame>
-																						<px class_id_reference="58" object_id="_207">
-																							<KeyFrame object_id="_208"></KeyFrame>
+																						<px class_id_reference="58" object_id="_208">
+																							<KeyFrame object_id="_209"></KeyFrame>
 																							<mVolume>100</mVolume>
 																						</px>
 																					</mDefaultKeyFrame>
@@ -2981,8 +2996,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	</mLink>
 																</Clip>
 																<mRender>
-																	<px class_id_reference="59" object_id="_209">
-																		<File object_id="_210">
+																	<px class_id_reference="59" object_id="_210">
+																		<File object_id="_211">
 																			<Node>
 																				<INode></INode>
 																				<parent>
@@ -3014,8 +3029,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	<item_version>0</item_version>
 																</mKeyFrames>
 																<mDefaultKeyFrame>
-																	<px class_id_reference="61" object_id="_211">
-																		<KeyFrame object_id="_212"></KeyFrame>
+																	<px class_id_reference="61" object_id="_212">
+																		<KeyFrame object_id="_213"></KeyFrame>
 																		<mInputSize>
 																			<x>1280</x>
 																			<y>720</y>
@@ -3046,7 +3061,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 														</px>
 													</item>
 													<item>
-														<px class_id="80" class_name="model::video::transition::WipeCircle" tracking_level="1" version="1" object_id="_213">
+														<px class_id="82" class_name="model::video::transition::WipeArc" tracking_level="1" version="1" object_id="_214">
 															<VideoTransition>
 																<Transition>
 																	<Clip>
@@ -3067,16 +3082,27 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																		<value>10</value>
 																	</mFramesRight>
 																	<mParameters>
-																		<count>3</count>
+																		<count>4</count>
 																		<item_version>0</item_version>
 																		<item>
 																			<first>
 																				<string>bandscount</string>
 																			</first>
 																			<second>
-																				<px class_id_reference="77" object_id="_214">
+																				<px class_id_reference="80" object_id="_215">
 																					<TransitionParameter></TransitionParameter>
 																					<mValue>1</mValue>
+																				</px>
+																			</second>
+																		</item>
+																		<item>
+																			<first>
+																				<string>direction</string>
+																			</first>
+																			<second>
+																				<px class_id="83" class_name="model::TransitionParameterDirection" tracking_level="1" version="1" object_id="_216">
+																					<TransitionParameter></TransitionParameter>
+																					<mValue>7</mValue>
 																				</px>
 																			</second>
 																		</item>
@@ -3085,7 +3111,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																				<string>inversed</string>
 																			</first>
 																			<second>
-																				<px class_id_reference="79" object_id="_215">
+																				<px class_id_reference="78" object_id="_217">
 																					<TransitionParameter></TransitionParameter>
 																					<mValue>0</mValue>
 																				</px>
@@ -3096,7 +3122,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																				<string>softenedges</string>
 																			</first>
 																			<second>
-																				<px class_id_reference="79" object_id="_216">
+																				<px class_id_reference="78" object_id="_218">
 																					<TransitionParameter></TransitionParameter>
 																					<mValue>1</mValue>
 																				</px>
@@ -3109,23 +3135,23 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="48" object_id="_217">
+														<px class_id_reference="48" object_id="_219">
 															<ClipInterval>
 																<Clip>
 																	<mLink>
 																		<ptr>
-																			<px class_id_reference="52" object_id="_218">
+																			<px class_id_reference="52" object_id="_220">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
 																							<ptr>
-																								<px class_id_reference="48" object_id_reference="_217"></px>
+																								<px class_id_reference="48" object_id_reference="_219"></px>
 																							</ptr>
 																						</mLink>
 																					</Clip>
 																					<mRender>
-																						<px class_id_reference="54" object_id="_219">
-																							<File object_id="_220">
+																						<px class_id_reference="54" object_id="_221">
+																							<File object_id="_222">
 																								<Node>
 																									<INode></INode>
 																									<parent>
@@ -3157,8 +3183,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																						<item_version>0</item_version>
 																					</mKeyFrames>
 																					<mDefaultKeyFrame>
-																						<px class_id_reference="58" object_id="_221">
-																							<KeyFrame object_id="_222"></KeyFrame>
+																						<px class_id_reference="58" object_id="_223">
+																							<KeyFrame object_id="_224"></KeyFrame>
 																							<mVolume>100</mVolume>
 																						</px>
 																					</mDefaultKeyFrame>
@@ -3169,8 +3195,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	</mLink>
 																</Clip>
 																<mRender>
-																	<px class_id_reference="59" object_id="_223">
-																		<File object_id="_224">
+																	<px class_id_reference="59" object_id="_225">
+																		<File object_id="_226">
 																			<Node>
 																				<INode></INode>
 																				<parent>
@@ -3202,8 +3228,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	<item_version>0</item_version>
 																</mKeyFrames>
 																<mDefaultKeyFrame>
-																	<px class_id_reference="61" object_id="_225">
-																		<KeyFrame object_id="_226"></KeyFrame>
+																	<px class_id_reference="61" object_id="_227">
+																		<KeyFrame object_id="_228"></KeyFrame>
 																		<mInputSize>
 																			<x>1280</x>
 																			<y>720</y>
@@ -3234,23 +3260,23 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="48" object_id="_227">
+														<px class_id_reference="48" object_id="_229">
 															<ClipInterval>
 																<Clip>
 																	<mLink>
 																		<ptr>
-																			<px class_id_reference="52" object_id="_228">
+																			<px class_id_reference="52" object_id="_230">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
 																							<ptr>
-																								<px class_id_reference="48" object_id_reference="_227"></px>
+																								<px class_id_reference="48" object_id_reference="_229"></px>
 																							</ptr>
 																						</mLink>
 																					</Clip>
 																					<mRender>
-																						<px class_id_reference="54" object_id="_229">
-																							<File object_id="_230">
+																						<px class_id_reference="54" object_id="_231">
+																							<File object_id="_232">
 																								<Node>
 																									<INode></INode>
 																									<parent>
@@ -3282,8 +3308,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																						<item_version>0</item_version>
 																					</mKeyFrames>
 																					<mDefaultKeyFrame>
-																						<px class_id_reference="58" object_id="_231">
-																							<KeyFrame object_id="_232"></KeyFrame>
+																						<px class_id_reference="58" object_id="_233">
+																							<KeyFrame object_id="_234"></KeyFrame>
 																							<mVolume>100</mVolume>
 																						</px>
 																					</mDefaultKeyFrame>
@@ -3294,8 +3320,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	</mLink>
 																</Clip>
 																<mRender>
-																	<px class_id_reference="59" object_id="_233">
-																		<File object_id="_234">
+																	<px class_id_reference="59" object_id="_235">
+																		<File object_id="_236">
 																			<Node>
 																				<INode></INode>
 																				<parent>
@@ -3327,8 +3353,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	<item_version>0</item_version>
 																</mKeyFrames>
 																<mDefaultKeyFrame>
-																	<px class_id_reference="61" object_id="_235">
-																		<KeyFrame object_id="_236"></KeyFrame>
+																	<px class_id_reference="61" object_id="_237">
+																		<KeyFrame object_id="_238"></KeyFrame>
 																		<mInputSize>
 																			<x>1280</x>
 																			<y>720</y>
@@ -3359,7 +3385,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="80" object_id="_237">
+														<px class_id_reference="82" object_id="_239">
 															<VideoTransition>
 																<Transition>
 																	<Clip>
@@ -3380,16 +3406,27 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																		<value>10</value>
 																	</mFramesRight>
 																	<mParameters>
-																		<count>3</count>
+																		<count>4</count>
 																		<item_version>0</item_version>
 																		<item>
 																			<first>
 																				<string>bandscount</string>
 																			</first>
 																			<second>
-																				<px class_id_reference="77" object_id="_238">
+																				<px class_id_reference="80" object_id="_240">
 																					<TransitionParameter></TransitionParameter>
 																					<mValue>1</mValue>
+																				</px>
+																			</second>
+																		</item>
+																		<item>
+																			<first>
+																				<string>direction</string>
+																			</first>
+																			<second>
+																				<px class_id_reference="83" object_id="_241">
+																					<TransitionParameter></TransitionParameter>
+																					<mValue>7</mValue>
 																				</px>
 																			</second>
 																		</item>
@@ -3398,7 +3435,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																				<string>inversed</string>
 																			</first>
 																			<second>
-																				<px class_id_reference="79" object_id="_239">
+																				<px class_id_reference="78" object_id="_242">
 																					<TransitionParameter></TransitionParameter>
 																					<mValue>0</mValue>
 																				</px>
@@ -3409,7 +3446,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																				<string>softenedges</string>
 																			</first>
 																			<second>
-																				<px class_id_reference="79" object_id="_240">
+																				<px class_id_reference="78" object_id="_243">
 																					<TransitionParameter></TransitionParameter>
 																					<mValue>1</mValue>
 																				</px>
@@ -3422,23 +3459,23 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="48" object_id="_241">
+														<px class_id_reference="48" object_id="_244">
 															<ClipInterval>
 																<Clip>
 																	<mLink>
 																		<ptr>
-																			<px class_id_reference="52" object_id="_242">
+																			<px class_id_reference="52" object_id="_245">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
 																							<ptr>
-																								<px class_id_reference="48" object_id_reference="_241"></px>
+																								<px class_id_reference="48" object_id_reference="_244"></px>
 																							</ptr>
 																						</mLink>
 																					</Clip>
 																					<mRender>
-																						<px class_id_reference="54" object_id="_243">
-																							<File object_id="_244">
+																						<px class_id_reference="54" object_id="_246">
+																							<File object_id="_247">
 																								<Node>
 																									<INode></INode>
 																									<parent>
@@ -3470,8 +3507,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																						<item_version>0</item_version>
 																					</mKeyFrames>
 																					<mDefaultKeyFrame>
-																						<px class_id_reference="58" object_id="_245">
-																							<KeyFrame object_id="_246"></KeyFrame>
+																						<px class_id_reference="58" object_id="_248">
+																							<KeyFrame object_id="_249"></KeyFrame>
 																							<mVolume>100</mVolume>
 																						</px>
 																					</mDefaultKeyFrame>
@@ -3482,8 +3519,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	</mLink>
 																</Clip>
 																<mRender>
-																	<px class_id_reference="59" object_id="_247">
-																		<File object_id="_248">
+																	<px class_id_reference="59" object_id="_250">
+																		<File object_id="_251">
 																			<Node>
 																				<INode></INode>
 																				<parent>
@@ -3515,8 +3552,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	<item_version>0</item_version>
 																</mKeyFrames>
 																<mDefaultKeyFrame>
-																	<px class_id_reference="61" object_id="_249">
-																		<KeyFrame object_id="_250"></KeyFrame>
+																	<px class_id_reference="61" object_id="_252">
+																		<KeyFrame object_id="_253"></KeyFrame>
 																		<mInputSize>
 																			<x>1280</x>
 																			<y>720</y>
@@ -3547,7 +3584,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 														</px>
 													</item>
 													<item>
-														<px class_id="81" class_name="model::video::transition::WipeDoubleClock" tracking_level="1" version="1" object_id="_251">
+														<px class_id="84" class_name="model::video::transition::WipeCircle" tracking_level="1" version="1" object_id="_254">
 															<VideoTransition>
 																<Transition>
 																	<Clip>
@@ -3568,14 +3605,25 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																		<value>10</value>
 																	</mFramesRight>
 																	<mParameters>
-																		<count>2</count>
+																		<count>3</count>
 																		<item_version>0</item_version>
 																		<item>
 																			<first>
-																				<string>angle</string>
+																				<string>bandscount</string>
 																			</first>
 																			<second>
-																				<px class_id_reference="77" object_id="_252">
+																				<px class_id_reference="80" object_id="_255">
+																					<TransitionParameter></TransitionParameter>
+																					<mValue>1</mValue>
+																				</px>
+																			</second>
+																		</item>
+																		<item>
+																			<first>
+																				<string>inversed</string>
+																			</first>
+																			<second>
+																				<px class_id_reference="78" object_id="_256">
 																					<TransitionParameter></TransitionParameter>
 																					<mValue>0</mValue>
 																				</px>
@@ -3586,7 +3634,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																				<string>softenedges</string>
 																			</first>
 																			<second>
-																				<px class_id_reference="79" object_id="_253">
+																				<px class_id_reference="78" object_id="_257">
 																					<TransitionParameter></TransitionParameter>
 																					<mValue>1</mValue>
 																				</px>
@@ -3599,23 +3647,23 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="48" object_id="_254">
+														<px class_id_reference="48" object_id="_258">
 															<ClipInterval>
 																<Clip>
 																	<mLink>
 																		<ptr>
-																			<px class_id_reference="52" object_id="_255">
+																			<px class_id_reference="52" object_id="_259">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
 																							<ptr>
-																								<px class_id_reference="48" object_id_reference="_254"></px>
+																								<px class_id_reference="48" object_id_reference="_258"></px>
 																							</ptr>
 																						</mLink>
 																					</Clip>
 																					<mRender>
-																						<px class_id_reference="54" object_id="_256">
-																							<File object_id="_257">
+																						<px class_id_reference="54" object_id="_260">
+																							<File object_id="_261">
 																								<Node>
 																									<INode></INode>
 																									<parent>
@@ -3647,8 +3695,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																						<item_version>0</item_version>
 																					</mKeyFrames>
 																					<mDefaultKeyFrame>
-																						<px class_id_reference="58" object_id="_258">
-																							<KeyFrame object_id="_259"></KeyFrame>
+																						<px class_id_reference="58" object_id="_262">
+																							<KeyFrame object_id="_263"></KeyFrame>
 																							<mVolume>100</mVolume>
 																						</px>
 																					</mDefaultKeyFrame>
@@ -3659,8 +3707,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	</mLink>
 																</Clip>
 																<mRender>
-																	<px class_id_reference="59" object_id="_260">
-																		<File object_id="_261">
+																	<px class_id_reference="59" object_id="_264">
+																		<File object_id="_265">
 																			<Node>
 																				<INode></INode>
 																				<parent>
@@ -3692,8 +3740,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	<item_version>0</item_version>
 																</mKeyFrames>
 																<mDefaultKeyFrame>
-																	<px class_id_reference="61" object_id="_262">
-																		<KeyFrame object_id="_263"></KeyFrame>
+																	<px class_id_reference="61" object_id="_266">
+																		<KeyFrame object_id="_267"></KeyFrame>
 																		<mInputSize>
 																			<x>1280</x>
 																			<y>720</y>
@@ -3724,23 +3772,23 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="48" object_id="_264">
+														<px class_id_reference="48" object_id="_268">
 															<ClipInterval>
 																<Clip>
 																	<mLink>
 																		<ptr>
-																			<px class_id_reference="52" object_id="_265">
+																			<px class_id_reference="52" object_id="_269">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
 																							<ptr>
-																								<px class_id_reference="48" object_id_reference="_264"></px>
+																								<px class_id_reference="48" object_id_reference="_268"></px>
 																							</ptr>
 																						</mLink>
 																					</Clip>
 																					<mRender>
-																						<px class_id_reference="54" object_id="_266">
-																							<File object_id="_267">
+																						<px class_id_reference="54" object_id="_270">
+																							<File object_id="_271">
 																								<Node>
 																									<INode></INode>
 																									<parent>
@@ -3772,8 +3820,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																						<item_version>0</item_version>
 																					</mKeyFrames>
 																					<mDefaultKeyFrame>
-																						<px class_id_reference="58" object_id="_268">
-																							<KeyFrame object_id="_269"></KeyFrame>
+																						<px class_id_reference="58" object_id="_272">
+																							<KeyFrame object_id="_273"></KeyFrame>
 																							<mVolume>100</mVolume>
 																						</px>
 																					</mDefaultKeyFrame>
@@ -3784,8 +3832,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	</mLink>
 																</Clip>
 																<mRender>
-																	<px class_id_reference="59" object_id="_270">
-																		<File object_id="_271">
+																	<px class_id_reference="59" object_id="_274">
+																		<File object_id="_275">
 																			<Node>
 																				<INode></INode>
 																				<parent>
@@ -3817,8 +3865,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	<item_version>0</item_version>
 																</mKeyFrames>
 																<mDefaultKeyFrame>
-																	<px class_id_reference="61" object_id="_272">
-																		<KeyFrame object_id="_273"></KeyFrame>
+																	<px class_id_reference="61" object_id="_276">
+																		<KeyFrame object_id="_277"></KeyFrame>
 																		<mInputSize>
 																			<x>1280</x>
 																			<y>720</y>
@@ -3849,7 +3897,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="81" object_id="_274">
+														<px class_id_reference="84" object_id="_278">
 															<VideoTransition>
 																<Transition>
 																	<Clip>
@@ -3870,14 +3918,25 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																		<value>10</value>
 																	</mFramesRight>
 																	<mParameters>
-																		<count>2</count>
+																		<count>3</count>
 																		<item_version>0</item_version>
 																		<item>
 																			<first>
-																				<string>angle</string>
+																				<string>bandscount</string>
 																			</first>
 																			<second>
-																				<px class_id_reference="77" object_id="_275">
+																				<px class_id_reference="80" object_id="_279">
+																					<TransitionParameter></TransitionParameter>
+																					<mValue>1</mValue>
+																				</px>
+																			</second>
+																		</item>
+																		<item>
+																			<first>
+																				<string>inversed</string>
+																			</first>
+																			<second>
+																				<px class_id_reference="78" object_id="_280">
 																					<TransitionParameter></TransitionParameter>
 																					<mValue>0</mValue>
 																				</px>
@@ -3888,7 +3947,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																				<string>softenedges</string>
 																			</first>
 																			<second>
-																				<px class_id_reference="79" object_id="_276">
+																				<px class_id_reference="78" object_id="_281">
 																					<TransitionParameter></TransitionParameter>
 																					<mValue>1</mValue>
 																				</px>
@@ -3901,23 +3960,23 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="48" object_id="_277">
+														<px class_id_reference="48" object_id="_282">
 															<ClipInterval>
 																<Clip>
 																	<mLink>
 																		<ptr>
-																			<px class_id_reference="52" object_id="_278">
+																			<px class_id_reference="52" object_id="_283">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
 																							<ptr>
-																								<px class_id_reference="48" object_id_reference="_277"></px>
+																								<px class_id_reference="48" object_id_reference="_282"></px>
 																							</ptr>
 																						</mLink>
 																					</Clip>
 																					<mRender>
-																						<px class_id_reference="54" object_id="_279">
-																							<File object_id="_280">
+																						<px class_id_reference="54" object_id="_284">
+																							<File object_id="_285">
 																								<Node>
 																									<INode></INode>
 																									<parent>
@@ -3949,8 +4008,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																						<item_version>0</item_version>
 																					</mKeyFrames>
 																					<mDefaultKeyFrame>
-																						<px class_id_reference="58" object_id="_281">
-																							<KeyFrame object_id="_282"></KeyFrame>
+																						<px class_id_reference="58" object_id="_286">
+																							<KeyFrame object_id="_287"></KeyFrame>
 																							<mVolume>100</mVolume>
 																						</px>
 																					</mDefaultKeyFrame>
@@ -3961,8 +4020,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	</mLink>
 																</Clip>
 																<mRender>
-																	<px class_id_reference="59" object_id="_283">
-																		<File object_id="_284">
+																	<px class_id_reference="59" object_id="_288">
+																		<File object_id="_289">
 																			<Node>
 																				<INode></INode>
 																				<parent>
@@ -3994,8 +4053,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	<item_version>0</item_version>
 																</mKeyFrames>
 																<mDefaultKeyFrame>
-																	<px class_id_reference="61" object_id="_285">
-																		<KeyFrame object_id="_286"></KeyFrame>
+																	<px class_id_reference="61" object_id="_290">
+																		<KeyFrame object_id="_291"></KeyFrame>
 																		<mInputSize>
 																			<x>1280</x>
 																			<y>720</y>
@@ -4026,7 +4085,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 														</px>
 													</item>
 													<item>
-														<px class_id="82" class_name="model::video::transition::WipeClock" tracking_level="1" version="1" object_id="_287">
+														<px class_id="85" class_name="model::video::transition::WipeDoubleClock" tracking_level="1" version="1" object_id="_292">
 															<VideoTransition>
 																<Transition>
 																	<Clip>
@@ -4047,36 +4106,14 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																		<value>10</value>
 																	</mFramesRight>
 																	<mParameters>
-																		<count>4</count>
+																		<count>2</count>
 																		<item_version>0</item_version>
 																		<item>
 																			<first>
 																				<string>angle</string>
 																			</first>
 																			<second>
-																				<px class_id_reference="77" object_id="_288">
-																					<TransitionParameter></TransitionParameter>
-																					<mValue>0</mValue>
-																				</px>
-																			</second>
-																		</item>
-																		<item>
-																			<first>
-																				<string>bandscount</string>
-																			</first>
-																			<second>
-																				<px class_id_reference="77" object_id="_289">
-																					<TransitionParameter></TransitionParameter>
-																					<mValue>1</mValue>
-																				</px>
-																			</second>
-																		</item>
-																		<item>
-																			<first>
-																				<string>inversed</string>
-																			</first>
-																			<second>
-																				<px class_id_reference="79" object_id="_290">
+																				<px class_id_reference="80" object_id="_293">
 																					<TransitionParameter></TransitionParameter>
 																					<mValue>0</mValue>
 																				</px>
@@ -4087,7 +4124,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																				<string>softenedges</string>
 																			</first>
 																			<second>
-																				<px class_id_reference="79" object_id="_291">
+																				<px class_id_reference="78" object_id="_294">
 																					<TransitionParameter></TransitionParameter>
 																					<mValue>1</mValue>
 																				</px>
@@ -4100,23 +4137,23 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="48" object_id="_292">
+														<px class_id_reference="48" object_id="_295">
 															<ClipInterval>
 																<Clip>
 																	<mLink>
 																		<ptr>
-																			<px class_id_reference="52" object_id="_293">
+																			<px class_id_reference="52" object_id="_296">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
 																							<ptr>
-																								<px class_id_reference="48" object_id_reference="_292"></px>
+																								<px class_id_reference="48" object_id_reference="_295"></px>
 																							</ptr>
 																						</mLink>
 																					</Clip>
 																					<mRender>
-																						<px class_id_reference="54" object_id="_294">
-																							<File object_id="_295">
+																						<px class_id_reference="54" object_id="_297">
+																							<File object_id="_298">
 																								<Node>
 																									<INode></INode>
 																									<parent>
@@ -4148,8 +4185,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																						<item_version>0</item_version>
 																					</mKeyFrames>
 																					<mDefaultKeyFrame>
-																						<px class_id_reference="58" object_id="_296">
-																							<KeyFrame object_id="_297"></KeyFrame>
+																						<px class_id_reference="58" object_id="_299">
+																							<KeyFrame object_id="_300"></KeyFrame>
 																							<mVolume>100</mVolume>
 																						</px>
 																					</mDefaultKeyFrame>
@@ -4160,8 +4197,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	</mLink>
 																</Clip>
 																<mRender>
-																	<px class_id_reference="59" object_id="_298">
-																		<File object_id="_299">
+																	<px class_id_reference="59" object_id="_301">
+																		<File object_id="_302">
 																			<Node>
 																				<INode></INode>
 																				<parent>
@@ -4193,8 +4230,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	<item_version>0</item_version>
 																</mKeyFrames>
 																<mDefaultKeyFrame>
-																	<px class_id_reference="61" object_id="_300">
-																		<KeyFrame object_id="_301"></KeyFrame>
+																	<px class_id_reference="61" object_id="_303">
+																		<KeyFrame object_id="_304"></KeyFrame>
 																		<mInputSize>
 																			<x>1280</x>
 																			<y>720</y>
@@ -4225,23 +4262,23 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="48" object_id="_302">
+														<px class_id_reference="48" object_id="_305">
 															<ClipInterval>
 																<Clip>
 																	<mLink>
 																		<ptr>
-																			<px class_id_reference="52" object_id="_303">
+																			<px class_id_reference="52" object_id="_306">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
 																							<ptr>
-																								<px class_id_reference="48" object_id_reference="_302"></px>
+																								<px class_id_reference="48" object_id_reference="_305"></px>
 																							</ptr>
 																						</mLink>
 																					</Clip>
 																					<mRender>
-																						<px class_id_reference="54" object_id="_304">
-																							<File object_id="_305">
+																						<px class_id_reference="54" object_id="_307">
+																							<File object_id="_308">
 																								<Node>
 																									<INode></INode>
 																									<parent>
@@ -4273,8 +4310,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																						<item_version>0</item_version>
 																					</mKeyFrames>
 																					<mDefaultKeyFrame>
-																						<px class_id_reference="58" object_id="_306">
-																							<KeyFrame object_id="_307"></KeyFrame>
+																						<px class_id_reference="58" object_id="_309">
+																							<KeyFrame object_id="_310"></KeyFrame>
 																							<mVolume>100</mVolume>
 																						</px>
 																					</mDefaultKeyFrame>
@@ -4285,8 +4322,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	</mLink>
 																</Clip>
 																<mRender>
-																	<px class_id_reference="59" object_id="_308">
-																		<File object_id="_309">
+																	<px class_id_reference="59" object_id="_311">
+																		<File object_id="_312">
 																			<Node>
 																				<INode></INode>
 																				<parent>
@@ -4318,8 +4355,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	<item_version>0</item_version>
 																</mKeyFrames>
 																<mDefaultKeyFrame>
-																	<px class_id_reference="61" object_id="_310">
-																		<KeyFrame object_id="_311"></KeyFrame>
+																	<px class_id_reference="61" object_id="_313">
+																		<KeyFrame object_id="_314"></KeyFrame>
 																		<mInputSize>
 																			<x>1280</x>
 																			<y>720</y>
@@ -4350,7 +4387,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="82" object_id="_312">
+														<px class_id_reference="85" object_id="_315">
 															<VideoTransition>
 																<Transition>
 																	<Clip>
@@ -4371,36 +4408,14 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																		<value>10</value>
 																	</mFramesRight>
 																	<mParameters>
-																		<count>4</count>
+																		<count>2</count>
 																		<item_version>0</item_version>
 																		<item>
 																			<first>
 																				<string>angle</string>
 																			</first>
 																			<second>
-																				<px class_id_reference="77" object_id="_313">
-																					<TransitionParameter></TransitionParameter>
-																					<mValue>0</mValue>
-																				</px>
-																			</second>
-																		</item>
-																		<item>
-																			<first>
-																				<string>bandscount</string>
-																			</first>
-																			<second>
-																				<px class_id_reference="77" object_id="_314">
-																					<TransitionParameter></TransitionParameter>
-																					<mValue>1</mValue>
-																				</px>
-																			</second>
-																		</item>
-																		<item>
-																			<first>
-																				<string>inversed</string>
-																			</first>
-																			<second>
-																				<px class_id_reference="79" object_id="_315">
+																				<px class_id_reference="80" object_id="_316">
 																					<TransitionParameter></TransitionParameter>
 																					<mValue>0</mValue>
 																				</px>
@@ -4411,7 +4426,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																				<string>softenedges</string>
 																			</first>
 																			<second>
-																				<px class_id_reference="79" object_id="_316">
+																				<px class_id_reference="78" object_id="_317">
 																					<TransitionParameter></TransitionParameter>
 																					<mValue>1</mValue>
 																				</px>
@@ -4424,23 +4439,23 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="48" object_id="_317">
+														<px class_id_reference="48" object_id="_318">
 															<ClipInterval>
 																<Clip>
 																	<mLink>
 																		<ptr>
-																			<px class_id_reference="52" object_id="_318">
+																			<px class_id_reference="52" object_id="_319">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
 																							<ptr>
-																								<px class_id_reference="48" object_id_reference="_317"></px>
+																								<px class_id_reference="48" object_id_reference="_318"></px>
 																							</ptr>
 																						</mLink>
 																					</Clip>
 																					<mRender>
-																						<px class_id_reference="54" object_id="_319">
-																							<File object_id="_320">
+																						<px class_id_reference="54" object_id="_320">
+																							<File object_id="_321">
 																								<Node>
 																									<INode></INode>
 																									<parent>
@@ -4472,8 +4487,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																						<item_version>0</item_version>
 																					</mKeyFrames>
 																					<mDefaultKeyFrame>
-																						<px class_id_reference="58" object_id="_321">
-																							<KeyFrame object_id="_322"></KeyFrame>
+																						<px class_id_reference="58" object_id="_322">
+																							<KeyFrame object_id="_323"></KeyFrame>
 																							<mVolume>100</mVolume>
 																						</px>
 																					</mDefaultKeyFrame>
@@ -4484,8 +4499,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	</mLink>
 																</Clip>
 																<mRender>
-																	<px class_id_reference="59" object_id="_323">
-																		<File object_id="_324">
+																	<px class_id_reference="59" object_id="_324">
+																		<File object_id="_325">
 																			<Node>
 																				<INode></INode>
 																				<parent>
@@ -4517,8 +4532,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	<item_version>0</item_version>
 																</mKeyFrames>
 																<mDefaultKeyFrame>
-																	<px class_id_reference="61" object_id="_325">
-																		<KeyFrame object_id="_326"></KeyFrame>
+																	<px class_id_reference="61" object_id="_326">
+																		<KeyFrame object_id="_327"></KeyFrame>
 																		<mInputSize>
 																			<x>1280</x>
 																			<y>720</y>
@@ -4549,7 +4564,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 														</px>
 													</item>
 													<item>
-														<px class_id="83" class_name="model::video::transition::WipeStraight" tracking_level="1" version="1" object_id="_327">
+														<px class_id="86" class_name="model::video::transition::WipeClock" tracking_level="1" version="1" object_id="_328">
 															<VideoTransition>
 																<Transition>
 																	<Clip>
@@ -4570,14 +4585,25 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																		<value>10</value>
 																	</mFramesRight>
 																	<mParameters>
-																		<count>3</count>
+																		<count>4</count>
 																		<item_version>0</item_version>
+																		<item>
+																			<first>
+																				<string>angle</string>
+																			</first>
+																			<second>
+																				<px class_id_reference="80" object_id="_329">
+																					<TransitionParameter></TransitionParameter>
+																					<mValue>0</mValue>
+																				</px>
+																			</second>
+																		</item>
 																		<item>
 																			<first>
 																				<string>bandscount</string>
 																			</first>
 																			<second>
-																				<px class_id_reference="77" object_id="_328">
+																				<px class_id_reference="80" object_id="_330">
 																					<TransitionParameter></TransitionParameter>
 																					<mValue>1</mValue>
 																				</px>
@@ -4585,12 +4611,12 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																		</item>
 																		<item>
 																			<first>
-																				<string>direction</string>
+																				<string>inversed</string>
 																			</first>
 																			<second>
-																				<px class_id_reference="78" object_id="_329">
+																				<px class_id_reference="78" object_id="_331">
 																					<TransitionParameter></TransitionParameter>
-																					<mValue>7</mValue>
+																					<mValue>0</mValue>
 																				</px>
 																			</second>
 																		</item>
@@ -4599,7 +4625,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																				<string>softenedges</string>
 																			</first>
 																			<second>
-																				<px class_id_reference="79" object_id="_330">
+																				<px class_id_reference="78" object_id="_332">
 																					<TransitionParameter></TransitionParameter>
 																					<mValue>1</mValue>
 																				</px>
@@ -4612,23 +4638,23 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="48" object_id="_331">
+														<px class_id_reference="48" object_id="_333">
 															<ClipInterval>
 																<Clip>
 																	<mLink>
 																		<ptr>
-																			<px class_id_reference="52" object_id="_332">
+																			<px class_id_reference="52" object_id="_334">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
 																							<ptr>
-																								<px class_id_reference="48" object_id_reference="_331"></px>
+																								<px class_id_reference="48" object_id_reference="_333"></px>
 																							</ptr>
 																						</mLink>
 																					</Clip>
 																					<mRender>
-																						<px class_id_reference="54" object_id="_333">
-																							<File object_id="_334">
+																						<px class_id_reference="54" object_id="_335">
+																							<File object_id="_336">
 																								<Node>
 																									<INode></INode>
 																									<parent>
@@ -4660,8 +4686,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																						<item_version>0</item_version>
 																					</mKeyFrames>
 																					<mDefaultKeyFrame>
-																						<px class_id_reference="58" object_id="_335">
-																							<KeyFrame object_id="_336"></KeyFrame>
+																						<px class_id_reference="58" object_id="_337">
+																							<KeyFrame object_id="_338"></KeyFrame>
 																							<mVolume>100</mVolume>
 																						</px>
 																					</mDefaultKeyFrame>
@@ -4672,8 +4698,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	</mLink>
 																</Clip>
 																<mRender>
-																	<px class_id_reference="59" object_id="_337">
-																		<File object_id="_338">
+																	<px class_id_reference="59" object_id="_339">
+																		<File object_id="_340">
 																			<Node>
 																				<INode></INode>
 																				<parent>
@@ -4705,8 +4731,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	<item_version>0</item_version>
 																</mKeyFrames>
 																<mDefaultKeyFrame>
-																	<px class_id_reference="61" object_id="_339">
-																		<KeyFrame object_id="_340"></KeyFrame>
+																	<px class_id_reference="61" object_id="_341">
+																		<KeyFrame object_id="_342"></KeyFrame>
 																		<mInputSize>
 																			<x>1280</x>
 																			<y>720</y>
@@ -4737,23 +4763,23 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="48" object_id="_341">
+														<px class_id_reference="48" object_id="_343">
 															<ClipInterval>
 																<Clip>
 																	<mLink>
 																		<ptr>
-																			<px class_id_reference="52" object_id="_342">
+																			<px class_id_reference="52" object_id="_344">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
 																							<ptr>
-																								<px class_id_reference="48" object_id_reference="_341"></px>
+																								<px class_id_reference="48" object_id_reference="_343"></px>
 																							</ptr>
 																						</mLink>
 																					</Clip>
 																					<mRender>
-																						<px class_id_reference="54" object_id="_343">
-																							<File object_id="_344">
+																						<px class_id_reference="54" object_id="_345">
+																							<File object_id="_346">
 																								<Node>
 																									<INode></INode>
 																									<parent>
@@ -4785,8 +4811,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																						<item_version>0</item_version>
 																					</mKeyFrames>
 																					<mDefaultKeyFrame>
-																						<px class_id_reference="58" object_id="_345">
-																							<KeyFrame object_id="_346"></KeyFrame>
+																						<px class_id_reference="58" object_id="_347">
+																							<KeyFrame object_id="_348"></KeyFrame>
 																							<mVolume>100</mVolume>
 																						</px>
 																					</mDefaultKeyFrame>
@@ -4797,8 +4823,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	</mLink>
 																</Clip>
 																<mRender>
-																	<px class_id_reference="59" object_id="_347">
-																		<File object_id="_348">
+																	<px class_id_reference="59" object_id="_349">
+																		<File object_id="_350">
 																			<Node>
 																				<INode></INode>
 																				<parent>
@@ -4830,8 +4856,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	<item_version>0</item_version>
 																</mKeyFrames>
 																<mDefaultKeyFrame>
-																	<px class_id_reference="61" object_id="_349">
-																		<KeyFrame object_id="_350"></KeyFrame>
+																	<px class_id_reference="61" object_id="_351">
+																		<KeyFrame object_id="_352"></KeyFrame>
 																		<mInputSize>
 																			<x>1280</x>
 																			<y>720</y>
@@ -4862,7 +4888,206 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="83" object_id="_351">
+														<px class_id_reference="86" object_id="_353">
+															<VideoTransition>
+																<Transition>
+																	<Clip>
+																		<mLink>
+																			<ptr>
+																				<px class_id="-1"></px>
+																			</ptr>
+																		</mLink>
+																	</Clip>
+																	<mFramesLeft>
+																		<initialized>1</initialized>
+																		<item_version>0</item_version>
+																		<value>10</value>
+																	</mFramesLeft>
+																	<mFramesRight>
+																		<initialized>1</initialized>
+																		<item_version>0</item_version>
+																		<value>10</value>
+																	</mFramesRight>
+																	<mParameters>
+																		<count>4</count>
+																		<item_version>0</item_version>
+																		<item>
+																			<first>
+																				<string>angle</string>
+																			</first>
+																			<second>
+																				<px class_id_reference="80" object_id="_354">
+																					<TransitionParameter></TransitionParameter>
+																					<mValue>0</mValue>
+																				</px>
+																			</second>
+																		</item>
+																		<item>
+																			<first>
+																				<string>bandscount</string>
+																			</first>
+																			<second>
+																				<px class_id_reference="80" object_id="_355">
+																					<TransitionParameter></TransitionParameter>
+																					<mValue>1</mValue>
+																				</px>
+																			</second>
+																		</item>
+																		<item>
+																			<first>
+																				<string>inversed</string>
+																			</first>
+																			<second>
+																				<px class_id_reference="78" object_id="_356">
+																					<TransitionParameter></TransitionParameter>
+																					<mValue>0</mValue>
+																				</px>
+																			</second>
+																		</item>
+																		<item>
+																			<first>
+																				<string>softenedges</string>
+																			</first>
+																			<second>
+																				<px class_id_reference="78" object_id="_357">
+																					<TransitionParameter></TransitionParameter>
+																					<mValue>1</mValue>
+																				</px>
+																			</second>
+																		</item>
+																	</mParameters>
+																</Transition>
+																<IVideo></IVideo>
+															</VideoTransition>
+														</px>
+													</item>
+													<item>
+														<px class_id_reference="48" object_id="_358">
+															<ClipInterval>
+																<Clip>
+																	<mLink>
+																		<ptr>
+																			<px class_id_reference="52" object_id="_359">
+																				<ClipInterval>
+																					<Clip>
+																						<mLink>
+																							<ptr>
+																								<px class_id_reference="48" object_id_reference="_358"></px>
+																							</ptr>
+																						</mLink>
+																					</Clip>
+																					<mRender>
+																						<px class_id_reference="54" object_id="_360">
+																							<File object_id="_361">
+																								<Node>
+																									<INode></INode>
+																									<parent>
+																										<px class_id="-1"></px>
+																									</parent>
+																									<mChildren>
+																										<count>0</count>
+																										<item_version>1</item_version>
+																									</mChildren>
+																								</Node>
+																								<mPath>
+																									<filename>
+																										<string>..\input\00.avi</string>
+																									</filename>
+																								</mPath>
+																								<mMaxBufferSize>100</mMaxBufferSize>
+																							</File>
+																							<IAudio></IAudio>
+																						</px>
+																					</mRender>
+																					<mSpeed>
+																						<numerator>1</numerator>
+																						<denominator>1</denominator>
+																					</mSpeed>
+																					<mOffset>10</mOffset>
+																					<mLength>153</mLength>
+																					<mKeyFrames>
+																						<count>0</count>
+																						<item_version>0</item_version>
+																					</mKeyFrames>
+																					<mDefaultKeyFrame>
+																						<px class_id_reference="58" object_id="_362">
+																							<KeyFrame object_id="_363"></KeyFrame>
+																							<mVolume>100</mVolume>
+																						</px>
+																					</mDefaultKeyFrame>
+																				</ClipInterval>
+																				<IAudio></IAudio>
+																			</px>
+																		</ptr>
+																	</mLink>
+																</Clip>
+																<mRender>
+																	<px class_id_reference="59" object_id="_364">
+																		<File object_id="_365">
+																			<Node>
+																				<INode></INode>
+																				<parent>
+																					<px class_id="-1"></px>
+																				</parent>
+																				<mChildren>
+																					<count>0</count>
+																					<item_version>1</item_version>
+																				</mChildren>
+																			</Node>
+																			<mPath>
+																				<filename>
+																					<string>..\input\00.avi</string>
+																				</filename>
+																			</mPath>
+																			<mMaxBufferSize>10</mMaxBufferSize>
+																		</File>
+																		<IVideo></IVideo>
+																	</px>
+																</mRender>
+																<mSpeed>
+																	<numerator>1</numerator>
+																	<denominator>1</denominator>
+																</mSpeed>
+																<mOffset>20</mOffset>
+																<mLength>133</mLength>
+																<mKeyFrames>
+																	<count>0</count>
+																	<item_version>0</item_version>
+																</mKeyFrames>
+																<mDefaultKeyFrame>
+																	<px class_id_reference="61" object_id="_366">
+																		<KeyFrame object_id="_367"></KeyFrame>
+																		<mInputSize>
+																			<x>1280</x>
+																			<y>720</y>
+																		</mInputSize>
+																		<mOpacity>255</mOpacity>
+																		<mScaling>1</mScaling>
+																		<mScalingFactor>
+																			<numerator>1</numerator>
+																			<denominator>1</denominator>
+																		</mScalingFactor>
+																		<mRotation>
+																			<numerator>0</numerator>
+																			<denominator>1</denominator>
+																		</mRotation>
+																		<mRotationPositionOffset>
+																			<x>0</x>
+																			<y>0</y>
+																		</mRotationPositionOffset>
+																		<mAlignment>0</mAlignment>
+																		<mPosition>
+																			<x>0</x>
+																			<y>0</y>
+																		</mPosition>
+																	</px>
+																</mDefaultKeyFrame>
+															</ClipInterval>
+															<IVideo></IVideo>
+														</px>
+													</item>
+													<item>
+														<px class_id="87" class_name="model::video::transition::WipeStraight" tracking_level="1" version="1" object_id="_368">
 															<VideoTransition>
 																<Transition>
 																	<Clip>
@@ -4890,7 +5115,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																				<string>bandscount</string>
 																			</first>
 																			<second>
-																				<px class_id_reference="77" object_id="_352">
+																				<px class_id_reference="80" object_id="_369">
 																					<TransitionParameter></TransitionParameter>
 																					<mValue>1</mValue>
 																				</px>
@@ -4901,7 +5126,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																				<string>direction</string>
 																			</first>
 																			<second>
-																				<px class_id_reference="78" object_id="_353">
+																				<px class_id_reference="83" object_id="_370">
 																					<TransitionParameter></TransitionParameter>
 																					<mValue>7</mValue>
 																				</px>
@@ -4912,7 +5137,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																				<string>softenedges</string>
 																			</first>
 																			<second>
-																				<px class_id_reference="79" object_id="_354">
+																				<px class_id_reference="78" object_id="_371">
 																					<TransitionParameter></TransitionParameter>
 																					<mValue>1</mValue>
 																				</px>
@@ -4925,23 +5150,23 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="48" object_id="_355">
+														<px class_id_reference="48" object_id="_372">
 															<ClipInterval>
 																<Clip>
 																	<mLink>
 																		<ptr>
-																			<px class_id_reference="52" object_id="_356">
+																			<px class_id_reference="52" object_id="_373">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
 																							<ptr>
-																								<px class_id_reference="48" object_id_reference="_355"></px>
+																								<px class_id_reference="48" object_id_reference="_372"></px>
 																							</ptr>
 																						</mLink>
 																					</Clip>
 																					<mRender>
-																						<px class_id_reference="54" object_id="_357">
-																							<File object_id="_358">
+																						<px class_id_reference="54" object_id="_374">
+																							<File object_id="_375">
 																								<Node>
 																									<INode></INode>
 																									<parent>
@@ -4954,7 +5179,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																								</Node>
 																								<mPath>
 																									<filename>
-																										<string>..\input\00.avi</string>
+																										<string>..\input\01.avi</string>
 																									</filename>
 																								</mPath>
 																								<mMaxBufferSize>100</mMaxBufferSize>
@@ -4967,14 +5192,14 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																						<denominator>1</denominator>
 																					</mSpeed>
 																					<mOffset>10</mOffset>
-																					<mLength>163</mLength>
+																					<mLength>175</mLength>
 																					<mKeyFrames>
 																						<count>0</count>
 																						<item_version>0</item_version>
 																					</mKeyFrames>
 																					<mDefaultKeyFrame>
-																						<px class_id_reference="58" object_id="_359">
-																							<KeyFrame object_id="_360"></KeyFrame>
+																						<px class_id_reference="58" object_id="_376">
+																							<KeyFrame object_id="_377"></KeyFrame>
 																							<mVolume>100</mVolume>
 																						</px>
 																					</mDefaultKeyFrame>
@@ -4985,8 +5210,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	</mLink>
 																</Clip>
 																<mRender>
-																	<px class_id_reference="59" object_id="_361">
-																		<File object_id="_362">
+																	<px class_id_reference="59" object_id="_378">
+																		<File object_id="_379">
 																			<Node>
 																				<INode></INode>
 																				<parent>
@@ -4999,7 +5224,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																			</Node>
 																			<mPath>
 																				<filename>
-																					<string>..\input\00.avi</string>
+																					<string>..\input\01.avi</string>
 																				</filename>
 																			</mPath>
 																			<mMaxBufferSize>10</mMaxBufferSize>
@@ -5012,14 +5237,14 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	<denominator>1</denominator>
 																</mSpeed>
 																<mOffset>20</mOffset>
-																<mLength>153</mLength>
+																<mLength>165</mLength>
 																<mKeyFrames>
 																	<count>0</count>
 																	<item_version>0</item_version>
 																</mKeyFrames>
 																<mDefaultKeyFrame>
-																	<px class_id_reference="61" object_id="_363">
-																		<KeyFrame object_id="_364"></KeyFrame>
+																	<px class_id_reference="61" object_id="_380">
+																		<KeyFrame object_id="_381"></KeyFrame>
 																		<mInputSize>
 																			<x>1280</x>
 																			<y>720</y>
@@ -5050,148 +5275,23 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="48" object_id="_365">
+														<px class_id_reference="48" object_id="_382">
 															<ClipInterval>
 																<Clip>
 																	<mLink>
 																		<ptr>
-																			<px class_id_reference="52" object_id="_366">
+																			<px class_id_reference="52" object_id="_383">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
 																							<ptr>
-																								<px class_id_reference="48" object_id_reference="_365"></px>
+																								<px class_id_reference="48" object_id_reference="_382"></px>
 																							</ptr>
 																						</mLink>
 																					</Clip>
 																					<mRender>
-																						<px class_id_reference="54" object_id="_367">
-																							<File object_id="_368">
-																								<Node>
-																									<INode></INode>
-																									<parent>
-																										<px class_id="-1"></px>
-																									</parent>
-																									<mChildren>
-																										<count>0</count>
-																										<item_version>1</item_version>
-																									</mChildren>
-																								</Node>
-																								<mPath>
-																									<filename>
-																										<string>..\input\01.avi</string>
-																									</filename>
-																								</mPath>
-																								<mMaxBufferSize>100</mMaxBufferSize>
-																							</File>
-																							<IAudio></IAudio>
-																						</px>
-																					</mRender>
-																					<mSpeed>
-																						<numerator>1</numerator>
-																						<denominator>1</denominator>
-																					</mSpeed>
-																					<mOffset>0</mOffset>
-																					<mLength>185</mLength>
-																					<mKeyFrames>
-																						<count>0</count>
-																						<item_version>0</item_version>
-																					</mKeyFrames>
-																					<mDefaultKeyFrame>
-																						<px class_id_reference="58" object_id="_369">
-																							<KeyFrame object_id="_370"></KeyFrame>
-																							<mVolume>100</mVolume>
-																						</px>
-																					</mDefaultKeyFrame>
-																				</ClipInterval>
-																				<IAudio></IAudio>
-																			</px>
-																		</ptr>
-																	</mLink>
-																</Clip>
-																<mRender>
-																	<px class_id_reference="59" object_id="_371">
-																		<File object_id="_372">
-																			<Node>
-																				<INode></INode>
-																				<parent>
-																					<px class_id="-1"></px>
-																				</parent>
-																				<mChildren>
-																					<count>0</count>
-																					<item_version>1</item_version>
-																				</mChildren>
-																			</Node>
-																			<mPath>
-																				<filename>
-																					<string>..\input\01.avi</string>
-																				</filename>
-																			</mPath>
-																			<mMaxBufferSize>10</mMaxBufferSize>
-																		</File>
-																		<IVideo></IVideo>
-																	</px>
-																</mRender>
-																<mSpeed>
-																	<numerator>1</numerator>
-																	<denominator>1</denominator>
-																</mSpeed>
-																<mOffset>0</mOffset>
-																<mLength>185</mLength>
-																<mKeyFrames>
-																	<count>0</count>
-																	<item_version>0</item_version>
-																</mKeyFrames>
-																<mDefaultKeyFrame>
-																	<px class_id_reference="61" object_id="_373">
-																		<KeyFrame object_id="_374"></KeyFrame>
-																		<mInputSize>
-																			<x>1280</x>
-																			<y>720</y>
-																		</mInputSize>
-																		<mOpacity>255</mOpacity>
-																		<mScaling>1</mScaling>
-																		<mScalingFactor>
-																			<numerator>1</numerator>
-																			<denominator>1</denominator>
-																		</mScalingFactor>
-																		<mRotation>
-																			<numerator>0</numerator>
-																			<denominator>1</denominator>
-																		</mRotation>
-																		<mRotationPositionOffset>
-																			<x>0</x>
-																			<y>0</y>
-																		</mRotationPositionOffset>
-																		<mAlignment>0</mAlignment>
-																		<mPosition>
-																			<x>0</x>
-																			<y>0</y>
-																		</mPosition>
-																	</px>
-																</mDefaultKeyFrame>
-															</ClipInterval>
-															<IVideo></IVideo>
-														</px>
-													</item>
-													<item>
-														<px class_id_reference="48" object_id="_375">
-															<ClipInterval>
-																<Clip>
-																	<mLink>
-																		<ptr>
-																			<px class_id_reference="52" object_id="_376">
-																				<ClipInterval>
-																					<Clip>
-																						<mLink>
-																							<ptr>
-																								<px class_id_reference="48" object_id_reference="_375"></px>
-																							</ptr>
-																						</mLink>
-																					</Clip>
-																					<mRender>
-																						<px class_id_reference="54" object_id="_377">
-																							<File object_id="_378">
+																						<px class_id_reference="54" object_id="_384">
+																							<File object_id="_385">
 																								<Node>
 																									<INode></INode>
 																									<parent>
@@ -5217,14 +5317,14 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																						<denominator>1</denominator>
 																					</mSpeed>
 																					<mOffset>0</mOffset>
-																					<mLength>251</mLength>
+																					<mLength>241</mLength>
 																					<mKeyFrames>
 																						<count>0</count>
 																						<item_version>0</item_version>
 																					</mKeyFrames>
 																					<mDefaultKeyFrame>
-																						<px class_id_reference="58" object_id="_379">
-																							<KeyFrame object_id="_380"></KeyFrame>
+																						<px class_id_reference="58" object_id="_386">
+																							<KeyFrame object_id="_387"></KeyFrame>
 																							<mVolume>100</mVolume>
 																						</px>
 																					</mDefaultKeyFrame>
@@ -5235,8 +5335,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	</mLink>
 																</Clip>
 																<mRender>
-																	<px class_id_reference="59" object_id="_381">
-																		<File object_id="_382">
+																	<px class_id_reference="59" object_id="_388">
+																		<File object_id="_389">
 																			<Node>
 																				<INode></INode>
 																				<parent>
@@ -5262,14 +5362,14 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	<denominator>1</denominator>
 																</mSpeed>
 																<mOffset>0</mOffset>
-																<mLength>251</mLength>
+																<mLength>231</mLength>
 																<mKeyFrames>
 																	<count>0</count>
 																	<item_version>0</item_version>
 																</mKeyFrames>
 																<mDefaultKeyFrame>
-																	<px class_id_reference="61" object_id="_383">
-																		<KeyFrame object_id="_384"></KeyFrame>
+																	<px class_id_reference="61" object_id="_390">
+																		<KeyFrame object_id="_391"></KeyFrame>
 																		<mInputSize>
 																			<x>1280</x>
 																			<y>720</y>
@@ -5300,23 +5400,86 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="48" object_id="_385">
+														<px class_id_reference="87" object_id="_392">
+															<VideoTransition>
+																<Transition>
+																	<Clip>
+																		<mLink>
+																			<ptr>
+																				<px class_id="-1"></px>
+																			</ptr>
+																		</mLink>
+																	</Clip>
+																	<mFramesLeft>
+																		<initialized>1</initialized>
+																		<item_version>0</item_version>
+																		<value>10</value>
+																	</mFramesLeft>
+																	<mFramesRight>
+																		<initialized>1</initialized>
+																		<item_version>0</item_version>
+																		<value>10</value>
+																	</mFramesRight>
+																	<mParameters>
+																		<count>3</count>
+																		<item_version>0</item_version>
+																		<item>
+																			<first>
+																				<string>bandscount</string>
+																			</first>
+																			<second>
+																				<px class_id_reference="80" object_id="_393">
+																					<TransitionParameter></TransitionParameter>
+																					<mValue>1</mValue>
+																				</px>
+																			</second>
+																		</item>
+																		<item>
+																			<first>
+																				<string>direction</string>
+																			</first>
+																			<second>
+																				<px class_id_reference="83" object_id="_394">
+																					<TransitionParameter></TransitionParameter>
+																					<mValue>7</mValue>
+																				</px>
+																			</second>
+																		</item>
+																		<item>
+																			<first>
+																				<string>softenedges</string>
+																			</first>
+																			<second>
+																				<px class_id_reference="78" object_id="_395">
+																					<TransitionParameter></TransitionParameter>
+																					<mValue>1</mValue>
+																				</px>
+																			</second>
+																		</item>
+																	</mParameters>
+																</Transition>
+																<IVideo></IVideo>
+															</VideoTransition>
+														</px>
+													</item>
+													<item>
+														<px class_id_reference="48" object_id="_396">
 															<ClipInterval>
 																<Clip>
 																	<mLink>
 																		<ptr>
-																			<px class_id_reference="52" object_id="_386">
+																			<px class_id_reference="52" object_id="_397">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
 																							<ptr>
-																								<px class_id_reference="48" object_id_reference="_385"></px>
+																								<px class_id_reference="48" object_id_reference="_396"></px>
 																							</ptr>
 																						</mLink>
 																					</Clip>
 																					<mRender>
-																						<px class_id_reference="54" object_id="_387">
-																							<File object_id="_388">
+																						<px class_id_reference="54" object_id="_398">
+																							<File object_id="_399">
 																								<Node>
 																									<INode></INode>
 																									<parent>
@@ -5341,15 +5504,15 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																						<numerator>1</numerator>
 																						<denominator>1</denominator>
 																					</mSpeed>
-																					<mOffset>0</mOffset>
-																					<mLength>239</mLength>
+																					<mOffset>10</mOffset>
+																					<mLength>229</mLength>
 																					<mKeyFrames>
 																						<count>0</count>
 																						<item_version>0</item_version>
 																					</mKeyFrames>
 																					<mDefaultKeyFrame>
-																						<px class_id_reference="58" object_id="_389">
-																							<KeyFrame object_id="_390"></KeyFrame>
+																						<px class_id_reference="58" object_id="_400">
+																							<KeyFrame object_id="_401"></KeyFrame>
 																							<mVolume>100</mVolume>
 																						</px>
 																					</mDefaultKeyFrame>
@@ -5360,8 +5523,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	</mLink>
 																</Clip>
 																<mRender>
-																	<px class_id_reference="59" object_id="_391">
-																		<File object_id="_392">
+																	<px class_id_reference="59" object_id="_402">
+																		<File object_id="_403">
 																			<Node>
 																				<INode></INode>
 																				<parent>
@@ -5386,15 +5549,15 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	<numerator>1</numerator>
 																	<denominator>1</denominator>
 																</mSpeed>
-																<mOffset>0</mOffset>
-																<mLength>239</mLength>
+																<mOffset>20</mOffset>
+																<mLength>219</mLength>
 																<mKeyFrames>
 																	<count>0</count>
 																	<item_version>0</item_version>
 																</mKeyFrames>
 																<mDefaultKeyFrame>
-																	<px class_id_reference="61" object_id="_393">
-																		<KeyFrame object_id="_394"></KeyFrame>
+																	<px class_id_reference="61" object_id="_404">
+																		<KeyFrame object_id="_405"></KeyFrame>
 																		<mInputSize>
 																			<x>1280</x>
 																			<y>720</y>
@@ -5425,23 +5588,23 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="48" object_id="_395">
+														<px class_id_reference="48" object_id="_406">
 															<ClipInterval>
 																<Clip>
 																	<mLink>
 																		<ptr>
-																			<px class_id_reference="52" object_id="_396">
+																			<px class_id_reference="52" object_id="_407">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
 																							<ptr>
-																								<px class_id_reference="48" object_id_reference="_395"></px>
+																								<px class_id_reference="48" object_id_reference="_406"></px>
 																							</ptr>
 																						</mLink>
 																					</Clip>
 																					<mRender>
-																						<px class_id_reference="54" object_id="_397">
-																							<File object_id="_398">
+																						<px class_id_reference="54" object_id="_408">
+																							<File object_id="_409">
 																								<Node>
 																									<INode></INode>
 																									<parent>
@@ -5473,8 +5636,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																						<item_version>0</item_version>
 																					</mKeyFrames>
 																					<mDefaultKeyFrame>
-																						<px class_id_reference="58" object_id="_399">
-																							<KeyFrame object_id="_400"></KeyFrame>
+																						<px class_id_reference="58" object_id="_410">
+																							<KeyFrame object_id="_411"></KeyFrame>
 																							<mVolume>100</mVolume>
 																						</px>
 																					</mDefaultKeyFrame>
@@ -5485,8 +5648,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	</mLink>
 																</Clip>
 																<mRender>
-																	<px class_id_reference="59" object_id="_401">
-																		<File object_id="_402">
+																	<px class_id_reference="59" object_id="_412">
+																		<File object_id="_413">
 																			<Node>
 																				<INode></INode>
 																				<parent>
@@ -5518,8 +5681,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	<item_version>0</item_version>
 																</mKeyFrames>
 																<mDefaultKeyFrame>
-																	<px class_id_reference="61" object_id="_403">
-																		<KeyFrame object_id="_404"></KeyFrame>
+																	<px class_id_reference="61" object_id="_414">
+																		<KeyFrame object_id="_415"></KeyFrame>
 																		<mInputSize>
 																			<x>1280</x>
 																			<y>720</y>
@@ -5550,23 +5713,23 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="48" object_id="_405">
+														<px class_id_reference="48" object_id="_416">
 															<ClipInterval>
 																<Clip>
 																	<mLink>
 																		<ptr>
-																			<px class_id_reference="52" object_id="_406">
+																			<px class_id_reference="52" object_id="_417">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
 																							<ptr>
-																								<px class_id_reference="48" object_id_reference="_405"></px>
+																								<px class_id_reference="48" object_id_reference="_416"></px>
 																							</ptr>
 																						</mLink>
 																					</Clip>
 																					<mRender>
-																						<px class_id_reference="54" object_id="_407">
-																							<File object_id="_408">
+																						<px class_id_reference="54" object_id="_418">
+																							<File object_id="_419">
 																								<Node>
 																									<INode></INode>
 																									<parent>
@@ -5598,8 +5761,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																						<item_version>0</item_version>
 																					</mKeyFrames>
 																					<mDefaultKeyFrame>
-																						<px class_id_reference="58" object_id="_409">
-																							<KeyFrame object_id="_410"></KeyFrame>
+																						<px class_id_reference="58" object_id="_420">
+																							<KeyFrame object_id="_421"></KeyFrame>
 																							<mVolume>100</mVolume>
 																						</px>
 																					</mDefaultKeyFrame>
@@ -5610,8 +5773,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	</mLink>
 																</Clip>
 																<mRender>
-																	<px class_id_reference="59" object_id="_411">
-																		<File object_id="_412">
+																	<px class_id_reference="59" object_id="_422">
+																		<File object_id="_423">
 																			<Node>
 																				<INode></INode>
 																				<parent>
@@ -5643,8 +5806,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	<item_version>0</item_version>
 																</mKeyFrames>
 																<mDefaultKeyFrame>
-																	<px class_id_reference="61" object_id="_413">
-																		<KeyFrame object_id="_414"></KeyFrame>
+																	<px class_id_reference="61" object_id="_424">
+																		<KeyFrame object_id="_425"></KeyFrame>
 																		<mInputSize>
 																			<x>1280</x>
 																			<y>720</y>
@@ -5675,23 +5838,23 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="48" object_id="_415">
+														<px class_id_reference="48" object_id="_426">
 															<ClipInterval>
 																<Clip>
 																	<mLink>
 																		<ptr>
-																			<px class_id_reference="52" object_id="_416">
+																			<px class_id_reference="52" object_id="_427">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
 																							<ptr>
-																								<px class_id_reference="48" object_id_reference="_415"></px>
+																								<px class_id_reference="48" object_id_reference="_426"></px>
 																							</ptr>
 																						</mLink>
 																					</Clip>
 																					<mRender>
-																						<px class_id_reference="54" object_id="_417">
-																							<File object_id="_418">
+																						<px class_id_reference="54" object_id="_428">
+																							<File object_id="_429">
 																								<Node>
 																									<INode></INode>
 																									<parent>
@@ -5723,8 +5886,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																						<item_version>0</item_version>
 																					</mKeyFrames>
 																					<mDefaultKeyFrame>
-																						<px class_id_reference="58" object_id="_419">
-																							<KeyFrame object_id="_420"></KeyFrame>
+																						<px class_id_reference="58" object_id="_430">
+																							<KeyFrame object_id="_431"></KeyFrame>
 																							<mVolume>100</mVolume>
 																						</px>
 																					</mDefaultKeyFrame>
@@ -5735,8 +5898,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	</mLink>
 																</Clip>
 																<mRender>
-																	<px class_id_reference="59" object_id="_421">
-																		<File object_id="_422">
+																	<px class_id_reference="59" object_id="_432">
+																		<File object_id="_433">
 																			<Node>
 																				<INode></INode>
 																				<parent>
@@ -5768,8 +5931,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	<item_version>0</item_version>
 																</mKeyFrames>
 																<mDefaultKeyFrame>
-																	<px class_id_reference="61" object_id="_423">
-																		<KeyFrame object_id="_424"></KeyFrame>
+																	<px class_id_reference="61" object_id="_434">
+																		<KeyFrame object_id="_435"></KeyFrame>
 																		<mInputSize>
 																			<x>1280</x>
 																			<y>720</y>
@@ -5800,23 +5963,23 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="48" object_id="_425">
+														<px class_id_reference="48" object_id="_436">
 															<ClipInterval>
 																<Clip>
 																	<mLink>
 																		<ptr>
-																			<px class_id_reference="52" object_id="_426">
+																			<px class_id_reference="52" object_id="_437">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
 																							<ptr>
-																								<px class_id_reference="48" object_id_reference="_425"></px>
+																								<px class_id_reference="48" object_id_reference="_436"></px>
 																							</ptr>
 																						</mLink>
 																					</Clip>
 																					<mRender>
-																						<px class_id_reference="54" object_id="_427">
-																							<File object_id="_428">
+																						<px class_id_reference="54" object_id="_438">
+																							<File object_id="_439">
 																								<Node>
 																									<INode></INode>
 																									<parent>
@@ -5848,8 +6011,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																						<item_version>0</item_version>
 																					</mKeyFrames>
 																					<mDefaultKeyFrame>
-																						<px class_id_reference="58" object_id="_429">
-																							<KeyFrame object_id="_430"></KeyFrame>
+																						<px class_id_reference="58" object_id="_440">
+																							<KeyFrame object_id="_441"></KeyFrame>
 																							<mVolume>100</mVolume>
 																						</px>
 																					</mDefaultKeyFrame>
@@ -5860,8 +6023,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	</mLink>
 																</Clip>
 																<mRender>
-																	<px class_id_reference="59" object_id="_431">
-																		<File object_id="_432">
+																	<px class_id_reference="59" object_id="_442">
+																		<File object_id="_443">
 																			<Node>
 																				<INode></INode>
 																				<parent>
@@ -5893,8 +6056,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	<item_version>0</item_version>
 																</mKeyFrames>
 																<mDefaultKeyFrame>
-																	<px class_id_reference="61" object_id="_433">
-																		<KeyFrame object_id="_434"></KeyFrame>
+																	<px class_id_reference="61" object_id="_444">
+																		<KeyFrame object_id="_445"></KeyFrame>
 																		<mInputSize>
 																			<x>1280</x>
 																			<y>720</y>
@@ -5925,23 +6088,23 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="48" object_id="_435">
+														<px class_id_reference="48" object_id="_446">
 															<ClipInterval>
 																<Clip>
 																	<mLink>
 																		<ptr>
-																			<px class_id_reference="52" object_id="_436">
+																			<px class_id_reference="52" object_id="_447">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
 																							<ptr>
-																								<px class_id_reference="48" object_id_reference="_435"></px>
+																								<px class_id_reference="48" object_id_reference="_446"></px>
 																							</ptr>
 																						</mLink>
 																					</Clip>
 																					<mRender>
-																						<px class_id_reference="54" object_id="_437">
-																							<File object_id="_438">
+																						<px class_id_reference="54" object_id="_448">
+																							<File object_id="_449">
 																								<Node>
 																									<INode></INode>
 																									<parent>
@@ -5973,8 +6136,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																						<item_version>0</item_version>
 																					</mKeyFrames>
 																					<mDefaultKeyFrame>
-																						<px class_id_reference="58" object_id="_439">
-																							<KeyFrame object_id="_440"></KeyFrame>
+																						<px class_id_reference="58" object_id="_450">
+																							<KeyFrame object_id="_451"></KeyFrame>
 																							<mVolume>100</mVolume>
 																						</px>
 																					</mDefaultKeyFrame>
@@ -5985,8 +6148,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	</mLink>
 																</Clip>
 																<mRender>
-																	<px class_id_reference="59" object_id="_441">
-																		<File object_id="_442">
+																	<px class_id_reference="59" object_id="_452">
+																		<File object_id="_453">
 																			<Node>
 																				<INode></INode>
 																				<parent>
@@ -6018,8 +6181,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	<item_version>0</item_version>
 																</mKeyFrames>
 																<mDefaultKeyFrame>
-																	<px class_id_reference="61" object_id="_443">
-																		<KeyFrame object_id="_444"></KeyFrame>
+																	<px class_id_reference="61" object_id="_454">
+																		<KeyFrame object_id="_455"></KeyFrame>
 																		<mInputSize>
 																			<x>1280</x>
 																			<y>720</y>
@@ -6050,23 +6213,23 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="48" object_id="_445">
+														<px class_id_reference="48" object_id="_456">
 															<ClipInterval>
 																<Clip>
 																	<mLink>
 																		<ptr>
-																			<px class_id_reference="52" object_id="_446">
+																			<px class_id_reference="52" object_id="_457">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
 																							<ptr>
-																								<px class_id_reference="48" object_id_reference="_445"></px>
+																								<px class_id_reference="48" object_id_reference="_456"></px>
 																							</ptr>
 																						</mLink>
 																					</Clip>
 																					<mRender>
-																						<px class_id_reference="54" object_id="_447">
-																							<File object_id="_448">
+																						<px class_id_reference="54" object_id="_458">
+																							<File object_id="_459">
 																								<Node>
 																									<INode></INode>
 																									<parent>
@@ -6098,8 +6261,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																						<item_version>0</item_version>
 																					</mKeyFrames>
 																					<mDefaultKeyFrame>
-																						<px class_id_reference="58" object_id="_449">
-																							<KeyFrame object_id="_450"></KeyFrame>
+																						<px class_id_reference="58" object_id="_460">
+																							<KeyFrame object_id="_461"></KeyFrame>
 																							<mVolume>100</mVolume>
 																						</px>
 																					</mDefaultKeyFrame>
@@ -6110,8 +6273,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	</mLink>
 																</Clip>
 																<mRender>
-																	<px class_id_reference="59" object_id="_451">
-																		<File object_id="_452">
+																	<px class_id_reference="59" object_id="_462">
+																		<File object_id="_463">
 																			<Node>
 																				<INode></INode>
 																				<parent>
@@ -6143,8 +6306,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	<item_version>0</item_version>
 																</mKeyFrames>
 																<mDefaultKeyFrame>
-																	<px class_id_reference="61" object_id="_453">
-																		<KeyFrame object_id="_454"></KeyFrame>
+																	<px class_id_reference="61" object_id="_464">
+																		<KeyFrame object_id="_465"></KeyFrame>
 																		<mInputSize>
 																			<x>1280</x>
 																			<y>720</y>
@@ -6175,23 +6338,23 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="48" object_id="_455">
+														<px class_id_reference="48" object_id="_466">
 															<ClipInterval>
 																<Clip>
 																	<mLink>
 																		<ptr>
-																			<px class_id_reference="52" object_id="_456">
+																			<px class_id_reference="52" object_id="_467">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
 																							<ptr>
-																								<px class_id_reference="48" object_id_reference="_455"></px>
+																								<px class_id_reference="48" object_id_reference="_466"></px>
 																							</ptr>
 																						</mLink>
 																					</Clip>
 																					<mRender>
-																						<px class_id_reference="54" object_id="_457">
-																							<File object_id="_458">
+																						<px class_id_reference="54" object_id="_468">
+																							<File object_id="_469">
 																								<Node>
 																									<INode></INode>
 																									<parent>
@@ -6223,8 +6386,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																						<item_version>0</item_version>
 																					</mKeyFrames>
 																					<mDefaultKeyFrame>
-																						<px class_id_reference="58" object_id="_459">
-																							<KeyFrame object_id="_460"></KeyFrame>
+																						<px class_id_reference="58" object_id="_470">
+																							<KeyFrame object_id="_471"></KeyFrame>
 																							<mVolume>100</mVolume>
 																						</px>
 																					</mDefaultKeyFrame>
@@ -6235,8 +6398,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	</mLink>
 																</Clip>
 																<mRender>
-																	<px class_id_reference="59" object_id="_461">
-																		<File object_id="_462">
+																	<px class_id_reference="59" object_id="_472">
+																		<File object_id="_473">
 																			<Node>
 																				<INode></INode>
 																				<parent>
@@ -6268,8 +6431,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	<item_version>0</item_version>
 																</mKeyFrames>
 																<mDefaultKeyFrame>
-																	<px class_id_reference="61" object_id="_463">
-																		<KeyFrame object_id="_464"></KeyFrame>
+																	<px class_id_reference="61" object_id="_474">
+																		<KeyFrame object_id="_475"></KeyFrame>
 																		<mInputSize>
 																			<x>1280</x>
 																			<y>720</y>
@@ -6300,23 +6463,23 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="48" object_id="_465">
+														<px class_id_reference="48" object_id="_476">
 															<ClipInterval>
 																<Clip>
 																	<mLink>
 																		<ptr>
-																			<px class_id_reference="52" object_id="_466">
+																			<px class_id_reference="52" object_id="_477">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
 																							<ptr>
-																								<px class_id_reference="48" object_id_reference="_465"></px>
+																								<px class_id_reference="48" object_id_reference="_476"></px>
 																							</ptr>
 																						</mLink>
 																					</Clip>
 																					<mRender>
-																						<px class_id_reference="54" object_id="_467">
-																							<File object_id="_468">
+																						<px class_id_reference="54" object_id="_478">
+																							<File object_id="_479">
 																								<Node>
 																									<INode></INode>
 																									<parent>
@@ -6348,8 +6511,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																						<item_version>0</item_version>
 																					</mKeyFrames>
 																					<mDefaultKeyFrame>
-																						<px class_id_reference="58" object_id="_469">
-																							<KeyFrame object_id="_470"></KeyFrame>
+																						<px class_id_reference="58" object_id="_480">
+																							<KeyFrame object_id="_481"></KeyFrame>
 																							<mVolume>100</mVolume>
 																						</px>
 																					</mDefaultKeyFrame>
@@ -6360,8 +6523,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	</mLink>
 																</Clip>
 																<mRender>
-																	<px class_id_reference="59" object_id="_471">
-																		<File object_id="_472">
+																	<px class_id_reference="59" object_id="_482">
+																		<File object_id="_483">
 																			<Node>
 																				<INode></INode>
 																				<parent>
@@ -6393,8 +6556,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	<item_version>0</item_version>
 																</mKeyFrames>
 																<mDefaultKeyFrame>
-																	<px class_id_reference="61" object_id="_473">
-																		<KeyFrame object_id="_474"></KeyFrame>
+																	<px class_id_reference="61" object_id="_484">
+																		<KeyFrame object_id="_485"></KeyFrame>
 																		<mInputSize>
 																			<x>1280</x>
 																			<y>720</y>
@@ -6425,23 +6588,23 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="48" object_id="_475">
+														<px class_id_reference="48" object_id="_486">
 															<ClipInterval>
 																<Clip>
 																	<mLink>
 																		<ptr>
-																			<px class_id_reference="52" object_id="_476">
+																			<px class_id_reference="52" object_id="_487">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
 																							<ptr>
-																								<px class_id_reference="48" object_id_reference="_475"></px>
+																								<px class_id_reference="48" object_id_reference="_486"></px>
 																							</ptr>
 																						</mLink>
 																					</Clip>
 																					<mRender>
-																						<px class_id_reference="54" object_id="_477">
-																							<File object_id="_478">
+																						<px class_id_reference="54" object_id="_488">
+																							<File object_id="_489">
 																								<Node>
 																									<INode></INode>
 																									<parent>
@@ -6473,8 +6636,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																						<item_version>0</item_version>
 																					</mKeyFrames>
 																					<mDefaultKeyFrame>
-																						<px class_id_reference="58" object_id="_479">
-																							<KeyFrame object_id="_480"></KeyFrame>
+																						<px class_id_reference="58" object_id="_490">
+																							<KeyFrame object_id="_491"></KeyFrame>
 																							<mVolume>100</mVolume>
 																						</px>
 																					</mDefaultKeyFrame>
@@ -6485,8 +6648,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	</mLink>
 																</Clip>
 																<mRender>
-																	<px class_id_reference="59" object_id="_481">
-																		<File object_id="_482">
+																	<px class_id_reference="59" object_id="_492">
+																		<File object_id="_493">
 																			<Node>
 																				<INode></INode>
 																				<parent>
@@ -6518,8 +6681,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	<item_version>0</item_version>
 																</mKeyFrames>
 																<mDefaultKeyFrame>
-																	<px class_id_reference="61" object_id="_483">
-																		<KeyFrame object_id="_484"></KeyFrame>
+																	<px class_id_reference="61" object_id="_494">
+																		<KeyFrame object_id="_495"></KeyFrame>
 																		<mInputSize>
 																			<x>1280</x>
 																			<y>720</y>
@@ -6550,23 +6713,23 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="48" object_id="_485">
+														<px class_id_reference="48" object_id="_496">
 															<ClipInterval>
 																<Clip>
 																	<mLink>
 																		<ptr>
-																			<px class_id_reference="52" object_id="_486">
+																			<px class_id_reference="52" object_id="_497">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
 																							<ptr>
-																								<px class_id_reference="48" object_id_reference="_485"></px>
+																								<px class_id_reference="48" object_id_reference="_496"></px>
 																							</ptr>
 																						</mLink>
 																					</Clip>
 																					<mRender>
-																						<px class_id_reference="54" object_id="_487">
-																							<File object_id="_488">
+																						<px class_id_reference="54" object_id="_498">
+																							<File object_id="_499">
 																								<Node>
 																									<INode></INode>
 																									<parent>
@@ -6598,8 +6761,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																						<item_version>0</item_version>
 																					</mKeyFrames>
 																					<mDefaultKeyFrame>
-																						<px class_id_reference="58" object_id="_489">
-																							<KeyFrame object_id="_490"></KeyFrame>
+																						<px class_id_reference="58" object_id="_500">
+																							<KeyFrame object_id="_501"></KeyFrame>
 																							<mVolume>100</mVolume>
 																						</px>
 																					</mDefaultKeyFrame>
@@ -6610,8 +6773,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	</mLink>
 																</Clip>
 																<mRender>
-																	<px class_id_reference="59" object_id="_491">
-																		<File object_id="_492">
+																	<px class_id_reference="59" object_id="_502">
+																		<File object_id="_503">
 																			<Node>
 																				<INode></INode>
 																				<parent>
@@ -6643,8 +6806,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	<item_version>0</item_version>
 																</mKeyFrames>
 																<mDefaultKeyFrame>
-																	<px class_id_reference="61" object_id="_493">
-																		<KeyFrame object_id="_494"></KeyFrame>
+																	<px class_id_reference="61" object_id="_504">
+																		<KeyFrame object_id="_505"></KeyFrame>
 																		<mInputSize>
 																			<x>1280</x>
 																			<y>720</y>
@@ -6675,23 +6838,23 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="48" object_id="_495">
+														<px class_id_reference="48" object_id="_506">
 															<ClipInterval>
 																<Clip>
 																	<mLink>
 																		<ptr>
-																			<px class_id_reference="52" object_id="_496">
+																			<px class_id_reference="52" object_id="_507">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
 																							<ptr>
-																								<px class_id_reference="48" object_id_reference="_495"></px>
+																								<px class_id_reference="48" object_id_reference="_506"></px>
 																							</ptr>
 																						</mLink>
 																					</Clip>
 																					<mRender>
-																						<px class_id_reference="54" object_id="_497">
-																							<File object_id="_498">
+																						<px class_id_reference="54" object_id="_508">
+																							<File object_id="_509">
 																								<Node>
 																									<INode></INode>
 																									<parent>
@@ -6723,8 +6886,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																						<item_version>0</item_version>
 																					</mKeyFrames>
 																					<mDefaultKeyFrame>
-																						<px class_id_reference="58" object_id="_499">
-																							<KeyFrame object_id="_500"></KeyFrame>
+																						<px class_id_reference="58" object_id="_510">
+																							<KeyFrame object_id="_511"></KeyFrame>
 																							<mVolume>100</mVolume>
 																						</px>
 																					</mDefaultKeyFrame>
@@ -6735,8 +6898,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	</mLink>
 																</Clip>
 																<mRender>
-																	<px class_id_reference="59" object_id="_501">
-																		<File object_id="_502">
+																	<px class_id_reference="59" object_id="_512">
+																		<File object_id="_513">
 																			<Node>
 																				<INode></INode>
 																				<parent>
@@ -6768,8 +6931,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	<item_version>0</item_version>
 																</mKeyFrames>
 																<mDefaultKeyFrame>
-																	<px class_id_reference="61" object_id="_503">
-																		<KeyFrame object_id="_504"></KeyFrame>
+																	<px class_id_reference="61" object_id="_514">
+																		<KeyFrame object_id="_515"></KeyFrame>
 																		<mInputSize>
 																			<x>1280</x>
 																			<y>720</y>
@@ -6800,23 +6963,23 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="48" object_id="_505">
+														<px class_id_reference="48" object_id="_516">
 															<ClipInterval>
 																<Clip>
 																	<mLink>
 																		<ptr>
-																			<px class_id_reference="52" object_id="_506">
+																			<px class_id_reference="52" object_id="_517">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
 																							<ptr>
-																								<px class_id_reference="48" object_id_reference="_505"></px>
+																								<px class_id_reference="48" object_id_reference="_516"></px>
 																							</ptr>
 																						</mLink>
 																					</Clip>
 																					<mRender>
-																						<px class_id_reference="54" object_id="_507">
-																							<File object_id="_508">
+																						<px class_id_reference="54" object_id="_518">
+																							<File object_id="_519">
 																								<Node>
 																									<INode></INode>
 																									<parent>
@@ -6848,8 +7011,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																						<item_version>0</item_version>
 																					</mKeyFrames>
 																					<mDefaultKeyFrame>
-																						<px class_id_reference="58" object_id="_509">
-																							<KeyFrame object_id="_510"></KeyFrame>
+																						<px class_id_reference="58" object_id="_520">
+																							<KeyFrame object_id="_521"></KeyFrame>
 																							<mVolume>100</mVolume>
 																						</px>
 																					</mDefaultKeyFrame>
@@ -6860,8 +7023,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	</mLink>
 																</Clip>
 																<mRender>
-																	<px class_id_reference="59" object_id="_511">
-																		<File object_id="_512">
+																	<px class_id_reference="59" object_id="_522">
+																		<File object_id="_523">
 																			<Node>
 																				<INode></INode>
 																				<parent>
@@ -6893,8 +7056,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	<item_version>0</item_version>
 																</mKeyFrames>
 																<mDefaultKeyFrame>
-																	<px class_id_reference="61" object_id="_513">
-																		<KeyFrame object_id="_514"></KeyFrame>
+																	<px class_id_reference="61" object_id="_524">
+																		<KeyFrame object_id="_525"></KeyFrame>
 																		<mInputSize>
 																			<x>1280</x>
 																			<y>720</y>
@@ -6925,23 +7088,23 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="48" object_id="_515">
+														<px class_id_reference="48" object_id="_526">
 															<ClipInterval>
 																<Clip>
 																	<mLink>
 																		<ptr>
-																			<px class_id_reference="52" object_id="_516">
+																			<px class_id_reference="52" object_id="_527">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
 																							<ptr>
-																								<px class_id_reference="48" object_id_reference="_515"></px>
+																								<px class_id_reference="48" object_id_reference="_526"></px>
 																							</ptr>
 																						</mLink>
 																					</Clip>
 																					<mRender>
-																						<px class_id_reference="54" object_id="_517">
-																							<File object_id="_518">
+																						<px class_id_reference="54" object_id="_528">
+																							<File object_id="_529">
 																								<Node>
 																									<INode></INode>
 																									<parent>
@@ -6973,8 +7136,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																						<item_version>0</item_version>
 																					</mKeyFrames>
 																					<mDefaultKeyFrame>
-																						<px class_id_reference="58" object_id="_519">
-																							<KeyFrame object_id="_520"></KeyFrame>
+																						<px class_id_reference="58" object_id="_530">
+																							<KeyFrame object_id="_531"></KeyFrame>
 																							<mVolume>100</mVolume>
 																						</px>
 																					</mDefaultKeyFrame>
@@ -6985,8 +7148,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	</mLink>
 																</Clip>
 																<mRender>
-																	<px class_id_reference="59" object_id="_521">
-																		<File object_id="_522">
+																	<px class_id_reference="59" object_id="_532">
+																		<File object_id="_533">
 																			<Node>
 																				<INode></INode>
 																				<parent>
@@ -7018,8 +7181,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	<item_version>0</item_version>
 																</mKeyFrames>
 																<mDefaultKeyFrame>
-																	<px class_id_reference="61" object_id="_523">
-																		<KeyFrame object_id="_524"></KeyFrame>
+																	<px class_id_reference="61" object_id="_534">
+																		<KeyFrame object_id="_535"></KeyFrame>
 																		<mInputSize>
 																			<x>1280</x>
 																			<y>720</y>
@@ -7050,23 +7213,23 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="48" object_id="_525">
+														<px class_id_reference="48" object_id="_536">
 															<ClipInterval>
 																<Clip>
 																	<mLink>
 																		<ptr>
-																			<px class_id_reference="52" object_id="_526">
+																			<px class_id_reference="52" object_id="_537">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
 																							<ptr>
-																								<px class_id_reference="48" object_id_reference="_525"></px>
+																								<px class_id_reference="48" object_id_reference="_536"></px>
 																							</ptr>
 																						</mLink>
 																					</Clip>
 																					<mRender>
-																						<px class_id_reference="54" object_id="_527">
-																							<File object_id="_528">
+																						<px class_id_reference="54" object_id="_538">
+																							<File object_id="_539">
 																								<Node>
 																									<INode></INode>
 																									<parent>
@@ -7098,8 +7261,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																						<item_version>0</item_version>
 																					</mKeyFrames>
 																					<mDefaultKeyFrame>
-																						<px class_id_reference="58" object_id="_529">
-																							<KeyFrame object_id="_530"></KeyFrame>
+																						<px class_id_reference="58" object_id="_540">
+																							<KeyFrame object_id="_541"></KeyFrame>
 																							<mVolume>100</mVolume>
 																						</px>
 																					</mDefaultKeyFrame>
@@ -7110,8 +7273,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	</mLink>
 																</Clip>
 																<mRender>
-																	<px class_id_reference="59" object_id="_531">
-																		<File object_id="_532">
+																	<px class_id_reference="59" object_id="_542">
+																		<File object_id="_543">
 																			<Node>
 																				<INode></INode>
 																				<parent>
@@ -7143,8 +7306,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	<item_version>0</item_version>
 																</mKeyFrames>
 																<mDefaultKeyFrame>
-																	<px class_id_reference="61" object_id="_533">
-																		<KeyFrame object_id="_534"></KeyFrame>
+																	<px class_id_reference="61" object_id="_544">
+																		<KeyFrame object_id="_545"></KeyFrame>
 																		<mInputSize>
 																			<x>1280</x>
 																			<y>720</y>
@@ -7175,23 +7338,23 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="48" object_id="_535">
+														<px class_id_reference="48" object_id="_546">
 															<ClipInterval>
 																<Clip>
 																	<mLink>
 																		<ptr>
-																			<px class_id_reference="52" object_id="_536">
+																			<px class_id_reference="52" object_id="_547">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
 																							<ptr>
-																								<px class_id_reference="48" object_id_reference="_535"></px>
+																								<px class_id_reference="48" object_id_reference="_546"></px>
 																							</ptr>
 																						</mLink>
 																					</Clip>
 																					<mRender>
-																						<px class_id_reference="54" object_id="_537">
-																							<File object_id="_538">
+																						<px class_id_reference="54" object_id="_548">
+																							<File object_id="_549">
 																								<Node>
 																									<INode></INode>
 																									<parent>
@@ -7223,8 +7386,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																						<item_version>0</item_version>
 																					</mKeyFrames>
 																					<mDefaultKeyFrame>
-																						<px class_id_reference="58" object_id="_539">
-																							<KeyFrame object_id="_540"></KeyFrame>
+																						<px class_id_reference="58" object_id="_550">
+																							<KeyFrame object_id="_551"></KeyFrame>
 																							<mVolume>100</mVolume>
 																						</px>
 																					</mDefaultKeyFrame>
@@ -7235,8 +7398,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	</mLink>
 																</Clip>
 																<mRender>
-																	<px class_id_reference="59" object_id="_541">
-																		<File object_id="_542">
+																	<px class_id_reference="59" object_id="_552">
+																		<File object_id="_553">
 																			<Node>
 																				<INode></INode>
 																				<parent>
@@ -7268,8 +7431,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	<item_version>0</item_version>
 																</mKeyFrames>
 																<mDefaultKeyFrame>
-																	<px class_id_reference="61" object_id="_543">
-																		<KeyFrame object_id="_544"></KeyFrame>
+																	<px class_id_reference="61" object_id="_554">
+																		<KeyFrame object_id="_555"></KeyFrame>
 																		<mInputSize>
 																			<x>1280</x>
 																			<y>720</y>
@@ -7300,23 +7463,23 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="48" object_id="_545">
+														<px class_id_reference="48" object_id="_556">
 															<ClipInterval>
 																<Clip>
 																	<mLink>
 																		<ptr>
-																			<px class_id_reference="52" object_id="_546">
+																			<px class_id_reference="52" object_id="_557">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
 																							<ptr>
-																								<px class_id_reference="48" object_id_reference="_545"></px>
+																								<px class_id_reference="48" object_id_reference="_556"></px>
 																							</ptr>
 																						</mLink>
 																					</Clip>
 																					<mRender>
-																						<px class_id_reference="54" object_id="_547">
-																							<File object_id="_548">
+																						<px class_id_reference="54" object_id="_558">
+																							<File object_id="_559">
 																								<Node>
 																									<INode></INode>
 																									<parent>
@@ -7348,8 +7511,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																						<item_version>0</item_version>
 																					</mKeyFrames>
 																					<mDefaultKeyFrame>
-																						<px class_id_reference="58" object_id="_549">
-																							<KeyFrame object_id="_550"></KeyFrame>
+																						<px class_id_reference="58" object_id="_560">
+																							<KeyFrame object_id="_561"></KeyFrame>
 																							<mVolume>100</mVolume>
 																						</px>
 																					</mDefaultKeyFrame>
@@ -7360,8 +7523,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	</mLink>
 																</Clip>
 																<mRender>
-																	<px class_id_reference="59" object_id="_551">
-																		<File object_id="_552">
+																	<px class_id_reference="59" object_id="_562">
+																		<File object_id="_563">
 																			<Node>
 																				<INode></INode>
 																				<parent>
@@ -7393,8 +7556,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	<item_version>0</item_version>
 																</mKeyFrames>
 																<mDefaultKeyFrame>
-																	<px class_id_reference="61" object_id="_553">
-																		<KeyFrame object_id="_554"></KeyFrame>
+																	<px class_id_reference="61" object_id="_564">
+																		<KeyFrame object_id="_565"></KeyFrame>
 																		<mInputSize>
 																			<x>1280</x>
 																			<y>720</y>
@@ -7425,23 +7588,23 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="48" object_id="_555">
+														<px class_id_reference="48" object_id="_566">
 															<ClipInterval>
 																<Clip>
 																	<mLink>
 																		<ptr>
-																			<px class_id_reference="52" object_id="_556">
+																			<px class_id_reference="52" object_id="_567">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
 																							<ptr>
-																								<px class_id_reference="48" object_id_reference="_555"></px>
+																								<px class_id_reference="48" object_id_reference="_566"></px>
 																							</ptr>
 																						</mLink>
 																					</Clip>
 																					<mRender>
-																						<px class_id_reference="54" object_id="_557">
-																							<File object_id="_558">
+																						<px class_id_reference="54" object_id="_568">
+																							<File object_id="_569">
 																								<Node>
 																									<INode></INode>
 																									<parent>
@@ -7473,8 +7636,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																						<item_version>0</item_version>
 																					</mKeyFrames>
 																					<mDefaultKeyFrame>
-																						<px class_id_reference="58" object_id="_559">
-																							<KeyFrame object_id="_560"></KeyFrame>
+																						<px class_id_reference="58" object_id="_570">
+																							<KeyFrame object_id="_571"></KeyFrame>
 																							<mVolume>100</mVolume>
 																						</px>
 																					</mDefaultKeyFrame>
@@ -7485,8 +7648,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	</mLink>
 																</Clip>
 																<mRender>
-																	<px class_id_reference="59" object_id="_561">
-																		<File object_id="_562">
+																	<px class_id_reference="59" object_id="_572">
+																		<File object_id="_573">
 																			<Node>
 																				<INode></INode>
 																				<parent>
@@ -7518,8 +7681,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																	<item_version>0</item_version>
 																</mKeyFrames>
 																<mDefaultKeyFrame>
-																	<px class_id_reference="61" object_id="_563">
-																		<KeyFrame object_id="_564"></KeyFrame>
+																	<px class_id_reference="61" object_id="_574">
+																		<KeyFrame object_id="_575"></KeyFrame>
 																		<mInputSize>
 																			<x>1280</x>
 																			<y>720</y>
@@ -7550,8 +7713,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 														</px>
 													</item>
 													<item>
-														<px class_id="84" class_name="model::ImageClip" tracking_level="1" version="1" object_id="_565">
-															<VideoClip object_id="_566">
+														<px class_id="88" class_name="model::ImageClip" tracking_level="1" version="1" object_id="_576">
+															<VideoClip object_id="_577">
 																<ClipInterval>
 																	<Clip>
 																		<mLink>
@@ -7561,9 +7724,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																		</mLink>
 																	</Clip>
 																	<mRender>
-																		<px class_id="85" class_name="model::ImageFile" tracking_level="1" version="2" object_id="_567">
-																			<VideoFile object_id="_568">
-																				<File object_id="_569">
+																		<px class_id="89" class_name="model::ImageFile" tracking_level="1" version="2" object_id="_578">
+																			<VideoFile object_id="_579">
+																				<File object_id="_580">
 																					<Node>
 																						<INode></INode>
 																						<parent>
@@ -7583,7 +7746,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																				</File>
 																				<IVideo></IVideo>
 																			</VideoFile>
-																			<mColor class_id="86" tracking_level="0" version="0">
+																			<mColor class_id="90" tracking_level="0" version="0">
 																				<initialized>0</initialized>
 																			</mColor>
 																		</px>
@@ -7599,8 +7762,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																		<item_version>0</item_version>
 																	</mKeyFrames>
 																	<mDefaultKeyFrame>
-																		<px class_id_reference="61" object_id="_570">
-																			<KeyFrame object_id="_571"></KeyFrame>
+																		<px class_id_reference="61" object_id="_581">
+																			<KeyFrame object_id="_582"></KeyFrame>
 																			<mInputSize>
 																				<x>614</x>
 																				<y>703</y>
@@ -7642,8 +7805,8 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 									<count>1</count>
 									<item_version>1</item_version>
 									<item>
-										<px class_id="87" class_name="model::AudioTrack" tracking_level="1" version="1" object_id="_572">
-											<Track object_id="_573">
+										<px class_id="91" class_name="model::AudioTrack" tracking_level="1" version="1" object_id="_583">
+											<Track object_id="_584">
 												<mIndex>0</mIndex>
 												<mClips>
 													<count>49</count>
@@ -7652,7 +7815,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 														<px class_id_reference="52" object_id_reference="_32"></px>
 													</item>
 													<item>
-														<px class_id_reference="64" object_id="_574">
+														<px class_id_reference="64" object_id="_585">
 															<Clip>
 																<mLink>
 																	<ptr>
@@ -7708,103 +7871,103 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 														<px class_id_reference="52" object_id_reference="_189"></px>
 													</item>
 													<item>
-														<px class_id_reference="52" object_id_reference="_204"></px>
+														<px class_id_reference="52" object_id_reference="_205"></px>
 													</item>
 													<item>
-														<px class_id_reference="52" object_id_reference="_218"></px>
+														<px class_id_reference="52" object_id_reference="_220"></px>
 													</item>
 													<item>
-														<px class_id_reference="52" object_id_reference="_228"></px>
+														<px class_id_reference="52" object_id_reference="_230"></px>
 													</item>
 													<item>
-														<px class_id_reference="52" object_id_reference="_242"></px>
+														<px class_id_reference="52" object_id_reference="_245"></px>
 													</item>
 													<item>
-														<px class_id_reference="52" object_id_reference="_255"></px>
+														<px class_id_reference="52" object_id_reference="_259"></px>
 													</item>
 													<item>
-														<px class_id_reference="52" object_id_reference="_265"></px>
+														<px class_id_reference="52" object_id_reference="_269"></px>
 													</item>
 													<item>
-														<px class_id_reference="52" object_id_reference="_278"></px>
+														<px class_id_reference="52" object_id_reference="_283"></px>
 													</item>
 													<item>
-														<px class_id_reference="52" object_id_reference="_293"></px>
+														<px class_id_reference="52" object_id_reference="_296"></px>
 													</item>
 													<item>
-														<px class_id_reference="52" object_id_reference="_303"></px>
+														<px class_id_reference="52" object_id_reference="_306"></px>
 													</item>
 													<item>
-														<px class_id_reference="52" object_id_reference="_318"></px>
+														<px class_id_reference="52" object_id_reference="_319"></px>
 													</item>
 													<item>
-														<px class_id_reference="52" object_id_reference="_332"></px>
+														<px class_id_reference="52" object_id_reference="_334"></px>
 													</item>
 													<item>
-														<px class_id_reference="52" object_id_reference="_342"></px>
+														<px class_id_reference="52" object_id_reference="_344"></px>
 													</item>
 													<item>
-														<px class_id_reference="52" object_id_reference="_356"></px>
+														<px class_id_reference="52" object_id_reference="_359"></px>
 													</item>
 													<item>
-														<px class_id_reference="52" object_id_reference="_366"></px>
+														<px class_id_reference="52" object_id_reference="_373"></px>
 													</item>
 													<item>
-														<px class_id_reference="52" object_id_reference="_376"></px>
+														<px class_id_reference="52" object_id_reference="_383"></px>
 													</item>
 													<item>
-														<px class_id_reference="52" object_id_reference="_386"></px>
+														<px class_id_reference="52" object_id_reference="_397"></px>
 													</item>
 													<item>
-														<px class_id_reference="52" object_id_reference="_396"></px>
+														<px class_id_reference="52" object_id_reference="_407"></px>
 													</item>
 													<item>
-														<px class_id_reference="52" object_id_reference="_406"></px>
+														<px class_id_reference="52" object_id_reference="_417"></px>
 													</item>
 													<item>
-														<px class_id_reference="52" object_id_reference="_416"></px>
+														<px class_id_reference="52" object_id_reference="_427"></px>
 													</item>
 													<item>
-														<px class_id_reference="52" object_id_reference="_426"></px>
+														<px class_id_reference="52" object_id_reference="_437"></px>
 													</item>
 													<item>
-														<px class_id_reference="52" object_id_reference="_436"></px>
+														<px class_id_reference="52" object_id_reference="_447"></px>
 													</item>
 													<item>
-														<px class_id_reference="52" object_id_reference="_446"></px>
+														<px class_id_reference="52" object_id_reference="_457"></px>
 													</item>
 													<item>
-														<px class_id_reference="52" object_id_reference="_456"></px>
+														<px class_id_reference="52" object_id_reference="_467"></px>
 													</item>
 													<item>
-														<px class_id_reference="52" object_id_reference="_466"></px>
+														<px class_id_reference="52" object_id_reference="_477"></px>
 													</item>
 													<item>
-														<px class_id_reference="52" object_id_reference="_476"></px>
+														<px class_id_reference="52" object_id_reference="_487"></px>
 													</item>
 													<item>
-														<px class_id_reference="52" object_id_reference="_486"></px>
+														<px class_id_reference="52" object_id_reference="_497"></px>
 													</item>
 													<item>
-														<px class_id_reference="52" object_id_reference="_496"></px>
+														<px class_id_reference="52" object_id_reference="_507"></px>
 													</item>
 													<item>
-														<px class_id_reference="52" object_id_reference="_506"></px>
+														<px class_id_reference="52" object_id_reference="_517"></px>
 													</item>
 													<item>
-														<px class_id_reference="52" object_id_reference="_516"></px>
+														<px class_id_reference="52" object_id_reference="_527"></px>
 													</item>
 													<item>
-														<px class_id_reference="52" object_id_reference="_526"></px>
+														<px class_id_reference="52" object_id_reference="_537"></px>
 													</item>
 													<item>
-														<px class_id_reference="52" object_id_reference="_536"></px>
+														<px class_id_reference="52" object_id_reference="_547"></px>
 													</item>
 													<item>
-														<px class_id_reference="52" object_id_reference="_546"></px>
+														<px class_id_reference="52" object_id_reference="_557"></px>
 													</item>
 													<item>
-														<px class_id_reference="52" object_id_reference="_556"></px>
+														<px class_id_reference="52" object_id_reference="_567"></px>
 													</item>
 												</mClips>
 												<mHeight>50</mHeight>
@@ -7819,7 +7982,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 							</px>
 						</item>
 						<item>
-							<px class_id_reference="32" object_id="_575">
+							<px class_id_reference="32" object_id="_586">
 								<Node>
 									<INode></INode>
 									<parent>
@@ -7829,11 +7992,11 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 										<count>1</count>
 										<item_version>1</item_version>
 										<item>
-											<px class_id_reference="39" object_id="_576">
+											<px class_id_reference="39" object_id="_587">
 												<Node>
 													<INode></INode>
 													<parent>
-														<px class_id_reference="32" object_id_reference="_575"></px>
+														<px class_id_reference="32" object_id_reference="_586"></px>
 													</parent>
 													<mChildren>
 														<count>0</count>
@@ -7864,39 +8027,39 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 		</px>
 	</mRoot>
 </project>
-<view class_id="88" tracking_level="0" version="1">
-	<window class_id="89" tracking_level="0" version="1">
-		<projectview class_id="90" tracking_level="0" version="1">
-			<mOpenFolders class_id="91" tracking_level="0" version="0">
+<view class_id="92" tracking_level="0" version="1">
+	<window class_id="93" tracking_level="0" version="1">
+		<projectview class_id="94" tracking_level="0" version="1">
+			<mOpenFolders class_id="95" tracking_level="0" version="0">
 				<count>2</count>
 				<item_version>1</item_version>
 				<item>
 					<px class_id_reference="33" object_id_reference="_17"></px>
 				</item>
 				<item>
-					<px class_id_reference="32" object_id_reference="_575"></px>
+					<px class_id_reference="32" object_id_reference="_586"></px>
 				</item>
 			</mOpenFolders>
 		</projectview>
-		<timelinesview class_id="92" tracking_level="0" version="1">
+		<timelinesview class_id="96" tracking_level="0" version="1">
 			<notebookCount>1</notebookCount>
 			<selectedPage>0</selectedPage>
-			<sequence class_id="93" tracking_level="0" version="1">
+			<sequence class_id="97" tracking_level="0" version="1">
 				<px class_id_reference="40" object_id_reference="_28"></px>
 			</sequence>
-			<timeline class_id="94" tracking_level="0" version="2">
-				<zoom class_id="95" tracking_level="0" version="2">
+			<timeline class_id="98" tracking_level="0" version="2">
+				<zoom class_id="99" tracking_level="0" version="2">
 					<mZoom>
 						<numerator>1</numerator>
 						<denominator>1</denominator>
 					</mZoom>
 				</zoom>
-				<intervals class_id="96" tracking_level="0" version="1">
-					<mIntervals class_id="97" tracking_level="0" version="0">
-						<listofpairs class_id="98" tracking_level="0" version="0">
+				<intervals class_id="100" tracking_level="0" version="1">
+					<mIntervals class_id="101" tracking_level="0" version="0">
+						<listofpairs class_id="102" tracking_level="0" version="0">
 							<count>2</count>
 							<item_version>0</item_version>
-							<item class_id="99" tracking_level="0" version="0">
+							<item class_id="103" tracking_level="0" version="0">
 								<first>85</first>
 								<second>265</second>
 							</item>
@@ -7907,13 +8070,13 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 						</listofpairs>
 					</mIntervals>
 				</intervals>
-				<scrolling class_id="100" tracking_level="0" version="0">
-					<mCenterPts>7927</mCenterPts>
+				<scrolling class_id="104" tracking_level="0" version="0">
+					<mCenterPts>7907</mCenterPts>
 				</scrolling>
-				<cursor class_id="101" tracking_level="0" version="0">
-					<mCursorPosition>7927</mCursorPosition>
+				<cursor class_id="105" tracking_level="0" version="0">
+					<mCursorPosition>7907</mCursorPosition>
 				</cursor>
-				<player class_id="102" tracking_level="0" version="0">
+				<player class_id="106" tracking_level="0" version="0">
 					<speed>100</speed>
 				</player>
 			</timeline>

@@ -67,7 +67,13 @@ if (WIN32 AND NOT UNIX)
   install (FILES ${BOOST_INSTALL}                                               COMPONENT ${APPNAME} DESTINATION .      CONFIGURATIONS Release MinSizeRel RelWithDebInfo)
   install (FILES ${BOOST_INSTALL_DEBUG}                                         COMPONENT ${APPNAME} DESTINATION .      CONFIGURATIONS Debug)
   install (FILES ${PROJECT_BINARY_DIR}/main/stripped.pdb                        COMPONENT ${APPNAME} DESTINATION .      CONFIGURATIONS RelWithDebInfo     RENAME ${APPNAME_LOWER}.pdb ) # For generating stack traces the pdb file is distributed
-  install (DIRECTORY ${PROJECT_SOURCE_DIR}/images/                              COMPONENT ${APPNAME} DESTINATION images)
+  install (
+    DIRECTORY ${PROJECT_SOURCE_DIR}/images/                              
+    COMPONENT ${APPNAME} 
+	DESTINATION images        
+    PATTERN "*.svg" EXCLUDE
+	PATTERN "*.rc" EXCLUDE
+	PATTERN "*.pdn" EXCLUDE)
   install (DIRECTORY ${PROJECT_SOURCE_DIR}/html/                                COMPONENT ${APPNAME} DESTINATION html)
   install (DIRECTORY ${PROJECT_SOURCE_DIR}/lang/                                COMPONENT ${APPNAME} DESTINATION lang)
   install (FILES ${PROJECT_BINARY_DIR}/changelog.html                           COMPONENT ${APPNAME} DESTINATION html/about)
@@ -99,7 +105,10 @@ else ()
   install (
     DIRECTORY   ${PROJECT_SOURCE_DIR}/images/
     COMPONENT   ${APPNAME_LOWER}
-    DESTINATION share/${APPNAME_LOWER}/images )
+    DESTINATION share/${APPNAME_LOWER}/images
+    PATTERN "*.svg" EXCLUDE
+	PATTERN "*.rc" EXCLUDE
+	PATTERN "*.pdn" EXCLUDE	)
   install (
     DIRECTORY   ${PROJECT_SOURCE_DIR}/html/
     COMPONENT   ${APPNAME_LOWER}

@@ -26,7 +26,8 @@ DEFINE_EVENT(EVENT_TRANSITION_PARAMETER_CHANGED, EventTransitionParameterChanged
 //////////////////////////////////////////////////////////////////////////
 
 TransitionParameter::TransitionParameter(const TransitionParameter& other)
-    : mDescription{ other.mDescription }
+    : mName{ other.mName }
+    , mDescription{ other.mDescription }
 {
 }
 
@@ -34,11 +35,14 @@ TransitionParameter::TransitionParameter(const TransitionParameter& other)
 // TO BE CALLED WHEN THE DATA CHANGES
 //////////////////////////////////////////////////////////////////////////
 
-void TransitionParameter::signalUpdate(std::function<void()> update)
+void TransitionParameter::signalUpdate()
 {
-    update();
-    EventTransitionParameterChanged changedEvent{ mDescription };
+    EventTransitionParameterChanged changedEvent{ mName };
     ProcessEvent(changedEvent);
+    if (mOnChange != nullptr)
+    {
+        mOnChange(mName);
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////

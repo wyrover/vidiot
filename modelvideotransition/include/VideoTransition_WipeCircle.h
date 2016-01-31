@@ -42,7 +42,7 @@ public:
 
     bool supports(TransitionType type) const override;
 
-    std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> getParameters() const override;
+    std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> getAvailableParameters() const override;
 
     wxString getDescription(TransitionType type) const override;
 

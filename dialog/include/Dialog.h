@@ -73,6 +73,18 @@ public:
 
     //////////////////////////////////////////////////////////////////////////
 
+    /// Set a fixed outcome for the next file selection for testing.
+    /// \param file fixed file name which will be returned for the next getFile() call
+    void setFile(const wxString& file);
+
+    /// Open a file selection dialog. If before this call setFile() was called, the file given in
+    /// setFile() is returned and that value is reset.
+    /// In case the dialog is aborted or no file is selected for another reason, an empty string is returned.
+    /// \post !sFile
+    wxString getFile(const wxString& message, const wxString& defaultPath = wxEmptyString, const wxString& filetypes = Dialog::getMediaFileTypes(), wxWindow* parent = 0);
+
+    //////////////////////////////////////////////////////////////////////////
+
     /// Set a fixed outcome for the next files selection for testing.
     /// \param files fixed list of absolute file names which will be returned for the next getFiles() call
     void setFiles(const wxStrings& files);
@@ -154,6 +166,7 @@ private:
 
     boost::optional<wxString> mDir;
     boost::optional<wxString> mSaveFile;
+    boost::optional<wxString> mFile;
     boost::optional<wxStrings> mFiles;
     boost::optional<wxString> mText;
     boost::optional<wxString> mComboText;

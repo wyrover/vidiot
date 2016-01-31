@@ -66,7 +66,7 @@ public:
 
     void pushInfoText(const wxString& text);
     void popInfoText();
-    void timedInfoText(const wxString& text);
+    void timedInfoText(const wxString& text, int ms = 5000);
 
     void setQueueText(const wxString& text = "");
 

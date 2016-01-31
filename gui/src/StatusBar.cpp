@@ -125,10 +125,10 @@ void StatusBar::popInfoText()
     PopStatusText(sInfo);
 }
 
-void StatusBar::timedInfoText(const wxString& text)
+void StatusBar::timedInfoText(const wxString& text, int ms)
 {
     pushInfoText(text);
-    mInfoTimer->StartOnce(5000);
+    mInfoTimer->StartOnce(ms);
 }
 
 void StatusBar::setQueueText(const wxString& text)

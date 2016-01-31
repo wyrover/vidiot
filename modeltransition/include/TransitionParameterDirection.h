@@ -75,8 +75,8 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    inline Direction getValue() const { return mValue; }
-    inline void setValue(Direction value) { mValue = value; }
+    Direction getValue() const;
+    void setValue(Direction value);
 
 protected:
 
