@@ -42,7 +42,7 @@ bool WipeClock::supports(TransitionType type) const
         type == TransitionTypeFadeOutToNext;
 }
 
-std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> WipeClock::getParameters() const
+std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> WipeClock::getAvailableParameters() const
 {
     return
     {

@@ -48,8 +48,13 @@ public:
     virtual wxWindow* makeWidget(wxWindow *parent) = 0;
     virtual void destroyWidget() = 0;
 
+    wxString getName() { return mName; }
+    void setName(const wxString& name) { mName = name; }
+
     wxString getDescription() { return mDescription; }
-    void setDescription(wxString description) { mDescription = description; }
+    void setDescription(const wxString& description) { mDescription = description; }
+
+    void setOnChanged(std::function<void(const wxString&)> onChange) { mOnChange = onChange; }
 
 protected:
 
@@ -65,9 +70,8 @@ protected:
     // TO BE CALLED WHEN THE DATA CHANGES
     //////////////////////////////////////////////////////////////////////////
 
-    /// Must be called to set the data.
     /// This ensures events are generated.
-    void signalUpdate(std::function<void()> update);
+    void signalUpdate();
 
 private:
 
@@ -75,7 +79,9 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
+    wxString mName; // Never serialize this
     wxString mDescription; // Never serialize this
+    std::function<void(const wxString&)> mOnChange = nullptr;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

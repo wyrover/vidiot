@@ -67,9 +67,17 @@ void save(Archive & ar, const wxFileName& filename, const unsigned int version)
         // the config setting.
         // Done to avoid having to maintain two test reference sets
         // and to ensure portability of projects (with relative paths).
-        wxFileName path{ model::Project::get().convertPathForSaving(filename) };
-        wxString saveString{ util::path::toSaveString(path) };
-        ar & boost::serialization::make_nvp(sFileName.c_str(), saveString);
+        if (filename.IsOk())
+        {
+            wxFileName path{ model::Project::get().convertPathForSaving(filename) };
+            wxString saveString{ util::path::toSaveString(path) };
+            ar & boost::serialization::make_nvp(sFileName.c_str(), saveString);
+        }
+        else
+        {
+            wxString saveString{ "" };
+            ar & boost::serialization::make_nvp(sFileName.c_str(), saveString);
+        }
     }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
     catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
@@ -89,8 +97,15 @@ void load(Archive & ar, wxFileName& filename, const unsigned int version)
         // the config setting.
         // Done to avoid having to maintain two test reference sets
         // and to ensure portability of projects (with relative paths).
-        filename.Assign(saveString, wxPATH_WIN);
-        filename = model::Project::get().convertPathAfterLoading(filename);
+        if (!saveString.IsEmpty())
+        {
+            filename.Assign(saveString, wxPATH_WIN);
+            filename = model::Project::get().convertPathAfterLoading(filename);
+        }
+        else
+        {
+            filename.Clear();
+        }
     }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
     catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }

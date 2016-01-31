@@ -22,6 +22,7 @@
 namespace model {
 
 wxString TransitionParameterInt::sParameterAngle{ "angle" };
+wxString TransitionParameterInt::sParameterRotations{ "rotations" };
 wxString TransitionParameterInt::sParameterBandsCount{ "bandscount" };
 
 //////////////////////////////////////////////////////////////////////////
@@ -117,37 +118,63 @@ void TransitionParameterInt::destroyWidget()
     mSlider = nullptr;
     mSpin = nullptr;
 }
+//////////////////////////////////////////////////////////////////////////
+// GET/SET
+//////////////////////////////////////////////////////////////////////////
+
+int TransitionParameterInt::getValue() const 
+{ 
+    return mValue; 
+}
+
+void TransitionParameterInt::setValue(int value) 
+{
+    if (mValue != value)
+    {
+        VAR_INFO(value);
+        if (mSlider != nullptr)
+        {
+            mSlider->SetValue(value);
+        }
+        if (mSpin != nullptr)
+        {
+            mSpin->SetValue(value);
+        }
+        mValue = value;
+    }
+    signalUpdate();
+}
+
+int TransitionParameterInt::getMin() const
+{
+    return mMin;
+}
+
+int TransitionParameterInt::getMax() const
+{
+    return mMax;
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 // GUI EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void TransitionParameterInt::onChange(int value)
-{
-    VAR_INFO(value);
-    CatchExceptions([this, value]
-    {
-        if (value != mValue)
-        {
-            signalUpdate([this, value]
-            {
-                mSlider->SetValue(value);
-                mSpin->SetValue(value);
-                mValue = value;
-            });
-        }
-    });
-}
-
 void TransitionParameterInt::onSlider(wxCommandEvent& event)
 {
-    onChange(mSlider->GetValue());
+    CatchExceptions([this]
+    {
+        setValue(mSlider->GetValue());
+    });
     event.Skip();
 }
 
 void TransitionParameterInt::onSpin(wxSpinEvent& event)
 {
-    onChange(mSpin->GetValue()); // NOT: event.GetValue() -- The event's value may be outside the range boundaries
+    CatchExceptions([this]
+    {
+        setValue(mSpin->GetValue()); // NOT: event.GetValue() -- The event's value may be outside the range boundaries
+    });
     event.Skip();
 }
 

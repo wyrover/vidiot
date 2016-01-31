@@ -24,7 +24,10 @@
 #include "TransitionParameterBool.h"
 #include "TransitionParameterColor.h"
 #include "TransitionParameterDirection.h"
+#include "TransitionParameterDouble.h"
+#include "TransitionParameterImage.h"
 #include "TransitionParameterInt.h"
+#include "TransitionParameterRotationDirection.h"
 #include "UtilSerializeBoost.h"
 
 namespace model {
@@ -49,6 +52,10 @@ void Transition::init(boost::optional<pts> nFramesLeft, boost::optional<pts> nFr
     ASSERT_MORE_THAN_ZERO(getLength());
 
     initParameters(getCurrentParameters());
+    for (auto parameter : mParameters)
+    {
+        parameter.second->setOnChanged(std::bind(&Transition::onParameterChanged, this, std::placeholders::_1));
+    }
 
     VAR_DEBUG(this)(nFramesLeft)(nFramesRight);
 }
@@ -60,6 +67,10 @@ Transition::Transition(const Transition& other)
     , mParameters(make_cloned<wxString, TransitionParameter>(other.mParameters))
 {
     VAR_DEBUG(other)(*this);
+    for (auto parameter : mParameters)
+    {
+        parameter.second->setOnChanged(std::bind(&Transition::onParameterChanged, this, std::placeholders::_1));
+    }
 }
 
 Transition::~Transition()
@@ -268,15 +279,14 @@ bool Transition::supports(TransitionType type) const
 
 void Transition::initParameters(std::map<wxString, TransitionParameterPtr> currentValues)
 {
-    std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> known{ getParameters() };
-
     mParameters.clear(); // Start with nothing
-    for (auto tuple : getParameters())
+    for (auto tuple : getAvailableParameters())
     {
         wxString name{ std::get<0>(tuple) };
         wxString description{ std::get<1>(tuple) };
         model::TransitionParameterPtr parameter{ std::get<2>(tuple) };
 
+        parameter->setName(name);
         parameter->setDescription(description);
 
         if (currentValues.find(name) != currentValues.end())
@@ -290,12 +300,26 @@ void Transition::initParameters(std::map<wxString, TransitionParameterPtr> curre
         }
 
         mParameters[name] = parameter;
+        // todo ensure proper ordering of parameter widgets by adding an index to getParameters (or by having it return a vector?) and storing the index just like description, and then retrieve the ordered list in DetailsClip::createTransitionParameterWidgets
     }
 }
 
 std::map<wxString, TransitionParameterPtr> Transition::getCurrentParameters() const
 {
     return mParameters;
+}
+
+std::vector<TransitionParameterPtr> Transition::getSortedParameters() const
+{
+    std::vector<TransitionParameterPtr> result;
+    for (auto tuple : getAvailableParameters())
+    {
+        wxString name{ std::get<0>(tuple) };
+        ASSERT_MAP_CONTAINS(mParameters, name);
+        auto it{ mParameters.find(name) };
+        result.push_back(it->second);
+    }
+    return result;
 }
     
 template <typename PARAMETERTYPE>
@@ -309,9 +333,12 @@ boost::shared_ptr<PARAMETERTYPE> Transition::getParameter(wxString name) const
 }
 
 template boost::shared_ptr<TransitionParameterBool> Transition::getParameter<TransitionParameterBool>(wxString name) const;
+template boost::shared_ptr<TransitionParameterDouble> Transition::getParameter<TransitionParameterDouble>(wxString name) const;
+template boost::shared_ptr<TransitionParameterImage> Transition::getParameter<TransitionParameterImage>(wxString name) const;
 template boost::shared_ptr<TransitionParameterInt> Transition::getParameter<TransitionParameterInt>(wxString name) const;
 template boost::shared_ptr<TransitionParameterColor> Transition::getParameter<TransitionParameterColor>(wxString name) const;
 template boost::shared_ptr<TransitionParameterDirection> Transition::getParameter<TransitionParameterDirection>(wxString name) const;
+template boost::shared_ptr<TransitionParameterRotationDirection> Transition::getParameter<TransitionParameterRotationDirection>(wxString name) const;
 
 //////////////////////////////////////////////////////////////////////////
 // LOGGING

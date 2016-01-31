@@ -133,12 +133,20 @@ public:
     /// This is used for initialization after reading from disk.
     void initParameters(std::map<wxString, TransitionParameterPtr> currentValues);
 
-    virtual std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> getParameters() const = 0;
+    /// \note Ordering as returned here is the ordering in which the widgets must be shown.
+    /// \return Possible parameters (name, description, parameter) holding default values. 
+    virtual std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> getAvailableParameters() const = 0;
 
+    /// \return Currently configured parameters for this transition
     std::map<wxString, TransitionParameterPtr> getCurrentParameters() const;
+
+    /// \return Sorted list of currently configured parameters, for creating widgets in the proper order.
+    std::vector<TransitionParameterPtr> getSortedParameters() const;
 
     template <typename PARAMETERTYPE>
     boost::shared_ptr<PARAMETERTYPE> getParameter(wxString name) const;
+
+    virtual void onParameterChanged(const wxString& name) {};
 
 protected:
 

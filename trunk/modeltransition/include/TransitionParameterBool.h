@@ -61,8 +61,8 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    inline bool getValue() const { return mValue; }
-    inline void setValue(bool value) { mValue = value; }
+    bool getValue() const;
+    void setValue(bool value);
 
 protected:
 

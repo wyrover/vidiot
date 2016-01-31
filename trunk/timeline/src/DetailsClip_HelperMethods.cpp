@@ -467,15 +467,14 @@ void DetailsClip::createTransitionParameterWidgets()
     if (mTransitionClone)
     {
         mTransitionType->Clear();
-        for (auto n_and_transition : getPossibleVideoTransitions())
+        for (auto n_and_transition : getPossibleVideoTransitions())     // todo sort
         {
             mTransitionType->Append(n_and_transition.second->getDescription(mTransitionClone->getTransitionType()));
         }
         mTransitionType->SetStringSelection(mTransitionClone->getDescription());
 
-        for (auto name_and_parameter : mTransitionClone->getCurrentParameters())
+        for (auto parameter : mTransitionClone->getSortedParameters())
         {
-            model::TransitionParameterPtr parameter{ name_and_parameter.second };
             wxStaticText* title{ new wxStaticText(mTransitionPanel, wxID_ANY, parameter->getDescription(), wxDefaultPosition, wxSize(120, -1), wxST_ELLIPSIZE_END) };
             mTransitionBoxSizer->Add(title, wxSizerFlags(0).CenterVertical().Left());//, 0, wxALL|wxALIGN_TOP, 0);
             mTransitionBoxSizer->Add(parameter->makeWidget(mTransitionPanel), wxSizerFlags(1).Expand());
@@ -496,9 +495,8 @@ void DetailsClip::destroyTransitionParameterWidgets()
 
     if (mTransitionClone)
     {
-        for (auto name_and_parameter : mTransitionClone->getCurrentParameters())
+        for (auto parameter : mTransitionClone->getSortedParameters())
         {
-            model::TransitionParameterPtr parameter{ name_and_parameter.second };
             parameter->Unbind(model::EVENT_TRANSITION_PARAMETER_CHANGED, &DetailsClip::onTransitionParameterChanged, this);
             parameter->destroyWidget();
         }

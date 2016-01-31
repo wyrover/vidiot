@@ -88,15 +88,38 @@ void TransitionParameterColor::destroyWidget()
 }
 
 //////////////////////////////////////////////////////////////////////////
+// GET/SET
+//////////////////////////////////////////////////////////////////////////
+
+wxColour TransitionParameterColor::getValue() const 
+{ 
+    return mValue; 
+}
+
+void TransitionParameterColor::setValue(wxColour value) 
+{
+    if (mValue != value)
+    {
+        VAR_INFO(value);
+        mValue = value;
+        if (mControl != nullptr)
+        {
+            mControl->SetColour(mValue);
+        }
+        signalUpdate();
+    }
+}
+
+//////////////////////////////////////////////////////////////////////////
 // GUI EVENTS
 //////////////////////////////////////////////////////////////////////////
 
 void TransitionParameterColor::onColor(wxColourPickerEvent& event)
 {
-    if (mValue != event.GetColour())
+    CatchExceptions([this]
     {
-        signalUpdate([this, event] { mValue = event.GetColour(); });
-    }
+        setValue(mControl->GetColour());
+    });
     event.Skip();
 }
 

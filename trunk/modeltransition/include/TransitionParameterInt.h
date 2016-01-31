@@ -30,6 +30,7 @@ public:
     // Defining them here ensures that these parameters are maintained when
     // changing the transition type.
     static wxString sParameterAngle;
+    static wxString sParameterRotations;
     static wxString sParameterBandsCount;
 
     //////////////////////////////////////////////////////////////////////////
@@ -60,8 +61,10 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    inline int getValue() const { return mValue; }
-    inline void setValue(int value) { mValue = value; }
+    int getValue() const;
+    void setValue(int value);
+    int getMin() const;
+    int getMax() const;
 
 protected:
 
@@ -78,8 +81,6 @@ private:
     //////////////////////////////////////////////////////////////////////////
     // GUI EVENTS
     //////////////////////////////////////////////////////////////////////////
-
-    void onChange(int value);
 
     void onSlider(wxCommandEvent& event);
     void onSpin(wxSpinEvent& event);

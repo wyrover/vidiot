@@ -214,7 +214,7 @@ double Convert::degreesToRadians(rational64 degrees)
 // static
 int Convert::doubleToInt(double x)
 {
-    return (x >= 0.0) ? static_cast<int>(std::floor(x + 0.5)) : static_cast<int>(std::ceil(x - 0.5));
+    return (x >= 0.0) ? static_cast<int>(std::floor(x + 0.5)) : static_cast<int>(std::ceil(x - 0.5));     // todo std::trunc?
 }
 
 // static

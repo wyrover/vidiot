@@ -19,7 +19,7 @@
 
 #include "Config.h"
 #include "UtilException.h"
-
+                                              //todo rename to direction8
 namespace model {
 
 IMPLEMENTENUM(Direction);
@@ -105,19 +105,38 @@ void TransitionParameterDirection::destroyWidget()
 }
 
 //////////////////////////////////////////////////////////////////////////
+// GET/SET
+//////////////////////////////////////////////////////////////////////////
+
+Direction TransitionParameterDirection::getValue() const 
+{ 
+    return mValue; 
+}
+
+void TransitionParameterDirection::setValue(Direction value) 
+{ 
+    if (mValue != value)
+    {
+        mValue = value;
+        if (mControl != nullptr)
+        {
+            VAR_INFO(value);
+            mControl->select(value);
+        }
+        signalUpdate();
+    }
+}
+
+
+//////////////////////////////////////////////////////////////////////////
 // GUI EVENTS
 //////////////////////////////////////////////////////////////////////////
 
 void TransitionParameterDirection::onDirection(wxCommandEvent& event)
 {
-    Direction value{ mControl->getValue() };
-    VAR_INFO(value);
-    CatchExceptions([this, value]
+    CatchExceptions([this]
     {
-        if (mValue != value)
-        {
-            signalUpdate([this, value] { mValue = value; });
-        }
+        setValue(mControl->getValue());
     });
     event.Skip();
 }

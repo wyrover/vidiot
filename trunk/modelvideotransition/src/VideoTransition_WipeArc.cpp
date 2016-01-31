@@ -43,7 +43,7 @@ bool WipeArc::supports(TransitionType type) const
         type == TransitionTypeFadeOutToNext;
 }
 
-std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> WipeArc::getParameters() const
+std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> WipeArc::getAvailableParameters() const
 {
     return
     {
