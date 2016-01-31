@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#include "VideoTransition_ImageZoom.h"
+#include "VideoTransition_WipeImage.h"
 
 #include <wx/textfile.h>
 #include "Convert.h"
@@ -31,27 +31,27 @@
 namespace model { namespace video { namespace transition {
 
 // static 
-wxString ImageZoom::getDefaultZoomImagesPath()
+wxString WipeImage::getDefaultZoomImagesPath()
 {
-    return util::path::getCombinedPath(util::path::getResourcesPath(), { "images","zoomimage" }).GetFullPath();
+    return util::path::getCombinedPath(util::path::getResourcesPath(), { "images","wipeimage" }).GetFullPath();
 }
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-ImageZoom::ImageZoom(const wxString& file, const wxString& name)
+WipeImage::WipeImage(const wxString& file, const wxString& name)
     : VideoTransitionOpacity()
     , mName(name)
 {
 }
 
-ImageZoom* ImageZoom::clone() const
+WipeImage* WipeImage::clone() const
 {
-    return new ImageZoom(static_cast<const ImageZoom&>(*this));
+    return new WipeImage(static_cast<const WipeImage&>(*this));
 }
 
-ImageZoom::ImageZoom(const ImageZoom& other)
+WipeImage::WipeImage(const WipeImage& other)
     : VideoTransitionOpacity(other)
     , mImage(nullptr) // Do not copy the cached image
 {
@@ -61,14 +61,14 @@ ImageZoom::ImageZoom(const ImageZoom& other)
 // TRANSITION
 //////////////////////////////////////////////////////////////////////////
 
-bool ImageZoom::supports(TransitionType type) const
+bool WipeImage::supports(TransitionType type) const
 {
     return
         type == TransitionTypeFadeInFromPrevious ||
         type == TransitionTypeFadeOutToNext;
 }
 
-std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> ImageZoom::getAvailableParameters() const
+std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> WipeImage::getAvailableParameters() const
 {
     return
     {
@@ -80,12 +80,12 @@ std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> ImageZoom::g
     };
 }
 
-wxString ImageZoom::getDescription(TransitionType type) const
+wxString WipeImage::getDescription(TransitionType type) const
 {
     return _("Zoom Image");
 }
 
-void ImageZoom::onParameterChanged(const wxString& name)
+void WipeImage::onParameterChanged(const wxString& name)
 {                              
     if (name == TransitionParameterImage::sParameterImageFilename)
     {
@@ -147,8 +147,7 @@ void ImageZoom::onParameterChanged(const wxString& name)
 // VIDEOTRANSITIONOPACITY
 //////////////////////////////////////////////////////////////////////////
 
-// todo rename to wipeimage?
-std::function<float (int,int)> ImageZoom::getRightMethod(const wxImagePtr& image, const float& factor) const
+std::function<float (int,int)> WipeImage::getRightMethod(const wxImagePtr& image, const float& factor) const
 {
     wxFileName filename{ getParameter<TransitionParameterImage>(TransitionParameterImage::sParameterImageFilename)->getValue() };
     // Note: the scaling parameter gives the relative factor to apply the the 'pattern image' size, at the end of the (non inversed) transition.
@@ -251,7 +250,7 @@ std::function<float (int,int)> ImageZoom::getRightMethod(const wxImagePtr& image
 //////////////////////////////////////////////////////////////////////////
 
 template<class Archive>
-void ImageZoom::serialize(Archive & ar, const unsigned int version)
+void WipeImage::serialize(Archive & ar, const unsigned int version)
 {
     try
     {
@@ -264,4 +263,4 @@ void ImageZoom::serialize(Archive & ar, const unsigned int version)
 
 }}} //namespace
 
-BOOST_CLASS_EXPORT_IMPLEMENT(model::video::transition::ImageZoom)
+BOOST_CLASS_EXPORT_IMPLEMENT(model::video::transition::WipeImage)
