@@ -18,7 +18,7 @@
 #include "TestVideoTransitions.h"
 
 #include "TransitionParameterImage.h"
-#include "VideoTransition_ImageZoom.h"
+#include "VideoTransition_WipeImage.h"
 
 namespace test {
 
@@ -108,10 +108,10 @@ void TestVideoTransitions::testWipeImage()
     TimelineZoomIn(6);
 
     StartTest("Preparation: Create and select transition and maximize preview pane");
-    model::IPaths files{ GetSupportedFiles(model::video::transition::ImageZoom::getDefaultZoomImagesPath()) };
+    model::IPaths files{ GetSupportedFiles(model::video::transition::WipeImage::getDefaultZoomImagesPath()) };
     util::thread::RunInMainAndWait([]() 
     { 
-        gui::timeline::cmd::createTransition(getSequence(), VideoClip(0, 0), model::TransitionTypeFadeOutToNext, boost::make_shared<model::video::transition::ImageZoom>()); 
+        gui::timeline::cmd::createTransition(getSequence(), VideoClip(0, 0), model::TransitionTypeFadeOutToNext, boost::make_shared<model::video::transition::WipeImage>()); 
     });
     model::VideoTransitionPtr transition{ VideoTransition(0,1) };
     MaximizePreviewPane(true, false);

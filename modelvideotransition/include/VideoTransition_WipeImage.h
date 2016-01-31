@@ -21,7 +21,7 @@
 
 namespace model { namespace video { namespace transition {
 
-class ImageZoom
+class WipeImage
     :   public VideoTransitionOpacity
 {
 public:
@@ -32,13 +32,13 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    ImageZoom() = default;
+    WipeImage() = default;
 
-    ImageZoom(const wxString& file, const wxString& name);
+    WipeImage(const wxString& file, const wxString& name);
 
-    ImageZoom* clone() const override;
+    WipeImage* clone() const override;
 
-    virtual ~ImageZoom() = default;
+    virtual ~WipeImage() = default;
 
     //////////////////////////////////////////////////////////////////////////
     // TRANSITION
@@ -66,7 +66,7 @@ protected:
 public:
     /// Copy constructor. Use make_cloned for making deep copies of objects.
     /// \see make_cloned
-    ImageZoom(const ImageZoom& other);
+    WipeImage(const WipeImage& other);
 
 private:
 
@@ -89,5 +89,5 @@ private:
 
 }}} // namespace
 
-BOOST_CLASS_VERSION(model::video::transition::ImageZoom, 1)
-BOOST_CLASS_EXPORT_KEY(model::video::transition::ImageZoom)
+BOOST_CLASS_VERSION(model::video::transition::WipeImage, 1)
+BOOST_CLASS_EXPORT_KEY(model::video::transition::WipeImage)
