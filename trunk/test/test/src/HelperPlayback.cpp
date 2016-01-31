@@ -88,5 +88,33 @@ void Play(int ms)
     stopped.wait();
 }
 
+void MaximizePreviewPane(bool maximizeWindow, bool hideDetails)
+{
+    WindowTriggerMenu(ID_SHOW_PROJECT);
+    if (hideDetails) 
+    { 
+        WindowTriggerMenu(ID_SHOW_DETAILS); 
+    }
+    wxRect r{ getTimeline().getPlayer()->GetScreenRect() };
+    wxPoint p{ r.GetLeft() + r.GetWidth() / 2, r.GetBottom() + 4 };
+
+    util::thread::RunInMainAndWait([maximizeWindow]
+    {
+        if (maximizeWindow)
+        {
+            gui::Window::get().Maximize();
+        }
+
+        // Make preview as large as possible. Trick taken from http://trac.wxwidgets.org/ticket/13180
+        // wxAUI hack: set minimum height to desired value, then call wxAuiPaneInfo::Fixed() to apply it
+        gui::Window::get().getUiManager().GetPane(gui::Window::sPaneNamePreview).MinSize(-1, 510);
+        gui::Window::get().getUiManager().GetPane(gui::Window::sPaneNamePreview).Fixed();
+        gui::Window::get().getUiManager().Update();
+        //now make resizable again
+        gui::Window::get().getUiManager().GetPane(gui::Window::sPaneNameTimelines).Resizable();
+        gui::Window::get().getUiManager().Update();
+    });
+    WaitForIdle;
+}
 
 } // namespace

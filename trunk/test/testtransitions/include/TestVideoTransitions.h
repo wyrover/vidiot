@@ -38,6 +38,7 @@ namespace test
         //////////////////////////////////////////////////////////////////////////
 
         void testVideoTransitions();
+        void testWipeImage();
 
     private:
 
