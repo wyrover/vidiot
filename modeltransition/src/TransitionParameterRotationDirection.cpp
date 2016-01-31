@@ -15,63 +15,57 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#include "TransitionParameterDirection.h"
+#include "TransitionParameterRotationDirection.h"
 
 #include "Config.h"
 #include "UtilException.h"
-                                              //todo rename to direction8
+
 namespace model {
 
-IMPLEMENTENUM(Direction);
+IMPLEMENTENUM(RotationDirection);
 
-std::map<Direction, wxString> DirectionConverter::getMapToHumanReadibleString()
+std::map<RotationDirection, wxString> RotationDirectionConverter::getMapToHumanReadibleString()
 {
     return
     {
-        { DirectionTopLeftToBottomRight, _("Top left to bottom right") },
-        { DirectionTopToBottom, _("Top to bottom") },
-        { DirectionTopRightToBottomLeft, _("Top right to bottom left") },
-        { DirectionRightToLeft, _("Right to left") },
-        { DirectionBottomRightToTopLeft, _("Bottom right to top left") },
-        { DirectionBottomToTop, _("Bottom to top") },
-        { DirectionBottomLeftToTopRight, _("Bottom left to top right") },
-        { DirectionLeftToRight, _("Left to right") },
+        { RotationDirectionClockWise, _("Clockwise")},
+        { RotationDirectionCounterClockWise, _("Counterclockwise") },
     };
 }
 
-wxString TransitionParameterDirection::sParameterDirection{ "direction" };
+wxString TransitionParameterRotationDirection::sParameterRotationDirection{ "rotationdirection" };
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-TransitionParameterDirection::TransitionParameterDirection()
+TransitionParameterRotationDirection::TransitionParameterRotationDirection()
     : TransitionParameter()
-    , mValue{ DirectionLeftToRight }
+    , mValue{ RotationDirectionClockWise }
 {
     VAR_DEBUG(*this);
 }
 
-TransitionParameterDirection::TransitionParameterDirection(const Direction& direction)
+TransitionParameterRotationDirection::TransitionParameterRotationDirection(const RotationDirection& direction)
     : TransitionParameter()
     , mValue{ direction }
 {
     VAR_DEBUG(*this);
 }
 
-TransitionParameterDirection::TransitionParameterDirection(const TransitionParameterDirection& other)
+TransitionParameterRotationDirection::TransitionParameterRotationDirection(const TransitionParameterRotationDirection& other)
     : TransitionParameter(other)
     , mValue{ other.mValue }
 {
     VAR_DEBUG(*this);
 }
 
-TransitionParameterDirection* TransitionParameterDirection::clone() const
+TransitionParameterRotationDirection* TransitionParameterRotationDirection::clone() const
 {
-    return new TransitionParameterDirection(static_cast<const TransitionParameterDirection&>(*this));
+    return new TransitionParameterRotationDirection(static_cast<const TransitionParameterRotationDirection&>(*this));
 }
 
-TransitionParameterDirection::~TransitionParameterDirection()
+TransitionParameterRotationDirection::~TransitionParameterRotationDirection()
 {
     VAR_DEBUG(this);
 }
@@ -80,26 +74,26 @@ TransitionParameterDirection::~TransitionParameterDirection()
 // TRANSITIONPARAMETER
 //////////////////////////////////////////////////////////////////////////
 
-void TransitionParameterDirection::copyValue(TransitionParameterPtr other)
+void TransitionParameterRotationDirection::copyValue(TransitionParameterPtr other)
 {
-    boost::shared_ptr<TransitionParameterDirection> typed{ boost::dynamic_pointer_cast<TransitionParameterDirection>(other) };
+    boost::shared_ptr<TransitionParameterRotationDirection> typed{ boost::dynamic_pointer_cast<TransitionParameterRotationDirection>(other) };
     if (typed)
     {
         setValue(typed->getValue());
     }
 }
 
-wxWindow* TransitionParameterDirection::makeWidget(wxWindow *parent)
+wxWindow* TransitionParameterRotationDirection::makeWidget(wxWindow *parent)
 {
     ASSERT_EQUALS(mControl, 0);
-    mControl = new DirectionSelector(parent, DirectionConverter::getMapToHumanReadibleString(), mValue);
-    mControl->Bind(wxEVT_CHOICE, &TransitionParameterDirection::onDirection, this);
+    mControl = new RotationDirectionSelector(parent, RotationDirectionConverter::getMapToHumanReadibleString(), mValue);
+    mControl->Bind(wxEVT_CHOICE, &TransitionParameterRotationDirection::onRotationDirection, this);
     return mControl;
 }
-void TransitionParameterDirection::destroyWidget()
+void TransitionParameterRotationDirection::destroyWidget()
 {
     ASSERT_DIFFERS(mControl, 0);
-    mControl->Unbind(wxEVT_CHOICE, &TransitionParameterDirection::onDirection, this);
+    mControl->Unbind(wxEVT_CHOICE, &TransitionParameterRotationDirection::onRotationDirection, this);
     mControl->Destroy();
     mControl = nullptr;
 }
@@ -108,12 +102,12 @@ void TransitionParameterDirection::destroyWidget()
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-Direction TransitionParameterDirection::getValue() const 
+RotationDirection TransitionParameterRotationDirection::getValue() const
 { 
     return mValue; 
 }
 
-void TransitionParameterDirection::setValue(Direction value) 
+void TransitionParameterRotationDirection::setValue(RotationDirection value)
 { 
     if (mValue != value)
     {
@@ -127,11 +121,12 @@ void TransitionParameterDirection::setValue(Direction value)
     }
 }
 
+
 //////////////////////////////////////////////////////////////////////////
 // GUI EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void TransitionParameterDirection::onDirection(wxCommandEvent& event)
+void TransitionParameterRotationDirection::onRotationDirection(wxCommandEvent& event)
 {
     CatchExceptions([this]
     {
@@ -144,7 +139,7 @@ void TransitionParameterDirection::onDirection(wxCommandEvent& event)
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<(std::ostream& os, const TransitionParameterDirection& obj)
+std::ostream& operator<<(std::ostream& os, const TransitionParameterRotationDirection& obj)
 {
     os << obj.mValue;
     return os;
@@ -155,7 +150,7 @@ std::ostream& operator<<(std::ostream& os, const TransitionParameterDirection& o
 //////////////////////////////////////////////////////////////////////////
 
 template<class Archive>
-void TransitionParameterDirection::serialize(Archive & ar, const unsigned int version)
+void TransitionParameterRotationDirection::serialize(Archive & ar, const unsigned int version)
 {
     try
     {
@@ -166,9 +161,9 @@ void TransitionParameterDirection::serialize(Archive & ar, const unsigned int ve
     catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
     catch (...)                                  { LOG_ERROR;                                   throw; }
 }
-template void TransitionParameterDirection::serialize<boost::archive::xml_oarchive>(boost::archive::xml_oarchive& ar, const unsigned int archiveVersion);
-template void TransitionParameterDirection::serialize<boost::archive::xml_iarchive>(boost::archive::xml_iarchive& ar, const unsigned int archiveVersion);
+template void TransitionParameterRotationDirection::serialize<boost::archive::xml_oarchive>(boost::archive::xml_oarchive& ar, const unsigned int archiveVersion);
+template void TransitionParameterRotationDirection::serialize<boost::archive::xml_iarchive>(boost::archive::xml_iarchive& ar, const unsigned int archiveVersion);
 
 } //namespace
 
-BOOST_CLASS_EXPORT_IMPLEMENT(model::TransitionParameterDirection)
+BOOST_CLASS_EXPORT_IMPLEMENT(model::TransitionParameterRotationDirection)

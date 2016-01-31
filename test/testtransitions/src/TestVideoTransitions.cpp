@@ -17,6 +17,9 @@
 
 #include "TestVideoTransitions.h"
 
+#include "TransitionParameterImage.h"
+#include "VideoTransition_ImageZoom.h"
+
 namespace test {
 
 //////////////////////////////////////////////////////////////////////////
@@ -96,6 +99,45 @@ void TestVideoTransitions::testVideoTransitions()
                 Undo(3);
             }
         }
+    }
+}
+
+void TestVideoTransitions::testWipeImage()
+{
+    StartTestSuite();
+    TimelineZoomIn(6);
+
+    StartTest("Preparation: Create and select transition and maximize preview pane");
+    model::IPaths files{ GetSupportedFiles(model::video::transition::ImageZoom::getDefaultZoomImagesPath()) };
+    util::thread::RunInMainAndWait([]() 
+    { 
+        gui::timeline::cmd::createTransition(getSequence(), VideoClip(0, 0), model::TransitionTypeFadeOutToNext, boost::make_shared<model::video::transition::ImageZoom>()); 
+    });
+    model::VideoTransitionPtr transition{ VideoTransition(0,1) };
+    MaximizePreviewPane(true, false);
+
+
+    for (model::IPathPtr path : files)
+    {
+        if (!path->getPath().GetExt().IsSameAs("png")) continue; // Ignore all non png files
+        StartTest(path->getPath().GetFullName());
+        TimelineSelectClips({});
+        // Values are set BEFORE opening the details.
+        // This avoids having to change the parameters via the widgets (which is more work)
+        util::thread::RunInMainAndWait([path, transition]
+        {
+            boost::shared_ptr<model::TransitionParameterImage> image{ transition->getParameter<model::TransitionParameterImage>(model::TransitionParameterImage::sParameterImageFilename) };
+            image->setValue(path->getPath());
+        });
+        TimelineSelectClips({ transition });
+        ASSERT(DetailsView(transition));
+        // Enable the code below for determining the default size for a picture
+        //if (path->getPath().GetName() == "rectangle4_3") 
+        //{ 
+        //    TimelinePositionCursor(RightPixel(transition));
+        //    pause();       
+        //}
+        Scrub(-2 + LeftPixel(transition), RightPixel(transition) + 2);
     }
 }
 

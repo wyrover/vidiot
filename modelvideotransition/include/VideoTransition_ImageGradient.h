@@ -17,14 +17,12 @@
 
 #pragma once
 
-namespace gui {
-class PlaybackActiveEvent;
-}
+#include "VideoTransitionOpacity.h"
 
-namespace test {
+namespace model { namespace video { namespace transition {
 
-class WaitForPlayback
-    :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
+class ImageGradient
+    :   public VideoTransitionOpacity
 {
 public:
 
@@ -32,59 +30,50 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    WaitForPlayback(bool waitForStart);
-    ~WaitForPlayback();
+    ImageGradient() = default;
+
+    ImageGradient* clone() const override;
+
+    virtual ~ImageGradient() = default;
 
     //////////////////////////////////////////////////////////////////////////
-    // WAIT
+    // TRANSITION
     //////////////////////////////////////////////////////////////////////////
 
-    void wait();
+    bool supports(TransitionType type) const override;
+
+    std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> getAvailableParameters() const override;
+
+    wxString getDescription(TransitionType type) const override;
+
+    //////////////////////////////////////////////////////////////////////////
+    // VIDEOTRANSITIONOPACITY
+    //////////////////////////////////////////////////////////////////////////
+
+    std::function<float (int,int)> getRightMethod(const wxImagePtr& image, const float& factor) const override;
+
+protected:
+
+    //////////////////////////////////////////////////////////////////////////
+    // COPY CONSTRUCTOR
+    //////////////////////////////////////////////////////////////////////////
+public:
+    /// Copy constructor. Use make_cloned for making deep copies of objects.
+    /// \see make_cloned
+    ImageGradient(const ImageGradient& other) = default;
 
 private:
 
     //////////////////////////////////////////////////////////////////////////
-    // EVENT FROM PLAYER
+    // SERIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    void onPlaybackActive(gui::PlaybackActiveEvent& event);
-
-    //////////////////////////////////////////////////////////////////////////
-    // MEMBERS
-    //////////////////////////////////////////////////////////////////////////
-
-    bool mWaitForStart;
-    bool mDone;
-    boost::condition_variable mCondition;
-    boost::mutex mMutex;
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive & ar, const unsigned int version);
 };
 
-struct WaitForPlaybackStarted : public WaitForPlayback
-{
-    WaitForPlaybackStarted()
-        :   WaitForPlayback(true)
-    {
-    }
-};
+}}} // namespace
 
-struct WaitForPlaybackStopped : public WaitForPlayback
-{
-    WaitForPlaybackStopped()
-        :   WaitForPlayback(false)
-    {
-    }
-};
-
-/// 1. Start playback from the given position
-/// 2. Wait until ms has expired, stop playback
-/// 3. wait until playback has stopped.
-void Play(pixel from, int ms);
-
-/// 1. Start playback from the current position
-/// 2. Wait until ms has expired, stop playback.
-/// 3. wait until playback has stopped.
-void Play(int ms);
-
-void MaximizePreviewPane(bool maximizeWindow = true, bool hideDetails = true);
-
-} // namespace
+BOOST_CLASS_VERSION(model::video::transition::ImageGradient, 1)
+BOOST_CLASS_EXPORT_KEY(model::video::transition::ImageGradient)

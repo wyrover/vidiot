@@ -86,4 +86,7 @@ wxFileName getConfigFilePath();
 /// \return the path where the localized strings databases reside
 wxFileName getLanguagesPath();
 
+/// \return the path by combining root dir and all sub directories
+wxFileName getCombinedPath(const wxFileName& rootdir, wxStrings subdirs);
+
 }} // namespace

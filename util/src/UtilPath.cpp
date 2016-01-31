@@ -308,4 +308,15 @@ wxFileName getLanguagesPath()
     return result;
 }
 
+wxFileName getCombinedPath(const wxFileName& rootdir, wxStrings subdirs)
+{
+    wxFileName result{ rootdir };
+    for (wxString subdir : subdirs)
+    {
+        result.AppendDir(subdir);
+    }
+    return result;
+}
+
+
 }} // namespace
