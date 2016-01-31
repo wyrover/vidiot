@@ -18,7 +18,7 @@
 #include "VideoTransition_WipeArc.h"
 
 #include "TransitionParameterBool.h"
-#include "TransitionParameterDirection.h"
+#include "TransitionParameterDirection8.h"
 #include "TransitionParameterInt.h"
 
 namespace model { namespace video { namespace transition {
@@ -48,7 +48,7 @@ std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> WipeArc::get
     return
     {
         std::make_tuple(TransitionParameterInt::sParameterBandsCount, _("Number of bands"), boost::make_shared<TransitionParameterInt>(1, 1, 100)),
-        std::make_tuple(TransitionParameterDirection::sParameterDirection, _("Direction"), boost::make_shared<TransitionParameterDirection>(DirectionLeftToRight)),
+        std::make_tuple(TransitionParameterDirection8::sParameterDirection8, _("Direction"), boost::make_shared<TransitionParameterDirection8>(Direction8LeftToRight)),
         std::make_tuple(TransitionParameterBool::sParameterInversed, _("Inversed"), boost::make_shared<TransitionParameterBool>(false)),
         std::make_tuple(TransitionParameterBool::sParameterSoftenEdges, _("Soften edges"), boost::make_shared<TransitionParameterBool>(true)),
     };
@@ -66,7 +66,7 @@ wxString WipeArc::getDescription(TransitionType type) const
 std::function<float (int,int)> WipeArc::getRightMethod(const wxImagePtr& image, const float& factor) const
 {
     int nBands{ getParameter<TransitionParameterInt>(TransitionParameterInt::sParameterBandsCount)->getValue() };
-    Direction direction{ getParameter<TransitionParameterDirection>(TransitionParameterDirection::sParameterDirection)->getValue() };
+    Direction8 direction{ getParameter<TransitionParameterDirection8>(TransitionParameterDirection8::sParameterDirection8)->getValue() };
     bool inverse{ getParameter<TransitionParameterBool>(TransitionParameterBool::sParameterInversed)->getValue() };
     bool soften{ getParameter<TransitionParameterBool>(TransitionParameterBool::sParameterSoftenEdges)->getValue() };
     int w{ image->GetWidth() };
@@ -76,14 +76,14 @@ std::function<float (int,int)> WipeArc::getRightMethod(const wxImagePtr& image, 
     int y_origin{ 0 };
     switch (direction)
     {
-        case DirectionLeftToRight: { x_origin = 0; y_origin = h / 2; break; }
-        case DirectionRightToLeft: { x_origin = w; y_origin = h / 2; break; }
-        case DirectionTopToBottom: { x_origin = w / 2; y_origin = 0; break; }
-        case DirectionBottomToTop: { x_origin = w / 2; y_origin = h; break; }
-        case DirectionTopLeftToBottomRight: { x_origin = 0; y_origin = 0; break; }
-        case DirectionBottomRightToTopLeft: { x_origin = w; y_origin = h; break; }
-        case DirectionBottomLeftToTopRight: { x_origin = 0; y_origin = h; break; }
-        case DirectionTopRightToBottomLeft: { x_origin = w; y_origin = 0; break; }
+        case Direction8LeftToRight: { x_origin = 0; y_origin = h / 2; break; }
+        case Direction8RightToLeft: { x_origin = w; y_origin = h / 2; break; }
+        case Direction8TopToBottom: { x_origin = w / 2; y_origin = 0; break; }
+        case Direction8BottomToTop: { x_origin = w / 2; y_origin = h; break; }
+        case Direction8TopLeftToBottomRight: { x_origin = 0; y_origin = 0; break; }
+        case Direction8BottomRightToTopLeft: { x_origin = w; y_origin = h; break; }
+        case Direction8BottomLeftToTopRight: { x_origin = 0; y_origin = h; break; }
+        case Direction8TopRightToBottomLeft: { x_origin = w; y_origin = 0; break; }
     }
     // Use the 'farthest away' point to determine the band size. 
     // Using a smaller size gives artifacts.

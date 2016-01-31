@@ -22,7 +22,7 @@
 #include "Properties.h"
 #include "StatusBar.h"
 #include "TransitionParameterBool.h"
-#include "TransitionParameterDirection.h"
+#include "TransitionParameterDirection8.h"
 #include "TransitionParameterDouble.h"
 #include "TransitionParameterInt.h"
 #include "TransitionParameterRotationDirection.h"

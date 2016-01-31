@@ -19,7 +19,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-31 22:21+0100\n"
+"POT-Creation-Date: 2016-01-31 22:32+0100\n"
 "PO-Revision-Date: 2016-01-14 22:55+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -912,35 +912,35 @@ msgstr ""
 "%s moet nu opnieuw gestart worden.\n"
 " (bekend problem dat hierna nog een project openen altijd faalt)."
 
-#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection.cpp:31
+#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection8.cpp:31
 msgid "Top left to bottom right"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection.cpp:32
+#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection8.cpp:32
 msgid "Top to bottom"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection.cpp:33
+#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection8.cpp:33
 msgid "Top right to bottom left"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection.cpp:34
+#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection8.cpp:34
 msgid "Right to left"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection.cpp:35
+#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection8.cpp:35
 msgid "Bottom right to top left"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection.cpp:36
+#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection8.cpp:36
 msgid "Bottom to top"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection.cpp:37
+#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection8.cpp:37
 msgid "Bottom left to top right"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection.cpp:38
+#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection8.cpp:38
 msgid "Left to right"
 msgstr ""
 

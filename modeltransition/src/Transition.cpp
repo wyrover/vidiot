@@ -23,7 +23,7 @@
 #include "TransitionParameter.h"
 #include "TransitionParameterBool.h"
 #include "TransitionParameterColor.h"
-#include "TransitionParameterDirection.h"
+#include "TransitionParameterDirection8.h"
 #include "TransitionParameterDouble.h"
 #include "TransitionParameterImage.h"
 #include "TransitionParameterInt.h"
@@ -300,7 +300,6 @@ void Transition::initParameters(std::map<wxString, TransitionParameterPtr> curre
         }
 
         mParameters[name] = parameter;
-        // todo ensure proper ordering of parameter widgets by adding an index to getParameters (or by having it return a vector?) and storing the index just like description, and then retrieve the ordered list in DetailsClip::createTransitionParameterWidgets
     }
 }
 
@@ -337,7 +336,7 @@ template boost::shared_ptr<TransitionParameterDouble> Transition::getParameter<T
 template boost::shared_ptr<TransitionParameterImage> Transition::getParameter<TransitionParameterImage>(wxString name) const;
 template boost::shared_ptr<TransitionParameterInt> Transition::getParameter<TransitionParameterInt>(wxString name) const;
 template boost::shared_ptr<TransitionParameterColor> Transition::getParameter<TransitionParameterColor>(wxString name) const;
-template boost::shared_ptr<TransitionParameterDirection> Transition::getParameter<TransitionParameterDirection>(wxString name) const;
+template boost::shared_ptr<TransitionParameterDirection8> Transition::getParameter<TransitionParameterDirection8>(wxString name) const;
 template boost::shared_ptr<TransitionParameterRotationDirection> Transition::getParameter<TransitionParameterRotationDirection>(wxString name) const;
 
 //////////////////////////////////////////////////////////////////////////
