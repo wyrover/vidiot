@@ -25,7 +25,7 @@
 #include "TransitionParameterColor.h"
 #include "TransitionParameterDirection8.h"
 #include "TransitionParameterDouble.h"
-#include "TransitionParameterImage.h"
+#include "TransitionParameterFilename.h"
 #include "TransitionParameterInt.h"
 #include "TransitionParameterRotationDirection.h"
 #include "UtilSerializeBoost.h"
@@ -333,7 +333,7 @@ boost::shared_ptr<PARAMETERTYPE> Transition::getParameter(wxString name) const
 
 template boost::shared_ptr<TransitionParameterBool> Transition::getParameter<TransitionParameterBool>(wxString name) const;
 template boost::shared_ptr<TransitionParameterDouble> Transition::getParameter<TransitionParameterDouble>(wxString name) const;
-template boost::shared_ptr<TransitionParameterImage> Transition::getParameter<TransitionParameterImage>(wxString name) const;
+template boost::shared_ptr<TransitionParameterFilename> Transition::getParameter<TransitionParameterFilename>(wxString name) const;
 template boost::shared_ptr<TransitionParameterInt> Transition::getParameter<TransitionParameterInt>(wxString name) const;
 template boost::shared_ptr<TransitionParameterColor> Transition::getParameter<TransitionParameterColor>(wxString name) const;
 template boost::shared_ptr<TransitionParameterDirection8> Transition::getParameter<TransitionParameterDirection8>(wxString name) const;

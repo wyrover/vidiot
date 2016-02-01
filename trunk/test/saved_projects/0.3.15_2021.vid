@@ -2847,7 +2847,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 														</px>
 													</item>
 													<item>
-														<px class_id="76" class_name="model::video::transition::ImageZoom" tracking_level="1" version="1" object_id="_198">
+														<px class_id="76" class_name="model::video::transition::WipeImage" tracking_level="1" version="1" object_id="_198">
 															<VideoTransition>
 																<Transition>
 																	<Clip>
@@ -2875,7 +2875,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																				<string>imagefilename</string>
 																			</first>
 																			<second>
-																				<px class_id="77" class_name="model::TransitionParameterImage" tracking_level="1" version="1" object_id="_199">
+																				<px class_id="77" class_name="model::TransitionParameterFilename" tracking_level="1" version="1" object_id="_199">
 																					<TransitionParameter></TransitionParameter>
 																					<mValue>
 																						<filename>
@@ -3097,10 +3097,10 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																		</item>
 																		<item>
 																			<first>
-																				<string>direction</string>
+																				<string>direction8</string>
 																			</first>
 																			<second>
-																				<px class_id="83" class_name="model::TransitionParameterDirection" tracking_level="1" version="1" object_id="_216">
+																				<px class_id="83" class_name="model::TransitionParameterDirection8" tracking_level="1" version="1" object_id="_216">
 																					<TransitionParameter></TransitionParameter>
 																					<mValue>7</mValue>
 																				</px>
@@ -3421,7 +3421,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																		</item>
 																		<item>
 																			<first>
-																				<string>direction</string>
+																				<string>direction8</string>
 																			</first>
 																			<second>
 																				<px class_id_reference="83" object_id="_241">
@@ -5123,7 +5123,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																		</item>
 																		<item>
 																			<first>
-																				<string>direction</string>
+																				<string>direction8</string>
 																			</first>
 																			<second>
 																				<px class_id_reference="83" object_id="_370">
@@ -5436,7 +5436,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																		</item>
 																		<item>
 																			<first>
-																				<string>direction</string>
+																				<string>direction8</string>
 																			</first>
 																			<second>
 																				<px class_id_reference="83" object_id="_394">

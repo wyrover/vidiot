@@ -44,6 +44,14 @@ const int File::STREAMINDEX_UNDEFINED = -1;
 // unavailable file, crashes occur.
 const int File::LENGTH_UNDEFINED = std::numeric_limits<int>::max();
 
+// static 
+wxString File::sSupportedVideoExtensions{ "*.avi;*.mov;*.mp4;*.mpeg;*.mpg;*.m2v;*.m4v;*.3gp;*.3g2;*.mkv;*.ogv;*.webm" };
+// static 
+wxString File::sSupportedAudioExtensions{ "*.wav;*.mp3;*.m2a" };
+//static 
+wxString File::sSupportedImageExtensions{ "*.bmp;*.gif;*.jpg;*.png;*.tga;*.tif;*.tiff" };
+
+
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////

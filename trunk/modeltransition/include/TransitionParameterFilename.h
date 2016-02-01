@@ -21,7 +21,7 @@
 
 namespace model {
 
-class TransitionParameterImage
+class TransitionParameterFilename
     : public TransitionParameter
 {
 public:
@@ -36,19 +36,20 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     /// Constructor for recovery from disk.
-    TransitionParameterImage();
+    TransitionParameterFilename();
 
     /// Constructor for creating a new parameter.
+    /// \param fileDescriptor descriptor for selecting file types in select file dialog
     /// \param defaultPath if nonempty indicates the default path for searching images
     /// \param requiresMaskOrAlpha if true, the image MUST have either a mask OR an alpha channel
     /// \param requiresAlpha if true, the image MUST have an alpha channel
     /// \pre !requiresMaskOrAlpha || !requiresAlpha
-    explicit TransitionParameterImage(bool requiresMaskOrAlpha, bool requiresAlpha, const wxString& defaultPath = wxEmptyString);
+    explicit TransitionParameterFilename(const wxString& fileDescriptor, bool requiresMaskOrAlpha, bool requiresAlpha, const wxString& defaultPath = wxEmptyString);
 
     /// Used for making deep copies (clones)
-    virtual TransitionParameterImage* clone() const override;
+    virtual TransitionParameterFilename* clone() const override;
 
-    virtual ~TransitionParameterImage();
+    virtual ~TransitionParameterFilename();
 
     //////////////////////////////////////////////////////////////////////////
     // TRANSITIONPARAMETER
@@ -74,7 +75,7 @@ protected:
 
     /// Copy constructor. Use make_cloned for making deep copies of objects.
     /// \see make_cloned
-    TransitionParameterImage(const TransitionParameterImage& other);
+    TransitionParameterFilename(const TransitionParameterFilename& other);
 
 private:
 
@@ -93,6 +94,7 @@ private:
     wxButton* mFileButton = nullptr;
     wxFileName mValue;
     wxString mDefaultPath;
+    wxString mFileDescriptor;
     bool mMaskOrAlpha = false; ///< If true, the image MUST have a mask OR alpha data
     bool mAlpha = false; ///< If true, the image MUST have alpha data
 
@@ -100,7 +102,7 @@ private:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<(std::ostream& os, const TransitionParameterImage& obj);
+    friend std::ostream& operator<<(std::ostream& os, const TransitionParameterFilename& obj);
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION
@@ -112,5 +114,5 @@ private:
 };
 } // namespace
 
-BOOST_CLASS_VERSION(model::TransitionParameterImage, 1)
-BOOST_CLASS_EXPORT_KEY(model::TransitionParameterImage)
+BOOST_CLASS_VERSION(model::TransitionParameterFilename, 1)
+BOOST_CLASS_EXPORT_KEY(model::TransitionParameterFilename)

@@ -17,7 +17,7 @@
 
 #include "TestVideoTransitions.h"
 
-#include "TransitionParameterImage.h"
+#include "TransitionParameterFilename.h"
 #include "VideoTransition_WipeImage.h"
 
 namespace test {
@@ -126,7 +126,7 @@ void TestVideoTransitions::testWipeImage()
         // This avoids having to change the parameters via the widgets (which is more work)
         util::thread::RunInMainAndWait([path, transition]
         {
-            boost::shared_ptr<model::TransitionParameterImage> image{ transition->getParameter<model::TransitionParameterImage>(model::TransitionParameterImage::sParameterImageFilename) };
+            boost::shared_ptr<model::TransitionParameterFilename> image{ transition->getParameter<model::TransitionParameterFilename>(model::TransitionParameterFilename::sParameterImageFilename) };
             image->setValue(path->getPath());
         });
         TimelineSelectClips({ transition });

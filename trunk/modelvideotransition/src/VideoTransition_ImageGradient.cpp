@@ -18,7 +18,7 @@
 #include "VideoTransition_ImageGradient.h"
 
 #include "TransitionParameterBool.h"
-#include "TransitionParameterImage.h"
+#include "TransitionParameterFilename.h"
 
 namespace model { namespace video { namespace transition {
 
@@ -46,7 +46,7 @@ std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> ImageGradien
 {
     return
     {
-        std::make_tuple(TransitionParameterImage::sParameterImageFilename, _("Image"), boost::make_shared<TransitionParameterImage>(false, true)),
+        std::make_tuple(TransitionParameterFilename::sParameterImageFilename, _("Image"), boost::make_shared<TransitionParameterFilename>("", false, true)),
         std::make_tuple(TransitionParameterBool::sParameterInversed, _("Inversed"), boost::make_shared<TransitionParameterBool>(false)),
     };
 }
@@ -62,7 +62,7 @@ wxString ImageGradient::getDescription(TransitionType type) const
 
 std::function<float (int,int)> ImageGradient::getRightMethod(const wxImagePtr& image, const float& factor) const
 {
-    wxFileName filename{ getParameter<TransitionParameterImage>(TransitionParameterImage::sParameterImageFilename)->getValue() };
+    wxFileName filename{ getParameter<TransitionParameterFilename>(TransitionParameterFilename::sParameterImageFilename)->getValue() };
     bool inversed{ getParameter<TransitionParameterBool>(TransitionParameterBool::sParameterInversed)->getValue() };
 
     double w{ static_cast<double>(image->GetWidth()) };

@@ -19,6 +19,7 @@
 
 #include "CommandLine.h"
 #include "Config.h"
+#include "File.h"
 #include "UtilMail.h"
 #include "UtilPath.h"
 #include "UtilThread.h"
@@ -63,17 +64,13 @@ Dialog::~Dialog()
 // static
 wxString Dialog::getMediaFileTypes()
 {
-    static wxString sVideo{ "*.avi;*.mov;*.mp4;*.mpeg;*.mpg;*.m2v;*.m4v;*.3gp;*.3g2;*.mkv;*.ogv;*.webm" };
-    static wxString sAudio{ "*.wav;*.mp3;*.m2a" };
-    static wxString sImage{ "*.bmp;*.gif;*.jpg;*.png;*.tga;*.tif;*.tiff" };
-
-    static wxString sSupported{ sVideo + ";" + sAudio + ";" + sImage };
+    static wxString sSupported{ model::File::sSupportedVideoExtensions + ";" + model::File::sSupportedAudioExtensions + ";" + model::File::sSupportedImageExtensions };
 
     static wxString result{
-        _("Supported files") + "|" + sSupported + ";" + sSupported.Upper() + "|" +
-        _("Video files") + " (" + sVideo + ")|" + sVideo + ";" + sVideo.Upper() + "|" +
-        _("Audio files") + " (" + sAudio + ")|" + sAudio + ";" + sAudio.Upper() + "|" +
-        _("Images") + " (" + sImage + ")|" + sImage + ";" + sImage.Upper() + "|" +
+        _("Supported files") + "|" + model::File::sSupportedAudioExtensions + ";" + model::File::sSupportedAudioExtensions.Upper() + "|" +
+        _("Video files") + " (" + model::File::sSupportedVideoExtensions + ")|" + model::File::sSupportedVideoExtensions + ";" + model::File::sSupportedVideoExtensions.Upper() + "|" +
+        _("Audio files") + " (" + model::File::sSupportedAudioExtensions + ")|" + model::File::sSupportedAudioExtensions + ";" + model::File::sSupportedAudioExtensions.Upper() + "|" +
+        _("Images") + " (" + model::File::sSupportedImageExtensions + ")|" + model::File::sSupportedImageExtensions + ";" + model::File::sSupportedImageExtensions.Upper() + "|" +
         _("All files") + " (%s)|%s" };
     return result;
 }
