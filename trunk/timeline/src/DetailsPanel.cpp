@@ -86,7 +86,7 @@ wxFlexGridSizer* DetailsPanel::addBox(boost::optional<wxString> name, int vgap)
 
     mTopSizer->Layout();
     return mBoxSizer;
-}            // todo what about auto trnasition playback during transition trimming?
+}
 
 
 void DetailsPanel::addWidget(wxWindow* window)
