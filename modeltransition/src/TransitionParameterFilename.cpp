@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#include "TransitionParameterImage.h"
+#include "TransitionParameterFilename.h"
 
 #include "Dialog.h"
 #include "UtilException.h"
@@ -23,21 +23,22 @@
 
 namespace model {
 
-wxString TransitionParameterImage::sParameterImageFilename{ "imagefilename" };
+wxString TransitionParameterFilename::sParameterImageFilename{ "imagefilename" };
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-TransitionParameterImage::TransitionParameterImage()
+TransitionParameterFilename::TransitionParameterFilename()
     : TransitionParameter()
 {
     VAR_DEBUG(*this);
 }
 
-TransitionParameterImage::TransitionParameterImage(bool requiresMaskOrAlpha, bool requiresAlpha, const wxString& defaultPath)
+TransitionParameterFilename::TransitionParameterFilename(const wxString& fileDescriptor, bool requiresMaskOrAlpha, bool requiresAlpha, const wxString& defaultPath)
     : TransitionParameter()
     , mValue{ }
+    , mFileDescriptor{ fileDescriptor }
     , mMaskOrAlpha{ requiresMaskOrAlpha }
     , mAlpha{ requiresAlpha }
     , mDefaultPath{ defaultPath }
@@ -47,9 +48,10 @@ TransitionParameterImage::TransitionParameterImage(bool requiresMaskOrAlpha, boo
     ASSERT_IMPLIES(mMaskOrAlpha, !mAlpha);
 }
 
-TransitionParameterImage::TransitionParameterImage(const TransitionParameterImage& other)
+TransitionParameterFilename::TransitionParameterFilename(const TransitionParameterFilename& other)
     : TransitionParameter(other)
     , mValue{ other.mValue }
+    , mFileDescriptor{ other.mFileDescriptor }
     , mMaskOrAlpha{ other.mMaskOrAlpha }
     , mAlpha{ other.mAlpha }
     , mDefaultPath{ other.mDefaultPath }
@@ -57,12 +59,12 @@ TransitionParameterImage::TransitionParameterImage(const TransitionParameterImag
     VAR_DEBUG(*this);
 }
 
-TransitionParameterImage* TransitionParameterImage::clone() const
+TransitionParameterFilename* TransitionParameterFilename::clone() const
 {
-    return new TransitionParameterImage(static_cast<const TransitionParameterImage&>(*this));
+    return new TransitionParameterFilename(static_cast<const TransitionParameterFilename&>(*this));
 }
 
-TransitionParameterImage::~TransitionParameterImage()
+TransitionParameterFilename::~TransitionParameterFilename()
 {
     VAR_DEBUG(this);
 }
@@ -71,16 +73,16 @@ TransitionParameterImage::~TransitionParameterImage()
 // TRANSITIONPARAMETER
 //////////////////////////////////////////////////////////////////////////
 
-void TransitionParameterImage::copyValue(TransitionParameterPtr other)
+void TransitionParameterFilename::copyValue(TransitionParameterPtr other)
 {
-    boost::shared_ptr<TransitionParameterImage> typed{ boost::dynamic_pointer_cast<TransitionParameterImage>(other) };
+    boost::shared_ptr<TransitionParameterFilename> typed{ boost::dynamic_pointer_cast<TransitionParameterFilename>(other) };
     if (typed)
     {
         setValue(typed->getValue());
     }
 }
 
-wxWindow* TransitionParameterImage::makeWidget(wxWindow *parent)    // todo rename to TransitionParameterFilename
+wxWindow* TransitionParameterFilename::makeWidget(wxWindow *parent)
 {
     ASSERT_ZERO(mPanel);
     ASSERT_ZERO(mFile);
@@ -91,19 +93,19 @@ wxWindow* TransitionParameterImage::makeWidget(wxWindow *parent)    // todo rena
     mFile = new wxTextCtrl(mPanel, wxID_ANY, mValue.GetFullPath(), wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
     mFile->SetValue(mValue.GetFullPath());
     mFileButton = new wxButton(mPanel, wxID_ANY, _("Select"));
-    mFileButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &TransitionParameterImage::onFileButtonPressed, this);
+    mFileButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &TransitionParameterFilename::onFileButtonPressed, this);
     mPanel->GetSizer()->Add(mFile, wxSizerFlags(1).Expand());
     mPanel->GetSizer()->Add(mFileButton, wxSizerFlags(0));
 
     return mPanel;
 }
-void TransitionParameterImage::destroyWidget()
+void TransitionParameterFilename::destroyWidget()
 {
     ASSERT_NONZERO(mPanel);
     ASSERT_NONZERO(mFile);
     ASSERT_NONZERO(mFileButton);
 
-    mFileButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &TransitionParameterImage::onFileButtonPressed, this);
+    mFileButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &TransitionParameterFilename::onFileButtonPressed, this);
 
     mPanel->Destroy();
     mPanel = nullptr;
@@ -114,12 +116,12 @@ void TransitionParameterImage::destroyWidget()
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-wxFileName TransitionParameterImage::getValue() const 
+wxFileName TransitionParameterFilename::getValue() const 
 { 
     return mValue; 
 }
 
-void TransitionParameterImage::setValue(wxFileName value)
+void TransitionParameterFilename::setValue(wxFileName value)
 {
     if (mValue != value)
     {
@@ -138,21 +140,17 @@ void TransitionParameterImage::setValue(wxFileName value)
 // GUI EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void TransitionParameterImage::onFileButtonPressed(wxCommandEvent& event)
+void TransitionParameterFilename::onFileButtonPressed(wxCommandEvent& event)
 {
     CatchExceptions([this]
     {                                        
         ASSERT_NONZERO(mPanel);
-        static wxString sImage{ "*.bmp;*.gif;*.jpg;*.png;*.tga;*.tif;*.tiff" }; // todo reuse with the string in Dialog...
-        static wxString filetypes{ _("Images") + " (" + sImage + ")|" + sImage + ";" + sImage.Upper() };
-        wxString selected{ gui::Dialog::get().getFile(_("Select image"), mDefaultPath, filetypes, mPanel) };//todo , defaultpath, defaultfile, defaultextension) };
+        wxString selected{ gui::Dialog::get().getFile(getDescription(), mDefaultPath, mFileDescriptor, mPanel) };
         if (!selected.IsEmpty())
         {
-            // todo checking for mask and/or alpha (and showing a popup in case of missing data!)
             wxFileName value{ util::path::toFileName(selected) };
             value.MakeAbsolute();
             setValue(value);
-            // todo checking for file!
         }
     });
 }
@@ -161,7 +159,7 @@ void TransitionParameterImage::onFileButtonPressed(wxCommandEvent& event)
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<(std::ostream& os, const TransitionParameterImage& obj)
+std::ostream& operator<<(std::ostream& os, const TransitionParameterFilename& obj)
 {
     os << obj.mValue;
     return os;
@@ -172,7 +170,7 @@ std::ostream& operator<<(std::ostream& os, const TransitionParameterImage& obj)
 //////////////////////////////////////////////////////////////////////////
 
 template<class Archive>
-void TransitionParameterImage::serialize(Archive & ar, const unsigned int version)
+void TransitionParameterFilename::serialize(Archive & ar, const unsigned int version)
 {
     try
     {
@@ -183,9 +181,9 @@ void TransitionParameterImage::serialize(Archive & ar, const unsigned int versio
     catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
     catch (...)                                  { LOG_ERROR;                                   throw; }
 }
-template void TransitionParameterImage::serialize<boost::archive::xml_oarchive>(boost::archive::xml_oarchive& ar, const unsigned int archiveVersion);
-template void TransitionParameterImage::serialize<boost::archive::xml_iarchive>(boost::archive::xml_iarchive& ar, const unsigned int archiveVersion);
+template void TransitionParameterFilename::serialize<boost::archive::xml_oarchive>(boost::archive::xml_oarchive& ar, const unsigned int archiveVersion);
+template void TransitionParameterFilename::serialize<boost::archive::xml_iarchive>(boost::archive::xml_iarchive& ar, const unsigned int archiveVersion);
 
 } //namespace
 
-BOOST_CLASS_EXPORT_IMPLEMENT(model::TransitionParameterImage)
+BOOST_CLASS_EXPORT_IMPLEMENT(model::TransitionParameterFilename)

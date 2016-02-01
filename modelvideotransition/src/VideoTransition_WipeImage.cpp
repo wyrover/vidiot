@@ -70,9 +70,10 @@ bool WipeImage::supports(TransitionType type) const
 
 std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> WipeImage::getAvailableParameters() const
 {
+    wxString descriptor{ _("Images") + " (" + File::sSupportedImageExtensions + ")|" + File::sSupportedImageExtensions + ";" + File::sSupportedImageExtensions.Upper() };
     return
     {
-        std::make_tuple(TransitionParameterImage::sParameterImageFilename, _("Image"), boost::make_shared<TransitionParameterImage>(true, false, getDefaultZoomImagesPath())),
+        std::make_tuple(TransitionParameterFilename::sParameterImageFilename, _("Image"), boost::make_shared<TransitionParameterFilename>(descriptor, true, false, getDefaultZoomImagesPath())),
         std::make_tuple(TransitionParameterDouble::sParameterScaling, _("Scaling"), boost::make_shared<TransitionParameterDouble>(1.0, 0.0, 10.0)),
         std::make_tuple(TransitionParameterInt::sParameterRotations, _("Rotations"), boost::make_shared<TransitionParameterInt>(0, 0, 100)),
         std::make_tuple(TransitionParameterRotationDirection::sParameterRotationDirection, _("Rotation direction"), boost::make_shared<TransitionParameterRotationDirection>(RotationDirectionClockWise)),
@@ -87,11 +88,11 @@ wxString WipeImage::getDescription(TransitionType type) const
 
 void WipeImage::onParameterChanged(const wxString& name)
 {                              
-    if (name == TransitionParameterImage::sParameterImageFilename)
+    if (name == TransitionParameterFilename::sParameterImageFilename)
     {
         mImage = nullptr; // Use new image
 
-        wxFileName filename{ getParameter<TransitionParameterImage>(TransitionParameterImage::sParameterImageFilename)->getValue() };
+        wxFileName filename{ getParameter<TransitionParameterFilename>(TransitionParameterFilename::sParameterImageFilename)->getValue() };
         filename.MakeRelativeTo(getDefaultZoomImagesPath());
         if (filename.GetDirCount() == 0)
         {
@@ -149,7 +150,7 @@ void WipeImage::onParameterChanged(const wxString& name)
 
 std::function<float (int,int)> WipeImage::getRightMethod(const wxImagePtr& image, const float& factor) const
 {
-    wxFileName filename{ getParameter<TransitionParameterImage>(TransitionParameterImage::sParameterImageFilename)->getValue() };
+    wxFileName filename{ getParameter<TransitionParameterFilename>(TransitionParameterFilename::sParameterImageFilename)->getValue() };
     // Note: the scaling parameter gives the relative factor to apply the the 'pattern image' size, at the end of the (non inversed) transition.
     double scaling{ getParameter<TransitionParameterDouble>(TransitionParameterDouble::sParameterScaling)->getValue() };
     bool inversed{ getParameter<TransitionParameterBool>(TransitionParameterBool::sParameterInversed)->getValue() };

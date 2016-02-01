@@ -19,7 +19,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-31 22:32+0100\n"
+"POT-Creation-Date: 2016-02-01 19:02+0100\n"
 "PO-Revision-Date: 2016-01-07 15:38+0300\n"
 "Last-Translator: Ted Mossolov <teodorrrro@gmail.com>\n"
 "Language-Team: Ted Mossolov <teodorrrro@gmail.com>\n"
@@ -54,7 +54,7 @@ msgstr "Файлы аудио"
 
 #: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:76
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:138
-#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterImage.cpp:147
+#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterFilename.cpp:147
 msgid "Images"
 msgstr "Изображения"
 
@@ -411,7 +411,7 @@ msgid "Format"
 msgstr "Формат"
 
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:91
-#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterImage.cpp:93
+#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterFilename.cpp:93
 msgid "Select"
 msgstr "Выбрать"
 
@@ -931,7 +931,7 @@ msgstr ""
 msgid "Left to right"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterImage.cpp:148
+#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterFilename.cpp:148
 msgid "Select image"
 msgstr ""
 
