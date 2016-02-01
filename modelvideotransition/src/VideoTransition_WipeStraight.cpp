@@ -61,8 +61,6 @@ wxString WipeStraight::getDescription(TransitionType type) const
 // VIDEOTRANSITIONOPACITY
 //////////////////////////////////////////////////////////////////////////
 
-// todo 'image wipe'
-
 /// \param w width of image
 /// \param h height of image
 /// \param a 'a' part of equation describing the diagonal

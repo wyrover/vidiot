@@ -164,6 +164,7 @@ void DetailsClip::submitEditCommandUponTransitionEdit(const wxString& parameter)
     }
 
     // todo upon undo the transition looks selected again, but the playback is not started.
+    // todo same after trimming: transition looks selected again, but the playback is not started.
     if (mPlaybackActive)
     {
         // Restart the playback after the edit
@@ -264,7 +265,7 @@ void DetailsClip::startPlayback(bool start)
         mClip->getTrack() != nullptr)
     {
         mPlaybackActive = true;
-        getPlayer()->playRange(mClip->getLeftPts(), mClip->getRightPts());
+        getPlayer()->playRange(mClip->getPerceivedLeftPts(), mClip->getPerceivedRightPts());
     }
     else
     {
@@ -467,7 +468,7 @@ void DetailsClip::createTransitionParameterWidgets()
     if (mTransitionClone)
     {
         mTransitionType->Clear();
-        for (auto n_and_transition : getPossibleVideoTransitions())     // todo sort
+        for (auto n_and_transition : getPossibleVideoTransitions())
         {
             mTransitionType->Append(n_and_transition.second->getDescription(mTransitionClone->getTransitionType()));
         }
@@ -513,7 +514,9 @@ std::map<int, model::TransitionPtr> DetailsClip::getPossibleVideoTransitions() c
         mClip->isA<model::IVideo>())
     {
         int n{ 0 };
-        for (model::TransitionPtr transition : model::video::VideoTransitionFactory::get().getAllPossibleTransitionsOfType(mTransitionClone->getTransitionType()))
+        std::vector<model::TransitionPtr> all{ model::video::VideoTransitionFactory::get().getAllPossibleTransitionsOfType(mTransitionClone->getTransitionType()) };
+        std::sort(all.begin(), all.end(), [](model::TransitionPtr t1, model::TransitionPtr t2) { return t1->getDescription() < t2->getDescription(); });
+        for (model::TransitionPtr transition : all)
         {
             result[n] = transition;
             ++n;

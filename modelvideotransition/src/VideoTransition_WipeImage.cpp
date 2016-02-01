@@ -83,7 +83,7 @@ std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> WipeImage::g
 
 wxString WipeImage::getDescription(TransitionType type) const
 {
-    return _("Zoom Image");
+    return _("Wipe Image");
 }
 
 void WipeImage::onParameterChanged(const wxString& name)
