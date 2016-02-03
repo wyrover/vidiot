@@ -19,7 +19,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-02-01 19:02+0100\n"
+"POT-Creation-Date: 2016-02-03 10:39+0100\n"
 "PO-Revision-Date: 2016-01-07 15:38+0300\n"
 "Last-Translator: Ted Mossolov <teodorrrro@gmail.com>\n"
 "Language-Team: Ted Mossolov <teodorrrro@gmail.com>\n"
@@ -40,29 +40,29 @@ msgstr ""
 msgid "Unnamed command"
 msgstr "Безымянная команда"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:73
+#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:70
 msgid "Supported files"
 msgstr "Поддерживаемые файлы"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:74
+#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:71
 msgid "Video files"
 msgstr "Файлы видео"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:75
+#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:72
 msgid "Audio files"
 msgstr "Файлы аудио"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:76
+#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:73
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:138
-#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterFilename.cpp:147
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:73
 msgid "Images"
 msgstr "Изображения"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:77
+#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:74
 msgid "All files"
 msgstr "Все файлы"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:307
+#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:304
 msgid ""
 "A fatal error was encountered. Press OK to generate debug report. Press "
 "Cancel to terminate."
@@ -70,12 +70,12 @@ msgstr ""
 "Возникла критическая ошибка. Нажмите \"ОК\", чтобы создать отчет об ошибке, "
 "или \"Отмена\", чтобы прервать работу программы."
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:367
+#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:364
 #, c-format
 msgid "%s crash report"
 msgstr "%s - отчет об ошибке"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:367
+#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:364
 #, c-format
 msgid ""
 "I'm sorry, but %1$s crashed.\n"
@@ -411,7 +411,7 @@ msgid "Format"
 msgstr "Формат"
 
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:91
-#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterFilename.cpp:93
+#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterFilename.cpp:95
 msgid "Select"
 msgstr "Выбрать"
 
@@ -808,11 +808,11 @@ msgstr "Дорожка"
 msgid "Audio crossfade"
 msgstr "Переход аудио"
 
-#: C:\Vidiot\vidiot_trunk\modelfile\src\File.cpp:154
+#: C:\Vidiot\vidiot_trunk\modelfile\src\File.cpp:162
 msgid "File removed"
 msgstr "Файл удален"
 
-#: C:\Vidiot\vidiot_trunk\modelfile\src\File.cpp:154
+#: C:\Vidiot\vidiot_trunk\modelfile\src\File.cpp:162
 #, c-format
 msgid ""
 "The file %s has been removed from disk. File is removed from project also."
@@ -899,40 +899,40 @@ msgstr ""
 "Необходим перезапуск %s (это известная ошибка: сейчас открыть проект не "
 "получится)"
 
-#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection8.cpp:31
-msgid "Top left to bottom right"
-msgstr ""
-
+#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection4.cpp:31
 #: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection8.cpp:32
 msgid "Top to bottom"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection4.cpp:32
+#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection8.cpp:34
+msgid "Right to left"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection4.cpp:33
+#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection8.cpp:36
+msgid "Bottom to top"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection4.cpp:34
+#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection8.cpp:38
+msgid "Left to right"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection8.cpp:31
+msgid "Top left to bottom right"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection8.cpp:33
 msgid "Top right to bottom left"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection8.cpp:34
-msgid "Right to left"
-msgstr ""
-
 #: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection8.cpp:35
 msgid "Bottom right to top left"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection8.cpp:36
-msgid "Bottom to top"
-msgstr ""
-
 #: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection8.cpp:37
 msgid "Bottom left to top right"
-msgstr ""
-
-#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection8.cpp:38
-msgid "Left to right"
-msgstr ""
-
-#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterFilename.cpp:148
-msgid "Select image"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterRotationDirection.cpp:31
@@ -976,7 +976,7 @@ msgid "Fade to color"
 msgstr "Переход в цвет"
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_ImageGradient.cpp:49
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:75
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:76
 msgid "Image"
 msgstr ""
 
@@ -984,7 +984,7 @@ msgstr ""
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeArc.cpp:52
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeCircle.cpp:50
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeClock.cpp:51
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:79
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:80
 msgid "Inversed"
 msgstr ""
 
@@ -992,13 +992,20 @@ msgstr ""
 msgid "Image gradient"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeArc.cpp:50
-msgid "Number of bands"
-msgstr ""
-
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_Push.cpp:50
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_Slide.cpp:50
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeArc.cpp:51
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeStraight.cpp:50
 msgid "Direction"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_Push.cpp:56
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_Slide.cpp:56
+msgid "Push"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeArc.cpp:50
+msgid "Number of bands"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeArc.cpp:53
@@ -1040,21 +1047,21 @@ msgid "Wipe Double Clock"
 msgstr ""
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:76
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:77
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:211
 msgid "Scaling"
 msgstr "Масштаб"
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:77
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:78
 msgid "Rotations"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:78
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:79
 msgid "Rotation direction"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:85
-msgid "Zoom Image"
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:86
+msgid "Wipe Image"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeStraight.cpp:57
@@ -1493,7 +1500,7 @@ msgstr ""
 msgid "Change %s (%s)"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_HelperMethods.cpp:189
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_HelperMethods.cpp:190
 msgid "Change transition type"
 msgstr ""
 

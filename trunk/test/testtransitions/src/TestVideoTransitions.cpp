@@ -140,5 +140,5 @@ void TestVideoTransitions::testWipeImage()
         Scrub(-2 + LeftPixel(transition), RightPixel(transition) + 2);
     }
 }
-
+           //todo test rendering!
 } // namespace

@@ -132,7 +132,14 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
     ASSERT_ZERO(codec->refcounted_frames); // for new version of avcodec, see avcodec_decode_video2 docs
 
     wxSize codecSize(codec->width,getCodec()->height);
-    wxSize size(Convert::sizeInBoundingBox(wxSize(codec->width,codec->height),parameters.getBoundingBox()));
+    rational64 dummy;
+    // The true ensures that the bounding box is filled. This guarantees that - for plain video clips - the resulting
+    // frames completely fill the bounding box, regardless of the chosen scaling for the preview window. When using false
+    // here, the image sometimes is one or two pixels smaller than the bounding box. That resulted in a black line between
+    // the two frames when showing a 'push' transition.
+    // 
+    // Resizing such that 'everything fits' inside the bounding box is already done in VideoClip.
+    wxSize size(Convert::sizeInBoundingBox(wxSize(codec->width,codec->height),parameters.getBoundingBox(), dummy, true));
     static const int sMinimumFrameSize = 10;        // I had issues when generating smaller bitmaps. To avoid these, always
     size.x = std::max(size.x,sMinimumFrameSize);    // use a minimum framesize. The region of interest in videoclips will ensure
     size.y = std::max(size.y,sMinimumFrameSize);    // that any excess data is cut off.

@@ -41,6 +41,24 @@ std::map<Direction8, wxString> Direction8Converter::getMapToHumanReadibleString(
 
 wxString TransitionParameterDirection8::sParameterDirection8{ "direction8" };
 
+// static 
+Direction8 TransitionParameterDirection8::getInversedDirection(Direction8 direction)
+{
+    static std::map<Direction8, Direction8> sMap =
+    {
+        { Direction8TopLeftToBottomRight, Direction8BottomRightToTopLeft },
+        { Direction8TopToBottom, Direction8BottomToTop },
+        { Direction8TopRightToBottomLeft,Direction8BottomLeftToTopRight },
+        { Direction8RightToLeft, Direction8LeftToRight },
+        { Direction8BottomRightToTopLeft, Direction8TopLeftToBottomRight },
+        { Direction8BottomToTop, Direction8TopToBottom },
+        { Direction8BottomLeftToTopRight, Direction8TopRightToBottomLeft },
+        { Direction8LeftToRight,Direction8RightToLeft },
+    };
+    ASSERT_MAP_CONTAINS(sMap, direction);
+    return sMap.find(direction)->second;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////

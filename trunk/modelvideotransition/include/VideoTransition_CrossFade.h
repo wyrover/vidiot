@@ -18,7 +18,7 @@
 #pragma once
 
 #include "VideoTransitionOpacity.h"
-#include <boost/serialization/export.hpp>
+#include <boost/serialization/export.hpp>      //todo huh
 
 namespace model { namespace video { namespace transition {
 

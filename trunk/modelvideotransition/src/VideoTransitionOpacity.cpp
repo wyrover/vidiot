@@ -22,7 +22,7 @@
 #include "VideoFrameLayer.h"
 #include "VideoSkipFrame.h"
 
-namespace model {
+namespace model { namespace video { namespace transition {
 
 //////////////////////////////////////////////////////////////////////////
 // IMPLEMENTATION OF TRANSITION
@@ -31,7 +31,7 @@ namespace model {
 VideoFramePtr VideoTransitionOpacity::getVideo(pts position, const IClipPtr& leftClip, const IClipPtr& rightClip, const VideoCompositionParameters& parameters)
 {
     VAR_DEBUG(position)(parameters);
-    VideoFramePtr result = parameters.getSkip() ? boost::make_shared<VideoSkipFrame>(parameters) : boost::make_shared<VideoFrame>(parameters);
+    VideoFramePtr result{ parameters.getSkip() ? boost::make_shared<VideoSkipFrame>(parameters) : boost::make_shared<VideoFrame>(parameters) };
 
     auto applyStep = [this, result, parameters, position](IClipPtr clip, bool left)
     {
@@ -69,7 +69,7 @@ VideoFramePtr VideoTransitionOpacity::getVideo(pts position, const IClipPtr& lef
                             }
                         }
                     }
-                }
+                }            // todo given this implementation, can't we enable fadein and fadeout for all 'children'? Thus, for all wipes?
             }
         }
 
@@ -147,4 +147,4 @@ std::function<float(int, int)> VideoTransitionOpacity::getLeftMethod(const wxIma
     return [](int x, int y) -> float { return 1.0; };
 }
 
-} // namespace
+}}} // namespace

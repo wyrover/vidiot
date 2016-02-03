@@ -322,6 +322,7 @@ void VideoDisplay::moveTo(pts position)
     mSequence->moveTo(position);
     GetEventHandler()->QueueEvent(new PlaybackPositionEvent(position));
 
+    updateParameters(); // Update, for instance, show bounding box.
     if (mWidth > 0 && mHeight > 0)
     {
         // Avoid getting bitmaps for empty windows during startup.

@@ -165,10 +165,7 @@ std::function<float (int,int)> WipeImage::getRightMethod(const wxImagePtr& image
     // todo propagate clear call to all transitions (and then clear the cached image)
     // todo add documentation on transitions   (part. about size of zoom images?)
     // todo two vertical (horizontal) lines moving from middle to outside
-    // todo slide in transition
-    // todo slide out transition
     // todo zoom transition?
-    // todo push transition
     // todo image blur!
     // todo hangup when transition playback is active (release mode without debugging) and selecting the imagezoom
                      
