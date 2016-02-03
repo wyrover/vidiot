@@ -17,13 +17,15 @@
 
 #pragma once
 
-#include "VideoTransitionOpacity.h"
-#include <boost/serialization/export.hpp>      //todo huh
+#include "VideoTransition.h"
+#include "IVideo.h"
 
 namespace model { namespace video { namespace transition {
 
-class CrossFade
-    :   public VideoTransitionOpacity
+/// Default base class for transitions that merely select pixels of the left
+/// or right image by changing the clip's opacity values.
+class Slide
+    :   public VideoTransition
 {
 public:
 
@@ -31,29 +33,21 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    CrossFade() = default;
+    Slide() = default;
 
-    CrossFade* clone() const override;
+    Slide* clone() const override;
 
-    virtual ~CrossFade() = default;
+    virtual ~Slide() = default;
 
     //////////////////////////////////////////////////////////////////////////
     // TRANSITION
     //////////////////////////////////////////////////////////////////////////
 
-    std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> getAvailableParameters() const override { return{}; };
+    bool supports(TransitionType type) const override;
+
+    std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> getAvailableParameters() const override;
 
     wxString getDescription(TransitionType type) const override;
-
-    //////////////////////////////////////////////////////////////////////////
-    // VIDEOTRANSITIONOPACITY
-    //////////////////////////////////////////////////////////////////////////
-
-    void handleFullyOpaqueImage(const wxImagePtr& image, const std::function<float (int, int)>& f) const override;
-
-    std::function<float(int, int)> getLeftMethod(const wxImagePtr& image, const float& factor) const override;
-
-    std::function<float (int,int)> getRightMethod(const wxImagePtr& image, const float& factor) const override;
 
 protected:
 
@@ -63,7 +57,13 @@ protected:
 
     /// Copy constructor. Use make_cloned for making deep copies of objects.
     /// \see make_cloned
-    CrossFade(const CrossFade& other) = default;
+    Slide(const Slide& other) = default;
+
+    //////////////////////////////////////////////////////////////////////////
+    // IMPLEMENTATION OF TRANSITION
+    //////////////////////////////////////////////////////////////////////////
+
+    VideoFramePtr getVideo(pts position, const IClipPtr& leftClip, const IClipPtr& rightClip, const VideoCompositionParameters& parameters) override;
 
 private:
 
@@ -78,5 +78,5 @@ private:
 
 }}} // namespace
 
-BOOST_CLASS_VERSION(model::video::transition::CrossFade, 1)
-BOOST_CLASS_EXPORT_KEY(model::video::transition::CrossFade)
+BOOST_CLASS_VERSION(model::video::transition::Slide, 1)
+BOOST_CLASS_EXPORT_KEY(model::video::transition::Slide)

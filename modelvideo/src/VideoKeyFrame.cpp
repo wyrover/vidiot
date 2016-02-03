@@ -288,7 +288,7 @@ void VideoKeyFrame::updateAutomatedScaling()
     case VideoScalingFitAll:
     {
         rational64 scalingfactor;
-        Convert::sizeInBoundingBox(mInputSize, outputsize, mScalingFactor);
+        Convert::sizeInBoundingBox(mInputSize, outputsize, mScalingFactor, false); // The false ensures that the entire video contents is shown (with black bars to fill the bounding box)
         break;
     }
     case VideoScalingNone:

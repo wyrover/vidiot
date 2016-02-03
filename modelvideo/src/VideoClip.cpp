@@ -126,7 +126,9 @@ VideoFramePtr VideoClip::getNextVideo(const VideoCompositionParameters& paramete
             ASSERT_NONZERO(keyFrame);
 
             // Scale the clip's size and region of interest to the bounding box
-            // Determine scaling for 'fitting' a clip with size 'projectSize' in a bounding box of size 'size'
+            // Determine scaling for 'fitting' a clip with size 'projectSize' in a bounding box of size 'size'.
+            // Note that there may be optional black bars around the video data to fill the bounding box.
+            // Size is reduced until everything fits.
             wxSize outputsize = Properties::get().getVideoSize();
 
             rational64 scaleToBoundingBox(0);

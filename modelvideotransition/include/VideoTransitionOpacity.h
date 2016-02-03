@@ -20,7 +20,7 @@
 #include "VideoTransition.h"
 #include "IVideo.h"
 
-namespace model {
+namespace model { namespace video { namespace transition {
 
 /// Default base class for transitions that merely select pixels of the left
 /// or right image by changing the clip's opacity values.
@@ -98,4 +98,4 @@ protected:
     virtual std::function<float (int,int)> getRightMethod(const wxImagePtr& image, const float& factor) const = 0;
 };
 
-} // namespace
+}}} // namespace

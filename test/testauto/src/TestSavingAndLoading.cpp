@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#include "TestSavingAndLoading.h"
+#include "TestSavingAndLoading.h" // todo make separate project
 
 namespace test {
 

@@ -24,19 +24,15 @@
 
 namespace model {
 
-DECLAREENUM(Direction8, \
-    Direction8TopLeftToBottomRight, \
-    Direction8TopToBottom, \
-    Direction8TopRightToBottomLeft, \
-    Direction8RightToLeft, \
-    Direction8BottomRightToTopLeft, \
-    Direction8BottomToTop, \
-    Direction8BottomLeftToTopRight, \
-    Direction8LeftToRight);
+DECLAREENUM(Direction4, \
+    Direction4TopToBottom, \
+    Direction4RightToLeft, \
+    Direction4BottomToTop, \
+    Direction4LeftToRight);
 
-typedef EnumSelector<Direction8> Direction8Selector;
+typedef EnumSelector<Direction4> Direction4Selector;
 
-class TransitionParameterDirection8
+class TransitionParameterDirection4
     : public TransitionParameter
 {
 public:
@@ -44,24 +40,22 @@ public:
     // Generic settings used by multiple transitions.
     // Defining them here ensures that these parameters are maintained when
     // changing the transition type.
-    static wxString sParameterDirection8;
-
-    static Direction8 getInversedDirection(Direction8 direction);
+    static wxString sParameterDirection4;
 
     //////////////////////////////////////////////////////////////////////////
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
     /// Constructor for recovery from disk.
-    TransitionParameterDirection8();
+    TransitionParameterDirection4();
 
     /// Constructor for creating a new parameter.
-    explicit TransitionParameterDirection8(const Direction8& direction);
+    explicit TransitionParameterDirection4(const Direction4& direction);
 
     /// Used for making deep copies (clones)
-    virtual TransitionParameterDirection8* clone() const override;
+    virtual TransitionParameterDirection4* clone() const override;
 
-    virtual ~TransitionParameterDirection8();
+    virtual ~TransitionParameterDirection4();
 
     //////////////////////////////////////////////////////////////////////////
     // TRANSITIONPARAMETER
@@ -77,8 +71,8 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    Direction8 getValue() const;
-    void setValue(Direction8 value);
+    Direction4 getValue() const;
+    void setValue(Direction4 value);
 
 protected:
 
@@ -88,7 +82,7 @@ protected:
 
     /// Copy constructor. Use make_cloned for making deep copies of objects.
     /// \see make_cloned
-    TransitionParameterDirection8(const TransitionParameterDirection8& other);
+    TransitionParameterDirection4(const TransitionParameterDirection4& other);
 
 private:
 
@@ -102,14 +96,14 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    Direction8Selector* mControl = nullptr;
-    Direction8 mValue = Direction8_MAX;
+    Direction4Selector* mControl = nullptr;
+    Direction4 mValue = Direction4_MAX;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<(std::ostream& os, const TransitionParameterDirection8& obj);
+    friend std::ostream& operator<<(std::ostream& os, const TransitionParameterDirection4& obj);
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION
@@ -121,5 +115,5 @@ private:
 };
 } // namespace
 
-BOOST_CLASS_VERSION(model::TransitionParameterDirection8, 1)
-BOOST_CLASS_EXPORT_KEY(model::TransitionParameterDirection8)
+BOOST_CLASS_VERSION(model::TransitionParameterDirection4, 1)
+BOOST_CLASS_EXPORT_KEY(model::TransitionParameterDirection4)

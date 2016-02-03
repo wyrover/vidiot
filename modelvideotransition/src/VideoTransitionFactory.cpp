@@ -20,6 +20,8 @@
 #include "VideoTransition_CrossFade.h"
 #include "VideoTransition_FadeToColor.h"
 #include "VideoTransition_ImageGradient.h"
+#include "VideoTransition_Push.h"
+#include "VideoTransition_Slide.h"
 #include "VideoTransition_WipeArc.h"
 #include "VideoTransition_WipeCircle.h"
 #include "VideoTransition_WipeDoubleClock.h"
@@ -34,7 +36,9 @@ VideoTransitionFactory::VideoTransitionFactory()
 {
     add(boost::make_shared<model::video::transition::CrossFade>());
     add(boost::make_shared<model::video::transition::FadeToColor>());
- // todo   add(boost::make_shared<model::video::transition::ImageGradient>());
+    add(boost::make_shared<model::video::transition::Push>());
+    add(boost::make_shared<model::video::transition::Slide>());
+    // todo   add(boost::make_shared<model::video::transition::ImageGradient>());
     add(boost::make_shared<model::video::transition::WipeImage>());
     add(boost::make_shared<model::video::transition::WipeArc>());
     add(boost::make_shared<model::video::transition::WipeCircle>());
