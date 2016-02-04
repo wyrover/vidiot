@@ -62,7 +62,6 @@ wxString Push::getDescription(TransitionType type) const
 
 VideoFramePtr Push::getVideo(pts position, const IClipPtr& leftClip, const IClipPtr& rightClip, const VideoCompositionParameters& parameters)
 {
-    // todo handle one of the two clips nullptr
     VAR_DEBUG(position)(parameters);
     VideoFramePtr result{ parameters.getSkip() ? boost::make_shared<VideoSkipFrame>(parameters) : boost::make_shared<VideoFrame>(parameters) };
 

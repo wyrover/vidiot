@@ -35,7 +35,7 @@ std::map<Direction4, wxString> Direction4Converter::getMapToHumanReadibleString(
     };
 }
 
-wxString TransitionParameterDirection4::sParameterDirection4{ "Direction4" };
+wxString TransitionParameterDirection4::sParameterDirection4{ "direction4" };
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
