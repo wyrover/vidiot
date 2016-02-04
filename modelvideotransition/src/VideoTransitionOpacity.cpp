@@ -69,7 +69,7 @@ VideoFramePtr VideoTransitionOpacity::getVideo(pts position, const IClipPtr& lef
                             }
                         }
                     }
-                }            // todo given this implementation, can't we enable fadein and fadeout for all 'children'? Thus, for all wipes?
+                }            // todo given this implementation, can't we enable fadein and fadeout for all 'children'? Thus, for all wipes? look at barn doors for default getleft method?
             }
         }
 

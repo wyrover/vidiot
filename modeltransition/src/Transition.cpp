@@ -23,6 +23,7 @@
 #include "TransitionParameter.h"
 #include "TransitionParameterBool.h"
 #include "TransitionParameterColor.h"
+#include "TransitionParameterDirection2.h"
 #include "TransitionParameterDirection4.h"
 #include "TransitionParameterDirection8.h"
 #include "TransitionParameterDouble.h"
@@ -337,6 +338,7 @@ template boost::shared_ptr<TransitionParameterDouble> Transition::getParameter<T
 template boost::shared_ptr<TransitionParameterFilename> Transition::getParameter<TransitionParameterFilename>(wxString name) const;
 template boost::shared_ptr<TransitionParameterInt> Transition::getParameter<TransitionParameterInt>(wxString name) const;
 template boost::shared_ptr<TransitionParameterColor> Transition::getParameter<TransitionParameterColor>(wxString name) const;
+template boost::shared_ptr<TransitionParameterDirection2> Transition::getParameter<TransitionParameterDirection2>(wxString name) const;
 template boost::shared_ptr<TransitionParameterDirection4> Transition::getParameter<TransitionParameterDirection4>(wxString name) const;
 template boost::shared_ptr<TransitionParameterDirection8> Transition::getParameter<TransitionParameterDirection8>(wxString name) const;
 template boost::shared_ptr<TransitionParameterRotationDirection> Transition::getParameter<TransitionParameterRotationDirection>(wxString name) const;

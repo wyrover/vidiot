@@ -15,59 +15,57 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#include "TransitionParameterDirection4.h"
+#include "TransitionParameterDirection2.h"
 
 #include "Config.h"
 #include "UtilException.h"
 
 namespace model {
 
-IMPLEMENTENUM(Direction4);
+IMPLEMENTENUM(Direction2);
 
-std::map<Direction4, wxString> Direction4Converter::getMapToHumanReadibleString()
+std::map<Direction2, wxString> Direction2Converter::getMapToHumanReadibleString()
 {
     return
     {
-        { Direction4TopToBottom, _("Top to bottom") },
-        { Direction4RightToLeft, _("Right to left") },
-        { Direction4BottomToTop, _("Bottom to top") },
-        { Direction4LeftToRight, _("Left to right") },
+        { Direction2Horizontal, _("Horizontal") },
+        { Direction2Vertical, _("Vertical") },
     };
 }
 
-wxString TransitionParameterDirection4::sParameterDirection4{ "direction4" };
+wxString TransitionParameterDirection2::sParameterDirection2{ "direction2" };
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-TransitionParameterDirection4::TransitionParameterDirection4()
+TransitionParameterDirection2::TransitionParameterDirection2()
     : TransitionParameter()
-    , mValue{ Direction4LeftToRight }
+    , mValue{ Direction2Horizontal }
 {
     VAR_DEBUG(*this);
 }
 
-TransitionParameterDirection4::TransitionParameterDirection4(const Direction4& direction)
+TransitionParameterDirection2::TransitionParameterDirection2(const Direction2& direction)
     : TransitionParameter()
     , mValue{ direction }
 {
     VAR_DEBUG(*this);
 }
 
-TransitionParameterDirection4::TransitionParameterDirection4(const TransitionParameterDirection4& other)
+TransitionParameterDirection2::TransitionParameterDirection2(const TransitionParameterDirection2& other)
     : TransitionParameter(other)
     , mValue{ other.mValue }
 {
     VAR_DEBUG(*this);
 }
 
-TransitionParameterDirection4* TransitionParameterDirection4::clone() const
+TransitionParameterDirection2* TransitionParameterDirection2::clone() const
 {
-    return new TransitionParameterDirection4(static_cast<const TransitionParameterDirection4&>(*this));
+    return new TransitionParameterDirection2(static_cast<const TransitionParameterDirection2&>(*this));
 }
 
-TransitionParameterDirection4::~TransitionParameterDirection4()
+TransitionParameterDirection2::~TransitionParameterDirection2()
 {
     VAR_DEBUG(this);
 }
@@ -76,26 +74,26 @@ TransitionParameterDirection4::~TransitionParameterDirection4()
 // TRANSITIONPARAMETER
 //////////////////////////////////////////////////////////////////////////
 
-void TransitionParameterDirection4::copyValue(TransitionParameterPtr other)
+void TransitionParameterDirection2::copyValue(TransitionParameterPtr other)
 {
-    boost::shared_ptr<TransitionParameterDirection4> typed{ boost::dynamic_pointer_cast<TransitionParameterDirection4>(other) };
+    boost::shared_ptr<TransitionParameterDirection2> typed{ boost::dynamic_pointer_cast<TransitionParameterDirection2>(other) };
     if (typed)
     {
         setValue(typed->getValue());
     }
 }
 
-wxWindow* TransitionParameterDirection4::makeWidget(wxWindow *parent)
+wxWindow* TransitionParameterDirection2::makeWidget(wxWindow *parent)
 {
     ASSERT_EQUALS(mControl, 0);
-    mControl = new Direction4Selector(parent, Direction4Converter::getMapToHumanReadibleString(), mValue);
-    mControl->Bind(wxEVT_CHOICE, &TransitionParameterDirection4::onDirection, this);
+    mControl = new Direction2Selector(parent, Direction2Converter::getMapToHumanReadibleString(), mValue);
+    mControl->Bind(wxEVT_CHOICE, &TransitionParameterDirection2::onDirection, this);
     return mControl;
 }
-void TransitionParameterDirection4::destroyWidget()
+void TransitionParameterDirection2::destroyWidget()
 {
     ASSERT_DIFFERS(mControl, 0);
-    mControl->Unbind(wxEVT_CHOICE, &TransitionParameterDirection4::onDirection, this);
+    mControl->Unbind(wxEVT_CHOICE, &TransitionParameterDirection2::onDirection, this);
     mControl->Destroy();
     mControl = nullptr;
 }
@@ -104,12 +102,12 @@ void TransitionParameterDirection4::destroyWidget()
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-Direction4 TransitionParameterDirection4::getValue() const 
+Direction2 TransitionParameterDirection2::getValue() const 
 { 
     return mValue; 
 }
 
-void TransitionParameterDirection4::setValue(Direction4 value) 
+void TransitionParameterDirection2::setValue(Direction2 value) 
 { 
     if (mValue != value)
     {
@@ -127,7 +125,7 @@ void TransitionParameterDirection4::setValue(Direction4 value)
 // GUI EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void TransitionParameterDirection4::onDirection(wxCommandEvent& event)
+void TransitionParameterDirection2::onDirection(wxCommandEvent& event)
 {
     CatchExceptions([this]
     {
@@ -140,7 +138,7 @@ void TransitionParameterDirection4::onDirection(wxCommandEvent& event)
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<(std::ostream& os, const TransitionParameterDirection4& obj)
+std::ostream& operator<<(std::ostream& os, const TransitionParameterDirection2& obj)
 {
     os << obj.mValue;
     return os;
@@ -151,7 +149,7 @@ std::ostream& operator<<(std::ostream& os, const TransitionParameterDirection4& 
 //////////////////////////////////////////////////////////////////////////
 
 template<class Archive>
-void TransitionParameterDirection4::serialize(Archive & ar, const unsigned int version)
+void TransitionParameterDirection2::serialize(Archive & ar, const unsigned int version)
 {
     try
     {
@@ -162,9 +160,9 @@ void TransitionParameterDirection4::serialize(Archive & ar, const unsigned int v
     catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
     catch (...)                                  { LOG_ERROR;                                   throw; }
 }
-template void TransitionParameterDirection4::serialize<boost::archive::xml_oarchive>(boost::archive::xml_oarchive& ar, const unsigned int archiveVersion);
-template void TransitionParameterDirection4::serialize<boost::archive::xml_iarchive>(boost::archive::xml_iarchive& ar, const unsigned int archiveVersion);
+template void TransitionParameterDirection2::serialize<boost::archive::xml_oarchive>(boost::archive::xml_oarchive& ar, const unsigned int archiveVersion);
+template void TransitionParameterDirection2::serialize<boost::archive::xml_iarchive>(boost::archive::xml_iarchive& ar, const unsigned int archiveVersion);
 
 } //namespace
 
-BOOST_CLASS_EXPORT_IMPLEMENT(model::TransitionParameterDirection4)
+BOOST_CLASS_EXPORT_IMPLEMENT(model::TransitionParameterDirection2)

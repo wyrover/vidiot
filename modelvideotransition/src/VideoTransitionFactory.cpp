@@ -23,6 +23,7 @@
 #include "VideoTransition_Push.h"
 #include "VideoTransition_Slide.h"
 #include "VideoTransition_WipeArc.h"
+#include "VideoTransition_WipeBarnDoors.h"
 #include "VideoTransition_WipeCircle.h"
 #include "VideoTransition_WipeDoubleClock.h"
 #include "VideoTransition_WipeClock.h"
@@ -39,11 +40,12 @@ VideoTransitionFactory::VideoTransitionFactory()
     add(boost::make_shared<model::video::transition::Push>());
     add(boost::make_shared<model::video::transition::Slide>());
     // todo   add(boost::make_shared<model::video::transition::ImageGradient>());
-    add(boost::make_shared<model::video::transition::WipeImage>());
     add(boost::make_shared<model::video::transition::WipeArc>());
+    add(boost::make_shared<model::video::transition::WipeBarnDoors>());
     add(boost::make_shared<model::video::transition::WipeCircle>());
     add(boost::make_shared<model::video::transition::WipeDoubleClock>());
     add(boost::make_shared<model::video::transition::WipeClock>());
+    add(boost::make_shared<model::video::transition::WipeImage>());
     add(boost::make_shared<model::video::transition::WipeStraight>());
 }
 
