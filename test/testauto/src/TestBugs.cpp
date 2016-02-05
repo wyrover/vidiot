@@ -780,4 +780,16 @@ void TestBugs::testCrashAfterSelectingAnEmptyClip()
     ASSERT_SELECTION_SIZE(1);
 }
 
+void TestBugs::testCrashWhenMovingCursorOutsideTimelineWhenShiftBeginTrimming()
+{
+    StartTestSuite();
+    TimelineZoomIn(8);
+    TimelineTrimLeft(VideoClip(0, 0), 20);
+    TimelineBeginTrim(LeftCenter(VideoClip(0, 0)), true);
+    pts l{ VideoClip(0,0)->getLength() };
+    TimelineLeave(wxPoint(-1, VCenter(VideoClip(0, 0))));
+    ASSERT_EQUALS(VideoClip(0, 0)->getLength(), l);
+    TimelineEndTrim();
+}
+
 } // namespace

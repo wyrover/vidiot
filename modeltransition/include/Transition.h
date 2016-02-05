@@ -58,7 +58,7 @@ public:
     wxString getDescription() const override;
     pts getLength() const override;
     void moveTo(pts position) override;
-    void clean() override;
+    virtual void clean() override;
 
     //////////////////////////////////////////////////////////////////////////
     // ICLIP

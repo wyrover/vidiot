@@ -215,6 +215,12 @@ public:
     /// a length button in the details view caused a crash.
     void testCrashAfterSelectingAnEmptyClip();
 
+    /// Starting a begin trim operation at the beginning of a track, and then 
+    /// moving the cursor to the left, caused an EvLeave with an x-position of -1.
+    /// This x-position was then used to determine a logical clip position,
+    /// resulting in an assert in ClipView.
+    void testCrashWhenMovingCursorOutsideTimelineWhenShiftBeginTrimming();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////

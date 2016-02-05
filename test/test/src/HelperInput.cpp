@@ -281,8 +281,6 @@ void TimelineRightClick(wxPoint position)
     }
 }
 
-
-
 void TimelineRightDown()
 {
     if (FixtureGui::UseRealUiEvents)
@@ -315,6 +313,23 @@ void TimelineRightUp()
             CurrentTimelineInputState::Get().RightDown = false;
             gui::timeline::state::EvRightUp event(CurrentTimelineInputState::Get().getWxMouseState());
             getTimeline().getStateMachine().handleRightUp(event);
+        });
+    }
+}
+
+void TimelineLeave(wxPoint position)
+{
+    if (FixtureGui::UseRealUiEvents)
+    {
+        FATAL("NIY");
+    }
+    else
+    {
+        util::thread::RunInMainAndWait([&position]
+        {
+            CurrentTimelineInputState::Get().Position = position - getTimeline().getScrolling().getOffset();
+            gui::timeline::state::EvLeave event(CurrentTimelineInputState::Get().getWxMouseState());
+            getTimeline().getStateMachine().handleLeave(event);
         });
     }
 }

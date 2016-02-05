@@ -106,7 +106,12 @@ Mouse::~Mouse()
 
 void Mouse::update(state::EvMouse& state)
 {
-    mPhysicalPosition = state.Position;
+    mPhysicalPosition =  state.Position;
+    mPhysicalPosition.x = std::max(0, mPhysicalPosition.x);                        // Some events may have positions
+    mPhysicalPosition.x = std::min(getSequenceView().getW(), mPhysicalPosition.x); // outside the sequence view
+    mPhysicalPosition.y = std::max(0, mPhysicalPosition.y);                        // region.
+    mPhysicalPosition.y = std::min(getSequenceView().getH(), mPhysicalPosition.y); // Example: leave event.
+
     mVirtualPosition =  getScrolling().getVirtualPosition(mPhysicalPosition);
     VAR_DEBUG(mPhysicalPosition)(mVirtualPosition);
 
