@@ -44,6 +44,8 @@ public:
     // TRANSITION
     //////////////////////////////////////////////////////////////////////////
 
+    void clean() override;
+
     bool supports(TransitionType type) const override;
 
     std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> getAvailableParameters() const override;

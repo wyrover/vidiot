@@ -98,6 +98,9 @@ void TimelineRightDown();
 /// Trigger a right up event in the timeline at the current mouse position.
 void TimelineRightUp();
 
+/// Trigger a leave event with the given position.
+void TimelineLeave(wxPoint position);
+
 /// Trigger a key down event in the timeline for the given key.
 /// \param key wx key code for key (may be wxMOD_* to generate events for modifiers)
 void TimelineKeyDown(int key); 

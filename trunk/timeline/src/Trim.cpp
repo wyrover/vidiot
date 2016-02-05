@@ -391,7 +391,7 @@ void Trim::submit()
                 static const int NumberOfSteps = AnimationDurationInMs / SleepTimePerStep;
                 for (int step = NumberOfSteps; step > 0; --step) // step > 0: otherwise /0 possible
                 {
-                    int newShift = -1 * model::Convert::doubleToInt(static_cast<double>(remaining) / static_cast<double>(NumberOfSteps)* static_cast<double>(step));
+                    int newShift{ -1 * static_cast<int>(std::round(static_cast<double>(remaining) / static_cast<double>(NumberOfSteps)* static_cast<double>(step))) };
                     pts cursorDiff = getTimeline().getZoom().pixelsToPts(newShift);
                     getTimeline().setShift(newShift);
                     getTimeline().getCursor().setLogicalPosition(mCursorPositionBefore - diff + cursorDiff);

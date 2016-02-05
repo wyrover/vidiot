@@ -61,6 +61,13 @@ WipeImage::WipeImage(const WipeImage& other)
 // TRANSITION
 //////////////////////////////////////////////////////////////////////////
 
+void WipeImage::clean()
+{
+    VideoTransitionOpacity::clean();
+    mImage = nullptr;
+    mImageFileName.Clear();
+}
+
 bool WipeImage::supports(TransitionType type) const
 {
     return
@@ -162,7 +169,6 @@ std::function<float (int,int)> WipeImage::getRightMethod(const wxImagePtr& image
         mImageFileName = filename;
     }
                             
-    // todo propagate clear call to all transitions (and then clear the cached image)
     // todo add documentation on transitions   (part. about size of zoom images?)
     // todo hangup when transition playback is active (release mode without debugging) and selecting the imagezoom
                      
