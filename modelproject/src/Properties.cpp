@@ -72,57 +72,67 @@ Properties::~Properties()
 
 FrameRate Properties::getFrameRate() const
 {
+    boost::mutex::scoped_lock lock(mMutex);
     return mFrameRate;
 }
 
 void Properties::setFrameRate(FrameRate frameRate)
 {
     ASSERT(wxThread::IsMain());
+    boost::mutex::scoped_lock lock(mMutex);
     mFrameRate = frameRate;
 }
 
 wxSize Properties::getVideoSize() const
 {
+    boost::mutex::scoped_lock lock(mMutex);
     return wxSize(mVideoWidth,mVideoHeight);
 }
 
 void Properties::setVideoSize(wxSize size)
 {
     ASSERT(wxThread::IsMain());
+    boost::mutex::scoped_lock lock(mMutex);
     mVideoWidth = size.GetWidth();
     mVideoHeight = size.GetHeight();
 }
 
 int Properties::getAudioNumberOfChannels() const
 {
+    boost::mutex::scoped_lock lock(mMutex);
     return mAudioChannels;
 }
 
 void Properties::setAudioNumberOfChannels(int channels)
 {
     ASSERT(wxThread::IsMain());
+    boost::mutex::scoped_lock lock(mMutex);
     mAudioChannels = channels;
 }
 
 int Properties::getAudioSampleRate() const
 {
+    boost::mutex::scoped_lock lock(mMutex);
     return mAudioSampleRate;
 }
 
 void Properties::setAudioSampleRate(int audioFrameRate)
 {
     ASSERT(wxThread::IsMain());
+    boost::mutex::scoped_lock lock(mMutex);
     mAudioSampleRate = audioFrameRate;
 }
 
 render::RenderPtr Properties::getDefaultRender() const
 {
+    boost::mutex::scoped_lock lock(mMutex);
     return make_cloned<render::Render>(mDefaultRender);
 }
 
 void Properties::setDefaultRender(const render::RenderPtr& render)
 {
     ASSERT(wxThread::IsMain());
+    boost::mutex::scoped_lock lock(mMutex);
     mDefaultRender = make_cloned<render::Render>(render);
 }
 

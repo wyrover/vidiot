@@ -273,7 +273,7 @@ void ClipView::getPositionInfo(const wxPoint& position, PointerPositionInfo& inf
     // (then the cursor won't flip too much).
     pixel dist_begin = position.x - getLeftPixel();
     pixel dist_end = getRightPixel() - position.x;
-    ASSERT_MORE_THAN_EQUALS_ZERO(dist_begin)(mClip);   // todo this assert failed when (shift) begin trimming at clip 0 and then immediately moving left, outside timeline. EvLeave was generated with x position -1.
+    ASSERT_MORE_THAN_EQUALS_ZERO(dist_begin)(mClip);
     ASSERT_MORE_THAN_EQUALS_ZERO(dist_end)(mClip);
 
     model::TrackPtr track = mClip->getTrack();

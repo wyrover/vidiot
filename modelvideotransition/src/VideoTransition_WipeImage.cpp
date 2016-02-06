@@ -66,6 +66,7 @@ void WipeImage::clean()
     VideoTransitionOpacity::clean();
     mImage = nullptr;
     mImageFileName.Clear();
+    mErrorShown = false;
 }
 
 bool WipeImage::supports(TransitionType type) const
@@ -184,7 +185,7 @@ std::function<float (int,int)> WipeImage::getRightMethod(const wxImagePtr& image
         float directedFactor{ inversed ? 1.0f - factor : factor };
 
         // Ensure proper WYSIWYG, scale the image extra in case the preview size differs from the output size of the project.
-        wxSize outputSize{ Properties::get().getVideoSize() }; // todo make properties more thread safe than now. This will often be done in secondary thread (rendering/playback!)
+        wxSize outputSize{ Properties::get().getVideoSize() };
         float adjustedFactor{ directedFactor * static_cast<float>(image->GetWidth()) / static_cast<float>(outputSize.GetWidth()) };
 
         // Zoom
@@ -238,10 +239,15 @@ std::function<float (int,int)> WipeImage::getRightMethod(const wxImagePtr& image
         };
     }
 
-    // todo make mechanism to be able to set messages (dialog even?) from secondary thread? Optionally, abort rendering/playback? 
-    // Maybe add exception with message for dialog and then catch in render loop (with yes/no to abort rendering?)
-    // but then the exception must also be caught in playback threads, AND in main thread for all previews! (maybe ignore by default)
-    // gui::StatusBar::get().timedInfoText(wxString::Format(_("Missing %s at %s."), filename.GetFullName(), Convert::ptsToHumanReadibleString(getLeftPts())), 10000);
+    if (!mErrorShown)
+    {
+        wxString error =
+            filename.IsOk() ?
+            wxString::Format(_("Couldn't read %s at %s."), filename.GetFullName(), Convert::ptsToHumanReadibleString(getLeftPts())) :
+            wxString::Format(_("No image selected at %s."), Convert::ptsToHumanReadibleString(getLeftPts()));
+        gui::StatusBar::get().timedInfoText(error, 10000);
+        mErrorShown = true;
+    }
     VAR_WARNING(filename);
     return [](int x, int y) { return static_cast<float>(0.0); };
 }

@@ -95,7 +95,7 @@ VideoFramePtr Push::getVideo(pts position, const IClipPtr& leftClip, const IClip
             rightPositionOffset.x = leftPositionOffset.x - w;
             break;
         default:
-            VAR_WARNING(position);        // todo add tests for all directions?
+            VAR_WARNING(position);
     }
 
     auto addClip = [parameters, result](const model::IClipPtr& clip, wxPoint offset)

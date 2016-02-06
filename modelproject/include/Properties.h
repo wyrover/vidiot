@@ -79,6 +79,7 @@ private:
     int mAudioChannels;
     int mAudioSampleRate;
     render::RenderPtr mDefaultRender;
+    mutable boost::mutex mMutex;
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

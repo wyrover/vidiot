@@ -78,6 +78,7 @@ private:
 
     mutable wxImagePtr mImage = nullptr; 
     mutable wxFileName mImageFileName;
+    mutable bool mErrorShown = false;
     boost::optional<wxString> mName = boost::none;
 
     //////////////////////////////////////////////////////////////////////////
