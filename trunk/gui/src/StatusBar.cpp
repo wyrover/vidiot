@@ -127,8 +127,15 @@ void StatusBar::popInfoText()
 
 void StatusBar::timedInfoText(const wxString& text, int ms)
 {
-    pushInfoText(text);
-    mInfoTimer->StartOnce(ms);
+    if (wxThread::IsMain())
+    {
+        pushInfoText(text);
+        mInfoTimer->StartOnce(ms);
+    }
+    else
+    {
+        util::thread::RunInMainAndWait(std::bind(&StatusBar::timedInfoText, this, text, ms));
+    }
 }
 
 void StatusBar::setQueueText(const wxString& text)

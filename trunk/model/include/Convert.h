@@ -135,8 +135,6 @@ public:
 
     static double degreesToRadians(rational64 degrees);
 
-    static int doubleToInt(double x);
-
     /// Convert a number of audio samples (data for one speaker) to a number of bytes required to store this
     /// \param nSamples Number of audio samples
     /// \return number of required bytes

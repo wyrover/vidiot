@@ -187,8 +187,8 @@ void WipeStraight::serialize(Archive & ar, const unsigned int version)
     catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
     catch (...)                                  { LOG_ERROR;                                   throw; }
 }
-//template void WipeStraight::serialize<boost::archive::xml_oarchive>(boost::archive::xml_oarchive& ar, const unsigned int archiveVersion);    // todo no longer required due to exports?
-//template void WipeStraight::serialize<boost::archive::xml_iarchive>(boost::archive::xml_iarchive& ar, const unsigned int archiveVersion);
+template void WipeStraight::serialize<boost::archive::xml_oarchive>(boost::archive::xml_oarchive& ar, const unsigned int archiveVersion);
+template void WipeStraight::serialize<boost::archive::xml_iarchive>(boost::archive::xml_iarchive& ar, const unsigned int archiveVersion);
 
 template<class Archive>
 void Bands::serialize(Archive & ar, const unsigned int version)
