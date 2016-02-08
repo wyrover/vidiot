@@ -64,6 +64,7 @@ wxWindow* TransitionParameterBool::makeWidget(wxWindow *parent)
 
     mCheck = new wxCheckBox(parent, wxID_ANY, "");
     mCheck->SetValue(mValue);
+    mCheck->SetToolTip(getToolTip());
     mCheck->Bind(wxEVT_CHECKBOX, &TransitionParameterBool::onCheck, this);
 
     return mCheck;

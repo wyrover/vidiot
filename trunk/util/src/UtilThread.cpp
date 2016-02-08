@@ -23,84 +23,59 @@
 
 namespace util { namespace thread {
 
-class RunInMainThread;
-typedef boost::shared_ptr<RunInMainThread> RunInMainThreadPtr;
-DECLARE_EVENT(EVENT_RUN_IN_MAIN_THREAD, EventRunInMainThread, RunInMainThreadPtr);
-DEFINE_EVENT(EVENT_RUN_IN_MAIN_THREAD,  EventRunInMainThread, RunInMainThreadPtr);
-
-class RunInMainThread
-    :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
-    ,   public Self<RunInMainThread>
+RunInMainScheduler::RunInMainScheduler()
 {
-public:
+    Bind(wxEVT_THREAD, &RunInMainScheduler::onThreadEvent, this);
+}
 
-    RunInMainThread(const std::function<void()>& method, bool wait)
-        : mMethod(method)
-        , mWait(wait)
-        , mDone(false)
+RunInMainScheduler::~RunInMainScheduler()
+{
+    Unbind(wxEVT_THREAD, &RunInMainScheduler::onThreadEvent, this);
+}
+
+void RunInMainScheduler::run(const std::function<void()>& method)
+{
+    if (wxThread::IsMain())
     {
+        method();
     }
-    RunInMainThread(const RunInMainThread&) = delete;
-    RunInMainThread& operator=(const RunInMainThread&) = delete;
-
-    void run()
+    else
     {
-        if (wxThread::IsMain())
-        {
-            mMethod();
-        }
-        else
-        {
-            Bind( EVENT_RUN_IN_MAIN_THREAD, &RunInMainThread::onThreadEvent, this );
-            QueueEvent(new EventRunInMainThread(self()));
-            if (mWait)
-            {
-                boost::mutex::scoped_lock lock(mMutex);
-                while (!mDone)
-                {
-                    mCondition.wait(lock);
-                }
-            }
-        }
+        wxThreadEvent* threadEvent{ new wxThreadEvent{wxEVT_THREAD, wxID_HIGHEST + 1} };
+        threadEvent->SetPayload(method);
+        QueueEvent(threadEvent);
     }
+}
 
-    ~RunInMainThread()
-    {
-        if (mDone)
-        {
-            Unbind( EVENT_RUN_IN_MAIN_THREAD, &RunInMainThread::onThreadEvent, this );
-        }
-    }
-
-    void onThreadEvent(EventRunInMainThread& event)
-    {
-        mMethod();
-        event.getValue().reset();
-        boost::mutex::scoped_lock lock(mMutex);
-        mDone = true;
-        mCondition.notify_all();
-    }
-
-private:
-
-    std::function<void()> mMethod;
-    bool mWait;
-
-    boost::condition_variable mCondition;
-    boost::mutex mMutex;
-    bool mDone;
-};
+void RunInMainScheduler::onThreadEvent(wxThreadEvent& event)
+{
+    ASSERT(wxThread::IsMain());
+    std::function<void()> method{ event.GetPayload<std::function<void()>>() };
+    method();
+}
 
 void RunInMainAndWait(const std::function<void()>& method)
 {
-    RunInMainThreadPtr obj = boost::make_shared<RunInMainThread>(method, true);
-    obj->run();
+    std::atomic<bool> done{ false };
+    boost::condition_variable condition;
+    boost::mutex mutex;
+    util::thread::RunInMainScheduler::get().run([method, &done, &mutex, &condition]
+    {
+        method();
+        done = true;
+        boost::mutex::scoped_lock lock(mutex);
+        condition.notify_all();
+    });
+    boost::mutex::scoped_lock lock(mutex);
+    while (!done)
+    {
+        condition.wait(lock);
+    }
 }
 
 void RunInMain(const std::function<void()>& method)
 {
-    RunInMainThreadPtr obj = boost::make_shared<RunInMainThread>(method, false);
-    obj->run();
+    util::thread::RunInMainScheduler::get().run(method);
 }
 
 void setCurrentThreadName(const char* name)

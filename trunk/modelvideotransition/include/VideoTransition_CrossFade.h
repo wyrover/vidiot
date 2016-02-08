@@ -40,7 +40,7 @@ public:
     // TRANSITION
     //////////////////////////////////////////////////////////////////////////
 
-    std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> getAvailableParameters() const override { return{}; };
+    ParameterAttributes getAvailableParameters() const override { return{}; };
 
     wxString getDescription(TransitionType type) const override;
 

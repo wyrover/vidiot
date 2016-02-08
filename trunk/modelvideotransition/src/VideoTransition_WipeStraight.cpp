@@ -42,13 +42,13 @@ bool WipeStraight::supports(TransitionType type) const
         type == TransitionTypeFadeOutToNext;
 }
 
-std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> WipeStraight::getAvailableParameters() const
+ParameterAttributes WipeStraight::getAvailableParameters() const
 {
     return
     {
-        std::make_tuple(TransitionParameterInt::sParameterBandsCount, _("Number of lines"), boost::make_shared<TransitionParameterInt>(1, 1, 100)),
-        std::make_tuple(TransitionParameterDirection8::sParameterDirection8, _("Direction"), boost::make_shared<TransitionParameterDirection8>(Direction8LeftToRight)),
-        std::make_tuple(TransitionParameterBool::sParameterSoftenEdges, _("Soften edges"), boost::make_shared<TransitionParameterBool>(true)),
+        { TransitionParameterInt::sParameterBandsCount, _("Number of lines"), _("Select the number of simultaneous wipes."), boost::make_shared<TransitionParameterInt>(1, 1, 100) },
+        { TransitionParameterDirection8::sParameterDirection8, _("Direction"), _("Select the direction of the wipes."), boost::make_shared<TransitionParameterDirection8>(Direction8LeftToRight) },
+        { TransitionParameterBool::sParameterSoftenEdges, _("Soften edges"), _("Select to enable smoothing at the edges."), boost::make_shared<TransitionParameterBool>(true) },
     };
 }
 

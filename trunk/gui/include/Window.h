@@ -21,8 +21,13 @@
 #include "HelperPanel.h"
 #include "UtilSingleInstance.h"
 
+class RunInMainScheduler;
+
 namespace util {
     class TestCrash;
+    namespace thread {
+        struct RunInMainScheduler;
+    }
 }
 
 namespace model {
@@ -218,35 +223,37 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    wxDocManager* mDocManager;
-    wxDocTemplate* mDocTemplate;
+    wxDocManager* mDocManager = nullptr;
+    wxDocTemplate* mDocTemplate = nullptr;
 
-    Dialog* mDialog;
+    Dialog* mDialog = nullptr;
 
-    model::FileWatcher* mWatcher;
+    model::FileWatcher* mWatcher = nullptr;
 
-    worker::VisibleWorker*   mVisibleWorker;
-    worker::InvisibleWorker* mInvisibleWorker;
+    util::thread::RunInMainScheduler* mScheduler = nullptr;
 
-    Preview*        mPreview;
-    DetailsView*    mDetailsView;
-    TimelinesView*  mTimelinesView;
-    ProjectView*    mProjectView;
-    Help*           mHelp;
+    worker::VisibleWorker*   mVisibleWorker = nullptr;
+    worker::InvisibleWorker* mInvisibleWorker = nullptr;
 
-    wxMenuBar*          mMenuBar;        // For enabling/disabling menus
-    wxMenu*             mMenuFile;       // For enabling/disabling menus
-    wxMenu*             mMenuEdit;       // For associating with do/undo
-    wxMenu*             mMenuView;       // For updating view items when panes are closed.
-    wxMenu*             mMenuSequence;   // For determining cleanup of the sequence menu's
-    wxMenu*             mMenuWorkspace;
-    wxMenu*             mMenuHelp;       // For updating Help when the pane is closed.
-    util::TestCrash*    mTestCrash;
+    Preview*        mPreview = nullptr;
+    DetailsView*    mDetailsView = nullptr;
+    TimelinesView*  mTimelinesView = nullptr;
+    ProjectView*    mProjectView = nullptr;
+    Help*           mHelp = nullptr;
 
-    wxAuiManager        mUiManager;
+    wxMenuBar*          mMenuBar = nullptr;        // For enabling/disabling menus
+    wxMenu*             mMenuFile = nullptr;       // For enabling/disabling menus
+    wxMenu*             mMenuEdit = nullptr;       // For associating with do/undo
+    wxMenu*             mMenuView = nullptr;       // For updating view items when panes are closed.
+    wxMenu*             mMenuSequence = nullptr;   // For determining cleanup of the sequence menu's
+    wxMenu*             mMenuWorkspace = nullptr;
+    wxMenu*             mMenuHelp = nullptr;       // For updating Help when the pane is closed.
+    util::TestCrash*    mTestCrash = nullptr;
 
-    model::audio::AudioTransitionFactory* mAudioTransitionFactory;
-    model::video::VideoTransitionFactory* mVideoTransitionFactory;
+    wxAuiManager        mUiManager = nullptr;
+
+    model::audio::AudioTransitionFactory* mAudioTransitionFactory = nullptr;
+    model::video::VideoTransitionFactory* mVideoTransitionFactory = nullptr;
 
     wxString            mDefaultPerspective;
 

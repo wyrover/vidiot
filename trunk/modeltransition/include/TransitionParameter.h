@@ -48,13 +48,16 @@ public:
     virtual wxWindow* makeWidget(wxWindow *parent) = 0;
     virtual void destroyWidget() = 0;
 
-    wxString getName() { return mName; }
-    void setName(const wxString& name) { mName = name; }
+    wxString getName() const;
+    void setName(const wxString& name);
 
-    wxString getDescription() { return mDescription; }
-    void setDescription(const wxString& description) { mDescription = description; }
+    wxString getDescription() const;
+    void setDescription(const wxString& description);
 
-    void setOnChanged(std::function<void(const wxString&)> onChange) { mOnChange = onChange; }
+    wxString getToolTip() const;
+    void setToolTip(const wxString& tooltip);
+
+    void setOnChanged(std::function<void(const wxString&)> onChange);
 
 protected:
 
@@ -81,6 +84,7 @@ private:
 
     wxString mName; // Never serialize this
     wxString mDescription; // Never serialize this
+    wxString mToolTip; // Never serialize this
     std::function<void(const wxString&)> mOnChange = nullptr;
 
     //////////////////////////////////////////////////////////////////////////

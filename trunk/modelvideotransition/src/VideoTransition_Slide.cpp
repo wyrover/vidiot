@@ -43,12 +43,12 @@ bool Slide::supports(TransitionType type) const
     return true;
 }
 
-std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> Slide::getAvailableParameters() const
+ParameterAttributes Slide::getAvailableParameters() const
 {
     return
     {
-        std::make_tuple(TransitionParameterDirection8::sParameterDirection8, _("Direction"), boost::make_shared<TransitionParameterDirection8>(Direction8RightToLeft)),
-        std::make_tuple(TransitionParameterBool::sParameterInversed, _("Inversed"), boost::make_shared<TransitionParameterBool>(false)),
+        { TransitionParameterDirection8::sParameterDirection8, _("Direction"), _("Select the movement direction."), boost::make_shared<TransitionParameterDirection8>(Direction8RightToLeft) },
+        { TransitionParameterBool::sParameterInversed, _("Inversed"), _("Select between 'sliding in' the second clip or 'sliding away' the first clip."), boost::make_shared<TransitionParameterBool>(false) },
     };
 }
 

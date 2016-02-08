@@ -44,8 +44,6 @@ void TestVideoTransitions::testVideoTransitions()
 {
     auto setOpacity = [](int index, int opacity)
     {
-        std::ostringstream os; os << "Set opacity: " << opacity;
-        StartTest(os.str().c_str());
         TimelineSelectClips({});
         TimelineLeftClick(Center(VideoClip(0,index)));
         SetValue(DetailsClipView()->getOpacitySlider(), opacity); // Same as WXK_PAGEUP
@@ -75,7 +73,7 @@ void TestVideoTransitions::testVideoTransitions()
             {
                 model::TransitionType tt{ type_and_index.first };
                 int ti{ type_and_index.second };
-                StartTest(model::TransitionType_toString(tt) + " " + t->getDescription());
+                StartTest(t->getDescription() + " " + model::TransitionType_toString(tt));
                 util::thread::RunInMainAndWait([t, tt]() { gui::timeline::cmd::createTransition(getSequence(), VideoClip(0, 1), tt, t); });
                 ASSERT(VideoClip(0, ti)->isA<model::Transition>());
                 TimelineLeftClick(Center(VideoClip(0, ti))); // Open properties
@@ -88,7 +86,7 @@ void TestVideoTransitions::testVideoTransitions()
                 stopped.wait();
                 Scrub(-2 + LeftPixel(VideoClip(0, ti)), RightPixel(VideoClip(0, ti)) + 2);
                 Play(-2 + LeftPixel(VideoClip(0, ti)), 250);
-                StartTest(model::TransitionType_toString(tt) + " " + t->getDescription() + " (opacity)");
+                StartTest(t->getDescription() + " " + model::TransitionType_toString(tt) + " (opacity)");
                 setOpacity(ti - 1, 50);
                 setOpacity(ti + 1, 200);
                 Scrub(-2 + LeftPixel(VideoClip(0, ti)), RightPixel(VideoClip(0, ti)) + 2);

@@ -120,12 +120,14 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     wxBoxSizer* speedsizer = new wxBoxSizer(wxHORIZONTAL);
     mSpeedSlider = new wxSlider(mSpeedPanel, wxID_ANY, factorToSliderValue(sFactorMax), factorToSliderValue(sFactorMin), factorToSliderValue(sFactorMax));
     mSpeedSlider->SetPageSize(sFactorPageSize);
+    mSpeedSlider->SetToolTip(_("Change the speed of the clip. Note that currently only changing the speed of video-only clips is supported. Furthermore, changing the clip speed is only allowed when a there are no other clips 'under' and 'above' the clip in the timeline."));
     mSpeedSpin = new wxSpinCtrlDouble(mSpeedPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(55,-1));
     mSpeedSpin->SetWindowVariant( wxWINDOW_VARIANT_SMALL );
     mSpeedSpin->SetDigits(sFactorPrecision);
     mSpeedSpin->SetValue(1);
     mSpeedSpin->SetRange(boost::rational_cast<double>(sFactorMin), boost::rational_cast<double>(sFactorMax));
     mSpeedSpin->SetIncrement(sFactorIncrement);
+    mSpeedSpin->SetToolTip(mSpeedSlider->GetToolTipText());
     speedsizer->Add(mSpeedSlider, wxSizerFlags(1).Expand());
     speedsizer->Add(mSpeedSpin, wxSizerFlags(0));
     mSpeedPanel->SetSizer(speedsizer);
@@ -139,7 +141,9 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     wxBoxSizer* playbacksizer = new wxBoxSizer(wxHORIZONTAL);
     mPlayButton = new wxButton(mPlaybackPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
     mPlayButton->SetBitmap(util::window::getIcon("icon-pauseplay.png"), wxTOP);
+    mPlayButton->SetToolTip(_("Press this button to start/stop continuous playback of the transition."));
     mAutoPlayButton = new wxCheckBox(mPlaybackPanel, wxID_ANY, _("Start automatically"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+    mAutoPlayButton->SetToolTip(_("Select this to immediately start continuous playback of transition when a transition is selected."));
     playbacksizer->Add(mPlayButton, wxSizerFlags(0));
     playbacksizer->Add(mAutoPlayButton, wxSizerFlags(0).CenterVertical());
     mPlaybackPanel->SetSizer(playbacksizer);
@@ -152,6 +156,7 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     mTransitionTypePanel = new wxPanel(this);
     wxBoxSizer* transitiontypesizer = new wxBoxSizer(wxHORIZONTAL);
     mTransitionType = new wxChoice(mTransitionTypePanel, wxID_ANY);
+    mTransitionType->SetToolTip(_("Select the effect used for the transition towards the second clip."));
     transitiontypesizer->Add(mTransitionType, wxSizerFlags(1));
     mTransitionTypePanel->SetSizer(transitiontypesizer);
     // TRANSLATORS: Do not let the string exceed 20 characters.
@@ -163,10 +168,12 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     wxBoxSizer* opacitysizer = new wxBoxSizer(wxHORIZONTAL);
     mOpacitySlider = new wxSlider(mOpacityPanel, wxID_ANY, model::VideoKeyFrame::sOpacityMax, model::VideoKeyFrame::sOpacityMin, model::VideoKeyFrame::sOpacityMax );
     mOpacitySlider->SetPageSize(sOpacityPageSize);
+    mOpacitySlider->SetToolTip(_("Select the opacity of the video frame. A value of '0' means fully transparent. A value of '255' means fully opaque."));
     mOpacitySpin = new wxSpinCtrl(mOpacityPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(55,-1));
     mOpacitySpin->SetRange(model::VideoKeyFrame::sOpacityMin, model::VideoKeyFrame::sOpacityMax);
     mOpacitySpin->SetValue(model::VideoKeyFrame::sOpacityMax);
     mOpacitySpin->SetWindowVariant( wxWINDOW_VARIANT_SMALL );
+    mOpacitySpin->SetToolTip(mOpacitySlider->GetToolTipText());
     opacitysizer->Add(mOpacitySlider, wxSizerFlags(1).Expand());
     opacitysizer->Add(mOpacitySpin, wxSizerFlags(0));
     mOpacityPanel->SetSizer(opacitysizer);
@@ -177,6 +184,7 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     wxBoxSizer* rotationsizer = new wxBoxSizer(wxHORIZONTAL);
     mRotationSlider = new wxSlider(mRotationPanel,wxID_ANY, 1 * sRotationPrecisionFactor, sRotationMinNoKeyFrames, sRotationMaxNoKeyFrames);
     mRotationSlider->SetPageSize(sRotationPageSize);
+    mRotationSlider->SetToolTip(_("Select the rotation (in degrees) of the video frame."));
     mRotationSpin = new wxSpinCtrlDouble(mRotationPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(55,-1));
     mRotationSpin->SetWindowVariant( wxWINDOW_VARIANT_SMALL );
     mRotationSpin->SetDigits(sRotationPrecision);
@@ -185,6 +193,7 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
         static_cast<double>(sRotationMinNoKeyFrames) / static_cast<double>(sRotationPrecisionFactor),
         static_cast<double>(sRotationMaxNoKeyFrames) / static_cast<double>(sRotationPrecisionFactor));
     mRotationSpin->SetIncrement(sRotationIncrement);
+    mRotationSpin->SetToolTip(mRotationSlider->GetToolTipText());
     rotationsizer->Add(mRotationSlider, wxSizerFlags(1).Expand());
     rotationsizer->Add(mRotationSpin, wxSizerFlags(0));
     mRotationPanel->SetSizer(rotationsizer);
@@ -195,14 +204,17 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     wxBoxSizer* scalingsizer = new wxBoxSizer(wxHORIZONTAL);
     mSelectScaling = new EnumSelector<model::VideoScaling>(mScalingPanel, model::VideoScalingConverter::getMapToHumanReadibleString(), model::VideoScalingNone);
     mSelectScaling->SetWindowVariant( wxWINDOW_VARIANT_SMALL );
+    mSelectScaling->SetToolTip(_("Select between several automated scaling strategies or manually select the (custom) scaling factor of the video frame."));
     mScalingSlider = new wxSlider(mScalingPanel,wxID_ANY, factorToSliderValue(model::VideoKeyFrame::sScalingMax), factorToSliderValue(model::VideoKeyFrame::sScalingMin), factorToSliderValue(model::VideoKeyFrame::sScalingMax));
     mScalingSlider->SetPageSize(sFactorPageSize);
+    mScalingSlider->SetToolTip(_("Select the scaling factor to be applied to the video frame."));
     mScalingSpin = new wxSpinCtrlDouble(mScalingPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(55,-1));
     mScalingSpin->SetWindowVariant( wxWINDOW_VARIANT_SMALL );
     mScalingSpin->SetValue(1); // No scaling
     mScalingSpin->SetDigits(sFactorPrecision);
     mScalingSpin->SetRange(boost::rational_cast<double>(model::VideoKeyFrame::sScalingMin), boost::rational_cast<double>(model::VideoKeyFrame::sScalingMax));
     mScalingSpin->SetIncrement(sFactorIncrement);
+    mScalingSpin->SetToolTip(mScalingSlider->GetToolTipText());
     scalingsizer->Add(mSelectScaling, wxSizerFlags(0).Left());
     scalingsizer->Add(mScalingSlider, wxSizerFlags(1).Expand());
     scalingsizer->Add(mScalingSpin, wxSizerFlags(0));
@@ -214,20 +226,25 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     wxBoxSizer* alignmentsizer = new wxBoxSizer(wxHORIZONTAL);
     mSelectAlignment = new EnumSelector<model::VideoAlignment>(mAlignmentPanel, model::VideoAlignmentConverter::getMapToHumanReadibleString(), model::VideoAlignmentCustom);
     mSelectAlignment->SetWindowVariant( wxWINDOW_VARIANT_SMALL );
+    mSelectAlignment->SetToolTip(_("Select between several automated positioning strategies or manually select the (custom) position of the video frame."));
     wxStaticText* titleX = new wxStaticText(mAlignmentPanel, wxID_ANY, "  X:", wxDefaultPosition);
     mPositionXSlider = new wxSlider(mAlignmentPanel, wxID_ANY, 0, 0, 1);
     mPositionXSlider->SetPageSize(sPositionPageSize);
+    mPositionXSlider->SetToolTip(_("Select the horizontal position of the video frame."));
     mPositionXSpin = new wxSpinCtrl(mAlignmentPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(55,-1));
     mPositionXSpin->SetWindowVariant( wxWINDOW_VARIANT_SMALL );
     mPositionXSpin->SetRange(0,1);
     mPositionXSpin->SetValue(0);
+    mPositionXSpin->SetToolTip(mPositionXSlider->GetToolTipText());
     wxStaticText* titleY = new wxStaticText(mAlignmentPanel, wxID_ANY, "  Y:", wxDefaultPosition);
     mPositionYSlider = new wxSlider(mAlignmentPanel, wxID_ANY, 0, 0, 1);
     mPositionYSlider->SetPageSize(sPositionPageSize);
+    mPositionYSlider->SetToolTip(_("Select the vertical position of the video frame."));
     mPositionYSpin = new wxSpinCtrl(mAlignmentPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(55,-1));
     mPositionYSpin->SetWindowVariant( wxWINDOW_VARIANT_SMALL );
     mPositionYSpin->SetRange(0,1);
     mPositionYSpin->SetValue(0);
+    mPositionYSpin->SetToolTip(mPositionYSlider->GetToolTipText());
     alignmentsizer->Add(mSelectAlignment, wxSizerFlags(0).Expand());
     alignmentsizer->Add(titleX, wxSizerFlags(0).Expand());
     alignmentsizer->Add(mPositionXSlider, wxSizerFlags(1000).Expand());
@@ -263,10 +280,12 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     wxBoxSizer* volumesizer = new wxBoxSizer(wxHORIZONTAL);
     mVolumeSlider = new wxSlider(mVolumePanel, wxID_ANY, model::AudioKeyFrame::sVolumeDefault, model::AudioKeyFrame::sVolumeMin, model::AudioKeyFrame::sVolumeMax );
     mVolumeSlider->SetPageSize(sVolumePageSize);
+    mVolumeSlider->SetToolTip(_("Select the audio volume."));
     mVolumeSpin = new wxSpinCtrl(mVolumePanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(55,-1));
     mVolumeSpin->SetWindowVariant( wxWINDOW_VARIANT_SMALL );
     mVolumeSpin->SetRange(model::AudioKeyFrame::sVolumeMin, model::AudioKeyFrame::sVolumeMax);
     mVolumeSpin->SetValue(model::AudioKeyFrame::sVolumeDefault);
+    mVolumeSpin->SetToolTip(mVolumeSlider->GetToolTipText());
     volumesizer->Add(mVolumeSlider, wxSizerFlags(1).Expand());
     volumesizer->Add(mVolumeSpin, wxSizerFlags(0));
     mVolumePanel->SetSizer(volumesizer);

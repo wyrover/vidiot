@@ -42,12 +42,12 @@ bool ImageGradient::supports(TransitionType type) const
         type == TransitionTypeFadeOutToNext;
 }
 
-std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> ImageGradient::getAvailableParameters() const
+ParameterAttributes ImageGradient::getAvailableParameters() const
 {
     return
     {
-        std::make_tuple(TransitionParameterFilename::sParameterImageFilename, _("Image"), boost::make_shared<TransitionParameterFilename>("", false, true)),
-        std::make_tuple(TransitionParameterBool::sParameterInversed, _("Inversed"), boost::make_shared<TransitionParameterBool>(false)),
+        { TransitionParameterFilename::sParameterImageFilename, _("Image"), "", boost::make_shared<TransitionParameterFilename>("", false, true) },
+        { TransitionParameterBool::sParameterInversed, _("Inversed"), "", boost::make_shared<TransitionParameterBool>(false) },
     };
 }
 

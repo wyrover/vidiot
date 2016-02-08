@@ -89,6 +89,7 @@ wxWindow* TransitionParameterDirection4::makeWidget(wxWindow *parent)
 {
     ASSERT_EQUALS(mControl, 0);
     mControl = new Direction4Selector(parent, Direction4Converter::getMapToHumanReadibleString(), mValue);
+    mControl->SetToolTip(getToolTip());
     mControl->Bind(wxEVT_CHOICE, &TransitionParameterDirection4::onDirection, this);
     return mControl;
 }

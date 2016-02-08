@@ -20,7 +20,7 @@ msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-02-03 13:54+0100\n"
-"PO-Revision-Date: 2016-01-14 22:55+0100\n"
+"PO-Revision-Date: 2016-02-07 12:03+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: nl_NL\n"
@@ -1501,11 +1501,11 @@ msgstr "Ga naar laatste sleutelbeeld."
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Generic.cpp:60
 msgid "Add a key frame at the current position."
-msgstr "Voeg een sleutelbeeld toe op de huidige positive."
+msgstr "Voeg een sleutelbeeld toe op de huidige positie."
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Generic.cpp:61
 msgid "Remove the key frame at the current position."
-msgstr "Verwijder het sleutelbeeld op de huidige positive."
+msgstr "Verwijder het sleutelbeeld op de huidige positie."
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_GuiEvents.cpp:405
 msgid ""

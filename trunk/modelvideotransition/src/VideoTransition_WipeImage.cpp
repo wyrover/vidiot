@@ -76,16 +76,16 @@ bool WipeImage::supports(TransitionType type) const
         type == TransitionTypeFadeOutToNext;
 }
 
-std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> WipeImage::getAvailableParameters() const
+ParameterAttributes WipeImage::getAvailableParameters() const
 {
     wxString descriptor{ _("Images") + " (" + File::sSupportedImageExtensions + ")|" + File::sSupportedImageExtensions + ";" + File::sSupportedImageExtensions.Upper() };
     return
     {
-        std::make_tuple(TransitionParameterFilename::sParameterImageFilename, _("Image"), boost::make_shared<TransitionParameterFilename>(descriptor, true, false, getDefaultZoomImagesPath())),
-        std::make_tuple(TransitionParameterDouble::sParameterScaling, _("Scaling"), boost::make_shared<TransitionParameterDouble>(1.0, 0.0, 10.0)),
-        std::make_tuple(TransitionParameterInt::sParameterRotations, _("Rotations"), boost::make_shared<TransitionParameterInt>(0, 0, 100)),
-        std::make_tuple(TransitionParameterRotationDirection::sParameterRotationDirection, _("Rotation direction"), boost::make_shared<TransitionParameterRotationDirection>(RotationDirectionClockWise)),
-        std::make_tuple(TransitionParameterBool::sParameterInversed, _("Inversed"), boost::make_shared<TransitionParameterBool>(false)),
+        { TransitionParameterFilename::sParameterImageFilename, _("Image"), _("Select an image with an alpha channel or a mask. That information is then used to create the transition. Make sure that the image is sufficiently large to cover the entire video."), boost::make_shared<TransitionParameterFilename>(descriptor, true, false, getDefaultZoomImagesPath()) },
+        { TransitionParameterDouble::sParameterScaling, _("Scaling"), _("Select a scaling factor to be applied to the image. This can be used to make sure the transition covers exactly the entire clip(s) at the start or end of the transition."), boost::make_shared<TransitionParameterDouble>(1.0, 0.0, 10.0) },
+        { TransitionParameterInt::sParameterRotations, _("Rotations"), _("Select the number of rotations to be applied to the image during the transition."), boost::make_shared<TransitionParameterInt>(0, 0, 100) },
+        { TransitionParameterRotationDirection::sParameterRotationDirection, _("Rotation direction"), _("Select the clockwise direction of the rotation."), boost::make_shared<TransitionParameterRotationDirection>(RotationDirectionClockWise) },
+        { TransitionParameterBool::sParameterInversed, _("Inversed"), _("Select between 'zooming in' (normal) or 'zooming out' (inversed)"), boost::make_shared<TransitionParameterBool>(false) },
     };
 }
 
@@ -170,7 +170,6 @@ std::function<float (int,int)> WipeImage::getRightMethod(const wxImagePtr& image
         mImageFileName = filename;
     }
                             
-    // todo add documentation on transitions   (part. about size of zoom images?)
     // todo hangup when transition playback is active (release mode without debugging) and selecting the imagezoom
                      
     if (mImage && mImage->IsOk())
@@ -241,14 +240,14 @@ std::function<float (int,int)> WipeImage::getRightMethod(const wxImagePtr& image
 
     if (!mErrorShown)
     {
+        mErrorShown = true;
+        VAR_WARNING(filename);
         wxString error =
             filename.IsOk() ?
             wxString::Format(_("Couldn't read %s at %s."), filename.GetFullName(), Convert::ptsToHumanReadibleString(getLeftPts())) :
             wxString::Format(_("No image selected at %s."), Convert::ptsToHumanReadibleString(getLeftPts()));
-        gui::StatusBar::get().timedInfoText(error, 10000);
-        mErrorShown = true;
+            gui::StatusBar::get().timedInfoText(error, 10000);
     }
-    VAR_WARNING(filename);
     return [](int x, int y) { return static_cast<float>(0.0); };
 }
 

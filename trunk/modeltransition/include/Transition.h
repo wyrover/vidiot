@@ -23,6 +23,15 @@ namespace model {
 
 enum TransitionType : int;
 
+struct ParameterAttribute
+{
+    wxString Name;
+    wxString Description;
+    wxString Tooltip;
+    TransitionParameterPtr Parameter;
+};
+typedef std::vector < ParameterAttribute > ParameterAttributes;
+
 /// Class representing transitions in the timeline. Note that the actual transition
 /// is rendered by taking its adjacent clips, cloning these, and adjusting the clones
 /// to provide the correct frames.
@@ -135,7 +144,7 @@ public:
 
     /// \note Ordering as returned here is the ordering in which the widgets must be shown.
     /// \return Possible parameters (name, description, parameter) holding default values. 
-    virtual std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> getAvailableParameters() const = 0;
+    virtual ParameterAttributes getAvailableParameters() const = 0;
 
     /// \return Currently configured parameters for this transition
     std::map<wxString, TransitionParameterPtr> getCurrentParameters() const;

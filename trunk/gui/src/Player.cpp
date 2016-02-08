@@ -70,6 +70,7 @@ Player::Player(wxWindow *parent, model::SequencePtr sequence, wxWindow* focus)
     mStatus = new wxTextCtrl(mStatusPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY | wxTE_CENTRE);
     wxTextAttr textattr(*wxWHITE,*wxBLACK,*wxNORMAL_FONT,wxTEXT_ALIGNMENT_CENTER);
     mStatus->SetDefaultStyle(textattr);
+    mStatus->SetToolTip(_("This box shows the current timeline cursor position and the total length of the movie."));
     mStatusPanelSizer->Add(mStatus, 1, wxEXPAND);
 
     mStatusPanel->SetSizer(mStatusPanelSizer);
@@ -107,6 +108,13 @@ Player::Player(wxWindow *parent, model::SequencePtr sequence, wxWindow* focus)
     mButtonsPanelSizer->Add(mEndButton,         wxSizerFlags(1).Expand());
     mButtonsPanelSizer->Add(mSpeedButton,       wxSizerFlags(1).Expand());
 
+    mHomeButton->SetToolTip(_("Move to the beginning of the movie. Pressing HOME in the timeline has the same effect."));
+    mPreviousButton->SetToolTip(_("Move to the previous cut between two clips. Pressing Control-LEFT in the timeline has the same effect."));
+    mPlayButton->SetToolTip(_("Start/top playback of the movie. Pressing SPACE in the timeline has the same effect."));
+    mNextButton->SetToolTip(_("Move to the next cut between two clips. Pressing Control-RIGHT in the timeline has the same effect."));
+    mEndButton->SetToolTip(_("Move to the end of the movie. Pressing END in the timeline has the same effect."));
+    mSpeedButton->SetToolTip(_("Change the playback speed. Note that audio pitch is maintained as much as possible when this is changed."));
+
     mButtonsPanel->SetSizer(mButtonsPanelSizer);
 
     //////////////////////////////////////////////////////////////////////////
@@ -132,6 +140,7 @@ Player::Player(wxWindow *parent, model::SequencePtr sequence, wxWindow* focus)
     mSpeedSliderFrame->SetBackgroundColour(mSpeedButton->GetBackgroundColour());
     mSpeedSlider->SetBackgroundColour(mSpeedButton->GetBackgroundColour());
     mSpeed100->SetBackgroundColour(mSpeedButton->GetBackgroundColour());
+    mSpeed100->SetToolTip(_("Select normal playback speed."));
     mSpeedSliderFrame->GetSizer()->Add(mSpeed100, wxSizerFlags(0).Center());
     mSpeedSliderFrame->GetSizer()->Add(new wxStaticText(mSpeedSliderFrame, wxID_ANY, wxString::Format("%d", VideoDisplay::sMaximumSpeed)), wxSizerFlags(0).Center());
     mSpeedSliderFrame->GetSizer()->Add(mSpeedSlider, wxSizerFlags(1).Expand());

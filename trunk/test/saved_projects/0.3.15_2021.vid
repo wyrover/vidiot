@@ -6465,10 +6465,10 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																		</item>
 																		<item>
 																			<first>
-																				<string>inversed</string>
+																				<string>rotationdirection</string>
 																			</first>
 																			<second>
-																				<px class_id_reference="80" object_id="_467">
+																				<px class_id="88" class_name="model::TransitionParameterRotationDirection" tracking_level="1" version="1" object_id="_467">
 																					<TransitionParameter></TransitionParameter>
 																					<mValue>0</mValue>
 																				</px>
@@ -6789,10 +6789,10 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																		</item>
 																		<item>
 																			<first>
-																				<string>inversed</string>
+																				<string>rotationdirection</string>
 																			</first>
 																			<second>
-																				<px class_id_reference="80" object_id="_492">
+																				<px class_id_reference="88" object_id="_492">
 																					<TransitionParameter></TransitionParameter>
 																					<mValue>0</mValue>
 																				</px>
@@ -6941,7 +6941,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 														</px>
 													</item>
 													<item>
-														<px class_id="88" class_name="model::video::transition::WipeImage" tracking_level="1" version="1" object_id="_504">
+														<px class_id="89" class_name="model::video::transition::WipeImage" tracking_level="1" version="1" object_id="_504">
 															<VideoTransition>
 																<Transition>
 																	<Clip>
@@ -6969,7 +6969,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																				<string>imagefilename</string>
 																			</first>
 																			<second>
-																				<px class_id="89" class_name="model::TransitionParameterFilename" tracking_level="1" version="1" object_id="_505">
+																				<px class_id="90" class_name="model::TransitionParameterFilename" tracking_level="1" version="1" object_id="_505">
 																					<TransitionParameter></TransitionParameter>
 																					<mValue>
 																						<filename>
@@ -6995,7 +6995,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																				<string>rotationdirection</string>
 																			</first>
 																			<second>
-																				<px class_id="90" class_name="model::TransitionParameterRotationDirection" tracking_level="1" version="1" object_id="_507">
+																				<px class_id_reference="88" object_id="_507">
 																					<TransitionParameter></TransitionParameter>
 																					<mValue>0</mValue>
 																				</px>
@@ -7280,7 +7280,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 														</px>
 													</item>
 													<item>
-														<px class_id_reference="88" object_id="_530">
+														<px class_id_reference="89" object_id="_530">
 															<VideoTransition>
 																<Transition>
 																	<Clip>
@@ -7308,7 +7308,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																				<string>imagefilename</string>
 																			</first>
 																			<second>
-																				<px class_id_reference="89" object_id="_531">
+																				<px class_id_reference="90" object_id="_531">
 																					<TransitionParameter></TransitionParameter>
 																					<mValue>
 																						<filename>
@@ -7334,7 +7334,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																				<string>rotationdirection</string>
 																			</first>
 																			<second>
-																				<px class_id_reference="90" object_id="_533">
+																				<px class_id_reference="88" object_id="_533">
 																					<TransitionParameter></TransitionParameter>
 																					<mValue>0</mValue>
 																				</px>
