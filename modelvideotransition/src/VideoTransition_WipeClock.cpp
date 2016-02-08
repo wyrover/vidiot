@@ -19,6 +19,7 @@
 
 #include "TransitionParameterBool.h"
 #include "TransitionParameterInt.h"
+#include "TransitionParameterRotationDirection.h"
 
 namespace model { namespace video { namespace transition {
 
@@ -42,14 +43,14 @@ bool WipeClock::supports(TransitionType type) const
         type == TransitionTypeFadeOutToNext;
 }
 
-std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> WipeClock::getAvailableParameters() const
+ParameterAttributes WipeClock::getAvailableParameters() const
 {
     return
     {
-        std::make_tuple(TransitionParameterInt::sParameterAngle, _("Angle"), boost::make_shared<TransitionParameterInt>(0, 0, 360)),
-        std::make_tuple(TransitionParameterInt::sParameterBandsCount, _("Number of lines"), boost::make_shared<TransitionParameterInt>(1, 1, 100)),
-        std::make_tuple(TransitionParameterBool::sParameterInversed, _("Inversed"), boost::make_shared<TransitionParameterBool>(false)),
-        std::make_tuple(TransitionParameterBool::sParameterSoftenEdges, _("Soften edges"), boost::make_shared<TransitionParameterBool>(true)),
+        { TransitionParameterInt::sParameterAngle, _("Angle"), _("Select the starting angle."), boost::make_shared<TransitionParameterInt>(0, 0, 360) },
+        { TransitionParameterInt::sParameterBandsCount, _("Number of lines"), _("Select the number of simultaneous wipes."), boost::make_shared<TransitionParameterInt>(1, 1, 100) },
+        { TransitionParameterRotationDirection::sParameterRotationDirection, _("Rotation direction"), _("Select the clockwise direction of the wipes."), boost::make_shared<TransitionParameterRotationDirection>(RotationDirectionClockWise) },
+        { TransitionParameterBool::sParameterSoftenEdges, _("Soften edges"), _("Select to enable smoothing at the edges."), boost::make_shared<TransitionParameterBool>(true) },
     };
 }
 
@@ -66,7 +67,8 @@ std::function<float (int,int)> WipeClock::getRightMethod(const wxImagePtr& image
 {
     int angle{ getParameter<TransitionParameterInt>(TransitionParameterInt::sParameterAngle)->getValue() };
     int nBands{ getParameter<TransitionParameterInt>(TransitionParameterInt::sParameterBandsCount)->getValue() };
-    bool inverse{ getParameter<TransitionParameterBool>(TransitionParameterBool::sParameterInversed)->getValue() };
+    RotationDirection rd{ getParameter<TransitionParameterRotationDirection>(TransitionParameterRotationDirection::sParameterRotationDirection)->getValue() };
+    bool inverse{ rd == RotationDirectionCounterClockWise };
     bool soften{ getParameter<TransitionParameterBool>(TransitionParameterBool::sParameterSoftenEdges)->getValue() };
     int x_origin{ image->GetWidth() / 2};
     int y_origin{ image->GetHeight() / 2};

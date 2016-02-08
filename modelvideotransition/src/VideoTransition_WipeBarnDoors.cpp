@@ -40,12 +40,12 @@ bool WipeBarnDoors::supports(TransitionType type) const
     return true;
 }
 
-std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> WipeBarnDoors::getAvailableParameters() const
+ParameterAttributes WipeBarnDoors::getAvailableParameters() const
 {
     return
     {
-        std::make_tuple(TransitionParameterDirection2::sParameterDirection2, _("Direction"), boost::make_shared<TransitionParameterDirection2>(Direction2Horizontal)),
-        std::make_tuple(TransitionParameterBool::sParameterInversed, _("Inversed"), boost::make_shared<TransitionParameterBool>(false)),
+        { TransitionParameterDirection2::sParameterDirection2, _("Direction"), _("Select between a horizontal or a vertical effect"), boost::make_shared<TransitionParameterDirection2>(Direction2Horizontal) },
+        { TransitionParameterBool::sParameterInversed, _("Inversed"), _("Select between making the second clip visible from the inside (normal) or from the outside (inversed)"), boost::make_shared<TransitionParameterBool>(false) },
     };
 }
 

@@ -282,26 +282,23 @@ bool Transition::supports(TransitionType type) const
 void Transition::initParameters(std::map<wxString, TransitionParameterPtr> currentValues)
 {
     mParameters.clear(); // Start with nothing
-    for (auto tuple : getAvailableParameters())
+    for (auto attributes : getAvailableParameters())
     {
-        wxString name{ std::get<0>(tuple) };
-        wxString description{ std::get<1>(tuple) };
-        model::TransitionParameterPtr parameter{ std::get<2>(tuple) };
+        attributes.Parameter->setName(attributes.Name);
+        attributes.Parameter->setDescription(attributes.Description);
+        attributes.Parameter->setToolTip(attributes.Tooltip);
 
-        parameter->setName(name);
-        parameter->setDescription(description);
-
-        if (currentValues.find(name) != currentValues.end())
+        if (currentValues.find(attributes.Name) != currentValues.end())
         {
             // Use the value from the save file, if present
-            parameter->copyValue(currentValues.find(name)->second);
+            attributes.Parameter->copyValue(currentValues.find(attributes.Name)->second);
         }
         else
         {
             // Use the default value
         }
 
-        mParameters[name] = parameter;
+        mParameters[attributes.Name] = attributes.Parameter;
     }
 }
 
@@ -313,11 +310,10 @@ std::map<wxString, TransitionParameterPtr> Transition::getCurrentParameters() co
 std::vector<TransitionParameterPtr> Transition::getSortedParameters() const
 {
     std::vector<TransitionParameterPtr> result;
-    for (auto tuple : getAvailableParameters())
+    for (auto attributes : getAvailableParameters())
     {
-        wxString name{ std::get<0>(tuple) };
-        ASSERT_MAP_CONTAINS(mParameters, name);
-        auto it{ mParameters.find(name) };
+        ASSERT_MAP_CONTAINS(mParameters, attributes.Name);
+        auto it{ mParameters.find(attributes.Name) };
         result.push_back(it->second);
     }
     return result;

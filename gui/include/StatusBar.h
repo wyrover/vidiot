@@ -31,6 +31,8 @@ namespace gui {
 
 struct Timer;
 
+/// The status bar contents may be set from worker threads.
+/// This object guarantees that proper scheduling (on the main thread) is done.
 class StatusBar
     :   public wxStatusBar
     ,   public SingleInstance<StatusBar>

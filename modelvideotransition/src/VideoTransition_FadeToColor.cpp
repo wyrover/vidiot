@@ -43,11 +43,11 @@ bool FadeToColor::supports(TransitionType type) const
         type == TransitionTypeFadeOut;
 }
 
-std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> FadeToColor::getAvailableParameters() const
+ParameterAttributes FadeToColor::getAvailableParameters() const
 {
     return
     {
-        std::make_tuple(TransitionParameterColor::sParameterColor, _("Color"), boost::make_shared<TransitionParameterColor>(wxColour{ 255, 255, 255 })),
+        {TransitionParameterColor::sParameterColor, _("Color"), _("Select the color to use as the start/end of the transition."), boost::make_shared<TransitionParameterColor>(wxColour{ 255, 255, 255 })},
     };
 }
 

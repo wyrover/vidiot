@@ -94,12 +94,14 @@ wxWindow* TransitionParameterDouble::makeWidget(wxWindow *parent)
     wxBoxSizer* sizer = new wxBoxSizer(wxHORIZONTAL);
     mSlider = new wxSlider(mPanel, wxID_ANY, mValue * sPrecisionFactor, mMin * sPrecisionFactor, mMax * sPrecisionFactor);
     mSlider->SetPageSize(sPageSize);
+    mSlider->SetToolTip(getToolTip());
     mSpin = new wxSpinCtrlDouble(mPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(55, -1));
     mSpin->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
     mSpin->SetDigits(sPrecision);
     mSpin->SetValue(mValue);
     mSpin->SetRange(mMin, mMax);
     mSpin->SetIncrement(sIncrement);
+    mSpin->SetToolTip(getToolTip());
     sizer->Add(mSlider, wxSizerFlags(1000).Expand());
     sizer->Add(mSpin, wxSizerFlags(0).Expand());
     mPanel->SetSizer(sizer);

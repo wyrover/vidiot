@@ -42,12 +42,12 @@ bool WipeDoubleClock::supports(TransitionType type) const
         type == TransitionTypeFadeOutToNext;
 }
 
-std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> WipeDoubleClock::getAvailableParameters() const
+ParameterAttributes WipeDoubleClock::getAvailableParameters() const
 {
     return
     {
-        std::make_tuple(TransitionParameterInt::sParameterAngle, _("Angle"), boost::make_shared<TransitionParameterInt>(0, 0, 360)),
-        std::make_tuple(TransitionParameterBool::sParameterSoftenEdges, _("Soften edges"), boost::make_shared<TransitionParameterBool>(true)),
+        { TransitionParameterInt::sParameterAngle, _("Angle"), _("Select the starting angle."), boost::make_shared<TransitionParameterInt>(0, 0, 360) },
+        { TransitionParameterBool::sParameterSoftenEdges, _("Soften edges"), _("Select to enable smoothing at the edges."), boost::make_shared<TransitionParameterBool>(true) },
     };
 }
 

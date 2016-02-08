@@ -76,6 +76,7 @@ wxWindow* TransitionParameterColor::makeWidget(wxWindow *parent)
     ASSERT_EQUALS(mControl, 0);
     mControl = new wxColourPickerCtrl(parent, wxID_ANY, mValue, wxDefaultPosition, wxDefaultSize);
     mControl->SetColour(mValue);
+    mControl->SetToolTip(getToolTip());
     mControl->Bind(wxEVT_COLOURPICKER_CHANGED, &TransitionParameterColor::onColor, this);
     return mControl;
 }

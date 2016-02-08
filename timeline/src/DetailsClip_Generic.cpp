@@ -129,6 +129,7 @@ struct KeyFrameControlsImpl
             {
                 mKeyFramesButtons[i] = new wxToggleButton{ mPanel, static_cast<int>(i), wxString::Format("%ld", i + 1), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT };
                 mKeyFramesButtons[i]->SetFont(mKeyFramesButtons[i]->GetFont().Smaller().Smaller());
+                mKeyFramesButtons[i]->SetToolTip(wxString::Format(_("Select key frame number %ld. Clicking on the key frame indicator in the timeline has the same effect."), i + 1));
                 sizer->Add(mKeyFramesButtons[i], wxSizerFlags{ 1 });
             }
             mPanel->SetSizerAndFit(sizer);

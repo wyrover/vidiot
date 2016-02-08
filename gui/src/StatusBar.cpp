@@ -19,6 +19,7 @@
 
 #include <wx/appprogress.h>
 #include "Config.h"
+#include "UtilThread.h"
 #include "Worker.h"
 #include "WorkerEvent.h"
 
@@ -106,90 +107,103 @@ int StatusBar::getNumberOfStatusBars() const
 
 void StatusBar::setDebugText(const wxString& text)
 {
-    ASSERT(wxThread::IsMain());
-    if (GetFieldsCount() == sDebug + 1)
+    util::thread::RunInMainScheduler::get().run([this, text]
     {
-        SetStatusText( text, sDebug );
-    }
+        if (GetFieldsCount() == sDebug + 1)
+        {
+            SetStatusText(text, sDebug);
+        }
+    });
 }
 
 void StatusBar::pushInfoText(const wxString& text)
 {
-    ASSERT(wxThread::IsMain());
-    ASSERT(!text.IsSameAs(""));
-    PushStatusText( text, sInfo );
+    util::thread::RunInMainScheduler::get().run([this, text]
+    {
+        ASSERT(!text.IsSameAs(""));
+        PushStatusText(text, sInfo);
+    });
 }
 
 void StatusBar::popInfoText()
 {
-    PopStatusText(sInfo);
+    util::thread::RunInMainScheduler::get().run([this]
+    {
+        PopStatusText(sInfo);
+    });
 }
 
 void StatusBar::timedInfoText(const wxString& text, int ms)
 {
-    if (wxThread::IsMain())
+    util::thread::RunInMainScheduler::get().run([this, text, ms]
     {
         pushInfoText(text);
         mInfoTimer->StartOnce(ms);
-    }
-    else
-    {
-        util::thread::RunInMainAndWait(std::bind(&StatusBar::timedInfoText, this, text, ms));
-    }
+    });
 }
 
 void StatusBar::setQueueText(const wxString& text)
 {
-    ASSERT(wxThread::IsMain());
-    SetStatusText( text, sQueue );
+    util::thread::RunInMainScheduler::get().run([this, text]
+    {
+        SetStatusText(text, sQueue);
+    });
 }
 
 void StatusBar::setProcessingText(const wxString& text)
 {
-    ASSERT(wxThread::IsMain());
-    SetStatusText( text, sProcessing );
+    util::thread::RunInMainScheduler::get().run([this, text]
+    {
+        SetStatusText(text, sProcessing);
+    });
 }
 
 void StatusBar::showProgressBar(int max, bool taskbar)
 {
-    mTaskBarProgress.reset(); // Remove any pending progress bar indicator.
-    if (taskbar)
+    util::thread::RunInMainScheduler::get().run([this, max, taskbar]
     {
-        mTaskBarProgress = boost::make_shared<wxAppProgressIndicator>(GetParent(), max);
-    }
-    ASSERT(wxThread::IsMain());
-    mProgress->SetRange(max);
-    mProgress->Show();
+        mTaskBarProgress.reset(); // Remove any pending progress bar indicator.
+        if (taskbar)
+        {
+            mTaskBarProgress = boost::make_shared<wxAppProgressIndicator>(GetParent(), max);
+        }
+        mProgress->SetRange(max);
+        mProgress->Show();
+    });
 }
 
 void StatusBar::showProgress(int value)
 {
-    ASSERT(wxThread::IsMain());
-    if (mProgress->GetRange() < value)
+    util::thread::RunInMainScheduler::get().run([this, value]
     {
-        // Got crash here occasionally in some tests.
-        // Maybe caused by initially setting the max to 'the number of files to be index' in an AutoFolder.
-        // However, during the indexed (or, directly after setting the max) a new file may be added in the
-        // folder causing the number of items to exceed the original max value.
-        mProgress->SetRange(value);
+        if (mProgress->GetRange() < value)
+        {
+            // Got crash here occasionally in some tests.
+            // Maybe caused by initially setting the max to 'the number of files to be index' in an AutoFolder.
+            // However, during the indexed (or, directly after setting the max) a new file may be added in the
+            // folder causing the number of items to exceed the original max value.
+            mProgress->SetRange(value);
+            if (mTaskBarProgress)
+            {
+                mTaskBarProgress->SetRange(value);
+            }
+        }
+        mProgress->SetValue(value);
+
         if (mTaskBarProgress)
         {
-            mTaskBarProgress->SetRange(value);
+            mTaskBarProgress->SetValue(value);
         }
-    }
-    mProgress->SetValue(value);
-
-    if (mTaskBarProgress)
-    {
-        mTaskBarProgress->SetValue(value);
-    }
+    });
 }
 
 void StatusBar::hideProgressBar()
 {
-    ASSERT(wxThread::IsMain());
-    mProgress->Hide();
-    mTaskBarProgress.reset();
+    util::thread::RunInMainScheduler::get().run([this]
+    {
+        mProgress->Hide();
+        mTaskBarProgress.reset();
+    });
 }
 
 } // namespace

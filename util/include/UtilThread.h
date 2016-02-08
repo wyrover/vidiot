@@ -19,74 +19,34 @@
 
 namespace util { namespace thread {
 
-void RunInMainAndWait(const std::function<void()> &method);
-void RunInMain(const std::function<void()>& method);
-
-template <class RETURNTYPE>
-class RunInMainThreadWithResult
-    :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
+struct RunInMainScheduler
+    : public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
+    , public SingleInstance<RunInMainScheduler>
 {
-public:
-
-    RunInMainThreadWithResult(const std::function<RETURNTYPE()>& method)
-        :   mMethod(method)
-        ,   mDone(false)
-    {
-        if (wxThread::IsMain())
-        {
-            mResult = mMethod();
-        }
-        else
-        {
-            Bind( wxEVT_THREAD, &RunInMainThreadWithResult::onThreadEvent, this );
-            QueueEvent(new wxThreadEvent());
-            boost::mutex::scoped_lock lock(mMutex);
-            while (!mDone)
-            {
-                mCondition.wait(lock);
-            }
-        }
-    }
-
-    RunInMainThreadWithResult(const RunInMainThreadWithResult&) = delete;
-    RunInMainThreadWithResult& operator=(const RunInMainThreadWithResult&) = delete;
-    ~RunInMainThreadWithResult()
-    {
-        if (mDone)
-        {
-            Unbind( wxEVT_THREAD, &RunInMainThreadWithResult::onThreadEvent, this );
-        }
-    }
-
-    void onThreadEvent(wxThreadEvent& event)
-    {
-        mResult = mMethod();
-        boost::mutex::scoped_lock lock(mMutex);
-        mDone = true;
-        mCondition.notify_all();
-    }
-
-    RETURNTYPE getResult() const
-    {
-        return mResult;
-    }
+    RunInMainScheduler();
+    RunInMainScheduler(const RunInMainScheduler&) = delete;
+    RunInMainScheduler& operator=(const RunInMainScheduler&) = delete;
+    ~RunInMainScheduler();
+    void run(const std::function<void()>& method);
 
 private:
 
-    RETURNTYPE mResult;
-    std::function<RETURNTYPE()> mMethod;
-    bool mWait;
-
-    boost::condition_variable mCondition;
-    boost::mutex mMutex;
-    bool mDone;
+    void onThreadEvent(wxThreadEvent& event);
 };
+
+void RunInMain(const std::function<void()> &method);
+void RunInMainAndWait(const std::function<void()> &method);
 
 template <typename RETURNTYPE>
 RETURNTYPE RunInMainReturning(const std::function<RETURNTYPE()>& method)
 {
-    return RunInMainThreadWithResult<RETURNTYPE>(method).getResult();
-}
+    RETURNTYPE result;
+    RunInMainAndWait([method, &result]
+    {
+        result = method();
+    });
+    return result;
+};
 
 void setCurrentThreadName(const char* name);
 

@@ -28,8 +28,45 @@ DEFINE_EVENT(EVENT_TRANSITION_PARAMETER_CHANGED, EventTransitionParameterChanged
 TransitionParameter::TransitionParameter(const TransitionParameter& other)
     : mName{ other.mName }
     , mDescription{ other.mDescription }
+    , mToolTip{ other.mToolTip }
 {
 }
+
+//////////////////////////////////////////////////////////////////////////
+// INTERFACE
+//////////////////////////////////////////////////////////////////////////
+
+wxString TransitionParameter::getName() const
+{ 
+    return mName; 
+}
+
+void TransitionParameter::setName(const wxString& name) 
+{ 
+    mName = name; 
+}
+
+wxString TransitionParameter::getDescription() const
+{ 
+    return mDescription; 
+}
+
+void TransitionParameter::setDescription(const wxString& description) 
+{ 
+    mDescription = description; 
+}
+
+wxString TransitionParameter::getToolTip() const
+{ 
+    return mToolTip; 
+}
+
+void TransitionParameter::setToolTip(const wxString& tooltip) 
+{ 
+    mToolTip = tooltip; 
+}
+
+void TransitionParameter::setOnChanged(std::function<void(const wxString&)> onChange) { mOnChange = onChange; }
 
 //////////////////////////////////////////////////////////////////////////
 // TO BE CALLED WHEN THE DATA CHANGES

@@ -39,6 +39,7 @@
 #include "StatusBar.h"
 #include "TimelinesView.h"
 #include "UtilTestCrash.h"
+#include "UtilThread.h"
 #include "UtilWindow.h"
 #include "VideoTransitionFactory.h"
 #include "FileWatcher.h"
@@ -101,17 +102,6 @@ Window::Window()
     , mDocManager(new wxDocManager())
     , mDocTemplate(new wxDocTemplate(mDocManager, wxString::Format(_("%s files"), CommandLine::get().ExeName), "*." + model::Project::sFileExtension, "", model::Project::sFileExtension, wxString::Format(_("%s Project"), CommandLine::get().ExeName), wxString::Format(_("%s Project View"), CommandLine::get().ExeName), CLASSINFO(model::Project), CLASSINFO(ViewHelper)))
     , mDialog(new Dialog())
-    , mWatcher(0)
-    , mVisibleWorker(0)
-    , mInvisibleWorker(0)
-    , mPreview(0)
-    , mDetailsView(0)
-    , mTimelinesView(0)
-    , mProjectView(0)
-    , mMenuBar(0)
-    , mMenuEdit(0)
-    , mMenuSequence(0)
-    , mTestCrash(0)
     , mAudioTransitionFactory(new model::audio::AudioTransitionFactory())
     , mVideoTransitionFactory(new model::video::VideoTransitionFactory())
     , mProjectOpen(false)
@@ -135,6 +125,7 @@ Window::Window()
     mTimelinesView   = new TimelinesView(this);
     mProjectView     = new ProjectView(this);
     mHelp            = new Help(this);
+    mScheduler = new util::thread::RunInMainScheduler();
 
     util::window::setIcons(this);
 
@@ -511,6 +502,7 @@ Window::~Window()
     SetStatusBar(0);
     sb->wxWindowBase::Destroy();
 
+    delete mScheduler;
     delete mAudioTransitionFactory;
     delete mVideoTransitionFactory;
 

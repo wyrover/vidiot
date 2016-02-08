@@ -42,13 +42,13 @@ bool WipeCircle::supports(TransitionType type) const
         type == TransitionTypeFadeOutToNext;
 }
 
-std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> WipeCircle::getAvailableParameters() const
+ParameterAttributes WipeCircle::getAvailableParameters() const
 {
     return
     {
-        std::make_tuple(TransitionParameterInt::sParameterBandsCount, _("Number of circles"), boost::make_shared<TransitionParameterInt>(1, 1, 100)),
-        std::make_tuple(TransitionParameterBool::sParameterInversed, _("Inversed"), boost::make_shared<TransitionParameterBool>(false)),
-        std::make_tuple(TransitionParameterBool::sParameterSoftenEdges, _("Soften edges"), boost::make_shared<TransitionParameterBool>(true)),
+        { TransitionParameterInt::sParameterBandsCount, _("Number of circles"), _("Select the number of simultaneous wipes."), boost::make_shared<TransitionParameterInt>(1, 1, 100) },
+        { TransitionParameterBool::sParameterInversed, _("Inversed"),  _("Select between 'growing' and 'shrinking' (in the opposite direction)'."), boost::make_shared<TransitionParameterBool>(false) },
+        { TransitionParameterBool::sParameterSoftenEdges, _("Soften edges"), _("Select to enable smoothing at the edges."), boost::make_shared<TransitionParameterBool>(true) },
     };
 }
 

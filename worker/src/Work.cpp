@@ -49,7 +49,7 @@ void Work::execute(bool showProgress)
         mCallable();
         if (showProgress)
         {
-            util::thread::RunInMain([]
+            util::thread::RunInMainScheduler::get().run([]
             {
                 // Note that - in the code of mCallable - showProgressText can be called.
                 // That method schedules an event that causes the progress bar update.
@@ -91,10 +91,7 @@ void Work::showProgressText(const wxString& text)
 {
     if (mShowProgress)
     {
-        util::thread::RunInMain([text]
-        {
-            gui::StatusBar::get().setProcessingText(text);
-        });
+        gui::StatusBar::get().setProcessingText(text);
     }
 }
 
@@ -102,11 +99,7 @@ void Work::showProgressBar(int max, bool taskbar)
 {
     if (mShowProgress)
     {
-        util::thread::RunInMain([max, taskbar]
-        {
-            gui::StatusBar::get().showProgressBar(max, taskbar);
-        });
-
+        gui::StatusBar::get().showProgressBar(max, taskbar);
     }
 }
 
@@ -114,10 +107,7 @@ void Work::showProgress(int value)
 {
     if (mShowProgress)
     {
-        util::thread::RunInMain([value]
-        {
-            gui::StatusBar::get().showProgress(value);
-        });
+        gui::StatusBar::get().showProgress(value);
     }
 }
 

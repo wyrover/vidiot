@@ -87,6 +87,7 @@ wxWindow* TransitionParameterRotationDirection::makeWidget(wxWindow *parent)
 {
     ASSERT_EQUALS(mControl, 0);
     mControl = new RotationDirectionSelector(parent, RotationDirectionConverter::getMapToHumanReadibleString(), mValue);
+    mControl->SetToolTip(getToolTip());
     mControl->Bind(wxEVT_CHOICE, &TransitionParameterRotationDirection::onRotationDirection, this);
     return mControl;
 }

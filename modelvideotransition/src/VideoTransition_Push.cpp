@@ -43,11 +43,11 @@ bool Push::supports(TransitionType type) const
     return true;
 }
 
-std::vector<std::tuple<wxString, wxString, TransitionParameterPtr>> Push::getAvailableParameters() const
+ParameterAttributes Push::getAvailableParameters() const
 {
     return
     {
-        std::make_tuple(TransitionParameterDirection4::sParameterDirection4, _("Direction"), boost::make_shared<TransitionParameterDirection4>(Direction4LeftToRight))
+        { TransitionParameterDirection4::sParameterDirection4, _("Direction"), _("Select the movement direction."), boost::make_shared<TransitionParameterDirection4>(Direction4LeftToRight) }
     };
 }
 
