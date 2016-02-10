@@ -50,14 +50,18 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     void play();
-    void stop();
     void moveTo(pts position);
+
+    ResumeInfo pause(pts position); // todo make the position part of this class not of player?
+    void resume(const ResumeInfo& info);
+
     void setSpeed(int speed);
     int getSpeed() const;
     bool isPlaying() const;
     model::SequencePtr getSequence() const;
 
     void playRange(pts from, pts to);
+    void stopRange();
 
     //////////////////////////////////////////////////////////////////////////
     // AUDIO
@@ -160,6 +164,8 @@ private:
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
+
+    void stop();
 
     /// Update the parameters to be used for playback
     void updateParameters();

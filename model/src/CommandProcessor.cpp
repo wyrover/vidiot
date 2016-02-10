@@ -28,21 +28,30 @@ bool CommandProcessor::Redo()
     LOG_INFO;
     ASSERT_MORE_THAN_ZERO(mRedo);
     mRedo--;
-    return wxCommandProcessor::Redo();
+    auto players{ pausePlayers() };
+    bool result{ wxCommandProcessor::Redo() };
+    resumePlayers(players);
+    return result;
 }
 
 bool CommandProcessor::Submit(wxCommand *command, bool storeIt)
 {
     VAR_INFO(command)(storeIt);
     mRedo = 0;
-    return wxCommandProcessor::Submit(command,storeIt);
+    auto players{ pausePlayers() };
+    bool result{ wxCommandProcessor::Submit(command,storeIt) };
+    resumePlayers(players);
+    return result;
 }
 
 bool CommandProcessor::Undo()
 {
     LOG_INFO;
     mRedo++;
-    return wxCommandProcessor::Undo();
+    auto players{ pausePlayers() };
+    bool result{ wxCommandProcessor::Undo() };
+    resumePlayers(players);
+    return result;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -67,5 +76,39 @@ std::vector<wxCommand*> CommandProcessor::getUndoHistory() const
     return result;
 }
 
+
+void CommandProcessor::registerPlayer(IPlayer* player)
+{
+    mPlayers.push_back(player);
+}
+
+void CommandProcessor::unregisterPlayer(IPlayer* player)
+{
+    auto it{ std::find(mPlayers.begin(), mPlayers.end(), player) };
+    ASSERT(it != mPlayers.end())(mPlayers)(player);
+    mPlayers.erase(it);
+}
+
+//////////////////////////////////////////////////////////////////////////
+// HELPER METHODS
+//////////////////////////////////////////////////////////////////////////
+
+std::vector<std::pair<IPlayer*, ResumeInfo>> CommandProcessor::pausePlayers() const
+{
+    std::vector<std::pair<IPlayer*, ResumeInfo>> result;
+    for (IPlayer* player : mPlayers)
+    {
+        result.push_back(std::make_pair(player, player->pause()));
+    }
+    return result;
+}
+
+void CommandProcessor::resumePlayers(std::vector<std::pair<IPlayer*, ResumeInfo>> players)
+{
+    for (auto kvp : players)
+    {
+        kvp.first->resume(kvp.second);
+    }
+}
 
 } // namespace

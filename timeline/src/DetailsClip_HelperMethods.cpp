@@ -63,8 +63,6 @@ void DetailsClip::requestShowAndUpdateTitle()
 
 void DetailsClip::submitEditCommandUponAudioVideoEdit(const wxString& message, bool video, std::function<void()> edit)
 {
-    getPlayer()->stop(); // Stop iteration through the sequence, since the sequence is going to be changed.
-
     pts offset{ video ? mVideoKeyFrameControls->getKeyFrameOffset() : mAudioKeyFrameControls->getKeyFrameOffset() };
 
     if (mEditCommand == nullptr || // No command submit yet
@@ -137,8 +135,6 @@ void DetailsClip::submitEditCommandUponAudioVideoEdit(const wxString& message, b
 
 void DetailsClip::submitEditCommandUponTransitionEdit(const wxString& parameter)
 {
-    getPlayer()->stop(); // Stop iteration through the sequence, since the sequence is going to be changed.
-
     ASSERT_NONZERO(mTransitionClone);
 
     wxString message{ wxString::Format(_("Change %s (%s)"), mClip->getDescription(), parameter) };
@@ -163,14 +159,7 @@ void DetailsClip::submitEditCommandUponTransitionEdit(const wxString& parameter)
         // but the command may only be submitted once.
     }
 
-    // todo upon undo the transition looks selected again, but the playback is not started.
-    // todo same after trimming: transition looks selected again, but the playback is not started.
-    if (mPlaybackActive)
-    {
-        // Restart the playback after the edit
-        startPlayback(true);
-    }
-    else
+    if (!mPlaybackActive)
     {
         preview();
     }
@@ -178,7 +167,6 @@ void DetailsClip::submitEditCommandUponTransitionEdit(const wxString& parameter)
 
 void DetailsClip::submitEditCommandUponTransitionTypeChange(model::TransitionPtr transition)
 {
-    getPlayer()->stop(); // Stop iteration through the sequence, since the sequence is going to be changed.
     model::TransitionPtr original{ boost::dynamic_pointer_cast<model::Transition>(mClip) };
     ASSERT(original)(mClip);
 
@@ -207,12 +195,7 @@ void DetailsClip::submitEditCommandUponTransitionTypeChange(model::TransitionPtr
     // If a clip aspect is edited twice, simply adjust the clone twice,
     // but the command may only be submitted once.
 
-    if (mPlaybackActive)
-    {
-        // Restart the playback after the edit
-        startPlayback(true);
-    }
-    else
+    if (!mPlaybackActive)
     {
         preview();
     }
@@ -220,8 +203,6 @@ void DetailsClip::submitEditCommandUponTransitionTypeChange(model::TransitionPtr
 
 void DetailsClip::createOrUpdateSpeedCommand(rational64 speed)
 {
-    getPlayer()->stop(); // Stop iteration through the sequence, since the sequence is going to be changed.
-
     getTimeline().beginTransaction(); // Avoid flickering updates due to undo-ing the command.
     if (mEditSpeedCommand != nullptr &&
         mEditSpeedCommand == model::CommandProcessor::get().GetCurrentCommand())
@@ -265,12 +246,14 @@ void DetailsClip::startPlayback(bool start)
         mClip->getTrack() != nullptr)
     {
         mPlaybackActive = true;
+        mPlaybackClipIndex = std::make_pair(mClip->getIndex(), mClip->getTrack()->getIndex());
         getPlayer()->playRange(mClip->getPerceivedLeftPts(), mClip->getPerceivedRightPts());
     }
     else
     {
         mPlaybackActive = false;
-        getPlayer()->stop();
+        mPlaybackClipIndex = std::make_pair(-1, -1);
+        getPlayer()->stopRange();
     }
 }
 

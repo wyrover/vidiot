@@ -196,17 +196,7 @@ public:
     void beginTransaction();
 
     /// End a 'transaction'. This enables screen updates again.
-    /// Typically, call modelChanged after doing this.
     void endTransaction();
-
-    //////////////////////////////////////////////////////////////////////////
-    // CHANGE COMMANDS
-    //////////////////////////////////////////////////////////////////////////
-
-    /// Reset the mouse pointer, triggering an update of both the model (since
-    /// iterators are reset via the moveTo method) and the timeline (since
-    /// resetting the cursor causes an update).
-    void modelChanged();
 
 private:
 

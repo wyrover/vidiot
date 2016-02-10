@@ -17,10 +17,12 @@
 
 #include "TrimClip.h"
 
+#include "CommandProcessor.h" // todo for resumeinfo only
 #include "Cursor.h"
 #include "EmptyClip.h"
 #include "IClip.h"
 #include "Keyboard.h"
+#include "Player.h"
 #include "Selection.h"
 #include "Sequence.h"
 #include "Timeline.h"
@@ -72,6 +74,8 @@ void TrimClip::update(pts diff, bool shift, bool trimlink)
     VAR_DEBUG(diff)(shift);
     mNewClip.reset();
     mNewLink.reset();
+
+    ResumeInfo info{ getTimeline().getPlayer()->pause() }; // todo the model itselves should manage this (stopping playback temporarily).
     revert();
 
     mCursorPositionBefore = getTimeline().getCursor().getLogicalPosition();
@@ -115,6 +119,8 @@ void TrimClip::update(pts diff, bool shift, bool trimlink)
         applyTrim();
         getTimeline().getSelection().updateOnEdit(); // Selected clip is changed when applying the trim
     }
+
+    getTimeline().getPlayer()->resume(info);
 }
 
 void TrimClip::setCursorPositionAfter(pts position)

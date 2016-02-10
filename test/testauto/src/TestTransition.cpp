@@ -1224,5 +1224,94 @@ void TestTransition::testChangeTransitionType()
     }
 }
 
+void TestTransition::testTransitionPlaybackAndEditTransitionType()
+{
+    StartTestSuite();
+    TimelineZoomIn(4);
+
+    MakeInOutTransitionAfterClip preparation{ 2 };
+    TimelineSelectClips({ VideoClip(0,3) });
+    StartTest("Preparation");
+
+    WaitForPlaybackStarted started;
+    ButtonTriggerPressed(DetailsClipView()->getPlayButton());
+    started.wait();
+
+    for (model::TransitionPtr transition : model::video::VideoTransitionFactory::get().getAllPossibleTransitionsOfType(model::TransitionTypeFadeOutToNext))
+    {
+        wxString description{ transition->getDescription(model::TransitionTypeFadeOutToNext) };
+        {
+            StartTest("Change to " + description);
+            WaitForPlaybackStopped stopped;
+            WaitForPlaybackStarted startedagain;
+            SetValue(DetailsClipView()->getTransitionTypeSelector(), description);
+            stopped.wait();
+            startedagain.wait();
+            pause(250);
+            ASSERT_EQUALS(VideoClip(0, 3)->getDescription(), description);
+        }
+        {
+            StartTest("Undo  " + description);
+            WaitForPlaybackStopped stopped;
+            WaitForPlaybackStarted startedagain;
+            Undo();
+            stopped.wait();
+            startedagain.wait();
+            pause(250);
+        }
+    }
+
+    // Got crash here when the destructor of  MakeInOutTransitionAfterClip triggered an undo of the transition. 
+    // Crash occured in sws_scale (getnextvideo of videofile) in the video buffer thread.
+    // Fault was caused by the playback NOT being stopped before undo-ing the transition!
+}
+
+void TestTransition::testTransitionPlaybackAndEditTransitionParameter()
+{
+    StartTestSuite();
+    TimelineZoomIn(4);
+    StartTest("Preparation");
+
+    MakeInOutTransitionAfterClip preparation{ 2 };
+    SetValue(DetailsClipView()->getTransitionTypeSelector(), _("Wipe Circle"));
+    ASSERT_HISTORY_END(gui::timeline::cmd::CreateTransition)(gui::timeline::cmd::EditClipDetails);
+    TimelineSelectClips({});
+    TimelineSelectClips({ VideoClip(0,3) });
+
+    WaitForPlaybackStarted started;
+    ButtonTriggerPressed(DetailsClipView()->getPlayButton());
+    started.wait();
+
+    for (int c{ 2 }; c < 30; ++c)
+    {
+        {
+            StartTest(wxString::Format("Set number of circles to %d", c));
+            WaitForPlaybackStopped stopped;
+            WaitForPlaybackStarted startedagain;
+
+            // todo make helper methods for setting transition parameters:
+            boost::shared_ptr<model::TransitionParameterInt> count{ DetailsClipView()->getTransitionClone()->getParameter<model::TransitionParameterInt>(model::TransitionParameterInt::sParameterBandsCount) };
+            ASSERT_NONZERO(count);
+            util::thread::RunInMainAndWait([count, c] {count->setValue(c); });
+            stopped.wait();
+            startedagain.wait();
+            pause(200);
+            ASSERT_HISTORY_END(gui::timeline::cmd::CreateTransition)(gui::timeline::cmd::EditClipDetails)(gui::timeline::cmd::EditClipDetails);
+        }
+        {
+            StartTest(wxString::Format("Undo number of circles to %d", c));
+            WaitForPlaybackStopped stopped;
+            WaitForPlaybackStarted startedagain;
+            Undo();
+            ASSERT_HISTORY_END(gui::timeline::cmd::CreateTransition)(gui::timeline::cmd::EditClipDetails);
+            stopped.wait();
+            startedagain.wait();
+        }
+    }
+
+    // todo if this works, test each possible parameter for each transition!
+
+    Undo(); // Set transition type
+}
 
 } // namespace

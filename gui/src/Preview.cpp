@@ -114,7 +114,7 @@ void Preview::hide(Player* player)
 {
     if (player)
     {
-        player->stop();
+        player->pause();
         GetSizer()->Hide(player);
     }
 }

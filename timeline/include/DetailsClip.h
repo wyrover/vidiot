@@ -164,6 +164,7 @@ public:
 
     wxButton* getPlayButton() const;
 
+    model::TransitionPtr getTransitionClone() const;
     wxChoice* getTransitionTypeSelector() const;
 
     wxSlider* getOpacitySlider() const;
@@ -224,6 +225,7 @@ private:
     wxButton* mPlayButton = nullptr;
     wxCheckBox* mAutoPlayButton = nullptr;
     bool mPlaybackActive = false;
+    std::pair<int, int> mPlaybackClipIndex;
 
     wxPanel* mTransitionTypePanel = nullptr;
     wxChoice* mTransitionType = nullptr;

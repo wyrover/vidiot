@@ -85,7 +85,7 @@ void Play(int ms)
     util::thread::RunInMainScheduler::get().run([] { getTimeline().getPlayer()->play(); });
     started.wait();
     pause(ms);
-    util::thread::RunInMainScheduler::get().run([] { getTimeline().getPlayer()->stop(); });
+    util::thread::RunInMainScheduler::get().run([] { getTimeline().getPlayer()->pause(); });
     stopped.wait();
 }
 

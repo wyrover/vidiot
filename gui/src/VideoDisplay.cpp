@@ -215,10 +215,15 @@ void VideoDisplay::play()
             }
         }
 
-        showNextFrame();
-
+        // Must be set BEFORE calling showNextFrame.
+        // If range-based playback is enabled, showNextFrame may call 'play()' again.
+        // Setting this boolean here already ensures that no recursive calls to play()
+        // will be done in showNextFrame.
         mPlaying = true;
+
         GetEventHandler()->QueueEvent(new PlaybackActiveEvent(true));
+
+        showNextFrame();
 
         LOG_DEBUG;
     }
@@ -357,6 +362,24 @@ void VideoDisplay::setSpeed(int speed)
     }
 }
 
+ResumeInfo VideoDisplay::pause(pts position)
+{
+    ResumeInfo result;
+    result.playing = mPlaying;
+    result.range = mRange;
+    moveTo(position);
+    return result;
+}
+
+void VideoDisplay::resume(const ResumeInfo& info)
+{
+    if (info.playing)
+    {
+        mRange = info.range;
+        play();
+    }
+}
+
 int VideoDisplay::getSpeed() const
 {
     return mSpeed;
@@ -380,6 +403,17 @@ void VideoDisplay::playRange(pts from, pts to)
     moveTo(from);
     mRange.reset(std::make_pair(from, to));
     play();
+}
+
+void VideoDisplay::stopRange()
+{
+    ASSERT(wxThread::IsMain());
+    LOG_INFO;
+    if (mRange)
+    {
+        stop();
+        mRange.reset();
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -604,9 +638,7 @@ void VideoDisplay::showNextFrame()
         if (position > range.second)
         {
             // Restart at begin of range.
-            moveTo(range.first);
-            mRange.reset(range);
-            play();
+            resume(pause(range.first));
             return;
         }
     }

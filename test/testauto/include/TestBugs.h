@@ -18,7 +18,7 @@
 #pragma once
 
 #include "Test.h"
-
+                // todo make testall project which runs all tests consecutively (just runs the exes?)
 namespace test
 {
 

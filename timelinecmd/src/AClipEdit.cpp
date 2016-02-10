@@ -38,7 +38,7 @@
 
 namespace gui { namespace timeline { namespace cmd {
 
-    //////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
@@ -114,25 +114,6 @@ bool AClipEdit::Do()
 
     getTimeline().getSelection().updateOnEdit();
 
-    if (!mParams.empty())
-    {
-        // Only if actual changes were done, this call ensures resetting of all 'iteration' variables.
-        // Note that the if was added to avoid resetting the cursor (red line) in case of changing the length
-        // of a clip via 'clip details view'. The Trim command used there did not do any changes in its
-        // initialize method, but still (without the if) the modelChanged() was called. That caused the cursor
-        // position to be changed again.
-        //
-        // Scenario that went wrong (without the if):
-        // - Position cursor on clip 1
-        // - Click clip 4
-        // - Change a parameter of the clip (for instance, Y position)
-        // - DetailsClip makes a new command: a combination of trimming (possible with offset 0) and transform clip.
-        // - The 'previewed' frame of the modification should be a frame of clip 4;
-        //   therefore DetailsClip.cpp repositions the cursor in this scenario.
-        // However, the modelChanged() call here would cause an additional cursor repositioning.
-        getTimeline().modelChanged();
-    }
-
     if (Config::get().read<bool>(Config::sPathDebugLogSequenceOnEdit))
     {
         LOG_INFO << model::dump(getSequence(),1);
@@ -156,11 +137,6 @@ bool AClipEdit::Undo()
     undoExtraAfter();
 
     getTimeline().getSelection().updateOnEdit();
-
-    if (!mParamsUndo.empty())
-    {
-        getTimeline().modelChanged();
-    }
 
     if (Config::get().read<bool>(Config::sPathDebugLogSequenceOnEdit))
     {

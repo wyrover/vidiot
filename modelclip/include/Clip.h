@@ -47,8 +47,9 @@ public:
     // ICLIP
     //////////////////////////////////////////////////////////////////////////
 
-    TrackPtr getTrack() override;
+    TrackPtr getTrack() const override;
     bool hasTrack() const override;
+    int getIndex() const override;
 
     IClipPtr getNext() override;
     IClipPtr getPrev() override;
@@ -102,7 +103,7 @@ private:
         const IClipPtr& prev = IClipPtr(),
         const IClipPtr& next = IClipPtr(),
         pts trackPosition = 0,
-        const unsigned int& index = 0);
+        int index = 0);
 
     //////////////////////////////////////////////////////////////////////////
     // MEMBERS
@@ -112,7 +113,7 @@ private:
     WeakIClipPtr mPrev;     ///< Previous clip in the track. 0 if current clip is not part of a track. Stored as weak_ptr to avoid cyclic dependencies (leading to memory leaks).
     WeakIClipPtr mNext;     ///< Next clip in the track. 0 if current clip is not part of a track. Stored as weak_ptr to avoid cyclic dependencies (leading to memory leaks).
     pts mLeftPtsInTrack;    ///< Position inside the track. 0 if not in a track.
-    unsigned int mIndex;    ///< Index of this clip in the track (for debugging)
+    int mIndex;             ///< Index of this clip in the track
 
     WeakIClipPtr mLink;     ///< Clip that this clip is linked with. Stored as weak_ptr to avoid circular dependency between two linked clips which causes memory leaks.
 
