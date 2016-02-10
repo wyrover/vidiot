@@ -149,11 +149,17 @@ Player::Player(wxWindow *parent, model::SequencePtr sequence, wxWindow* focus)
     mSpeedSliderFrame->SetSize(wxSize(40, 160));
     mSpeed100->Bind(wxEVT_BUTTON, &Player::onSpeed100, this);
     mSpeedSlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED, &Player::onSpeedSliderUpdate, this);
+
+    //////////////////////////////////////////////////////////////////////////
+
+    model::CommandProcessor::get().registerPlayer(this);
 }
 
 Player::~Player()
 {
     VAR_DEBUG(this);
+
+    model::CommandProcessor::get().unregisterPlayer(this);
 
     Config::get().Unbind(EVENT_CONFIG_UPDATED, &Player::onConfigUpdated, this);
 
@@ -188,9 +194,11 @@ void Player::play()
 
 void Player::play_pause()
 {
+    LOG_INFO;
+    ASSERT(wxThread::IsMain());
     if (mDisplay->isPlaying())
     {
-        stop();
+        pause();
     }
     else
     {
@@ -198,20 +206,25 @@ void Player::play_pause()
     }
 }
 
-void Player::stop()
-{
-    LOG_INFO;
-    ASSERT(wxThread::IsMain());
-    if (mDisplay->isPlaying())
-    {
-        mDisplay->moveTo(mPosition);
-    }
-}
-
 void Player::moveTo(pts position)
 {
     VAR_INFO(this)(position);
+    ASSERT(wxThread::IsMain());
     mDisplay->moveTo(position);
+}
+
+ResumeInfo Player::pause()
+{
+    LOG_INFO;
+    ASSERT(wxThread::IsMain());
+    return mDisplay->pause(mPosition);
+}
+
+void Player::resume(const ResumeInfo& info)
+{
+    LOG_INFO;
+    ASSERT(wxThread::IsMain());
+    mDisplay->resume(info);
 }
 
 void Player::showPreview(const boost::shared_ptr<wxBitmap>& bitmap)
@@ -250,7 +263,7 @@ void Player::updateLength()
 
 void Player::setSpeed(int speed)
 {
-    stop();
+    pause();
     mDisplay->setSpeed(speed);
     updateSpeedButton();
 }
@@ -258,8 +271,14 @@ void Player::setSpeed(int speed)
 void Player::playRange(pts from, pts to)
 {
     VAR_DEBUG(from)(to);
-    stop();
+    pause();
     mDisplay->playRange(from, to);
+}
+
+void Player::stopRange()
+{
+    VAR_INFO;
+    mDisplay->stopRange();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -282,7 +301,7 @@ void Player::onPlaybackPosition(PlaybackPositionEvent& event) // make playbackst
 
     if (mDisplay->isPlaying() && (mPosition > mDisplay->getSequence()->getLength()))
     {
-        stop(); // Stop at end of sequence
+        pause(); // Stop at end of sequence
     }
 }
 

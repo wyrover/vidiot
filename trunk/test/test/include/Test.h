@@ -102,6 +102,7 @@
 #include "Track.h"
 #include "TrackView.h"
 #include "Transition.h"
+#include "TransitionParameterInt.h"
 #include "TrimClip.h"
 #include "UnlinkClips.h"
 #include "UtilFrameRate.h"

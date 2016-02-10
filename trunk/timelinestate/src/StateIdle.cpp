@@ -144,7 +144,8 @@ boost::statechart::result Idle::react( const EvKeyDown& evt)
         case WXK_SPACE:
         {
             evt.consumed();
-            return start();
+            getPlayer()->play();
+            return discard_event();
         }
         case WXK_DELETE:
         {
@@ -331,12 +332,6 @@ void Idle::updateMouseCursor()
 
     }
     getMouse().set(image);
-}
-
-boost::statechart::result Idle::start()
-{
-    getPlayer()->play();
-    return discard_event();
 }
 
 boost::statechart::result Idle::leftDown()

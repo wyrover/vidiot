@@ -169,8 +169,6 @@ std::function<float (int,int)> WipeImage::getRightMethod(const wxImagePtr& image
         mImage = boost::make_shared<wxImage>(filename.GetFullPath());
         mImageFileName = filename;
     }
-                            
-    // todo hangup when transition playback is active (release mode without debugging) and selecting the imagezoom
                      
     if (mImage && mImage->IsOk())
     {

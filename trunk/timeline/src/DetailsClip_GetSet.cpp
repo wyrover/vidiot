@@ -25,6 +25,7 @@
 #include "Config.h"
 #include "VideoClip.h"
 #include "VideoKeyFrame.h"
+#include "VideoTrack.h"
 
 namespace gui { namespace timeline {
 
@@ -51,11 +52,33 @@ void DetailsClip::setClip(const model::IClipPtr& clip)
     mTransitionClone = nullptr;
     mEditCommand = nullptr;
     mEditSpeedCommand = nullptr;
-    startPlayback(false);
 
     model::VideoClipPtr video{ getClipOfType<model::VideoClip>(clip) };
     model::AudioClipPtr audio{ getClipOfType<model::AudioClip>(clip) };
     model::TransitionPtr transition{ getClipOfType<model::Transition>(clip) };
+
+    bool autoStartPlayback{ Config::get().read<bool>(Config::sPathEditAutoStartPlayback) };
+    bool play{ false };
+    if (transition != nullptr && transition->isA<model::IVideo>())
+    {
+        play = autoStartPlayback;
+
+        if (!play)
+        {
+            // Check if playback active, and the clip with the same index is still selected.
+            // Continue the playback in that case.
+            // Example: Change transition type, then undo the change. After the undo, playback must remain active.
+            if (mPlaybackActive)
+            {
+                std::pair<int, int> index{ std::make_pair(clip->getIndex(), clip->getTrack()->getIndex()) };
+                if (mPlaybackClipIndex == index)
+                {
+                    play = true;
+                }
+            }
+        }
+    }
+
 
     if (video != nullptr ||
         audio != nullptr ||
@@ -110,9 +133,8 @@ void DetailsClip::setClip(const model::IClipPtr& clip)
 
     Layout();
 
-    bool autoStartPlayback{ Config::get().read<bool>(Config::sPathEditAutoStartPlayback) };
     mAutoPlayButton->SetValue(autoStartPlayback);
-    startPlayback(autoStartPlayback && transition != nullptr && transition->isA<model::IVideo>());
+    startPlayback(play);
 }
 
 pts DetailsClip::getLength(wxToggleButton* button) const

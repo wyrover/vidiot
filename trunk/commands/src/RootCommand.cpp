@@ -41,6 +41,10 @@ RootCommand::~RootCommand()
 
 void RootCommand::submit()
 {
+    // todo give sequences their own undo history AND command processors by using child document functionality of wxDocument.
+    // then pause the associated players automatically, whenever a command is done/undone/etc.
+    // Note: this should not only be done for submitted commands but also for partial edits like which is done for trimclip::update()!!!
+
     model::ProjectModification::submit(this);
 }
 

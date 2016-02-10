@@ -96,7 +96,7 @@ void Clip::setTrackInfo(
     const IClipPtr& prev,
     const IClipPtr& next,
     pts trackPosition,
-    const unsigned int& index)
+    int index)
 {
     mTrack = track;
     mPrev = prev;
@@ -105,9 +105,15 @@ void Clip::setTrackInfo(
     mIndex = index;
 }
 
-TrackPtr Clip::getTrack()
+TrackPtr Clip::getTrack() const
 {
     return mTrack.lock();
+}
+
+int Clip::getIndex() const
+{
+    ASSERT(getTrack())(*this);
+    return mIndex;
 }
 
 bool Clip::hasTrack() const

@@ -679,7 +679,7 @@ void TestDetailsClip::testEditClipDuringPlayback()
         started.wait();
         SetValue(DetailsClipView()->getScalingSlider(), 7000); // Same as presing WXK_PAGEUP
         pause(400);
-        util::thread::RunInMain([] { getTimeline().getPlayer()->stop(); });
+        util::thread::RunInMain([] { getTimeline().getPlayer()->pause(); });
         stopped.wait();
     }
     {
@@ -691,7 +691,7 @@ void TestDetailsClip::testEditClipDuringPlayback()
         started.wait();
         SetValue(DetailsClipView()->getVolumeSlider(), 90); // Same as pressing PageUp
         pause(400);
-        util::thread::RunInMain([] { getTimeline().getPlayer()->stop(); });
+        util::thread::RunInMain([] { getTimeline().getPlayer()->pause(); });
         stopped.wait();
     }
 }

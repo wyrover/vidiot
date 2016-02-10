@@ -64,6 +64,7 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     , sEditVolume(_("Edit volume of %s"))
     , sEditKeyFramesAdd(_("Add key frame to %s"))
     , sEditKeyFramesRemove(_("Remove key frame from %s"))
+    , mPlaybackClipIndex{ std::make_pair(-1, -1) }
 {
     VAR_DEBUG(this);
 

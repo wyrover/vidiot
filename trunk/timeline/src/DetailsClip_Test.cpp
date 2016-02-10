@@ -43,6 +43,11 @@ wxButton* DetailsClip::getPlayButton() const
     return mPlayButton;
 }
 
+model::TransitionPtr DetailsClip::getTransitionClone() const
+{
+    return mTransitionClone;
+}
+
 wxChoice* DetailsClip::getTransitionTypeSelector() const
 {
     return mTransitionType;

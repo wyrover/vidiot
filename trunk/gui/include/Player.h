@@ -17,6 +17,8 @@
 
 #pragma once
 
+#include "CommandProcessor.h"
+
 class EventConfigUpdated;
 class wxPopupTransientWindow;
 
@@ -28,7 +30,8 @@ class PlaybackPositionEvent;
 class VideoDisplay;
 
 class Player
-    :   public wxPanel
+    : public wxPanel
+    , public IPlayer
 {
 public:
 
@@ -45,8 +48,10 @@ public:
 
     void play();
     void play_pause();
-    void stop();
     void moveTo(pts position);
+
+    ResumeInfo pause() override;
+    void resume(const ResumeInfo& info) override;
 
     /// Show a preview of an edit operation
     /// \param bitmap image to be shown
@@ -62,6 +67,7 @@ public:
     void setSpeed(int speed);
 
     void playRange(pts from, pts to);
+    void stopRange();
 
     //////////////////////////////////////////////////////////////////////////
     // GUI EVENTS

@@ -45,8 +45,12 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     /// \return the track in which this clip is contained. A null ptr is returned if the clip is not in a track.
-    virtual TrackPtr getTrack() = 0;
+    virtual TrackPtr getTrack() const = 0;
     virtual bool hasTrack() const = 0;
+
+    /// \return the index (if any) in the track of this clip
+    /// \pre hasTrack()
+    virtual int getIndex() const = 0;
 
     /// \return pts (in containing track) of begin point of clip.
     /// The frame at this position is the first frame of this clip.

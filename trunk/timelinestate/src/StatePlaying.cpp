@@ -45,7 +45,6 @@ Playing::Playing( my_context ctx ) // entry
 Playing::~Playing() // exit
 {
     LOG_DEBUG;
-    ::cmd::RootCommand* cmd = 0;
     switch (mKeyCodeTriggeringStop)
     {
     case 'b':
@@ -55,7 +54,7 @@ Playing::~Playing() // exit
         break;
     case 's':
     case 'S':
-        cmd  = new cmd::SplitAtCursor(getSequence());
+        ::cmd::RootCommand* cmd{ new cmd::SplitAtCursor(getSequence()) };
         model::ProjectModification::submitIfPossible(cmd);
         getPlayer()->play();
         break;
@@ -70,7 +69,7 @@ boost::statechart::result Playing::react( const EvLeftDown& evt )
 {
     VAR_DEBUG(evt);
     post_event(evt); // Handle this event again in the Idle state
-    getPlayer()->stop();
+    getPlayer()->pause();
     triggerEnd();
     return transit< Idle >();
 }
@@ -90,11 +89,11 @@ boost::statechart::result Playing::react( const EvKeyDown& evt)
     case 'B':
         evt.consumed();
         mKeyCodeTriggeringStop = evt.KeyCode;
-        getPlayer()->stop();
+        getPlayer()->pause();
         return discard_event();
     case WXK_SPACE:
         evt.consumed();
-        getPlayer()->stop();
+        getPlayer()->pause();
         return discard_event();
     }
     return forward_event();
@@ -137,7 +136,7 @@ boost::statechart::result Playing::react( const EvKeyUp& evt)
 
 boost::statechart::result Playing::react( const EvDragEnter& evt)
 {
-	getPlayer()->stop();
+	getPlayer()->pause();
     triggerEnd();
     getDrag().start(getMouse().getVirtualPosition(), true);
     return transit<Dragging>();

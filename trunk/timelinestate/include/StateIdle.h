@@ -83,8 +83,6 @@ private:
 
     void updateMouseCursor();
 
-    boost::statechart::result start();
-
     boost::statechart::result leftDown();
     boost::statechart::result rightDown();
 

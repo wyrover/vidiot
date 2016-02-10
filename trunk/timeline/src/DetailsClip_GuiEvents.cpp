@@ -420,6 +420,8 @@ void DetailsClip::handleLengthButtonPressed(wxToggleButton* button)
     getTimeline().endTransaction();
     getTimeline().Refresh();
     getTimeline().SetFocus();
+
+    // todo auto transition playback should play the new range now
 }
 
 }} // namespace
