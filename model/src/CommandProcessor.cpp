@@ -17,6 +17,30 @@
 
 #include "CommandProcessor.h"
 
+#include "IPlayer.h"
+
+//////////////////////////////////////////////////////////////////////////
+// HELPER METHODS
+//////////////////////////////////////////////////////////////////////////
+
+std::vector<std::pair<IPlayer*, ResumeInfo>> pausePlayers(std::vector<IPlayer*> players) 
+{
+    std::vector<std::pair<IPlayer*, ResumeInfo>> result;
+    for (IPlayer* player : players)
+    {
+        result.push_back(std::make_pair(player, player->pause()));
+    }
+    return result;
+}
+
+void resumePlayers(std::vector<std::pair<IPlayer*, ResumeInfo>> players)
+{
+    for (auto kvp : players)
+    {
+        kvp.first->resume(kvp.second);
+    }
+}
+
 namespace model {
 
 //////////////////////////////////////////////////////////////////////////
@@ -28,7 +52,7 @@ bool CommandProcessor::Redo()
     LOG_INFO;
     ASSERT_MORE_THAN_ZERO(mRedo);
     mRedo--;
-    auto players{ pausePlayers() };
+    auto players{ pausePlayers(mPlayers) };
     bool result{ wxCommandProcessor::Redo() };
     resumePlayers(players);
     return result;
@@ -38,7 +62,7 @@ bool CommandProcessor::Submit(wxCommand *command, bool storeIt)
 {
     VAR_INFO(command)(storeIt);
     mRedo = 0;
-    auto players{ pausePlayers() };
+    auto players{ pausePlayers(mPlayers) };
     bool result{ wxCommandProcessor::Submit(command,storeIt) };
     resumePlayers(players);
     return result;
@@ -48,7 +72,7 @@ bool CommandProcessor::Undo()
 {
     LOG_INFO;
     mRedo++;
-    auto players{ pausePlayers() };
+    auto players{ pausePlayers(mPlayers) };
     bool result{ wxCommandProcessor::Undo() };
     resumePlayers(players);
     return result;
@@ -87,28 +111,6 @@ void CommandProcessor::unregisterPlayer(IPlayer* player)
     auto it{ std::find(mPlayers.begin(), mPlayers.end(), player) };
     ASSERT(it != mPlayers.end())(mPlayers)(player);
     mPlayers.erase(it);
-}
-
-//////////////////////////////////////////////////////////////////////////
-// HELPER METHODS
-//////////////////////////////////////////////////////////////////////////
-
-std::vector<std::pair<IPlayer*, ResumeInfo>> CommandProcessor::pausePlayers() const
-{
-    std::vector<std::pair<IPlayer*, ResumeInfo>> result;
-    for (IPlayer* player : mPlayers)
-    {
-        result.push_back(std::make_pair(player, player->pause()));
-    }
-    return result;
-}
-
-void CommandProcessor::resumePlayers(std::vector<std::pair<IPlayer*, ResumeInfo>> players)
-{
-    for (auto kvp : players)
-    {
-        kvp.first->resume(kvp.second);
-    }
 }
 
 } // namespace

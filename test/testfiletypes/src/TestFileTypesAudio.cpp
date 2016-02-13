@@ -26,7 +26,7 @@ void executeAudioTest(wxString filetypesDir)
 
     ExecuteOnAllFiles(filetypesDir, [] 
     {
-        Play(LeftPixel(VideoClip(0,0)), 1000);
+        Play(LeftPixel(AudioClip(0,0)), 1000);
         TimelinePositionCursor(HCenter(AudioClip(0,0)));
         TimelineKeyPress('v'); // Show the part being played (for longer files)
         Play(HCenter(AudioClip(0,0)), 1000);

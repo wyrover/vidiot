@@ -79,4 +79,34 @@ void ExecuteOnAllFiles(wxString pathToFiles, std::function<void()> action, bool 
     }
 }
 
+void AddClipsAndExecute(wxString pathToFiles, std::function<void(int)> action)
+{
+    // Create project (must be done after ConfigOverrule* code)
+    model::FolderPtr root = WindowCreateProject();
+    ASSERT(root);
+    wxString sSequence("Sequence");
+    model::SequencePtr sequence = ProjectViewAddSequence(sSequence, root);
+    // Ensure that audio peaks are generated (clip views large enough to hold the preview)
+    TimelineZoomIn(8);
+
+    WindowTriggerMenu(ID_CLOSESEQUENCE);
+
+    // Find input files in dir (must be done after creating a project, due to dependencies on project properties for opening/closing files)
+    wxFileName TestFilesPath = getTestPath();
+    TestFilesPath.AppendDir(pathToFiles);
+    ASSERT(TestFilesPath.IsDir());
+    ASSERT(TestFilesPath.DirExists());
+    model::IPaths InputFiles = GetSupportedFiles(TestFilesPath);
+
+    ExtendSequenceWithRepeatedClips(sequence, InputFiles, 1); // Note: Not via a command (thus, 'outside' the undo system)
+    ProjectViewOpenTimelineForSequence(sequence);
+
+    for (int i{ 0 }; i < std::max(NumberOfAudioClipsInTrack(0), NumberOfVideoClipsInTrack(0)); ++i)
+    {
+        StartTest(InputFiles[i]->getPath().GetFullName());
+        action(i);
+
+    }
+}
+
 } // namespace

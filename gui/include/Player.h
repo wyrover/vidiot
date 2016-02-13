@@ -17,7 +17,7 @@
 
 #pragma once
 
-#include "CommandProcessor.h"
+#include "IPlayer.h"
 
 class EventConfigUpdated;
 class wxPopupTransientWindow;

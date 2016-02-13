@@ -158,7 +158,7 @@ macro (findFiles dir)
 endmacro ()
 
 
-set (VIDIOTPROJECTGROUPS model modelaudio modelclip modelempty modelevent modelfile modelproject modeltransition modelvideo modelvideotransition dialog gui pch projectview projectviewcmd render timeline timelinecmd timelineevent timelinestate timelineview commands util worker)
+set (VIDIOTPROJECTGROUPS model modelaudio modelclip modelempty modelevent modelfile modelproject modeltransition modelvideo modelvideotransition dialog gui pch preview projectview projectviewcmd render timeline timelinecmd timelineevent timelinestate timelineview commands util worker)
 foreach (FOLDER ${VIDIOTPROJECTGROUPS})
   findFiles (${FOLDER})
   if (NOT FOLDER STREQUAL "pch")
