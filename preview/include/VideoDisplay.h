@@ -52,7 +52,7 @@ public:
     void play();
     void moveTo(pts position);
 
-    ResumeInfo pause(pts position); // todo make the position part of this class not of player?
+    ResumeInfo pause(pts position);
     void resume(const ResumeInfo& info);
 
     void setSpeed(int speed);

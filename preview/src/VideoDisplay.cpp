@@ -366,6 +366,7 @@ ResumeInfo VideoDisplay::pause(pts position)
 {
     ResumeInfo result;
     result.playing = mPlaying;
+    result.position = position;
     result.range = mRange;
     moveTo(position);
     return result;
