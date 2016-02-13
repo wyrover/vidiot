@@ -22,3 +22,5 @@ ADD_SUBDIRECTORY(testrendering)
 ADD_SUBDIRECTORY(testsync)
 ADD_SUBDIRECTORY(testtransitions)
 ADD_SUBDIRECTORY(testui)
+
+ADD_SUBDIRECTORY(testall)

@@ -118,4 +118,16 @@ struct MakeOutTransitionAfterClip : public MakeTransitionAfterClip
     virtual void moveMouseAndCreateTransition(int clipNumber) override;
 };
 
+
+template <typename PARAMETERTYPE, typename TYPE>
+void setTransitionParameter(model::TransitionPtr transition, wxString name, TYPE value)
+{
+    util::thread::RunInMainAndWait([transition, name, value] 
+    {
+        boost::shared_ptr<PARAMETERTYPE> parameter{ transition->getParameter<PARAMETERTYPE>(name) };
+        ASSERT_NONZERO(parameter);
+        parameter->setValue(value);
+    });
+}
+
 } // namespace
