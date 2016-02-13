@@ -95,6 +95,7 @@
 #include "Sequence.h"
 #include "SequenceView.h"
 #include "State.h"
+#include "StatusBar.h"
 #include "Timeline.h"
 #include "TimelineDataObject.h"
 #include "TimelinesView.h"

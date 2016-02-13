@@ -1289,10 +1289,7 @@ void TestTransition::testTransitionPlaybackAndEditTransitionParameter()
             WaitForPlaybackStopped stopped;
             WaitForPlaybackStarted startedagain;
 
-            // todo make helper methods for setting transition parameters:
-            boost::shared_ptr<model::TransitionParameterInt> count{ DetailsClipView()->getTransitionClone()->getParameter<model::TransitionParameterInt>(model::TransitionParameterInt::sParameterBandsCount) };
-            ASSERT_NONZERO(count);
-            util::thread::RunInMainAndWait([count, c] {count->setValue(c); });
+            setTransitionParameter<model::TransitionParameterInt>(DetailsClipView()->getTransitionClone(), model::TransitionParameterInt::sParameterBandsCount, c);
             stopped.wait();
             startedagain.wait();
             pause(200);
@@ -1308,8 +1305,6 @@ void TestTransition::testTransitionPlaybackAndEditTransitionParameter()
             startedagain.wait();
         }
     }
-
-    // todo if this works, test each possible parameter for each transition!
 
     Undo(); // Set transition type
 }

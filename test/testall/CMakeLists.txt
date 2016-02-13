@@ -1,4 +1,4 @@
-# Copyright 2013-2015 Eric Raijmakers.
+# Copyright 2013-2016 Eric Raijmakers.
 #
 # This file is part of Vidiot.
 #
@@ -15,12 +15,17 @@
 # You should have received a copy of the GNU General Public License
 # along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-ADD_SUBDIRECTORY(test)
-ADD_SUBDIRECTORY(testauto)
-ADD_SUBDIRECTORY(testfiletypes)
-ADD_SUBDIRECTORY(testrendering)
-ADD_SUBDIRECTORY(testsync)
-ADD_SUBDIRECTORY(testtransitions)
-ADD_SUBDIRECTORY(testui)
+link_directories (
+    ${FFMPEG_LIBRARY_DIR}
+    ${Boost_LIBRARY_DIRS}
+    ${PORTAUDIO_LIBRARY_DIR}
+    ${SOUNDTOUCH_LIBRARY_DIR}
+    ${VLD_LIBRARIES_DIR}
+)
 
-ADD_SUBDIRECTORY(testall)
+add_executable (testall WIN32 src/testall.cpp)
+target_link_libraries (testall ${Boost_LIBRARIES} ${wxWidgets_LIBRARIES} ${FFMPEG_LIBRARIES} ${PORTAUDIO_LIBRARIES} ${SOUNDTOUCH_LIBRARIES})
+
+copy_msvc_project_user_file (testall)
+
+add_dependencies(testall testauto testfiletypes testrendering testsync testtransitions testui)

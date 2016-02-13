@@ -82,7 +82,11 @@ void TestRenderingSynchronization::testLongSequence()
 
     StartTest("Play rendered");
     OpenFileExplorer(tempdir_and_filename.first->getFileName());
-    gui::Dialog::get().getConfirmation("Play back movie", "Press ok play back the movie (note: also test playback the file on disk directly!)");
+    for (int timer{ 120 }; timer > 0; --timer)
+    {
+        gui::StatusBar::get().setProcessingText(wxString::Format("Showing video in %ds", timer));
+        pause(1000);
+    }
     Play(8000);
     WindowTriggerMenu(ID_CLOSESEQUENCE);
     SetProjectUnmodified();

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-02-10 14:47+0100\n"
+"POT-Creation-Date: 2016-02-13 12:38+0100\n"
 "PO-Revision-Date: 2015-11-01 11:44+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -123,7 +123,7 @@ msgid "(requires restart)"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:63
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:120
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:125
 #: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:181
 msgid "Options"
 msgstr ""
@@ -182,7 +182,7 @@ msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:103
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogProjectProperties.cpp:44
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:108
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:113
 #: C:\Vidiot\vidiot_trunk\gui\src\EditProjectProperties.cpp:39
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:54
 msgid "Video"
@@ -223,7 +223,7 @@ msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:178
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogProjectProperties.cpp:73
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:114
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:119
 #: C:\Vidiot\vidiot_trunk\gui\src\EditProjectProperties.cpp:57
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:55
 msgid "Audio"
@@ -361,100 +361,100 @@ msgid ""
 "task(s)."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:57
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:59
 msgid "Render sequence"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:72
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:74
 msgid "Incompatible codec and file type"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:85
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:90
 msgid "Format"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:91
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:96
 #: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterFilename.cpp:96
 msgid "Select"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:102
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:107
 msgid "Output file"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:103
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:108
 msgid "Video codec"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:104
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:109
 msgid "Audio codec"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:127
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:132
 msgid "Render separation between cuts"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:131
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:136
 msgid "Actions"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:134
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:139
 msgid "Set as default"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:143
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:148
 msgid "OK && Render now"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:144
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:149
 msgid "OK"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:145
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:150
 msgid "Cancel"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:146
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:151
 msgid "Apply"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:229
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:237
 msgid "Select output file"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:388
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:396
 msgid "This audio codec can not be stored in the given file type"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:393
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:401
 msgid ""
 "This audio codec may cause problems with the given file type (cannot "
 "determine if this will work properly)."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:415
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:423
 msgid "This video codec can not be stored in the given file type"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:420
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:428
 msgid ""
 "This video codec may cause problems with the given file type (cannot "
 "determine if this will work properly)."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:515
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:523
 msgid "Select output file first."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:515
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:523
 msgid "No file selected"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:520
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:528
 msgid "Nothing to render"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:520
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:528
 msgid "Select at least a video or audio codec."
 msgstr ""
 
@@ -1078,6 +1078,7 @@ msgid "Number of circles"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeCircle.cpp:57
+#: C:\Vidiot\vidiot_trunk\test\testauto\src\TestTransition.cpp:1276
 msgid "Wipe Circle"
 msgstr ""
 
@@ -1155,12 +1156,12 @@ msgstr ""
 msgid "Wipe Image"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:247
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:245
 #, c-format
 msgid "Couldn't read %s at %s."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:248
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:246
 #, c-format
 msgid "No image selected at %s."
 msgstr ""
@@ -1592,12 +1593,12 @@ msgstr ""
 msgid "%s (%ss)"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_HelperMethods.cpp:144
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_HelperMethods.cpp:140
 #, c-format
 msgid "Change %s (%s)"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_HelperMethods.cpp:190
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_HelperMethods.cpp:178
 msgid "Change transition type"
 msgstr ""
 
@@ -2038,28 +2039,28 @@ msgstr ""
 msgid "Can't trim: position of clips prevents proper shifting"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\TrimClip.cpp:58
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\TrimClip.cpp:60
 msgid "Adjust length"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\TrimClip.cpp:82
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\TrimClip.cpp:86
 #, c-format
 msgid "Adjust %1$s side of %2$s"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\TrimClip.cpp:82
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\TrimClip.cpp:86
 msgid "left"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\TrimClip.cpp:82
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\TrimClip.cpp:86
 msgid "right"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\TrimClip.cpp:82
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\TrimClip.cpp:86
 msgid "transition"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\TrimClip.cpp:82
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\TrimClip.cpp:86
 msgid "clip"
 msgstr ""
 
