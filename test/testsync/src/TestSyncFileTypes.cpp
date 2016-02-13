@@ -63,7 +63,7 @@ void TestSyncFileTypes::executeTest()
     ExecuteOnAllFiles("filetypes_sync", [] 
     {
         pause(200); // Avoid threading hangup?
-        Play(LeftPixel(VideoClip(0,0)), 20000);
+        Play(LeftPixel(VideoClip(0,0)), 5000);
         Play(HCenter(VideoClip(0,0)), 5000);
     }, true);
 

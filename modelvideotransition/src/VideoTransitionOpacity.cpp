@@ -69,7 +69,7 @@ VideoFramePtr VideoTransitionOpacity::getVideo(pts position, const IClipPtr& lef
                             }
                         }
                     }
-                }            // todo given this implementation, can't we enable fadein and fadeout for all 'children'? Thus, for all wipes? look at barn doors for default getleft method?
+                }
             }
         }
 
@@ -144,6 +144,19 @@ void VideoTransitionOpacity::handleImageWithAlpha(const wxImagePtr& image, const
 
 std::function<float(int, int)> VideoTransitionOpacity::getLeftMethod(const wxImagePtr& image, const float& factor) const
 {
+    // This default implementation ensures that
+    // - fade out/fade in (from/to black) works properly (even with softened edges)
+    // - crossfades with softened edges work properly.
+
+    switch (getTransitionType())
+    {
+        case TransitionTypeFadeIn:
+        case TransitionTypeFadeOut:
+        {
+            std::function<float(int, int)> rm{ getRightMethod(image,factor) };
+            return [rm](int x, int y) -> float { return 1.0 - rm(x, y); };
+        }
+    }
     return [](int x, int y) -> float { return 1.0; };
 }
 

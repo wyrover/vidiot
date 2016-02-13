@@ -18,6 +18,7 @@
 #include "TestVideoTransitions.h"
 
 #include "TransitionParameterFilename.h"
+#include "VideoTransition_WipeCircle.h"
 #include "VideoTransition_WipeImage.h"
 
 namespace test {
@@ -42,15 +43,6 @@ void TestVideoTransitions::tearDown()
 
 void TestVideoTransitions::testVideoTransitions()
 {
-    auto setOpacity = [](int index, int opacity)
-    {
-        TimelineSelectClips({});
-        TimelineLeftClick(Center(VideoClip(0,index)));
-        SetValue(DetailsClipView()->getOpacitySlider(), opacity); // Same as WXK_PAGEUP
-        ASSERT_HISTORY_END(gui::timeline::cmd::EditClipDetails); // Verify that only one command object was added to the undo history
-        ASSERT_EQUALS(DefaultVideoKeyFrame(VideoClip(0, index))->getOpacity(), opacity);
-    };
-
     StartTestSuite();
     TimelineZoomIn(6);
 
@@ -85,19 +77,37 @@ void TestVideoTransitions::testVideoTransitions()
                 ButtonTriggerPressed(DetailsClipView()->getPlayButton());
                 stopped.wait();
                 Scrub(-2 + LeftPixel(VideoClip(0, ti)), RightPixel(VideoClip(0, ti)) + 2);
-                Play(-2 + LeftPixel(VideoClip(0, ti)), 250);
-                StartTest(t->getDescription() + " " + model::TransitionType_toString(tt) + " (opacity)");
-                setOpacity(ti - 1, 50);
-                setOpacity(ti + 1, 200);
-                Scrub(-2 + LeftPixel(VideoClip(0, ti)), RightPixel(VideoClip(0, ti)) + 2);
                 // Important: Position cursor BEFORE the clip!
                 //            Otherwise, for some transitions code is ran in the main thread and not in the buffer thread.
                 //            Some transitions used calls that were not allowed in a secondary thread (config calls).
                 Play(-2 + LeftPixel(VideoClip(0, ti)), 250);
-                Undo(3);
+                Undo();
             }
         }
     }
+}
+
+void TestVideoTransitions::testOpacityInTransition()
+{
+    auto setOpacity = [](int index, int opacity)
+    {
+        TimelineSelectClips({});
+        TimelineLeftClick(Center(VideoClip(0, index)));
+        SetValue(DetailsClipView()->getOpacitySlider(), opacity); // Same as WXK_PAGEUP
+        ASSERT_HISTORY_END(gui::timeline::cmd::EditClipDetails); // Verify that only one command object was added to the undo history
+        ASSERT_EQUALS(DefaultVideoKeyFrame(VideoClip(0, index))->getOpacity(), opacity);
+    };
+
+    StartTestSuite();
+    util::thread::RunInMainAndWait([]()
+    {
+        gui::timeline::cmd::createTransition(getSequence(), VideoClip(0, 0), model::TransitionTypeFadeOutToNext, boost::make_shared<model::video::transition::WipeCircle>());
+    });
+    ASSERT(VideoClip(0, 1)->isA<model::Transition>());
+    setOpacity(0, 50);
+    setOpacity(2, 200);
+    Scrub(-2 + LeftPixel(VideoClip(0, 1)), RightPixel(VideoClip(0, 1)) + 2);
+    Undo(3);
 }
 
 void TestVideoTransitions::testWipeImage()
@@ -135,7 +145,9 @@ void TestVideoTransitions::testWipeImage()
         //    TimelinePositionCursor(RightPixel(transition));
         //    pause();       
         //}
-        Scrub(-2 + LeftPixel(transition), RightPixel(transition) + 2);
+        Scrub(-1 + LeftPixel(transition), LeftPixel(transition) + 1);
+        TimelinePositionCursor(HCenter(transition));
+        Scrub(-1 + RightPixel(transition), RightPixel(transition) + 1);
     }
 }
 

@@ -37,9 +37,9 @@ WipeStraight* WipeStraight::clone() const
 
 bool WipeStraight::supports(TransitionType type) const
 {
-    return
-        type == TransitionTypeFadeInFromPrevious ||
-        type == TransitionTypeFadeOutToNext;
+    return true;
+        //type == TransitionTypeFadeInFromPrevious ||
+        //type == TransitionTypeFadeOutToNext;
 }
 
 ParameterAttributes WipeStraight::getAvailableParameters() const

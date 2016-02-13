@@ -40,7 +40,8 @@ Slide* Slide::clone() const
 
 bool Slide::supports(TransitionType type) const
 {
-    return true;
+    // FadeToNext serves no purpose (sliding emptyness over the clip does not work...)
+    return type != TransitionTypeFadeOutToNext;
 }
 
 ParameterAttributes Slide::getAvailableParameters() const
@@ -122,7 +123,10 @@ VideoFramePtr Slide::getVideo(pts position, const IClipPtr& leftClip, const ICli
 
     auto addClip = [parameters, result](const model::IClipPtr& clip, wxPoint offset)
     {
-        if (clip == nullptr) { return; }
+        if (clip == nullptr) 
+        { 
+            return; 
+        }
         VideoFramePtr frame{ boost::static_pointer_cast<VideoClip>(clip)->getNextVideo(parameters) };
         for (VideoFrameLayerPtr layer : frame->getLayers())
         {

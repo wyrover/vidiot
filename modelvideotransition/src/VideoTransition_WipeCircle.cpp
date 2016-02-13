@@ -37,9 +37,9 @@ WipeCircle* WipeCircle::clone() const
 
 bool WipeCircle::supports(TransitionType type) const
 {
-    return
-        type == TransitionTypeFadeInFromPrevious ||
-        type == TransitionTypeFadeOutToNext;
+    return true;
+        //type == TransitionTypeFadeInFromPrevious ||
+        //type == TransitionTypeFadeOutToNext;
 }
 
 ParameterAttributes WipeCircle::getAvailableParameters() const

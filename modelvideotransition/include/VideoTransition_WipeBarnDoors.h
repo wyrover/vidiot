@@ -50,8 +50,6 @@ public:
     // VIDEOTRANSITIONOPACITY
     //////////////////////////////////////////////////////////////////////////
 
-    std::function<float(int, int)> getLeftMethod(const wxImagePtr& image, const float& factor) const override;
-
     std::function<float (int,int)> getRightMethod(const wxImagePtr& image, const float& factor) const override;
 
 protected:

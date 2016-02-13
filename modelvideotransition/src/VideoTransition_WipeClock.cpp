@@ -38,9 +38,9 @@ WipeClock* WipeClock::clone() const
 
 bool WipeClock::supports(TransitionType type) const
 {
-    return
-        type == TransitionTypeFadeInFromPrevious ||
-        type == TransitionTypeFadeOutToNext;
+    return true;
+        //type == TransitionTypeFadeInFromPrevious ||
+        //type == TransitionTypeFadeOutToNext;
 }
 
 ParameterAttributes WipeClock::getAvailableParameters() const

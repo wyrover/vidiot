@@ -44,7 +44,7 @@ extern "C" int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char
     wxString sVersion("RelWithDebInfo");
 #endif
 
-    for (wxString test : { "testauto", "testfiletypes", "testtransitions", "testsync", "testfiletypes", "testrendering" })
+    for (wxString test : { "testauto", "testfiletypes", "testtransitions", "testsync", "testrendering", "testui" })
     {
         wxMessageOutputDebug().Output(test.Capitalize() + " ...");
         long teststarttime = time(0);
