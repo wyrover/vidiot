@@ -58,12 +58,6 @@ wxString WipeBarnDoors::getDescription(TransitionType type) const
 // VIDEOTRANSITIONOPACITY
 //////////////////////////////////////////////////////////////////////////
 
-std::function<float(int, int)> WipeBarnDoors::getLeftMethod(const wxImagePtr& image, const float& factor) const
-{
-    std::function<float(int, int)> rm{ getRightMethod(image,factor) };
-    return [rm](int x, int y) -> float { return 1.0 - rm(x,y); };
-}
-
 std::function<float (int,int)> WipeBarnDoors::getRightMethod(const wxImagePtr& image, const float& factor) const
 {
     Direction2 direction{ getParameter<TransitionParameterDirection2>(TransitionParameterDirection2::sParameterDirection2)->getValue() };

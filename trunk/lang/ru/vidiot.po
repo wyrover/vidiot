@@ -19,7 +19,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-02-13 17:09+0100\n"
+"POT-Creation-Date: 2016-02-13 19:09+0100\n"
 "PO-Revision-Date: 2016-01-07 15:38+0300\n"
 "Last-Translator: Ted Mossolov <teodorrrro@gmail.com>\n"
 "Language-Team: Ted Mossolov <teodorrrro@gmail.com>\n"
@@ -981,7 +981,7 @@ msgid "Image"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_ImageGradient.cpp:50
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_Slide.cpp:51
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_Slide.cpp:52
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeArc.cpp:52
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeBarnDoors.cpp:48
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeCircle.cpp:50
@@ -994,7 +994,7 @@ msgid "Image gradient"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_Push.cpp:50
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_Slide.cpp:50
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_Slide.cpp:51
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeArc.cpp:51
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeBarnDoors.cpp:47
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeStraight.cpp:50
@@ -1002,7 +1002,7 @@ msgid "Direction"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_Push.cpp:50
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_Slide.cpp:50
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_Slide.cpp:51
 msgid "Select the movement direction."
 msgstr ""
 
@@ -1010,12 +1010,12 @@ msgstr ""
 msgid "Push"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_Slide.cpp:51
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_Slide.cpp:52
 msgid ""
 "Select between 'sliding in' the second clip or 'sliding away' the first clip."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_Slide.cpp:57
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_Slide.cpp:58
 msgid "Slide"
 msgstr ""
 
@@ -1171,49 +1171,49 @@ msgstr ""
 msgid "Wipe Straight"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\preview\src\Player.cpp:74
+#: C:\Vidiot\vidiot_trunk\preview\src\Player.cpp:75
 msgid ""
 "This box shows the current timeline cursor position and the total length of "
 "the movie."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\preview\src\Player.cpp:112
+#: C:\Vidiot\vidiot_trunk\preview\src\Player.cpp:113
 msgid ""
 "Move to the beginning of the movie. Pressing HOME in the timeline has the "
 "same effect."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\preview\src\Player.cpp:113
+#: C:\Vidiot\vidiot_trunk\preview\src\Player.cpp:114
 msgid ""
 "Move to the previous cut between two clips. Pressing Control-LEFT in the "
 "timeline has the same effect."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\preview\src\Player.cpp:114
+#: C:\Vidiot\vidiot_trunk\preview\src\Player.cpp:115
 msgid ""
 "Start/top playback of the movie. Pressing SPACE in the timeline has the same "
 "effect."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\preview\src\Player.cpp:115
+#: C:\Vidiot\vidiot_trunk\preview\src\Player.cpp:116
 msgid ""
 "Move to the next cut between two clips. Pressing Control-RIGHT in the "
 "timeline has the same effect."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\preview\src\Player.cpp:116
+#: C:\Vidiot\vidiot_trunk\preview\src\Player.cpp:117
 msgid ""
 "Move to the end of the movie. Pressing END in the timeline has the same "
 "effect."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\preview\src\Player.cpp:117
+#: C:\Vidiot\vidiot_trunk\preview\src\Player.cpp:118
 msgid ""
 "Change the playback speed. Note that audio pitch is maintained as much as "
 "possible when this is changed."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\preview\src\Player.cpp:144
+#: C:\Vidiot\vidiot_trunk\preview\src\Player.cpp:145
 msgid "Select normal playback speed."
 msgstr ""
 
@@ -2117,28 +2117,28 @@ msgstr ""
 "Нельзя выполнить обрезку: положение клипов не позволяет правильно сместить "
 "их."
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\TrimClip.cpp:60
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\TrimClip.cpp:59
 msgid "Adjust length"
 msgstr "Изменить длительность"
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\TrimClip.cpp:86
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\TrimClip.cpp:85
 #, c-format
 msgid "Adjust %1$s side of %2$s"
 msgstr "Изменить %1$s часть %2$s"
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\TrimClip.cpp:86
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\TrimClip.cpp:85
 msgid "left"
 msgstr "левую"
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\TrimClip.cpp:86
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\TrimClip.cpp:85
 msgid "right"
 msgstr "правую"
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\TrimClip.cpp:86
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\TrimClip.cpp:85
 msgid "transition"
 msgstr "перехода"
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\TrimClip.cpp:86
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\TrimClip.cpp:85
 msgid "clip"
 msgstr "клипа"
 

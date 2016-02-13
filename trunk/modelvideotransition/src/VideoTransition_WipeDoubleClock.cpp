@@ -37,9 +37,9 @@ WipeDoubleClock* WipeDoubleClock::clone() const
 
 bool WipeDoubleClock::supports(TransitionType type) const
 {
-    return
-        type == TransitionTypeFadeInFromPrevious ||
-        type == TransitionTypeFadeOutToNext;
+    return true;
+        //type == TransitionTypeFadeInFromPrevious ||
+        //type == TransitionTypeFadeOutToNext;
 }
 
 ParameterAttributes WipeDoubleClock::getAvailableParameters() const

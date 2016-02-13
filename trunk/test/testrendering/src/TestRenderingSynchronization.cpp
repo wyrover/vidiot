@@ -67,7 +67,6 @@ void TestRenderingSynchronization::testLongSequence()
     StartTest("Play before render");
     TimelinePositionCursor(getTimeline().getZoom().ptsToPixels(model::Convert::timeToPts(EMPTY_LENGTH - 1000))); // 1 second before the end of the empty region
     TimelineKeyPress('v'); // Show the proper timeline part
-    Play(4000);
 
     StartTest("Render");
     std::pair< RandomTempDirPtr, wxFileName > tempdir_and_filename = RenderTimeline(0); // 0: Render all
@@ -82,7 +81,7 @@ void TestRenderingSynchronization::testLongSequence()
 
     StartTest("Play rendered");
     OpenFileExplorer(tempdir_and_filename.first->getFileName());
-    for (int timer{ 120 }; timer > 0; --timer)
+    for (int timer{ 30 }; timer > 0; --timer)
     {
         gui::StatusBar::get().setProcessingText(wxString::Format("Showing video in %ds", timer));
         pause(1000);

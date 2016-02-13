@@ -71,9 +71,9 @@ void WipeImage::clean()
 
 bool WipeImage::supports(TransitionType type) const
 {
-    return
-        type == TransitionTypeFadeInFromPrevious ||
-        type == TransitionTypeFadeOutToNext;
+    return true;
+        //type == TransitionTypeFadeInFromPrevious ||
+        //type == TransitionTypeFadeOutToNext;
 }
 
 ParameterAttributes WipeImage::getAvailableParameters() const
