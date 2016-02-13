@@ -19,6 +19,15 @@
 
 namespace test {
 
+/// Create sequence with one file each time and then execute the given action.
+/// \param pathToFiles path to test files
+/// \param action action to execute after opening the sequence with the file
+/// \param wait if true then waits until thumbnails/peaks have been generated before calling the action
 void ExecuteOnAllFiles(wxString pathToFiles, std::function<void()> action, bool wait = false);
+
+/// Create sequence with all files and then call the given action for each clip.
+/// \param pathToFiles path to test files
+/// \param action action to execute after opening the sequence with the file (parameter is clip number)
+void AddClipsAndExecute(wxString pathToFiles, std::function<void(int)> action);
 
 } // namespace

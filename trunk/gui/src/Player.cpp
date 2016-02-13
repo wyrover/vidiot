@@ -17,6 +17,7 @@
 
 #include "Player.h"
 
+#include "CommandProcessor.h"
 #include "Config.h"
 #include "Convert.h"
 #include "Cursor.h"
