@@ -19,7 +19,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-02-13 12:38+0100\n"
+"POT-Creation-Date: 2016-02-13 17:09+0100\n"
 "PO-Revision-Date: 2016-01-07 15:38+0300\n"
 "Last-Translator: Ted Mossolov <teodorrrro@gmail.com>\n"
 "Language-Team: Ted Mossolov <teodorrrro@gmail.com>\n"
@@ -507,68 +507,10 @@ msgstr "Указатель"
 msgid "Forward"
 msgstr "Вперед"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Player.cpp:73
-msgid ""
-"This box shows the current timeline cursor position and the total length of "
-"the movie."
-msgstr ""
-
-#: C:\Vidiot\vidiot_trunk\gui\src\Player.cpp:111
-msgid ""
-"Move to the beginning of the movie. Pressing HOME in the timeline has the "
-"same effect."
-msgstr ""
-
-#: C:\Vidiot\vidiot_trunk\gui\src\Player.cpp:112
-msgid ""
-"Move to the previous cut between two clips. Pressing Control-LEFT in the "
-"timeline has the same effect."
-msgstr ""
-
-#: C:\Vidiot\vidiot_trunk\gui\src\Player.cpp:113
-msgid ""
-"Start/top playback of the movie. Pressing SPACE in the timeline has the same "
-"effect."
-msgstr ""
-
-#: C:\Vidiot\vidiot_trunk\gui\src\Player.cpp:114
-msgid ""
-"Move to the next cut between two clips. Pressing Control-RIGHT in the "
-"timeline has the same effect."
-msgstr ""
-
-#: C:\Vidiot\vidiot_trunk\gui\src\Player.cpp:115
-msgid ""
-"Move to the end of the movie. Pressing END in the timeline has the same "
-"effect."
-msgstr ""
-
-#: C:\Vidiot\vidiot_trunk\gui\src\Player.cpp:116
-msgid ""
-"Change the playback speed. Note that audio pitch is maintained as much as "
-"possible when this is changed."
-msgstr ""
-
-#: C:\Vidiot\vidiot_trunk\gui\src\Player.cpp:143
-msgid "Select normal playback speed."
-msgstr ""
-
 #: C:\Vidiot\vidiot_trunk\gui\src\StatusBar.cpp:94
 #, c-format
 msgid "%d item(s) queued"
 msgstr "Элементов в очереди: %d"
-
-#: C:\Vidiot\vidiot_trunk\gui\src\VideoDisplay.cpp:186
-msgid "Could not initialize playback."
-msgstr "Не удалось инициализировать воспроизведение."
-
-#: C:\Vidiot\vidiot_trunk\gui\src\VideoDisplay.cpp:194
-msgid "Opening audio stream failed:"
-msgstr "Не удалось открыть аудиопоток:"
-
-#: C:\Vidiot\vidiot_trunk\gui\src\VideoDisplay.cpp:207
-msgid "Starting audio stream failed:"
-msgstr "Не удалось начать аудиопоток:"
 
 #: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:103
 #, c-format
@@ -1228,6 +1170,64 @@ msgstr ""
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeStraight.cpp:57
 msgid "Wipe Straight"
 msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\preview\src\Player.cpp:74
+msgid ""
+"This box shows the current timeline cursor position and the total length of "
+"the movie."
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\preview\src\Player.cpp:112
+msgid ""
+"Move to the beginning of the movie. Pressing HOME in the timeline has the "
+"same effect."
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\preview\src\Player.cpp:113
+msgid ""
+"Move to the previous cut between two clips. Pressing Control-LEFT in the "
+"timeline has the same effect."
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\preview\src\Player.cpp:114
+msgid ""
+"Start/top playback of the movie. Pressing SPACE in the timeline has the same "
+"effect."
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\preview\src\Player.cpp:115
+msgid ""
+"Move to the next cut between two clips. Pressing Control-RIGHT in the "
+"timeline has the same effect."
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\preview\src\Player.cpp:116
+msgid ""
+"Move to the end of the movie. Pressing END in the timeline has the same "
+"effect."
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\preview\src\Player.cpp:117
+msgid ""
+"Change the playback speed. Note that audio pitch is maintained as much as "
+"possible when this is changed."
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\preview\src\Player.cpp:144
+msgid "Select normal playback speed."
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\preview\src\VideoDisplay.cpp:186
+msgid "Could not initialize playback."
+msgstr "Не удалось инициализировать воспроизведение."
+
+#: C:\Vidiot\vidiot_trunk\preview\src\VideoDisplay.cpp:194
+msgid "Opening audio stream failed:"
+msgstr "Не удалось открыть аудиопоток:"
+
+#: C:\Vidiot\vidiot_trunk\preview\src\VideoDisplay.cpp:207
+msgid "Starting audio stream failed:"
+msgstr "Не удалось начать аудиопоток:"
 
 #: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:74
 msgid "Name"

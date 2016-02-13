@@ -17,7 +17,6 @@
 
 #include "TrimClip.h"
 
-#include "CommandProcessor.h" // todo for resumeinfo only
 #include "Cursor.h"
 #include "EmptyClip.h"
 #include "IClip.h"

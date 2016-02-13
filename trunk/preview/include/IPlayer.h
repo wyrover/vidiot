@@ -20,11 +20,11 @@
 struct ResumeInfo
 {
     bool playing = false;
-    // todo add resume position here
+    pts position = 0;
     boost::optional< std::pair<pts, pts> > range = boost::none;
 };
 
-struct IPlayer        // todo separate file and move all player related stuff into sep folder   (preview)
+struct IPlayer
 {
     virtual ResumeInfo pause() = 0;
     virtual void resume(const ResumeInfo& info) = 0;
