@@ -82,6 +82,8 @@ public:
 
     void testChangeTransitionType();
 
+    void testTransitionPlayback();
+
     void testTransitionPlaybackAndEditTransitionType();
 
     void testTransitionPlaybackAndEditTransitionParameter();

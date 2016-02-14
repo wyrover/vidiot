@@ -162,7 +162,7 @@ public:
     wxSlider* getSpeedSlider() const;
     wxSpinCtrlDouble* getSpeedSpin() const;
 
-    wxButton* getPlayButton() const;
+    wxToggleButton* getPlayButton() const;
 
     model::TransitionPtr getTransitionClone() const;
     wxChoice* getTransitionTypeSelector() const;
@@ -222,9 +222,8 @@ private:
     std::map<pts, pts> mTrimAtEnd;
 
     wxPanel* mPlaybackPanel = nullptr;
-    wxButton* mPlayButton = nullptr;
+    wxToggleButton* mPlayButton = nullptr;
     wxCheckBox* mAutoPlayButton = nullptr;
-    bool mPlaybackActive = false;
     std::pair<int, int> mPlaybackClipIndex;
 
     wxPanel* mTransitionTypePanel = nullptr;
@@ -285,7 +284,7 @@ private:
     void submitEditCommandUponTransitionTypeChange(model::TransitionPtr transition);
     void createOrUpdateSpeedCommand(rational64 speed);
 
-    void startPlayback(bool start);
+    void startStopPlayback(bool ignoreIndex = false);
     void preview();
 
     /// When a slider or spin control is changed for one of the position values, then update

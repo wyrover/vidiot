@@ -140,18 +140,20 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
 
     mPlaybackPanel = new wxPanel(this);
     wxBoxSizer* playbacksizer = new wxBoxSizer(wxHORIZONTAL);
-    mPlayButton = new wxButton(mPlaybackPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+    mPlayButton = new wxToggleButton(mPlaybackPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
     mPlayButton->SetBitmap(util::window::getIcon("icon-pauseplay.png"), wxTOP);
     mPlayButton->SetToolTip(_("Press this button to start/stop continuous playback of the transition."));
+    mPlayButton->SetValue(false);
     mAutoPlayButton = new wxCheckBox(mPlaybackPanel, wxID_ANY, _("Start automatically"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
     mAutoPlayButton->SetToolTip(_("Select this to immediately start continuous playback of transition when a transition is selected."));
+    mAutoPlayButton->SetValue(Config::get().read<bool>(Config::sPathEditAutoStartPlayback));
     playbacksizer->Add(mPlayButton, wxSizerFlags(0));
     playbacksizer->Add(mAutoPlayButton, wxSizerFlags(0).CenterVertical());
     mPlaybackPanel->SetSizer(playbacksizer);
     // TRANSLATORS: Do not let the string exceed 20 characters.
     addOption(_("Preview"), mPlaybackPanel);
 
-    mPlayButton->Bind(wxEVT_BUTTON, &DetailsClip::onPlayButtonPressed, this);
+    mPlayButton->Bind(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, &DetailsClip::onPlayButtonPressed, this);
     mAutoPlayButton->Bind(wxEVT_CHECKBOX, &DetailsClip::onAutoPlayToggled, this);
 
     mTransitionTypePanel = new wxPanel(this);
@@ -342,7 +344,7 @@ DetailsClip::~DetailsClip()
 
     mSpeedSlider->Unbind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onSpeedSliderChanged, this);
     mSpeedSpin->Unbind(wxEVT_COMMAND_SPINCTRLDOUBLE_UPDATED, &DetailsClip::onSpeedSpinChanged, this);
-    mPlayButton->Unbind(wxEVT_BUTTON, &DetailsClip::onPlayButtonPressed, this);
+    mPlayButton->Unbind(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, &DetailsClip::onPlayButtonPressed, this);
     mAutoPlayButton->Unbind(wxEVT_CHECKBOX, &DetailsClip::onAutoPlayToggled, this);
     mTransitionType->Unbind(wxEVT_CHOICE, &DetailsClip::onTransitionType, this);
     mOpacitySlider->Unbind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onOpacitySliderChanged, this);

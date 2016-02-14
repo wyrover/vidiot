@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-02-13 19:09+0100\n"
+"POT-Creation-Date: 2016-02-14 16:48+0100\n"
 "PO-Revision-Date: 2015-11-01 11:44+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -505,7 +505,7 @@ msgstr ""
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
 #: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:112
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:152
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:154
 msgid "Preview"
 msgstr ""
 
@@ -1020,7 +1020,7 @@ msgid "Number of circles"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeCircle.cpp:57
-#: C:\Vidiot\vidiot_trunk\test\testauto\src\TestTransition.cpp:1276
+#: C:\Vidiot\vidiot_trunk\test\testauto\src\TestTransition.cpp:1289
 msgid "Wipe Circle"
 msgstr ""
 
@@ -1065,7 +1065,7 @@ msgstr ""
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:85
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:224
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:226
 msgid "Scaling"
 msgstr ""
 
@@ -1578,12 +1578,12 @@ msgid ""
 "timeline has the same effect."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_GuiEvents.cpp:405
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_GuiEvents.cpp:410
 msgid ""
 "Could not execute the length change without messing up clips in other tracks."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_GuiEvents.cpp:411
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_GuiEvents.cpp:416
 msgid "Set length of clip"
 msgstr ""
 
@@ -1688,90 +1688,90 @@ msgstr ""
 msgid "Press this button to start/stop continuous playback of the transition."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:146
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:147
 msgid "Start automatically"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:147
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:148
 msgid ""
 "Select this to immediately start continuous playback of transition when a "
 "transition is selected."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:160
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:162
 msgid "Select the effect used for the transition towards the second clip."
 msgstr ""
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:164
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:166
 msgid "Type"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:172
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:174
 msgid ""
 "Select the opacity of the video frame. A value of '0' means fully "
 "transparent. A value of '255' means fully opaque."
 msgstr ""
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:182
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:184
 msgid "Opacity"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:188
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:190
 msgid "Select the rotation (in degrees) of the video frame."
 msgstr ""
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:202
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:204
 msgid "Rotation"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:208
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:210
 msgid ""
 "Select between several automated scaling strategies or manually select the "
 "(custom) scaling factor of the video frame."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:211
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:213
 msgid "Select the scaling factor to be applied to the video frame."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:230
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:232
 msgid ""
 "Select between several automated positioning strategies or manually select "
 "the (custom) position of the video frame."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:234
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:236
 msgid "Select the horizontal position of the video frame."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:243
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:245
 msgid "Select the vertical position of the video frame."
 msgstr ""
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:258
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:260
 msgid "Position"
 msgstr ""
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:265
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:267
 msgid "Video key frames"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:284
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:286
 msgid "Select the audio volume."
 msgstr ""
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:294
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:296
 msgid "Volume (%)"
 msgstr ""
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:300
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:302
 msgid "Audio key frames"
 msgstr ""
 

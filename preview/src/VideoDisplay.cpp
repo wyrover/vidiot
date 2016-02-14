@@ -376,6 +376,7 @@ void VideoDisplay::resume(const ResumeInfo& info)
 {
     if (info.playing)
     {
+        moveTo(info.position);
         mRange = info.range;
         play();
     }
