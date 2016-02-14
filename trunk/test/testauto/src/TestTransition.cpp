@@ -1266,6 +1266,19 @@ void TestTransition::testTransitionPlaybackAndEditTransitionType()
     // Fault was caused by the playback NOT being stopped before undo-ing the transition!
 }
 
+void TestTransition::testTransitionPlayback()
+{
+    StartTestSuite();
+    MakeInOutTransitionAfterClip preparation(3);
+    TimelineLeftClick(Center(VideoClip(0, 4))); // Open properties
+    WaitForPlaybackStarted started;
+    ButtonTriggerPressed(DetailsClipView()->getPlayButton(), true);
+    started.wait();
+    WaitForPlaybackStopped stopped;
+    ButtonTriggerPressed(DetailsClipView()->getPlayButton(), false);
+    stopped.wait();
+}
+
 void TestTransition::testTransitionPlaybackAndEditTransitionParameter()
 {
     StartTestSuite();
@@ -1282,7 +1295,7 @@ void TestTransition::testTransitionPlaybackAndEditTransitionParameter()
     ButtonTriggerPressed(DetailsClipView()->getPlayButton());
     started.wait();
 
-    for (int c{ 2 }; c < 30; ++c)
+    for (int c{ 2 }; c < 30; c += 5)
     {
         {
             StartTest(wxString::Format("Set number of circles to %d", c));

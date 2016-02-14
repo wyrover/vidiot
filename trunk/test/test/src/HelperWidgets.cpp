@@ -110,13 +110,14 @@ void ButtonTriggerPressed(wxButton* button)
     });
 }
 
-void ButtonTriggerPressed(wxToggleButton* button)
+void ButtonTriggerPressed(wxToggleButton* button, bool state)
 {
     // Using QueueEvent (without RunInMainAndWait) did not work.
-    util::thread::RunInMainAndWait([button]
+    util::thread::RunInMainAndWait([button, state]
     {
         wxCommandEvent event(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED);
         event.SetId(button->GetId());
+        button->SetValue(state);
         button->GetEventHandler()->ProcessEvent(event);
     });
 }

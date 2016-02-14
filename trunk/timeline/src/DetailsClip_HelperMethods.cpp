@@ -159,7 +159,7 @@ void DetailsClip::submitEditCommandUponTransitionEdit(const wxString& parameter)
         // but the command may only be submitted once.
     }
 
-    if (!mPlaybackActive)
+    if (!mPlayButton->GetValue())
     {
         preview();
     }
@@ -195,7 +195,7 @@ void DetailsClip::submitEditCommandUponTransitionTypeChange(model::TransitionPtr
     // If a clip aspect is edited twice, simply adjust the clone twice,
     // but the command may only be submitted once.
 
-    if (!mPlaybackActive)
+    if (!mPlayButton->GetValue())
     {
         preview();
     }
@@ -239,19 +239,39 @@ void DetailsClip::createOrUpdateSpeedCommand(rational64 speed)
     // NOT: preview(); -- leave cursor at same position
 }
 
-void DetailsClip::startPlayback(bool start)
+void DetailsClip::startStopPlayback(bool ignoreIndex)
 {
-    if (start && 
-        mClip && 
-        mClip->getTrack() != nullptr)
+    if (!mClip ||
+        mClip->getTrack() == nullptr ||
+        !mClip->isA<model::Transition>() ||
+        !mClip->isA<model::IVideo>())
     {
-        mPlaybackActive = true;
+        // Wrong clip type.
+        mPlayButton->SetValue(false);
+    }
+    else
+    {
+        if (!ignoreIndex)
+        {
+            std::pair<int, int> index{ std::make_pair(mClip->getIndex(), mClip->getTrack()->getIndex()) };
+            if (mPlayButton->GetValue() &&
+                mPlaybackClipIndex != index)
+            {
+                // Check if playback active, and the clip with the same index is still selected.
+                // Continue the playback in that case.
+                // Example: Change transition type, then undo the change. After the undo, playback must remain active.
+                mPlayButton->SetValue(false);
+            }
+        }
+    }
+
+    if (mPlayButton->GetValue())
+    {
         mPlaybackClipIndex = std::make_pair(mClip->getIndex(), mClip->getTrack()->getIndex());
         getPlayer()->playRange(mClip->getPerceivedLeftPts(), mClip->getPerceivedRightPts());
     }
     else
     {
-        mPlaybackActive = false;
         mPlaybackClipIndex = std::make_pair(-1, -1);
         getPlayer()->stopRange();
     }

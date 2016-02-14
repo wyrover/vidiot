@@ -38,7 +38,7 @@ wxSpinCtrlDouble* DetailsClip::getSpeedSpin() const
     return mSpeedSpin;
 }
 
-wxButton* DetailsClip::getPlayButton() const
+wxToggleButton* DetailsClip::getPlayButton() const
 {
     return mPlayButton;
 }

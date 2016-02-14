@@ -84,7 +84,7 @@ void DetailsClip::onPlayButtonPressed(wxCommandEvent& event)
     LOG_INFO;
     CatchExceptions([this]
     {
-        startPlayback(!mPlaybackActive);
+        startStopPlayback(true);
     });
 }
 
@@ -94,8 +94,13 @@ void DetailsClip::onAutoPlayToggled(wxCommandEvent& event)
     CatchExceptions([this]
     {
         bool autoStartPlayback{ mAutoPlayButton->GetValue() };
+        mAutoPlayButton->SetValue(autoStartPlayback);
         Config::get().write<bool>(Config::sPathEditAutoStartPlayback, autoStartPlayback);
-        startPlayback(autoStartPlayback);
+        if (autoStartPlayback)
+        {
+            mPlayButton->SetValue(true);
+            startStopPlayback(true);
+        }
     });
 }
 
@@ -421,7 +426,7 @@ void DetailsClip::handleLengthButtonPressed(wxToggleButton* button)
     getTimeline().Refresh();
     getTimeline().SetFocus();
 
-    // todo auto transition playback should play the new range now
+    startStopPlayback();
 }
 
 }} // namespace

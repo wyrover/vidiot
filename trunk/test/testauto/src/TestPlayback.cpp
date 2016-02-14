@@ -95,7 +95,7 @@ void TestPlayback::testPlaybackAfterRangedPlayback()
     MakeInOutTransitionAfterClip preparation(3);
     TimelineLeftClick(Center(VideoClip(0, 4))); // Open properties
     WaitForPlaybackStarted started;
-    ButtonTriggerPressed(DetailsClipView()->getPlayButton());
+    ButtonTriggerPressed(DetailsClipView()->getPlayButton(), true);
     started.wait();
     pause(1000);
     WaitForPlaybackStopped stopped;
