@@ -297,7 +297,8 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
         ASSERT_MORE_THAN_EQUALS_ZERO(pDecodedFrame->repeat_pict)(codec);
         if (pDecodedFrame->repeat_pict > 0)
         {
-            NIY("Input video frame repeating is not supported yet");
+            // Repeat_pict is ignored (so the frame'll be shown for an incorrect amount of time)
+            VAR_WARNING(pDecodedFrame->repeat_pict)(streamRate)(inputFrameRate)(inputTimeBase)(ticksPerFrame);
         }
 
         if (parameters.getSkip())

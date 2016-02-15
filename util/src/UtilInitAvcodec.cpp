@@ -112,12 +112,15 @@ void Avcodec::log(void *ptr, int level, const char * msg, va_list ap)
     if (ptr)
     {
         AVClass* info{ *(AVClass**)ptr };
-        osComponent
-            << "["
-            << info->item_name(ptr)
-            << ";"
-            << info->class_name
-            << "]";
+        if (info != nullptr)
+        {
+            osComponent
+                << "["
+                << info->item_name(ptr)
+                << ";"
+                << info->class_name
+                << "]";
+        }
     }
 
     sMostRecentLogLine = sFixedBuffer;

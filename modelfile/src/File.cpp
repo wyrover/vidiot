@@ -592,22 +592,22 @@ void File::openFile()
         VAR_DEBUG(stream->codec->sample_fmt)(stream->codec->channels)(stream->codec->sample_rate);
         if (stream->codec->channels <= 0)
         {
-            LOG_WARNING << "Unsupported audio file '" << path << "'. Number of channels is " << stream->codec->channels << ".";
+            LOG_WARNING << "Unsupported audio stream '" << path << "'. Number of channels is " << stream->codec->channels << ".";
             return false;
         }
         if (stream->codec->sample_fmt == AV_SAMPLE_FMT_NONE)
         {
-            LOG_WARNING << "Unsupported audio file '" << path << "'. Sample format is unknown.";
+            LOG_WARNING << "Unsupported audio stream '" << path << "'. Sample format is unknown.";
             return false;
         }
         if (av_get_bytes_per_sample(stream->codec->sample_fmt) == 0)
         {
-            LOG_WARNING << "Unsupported audio file '" << path << "'. Number of bytes per sample is unknown.";
+            LOG_WARNING << "Unsupported audio stream '" << path << "'. Number of bytes per sample is unknown.";
             return false;
         }
         if (stream->codec->sample_rate < 4000 || stream->codec->sample_rate > 256000)
         {
-            LOG_WARNING << "Unsupported audio file '" << path << "'. Sample rate (" << stream->codec->sample_rate << ") too big.";
+            LOG_WARNING << "Unsupported audio stream '" << path << "'. Sample rate (" << stream->codec->sample_rate << ") too big.";
             return false;
         }
         return true;
@@ -615,7 +615,6 @@ void File::openFile()
 
     auto isVideoSupported = [this,path](AVStream* stream) -> bool
     {
-        
         if (stream->codec->codec_type != AVMEDIA_TYPE_VIDEO)
         {
             return false;
@@ -623,6 +622,17 @@ void File::openFile()
         if (stream->disposition & AV_DISPOSITION_ATTACHED_PIC)
         {
             // This stream holds a (cover) image embedded in a (for example) mp3 file.
+            LOG_WARNING << "Unsupported video stream '" << path << "' (embedded picture)";
+            return false;
+        }
+        if (stream->codec->width == 0)
+        {
+            LOG_WARNING << "Unsupported video stream '" << path << "' (width 0)";
+            return false;
+        }
+        if (stream->codec->height == 0)
+        {
+            LOG_WARNING << "Unsupported video stream '" << path << "' (height 0)";
             return false;
         }
         return true;
