@@ -34,64 +34,67 @@ KeyFrameValues::KeyFrameValues(model::IClipPtr clip)
 
 KeyFrame::operator bool() const
 {
-    std::pair<pts, model::VideoKeyFramePtr> pos_frame_video{ std::make_pair(0, nullptr) };
-    std::pair<pts, model::AudioKeyFramePtr> pos_frame_audio{ std::make_pair(0, nullptr) };
+    util::thread::RunInMainAndWait([this]
+    {
+        std::pair<pts, model::VideoKeyFramePtr> pos_frame_video{ std::make_pair(0, nullptr) };
+        std::pair<pts, model::AudioKeyFramePtr> pos_frame_audio{ std::make_pair(0, nullptr) };
 
-    pts pos{ -1 };
-    if (mClip->isA<model::VideoClip>())
-    {
-        pos_frame_video = mKeyFrameIndex ? VideoKeyFrame(mClip, *mKeyFrameIndex) : std::make_pair(-1l, DefaultVideoKeyFrame(mClip));
-        pos = pos_frame_video.first;
-    }
-    if (mClip->isA<model::AudioClip>())
-    {
-        pos_frame_audio = mKeyFrameIndex ? AudioKeyFrame(mClip, *mKeyFrameIndex) : std::make_pair(-1l, DefaultAudioKeyFrame(mClip));
-        pos = pos_frame_audio.first;
-    }
+        pts pos{ -1 };
+        if (mClip->isA<model::VideoClip>())
+        {
+            pos_frame_video = mKeyFrameIndex ? VideoKeyFrame(mClip, *mKeyFrameIndex) : std::make_pair(-1l, DefaultVideoKeyFrame(mClip));
+            pos = pos_frame_video.first;
+        }
+        if (mClip->isA<model::AudioClip>())
+        {
+            pos_frame_audio = mKeyFrameIndex ? AudioKeyFrame(mClip, *mKeyFrameIndex) : std::make_pair(-1l, DefaultAudioKeyFrame(mClip));
+            pos = pos_frame_audio.first;
+        }
 
-    model::VideoKeyFramePtr keyFrameVideo{ pos_frame_video.second };
-    model::AudioKeyFramePtr keyFrameAudio{ pos_frame_audio.second };
+        model::VideoKeyFramePtr keyFrameVideo{ pos_frame_video.second };
+        model::AudioKeyFramePtr keyFrameAudio{ pos_frame_audio.second };
 
-    if (mKeyFrameOffset)
-    {
-        ASSERT(keyFrameVideo || keyFrameAudio);
-        ASSERT_EQUALS(*mKeyFrameOffset, pos);
-    }
-    if (mOpacity)
-    {
-        ASSERT(keyFrameVideo);
-        ASSERT_EQUALS(*mOpacity, keyFrameVideo->getOpacity());
-    }
-    if (mScaling)
-    {
-        ASSERT(keyFrameVideo);
-        ASSERT_EQUALS(*mScaling, keyFrameVideo->getScaling());
-    }
-    if (mScalingFactor)
-    {
-        ASSERT(keyFrameVideo);
-        ASSERT_EQUALS(*mScalingFactor, keyFrameVideo->getScalingFactor());
-    }
-    if (mAlignment)
-    {
-        ASSERT(keyFrameVideo);
-        ASSERT_EQUALS(*mAlignment, keyFrameVideo->getAlignment());
-    }
-    if (mPosition)
-    {
-        ASSERT(keyFrameVideo);
-        ASSERT_EQUALS(*mPosition, keyFrameVideo->getPosition());
-    }
-    if (mRotation)
-    {
-        ASSERT(keyFrameVideo);
-        ASSERT_EQUALS(*mRotation, keyFrameVideo->getRotation());
-    }
-    if (mVolume)
-    {
-        ASSERT(keyFrameAudio);
-        ASSERT_EQUALS(*mVolume, keyFrameAudio->getVolume());
-    }
+        if (mKeyFrameOffset)
+        {
+            ASSERT(keyFrameVideo || keyFrameAudio);
+            ASSERT_EQUALS(*mKeyFrameOffset, pos);
+        }
+        if (mOpacity)
+        {
+            ASSERT(keyFrameVideo);
+            ASSERT_EQUALS(*mOpacity, keyFrameVideo->getOpacity());
+        }
+        if (mScaling)
+        {
+            ASSERT(keyFrameVideo);
+            ASSERT_EQUALS(*mScaling, keyFrameVideo->getScaling());
+        }
+        if (mScalingFactor)
+        {
+            ASSERT(keyFrameVideo);
+            ASSERT_EQUALS(*mScalingFactor, keyFrameVideo->getScalingFactor());
+        }
+        if (mAlignment)
+        {
+            ASSERT(keyFrameVideo);
+            ASSERT_EQUALS(*mAlignment, keyFrameVideo->getAlignment());
+        }
+        if (mPosition)
+        {
+            ASSERT(keyFrameVideo);
+            ASSERT_EQUALS(*mPosition, keyFrameVideo->getPosition());
+        }
+        if (mRotation)
+        {
+            ASSERT(keyFrameVideo);
+            ASSERT_EQUALS(*mRotation, keyFrameVideo->getRotation());
+        }
+        if (mVolume)
+        {
+            ASSERT(keyFrameAudio);
+            ASSERT_EQUALS(*mVolume, keyFrameAudio->getVolume());
+        }
+    });
     return true;
 }
 

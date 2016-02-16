@@ -51,6 +51,7 @@ void GiveKeyboardFocus(wxWindow* widget)
 
 void SetValue(wxSlider* widget, int value)
 {
+    ASSERT_NONZERO(widget);
     util::thread::RunInMainAndWait([widget,value]
     {
         widget->SetValue(value);
@@ -61,6 +62,7 @@ void SetValue(wxSlider* widget, int value)
 
 void SetValue(wxSpinCtrl* widget, int value)
 {
+    ASSERT_NONZERO(widget);
     util::thread::RunInMainAndWait([widget,value]
     {
         widget->SetValue(value);
@@ -72,6 +74,7 @@ void SetValue(wxSpinCtrl* widget, int value)
 
 void SetValue(wxSpinCtrlDouble* widget, double value)
 {
+    ASSERT_NONZERO(widget);
     util::thread::RunInMainAndWait([widget,value]
     {
         wxSpinDoubleEvent event{wxEVT_SPINCTRLDOUBLE, 0, value};
@@ -82,6 +85,7 @@ void SetValue(wxSpinCtrlDouble* widget, double value)
 
 void SetValue(wxCheckBox* widget, bool value)
 {
+    ASSERT_NONZERO(widget);
     util::thread::RunInMainAndWait([widget,value]
     {
         widget->SetValue(value);
@@ -92,6 +96,7 @@ void SetValue(wxCheckBox* widget, bool value)
 
 void SetValue(wxChoice* widget, wxString value)
 {
+    ASSERT_NONZERO(widget);
     util::thread::RunInMainAndWait([widget, value]
     {
         widget->SetStringSelection(value);
@@ -102,6 +107,7 @@ void SetValue(wxChoice* widget, wxString value)
 
 void ButtonTriggerPressed(wxButton* button)
 {
+    ASSERT_NONZERO(button);
     // Using QueueEvent (without RunInMainAndWait) did not work.
     util::thread::RunInMainAndWait([button]
     {
@@ -112,6 +118,7 @@ void ButtonTriggerPressed(wxButton* button)
 
 void ButtonTriggerPressed(wxToggleButton* button, bool state)
 {
+    ASSERT_NONZERO(button);
     // Using QueueEvent (without RunInMainAndWait) did not work.
     util::thread::RunInMainAndWait([button, state]
     {

@@ -16,7 +16,9 @@
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
 #include <wx/app.h>
+#include <wx/filename.h>
 #include <sstream>
+#include <iostream>
 #include <iomanip>
 
 wxString getTimes(long start)
@@ -33,37 +35,53 @@ wxString getTimes(long start)
 
 extern "C" int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* lpCmdLine, int nCmdShow)
 {
-     SetThreadExecutionState(ES_CONTINUOUS | ES_SYSTEM_REQUIRED); // Avoid sleep
-    long starttime = time(0);
-    long returnvalue{ 0 };
+    SetThreadExecutionState(ES_CONTINUOUS | ES_SYSTEM_REQUIRED); // Avoid sleep
+    std::vector<wxString> tests{ "testauto", "testfiletypes", "testtransitions", "testsync", "testui", "testrendering" };
     wxApp::SetInstance(new wxApp());
     wxEntryStart(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
+#else
+int main(int argc, char *argv[])
+{
+    std::vector<wxString> tests{ "testauto", "testfiletypes", "testtransitions", "testsync", "testui", "testrendering" };
+    wxApp::SetInstance(new wxApp());
+    wxEntryStart(argc,argv);
+
+#endif // _MSC_VER
+
 #ifdef _DEBUG
     wxString sVersion("Debug");
 #else
     wxString sVersion("RelWithDebInfo");
 #endif
 
-    for (wxString test : { "testauto", "testfiletypes", "testtransitions", "testsync", "testui", "testrendering" })
+    long starttime = time(0);
+    long returnvalue{ 0 };
+
+    for (wxString test : tests)
     {
         wxMessageOutputDebug().Output(test.Capitalize() + " ...");
         long teststarttime = time(0);
-        returnvalue = wxExecute(wxGetCwd() + "\\..\\" + test + "\\" + sVersion + "\\" + test + ".exe", wxEXEC_SYNC);
+        wxFileName path{ wxFileName(wxGetCwd(), "") };
+        path.SetName(test);
+
+        path.AppendDir("..");
+        path.AppendDir(test);
+#ifdef _MSC_VER
+        path.AppendDir(sVersion);
+        path.SetExt("exe");
+#else
+        path.SetExt("run");
+#endif // _MSC_VER
+        returnvalue = wxExecute(path.GetFullPath(), wxEXEC_SYNC);
         if (returnvalue != 0) { break; }
         wxMessageOutputDebug().Output(test.Capitalize() + " done " + getTimes(teststarttime));
     }
 
     wxMessageOutputDebug().Output("Total running time: " + getTimes(starttime));
     wxEntryCleanup();
+#ifdef _MSC_VER
     SetThreadExecutionState(ES_CONTINUOUS); // Enable sleep again
+#endif // _MSC_VER
     return returnvalue;
 }
 
-#else
-
-int main(int argc, char *argv[])
-{
-    return 0;
-}
-
-#endif // _MSC_VER

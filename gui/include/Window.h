@@ -250,7 +250,7 @@ private:
     wxMenu*             mMenuHelp = nullptr;       // For updating Help when the pane is closed.
     util::TestCrash*    mTestCrash = nullptr;
 
-    wxAuiManager        mUiManager = nullptr;
+    wxAuiManager        mUiManager;
 
     model::audio::AudioTransitionFactory* mAudioTransitionFactory = nullptr;
     model::video::VideoTransitionFactory* mVideoTransitionFactory = nullptr;

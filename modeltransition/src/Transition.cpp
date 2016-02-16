@@ -313,12 +313,12 @@ std::vector<TransitionParameterPtr> Transition::getSortedParameters() const
     for (auto attributes : getAvailableParameters())
     {
         ASSERT_MAP_CONTAINS(mParameters, attributes.Name);
-        auto it{ mParameters.find(attributes.Name) };
+        std::map<wxString, TransitionParameterPtr>::const_iterator it{ mParameters.find(attributes.Name) };
         result.push_back(it->second);
     }
     return result;
 }
-    
+
 template <typename PARAMETERTYPE>
 boost::shared_ptr<PARAMETERTYPE> Transition::getParameter(wxString name) const
 {

@@ -711,14 +711,29 @@ void TestVideoKeyFrames::testInTransition()
     }
     {
         StartTest("Change key frames");
+
+        ASSERT(KeyFrame(VideoClip(0, 5)).KeyFrameIndex(0).Position(wxPoint{ 0, 0 }));
+        ASSERT(KeyFrame(VideoClip(0, 5)).KeyFrameIndex(1).Position(wxPoint{ 0, 0 }));
+
         ButtonTriggerPressed(DetailsClipView()->getVideoKeyFrameButton(0));
         ASSERT(KeyFrame(VideoClip(0, 5)).KeyFrameIndex(0).Position(wxPoint{ 0, 0 }));
+        ASSERT(KeyFrame(VideoClip(0, 5)).KeyFrameIndex(1).Position(wxPoint{ 0, 0 }));
+        ASSERT(DetailsView(VideoClip(0,5)).KeyFrameIndex(0).Position(wxPoint{0,0}));
+
         SetValue(DetailsClipView()->getPositionXSpin(), -128);
         ASSERT(KeyFrame(VideoClip(0, 5)).KeyFrameIndex(0).Position(wxPoint{ -128, 0 }));
-        ButtonTriggerPressed(DetailsClipView()->getVideoKeyFrameButton(1));
         ASSERT(KeyFrame(VideoClip(0, 5)).KeyFrameIndex(1).Position(wxPoint{ 0, 0 }));
+        ASSERT(DetailsView(VideoClip(0,5)).KeyFrameIndex(0).Position(wxPoint{-128,0}));
+
+        ButtonTriggerPressed(DetailsClipView()->getVideoKeyFrameButton(1));
+        ASSERT(KeyFrame(VideoClip(0, 5)).KeyFrameIndex(0).Position(wxPoint{ -128, 0 }));
+        ASSERT(KeyFrame(VideoClip(0, 5)).KeyFrameIndex(1).Position(wxPoint{ 0, 0 }));
+        ASSERT(DetailsView(VideoClip(0,5)).KeyFrameIndex(1).Position(wxPoint{0, 0}));
+
         SetValue(DetailsClipView()->getPositionYSpin(), 128);
-        ASSERT(KeyFrame(VideoClip(0, 5)).KeyFrameIndex(1).Position(wxPoint{ 0, 128 })); // todo gcc sometimes this assert fails. No longer happened when the assert at line 719 (two lines back) was added...
+        ASSERT(KeyFrame(VideoClip(0, 5)).KeyFrameIndex(0).Position(wxPoint{ -128, 0 }));
+        ASSERT(KeyFrame(VideoClip(0, 5)).KeyFrameIndex(1).Position(wxPoint{ 0, 128 }));
+        ASSERT(DetailsView(VideoClip(0,5)).KeyFrameIndex(1).Position(wxPoint{0, 128}));
     }
     {
         StartTest("Playback");
@@ -753,16 +768,33 @@ void TestVideoKeyFrames::testOutTransition()
     }
     {
         StartTest("Change key frames");
+
+        ASSERT(KeyFrame(VideoClip(0, 4)).KeyFrameIndex(0).Position(wxPoint{ 0, 0 }));
+        ASSERT(KeyFrame(VideoClip(0, 4)).KeyFrameIndex(1).Position(wxPoint{ 0, 0 }));
+
         ButtonTriggerPressed(DetailsClipView()->getVideoKeyFrameButton(0));
+        ASSERT(KeyFrame(VideoClip(0, 4)).KeyFrameIndex(0).Position(wxPoint{ 0, 0 }));
+        ASSERT(KeyFrame(VideoClip(0, 4)).KeyFrameIndex(1).Position(wxPoint{ 0, 0 }));
+        ASSERT(DetailsView(VideoClip(0,4)).KeyFrameIndex(0).Position(wxPoint{0,0}));
+
         SetValue(DetailsClipView()->getPositionXSpin(), -128);
         ASSERT(KeyFrame(VideoClip(0, 4)).KeyFrameIndex(0).Position(wxPoint{ -128, 0 }));
+        ASSERT(KeyFrame(VideoClip(0, 4)).KeyFrameIndex(1).Position(wxPoint{ 0, 0 }));
+        ASSERT(DetailsView(VideoClip(0,4)).KeyFrameIndex(0).Position(wxPoint{ -128,0 }));
+
         ButtonTriggerPressed(DetailsClipView()->getVideoKeyFrameButton(1));
+        ASSERT(KeyFrame(VideoClip(0, 4)).KeyFrameIndex(0).Position(wxPoint{ -128, 0 }));
+        ASSERT(KeyFrame(VideoClip(0, 4)).KeyFrameIndex(1).Position(wxPoint{ 0, 0 }));
+        ASSERT(DetailsView(VideoClip(0,4)).KeyFrameIndex(1).Position(wxPoint{ 0,0 }));
+
         SetValue(DetailsClipView()->getPositionYSpin(), 128);
+        ASSERT(KeyFrame(VideoClip(0, 4)).KeyFrameIndex(0).Position(wxPoint{ -128, 0 }));
         ASSERT(KeyFrame(VideoClip(0, 4)).KeyFrameIndex(1).Position(wxPoint{ 0, 128 }));
+        ASSERT(DetailsView(VideoClip(0,4)).KeyFrameIndex(1).Position(wxPoint{ 0, 128 }));
     }
     {
         StartTest("Playback");
-        TimelinePositionCursor(LeftPixel(VideoClip(0, 5)));
+        TimelinePositionCursor(LeftPixel(VideoClip(0, 4)));
         Play(500);
     }
 }

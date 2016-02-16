@@ -30,7 +30,7 @@
 
 namespace model { namespace video { namespace transition {
 
-// static 
+// static
 wxString WipeImage::getDefaultZoomImagesPath()
 {
     return util::path::getCombinedPath(util::path::getResourcesPath(), { "images","wipeimage" }).GetFullPath();
@@ -95,7 +95,7 @@ wxString WipeImage::getDescription(TransitionType type) const
 }
 
 void WipeImage::onParameterChanged(const wxString& name)
-{                              
+{
     if (name == TransitionParameterFilename::sParameterImageFilename)
     {
         mImage = nullptr; // Use new image
@@ -169,11 +169,11 @@ std::function<float (int,int)> WipeImage::getRightMethod(const wxImagePtr& image
         mImage = boost::make_shared<wxImage>(filename.GetFullPath());
         mImageFileName = filename;
     }
-                     
+
     if (mImage && mImage->IsOk())
     {
-        if (!mImage->HasAlpha())    
-        {       
+        if (!mImage->HasAlpha())
+        {
             // Initialize the image from mask data, or initialize default alpha (can happen if images are manipulated after being added).
             mImage->InitAlpha();
         }
@@ -206,7 +206,7 @@ std::function<float (int,int)> WipeImage::getRightMethod(const wxImagePtr& image
         int originX{ patternW / 2 };
         int originY{ patternH / 2 };
 
-        return [=, this](int x, int y) -> float
+        return [=](int x, int y) -> float
         {
             // Zoom
             int patternX{ static_cast<int>(std::floor(static_cast<float>(x - patternZoomedOffsetX) / zoom)) };
