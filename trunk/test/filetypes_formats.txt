@@ -1,0 +1,12 @@
+Used samples from http://samples.ffmpeg.org/ to verify file types support.
+
+Checked the following folders from that site:
+- 3D/
+- 8svx/  
+- A-codecs/AAC
+- AIFF/  
+- Divx4-bugs/ 
+- MPEG1/  
+- MPEG2/  
+- testsuite/
+- yuv4mpeg2/  

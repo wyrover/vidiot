@@ -23,7 +23,7 @@
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-std::vector<std::pair<IPlayer*, ResumeInfo>> pausePlayers(std::vector<IPlayer*> players) 
+std::vector<std::pair<IPlayer*, ResumeInfo>> pausePlayers(std::vector<IPlayer*> players)
 {
     std::vector<std::pair<IPlayer*, ResumeInfo>> result;
     for (IPlayer* player : players)
@@ -52,7 +52,7 @@ bool CommandProcessor::Redo()
     LOG_INFO;
     ASSERT_MORE_THAN_ZERO(mRedo);
     mRedo--;
-    auto players{ pausePlayers(mPlayers) };
+    std::vector<std::pair<IPlayer*, ResumeInfo>> players{ pausePlayers(mPlayers) };
     bool result{ wxCommandProcessor::Redo() };
     resumePlayers(players);
     return result;
@@ -62,7 +62,7 @@ bool CommandProcessor::Submit(wxCommand *command, bool storeIt)
 {
     VAR_INFO(command)(storeIt);
     mRedo = 0;
-    auto players{ pausePlayers(mPlayers) };
+    std::vector<std::pair<IPlayer*, ResumeInfo>> players{ pausePlayers(mPlayers) };
     bool result{ wxCommandProcessor::Submit(command,storeIt) };
     resumePlayers(players);
     return result;
@@ -72,7 +72,7 @@ bool CommandProcessor::Undo()
 {
     LOG_INFO;
     mRedo++;
-    auto players{ pausePlayers(mPlayers) };
+    std::vector<std::pair<IPlayer*, ResumeInfo>> players{ pausePlayers(mPlayers) };
     bool result{ wxCommandProcessor::Undo() };
     resumePlayers(players);
     return result;
@@ -108,7 +108,7 @@ void CommandProcessor::registerPlayer(IPlayer* player)
 
 void CommandProcessor::unregisterPlayer(IPlayer* player)
 {
-    auto it{ std::find(mPlayers.begin(), mPlayers.end(), player) };
+    std::vector<IPlayer*>::iterator it{ std::find(mPlayers.begin(), mPlayers.end(), player) };
     ASSERT(it != mPlayers.end())(mPlayers)(player);
     mPlayers.erase(it);
 }

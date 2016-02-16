@@ -53,7 +53,7 @@ void TestSavingAndLoading::testSaveAndLoad()
     mProjectFixture.init();
     // Wait until audio peaks generated. Otherwise, not all save files have the same contents.
     // The later save files may have more entries in the meta data cache.
-    expectation.wait(); 
+    expectation.wait();
 
     StartTest("Add non auto folder to project view");
     model::FolderPtr folder1 = ProjectViewAddFolder( sFolder );
@@ -131,7 +131,7 @@ void TestSavingAndLoading::testSaveAndLoad()
     StartTest("Move cursor position");
     TimelinePositionCursor(getTimeline().getZoom().ptsToPixels(getSequence()->getLength() / 2));
 
-    
+
 
     //////////////////////////////////////////////////////////////////////////
 
@@ -200,7 +200,7 @@ void TestSavingAndLoading::testBackupBeforeSave()
     mProjectFixture.init();
     // Wait until audio peaks generated. Otherwise, not all save files have the same contents.
     // The later save files may have more entries in the meta data cache.
-    expectation.wait(); 
+    expectation.wait();
 
     StartTest("Create temp dir and existing file");
     RandomTempDirPtr tempDirProject = RandomTempDir::generate();
@@ -326,7 +326,9 @@ void TestSavingAndLoading::checkDocument(wxFileName path)
     {
         StartTest(path.GetName() + ": " + "Open render settings"); // Known bug at some point: loading the project went ok, but when opening the render dialog a crash occurred.
         WindowTriggerMenu(ID_RENDERSETTINGS);
+        WaitUntilDialogOpen(true);
         ButtonTriggerPressed(gui::DialogRenderSettings::get().getCancelButton());
+        WaitUntilDialogOpen(false);
     }
     CloseProjectAndAvoidSaveDialog();
 }
