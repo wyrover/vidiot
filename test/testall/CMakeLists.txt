@@ -23,7 +23,7 @@ link_directories (
     ${VLD_LIBRARIES_DIR}
 )
 
-add_executable (testall WIN32 src/testall.cpp)
+add_executable (testall src/testall.cpp)
 target_link_libraries (testall ${Boost_LIBRARIES} ${wxWidgets_LIBRARIES} ${FFMPEG_LIBRARIES} ${PORTAUDIO_LIBRARIES} ${SOUNDTOUCH_LIBRARIES})
 
 copy_msvc_project_user_file (testall)

@@ -47,13 +47,14 @@ void TestRenderingSynchronization::testLongSequence()
     StartTest("Set codecs");
 
     WindowTriggerMenu(ID_RENDERSETTINGS);
+    WaitUntilDialogOpen(true);
     gui::DialogRenderSettings::get().getVideoCodecButton()->select(AV_CODEC_ID_MPEG4);
     gui::DialogRenderSettings::get().getAudioCodecButton()->select(AV_CODEC_ID_MP3);
     ButtonTriggerPressed(gui::DialogRenderSettings::get().getOkButton());
     WindowTriggerMenu(ID_CLOSESEQUENCE);
 
     StartTest("Create movie");
-    wxFileName syncFileName = getTestPath(); 
+    wxFileName syncFileName = getTestPath();
     syncFileName.AppendDir("filetypes_sync");
     ASSERT(syncFileName.IsDir());
     ASSERT(syncFileName.DirExists());

@@ -21,6 +21,21 @@
 #include <iostream>
 #include <iomanip>
 
+#ifdef _MSC_VER
+#include <windows.h>
+void no_sleep_allowed() { SetThreadExecutionState(ES_CONTINUOUS | ES_SYSTEM_REQUIRED); };
+void sleep_allowed() {  SetThreadExecutionState(ES_CONTINUOUS); }
+void log(const wxString& msg) { std::cout << msg << std::endl; wxMessageOutputDebug().Output(msg); }
+wxString get_ext() { return "exe"; }
+std::vector<wxString> get_tests() { return { "testauto", "testfiletypes", "testtransitions", "testsync", "testui", "testrendering" }; };
+#else
+void no_sleep_allowed() {};
+void sleep_allowed() {}
+void log(const wxString& msg) { std::cout << msg << std::endl; }
+wxString get_ext() { return "run"; }
+std::vector<wxString> get_tests() { return { "testauto", "testfiletypes", "testtransitions", "testsync", "testrendering", "testui" }; };
+#endif
+
 wxString getTimes(long start)
 {
     long t = time(0) - start;
@@ -29,59 +44,47 @@ wxString getTimes(long start)
     return os.str();
 }
 
-#ifdef _MSC_VER
-
-#include <windows.h>
-
-extern "C" int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* lpCmdLine, int nCmdShow)
-{
-    SetThreadExecutionState(ES_CONTINUOUS | ES_SYSTEM_REQUIRED); // Avoid sleep
-    std::vector<wxString> tests{ "testauto", "testfiletypes", "testtransitions", "testsync", "testui", "testrendering" };
-    wxApp::SetInstance(new wxApp());
-    wxEntryStart(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
-#else
 int main(int argc, char *argv[])
 {
-    std::vector<wxString> tests{ "testauto", "testfiletypes", "testtransitions", "testsync", "testui", "testrendering" };
-    wxApp::SetInstance(new wxApp());
+    no_sleep_allowed();
+    wxApp::SetInstance(new wxAppConsole());
     wxEntryStart(argc,argv);
-
-#endif // _MSC_VER
-
-#ifdef _DEBUG
-    wxString sVersion("Debug");
-#else
-    wxString sVersion("RelWithDebInfo");
-#endif
 
     long starttime = time(0);
     long returnvalue{ 0 };
 
-    for (wxString test : tests)
+    for (wxString test : get_tests())
     {
-        wxMessageOutputDebug().Output(test.Capitalize() + " ...");
+        log(test.Capitalize() + " ...");
         long teststarttime = time(0);
         wxFileName path{ wxFileName(wxGetCwd(), "") };
         path.SetName(test);
+        path.SetExt(get_ext());
 
         path.AppendDir("..");
         path.AppendDir(test);
 #ifdef _MSC_VER
-        path.AppendDir(sVersion);
-        path.SetExt("exe");
+#ifdef _DEBUG
+        path.AppendDir("Debug");
 #else
-        path.SetExt("run");
+        path.AppendDir("RelWithDebInfo");
+#endif
 #endif // _MSC_VER
         returnvalue = wxExecute(path.GetFullPath(), wxEXEC_SYNC);
-        if (returnvalue != 0) { break; }
-        wxMessageOutputDebug().Output(test.Capitalize() + " done " + getTimes(teststarttime));
+        if (returnvalue != 0)
+        {
+            log(test.Capitalize() + " FAILED");
+            break;
+        }
+        log(test.Capitalize() + " done " + getTimes(teststarttime));
     }
 
-    wxMessageOutputDebug().Output("Total running time: " + getTimes(starttime));
+    log("Total running time: " + getTimes(starttime));
     wxEntryCleanup();
+    sleep_allowed();
 #ifdef _MSC_VER
-    SetThreadExecutionState(ES_CONTINUOUS); // Enable sleep again
+    log("Grep for \"Detected memory leaks\" in Output pane.");
 #endif // _MSC_VER
+    std::cin.ignore();
     return returnvalue;
 }
-

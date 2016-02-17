@@ -16,6 +16,7 @@
 # along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
 ADD_SUBDIRECTORY(test)
+ADD_SUBDIRECTORY(testall)
 ADD_SUBDIRECTORY(testauto)
 ADD_SUBDIRECTORY(testfiletypes)
 ADD_SUBDIRECTORY(testrendering)
@@ -23,4 +24,3 @@ ADD_SUBDIRECTORY(testsync)
 ADD_SUBDIRECTORY(testtransitions)
 ADD_SUBDIRECTORY(testui)
 
-ADD_SUBDIRECTORY(testall)
