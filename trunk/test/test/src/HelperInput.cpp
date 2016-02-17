@@ -59,7 +59,7 @@ void SetWaitAfterEachInputAction(bool wait)
 void MouseLeftDown()
 {
     ASSERT(FixtureGui::UseRealUiEvents);
-    WaitHelper::Get().ExecuteAndWait( [] { wxUIActionSimulator().MouseDown(); });
+    util::thread::RunInMainAndWait( [] { wxUIActionSimulator().MouseDown(); });
 }
 
 void MouseLeftUp()

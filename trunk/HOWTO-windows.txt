@@ -21,6 +21,9 @@ NOTE: <VIDIOT_DIR> is the dir in which all 'vidiot' work is done.
   - Indent guides
   - Editor Guidelines
     + Add to registry HKEY_CURRENT_USER\Software\Microsoft\VisualStudio\xx.0\Text Editor\Guides(string) "RGB(60,60,60), 140"
+  - Microsoft Child Process Debugging Power Tool (for debugging tests spawned by testall)
+    https://visualstudiogallery.msdn.microsoft.com/a1141bff-463f-465f-9b6d-d29b7b503d7a?SRC=VSIDE
+    + Enable debugging child processes via Debug->Other Debug Targets->Child process debugging settings
 * Install 
 * Install <VIDIOT_SRC>/build/VisualStudioAddin
   - Install Microsoft Visual Studio SDK
