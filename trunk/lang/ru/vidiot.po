@@ -19,7 +19,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-02-17 14:23+0100\n"
+"POT-Creation-Date: 2016-02-18 22:27+0100\n"
 "PO-Revision-Date: 2016-01-07 15:38+0300\n"
 "Last-Translator: Ted Mossolov <teodorrrro@gmail.com>\n"
 "Language-Team: Ted Mossolov <teodorrrro@gmail.com>\n"
@@ -1037,7 +1037,7 @@ msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeArc.cpp:52
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeCircle.cpp:50
-msgid "Select between 'growing' and 'shrinking' (in the opposite direction)'."
+msgid "Select between 'growing' and 'shrinking' (in the opposite direction)."
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeArc.cpp:53
@@ -1159,7 +1159,7 @@ msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:245
 #, c-format
-msgid "Couldn't read %s at %s."
+msgid "Couldn't read %1$s at %2$s."
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:246
@@ -1191,8 +1191,8 @@ msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\preview\src\Player.cpp:115
 msgid ""
-"Start/top playback of the movie. Pressing SPACE in the timeline has the same "
-"effect."
+"Start/stop playback of the movie. Pressing SPACE in the timeline has the "
+"same effect."
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\preview\src\Player.cpp:116
