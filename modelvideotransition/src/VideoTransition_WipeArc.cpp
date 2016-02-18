@@ -49,7 +49,7 @@ ParameterAttributes WipeArc::getAvailableParameters() const
     {
         { TransitionParameterInt::sParameterBandsCount, _("Number of arcs"), _("Select the number of simultaneous wipes.") , boost::make_shared<TransitionParameterInt>(1, 1, 100) },
         { TransitionParameterDirection8::sParameterDirection8, _("Direction"), _("Select the direction of the wipes."), boost::make_shared<TransitionParameterDirection8>(Direction8LeftToRight) },
-        { TransitionParameterBool::sParameterInversed, _("Inversed"), _("Select between 'growing' and 'shrinking' (in the opposite direction)'."), boost::make_shared<TransitionParameterBool>(false) },
+        { TransitionParameterBool::sParameterInversed, _("Inversed"), _("Select between 'growing' and 'shrinking' (in the opposite direction)."), boost::make_shared<TransitionParameterBool>(false) },
         { TransitionParameterBool::sParameterSoftenEdges, _("Soften edges"), _("Select to enable smoothing at the edges."), boost::make_shared<TransitionParameterBool>(true) },
     };
 }

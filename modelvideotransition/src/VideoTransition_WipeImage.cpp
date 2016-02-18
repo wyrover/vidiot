@@ -242,7 +242,7 @@ std::function<float (int,int)> WipeImage::getRightMethod(const wxImagePtr& image
         VAR_WARNING(filename);
         wxString error =
             filename.IsOk() ?
-            wxString::Format(_("Couldn't read %s at %s."), filename.GetFullName(), Convert::ptsToHumanReadibleString(getLeftPts())) :
+            wxString::Format(_("Couldn't read %1$s at %2$s."), filename.GetFullName(), Convert::ptsToHumanReadibleString(getLeftPts())) :
             wxString::Format(_("No image selected at %s."), Convert::ptsToHumanReadibleString(getLeftPts()));
             gui::StatusBar::get().timedInfoText(error, 10000);
     }
