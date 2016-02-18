@@ -74,7 +74,7 @@ void TransitionParameter::setOnChanged(std::function<void(const wxString&)> onCh
 
 void TransitionParameter::signalUpdate()
 {
-    EventTransitionParameterChanged changedEvent{ mName };
+    EventTransitionParameterChanged changedEvent{ getDescription() };
     ProcessEvent(changedEvent);
     if (mOnChange != nullptr)
     {
