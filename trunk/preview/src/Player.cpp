@@ -112,7 +112,7 @@ Player::Player(wxWindow *parent, model::SequencePtr sequence, wxWindow* focus)
 
     mHomeButton->SetToolTip(_("Move to the beginning of the movie. Pressing HOME in the timeline has the same effect."));
     mPreviousButton->SetToolTip(_("Move to the previous cut between two clips. Pressing Control-LEFT in the timeline has the same effect."));
-    mPlayButton->SetToolTip(_("Start/top playback of the movie. Pressing SPACE in the timeline has the same effect."));
+    mPlayButton->SetToolTip(_("Start/stop playback of the movie. Pressing SPACE in the timeline has the same effect."));
     mNextButton->SetToolTip(_("Move to the next cut between two clips. Pressing Control-RIGHT in the timeline has the same effect."));
     mEndButton->SetToolTip(_("Move to the end of the movie. Pressing END in the timeline has the same effect."));
     mSpeedButton->SetToolTip(_("Change the playback speed. Note that audio pitch is maintained as much as possible when this is changed."));
