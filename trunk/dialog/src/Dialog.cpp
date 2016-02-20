@@ -67,7 +67,7 @@ wxString Dialog::getMediaFileTypes()
     static wxString sSupported{ model::File::sSupportedVideoExtensions + ";" + model::File::sSupportedAudioExtensions + ";" + model::File::sSupportedImageExtensions };
 
     static wxString result{
-        _("Supported files") + "|" + model::File::sSupportedAudioExtensions + ";" + model::File::sSupportedAudioExtensions.Upper() + "|" +
+        _("Supported files") + "|" + sSupported + ";" + sSupported.Upper() + "|" +
         _("Video files") + " (" + model::File::sSupportedVideoExtensions + ")|" + model::File::sSupportedVideoExtensions + ";" + model::File::sSupportedVideoExtensions.Upper() + "|" +
         _("Audio files") + " (" + model::File::sSupportedAudioExtensions + ")|" + model::File::sSupportedAudioExtensions + ";" + model::File::sSupportedAudioExtensions.Upper() + "|" +
         _("Images") + " (" + model::File::sSupportedImageExtensions + ")|" + model::File::sSupportedImageExtensions + ";" + model::File::sSupportedImageExtensions.Upper() + "|" +
