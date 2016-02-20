@@ -374,9 +374,12 @@ ResumeInfo VideoDisplay::pause(pts position)
 
 void VideoDisplay::resume(const ResumeInfo& info)
 {
+    // The reset of the cursor position must be done always. After an edit,
+    // the playback needs to be reset. The model iterators need to be reset
+    // to the proper position.
+    moveTo(info.position); 
     if (info.playing)
     {
-        moveTo(info.position);
         mRange = info.range;
         play();
     }
