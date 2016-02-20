@@ -102,10 +102,17 @@ void SplitAtCursorAndTrim(const model::SequencePtr& sequence, bool backwards)
 
             pts trim = backwards ? position - left : position - right;
             cmd->update(trim,true,true);
-            cmd->setCursorPositionAfter(backwards ? left : position);
+
+            pts cursorPositionAfter(backwards ? left : position);
+            cmd->setCursorPositionAfter(cursorPositionAfter);
             if (cmd->getDiff() != 0)
             {
                 cmd->submit();
+                // The submit of the command will cause a pause-resume on the player.
+                // The resume position will be the original cursor position at the time of creating the command.
+                // However, that's not practical for the initial submission of the command.
+                // In that case, the cursor should be really moved to the designated position.
+                timeline.getCursor().setLogicalPosition(cursorPositionAfter);
             }
             else
             {
