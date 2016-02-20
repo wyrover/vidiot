@@ -223,6 +223,7 @@ void DetailsClip::createOrUpdateSpeedCommand(rational64 speed)
     {
         mSpeedSpin->SetValue(boost::rational_cast<double>(mEditSpeedCommand->getActualSpeed()));
         mSpeedSlider->SetValue(factorToSliderValue(mEditSpeedCommand->getActualSpeed()));
+        requestShowAndUpdateTitle(); // Update length in title bar of details view
     }
     else
     {
