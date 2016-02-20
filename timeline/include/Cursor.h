@@ -49,8 +49,6 @@ public:
     /// \param position new position in sequence where cursor must be positioned
     void setLogicalPosition(pts position);
 
-    void setLogicalPositionAndKeepVisible(pts position);
-
     void onPlaybackPosition(pts position);
 
     void prevFrame();
