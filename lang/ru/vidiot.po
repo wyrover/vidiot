@@ -19,7 +19,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-02-18 22:27+0100\n"
+"POT-Creation-Date: 2016-02-20 17:15+0100\n"
 "PO-Revision-Date: 2016-01-07 15:38+0300\n"
 "Last-Translator: Ted Mossolov <teodorrrro@gmail.com>\n"
 "Language-Team: Ted Mossolov <teodorrrro@gmail.com>\n"
@@ -2111,7 +2111,7 @@ msgstr "Нельзя выполнить обрезку: переход."
 msgid "Can't trim: too many clips at cursor position."
 msgstr "Нельзя выполнить обрезку: на месте курсора слишком много клипов."
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\SplitAtCursorAndTrim.cpp:112
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\SplitAtCursorAndTrim.cpp:119
 msgid "Can't trim: position of clips prevents proper shifting"
 msgstr ""
 "Нельзя выполнить обрезку: положение клипов не позволяет правильно сместить "

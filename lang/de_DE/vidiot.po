@@ -19,7 +19,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-02-18 22:27+0100\n"
+"POT-Creation-Date: 2016-02-20 17:15+0100\n"
 "PO-Revision-Date: 2016-02-18 22:25+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -2156,7 +2156,7 @@ msgstr "Kann nicht beischneiden: Übergang."
 msgid "Can't trim: too many clips at cursor position."
 msgstr "Kann nicht beischneiden: zu viele Clips an der Cursorposition."
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\SplitAtCursorAndTrim.cpp:112
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\SplitAtCursorAndTrim.cpp:119
 msgid "Can't trim: position of clips prevents proper shifting"
 msgstr ""
 "Kann nicht beischneiden: Position des Clips verhindert die ordnungsgemäße "
