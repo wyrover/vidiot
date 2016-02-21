@@ -53,6 +53,7 @@ ParameterAttributes ImageGradient::getAvailableParameters() const
 
 wxString ImageGradient::getDescription(TransitionType type) const
 {
+    // TRANSLATORS: This string is not yet used.
     return _("Image gradient");
 }
 
