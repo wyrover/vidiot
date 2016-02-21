@@ -226,6 +226,7 @@ void Player::resume(const ResumeInfo& info)
 {
     LOG_INFO;
     ASSERT(wxThread::IsMain());
+    updateLength();
     mDisplay->resume(info);
 }
 
