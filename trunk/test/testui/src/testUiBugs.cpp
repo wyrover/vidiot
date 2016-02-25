@@ -16,7 +16,7 @@
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
 #include "TestUiBugs.h"
-
+//todo make testui work on linux
 namespace test {
 
 //////////////////////////////////////////////////////////////////////////
