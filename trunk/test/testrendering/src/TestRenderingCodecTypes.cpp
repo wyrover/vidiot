@@ -49,6 +49,7 @@ void TestRenderingCodecTypes::testRenderingCodecsVideo()
         WaitUntilMainWindowActive(false);
         gui::DialogRenderSettings::get().getVideoCodecButton()->select(id);
         ButtonTriggerPressed(gui::DialogRenderSettings::get().getOkButton());
+        WaitUntilMainWindowActive(true);
         RenderAndPlaybackCurrentTimeline();
         ProjectViewOpenTimelineForSequence(sequence);
     }
@@ -70,6 +71,7 @@ void TestRenderingCodecTypes::testRenderingCodecsAudio()
             WaitUntilMainWindowActive(false);
             gui::DialogRenderSettings::get().getAudioCodecButton()->select(id);
             ButtonTriggerPressed(gui::DialogRenderSettings::get().getOkButton());
+            WaitUntilMainWindowActive(true);
             RenderAndPlaybackCurrentTimeline();
             ProjectViewOpenTimelineForSequence(sequence);
         }

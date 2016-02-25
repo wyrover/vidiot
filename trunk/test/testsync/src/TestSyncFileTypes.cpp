@@ -19,6 +19,10 @@
 
 namespace test {
 
+// todo everywhere %s or %1$s or %2$s etc. is used add comments describing the context for translators.
+// todo everywhere %s is used twice, ensure that %1$s and %2$s are used!
+    // todo make mechanism for checking strings with %s twice, as this is not allowed
+
 //////////////////////////////////////////////////////////////////////////
 // TEST CASES
 //////////////////////////////////////////////////////////////////////////

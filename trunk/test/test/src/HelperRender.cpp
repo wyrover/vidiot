@@ -37,6 +37,7 @@ std::pair< RandomTempDirPtr, wxFileName > RenderTimeline(int lengthInS)
     std::pair< RandomTempDirPtr, wxFileName > tempdir_and_filename = OpenRenderDialogAndSetFilename();
     ExpectExecutedWork expectation(1);
     ButtonTriggerPressed(gui::DialogRenderSettings::get().getRenderButton());
+    WaitUntilMainWindowActive(true);
     expectation.wait();
     ASSERT(tempdir_and_filename.second.Exists());
     return tempdir_and_filename;

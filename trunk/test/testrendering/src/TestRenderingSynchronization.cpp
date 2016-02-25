@@ -51,6 +51,7 @@ void TestRenderingSynchronization::testLongSequence()
     gui::DialogRenderSettings::get().getVideoCodecButton()->select(AV_CODEC_ID_MPEG4);
     gui::DialogRenderSettings::get().getAudioCodecButton()->select(AV_CODEC_ID_MP3);
     ButtonTriggerPressed(gui::DialogRenderSettings::get().getOkButton());
+    WaitUntilMainWindowActive(true);
     WindowTriggerMenu(ID_CLOSESEQUENCE);
 
     StartTest("Create movie");
