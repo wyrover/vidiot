@@ -20,14 +20,14 @@ msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-02-21 15:35+0100\n"
-"PO-Revision-Date: 2016-01-07 15:38+0300\n"
+"PO-Revision-Date: 2016-02-24 20:37+0300\n"
 "Last-Translator: Ted Mossolov <teodorrrro@gmail.com>\n"
 "Language-Team: Ted Mossolov <teodorrrro@gmail.com>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.6\n"
+"X-Generator: Poedit 1.8.7\n"
 "X-Poedit-Basepath: ../..\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
@@ -397,6 +397,8 @@ msgid ""
 "Can't change options now. They may be in use by the running background "
 "task(s)."
 msgstr ""
+"В данный момент нельзя изменять параметры, так как некоторые из них могут "
+"использоваться выполняющимися в фоне заданиями."
 
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:59
 msgid "Render sequence"
@@ -731,7 +733,7 @@ msgstr "Не удалось открыть файл"
 #: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:898
 #, c-format
 msgid "Failed to open '%s'"
-msgstr ""
+msgstr "Не удалось открыть \"%s\""
 
 #: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:886
 msgid "Attention"
@@ -889,55 +891,55 @@ msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection2.cpp:31
 msgid "Horizontal"
-msgstr ""
+msgstr "По горизонтали"
 
 #: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection2.cpp:32
 msgid "Vertical"
-msgstr ""
+msgstr "По вертикали"
 
 #: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection4.cpp:31
 #: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection8.cpp:32
 msgid "Top to bottom"
-msgstr ""
+msgstr "Сверху вниз"
 
 #: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection4.cpp:32
 #: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection8.cpp:34
 msgid "Right to left"
-msgstr ""
+msgstr "Справа налево"
 
 #: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection4.cpp:33
 #: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection8.cpp:36
 msgid "Bottom to top"
-msgstr ""
+msgstr "Снизу вверх"
 
 #: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection4.cpp:34
 #: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection8.cpp:38
 msgid "Left to right"
-msgstr ""
+msgstr "Слева направо"
 
 #: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection8.cpp:31
 msgid "Top left to bottom right"
-msgstr ""
+msgstr "Сверху слева вниз вправо"
 
 #: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection8.cpp:33
 msgid "Top right to bottom left"
-msgstr ""
+msgstr "Сверху справа вниз влево"
 
 #: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection8.cpp:35
 msgid "Bottom right to top left"
-msgstr ""
+msgstr "Снизу справа вверх влево"
 
 #: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection8.cpp:37
 msgid "Bottom left to top right"
-msgstr ""
+msgstr "Снизу слева вверх вправо"
 
 #: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterRotationDirection.cpp:31
 msgid "Clockwise"
-msgstr ""
+msgstr "По часовой стрелке"
 
 #: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterRotationDirection.cpp:32
 msgid "Counterclockwise"
-msgstr ""
+msgstr "Против часовой стрелки"
 
 #: C:\Vidiot\vidiot_trunk\modelvideo\src\ErrorImage.cpp:32
 msgid "Missing file: "
@@ -965,7 +967,7 @@ msgstr "Цвет"
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_FadeToColor.cpp:50
 msgid "Select the color to use as the start/end of the transition."
-msgstr ""
+msgstr "Выберите цвет, используемый в начале и конце перехода."
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_FadeToColor.cpp:59
 msgid "Fade from color"
@@ -978,7 +980,7 @@ msgstr "Переход в цвет"
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_ImageGradient.cpp:49
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:84
 msgid "Image"
-msgstr ""
+msgstr "Изображение"
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_ImageGradient.cpp:50
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_Slide.cpp:52
@@ -987,12 +989,12 @@ msgstr ""
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeCircle.cpp:50
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:88
 msgid "Inversed"
-msgstr ""
+msgstr "Обратить"
 
 #. TRANSLATORS: This string is not yet used.
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_ImageGradient.cpp:57
 msgid "Image gradient"
-msgstr ""
+msgstr "Градиент изображения"
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_Push.cpp:50
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_Slide.cpp:51
@@ -1000,46 +1002,47 @@ msgstr ""
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeBarnDoors.cpp:47
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeStraight.cpp:50
 msgid "Direction"
-msgstr ""
+msgstr "Направление"
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_Push.cpp:50
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_Slide.cpp:51
 msgid "Select the movement direction."
-msgstr ""
+msgstr "Выберите направление движения."
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_Push.cpp:56
 msgid "Push"
-msgstr ""
+msgstr "Сдвиг"
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_Slide.cpp:52
 msgid ""
 "Select between 'sliding in' the second clip or 'sliding away' the first clip."
-msgstr ""
+msgstr "Выберите \"появление\" второго клипа или \"удаление\" первого клипа."
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_Slide.cpp:58
 msgid "Slide"
-msgstr ""
+msgstr "Скольжение"
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeArc.cpp:50
 msgid "Number of arcs"
-msgstr ""
+msgstr "Число дуг"
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeArc.cpp:50
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeCircle.cpp:49
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeClock.cpp:51
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeStraight.cpp:49
 msgid "Select the number of simultaneous wipes."
-msgstr ""
+msgstr "Выберите количество областей перехода."
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeArc.cpp:51
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeStraight.cpp:50
 msgid "Select the direction of the wipes."
-msgstr ""
+msgstr "Выберите направление перехода."
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeArc.cpp:52
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeCircle.cpp:50
 msgid "Select between 'growing' and 'shrinking' (in the opposite direction)."
 msgstr ""
+"Выберите \"увеличение\" или \"уменьшение\" (в противоположном направлении)."
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeArc.cpp:53
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeCircle.cpp:51
@@ -1047,7 +1050,7 @@ msgstr ""
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeDoubleClock.cpp:50
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeStraight.cpp:51
 msgid "Soften edges"
-msgstr ""
+msgstr "Сгладить края"
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeArc.cpp:53
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeCircle.cpp:51
@@ -1055,66 +1058,69 @@ msgstr ""
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeDoubleClock.cpp:50
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeStraight.cpp:51
 msgid "Select to enable smoothing at the edges."
-msgstr ""
+msgstr "Включить сглаживание краев."
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeArc.cpp:59
 msgid "Wipe Arc"
-msgstr ""
+msgstr "Дуга"
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeBarnDoors.cpp:47
 msgid "Select between a horizontal or a vertical effect"
-msgstr ""
+msgstr "Выберите горизонтальный или вертикальный эффект"
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeBarnDoors.cpp:48
 msgid ""
 "Select between making the second clip visible from the inside (normal) or "
 "from the outside (inversed)"
 msgstr ""
+"Выберите появление второго клипа изнутри (по умолчанию) или снаружи "
+"(обратить)."
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeBarnDoors.cpp:54
 msgid "Barn Doors"
-msgstr ""
+msgstr "Двери"
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeCircle.cpp:49
 msgid "Number of circles"
-msgstr ""
+msgstr "Число кругов"
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeCircle.cpp:57
 #: C:\Vidiot\vidiot_trunk\test\testauto\src\TestTransition.cpp:1289
 msgid "Wipe Circle"
-msgstr ""
+msgstr "Круг"
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeClock.cpp:50
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeDoubleClock.cpp:49
 msgid "Angle"
-msgstr ""
+msgstr "Угол"
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeClock.cpp:50
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeDoubleClock.cpp:49
 msgid "Select the starting angle."
-msgstr ""
+msgstr "Выберите начальный угол."
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeClock.cpp:51
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeStraight.cpp:49
 msgid "Number of lines"
-msgstr ""
+msgstr "Число линий"
 
+# Max length 20 characters!
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeClock.cpp:52
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:87
 msgid "Rotation direction"
-msgstr ""
+msgstr "Направление"
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeClock.cpp:52
 msgid "Select the clockwise direction of the wipes."
-msgstr ""
+msgstr "Выберите направление секторов перехода."
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeClock.cpp:59
 msgid "Wipe Clock"
-msgstr ""
+msgstr "Часовая стрелка"
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeDoubleClock.cpp:56
 msgid "Wipe Double Clock"
-msgstr ""
+msgstr "Две часовые стрелки"
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:84
 msgid ""
@@ -1122,6 +1128,9 @@ msgid ""
 "used to create the transition. Make sure that the image is sufficiently "
 "large to cover the entire video."
 msgstr ""
+"Выберите изображение с альфа-каналом или маской, эта информация будет "
+"использована для создания перехода. Изображение должно быть достаточно "
+"большим, чтобы закрыть видео полностью."
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:85
@@ -1135,88 +1144,105 @@ msgid ""
 "sure the transition covers exactly the entire clip(s) at the start or end of "
 "the transition."
 msgstr ""
+"Выберите коэффициент масштабирования, применяемого к изображению. С помощью "
+"масштабирования вы можете увеличить изображение перехода, чтобы оно "
+"закрывало весь клип."
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:86
 msgid "Rotations"
-msgstr ""
+msgstr "Повороты"
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:86
 msgid ""
 "Select the number of rotations to be applied to the image during the "
 "transition."
-msgstr ""
+msgstr "Выберите количество поворотов изображения во время перехода."
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:87
 msgid "Select the clockwise direction of the rotation."
-msgstr ""
+msgstr "Поворачивать по часовой стрелке."
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:88
 msgid "Select between 'zooming in' (normal) or 'zooming out' (inversed)"
-msgstr ""
+msgstr "Выберите \"увеличение\" (по умолчанию) или \"уменьшение\" (обратить)."
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:94
 msgid "Wipe Image"
-msgstr ""
+msgstr "Изображение перехода"
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:245
 #, c-format
 msgid "Couldn't read %1$s at %2$s."
-msgstr ""
+msgstr "Невозможно прочесть %1$s в позиции %2$s."
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:246
 #, c-format
 msgid "No image selected at %s."
-msgstr ""
+msgstr "В позиции %s нет изображения."
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeStraight.cpp:57
 msgid "Wipe Straight"
-msgstr ""
+msgstr "Наплыв"
 
 #: C:\Vidiot\vidiot_trunk\preview\src\Player.cpp:75
 msgid ""
 "This box shows the current timeline cursor position and the total length of "
 "the movie."
 msgstr ""
+"Здесь отображается текущая позиция курсора на шкале и общая длительность "
+"фильма."
 
 #: C:\Vidiot\vidiot_trunk\preview\src\Player.cpp:113
 msgid ""
 "Move to the beginning of the movie. Pressing HOME in the timeline has the "
 "same effect."
 msgstr ""
+"Перейти в начало фильма. В шкале времени тот же эффект имеет нажатие клавиши "
+"HOME."
 
 #: C:\Vidiot\vidiot_trunk\preview\src\Player.cpp:114
 msgid ""
 "Move to the previous cut between two clips. Pressing Control-LEFT in the "
 "timeline has the same effect."
 msgstr ""
+"Перейти к предыдущему стыку между клипами. В шкале времени тот же эффект "
+"имеет нажатие левой клавиши CONTROL."
 
 #: C:\Vidiot\vidiot_trunk\preview\src\Player.cpp:115
 msgid ""
 "Start/stop playback of the movie. Pressing SPACE in the timeline has the "
 "same effect."
 msgstr ""
+"Начать или остановить воспроизведение фильма. В шкале времени тот же эффект "
+"имеет нажатие клавиши ПРОБЕЛ."
 
 #: C:\Vidiot\vidiot_trunk\preview\src\Player.cpp:116
 msgid ""
 "Move to the next cut between two clips. Pressing Control-RIGHT in the "
 "timeline has the same effect."
 msgstr ""
+"Перейти к следующему стыку между клипами. В шкале времени тот же эффект "
+"имеет нажатие правой клавиши CONTROL."
 
 #: C:\Vidiot\vidiot_trunk\preview\src\Player.cpp:117
 msgid ""
 "Move to the end of the movie. Pressing END in the timeline has the same "
 "effect."
 msgstr ""
+"Перейти в конец фильма. В шкале времени тот же эффект имеет нажатие клавиши "
+"END."
 
 #: C:\Vidiot\vidiot_trunk\preview\src\Player.cpp:118
 msgid ""
 "Change the playback speed. Note that audio pitch is maintained as much as "
 "possible when this is changed."
 msgstr ""
+"Изменить скорость воспроизведения. Высота тона аудио будет сохранена по мере "
+"возможности."
 
 #: C:\Vidiot\vidiot_trunk\preview\src\Player.cpp:145
 msgid "Select normal playback speed."
-msgstr ""
+msgstr "Задать обычную скорость воспроизведения."
 
 #: C:\Vidiot\vidiot_trunk\preview\src\VideoDisplay.cpp:186
 msgid "Could not initialize playback."
@@ -1232,7 +1258,7 @@ msgstr "Не удалось начать аудиопоток:"
 
 #: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:74
 msgid "Name"
-msgstr ""
+msgstr "Название"
 
 #: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:309
 msgid "file"
@@ -1646,6 +1672,8 @@ msgid ""
 "Select key frame number %ld. Clicking on the key frame indicator in the "
 "timeline has the same effect."
 msgstr ""
+"Выбрать ключевой кадр №%ld. В шкале времени тот же эффект имеет щелчок на "
+"маркере ключевого кадра."
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_GuiEvents.cpp:410
 msgid ""
@@ -1662,16 +1690,16 @@ msgstr "Задать длительность клипа"
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_HelperMethods.cpp:61
 #, c-format
 msgid "%s (%ss)"
-msgstr ""
+msgstr "%s (%s с.)"
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_HelperMethods.cpp:140
 #, c-format
 msgid "Change %s (%s)"
-msgstr ""
+msgstr "Изменить %s (%s)"
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_HelperMethods.cpp:178
 msgid "Change transition type"
-msgstr ""
+msgstr "Изменить тип перехода"
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:56
 msgid "Transition"
@@ -1751,6 +1779,9 @@ msgid ""
 "allowed when a there are no other clips 'under' and 'above' the clip in the "
 "timeline."
 msgstr ""
+"Изменить скорость клипа. В данный момент поддерживается изменение скорости "
+"только клипов видео. Кроме того, можно изменять скорость клипа только если "
+"выше и ниже него нет других клипов."
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:136
@@ -1760,31 +1791,35 @@ msgstr "Скорость"
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:145
 msgid "Press this button to start/stop continuous playback of the transition."
 msgstr ""
+"Нажмите, чтобы начать или остановить постоянное воспроизведение перехода."
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:147
 msgid "Start automatically"
-msgstr ""
+msgstr "Автопросмотр"
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:148
 msgid ""
 "Select this to immediately start continuous playback of transition when a "
 "transition is selected."
 msgstr ""
+"Выберите эту функцию, чтобы просматривать выбираемые клипы автоматически."
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:162
 msgid "Select the effect used for the transition towards the second clip."
-msgstr ""
+msgstr "Выберите эффект перехода между клипами."
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:166
 msgid "Type"
-msgstr ""
+msgstr "Тип"
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:174
 msgid ""
 "Select the opacity of the video frame. A value of '0' means fully "
 "transparent. A value of '255' means fully opaque."
 msgstr ""
+"Задать непрозрачность кадра видео. \"0\" - полностью прозрачный, \"255\" - "
+"полностью непрозрачный."
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:184
@@ -1793,7 +1828,7 @@ msgstr "Непрозрачность"
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:190
 msgid "Select the rotation (in degrees) of the video frame."
-msgstr ""
+msgstr "Задать поворот кадра видео (в градусах)."
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:204
@@ -1805,24 +1840,28 @@ msgid ""
 "Select between several automated scaling strategies or manually select the "
 "(custom) scaling factor of the video frame."
 msgstr ""
+"Задать автоматический выбор метода масштабирования или ввести свой "
+"коэффициент масштабирования кадра видео."
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:213
 msgid "Select the scaling factor to be applied to the video frame."
-msgstr ""
+msgstr "Задать коэффициент масштабирования кадра видео."
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:232
 msgid ""
 "Select between several automated positioning strategies or manually select "
 "the (custom) position of the video frame."
 msgstr ""
+"Задать автоматический выбор метода расположения или указать особое положение "
+"кадра видео."
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:236
 msgid "Select the horizontal position of the video frame."
-msgstr ""
+msgstr "Задать положение кадра видео по горизонтали."
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:245
 msgid "Select the vertical position of the video frame."
-msgstr ""
+msgstr "Задать положение кадра видео по вертикали."
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:260
@@ -1836,7 +1875,7 @@ msgstr "Кл. кадры видео"
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:286
 msgid "Select the audio volume."
-msgstr ""
+msgstr "Задать уровень громкости аудио."
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:296
@@ -2153,7 +2192,7 @@ msgstr "Переместить ключевой кадр"
 
 #: C:\Vidiot\vidiot_trunk\timelineview\src\TimescaleView.cpp:216
 msgid "Zoom"
-msgstr ""
+msgstr "Масштаб"
 
 #: C:\Vidiot\vidiot_trunk\util\src\UtilInitAvcodec.cpp:29
 msgid "None"

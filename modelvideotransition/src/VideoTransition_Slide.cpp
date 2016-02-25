@@ -40,8 +40,8 @@ Slide* Slide::clone() const
 
 bool Slide::supports(TransitionType type) const
 {
-    // FadeToNext serves no purpose (sliding emptyness over the clip does not work...)
-    return type != TransitionTypeFadeOutToNext;
+    // FadeOut serves no purpose (sliding emptyness over the clip does not work...)
+    return type != TransitionTypeFadeOut;
 }
 
 ParameterAttributes Slide::getAvailableParameters() const
