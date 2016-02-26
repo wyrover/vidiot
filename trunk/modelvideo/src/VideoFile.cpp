@@ -228,23 +228,20 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
             }
             ASSERT_NONZERO(nextToBeDecodedPacket);
 
-            int len1 = avcodec_decode_video2(codec, pDecodedFrame, &frameFinished, nextToBeDecodedPacket);
-            if (len1 < 0)
+            int len1{ avcodec_decode_video2(codec, pDecodedFrame, &frameFinished, nextToBeDecodedPacket) };
+            if (len1 != nextToBeDecodedPacket->size)
             {
-                LOG_WARNING << "Decode error: " << *this;
-            }
-            else
-            {
-                ASSERT_LESS_THAN_EQUALS(len1, nextToBeDecodedPacket->size);
-                if (len1 < nextToBeDecodedPacket->size)
+                if (len1 < 0)
                 {
-                    ASSERT_LESS_THAN_EQUALS(nextToBeDecodedPacket->size - len1, 8);
-                    // else: Packet probably made aligned?
-                    // If the assert above fails,
-                    // then see http://blog.tomaka17.com/2012/03/libavcodeclibavformat-tutorial/
-                    // for the cases listed below 'The "isFrameAvailable" and "processedLength" variables are very important.'.
-                    // One case is missing here (0 < len1 < packet.size)
-                    // todo http://samples.ffmpeg.org
+                    LOG_WARNING << "Decode error: " << *this;
+                }
+                else
+                {
+                    // ASSERT_LESS_THAN_EQUALS(len1, nextToBeDecodedPacket->size);
+                    if (len1 < nextToBeDecodedPacket->size)
+                    {
+                        VAR_WARNING(nextToBeDecodedPacket->size - len1);
+                    }
                 }
             }
 
