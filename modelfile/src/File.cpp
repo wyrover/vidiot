@@ -45,9 +45,9 @@ const int File::STREAMINDEX_UNDEFINED = -1;
 const int File::LENGTH_UNDEFINED = std::numeric_limits<int>::max();
 
 // static 
-wxString File::sSupportedVideoExtensions{ "*.avi;*.mov;*.mp4;*.mpeg;*.mpg;*.m2v;*.m4v;*.3gp;*.3g2;*.mkv;*.ogv;*.webm" };
+wxString File::sSupportedVideoExtensions{ "*.asf;*.avi;*.ogm;*.mov;*.mp4;*.mpeg;*.mpg;*.mkv;*.dv;*.gxf;*.m2t;*.m2ts;*.m2v;*.m4v;*.mts;*.3gp;*.3g2;*.asx;*.ogv;*.webm;*.duk;*.dvr-ms;*.mv;*.pva;*.rm;*.rmvb;*.smv;*.ts" };
 // static 
-wxString File::sSupportedAudioExtensions{ "*.wav;*.mp3;*.m2a" };
+wxString File::sSupportedAudioExtensions{ "*.wav;*.mp3;*.flac;*.m2a;*.m4a;*.8svx;*.aa3;*.aac;*.aacp;*.ac3;*.act;*.aif;*.aiff;*.amr;*.ape;*.au;*.caf;*.dts;*.mid;*.mp1;*.mpc;*.mpp;*.mp+;*.ogg;*.oma;*.qcp;*.rso;*.tta;*.voc;*.vqf;*.wma;*.xwma" };
 //static 
 wxString File::sSupportedImageExtensions{ "*.bmp;*.gif;*.jpg;*.png;*.tga;*.tif;*.tiff" };
 

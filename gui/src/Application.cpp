@@ -26,6 +26,7 @@
 #include "UtilAssert.h"
 #include "UtilInitAvcodec.h"
 #include "UtilInitPortAudio.h"
+#include "UtilPath.h"
 #include "UtilStackWalker.h"
 #include "UtilThread.h"
 #include "VidiotVersion.h"

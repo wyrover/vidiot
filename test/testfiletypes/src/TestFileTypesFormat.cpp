@@ -19,14 +19,33 @@
 
 namespace test {
 
-void executeFormatTest(wxString filetypesDir)
+void executeFormatTest(wxString filetypesDir, bool audio, bool video)
 {
-    ExecuteOnAllFiles(filetypesDir, [] 
+    ExecuteOnAllFiles(filetypesDir, [audio, video] 
     {
-        Play(LeftPixel(VideoClip(0,0)), 1000);
-        TimelinePositionCursor(HCenter(VideoClip(0,0)));
+        ASSERT(video || audio);
+        // NOTE: For audio-only or video-only the counterpart becomes an EmptyClip
+        if (!audio) 
+        {
+            ASSERT_AUDIOTRACK0(EmptyClip);
+        }
+        else
+        {
+            ASSERT_AUDIOTRACK0(AudioClip);
+        }
+        if (!video)
+        {
+            ASSERT_VIDEOTRACK0(EmptyClip);
+        }
+        else
+        {
+            ASSERT_VIDEOTRACK0(VideoClip);
+        }
+        model::IClipPtr clip{ VideoClip(0,0) };
+        Play(LeftPixel(clip), 1000);
+        TimelinePositionCursor(HCenter(clip));
         TimelineKeyPress('v'); // Show the part being played (for longer files)
-        Play(HCenter(VideoClip(0,0)), 1000);
+        Play(HCenter(clip), 1000);
     }, true);
 }
 
@@ -34,10 +53,23 @@ void executeFormatTest(wxString filetypesDir)
 // TEST CASES
 //////////////////////////////////////////////////////////////////////////
 
-void TestFileTypesFormat::testFileTypes_formats()
+void TestFileTypesFormat::testFileTypes_formats_audio()
 {
     StartTestSuite();
-    executeFormatTest("filetypes_formats");
+    executeFormatTest("filetypes_formats_audio", true, false);
 }
+
+void TestFileTypesFormat::testFileTypes_formats_audio_and_video()
+{
+    StartTestSuite();
+    executeFormatTest("filetypes_formats_audio_and_video", true, true);
+}
+
+void TestFileTypesFormat::testFileTypes_formats_video()
+{
+    StartTestSuite();
+    executeFormatTest("filetypes_formats_video", false, true);
+}
+
 
 } // namespace
