@@ -31,7 +31,9 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     /// For checking that certain formats can be opened.
-    void testFileTypes_formats(); 
+    void testFileTypes_formats_audio(); 
+    void testFileTypes_formats_audio_and_video();
+    void testFileTypes_formats_video();
 };
 
 } // namespace
