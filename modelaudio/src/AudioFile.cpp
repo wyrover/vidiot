@@ -191,6 +191,44 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
 
     AVCodecContext* codec = getCodec();
 
+    auto allocateFrame = []() -> boost::shared_ptr<AVFrame>
+    {
+        // Ensure memory cleaned up in all possible control flows:
+
+        boost::shared_ptr<AVFrame> frame(av_frame_alloc(), [](AVFrame* frame) { av_frame_free(&frame); });
+        ASSERT_NONZERO(frame);
+        ASSERT_NONZERO(frame.get());
+        return frame;
+    };
+
+    auto copyFrame = [this, codec](boost::shared_ptr<AVFrame> frame, int offset) -> int
+    {
+        int decodedLineSize(0); // Will contain the number of bytes per plane
+        // return value of av_samples_get_buffer_size (unused) contains the entire required buffer size:
+        // - Contains ALL channel data
+        // - Contains 32 bit alignment for all used data fields (one for packet, multiple for planar)
+        av_samples_get_buffer_size(&decodedLineSize, codec->channels, frame->nb_samples, codec->sample_fmt, 1);
+        ASSERT_LESS_THAN_EQUALS(decodedLineSize, sAudioBufferSizeInBytes);
+        for (int i = 0; i < mNrPlanes; ++i)
+        {
+            if (frame->extended_data[i] != 0)
+            {
+                // Only take planes with actual data into account.
+                // Example: resolutionchange_contains_6_audio_planes_but_not_for_all_packets.mpg
+                //          This file contains (according to the meta data from the AVCodecContext)
+                //          6 audio planes. However, for some packets in the audio stream there are 
+                //          only two contained planes.
+                memcpy(mAudioDecodeBuffer[i] + offset, frame->extended_data[i], decodedLineSize);
+            }
+            else
+            {
+                memset(mAudioDecodeBuffer[i] + offset, 0, decodedLineSize);
+            }
+        }
+        return decodedLineSize;
+    };
+
+
     // All sizes are in bytes below
     int targetSizeInBytes = 0; // For planar data, size of each plane. For packet data, size of first plane, which contains all channels.
     int nDecodedSamplesPerChannel = 0;
@@ -209,13 +247,10 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
             packet.data = sourceData;
             packet.size = sourceSize;
 
-            // Ensure memory cleaned up in all possible control flows:
-            boost::shared_ptr<AVFrame> pFrame(av_frame_alloc(), [](AVFrame* frame) { av_frame_free(&frame); });
-            ASSERT_NONZERO(pFrame);
-            ASSERT_NONZERO(pFrame.get());
+            boost::shared_ptr<AVFrame> frame{ allocateFrame() };
 
             int got_frame = 0;
-            int usedSourceBytes = avcodec_decode_audio4(codec, pFrame.get(), &got_frame, &packet);
+            int usedSourceBytes = avcodec_decode_audio4(codec, frame.get(), &got_frame, &packet);
 
             if (usedSourceBytes < 0 || !got_frame)
             {
@@ -228,21 +263,13 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
                 done = true;
             }
 
-            int decodedLineSize(0); // Will contain the number of bytes per plane
-            // return value of av_samples_get_buffer_size (unused) contains the entire required buffer size:
-            // - Contains ALL channel data
-            // - Contains 32 bit alignment for all used data fields (one for packet, multiple for planar)
-            av_samples_get_buffer_size(&decodedLineSize, codec->channels, pFrame->nb_samples, codec->sample_fmt, 1);
-            for (int i = 0; i < mNrPlanes; ++i)
-            {
-                memcpy(mAudioDecodeBuffer[i] + targetSizeInBytes, pFrame->extended_data[i], decodedLineSize);
-            }
+            int decodedLineSize{ copyFrame(frame, targetSizeInBytes) };  // decodedLineSize will contain the number of bytes per plane
 
             sourceData += usedSourceBytes;
             sourceSize -= usedSourceBytes;
 
             targetSizeInBytes += decodedLineSize;
-            nDecodedSamplesPerChannel += pFrame->nb_samples;
+            nDecodedSamplesPerChannel += frame->nb_samples;
 
             // Only after the first packet has been decoded, all of the information
             // required for initializing resampling is available.
@@ -250,14 +277,29 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
             {
                 // Code taken from ffplay.c
                 int64_t dec_channel_layout =
-                    (pFrame->channel_layout && av_frame_get_channels(pFrame.get()) == av_get_channel_layout_nb_channels(pFrame->channel_layout)) ?
-                    pFrame->channel_layout : av_get_default_channel_layout(av_frame_get_channels(pFrame.get()));
+                    (frame->channel_layout && av_frame_get_channels(frame.get()) == av_get_channel_layout_nb_channels(frame->channel_layout)) ?
+                    frame->channel_layout : av_get_default_channel_layout(av_frame_get_channels(frame.get()));
+
+                // Only take planes with actual data into account.
+                // Some files have packets with fewer frames than described in the codec.
+                int nPlanesInFrame{ 0 };
+                for (int i = 0; i < mNrPlanes; ++i)
+                {
+                    if (frame->extended_data[i] != 0)
+                    {
+                        nPlanesInFrame++;
+                    }
+                }
+                if (nPlanesInFrame != mNrPlanes)
+                {
+                    dec_channel_layout = av_get_default_channel_layout(nPlanesInFrame);
+                }
 
                 mSoftwareResampleContext = swr_alloc_set_opts(0,
                     av_get_default_channel_layout(parameters.getNrChannels()), 
                     AV_SAMPLE_FMT_S16, 
                     Convert::samplerateToNewSpeed(parameters.getSampleRate(), parameters.getSpeed(), 1),
-                    dec_channel_layout, codec->sample_fmt, pFrame->sample_rate, 0, 0);
+                    dec_channel_layout, codec->sample_fmt, frame->sample_rate, 0, 0);
                 ASSERT_NONZERO(mSoftwareResampleContext);
 
                 int result { swr_init(mSoftwareResampleContext) };
@@ -271,9 +313,10 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
         AVPacket packet;
         memset(&packet, 0, sizeof(packet));
 
-        AVFrame frame = { { 0 } };
+        boost::shared_ptr<AVFrame> frame{ allocateFrame() };
+
         int got_frame = 0;
-        int usedSourceBytes = avcodec_decode_audio4(codec, &frame, &got_frame, &packet);
+        int usedSourceBytes = avcodec_decode_audio4(codec, frame.get(), &got_frame, &packet);
 
         if (!got_frame)
         {
@@ -283,18 +326,9 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
             return AudioChunkPtr();
         }
 
-        int decodedLineSize(0); // Will contain the number of bytes per plane
-        // decodeBuferInBytes contains the entire required buffer size:
-        // - Contains ALL channel data
-        // - Contains 32 bit alignment for all used data fields (one for packet, multiple for planar)
-        int decodeBufferInBytes = av_samples_get_buffer_size(&decodedLineSize, codec->channels, frame.nb_samples, codec->sample_fmt, 1);
-        for (int i = 0; i < mNrPlanes; ++i)
-        {
-            memcpy(mAudioDecodeBuffer[i], frame.extended_data[i], decodedLineSize);
-        }
+        int decodedLineSize{ copyFrame(frame, targetSizeInBytes) };  // decodedLineSize will contain the number of bytes per plane
 
-        // targetSizeInBytes += decodedLineSize;
-        nDecodedSamplesPerChannel += frame.nb_samples;
+        nDecodedSamplesPerChannel += frame->nb_samples;
 
         ASSERT_IMPLIES(mNeedsResampling, mSoftwareResampleContext != 0); // Must have been initialized already
     }
@@ -327,7 +361,7 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
         // The audioChunk is pre-allocated to avoid one extra memcpy (from resampled data into the chunk).
         audioChunk = boost::make_shared<AudioChunk>(parameters.getNrChannels(), bufferSize, true, false);
 
-        uint8_t *out[1]; // Output data always packet into one plane
+        uint8_t *out[1]; // Output data always packed into one plane
         out[0] = reinterpret_cast<uint8_t*>(audioChunk->getBuffer());
         int nOutputFrames = swr_convert(mSoftwareResampleContext, &out[0], bufferSize, const_cast<const uint8_t**>(mAudioDecodeBuffer), nDecodedSamplesPerChannel);
         ASSERT_MORE_THAN_EQUALS_ZERO(nOutputFrames);

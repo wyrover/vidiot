@@ -82,11 +82,16 @@ void Play(int ms)
     // NOTE: Starting and stopping the playback is not done via space key presses.
     //       Space does a 'toggle', which sometimes causes irratic behavior.
 
-    util::thread::RunInMainScheduler::get().run([] { getTimeline().getPlayer()->play(); });
+    Play();
     started.wait();
     pause(ms);
     util::thread::RunInMainScheduler::get().run([] { getTimeline().getPlayer()->pause(); });
     stopped.wait();
+}
+
+void Play()
+{
+    util::thread::RunInMainScheduler::get().run([] { getTimeline().getPlayer()->play(); });
 }
 
 void MaximizePreviewPane(bool maximizeWindow, bool hideDetails)

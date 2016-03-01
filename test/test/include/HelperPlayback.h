@@ -85,6 +85,9 @@ void Play(pixel from, int ms);
 /// 3. wait until playback has stopped.
 void Play(int ms);
 
+/// Start playback from the current position
+void Play();
+
 void MaximizePreviewPane(bool maximizeWindow = true, bool hideDetails = true);
 
 } // namespace

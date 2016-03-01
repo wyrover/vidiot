@@ -23,6 +23,7 @@ void executeFormatTest(wxString filetypesDir, bool audio, bool video)
 {
     ExecuteOnAllFiles(filetypesDir, [audio, video] 
     {
+        TimelineZoomIn(8);
         ASSERT(video || audio);
         // NOTE: For audio-only or video-only the counterpart becomes an EmptyClip
         if (!audio) 
@@ -46,6 +47,12 @@ void executeFormatTest(wxString filetypesDir, bool audio, bool video)
         TimelinePositionCursor(HCenter(clip));
         TimelineKeyPress('v'); // Show the part being played (for longer files)
         Play(HCenter(clip), 1000);
+        TimelinePositionCursor(RightPixel(clip) - 25);
+        TimelineKeyPress('v'); // Show the part being played (for longer files)
+        WaitForPlaybackStopped stopped;
+        Play();
+        stopped.wait();
+        //pause();
     }, true);
 }
 
@@ -56,18 +63,21 @@ void executeFormatTest(wxString filetypesDir, bool audio, bool video)
 void TestFileTypesFormat::testFileTypes_formats_audio()
 {
     StartTestSuite();
+    ConfigOverrule<long> overruleChannels(Config::sPathAudioDefaultNumberOfChannels, 2);
     executeFormatTest("filetypes_formats_audio", true, false);
 }
 
 void TestFileTypesFormat::testFileTypes_formats_audio_and_video()
 {
     StartTestSuite();
+    ConfigOverrule<long> overruleChannels(Config::sPathAudioDefaultNumberOfChannels, 2);
     executeFormatTest("filetypes_formats_audio_and_video", true, true);
 }
 
 void TestFileTypesFormat::testFileTypes_formats_video()
 {
     StartTestSuite();
+    ConfigOverrule<long> overruleChannels(Config::sPathAudioDefaultNumberOfChannels, 2);
     executeFormatTest("filetypes_formats_video", false, true);
 }
 
