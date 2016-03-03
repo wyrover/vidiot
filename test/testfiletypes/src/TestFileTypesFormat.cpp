@@ -52,7 +52,6 @@ void executeFormatTest(wxString filetypesDir, bool audio, bool video)
         WaitForPlaybackStopped stopped;
         Play();
         stopped.wait();
-        //pause();
     }, true);
 }
 
@@ -81,5 +80,17 @@ void TestFileTypesFormat::testFileTypes_formats_video()
     executeFormatTest("filetypes_formats_video", false, true);
 }
 
+void TestFileTypesFormat::testFileTypes_formats_audio_with_wrong_duration()
+{
+    StartTestSuite();
+    ConfigOverrule<long> overruleChannels(Config::sPathAudioDefaultNumberOfChannels, 2);
+    ExecuteOnAllFiles("filetypes_special/2_aac_error_while_decoding_stream.aac", []
+    {
+        Play("0:04", 1000);
+        Play("0:15", 1000);
+        Play("1:35", 1000);
+        Play("4:49", 2000);
+    }, true);
+}
 
 } // namespace

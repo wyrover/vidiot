@@ -144,27 +144,35 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
     PacketPtr audioPacket = getNextPacket();
     samplecount nSkipSamples = 0;
 
+
     if (mNewStartPosition)
     {
         pts position = *mNewStartPosition;
         samplecount nextSample = Convert::ptsToSamplesPerChannel(position, getCodec()->sample_rate);
 
-        auto getFirstSampleOfNextPacket = [this](AVPacket* packet) -> samplecount
+        auto positionInfoAvailable = [&audioPacket]() -> bool
         {
+            return audioPacket && audioPacket->getPacket()->pts != AV_NOPTS_VALUE;
+        };
+
+        auto getFirstSampleOfNextPacket = [this](AVPacket* packet) -> samplecount
+        {                    
             if (packet->duration > 0)
             {
                 return getFirstSample(packet->pts + packet->duration);
             }
             return getFirstSample(packet->pts + 1);
         };
-        while (audioPacket &&
-               getFirstSampleOfNextPacket(audioPacket->getPacket()) <= nextSample)
+
+        while (positionInfoAvailable() && 
+            getFirstSampleOfNextPacket(audioPacket->getPacket()) <= nextSample)
         {
             // The next packet starts also 'before' the required sample. Use that packet.
             // Seeking was too far ahread of the required point.
             audioPacket = getNextPacket();
         }
-        if (audioPacket)
+
+        if (positionInfoAvailable())
         {
             samplecount firstSample = getFirstSample(audioPacket->getPacket()->pts);
             if (firstSample > nextSample)

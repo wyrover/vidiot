@@ -34,6 +34,10 @@ public:
     void testFileTypes_formats_audio(); 
     void testFileTypes_formats_audio_and_video();
     void testFileTypes_formats_video();
+
+    /// The file used in this test is read with a wrong duration.
+    /// Therefore, playback is not done at the default positions.
+    void testFileTypes_formats_audio_with_wrong_duration();
 };
 
 } // namespace

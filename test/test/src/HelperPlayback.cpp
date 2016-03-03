@@ -67,6 +67,18 @@ void WaitForPlayback::onPlaybackActive(gui::PlaybackActiveEvent& event)
     event.Skip();
 }
 
+void Play(wxString from, int ms)
+{
+    wxStringTokenizer t(from, ":");
+    ASSERT_EQUALS(t.CountTokens(), 2);
+    int m{ wxAtoi(t.GetNextToken()) };
+    int s{ wxAtoi(t.GetNextToken()) };
+    pts position{ getTimeline().getZoom().ptsToPixels(model::Convert::timeToPts((m * 60 + s) * 1000)) };
+    TimelinePositionCursor(position);
+    TimelineKeyPress('v'); // Show the part being played (for longer files)
+    Play(position, ms);
+}
+
 void Play(pixel from, int ms)
 {
     TimelinePositionCursor(from);

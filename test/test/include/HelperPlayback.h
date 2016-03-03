@@ -75,6 +75,11 @@ struct WaitForPlaybackStopped : public WaitForPlayback
     }
 };
 
+/// 1. Start playback from the given position "mm:ss"
+/// 2. Wait until ms has expired, stop playback
+/// 3. wait until playback has stopped.
+void Play(wxString from, int ms);
+
 /// 1. Start playback from the given position
 /// 2. Wait until ms has expired, stop playback
 /// 3. wait until playback has stopped.
