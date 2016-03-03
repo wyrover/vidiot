@@ -26,40 +26,44 @@ void ExecuteOnAllFiles(wxString pathToFiles, std::function<void()> action, bool 
     ASSERT(root);
     wxString sSequence( "Sequence" );
     model::SequencePtr sequence = ProjectViewAddSequence( sSequence, root );
-    if (wait)
-    {
-        // Ensure that audio peaks are generated (clip views large enough to hold the preview)
-        TimelineZoomIn(4);
-    }
 
     WindowTriggerMenu(ID_CLOSESEQUENCE);
 
     // Find input files in dir (must be done after creating a project, due to dependencies on project properties for opening/closing files)
-    wxFileName TestFilesPath = getTestPath();
-    TestFilesPath.AppendDir(pathToFiles);
-    ASSERT(TestFilesPath.IsDir());
-    ASSERT(TestFilesPath.DirExists());
-    model::IPaths InputFiles = GetSupportedFiles(TestFilesPath);
+    wxFileName TestFilesPath{ util::path::toFileName(getTestPath().GetFullPath() + wxFileName::GetPathSeparator() + pathToFiles) };
+    model::IPaths InputFiles;
+    if (TestFilesPath.IsDir())
+    {
+        ASSERT(TestFilesPath.DirExists());
+        InputFiles = GetSupportedFiles(TestFilesPath);
+    }
+    else
+    {
+        ASSERT(TestFilesPath.FileExists());
+        model::FilePtr file{ boost::make_shared<model::File>(TestFilesPath) };
+        ASSERT(file->canBeOpened());
+        InputFiles.push_back(file);
+    }
 
     for ( model::IPathPtr path : InputFiles )
     {
         StartTest(path->getPath().GetFullName());
         model::FilePtr file = boost::make_shared<model::File>(path->getPath());
 
-        boost::shared_ptr<ExpectExecutedWork> wait;
-
-        if (wait)
-        {
-            int nWait = 0;
-            if (file->hasAudio()) { nWait++; }
-            if (file->hasVideo()) { nWait++; }
-            wait = boost::make_shared<ExpectExecutedWork>(nWait,true);
-        }
+        int nWait{ 0 };
+        if (wait && file->hasAudio()) { nWait++; }
+        if (wait && file->hasVideo()) { nWait++; }
+        boost::shared_ptr<ExpectExecutedWork> waiter{ nWait > 0 ? boost::make_shared<ExpectExecutedWork>(nWait,true) : nullptr };
 
         ExtendSequenceWithRepeatedClips(sequence, { path }, 1); // Note: Not via a command (thus, 'outside' the undo system)
         ProjectViewOpenTimelineForSequence(sequence);
-
         if (wait)
+        {
+            // Ensure that audio peaks are generated (clip views large enough to hold the preview)
+            TimelineZoomIn(6);
+        }
+
+        if (waiter)
         {
             // Wait until audio peaks generated. Otherwise, not all save files have the same contents.
             // The later save files may have more entries in the meta data cache.
@@ -67,7 +71,7 @@ void ExecuteOnAllFiles(wxString pathToFiles, std::function<void()> action, bool 
             // Wait for audio peaks to be generated. For the longer audio files this results in reading through the entire file.
             // For instance, for Dawn_AnotherDay_EmbeddedCoverImage_IncompleteEndPacket.mp3 this caused an error when reading
             // the last packet of the file.
-            wait->wait();
+            waiter->wait();
         }
 
         ASSERT_EQUALS(NumberOfVideoClipsInTrack(0),1);

@@ -20,7 +20,7 @@
 namespace test {
 
 /// Create sequence with one file each time and then execute the given action.
-/// \param pathToFiles path to test files
+/// \param pathToFiles path to test file(s). If one file is given, then only that file is tested.
 /// \param action action to execute after opening the sequence with the file
 /// \param wait if true then waits until thumbnails/peaks have been generated before calling the action
 void ExecuteOnAllFiles(wxString pathToFiles, std::function<void()> action, bool wait = false);

@@ -85,10 +85,7 @@ struct RenderPeaksWork
             // The if is required to avoid errors during editing operations.
             int origin{ mSize.y / 2 };
 
-            for (int x = 0; x < mSize.x; ++x)
-            {
-                result->SetRGB(wxRect{ 0, origin, mSize.x, 1 }, 87, 120, 74);
-            }
+            result->SetRGB(wxRect{ 0, origin, mSize.x, 1 }, 87, 120, 74);
 
             model::AudioPeaks peaks = mAudioClipClone->getPeaks(mParameters);
             int nPeaks = peaks.size();
@@ -105,7 +102,7 @@ struct RenderPeaksWork
                 int firstPeak = mAudioClipClone->getOffset();
                 int firstPixel = Zoom::ptsToPixels(firstPeak, mZoom);
 
-                for (int x{ 0 }; x < mSize.GetWidth() && !isAborted(); ++x)
+                for (int x{ 0 }; x < mSize.x && !isAborted(); ++x)
                 {
                     // Always computed wrt the total file length. This ensures consistent drawing during trimming operations.
                     // Without this, during trimming the displayed images flickers a bit (because of rounding issues).
