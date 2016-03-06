@@ -30,6 +30,8 @@ public:
     // TEST CASES
     //////////////////////////////////////////////////////////////////////////
 
+    void testFileTypes_formats_new();
+
     /// For checking that certain formats can be opened.
     void testFileTypes_formats_audio(); 
     void testFileTypes_formats_audio_and_video();
@@ -38,6 +40,7 @@ public:
     /// The file used in this test is read with a wrong duration.
     /// Therefore, playback is not done at the default positions.
     void testFileTypes_formats_audio_with_wrong_duration();
+
 };
 
 } // namespace

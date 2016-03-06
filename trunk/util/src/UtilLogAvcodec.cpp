@@ -127,8 +127,6 @@ std::ostream& operator<<(std::ostream& os, const AVPixelFormat& obj)
         LOGENUMVALUE(AV_PIX_FMT_GBRP10LE);
         LOGENUMVALUE(AV_PIX_FMT_GBRP16BE);
         LOGENUMVALUE(AV_PIX_FMT_GBRP16LE);
-        LOGENUMVALUE(AV_PIX_FMT_YUVA422P_LIBAV);
-        LOGENUMVALUE(AV_PIX_FMT_YUVA444P_LIBAV);
         LOGENUMVALUE(AV_PIX_FMT_YUVA420P9BE);
         LOGENUMVALUE(AV_PIX_FMT_YUVA420P9LE);
         LOGENUMVALUE(AV_PIX_FMT_YUVA422P9BE);
@@ -375,8 +373,7 @@ std::ostream& operator<<(std::ostream& os, const AVPacket* obj)
             << "flags="                << obj->flags           << ','
             << "side_data_elems="      << obj->side_data_elems << ','
             << "duration="             << obj->duration        << ','
-            << "pos="                  << obj->pos             << ','
-            << "convergence_duration=" << obj->convergence_duration
+            << "pos="                  << obj->pos
             << '}';
     }
     else
@@ -553,7 +550,6 @@ std::ostream& operator<<(std::ostream& os, const AVCodecID& obj)
     case AV_CODEC_ID_ANM:                os << "AV_CODEC_ID_ANM";                break;
     case AV_CODEC_ID_BINKVIDEO:          os << "AV_CODEC_ID_BINKVIDEO";          break;
     case AV_CODEC_ID_IFF_ILBM:           os << "AV_CODEC_ID_IFF_ILBM";           break;
-    case AV_CODEC_ID_IFF_BYTERUN1:       os << "AV_CODEC_ID_IFF_BYTERUN1";       break;
     case AV_CODEC_ID_KGV1:               os << "AV_CODEC_ID_KGV1";               break;
     case AV_CODEC_ID_YOP:                os << "AV_CODEC_ID_YOP";                break;
     case AV_CODEC_ID_VP8:                os << "AV_CODEC_ID_VP8";                break;

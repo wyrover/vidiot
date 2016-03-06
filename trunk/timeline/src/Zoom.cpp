@@ -129,7 +129,7 @@ int Zoom::ptsToPixels(pts position) const
     return ptsToPixels(position, mZoom);
 }
 
-// static 
+// static
 int Zoom::ptsToPixels(pts position, rational64 zoom)
 {
     return floor(rational64{ position } *rational64{ zoom });

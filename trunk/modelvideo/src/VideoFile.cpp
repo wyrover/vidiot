@@ -137,7 +137,7 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
     // frames completely fill the bounding box, regardless of the chosen scaling for the preview window. When using false
     // here, the image sometimes is one or two pixels smaller than the bounding box. That resulted in a black line between
     // the two frames when showing a 'push' transition.
-    // 
+    //
     // Resizing such that 'everything fits' inside the bounding box is already done in VideoClip.
     wxSize size(Convert::sizeInBoundingBox(wxSize(codec->width,codec->height),parameters.getBoundingBox(), dummy, true));
     static const int sMinimumFrameSize = 10;        // I had issues when generating smaller bitmaps. To avoid these, always
@@ -309,9 +309,10 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
         {
             // Resample the frame (includes format conversion)
             AVFrame* pScaledFrame = av_frame_alloc();
-            int bufferSize = avpicture_get_size(AV_PIX_FMT_RGB24, size.GetWidth(), size.GetHeight());
+            int bufferSize = av_image_get_buffer_size(AV_PIX_FMT_RGB24, size.GetWidth(), size.GetHeight(), 1);
             boost::uint8_t * buffer = static_cast<boost::uint8_t*>(av_malloc(bufferSize * sizeof(uint8_t)));
-            avpicture_fill(reinterpret_cast<AVPicture*>(pScaledFrame), buffer, AV_PIX_FMT_RGB24, size.GetWidth(), size.GetHeight());
+            AVPicture* picture{ reinterpret_cast<AVPicture*>(pScaledFrame) };
+            av_image_fill_arrays(picture->data, picture->linesize, buffer, AV_PIX_FMT_RGB24, size.GetWidth(), size.GetHeight(), 1);
             mSwsContext = sws_getCachedContext(mSwsContext,codec->width,
                 codec->height,
                 codec->pix_fmt,
@@ -487,17 +488,18 @@ void VideoFile::saveDecodedFrame(AVCodecContext* codec, AVFrame* frame, const wx
     static SwsContext* swsContext(0);
     static int count(0);
 
-    AVFrame* pWriteToDiskFrame = av_frame_alloc();
-    int bufferSizeToDisk = avpicture_get_size(AV_PIX_FMT_RGB24, codec->width, codec->height);
-    boost::uint8_t * bufferToDisk = static_cast<boost::uint8_t*>(av_malloc(bufferSizeToDisk * sizeof(uint8_t)));
-    avpicture_fill(reinterpret_cast<AVPicture*>(pWriteToDiskFrame), bufferToDisk, AV_PIX_FMT_RGB24, codec->width, codec->height);
+    AVFrame* pWriteToDiskFrame{ av_frame_alloc() };
+    int bufferSizeToDisk{ av_image_get_buffer_size(AV_PIX_FMT_RGB24, codec->width, codec->height, 1) };
+    boost::uint8_t* bufferToDisk{ static_cast<boost::uint8_t*>(av_malloc(bufferSizeToDisk * sizeof(uint8_t))) };
+    AVPicture* picture{ reinterpret_cast<AVPicture*>(pWriteToDiskFrame) };
+    av_image_fill_arrays(picture->data, picture->linesize, bufferToDisk, AV_PIX_FMT_RGB24, codec->width, codec->height, 1);
     swsContext = sws_getCachedContext(swsContext,codec->width,
         codec->height,
         codec->pix_fmt,
         codec->width,
         codec->height,
         AV_PIX_FMT_RGB24,
-        SWS_FAST_BILINEAR | SWS_CPU_CAPS_MMX | SWS_CPU_CAPS_MMX2, 0, 0, 0);
+        SWS_FAST_BILINEAR, 0, 0, 0);
     sws_scale(swsContext,frame->data,frame->linesize,0,codec->height,pWriteToDiskFrame->data,pWriteToDiskFrame->linesize);
 
     wxImagePtr image = boost::make_shared<wxImage>(wxImage(wxSize(codec->width, codec->height), pWriteToDiskFrame->data[0], true).Copy());

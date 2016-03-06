@@ -254,7 +254,7 @@ void ClipPreview::scheduleRendering() const
 {
     // Avoid scheduling unused bitmaps. Since these are thrown away, the scheduling will be repetitive, leasing to performance issues.
     wxSize minimumSize(getMinimumSize());
-    if (getW() < minimumSize.x || getH() < minimumSize.y) { return; } 
+    if (getW() < minimumSize.x || getH() < minimumSize.y) { return; }
 
     if (!getTimeline().renderThumbnails()) { return; }
     abortPendingWork();
@@ -274,6 +274,13 @@ void ClipPreview::abortPendingWork() const
          work->Unbind(worker::EVENT_WORK_DONE, &ClipPreview::onRenderDone, const_cast<ClipPreview*>(this));
     }
     mPendingWork.clear();
+}
+
+bool ClipPreview::hasCachedBitmap() const
+{
+    ASSERT(wxThread::IsMain());
+    wxSize size{ getSize() };
+    return (mImages.find(size) != mImages.end()) && (mPendingWork.empty());
 }
 
 wxBitmapPtr ClipPreview::getCachedBitmap(wxSize size) const

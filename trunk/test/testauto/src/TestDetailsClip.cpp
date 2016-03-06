@@ -652,7 +652,7 @@ void TestDetailsClip::testChangeVolume()
         audioclip->moveTo(10);
         referenceChunk = audioclip->getNextAudio(parameters);
         ASSERT_VOLUME(getAudioClip(AudioClip(0,4)),100,referenceChunk);
-
+              // todo stop build on warnings on linux 
         TimelineLeftClick(Center(AudioClip(0, 4)));
         SetValue(DetailsClipView()->getVolumeSlider(), 70);
         ASSERT_HISTORY_END(gui::timeline::cmd::EditClipDetails); // Verify that only one command object was added to the undo history

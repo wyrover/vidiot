@@ -155,13 +155,14 @@ void Worker::thread()
         QueueEvent(new WorkerQueueSizeEvent(mFifo.getSize()));
         if (w) // Check needed for the case that the fifo is aborted (and thus returns a 0 shared ptr)
         {
-            w->execute(mVisibleProgress);
+            bool done{ w->execute(mVisibleProgress) };
             util::thread::setCurrentThreadName(mName);
             w.reset(); // Clear, so that unfreezing is done if needed
             {
                 boost::mutex::scoped_lock lock(mMutex);
                 mCurrent.reset();
             }
+            if (done)
             {
                 mExecuted++;
                 if (mExecuted == mExecutedLimit)

@@ -125,7 +125,7 @@ AVStream* VideoCodec::addStream(AVFormatContext* context) const
     video_codec->time_base.num = Properties::get().getFrameRate().denominator();
 
     ASSERT(encoder->pix_fmts);
-    const PixelFormat* f = encoder->pix_fmts;
+    const AVPixelFormat* f = encoder->pix_fmts;
     VAR_DEBUG(*f);
     video_codec->pix_fmt = *f; // Use first pixel format
 

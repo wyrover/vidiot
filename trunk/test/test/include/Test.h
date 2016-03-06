@@ -45,6 +45,7 @@
 #include "AudioView.h"
 #include "AutoFolder.h"
 #include "ClipCreator.h"
+#include "ClipPreview.h"
 #include "ClipView.h"
 #include "Combiner.h"
 #include "CommandLine.h"

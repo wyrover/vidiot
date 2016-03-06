@@ -143,7 +143,17 @@ pixel ClipView::getY() const
 
 pixel ClipView::getW() const
 {
-    return getRightPixel() - getLeftPixel();
+    pixel result{ getRightPixel() - getLeftPixel() };
+#ifdef __GNUC__
+    // On Linux, X crashes if a 'too large' bitmap is created.
+    // Particularly, for clips with a width that is too large, BadAlloc is generated.
+    // Here the view of this clip is truncated if it's too large.
+    if (result > 30000)
+    {
+        result = 30000;
+    }
+#endif
+    return result;
 }
 
 pixel ClipView::getH() const

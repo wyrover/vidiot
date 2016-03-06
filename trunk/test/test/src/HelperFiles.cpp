@@ -50,28 +50,33 @@ void ExecuteOnAllFiles(wxString pathToFiles, std::function<void()> action, bool 
         StartTest(path->getPath().GetFullName());
         model::FilePtr file = boost::make_shared<model::File>(path->getPath());
 
-        int nWait{ 0 };
-        if (wait && file->hasAudio()) { nWait++; }
-        if (wait && file->hasVideo()) { nWait++; }
-        boost::shared_ptr<ExpectExecutedWork> waiter{ nWait > 0 ? boost::make_shared<ExpectExecutedWork>(nWait,true) : nullptr };
-
         ExtendSequenceWithRepeatedClips(sequence, { path }, 1); // Note: Not via a command (thus, 'outside' the undo system)
         ProjectViewOpenTimelineForSequence(sequence);
         if (wait)
         {
             // Ensure that audio peaks are generated (clip views large enough to hold the preview)
             TimelineZoomIn(6);
-        }
 
-        if (waiter)
-        {
             // Wait until audio peaks generated. Otherwise, not all save files have the same contents.
             // The later save files may have more entries in the meta data cache.
             //
             // Wait for audio peaks to be generated. For the longer audio files this results in reading through the entire file.
             // For instance, for Dawn_AnotherDay_EmbeddedCoverImage_IncompleteEndPacket.mp3 this caused an error when reading
             // the last packet of the file.
-            waiter->wait();
+            if (file->hasAudio())
+            {
+                while (util::thread::RunInMainReturning<bool>([]() { return !getTimeline().getViewMap().getClipPreview(AudioClip(0,0))->hasCachedBitmap(); }))
+                {
+                    pause(25);
+                }
+            }
+            if (file->hasVideo())
+            {
+                while (util::thread::RunInMainReturning<bool>([]() { return !getTimeline().getViewMap().getClipPreview(VideoClip(0,0))->hasCachedBitmap(); }))
+                {
+                    pause(25);
+                }
+            }
         }
 
         ASSERT_EQUALS(NumberOfVideoClipsInTrack(0),1);

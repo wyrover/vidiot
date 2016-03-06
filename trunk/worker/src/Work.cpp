@@ -41,26 +41,26 @@ Work::~Work()
     VAR_DEBUG(this);
 }
 
-void Work::execute(bool showProgress)
+bool Work::execute(bool showProgress)
 {
     VAR_DEBUG(this);
-    if (!mAbort)
+    if (mAbort) { return false; }
+    mCallable();
+    if (showProgress)
     {
-        mCallable();
-        if (showProgress)
+        util::thread::RunInMainScheduler::get().run([]
         {
-            util::thread::RunInMainScheduler::get().run([]
-            {
-                // Note that - in the code of mCallable - showProgressText can be called.
-                // That method schedules an event that causes the progress bar update.
-                // Therefore, here another event is scheduled that resets the text afterwards.
-                gui::StatusBar::get().hideProgressBar();
-                gui::StatusBar::get().setProcessingText("");
-            });
-        }
-        QueueEvent(new WorkDoneEvent(self()));
+            // Note that - in the code of mCallable - showProgressText can be called.
+            // That method schedules an event that causes the progress bar update.
+            // Therefore, here another event is scheduled that resets the text afterwards.
+            gui::StatusBar::get().hideProgressBar();
+            gui::StatusBar::get().setProcessingText("");
+        });
     }
+    if (mAbort) { return false; }
+    QueueEvent(new WorkDoneEvent(self()));
     VAR_DEBUG(this);
+    return true;
 }
 
 void Work::stopShowingProgress()

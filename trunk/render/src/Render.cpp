@@ -44,7 +44,7 @@
 
 namespace model { namespace render {
 
-static AVFrame *alloc_picture(const enum PixelFormat& pix_fmt, int width, int height);
+static AVFrame *alloc_picture(const enum AVPixelFormat& pix_fmt, int width, int height);
 
 //////////////////////////////////////////////////////////////////////////
 // RENDERING
@@ -400,6 +400,11 @@ void RenderWork::generate()
     AVCodecContext* videoCodec = 0;
     AVCodecContext* audioCodec = 0;
 
+    pts videoPosition{ 0 };
+    pts audioPosition{ 0 };
+    double audioTimeFactor{ 0 };
+    double videoTimeFactor{ 0 };
+
     AVFrame* outputPicture = 0;
     AVFrame* colorSpaceConversionPicture = 0;
     struct SwsContext *colorSpaceConversionContext = 0;
@@ -570,7 +575,27 @@ void RenderWork::generate()
 
         fileOpened = true;
 
-        avformat_write_header(context, 0);
+        int result{ avformat_write_header(context, 0) };
+        if (0 != result)
+        {
+            VAR_ERROR(result)(avcodecErrorString(result))(*this);
+            throw EncodingError(_("Failed to write file header"));
+        }
+
+        // The stream's time base is initialized when avformat_write_header is called.
+        if (storeVideo)
+        {
+            ASSERT_MORE_THAN_EQUALS_ZERO(videoStream->time_base.num);
+            ASSERT_MORE_THAN_EQUALS_ZERO(videoStream->time_base.num);
+            videoTimeFactor = static_cast<double>(videoStream->time_base.num) / static_cast<double>(videoStream->time_base.den);
+        }
+
+        if (storeAudio)
+        {
+            ASSERT_MORE_THAN_EQUALS_ZERO(audioStream->time_base.num);
+            ASSERT_MORE_THAN_EQUALS_ZERO(audioStream->time_base.num);
+            audioTimeFactor = static_cast<double>(audioStream->time_base.num) / static_cast<double>(audioStream->time_base.den);
+        }
 
         //////////////////////////////////////////////////////////////////////////
         // WRITE DATA INTO THE FILE
@@ -580,12 +605,11 @@ void RenderWork::generate()
 
         while (!isAborted())  // write interleaved audio and video frames
         {
-            // todo remove use of pts (deprecated)
-            double audioTime = storeAudio ? ((double)audioStream->pts.val) *  (double)audioStream->time_base.num / (double)audioStream->time_base.den : lengthInSeconds;
-            double videoTime = storeVideo ? ((double)videoStream->pts.val) * (double)videoStream->time_base.num / (double)videoStream->time_base.den : lengthInSeconds;
+            double audioTime{ storeAudio ? static_cast<double>(audioPosition) * audioTimeFactor : lengthInSeconds };
+            double videoTime{ storeVideo ? static_cast<double>(videoPosition) * videoTimeFactor : lengthInSeconds };
 
-            bool writeAudio = storeAudio && audioTime < (double)lengthInSeconds;
-            bool writeVideo = storeVideo && videoTime < (double)lengthInSeconds;
+            bool writeAudio{ storeAudio && audioTime < lengthInSeconds };
+            bool writeVideo{ storeVideo && videoTime < lengthInSeconds };
 
             if (!writeAudio && !writeVideo)
             {
@@ -692,7 +716,7 @@ void RenderWork::generate()
                     fedSamples += nRequiredInputSamplesPerChannel;
                 }
 
-                int result = avcodec_encode_audio2(audioCodec, audioPacket, encodeFrame, &gotPacket); // if gotPacket == 0, then packet is destructed
+                int result{ avcodec_encode_audio2(audioCodec, audioPacket, encodeFrame, &gotPacket) }; // if gotPacket == 0, then packet is destructed
                 if (0 != result)
                 {
                     VAR_ERROR(result)(avcodecErrorString(result))(*this);
@@ -710,6 +734,7 @@ void RenderWork::generate()
                     audioPacket->flags |= AV_PKT_FLAG_KEY;
                     audioPacket->stream_index = audioStream->index;
                     av_packet_rescale_ts(audioPacket, audioCodec->time_base, audioStream->time_base);
+                    audioPosition = audioPacket->pts;
                     int result = av_interleaved_write_frame(context, audioPacket); // av_interleaved_write_frame: transfers ownership of packet
                     if (0 != result)
                     {
@@ -761,8 +786,8 @@ void RenderWork::generate()
                         // CONVERT VIDEO TO REQUIRED FORMAT FOR ENCODER
                         //////////////////////////////////////////////////////////////////////////
 
-                        int rgbImageSize = avpicture_get_size(AV_PIX_FMT_RGB24, videoCodec->width, videoCodec->height);
-                        AVFrame* toBeFilledPicture = (colorSpaceConversionContext == 0) ? outputPicture : colorSpaceConversionPicture;
+                        int rgbImageSize{ av_image_get_buffer_size(AV_PIX_FMT_RGB24, videoCodec->width, videoCodec->height, 1) };
+                        AVFrame* toBeFilledPicture{ (colorSpaceConversionContext == 0) ? outputPicture : colorSpaceConversionPicture };
                         if (!image)
                         {
                             memset(toBeFilledPicture->data[0], 0, rgbImageSize); // Empty. Fill with 0.
@@ -829,6 +854,7 @@ void RenderWork::generate()
                     if (gotPacket)
                     {
                         av_packet_rescale_ts(videoPacket, videoCodec->time_base, videoStream->time_base);
+                        videoPosition = videoPacket->pts;
                         int result = av_interleaved_write_frame(context, videoPacket); // av_interleaved_write_frame: transfers ownership of packet
                         if (0 != result)
                         {
@@ -842,7 +868,7 @@ void RenderWork::generate()
             }
         }
 
-        int result = av_write_trailer(context);
+        result = av_write_trailer(context);
         if (result != 0)
         {
             VAR_ERROR(result)(avcodecErrorString(result))(*this);
@@ -859,13 +885,13 @@ void RenderWork::generate()
         VAR_ERROR(boost::diagnostic_information(e));
         gui::Dialog::get().getConfirmation(sErrorTitle, sInternalError);
     }
-    catch (std::exception& e)                    
-    { 
-        VAR_ERROR(e.what());                         
+    catch (std::exception& e)
+    {
+        VAR_ERROR(e.what());
         gui::Dialog::get().getConfirmation(sErrorTitle, sInternalError);
     }
-    catch (...)                                  
-    { 
+    catch (...)
+    {
         LOG_ERROR << "Unknown exception";
         gui::Dialog::get().getConfirmation(sErrorTitle, sInternalError);
     }
@@ -922,16 +948,20 @@ void RenderWork::generate()
     av_freep(&context);
 }
 
-static AVFrame *alloc_picture(const enum PixelFormat& pix_fmt, int width, int height)
+static AVFrame *alloc_picture(const enum AVPixelFormat& pix_fmt, int width, int height)
 {
-    AVFrame* picture = av_frame_alloc();
-    ASSERT(picture);
+    AVFrame* frame{ av_frame_alloc() };
+    ASSERT(frame != nullptr);
+    AVPicture* picture{ reinterpret_cast<AVPicture*>(frame) };
+    ASSERT(picture != nullptr);
 
-    int size = avpicture_get_size(pix_fmt, width, height);
-    uint8_t* picture_buf = (uint8_t*)av_malloc(size);
-    ASSERT(picture_buf);
-    avpicture_fill((AVPicture *)picture, picture_buf, pix_fmt, width, height);
-    return picture;
+    int size{ av_image_get_buffer_size(pix_fmt, width, height, 1) };
+    uint8_t* picture_buf{ static_cast<uint8_t*>(av_malloc(size)) };
+    ASSERT(picture_buf != nullptr);
+
+    av_image_fill_arrays(picture->data, picture->linesize, picture_buf, pix_fmt, width, height, 1);
+
+    return frame;
 }
 
 //////////////////////////////////////////////////////////////////////////
