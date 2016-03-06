@@ -224,7 +224,7 @@ wxSize SequenceView::getDefaultSize() const
         getTimeline().GetClientSize().GetWidth(),   // At least the widget size
         getZoom().ptsToPixels(length)               // At least enough to hold all clips
         ) };
- 
+
     int h{ std::max(
         getTimeline().GetClientSize().GetHeight(),      // At least the widget size
         getSequence()->getDividerPosition() +

@@ -44,11 +44,11 @@ const int File::STREAMINDEX_UNDEFINED = -1;
 // unavailable file, crashes occur.
 const int File::LENGTH_UNDEFINED = std::numeric_limits<int>::max();
 
-// static 
+// static
 wxString File::sSupportedVideoExtensions{ "*.asf;*.avi;*.ogm;*.mov;*.mp4;*.mpeg;*.mpg;*.mkv;*.dv;*.gxf;*.m2t;*.m2ts;*.m2v;*.m4v;*.mts;*.3gp;*.3g2;*.asx;*.ogv;*.webm;*.duk;*.dvr-ms;*.mv;*.pva;*.rm;*.rmvb;*.smv;*.ts" };
-// static 
+// static
 wxString File::sSupportedAudioExtensions{ "*.wav;*.mp3;*.flac;*.m2a;*.m4a;*.8svx;*.aa3;*.aac;*.aacp;*.ac3;*.act;*.aif;*.aiff;*.amr;*.ape;*.au;*.caf;*.dts;*.mid;*.mp1;*.mpc;*.mpp;*.mp+;*.ogg;*.oma;*.qcp;*.rso;*.tta;*.voc;*.vqf;*.wma;*.xwma" };
-//static 
+//static
 wxString File::sSupportedImageExtensions{ "*.bmp;*.gif;*.jpg;*.png;*.tga;*.tif;*.tiff" };
 
 
@@ -708,8 +708,8 @@ void File::openFile()
         }
     }
 
-    if ((!mHasVideo && !mHasAudio) || 
-        (!mNumberOfFrames) || 
+    if ((!mHasVideo && !mHasAudio) ||
+        (!mNumberOfFrames) ||
         (*mNumberOfFrames <= 0)) // <= 0: Some files have streams, but with all lengths == 0 (once happened when indexing by mistake ffprobe.exe)
     {
         LOG_WARNING << "No correct stream found " << '(' << (*this) << ')';
@@ -771,7 +771,7 @@ void File::bufferPacketsThread()
             PacketPtr p = boost::make_shared<Packet>(packet);
             mPackets.push(p);
         }
-        av_free_packet(packet);
+        av_packet_unref(packet);
     }
     if (!mReadingPackets)
     {

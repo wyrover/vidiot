@@ -81,6 +81,7 @@ public:
 
     void onRenderDone(worker::WorkDoneEvent& event);
 
+    bool hasCachedBitmap() const;
     void invalidateCachedBitmaps();
 
     void redrawNow();

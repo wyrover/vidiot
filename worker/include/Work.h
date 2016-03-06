@@ -36,7 +36,8 @@ public:
     Work& operator=(const Work&) = delete;
     virtual ~Work();
 
-    void execute(bool showProgress = true);
+    /// \return true if work was executed, false in case of abort
+    bool execute(bool showProgress = true);
 
     void stopShowingProgress();
 
