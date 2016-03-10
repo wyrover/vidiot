@@ -81,7 +81,7 @@ ImageFile::~ImageFile()
 
 pts ImageFile::getLength() const
 {
-    return Convert::timeToPts(sHour * 8); // 8 Hours...
+    return Convert::timeToPts(sHour * 128); // 128 Hours...
 }
 
 void ImageFile::moveTo(pts position)

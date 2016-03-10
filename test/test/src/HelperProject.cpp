@@ -51,6 +51,16 @@ void OpenProject(wxString path)
     WaitForIdle;
 }
 
+model::SequencePtr CreateProjectWithClosedSequence()
+{
+    model::FolderPtr root = WindowCreateProject();
+    ASSERT(root);
+    wxString sSequence("Sequence");
+    model::SequencePtr sequence{ ProjectViewAddSequence(sSequence, root) };
+    WindowTriggerMenu(ID_CLOSESEQUENCE);
+    return sequence;
+}
+
 DirAndFile SaveProjectAndClose(boost::optional<RandomTempDirPtr> tempDir, wxString filesuffix)
 {
     DirAndFile tempDir_fileName = SaveProject(tempDir,filesuffix);

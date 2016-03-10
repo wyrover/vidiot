@@ -226,6 +226,7 @@ void File::moveTo(pts position)
     stopReadingPackets();
 
     int64_t timestamp = model::Convert::ptsToMicroseconds(position);
+    int flags{ mFileContext->flags };
     if (timestamp >= mFileContext->duration)
     {
         // Can happen when changing a clip's speed.
@@ -243,17 +244,22 @@ void File::moveTo(pts position)
         {
             // Do not seek if == 0, may mess up some files. See remark at top of method.
 
+            if (mFileContext->start_time != AV_NOPTS_VALUE)
+            {
+                timestamp += mFileContext->start_time;
+            }
+
             // First, try seeking to a keyframe at the given position.
             int result = 0;
-            result = avformat_seek_file(mFileContext, -1, 0, timestamp, timestamp, 0);
+            result = avformat_seek_file(mFileContext, -1, std::numeric_limits<int64_t>::min(), timestamp, std::numeric_limits<int64_t>::max(), 0);
             if (result < 0)
             {
                 // Second, try seeking to a keyframe before the given position.
-                result = avformat_seek_file(mFileContext, -1, 0, timestamp, timestamp, AVSEEK_FLAG_BACKWARD);
+                result = avformat_seek_file(mFileContext, -1, std::numeric_limits<int64_t>::min(), timestamp, std::numeric_limits<int64_t>::max(), AVSEEK_FLAG_BACKWARD);
                 if (result < 0)
                 {
                     // Last resort, any frame will do.
-                    result = avformat_seek_file(mFileContext, -1, 0, timestamp, timestamp, AVSEEK_FLAG_BACKWARD | AVSEEK_FLAG_ANY);
+                    result = avformat_seek_file(mFileContext, -1, std::numeric_limits<int64_t>::min(), timestamp, std::numeric_limits<int64_t>::max(), AVSEEK_FLAG_BACKWARD | AVSEEK_FLAG_ANY);
                     LOG_WARNING << "Seek to " << position << " resulted in non-keyframe position and result " << result << " for file " << *this;
                     if (result < 0)
                     {

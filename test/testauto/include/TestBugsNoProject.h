@@ -17,23 +17,27 @@
 
 #pragma once
 
-namespace test {
+#include "Test.h"
 
-/// \return root node of the project
-model::FolderPtr getRoot();
+namespace test
+{
 
-void SetProjectUnmodified();
+/// This class tests scenarios that were problematic at one point.
+class TestBugsNoProject : public CxxTest::TestSuite // Must be on same line as class definition. Otherwise 'No tests defined error
+    ,   public SuiteCreator<TestBugsNoProject>
+{
+public:
 
-void OpenProject(wxString path);
+    //////////////////////////////////////////////////////////////////////////
+    // TEST CASES
+    //////////////////////////////////////////////////////////////////////////
 
-model::SequencePtr CreateProjectWithClosedSequence();
+    /// Crash occurred on Linux with a clip view with a 'too large' length.
+    /// Length caused the backing bitmap to become larger (wider) than allowed
+    /// by x-windows (result: BadAlloc).
+    void testCrashWhenOneClipIsTooLarge();
+};
 
-DirAndFile SaveProjectAndClose(boost::optional<RandomTempDirPtr> tempDir = boost::none, wxString filesuffix = "");
+}
 
-DirAndFile SaveProject(boost::optional<RandomTempDirPtr> tempDir = boost::none, wxString filesuffix = "");
-
-wxFileName generateSaveFileName(wxFileName dir);
-
-void CloseProjectAndAvoidSaveDialog();
-
-} // namespace
+using namespace test;
