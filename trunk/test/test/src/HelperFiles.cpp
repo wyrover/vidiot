@@ -21,13 +21,7 @@ namespace test {
 
 void ExecuteOnAllFiles(wxString pathToFiles, std::function<void()> action, bool wait)
 {
-    // Create project (must be done after ConfigOverrule* code)
-    model::FolderPtr root = WindowCreateProject();
-    ASSERT(root);
-    wxString sSequence( "Sequence" );
-    model::SequencePtr sequence = ProjectViewAddSequence( sSequence, root );
-
-    WindowTriggerMenu(ID_CLOSESEQUENCE);
+    model::SequencePtr sequence{ CreateProjectWithClosedSequence() };
 
     // Find input files in dir (must be done after creating a project, due to dependencies on project properties for opening/closing files)
     wxFileName TestFilesPath{ util::path::toFileName(getTestPath().GetFullPath() + wxFileName::GetPathSeparator() + pathToFiles) };

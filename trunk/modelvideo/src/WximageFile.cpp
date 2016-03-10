@@ -71,7 +71,7 @@ WximageFile::~WximageFile()
 
 pts WximageFile::getLength() const
 {
-    return Convert::timeToPts(sHour * 8); // 8 Hours...
+    return Convert::timeToPts(sHour * 128); // 128 Hours...
 }
 
 void WximageFile::moveTo(pts position)

@@ -64,7 +64,7 @@ void TestFileTypesFormat::testFileTypes_formats_new()
 {
     StartTestSuite();
     ConfigOverrule<long> overruleChannels(Config::sPathAudioDefaultNumberOfChannels, 2);
-    executeFormatTest("filetypes_special/Sisvel3DTile.ts", true, true);
+    //executeFormatTest("filetypes_special/Sisvel3DTile.ts", true, true);
 }
 
 void TestFileTypesFormat::testFileTypes_formats_audio()

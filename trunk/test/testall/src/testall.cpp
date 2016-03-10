@@ -33,7 +33,7 @@ void no_sleep_allowed() {};
 void sleep_allowed() {}
 void log(const wxString& msg) { std::cout << msg << std::endl; }
 wxString get_ext() { return "run"; }
-std::vector<wxString> get_tests() { return { "testauto", "testfiletypes", "testtransitions", "testsync", "testrendering", "testui" }; };
+std::vector<wxString> get_tests() { return { "testauto", "testfiletypes", "testtransitions", "testsync", "testrendering" }; };
 #endif
 
 wxString getTimes(long start)

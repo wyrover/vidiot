@@ -26,6 +26,8 @@ void SetProjectUnmodified();
 
 void OpenProject(wxString path);
 
+model::SequencePtr CreateProjectWithClosedSequence();
+
 DirAndFile SaveProjectAndClose(boost::optional<RandomTempDirPtr> tempDir = boost::none, wxString filesuffix = "");
 
 DirAndFile SaveProject(boost::optional<RandomTempDirPtr> tempDir = boost::none, wxString filesuffix = "");

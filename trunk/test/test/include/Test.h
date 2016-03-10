@@ -125,6 +125,8 @@
 #include "FileWatcher.h"
 #include "Window.h"
 #include "Worker.h"
+#include "WximageClip.h"
+#include "WximageFile.h"
 #include "Zoom.h"
 
 namespace test {
