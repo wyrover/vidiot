@@ -82,17 +82,12 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    bool mDecodingAudio;
-    bool mNeedsResampling;
-    SwrContext* mSoftwareResampleContext;
-    int mNrPlanes;
-
-    boost::optional<pts> mNewStartPosition;
-
-    // Do not use the method below for allocating the buffer. That will cause
-    // SEGV when compiled with GCC (MingW).
-    //int16_t audioDecodeBuffer[AVCODEC_MAX_AUDIO_FRAME_SIZE];
-    uint8_t** mAudioDecodeBuffer;
+    bool mDecodingAudio = false;
+    bool mNeedsResampling = false;
+    SwrContext* mSoftwareResampleContext = nullptr;
+    int mNrPlanes = 0;
+    boost::optional<pts> mNewStartPosition = boost::none;
+    std::vector< std::vector<uint8_t> > mAudioDecodeBuffer;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS

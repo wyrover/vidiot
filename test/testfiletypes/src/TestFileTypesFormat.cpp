@@ -52,7 +52,6 @@ void executeFormatTest(wxString filetypesDir, bool audio, bool video)
         WaitForPlaybackStopped stopped;
         Play();
         stopped.wait();
-        //pause();
     }, true);
 }
 
@@ -64,7 +63,7 @@ void TestFileTypesFormat::testFileTypes_formats_new()
 {
     StartTestSuite();
     ConfigOverrule<long> overruleChannels(Config::sPathAudioDefaultNumberOfChannels, 2);
-    //executeFormatTest("filetypes_special/Sisvel3DTile.ts", true, true);
+    //executeFormatTest("filetypes_special/sh3.ape", true, false);
 }
 
 void TestFileTypesFormat::testFileTypes_formats_audio()
