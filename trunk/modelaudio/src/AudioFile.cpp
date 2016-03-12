@@ -30,7 +30,7 @@ namespace model
 static const int sMicroSecondsPerSeconds = 1000 * 1000;
 static const int sMaxBufferSize = 100;
 
-static const int sAudioBufferSizeInBytes = 192000;
+static const int sAudioBufferSizeInBytes = 8192; // Note: always multiple of 32 (align to 32 bytes)
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
@@ -38,36 +38,18 @@ static const int sAudioBufferSizeInBytes = 192000;
 
 AudioFile::AudioFile()
     : File()
-    , mSoftwareResampleContext(0)
-    , mDecodingAudio(false)
-    , mNeedsResampling(false)
-    , mAudioDecodeBuffer(0)
-    , mNrPlanes(0)
-    , mNewStartPosition(boost::none)
 {
     VAR_DEBUG(*this);
 }
 
 AudioFile::AudioFile(const wxFileName& path)
     : File(path, sMaxBufferSize)
-    , mSoftwareResampleContext(0)
-    , mDecodingAudio(false)
-    , mNeedsResampling(false)
-    , mAudioDecodeBuffer(0)
-    , mNrPlanes(0)
-    , mNewStartPosition(boost::none)
 {
     VAR_DEBUG(*this);
 }
 
 AudioFile::AudioFile(const AudioFile& other)
     : File(other)
-    , mSoftwareResampleContext(0)
-    , mDecodingAudio(false)
-    , mNeedsResampling(false)
-    , mAudioDecodeBuffer(0)
-    , mNrPlanes(0)
-    , mNewStartPosition(boost::none)
 {
     VAR_DEBUG(*this);
 }
@@ -104,7 +86,7 @@ void AudioFile::moveTo(pts position)
     //
     // See also AVCodecContext->delay (here, it is assumed that 1 pts value is
     // always greater than the delay value). This has the advantage that the
-    // codec need not be opened (getCoded() != 0) for the move operation.
+    // codec need not be opened (getCodec() != 0) for the move operation.
     File::moveTo(std::max<pts>(position - 1,0));
 }
 
@@ -114,15 +96,7 @@ void AudioFile::clean()
 
     stopDecodingAudio();
 
-    if (mAudioDecodeBuffer)
-    {
-        for (int i = 0; i < mNrPlanes; ++i)
-        {
-            delete[] mAudioDecodeBuffer[i];
-        }
-        delete[] mAudioDecodeBuffer;
-    }
-    mAudioDecodeBuffer = 0;
+    mAudioDecodeBuffer.clear();
 
     File::clean();
 }
@@ -216,7 +190,20 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
         // - Contains ALL channel data
         // - Contains 32 bit alignment for all used data fields (one for packet, multiple for planar)
         av_samples_get_buffer_size(&decodedLineSize, codec->channels, frame->nb_samples, codec->sample_fmt, 1);
-        ASSERT_LESS_THAN_EQUALS(decodedLineSize, sAudioBufferSizeInBytes);
+
+        size_t requiredBufferSize{ static_cast<size_t>(offset + decodedLineSize) };
+        if (requiredBufferSize > mAudioDecodeBuffer[0].size())
+        {
+            // Some file formats packets (.ape) contain multiple sizes.
+            // First seen packet may not be the biggest...
+            int size{ offset + decodedLineSize };
+            int newAudioBufferSizeInBytes{ (size + 32 - 1) - (size + 32 - 1) % 32 }; // Align to 32 bytes
+            for (int i = 0; i < mNrPlanes; ++i)
+            {
+                mAudioDecodeBuffer[i].resize(newAudioBufferSizeInBytes);
+            }
+        }
+        ASSERT_LESS_THAN_EQUALS(requiredBufferSize, mAudioDecodeBuffer[0].size())(offset)(decodedLineSize)(*this);
         for (int i = 0; i < mNrPlanes; ++i)
         {
             if (frame->extended_data[i] != 0)
@@ -226,11 +213,11 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
                 //          This file contains (according to the meta data from the AVCodecContext)
                 //          6 audio planes. However, for some packets in the audio stream there are 
                 //          only two contained planes.
-                memcpy(mAudioDecodeBuffer[i] + offset, frame->extended_data[i], decodedLineSize);
+                memcpy(&(mAudioDecodeBuffer[i][offset]), frame->extended_data[i], decodedLineSize);
             }
             else
             {
-                memset(mAudioDecodeBuffer[i] + offset, 0, decodedLineSize);
+                memset(&(mAudioDecodeBuffer[i][offset]), 0, decodedLineSize);
             }
         }
         return decodedLineSize;
@@ -352,7 +339,7 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
     {
         // Use the plain decoded data without resampling.
         ASSERT_EQUALS(mNrPlanes,1); // Resulting data is never planar, in case of planar data resampling should be done
-        audioChunk = boost::make_shared<AudioChunk>(parameters.getNrChannels(), nDecodedSamplesPerChannel * parameters.getNrChannels(), true, false, (sample*)mAudioDecodeBuffer[0]);
+        audioChunk = boost::make_shared<AudioChunk>(parameters.getNrChannels(), nDecodedSamplesPerChannel * parameters.getNrChannels(), true, false, reinterpret_cast<sample*>(&(mAudioDecodeBuffer[0][0])));
     }
     else
     {
@@ -363,16 +350,22 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
         };
 
         int nExpectedOutputSamplesPerChannel = convertInputSampleCountToOutputSampleCount(nDecodedSamplesPerChannel);
-
+        nExpectedOutputSamplesPerChannel = std::max(nExpectedOutputSamplesPerChannel, swr_get_out_samples(mSoftwareResampleContext, nDecodedSamplesPerChannel));
         int bufferSize = av_samples_get_buffer_size(0, parameters.getNrChannels(), nExpectedOutputSamplesPerChannel, AV_SAMPLE_FMT_S16, 1);
-
+        int nExpectedOutputFrames = swr_get_out_samples(mSoftwareResampleContext, nDecodedSamplesPerChannel);
         // The audioChunk is pre-allocated to avoid one extra memcpy (from resampled data into the chunk).
         audioChunk = boost::make_shared<AudioChunk>(parameters.getNrChannels(), bufferSize, true, false);
 
         uint8_t *out[1]; // Output data always packed into one plane
         out[0] = reinterpret_cast<uint8_t*>(audioChunk->getBuffer());
-        int nOutputFrames = swr_convert(mSoftwareResampleContext, &out[0], bufferSize, const_cast<const uint8_t**>(mAudioDecodeBuffer), nDecodedSamplesPerChannel);
+        uint8_t **in{ new uint8_t*[mNrPlanes] };
+        for (int i{ 0 }; i < mNrPlanes; ++i)
+        {
+            in[i] = reinterpret_cast<uint8_t*>(&(mAudioDecodeBuffer[i][0]));
+        }
+        int nOutputFrames = swr_convert(mSoftwareResampleContext, &out[0], bufferSize, const_cast<const uint8_t**>(&in[0]), nDecodedSamplesPerChannel);
         ASSERT_MORE_THAN_EQUALS_ZERO(nOutputFrames);
+        delete[] in;
         int nOutputSamples = nOutputFrames * parameters.getNrChannels();
 
         // To check that the buffer was large enough to hold everything produced by swr_convert in one pass.
@@ -494,6 +487,8 @@ void AudioFile::startDecodingAudio(const AudioCompositionParameters& parameters)
 
     startReadingPackets(); // Also causes the file to be opened resulting in initialized avcodec members for File.
 
+    VAR_ERROR(getPath().GetFullName());
+
     if (!canBeOpened()) { return; } // File could not be opened (deleted?)
 
     mDecodingAudio = true;
@@ -502,16 +497,7 @@ void AudioFile::startDecodingAudio(const AudioCompositionParameters& parameters)
 
     mNrPlanes = av_sample_fmt_is_planar(codec->sample_fmt) ? codec->channels : 1;
 
-    // Allocated upon first use. See also the remark in the header file
-    // on GCC in combination with make_shared.
-    if (!mAudioDecodeBuffer)
-    {
-        mAudioDecodeBuffer = new uint8_t*[mNrPlanes];
-        for (int i = 0; i < mNrPlanes; ++i)
-        {
-            mAudioDecodeBuffer[i] = new uint8_t[sAudioBufferSizeInBytes];
-        }
-    }
+    mAudioDecodeBuffer = std::vector< std::vector<uint8_t> >(mNrPlanes, std::vector<uint8_t>(sAudioBufferSizeInBytes));
 
     AVCodec* audioCodec = avcodec_find_decoder(codec->codec_id);
     ASSERT_NONZERO(audioCodec);
@@ -549,6 +535,8 @@ void AudioFile::stopDecodingAudio()
         }
 
         avcodec_close(getCodec());
+
+        mAudioDecodeBuffer.clear();
     }
     mDecodingAudio = false;
 }
@@ -578,7 +566,11 @@ bool AudioFile::useStream(const AVMediaType& type) const
 
 std::ostream& operator<<(std::ostream& os, const AudioFile& obj)
 {
-    os << static_cast<const File&>(obj) << '|' << obj.mDecodingAudio;
+    os << static_cast<const File&>(obj) << '|'
+        << obj.mDecodingAudio << '|'
+        << obj.mNeedsResampling << '|'
+        << obj.mSoftwareResampleContext << '|'
+        << obj.mNrPlanes;
     return os;
 }
 
