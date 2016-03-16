@@ -24,6 +24,7 @@
 #include "FileMetaDataCache.h"
 #include "FilePacket.h"
 #include "Project.h"
+#include "StatusBar.h"
 #include "UtilInitAvcodec.h"
 #include "UtilPath.h"
 #include "UtilSerializeBoost.h"
@@ -51,6 +52,18 @@ wxString File::sSupportedAudioExtensions{ "*.wav;*.mp3;*.flac;*.m2a;*.m4a;*.8svx
 //static
 wxString File::sSupportedImageExtensions{ "*.bmp;*.gif;*.jpg;*.png;*.tga;*.tif;*.tiff" };
 
+pts getFrameCount(AVStream* stream, int64_t duration)
+{
+    ASSERT_DIFFERS(duration, AV_NOPTS_VALUE);
+    if (duration == 1)
+    {
+        // Stil image: disregard the timebase, since rounding errors
+        // (timebase of file different than project time base)
+        // may result in the outcome '0'.
+        return 1;
+    }
+    return Convert::rationaltimeToPts(rational64(sSecond, 1) * rational64(duration, 1) * rational64(stream->time_base.num, stream->time_base.den));
+};
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
@@ -227,7 +240,8 @@ void File::moveTo(pts position)
 
     int64_t timestamp = model::Convert::ptsToMicroseconds(position);
     int flags{ mFileContext->flags };
-    if (timestamp >= mFileContext->duration)
+    if ((mFileContext->duration != AV_NOPTS_VALUE && timestamp >= mFileContext->duration) ||
+        (position > mNumberOfFrames))
     {
         // Can happen when changing a clip's speed.
         // The preview of the clip is positioned 'in the center' of the clip.
@@ -271,6 +285,13 @@ void File::moveTo(pts position)
             if (mFileOpenedOk)
             {
                 ASSERT_MORE_THAN_EQUALS_ZERO(result)(avcodecErrorString(result))(*this);
+            }
+            else
+            {
+                // Error. Do not try again, but trigger reopening the file to start at the beginning.
+                VAR_ERROR(mFileOpenedOk);
+                stopReadingPackets();
+                closeFile();
             }
         }
     }
@@ -341,32 +362,50 @@ bool File::hasAudio()
     return mHasAudio;
 }
 
+std::map<const wxString, FileType> makeMap()
+{
+    std::map<const wxString, FileType> result;
+    std::string part;
+
+    wxStringTokenizer tokenizerAudio(File::sSupportedAudioExtensions, ';');
+    while (tokenizerAudio.HasMoreTokens())
+    {
+        wxString extension{ tokenizerAudio.GetNextToken() };
+        extension.erase(0, 2);
+        result[extension] = FileType_Audio;
+    }
+
+    wxStringTokenizer tokenizerImage(File::sSupportedImageExtensions, ';');
+    while (tokenizerImage.HasMoreTokens())
+    {
+        wxString extension{ tokenizerImage.GetNextToken() };
+        extension.erase(0, 2);
+        result[extension] = FileType_Image;
+    }
+
+    wxStringTokenizer tokenizerVideo(File::sSupportedVideoExtensions, ';');
+    while (tokenizerVideo.HasMoreTokens())
+    {
+        wxString extension{ tokenizerVideo.GetNextToken() };
+        extension.erase(0, 2);
+        result[extension] = FileType_Video;
+    }
+
+    result["png"] = FileType_Title;
+    result["tiff"] = FileType_Title;
+    result["tif"] = FileType_Title;
+    return result;
+}
+
 FileType File::getType() const
 {
-    static std::map<const wxString, FileType> sMap = {
-        {"png", FileType_Title},
-        {"tiff", FileType_Title},
-        {"tif", FileType_Title},
-        {"aif", FileType_Audio},
-        {"aiff", FileType_Audio},
-        {"wav", FileType_Audio},
-        {"mp3", FileType_Audio},
-        {"au", FileType_Audio},
-        {"flac", FileType_Audio},
-        {"m4a", FileType_Audio},
-        {"ogg", FileType_Audio},
-        {"wma", FileType_Audio},
-        {"gif", FileType_Image},
-        {"jpg", FileType_Image},
-        {"jpeg", FileType_Image},
-        {"bmp", FileType_Image},
-    };
+    static std::map<const wxString, FileType> sMap{ makeMap() };
     auto it = sMap.find(mPath.GetExt());
     if (it != sMap.end())
     {
         return it->second;
     }
-    return FileType_Video;
+    return FileType_Video; // todo add filetype unknown + warning here?
 }
 
 
@@ -577,16 +616,16 @@ void File::openFile()
         }
     }
 
-    auto getStreamLength = [this](AVStream* stream) -> pts
+    auto setNumberOfFrames = [this](pts nFrames)
     {
-        if (stream->duration == 1)
+        if ((nFrames != AV_NOPTS_VALUE) && 
+            (nFrames != 0) &&
+            (!mNumberOfFrames || *mNumberOfFrames < nFrames))
         {
-            // Stil image: disregard the timebase, since rounding errors
-            // (timebase of file different than project time base)
-            // may result in the outcome '0'.
-            return 1;
+            mNumberOfFrames.reset(nFrames);
+            ASSERT(mNumberOfFrames);
+            ASSERT_MORE_THAN_EQUALS_ZERO(*mNumberOfFrames);
         }
-        return Convert::rationaltimeToPts(rational64(sSecond,1) * rational64(stream->duration,1) * rational64(stream->time_base.num,stream->time_base.den));
     };
 
     auto isAudioSupported = [this,path](AVStream* stream) -> bool
@@ -656,50 +695,26 @@ void File::openFile()
         {
             mHasVideo = true;
 
-            if ( (stream->duration != AV_NOPTS_VALUE) && (stream->duration != 0))
+            if (stream->duration != AV_NOPTS_VALUE)
             {
-                mNumberOfFrames.reset(getStreamLength(stream));
-                ASSERT(mNumberOfFrames);
-                ASSERT_MORE_THAN_EQUALS_ZERO(*mNumberOfFrames);
+                setNumberOfFrames(getFrameCount(stream, stream->duration));
             }
-            else
+            if (stream->nb_frames != AV_NOPTS_VALUE)
             {
-                if ( (stream->nb_frames != AV_NOPTS_VALUE) && (stream->nb_frames != 0))
-                {
-                    mNumberOfFrames.reset(stream->nb_frames);
-                    ASSERT(mNumberOfFrames);
-                    ASSERT_MORE_THAN_EQUALS_ZERO(*mNumberOfFrames);
-                }
-                else
-                {
-                    // todo suppport test/filetypes_video/
-                    // - videoonly_encoded.m4v
-                    // - micro2.gif
-                    // - big-buck-bunny_trailer.webm
-                    // - elephants-dream.webm
-                    // These are files for which the length seems to be unknown until fully played
-                    //if (stream->codec_info_nb_frames > 0)
-                    //{
-                    //    mNumberOfFrames = stream->codec_info_nb_frames;
-                    //}
-                    //else
-                    //{
-                        mNumberOfFrames.reset(0);
-                    //}
-                    VAR_DEBUG(stream);
-                }
-            }
+                setNumberOfFrames(stream->nb_frames);
+        }
+
+                // todo BBC News_BBC TWO_2010_06_30_01_23_00.wtv has multiple audio streams
+                // add a (optional) setting to 'details' for selecting the audio (and video) stream in case of multiple streams.
         }
         else if (isAudioSupported(stream))
         {
             mHasAudio = true;
-
-            if (!mNumberOfFrames)
+            // For files without video, determine the number of 'virtual video frames'.
+            if (stream->duration != AV_NOPTS_VALUE)
             {
-                // For files without video, determine the number of 'virtual video frames'.
-                mNumberOfFrames.reset(getStreamLength(stream));
-                ASSERT(mNumberOfFrames);
-                ASSERT_MORE_THAN_EQUALS_ZERO(*mNumberOfFrames);
+                // todo add the if AV_NOPTS_VALUE to setNumberofframes?
+                setNumberOfFrames(getFrameCount(stream, stream->duration));
             }
         }
         else
@@ -711,6 +726,43 @@ void File::openFile()
         if ((mStreamIndex == STREAMINDEX_UNDEFINED) && useStream(stream->codec->codec_type))
         {
             mStreamIndex = i;
+        }
+    }
+
+    if (!mNumberOfFrames && 
+        mFileContext->nb_streams > 0)
+    {
+        VAR_WARNING(*this);
+        gui::StatusBar::get().pushInfoText(wxString::Format(_("Scanning %s to determine media length."), mPath.GetFullName()));
+        AVPacket pkt1 = { 0 };
+        AVPacket* packet = &pkt1;
+        std::vector<pts> streamPts(mFileContext->nb_streams, 0); // Note: no {, since that'll cause the wrong size
+        std::vector<pts> streamPackets(mFileContext->nb_streams, 0);
+        while (av_read_frame(mFileContext, packet) >= 0)
+        {
+            if (packet->pts != AV_NOPTS_VALUE) { streamPts[packet->stream_index] = std::max(streamPts[packet->stream_index], packet->pts); }
+            if (isVideoSupported(mFileContext->streams[packet->stream_index])) { streamPackets[packet->stream_index]++; }
+            av_packet_unref(packet);
+        }
+        // Reset position to beginning again. Otherwise, first playback (without 'moveTo' first) will cause errors.
+        avformat_seek_file(mFileContext, -1, std::numeric_limits<int64_t>::min(), 0, std::numeric_limits<int64_t>::max(), 0);
+
+        // todo store this info in the cache?
+        if (std::any_of(streamPts.begin(), streamPts.end(), [](pts value) { return value > 0; }))
+        {
+            // Try to extract length data by looking at the pts values in the packets.
+            std::vector<pts>::iterator it{ std::max_element(streamPts.begin(), streamPts.end()) };
+            int index{ std::distance(streamPts.begin(), it) };
+            pts nFrames{ getFrameCount(mFileContext->streams[index], *it) };
+            setNumberOfFrames(nFrames);
+            VAR_WARNING(*this)(nFrames);
+        }
+        else
+        {
+            // Fallback: use number of packets. May be too much, but then the user can still cut off the end of the clip.
+            pts nFrames{ *std::max_element(streamPackets.begin(), streamPackets.end()) };
+            setNumberOfFrames(nFrames);
+            VAR_WARNING(*this)(nFrames);
         }
     }
 
@@ -772,7 +824,7 @@ void File::bufferPacketsThread()
         }
         ASSERT_MORE_THAN_EQUALS_ZERO(packet->size);
 
-        if(packet->stream_index == mStreamIndex)
+        if (packet->stream_index == mStreamIndex)
         {
             PacketPtr p = boost::make_shared<Packet>(packet);
             mPackets.push(p);
