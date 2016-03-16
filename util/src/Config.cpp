@@ -209,7 +209,7 @@ void Config::init(bool inCxxTestMode)
     setDefault(sPathVideoDefaultScaling, model::VideoScaling_toString(model::VideoScalingFitToFill));
     setDefault(sPathVideoDefaultWidth, 1280);
     setDefault(sPathProjectLastOpened, "");
-    setDefault(sPathDebugLogLevel, LogLevel_toString(LogInfo));
+    setDefault(sPathDebugLogLevel, inCxxTestMode ? LogLevel_toString(LogWarning) : LogLevel_toString(LogInfo));
     setDefault(sPathProjectDefaultNewProjectType, model::DefaultNewProjectWizardStart_toString(model::DefaultNewProjectWizardStartFolder));
     setDefault(sPathDebugLogLevelAvcodec, LogLevelAvcodec_toString(LogLevelAvcodecError));
     setDefault(sPathMakeSequenceEmptyClipLength, 0);

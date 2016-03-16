@@ -42,6 +42,7 @@ void executeFormatTest(wxString filetypesDir, bool audio, bool video)
         {
             ASSERT_VIDEOTRACK0(VideoClip);
         }
+        // todo encode parameters of the file in the file name (length in #frames,  for example) such that these can be checked.
         model::IClipPtr clip{ VideoClip(0,0) };
         Play(LeftPixel(clip), 1000);
         TimelinePositionCursor(HCenter(clip));
@@ -63,7 +64,7 @@ void TestFileTypesFormat::testFileTypes_formats_new()
 {
     StartTestSuite();
     ConfigOverrule<long> overruleChannels(Config::sPathAudioDefaultNumberOfChannels, 2);
-    //executeFormatTest("filetypes_special/sh3.ape", true, false);
+    //executeFormatTest("filetypes_video/micro2.gif", false, true);
 }
 
 void TestFileTypesFormat::testFileTypes_formats_audio()
