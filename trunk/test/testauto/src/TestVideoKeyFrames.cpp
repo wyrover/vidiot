@@ -561,7 +561,6 @@ void TestVideoKeyFrames::testChangeClipSpeed()
     Unlink(VideoClip(0, 4));
     TimelineDeleteClip(AudioClip(0, 4));
     TimelinePositionCursor(HCenter(VideoClip(0, 4)));
-    TimelineTrimRight(VideoClip(0, 4), -1); // Ensure that the clip has a length of 239 frames such that the 'position at center' is 'on' a key frame
     TimelineSelectClips({ VideoClip(0,4) });
     ButtonTriggerPressed(DetailsClipView()->getVideoKeyFramesAddButton());
     SetValue(DetailsClipView()->getRotationSlider(), 9000); // 90 degrees
@@ -570,7 +569,6 @@ void TestVideoKeyFrames::testChangeClipSpeed()
         (cmd::ProjectViewCreateSequence)
         (gui::timeline::cmd::UnlinkClips)
         (gui::timeline::cmd::DeleteSelectedClips)
-        (gui::timeline::cmd::TrimClip)
         (gui::timeline::cmd::EditClipDetails) // Add key frame
         (gui::timeline::cmd::EditClipDetails); // Rotate
     {

@@ -157,14 +157,14 @@ void TestTransition::testDragAndDropOfOtherClips()
         // cuts the snapping is done.
         pts lengthOfDraggedClip = VideoClip(0,6)->getLength();
         StartTest("Snap almost to right edge of 00.avi");
-        TimelineDrag(From(Center(VideoClip(0,6))).HoldShiftWhileDragging().AlignLeft(RightPixel(VideoClip(0,0))+27));
+        TimelineDrag(From(Center(VideoClip(0,6))).HoldShiftWhileDragging().AlignLeft(RightPixel(VideoClip(0,0))+26));
         ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(VideoClip)(Transition)(VideoClip);
         ASSERT_EQUALS(VideoClip(0,0)->getLength(),preparation.lengthOfFirstClip);
         ASSERT_EQUALS(VideoClip(0,2)->getLength(),lengthOfDraggedClip);
         ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
         Undo();
         StartTest("Snap to right edge of 00.avi");
-        TimelineDrag(From(Center(VideoClip(0,6))).HoldShiftWhileDragging().AlignLeft(RightPixel(VideoClip(0,0))+26)); // Mouse must be moved a bit further to snap to the left edge
+        TimelineDrag(From(Center(VideoClip(0,6))).HoldShiftWhileDragging().AlignLeft(RightPixel(VideoClip(0,0))+25)); // Mouse must be moved a bit further to snap to the left edge
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(Transition)(VideoClip);
         ASSERT_EQUALS(VideoClip(0,0)->getLength(),preparation.lengthOfFirstClip);
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),lengthOfDraggedClip);

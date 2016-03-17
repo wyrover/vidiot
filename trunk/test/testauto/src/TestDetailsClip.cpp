@@ -705,7 +705,7 @@ void TestDetailsClip::testClipUpdatedAfterDragAndDrop()
     TimelineDragToTrack(1, VideoClip(0, 3), AudioClip(0, 3));
     TimelineDeleteClips({ VideoClip(0, 0), VideoClip(0, 2), VideoClip(0, 4), VideoClip(0, 5), VideoClip(0,6) });
     TimelineSelectClips({ VideoClip(1,1) });
-    for (int index : { 0, 1, 2, 3, 4, 5, 6, 7, 8 })
+    for (int index : { 0, 1, 2, 3, 4, 5, 6, 7 })
     {
         wxToggleButton* button = DetailsClipView()->getLengthButtons()[index];
         ASSERT(button->IsEnabled());
@@ -718,8 +718,11 @@ void TestDetailsClip::testClipUpdatedAfterDragAndDrop()
         wxToggleButton* button = DetailsClipView()->getLengthButtons()[index];
         ASSERT(!button->IsEnabled());
     }
-    // The 10s button is enabled because the clip already is 10s long, and because 10s is longer than the clip in the other track (~7s)
-    ASSERT(DetailsClipView()->getLengthButtons()[8]->IsEnabled());
+    // The 10s button is not enabled. The clip already is ~10s long.
+    // However, due to rounding in the number of frames conversion
+    // (from file frame rate to project frame rate) it becomes one frame
+    // shorter.
+    ASSERT(!DetailsClipView()->getLengthButtons()[8]->IsEnabled());
 
 }
 
