@@ -24,6 +24,7 @@
 #include "FileMetaDataCache.h"
 #include "FilePacket.h"
 #include "Project.h"
+#include "Properties.h"
 #include "StatusBar.h"
 #include "UtilInitAvcodec.h"
 #include "UtilPath.h"
@@ -701,11 +702,12 @@ void File::openFile()
             }
             if (stream->nb_frames != AV_NOPTS_VALUE)
             {
-                setNumberOfFrames(stream->nb_frames);
-        }
-
-                // todo BBC News_BBC TWO_2010_06_30_01_23_00.wtv has multiple audio streams
-                // add a (optional) setting to 'details' for selecting the audio (and video) stream in case of multiple streams.
+                // Convert to the Project frame rate.
+                AVRational rate{ av_stream_get_r_frame_rate(stream) };
+                setNumberOfFrames(Convert::timeToPts(Convert::ptsToTime(stream->nb_frames, FrameRate{ rate.num, rate.den })));
+            }
+            // todo BBC News_BBC TWO_2010_06_30_01_23_00.wtv has multiple audio streams
+            // add a (optional) setting to 'details' for selecting the audio (and video) stream in case of multiple streams.
         }
         else if (isAudioSupported(stream))
         {
@@ -713,7 +715,6 @@ void File::openFile()
             // For files without video, determine the number of 'virtual video frames'.
             if (stream->duration != AV_NOPTS_VALUE)
             {
-                // todo add the if AV_NOPTS_VALUE to setNumberofframes?
                 setNumberOfFrames(getFrameCount(stream, stream->duration));
             }
         }

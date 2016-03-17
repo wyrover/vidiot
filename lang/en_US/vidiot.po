@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-03-12 13:13+0100\n"
+"POT-Creation-Date: 2016-03-16 10:00+0100\n"
 "PO-Revision-Date: 2015-11-01 11:44+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -742,14 +742,19 @@ msgstr ""
 msgid "Audio crossfade"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\modelfile\src\File.cpp:162
+#: C:\Vidiot\vidiot_trunk\modelfile\src\File.cpp:175
 msgid "File removed"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\modelfile\src\File.cpp:162
+#: C:\Vidiot\vidiot_trunk\modelfile\src\File.cpp:175
 #, c-format
 msgid ""
 "The file %s has been removed from disk. File is removed from project also."
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\modelfile\src\File.cpp:736
+#, c-format
+msgid "Scanning %s to determine media length."
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\modelfile\src\FileAnalyzer.cpp:79

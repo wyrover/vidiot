@@ -379,7 +379,7 @@ wxSize VideoFile::getSize()
 
 FrameRate VideoFile::getFrameRate()
 {
-    AVRational frameRate = getStream()->r_frame_rate;
+    AVRational frameRate{ av_stream_get_r_frame_rate(getStream()) };
     return FrameRate(frameRate.num, frameRate.den);
 }
 
@@ -435,8 +435,8 @@ void VideoFile::startDecodingVideo(const VideoCompositionParameters& parameters)
     int result = avcodec_open2(avctx, videoCodec, 0);
     ASSERT_MORE_THAN_EQUALS_ZERO(result)(avcodecErrorString(result));
 
-    AVRational frameRate = getStream()->r_frame_rate;
-    FrameRate videoFrameRate = FrameRate(frameRate.num, frameRate.den);
+    AVRational frameRate{ av_stream_get_r_frame_rate(getStream()) };
+    FrameRate videoFrameRate{ frameRate.num, frameRate.den };
     if (videoFrameRate != Properties::get().getFrameRate())
     {
         LOG_DEBUG << "Frame rate conversion required from " << videoFrameRate << " to " << Properties::get().getFrameRate();
