@@ -51,4 +51,10 @@ void Unlink(model::IClipPtr clip);
 void AssertClipSpeed(model::IClipPtr clip, rational64 speed);
 #define ASSERT_CLIP_SPEED(clip, speed) AssertClipSpeed(clip, speed)
 
+void AssertAudioChunk(model::AudioChunkPtr chunk, std::vector<sample> reference, size_t offset = 0);
+#define ASSERT_AUDIO_CHUNK AssertAudioChunk
+
+void AssertVideoFrame(model::VideoFramePtr frame, std::vector<int> referenceRed, std::vector<int> referenceGreen, std::vector<int> referenceBlue, wxSize offset = wxSize{ 200,200 });
+#define ASSERT_VIDEO_FRAME AssertVideoFrame
+
 } // namespace

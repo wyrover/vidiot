@@ -79,4 +79,40 @@ void AssertClipSpeed(model::IClipPtr clip, rational64 speed)
     ASSERT_EQUALS(interval->getSpeed(), speed);
 }
 
+void AssertAudioChunk(model::AudioChunkPtr chunk, std::vector<sample> reference, size_t offset)
+{
+    ASSERT_NONZERO(chunk);
+    ASSERT_LESS_THAN(offset, chunk->getUnreadSampleCount());
+    ASSERT_MORE_THAN_ZERO(reference.size());
+    std::vector<sample> current;
+    sample* s{ chunk->getUnreadSamples() };
+    s += offset;
+    for (size_t i{ 0 }; i < reference.size(); ++i)
+    {
+        current.push_back(*s++);
+    }
+    ASSERT_EQUALS(current, reference);
+}
+
+void AssertVideoFrame(model::VideoFramePtr frame, std::vector<int> referenceRed, std::vector<int> referenceGreen, std::vector<int> referenceBlue, wxSize offset)
+{
+    ASSERT_NONZERO(frame);
+    ASSERT_MORE_THAN_ZERO(referenceRed.size());
+    ASSERT_EQUALS(referenceRed.size(), referenceGreen.size());
+    ASSERT_EQUALS(referenceRed.size(), referenceBlue.size());
+    wxImagePtr image{ frame->getImage() };
+    std::vector<int> currentRed;
+    std::vector<int> currentGreen;
+    std::vector<int> currentBlue;
+    for (int x{ offset.x }; x < offset.x + static_cast<int>(referenceRed.size()); ++x)
+    {
+        currentRed.push_back(image->GetRed(x, offset.y));
+        currentGreen.push_back(image->GetGreen(x, offset.y));
+        currentBlue.push_back(image->GetBlue(x, offset.y));
+    }
+    ASSERT_EQUALS(currentRed, referenceRed)(currentGreen)(currentBlue);
+    ASSERT_EQUALS(currentGreen, referenceGreen)(currentRed)(currentBlue);
+    ASSERT_EQUALS(currentBlue, referenceBlue)(currentRed)(currentGreen);
+}
+
 } // namespace
