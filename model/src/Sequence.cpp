@@ -417,9 +417,11 @@ render::RenderPtr Sequence::getRender()
     if (!mRender)
     {
         mRender = Properties::get().getDefaultRender();
-        wxFileName name = mRender->getFileName();
-        if (!!name.GetPath().IsSameAs(""))
+        wxFileName name{ mRender->getFileName() };
+        wxString path{ name.GetPath() };
+        if (name.GetPath().IsSameAs("") || name.GetPath().IsSameAs("\\") || name.GetPath().IsSameAs("/"))
         {
+            name.Clear();
             name.AssignHomeDir();
         }
         name.SetName(getName());
