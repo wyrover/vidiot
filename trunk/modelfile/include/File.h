@@ -134,6 +134,8 @@ protected:
     /// File is opened if it was not yet opened
     AVStream* getStream();
 
+    int64_t getStreamStartPosition();
+
     //////////////////////////////////////////////////////////////////////////
     // PACKETS INTERFACE TO SUBCLASSES
     //////////////////////////////////////////////////////////////////////////
@@ -183,6 +185,7 @@ private:
 
     // Buffering
     int mMaxBufferSize = 0;
+    int64_t mMaximumStartPts = 0; ///< Holds the maximum of the start positions of any stream. Any packet that is before this, is discarded, to ensure audio-video sync.
     FifoPacket mPackets; ///< Holds retrieved packets until extracted with getNextPacket()
     int mTwoInARow = 0;
     std::unique_ptr<boost::thread> mBufferPacketsThreadPtr = nullptr;

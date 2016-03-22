@@ -543,10 +543,15 @@ void AudioFile::stopDecodingAudio()
 
 samplecount AudioFile::getFirstSample(int64_t pts)
 {
+    AVStream* stream{ getStream() };
+    ASSERT_NONZERO(stream);
+    // Use the real start position of the used audio data. This ensures audio-video sync
+    // in case the audio and video have different start positions.
+    pts -= getStreamStartPosition();
     samplecount result =
         floor(
         rational64(pts) *
-        rational64(getStream()->time_base.num, getStream()->time_base.den) *
+        rational64(stream->time_base.num, stream->time_base.den) *
         rational64(getCodec()->sample_rate));
     return result;
 }
