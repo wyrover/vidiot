@@ -21,9 +21,18 @@ template <class T>
 std::ostream& operator<<(std::ostream& os, const std::vector<T>& obj)
 {
     os << "{";
+    bool comma{ false };
     for ( T child : obj )
     {
-        os << child << " ";
+        if (comma)
+        {
+            os << ',';
+        }
+        else
+        {
+            comma = true;
+        }
+        os << child;
     }
     os << "}";
     return os;
