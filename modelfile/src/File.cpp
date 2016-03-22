@@ -47,9 +47,9 @@ const int File::STREAMINDEX_UNDEFINED = -1;
 const int File::LENGTH_UNDEFINED = std::numeric_limits<int>::max();
 
 // static
-wxString File::sSupportedVideoExtensions{ "*.asf;*.avi;*.ogm;*.mov;*.mp4;*.mpeg;*.mpg;*.mkv;*.dv;*.gxf;*.m2t;*.m2ts;*.m2v;*.m4v;*.mts;*.3gp;*.3g2;*.asx;*.ogv;*.webm;*.duk;*.dvr-ms;*.mv;*.pva;*.rm;*.rmvb;*.smv;*.ts" };
+wxString File::sSupportedVideoExtensions{ "*.asf;*.avi;*.ogm;*.mov;*.mp4;*.mpeg;*.mpg;*.mkv;*.dv;*.gxf;*.m2t;*.m2ts;*.m2v;*.m4v;*.mts;*.3gp;*.3g2;*.asx;*.flv;*.f4v;*.ogv;*.webm;*.duk;*.dvr-ms;*.mv;*.pva;*.rm;*.rmvb;*.smv;*.ts;*.vob;*.wmv" };
 // static
-wxString File::sSupportedAudioExtensions{ "*.wav;*.mp3;*.flac;*.m2a;*.m4a;*.8svx;*.aa3;*.aac;*.aacp;*.ac3;*.act;*.aif;*.aiff;*.amr;*.ape;*.au;*.caf;*.dts;*.mid;*.mp1;*.mpc;*.mpp;*.mp+;*.ogg;*.oma;*.qcp;*.rso;*.tta;*.voc;*.vqf;*.wma;*.xwma" };
+wxString File::sSupportedAudioExtensions{ "*.wav;*.mp3;*.flac;*.m2a;*.m4a;*.8svx;*.aa3;*.aac;*.aacp;*.ac3;*.act;*.aif;*.aiff;*.amr;*.ape;*.au;*.caf;*.dts;*.mid;*.mka;*.mp1;*.mpc;*.mpp;*.mp+;*.ogg;*.oma;*.qcp;*.rso;*.tta;*.voc;*.vqf;*.wma;*.xwma" };
 //static
 wxString File::sSupportedImageExtensions{ "*.bmp;*.gif;*.jpg;*.png;*.tga;*.tif;*.tiff" };
 
@@ -108,6 +108,7 @@ File::File(const File& other)
     , mNumberOfFrames{ other.mNumberOfFrames }
     , mHasVideo{ other.mHasVideo }
     , mHasAudio{ other.mHasAudio }
+    , mMaximumStartPts{ other.mMaximumStartPts }
     // Status of opening
     , mMetaDataKnown{ other.mMetaDataKnown }
     , mFileOpenedOk{ other.mFileOpenedOk }
@@ -242,7 +243,7 @@ void File::moveTo(pts position)
     int64_t timestamp = model::Convert::ptsToMicroseconds(position);
     int flags{ mFileContext->flags };
     if ((mFileContext->duration != AV_NOPTS_VALUE && timestamp >= mFileContext->duration) ||
-        (position > mNumberOfFrames))
+        (position >= mNumberOfFrames))
     {
         // Can happen when changing a clip's speed.
         // The preview of the clip is positioned 'in the center' of the clip.
@@ -427,6 +428,11 @@ AVStream* File::getStream()
         return mFileContext->streams[mStreamIndex];
     }
     return 0;
+}
+
+int64_t File::getStreamStartPosition()
+{
+    return mMaximumStartPts;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -686,6 +692,7 @@ void File::openFile()
 
     mNumberOfFrames = boost::none;
     mStreamIndex = STREAMINDEX_UNDEFINED;
+    mMaximumStartPts = 0;
     for (unsigned int i=0; i < mFileContext->nb_streams; ++i)
     {
         AVStream* stream = mFileContext->streams[i];
@@ -706,6 +713,11 @@ void File::openFile()
                 AVRational rate{ av_stream_get_r_frame_rate(stream) };
                 setNumberOfFrames(Convert::timeToPts(Convert::ptsToTime(stream->nb_frames, FrameRate{ rate.num, rate.den })));
             }
+            if (stream->start_time != AV_NOPTS_VALUE && 
+                stream->start_time > mMaximumStartPts)
+            {
+                mMaximumStartPts = stream->start_time;
+            }
             // todo BBC News_BBC TWO_2010_06_30_01_23_00.wtv has multiple audio streams
             // add a (optional) setting to 'details' for selecting the audio (and video) stream in case of multiple streams.
         }
@@ -717,16 +729,26 @@ void File::openFile()
             {
                 setNumberOfFrames(getFrameCount(stream, stream->duration));
             }
+            if (stream->start_time != AV_NOPTS_VALUE && 
+                stream->start_time > mMaximumStartPts)
+            {
+                mMaximumStartPts = stream->start_time;
+            }
         }
         else
         {
             VAR_DEBUG(stream);
+            stream->discard = AVDISCARD_ALL;
             continue; // To ensure that this stream is not used in case the video/audio contents is not supported
         }
 
         if ((mStreamIndex == STREAMINDEX_UNDEFINED) && useStream(stream->codec->codec_type))
         {
             mStreamIndex = i;
+        }
+        else
+        {
+            // NOT: stream->discard = AVDISCARD_ALL; -- if a file has both audio and video use the maximum length of these two streams
         }
     }
 

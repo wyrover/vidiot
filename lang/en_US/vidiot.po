@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-03-16 10:00+0100\n"
+"POT-Creation-Date: 2016-03-21 20:52+0100\n"
 "PO-Revision-Date: 2015-11-01 11:44+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -75,44 +75,44 @@ msgstr ""
 msgid "Back"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:45
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:47
 msgid "Create new project"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:46
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:48
 msgid "No media files found."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:47
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:49
 msgid "Select a folder containing media files for creating a new movie."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:48
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:50
 msgid "Select individual media files for creating a new movie."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:49
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:51
 msgid "Start a new empty project."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:50
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:52
 #: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:363
 msgid "Select folder"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:51
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:53
 msgid "Select files"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:348
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:354
 msgid "Movie"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:478
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:490
 msgid "&Finish"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:607
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:619
 #: C:\Vidiot\vidiot_trunk\modelfile\src\FileAnalyzer.cpp:318
 #, c-format
 msgid "Found %d file(s)"
@@ -742,17 +742,17 @@ msgstr ""
 msgid "Audio crossfade"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\modelfile\src\File.cpp:175
+#: C:\Vidiot\vidiot_trunk\modelfile\src\File.cpp:177
 msgid "File removed"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\modelfile\src\File.cpp:175
+#: C:\Vidiot\vidiot_trunk\modelfile\src\File.cpp:177
 #, c-format
 msgid ""
 "The file %s has been removed from disk. File is removed from project also."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\modelfile\src\File.cpp:736
+#: C:\Vidiot\vidiot_trunk\modelfile\src\File.cpp:769
 #, c-format
 msgid "Scanning %s to determine media length."
 msgstr ""
@@ -889,15 +889,15 @@ msgstr ""
 msgid "Missing file: "
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoKeyFrame.cpp:199
+#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoKeyFrame.cpp:207
 msgid "Width becomes 0."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoKeyFrame.cpp:203
+#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoKeyFrame.cpp:211
 msgid "Height becomes 0."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoKeyFrame.cpp:207
+#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoKeyFrame.cpp:215
 msgid "Image becomes too large."
 msgstr ""
 
