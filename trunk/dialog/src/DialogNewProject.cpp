@@ -25,6 +25,8 @@
 #include "ProjectView.h"
 #include "ProjectViewCreateSequence.h"
 #include "Properties.h"
+#include "Render.h"
+#include "Sequence.h"
 #include "UtilAudioRate.h"
 #include "UtilEnum.h"
 #include "Window.h"
@@ -345,8 +347,18 @@ void DialogNewProject::onFinish(wxWizardEvent& event)
         else if (mFileAnalyzer->getNumberOfFolders() == 0 && mFileAnalyzer->getNumberOfMediaFiles() > 0)
         {
             // Create sequence of all given files
-            wxString sequenceName = nodes.size() > 1 ? _("Movie") : nodes.front()->getName();
-            model::ProjectModification::submit(new cmd::ProjectViewCreateSequence(root, sequenceName, nodes));
+            
+            // Note: INode->getName may contain a full path to a file.
+            wxFileName firstFileName{ util::path::toFileName(nodes.front()->getName()) };
+
+            wxString sequenceName = nodes.size() > 1 ? _("Movie") : firstFileName.GetName();
+            cmd::ProjectViewCreateSequence* cmd{ new cmd::ProjectViewCreateSequence(root, sequenceName, nodes) };
+            model::ProjectModification::submit(cmd);
+
+            // Make the rendered output path relative to the input file
+            wxFileName renderFilename{ cmd->getSequence()->getRender()->getFileName() };
+            firstFileName.SetFullName(renderFilename.GetFullName());
+            cmd->getSequence()->getRender()->setFileName(firstFileName);
         }
     }
 
