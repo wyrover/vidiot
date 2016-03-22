@@ -49,7 +49,7 @@ VideoKeyFrame::VideoKeyFrame()
     , mScalingFactor{ 1 }
     , mRotation{ 0 }
     , mRotationPositionOffset{ 0, 0 }
-    , mAlignment{}
+    , mAlignment{ VideoAlignmentCenter }
     , mPosition{ 0, 0 }
 {
     VAR_DEBUG(*this);
@@ -57,13 +57,21 @@ VideoKeyFrame::VideoKeyFrame()
 
 VideoKeyFrame::VideoKeyFrame(const wxSize& size)
     : KeyFrame{ false }
+    , mInputSize{ 0,0 }
+    , mOpacity{ sOpacityMax }
+    , mScaling{}
+    , mScalingFactor{ 1 }
+    , mRotation{ 0 }
+    , mRotationPositionOffset{ 0, 0 }
+    , mAlignment{ VideoAlignmentCenter }
+    , mPosition{ 0, 0 }
 {
-    VAR_DEBUG(*this);
     mInputSize = size;
     mScaling = Config::get().ReadEnum<VideoScaling>(Config::sPathVideoDefaultScaling);
     mAlignment = Config::get().ReadEnum<VideoAlignment>(Config::sPathVideoDefaultAlignment);
     updateAutomatedScaling();
     updateAutomatedPositioning();
+    VAR_DEBUG(*this);
 }
 
 VideoKeyFrame::VideoKeyFrame(VideoKeyFramePtr before, VideoKeyFramePtr after, pts positionBefore, pts position, pts positionAfter)
