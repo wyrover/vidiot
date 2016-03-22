@@ -102,7 +102,7 @@ void Render::initialize()
 
 Render::Render()
     :   wxEvtHandler()
-    ,   mFileName("/")
+    ,   mFileName()
     ,   mOutputFormat(OutputFormats::getDefault())
     ,   mSeparateAtCuts(false)
     ,   mStart(0)
