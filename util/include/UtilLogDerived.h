@@ -20,7 +20,14 @@
 template <typename DERIVED, typename BASE>
 std::ostream& logAs(std::ostream& os, const boost::shared_ptr<BASE>& obj)
 {
-    os << *(boost::dynamic_pointer_cast<DERIVED>(obj));
+    if (obj == nullptr)
+    {
+        os << "00000000";
+    }
+    else
+    {
+        os << *(boost::dynamic_pointer_cast<DERIVED>(obj));
+    }
     return os;
 }
 
