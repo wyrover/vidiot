@@ -37,6 +37,7 @@ void TestRenderingSynchronization::tearDown()
 // TEST CASES
 //////////////////////////////////////////////////////////////////////////
 
+// todo why is the playback of the rendered file nicely synced but the playback in vidiot is not?
 void TestRenderingSynchronization::testLongSequence()
 {
     StartTestSuite();
@@ -94,5 +95,7 @@ void TestRenderingSynchronization::testLongSequence()
     pause(1000); // Avoid problems with file still in use
     WindowTriggerMenu(wxID_CLOSE);
 }
+
+// todo add test for checking the number of rendered frames
 
 } // namespace
