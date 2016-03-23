@@ -952,14 +952,12 @@ static AVFrame *alloc_picture(const enum AVPixelFormat& pix_fmt, int width, int 
 {
     AVFrame* frame{ av_frame_alloc() };
     ASSERT(frame != nullptr);
-    AVPicture* picture{ reinterpret_cast<AVPicture*>(frame) };
-    ASSERT(picture != nullptr);
 
     int size{ av_image_get_buffer_size(pix_fmt, width, height, 1) };
     uint8_t* picture_buf{ static_cast<uint8_t*>(av_malloc(size)) };
     ASSERT(picture_buf != nullptr);
 
-    av_image_fill_arrays(picture->data, picture->linesize, picture_buf, pix_fmt, width, height, 1);
+    av_image_fill_arrays(frame->data, frame->linesize, picture_buf, pix_fmt, width, height, 1);
 
     return frame;
 }

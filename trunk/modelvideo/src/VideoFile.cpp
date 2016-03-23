@@ -311,8 +311,7 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
             AVFrame* pScaledFrame = av_frame_alloc();
             int bufferSize = av_image_get_buffer_size(AV_PIX_FMT_RGB24, size.GetWidth(), size.GetHeight(), 1);
             boost::uint8_t * buffer = static_cast<boost::uint8_t*>(av_malloc(bufferSize * sizeof(uint8_t)));
-            AVPicture* picture{ reinterpret_cast<AVPicture*>(pScaledFrame) };
-            av_image_fill_arrays(picture->data, picture->linesize, buffer, AV_PIX_FMT_RGB24, size.GetWidth(), size.GetHeight(), 1);
+            av_image_fill_arrays(pScaledFrame->data, pScaledFrame->linesize, buffer, AV_PIX_FMT_RGB24, size.GetWidth(), size.GetHeight(), 1);
             mSwsContext = sws_getCachedContext(mSwsContext,codec->width,
                 codec->height,
                 codec->pix_fmt,
@@ -379,7 +378,7 @@ wxSize VideoFile::getSize()
 
 FrameRate VideoFile::getFrameRate()
 {
-    AVRational frameRate{ av_stream_get_r_frame_rate(getStream()) };
+    AVRational frameRate = av_stream_get_r_frame_rate(getStream());
     return FrameRate(frameRate.num, frameRate.den);
 }
 
@@ -435,7 +434,7 @@ void VideoFile::startDecodingVideo(const VideoCompositionParameters& parameters)
     int result = avcodec_open2(avctx, videoCodec, 0);
     ASSERT_MORE_THAN_EQUALS_ZERO(result)(avcodecErrorString(result));
 
-    AVRational frameRate{ av_stream_get_r_frame_rate(getStream()) };
+    AVRational frameRate = av_stream_get_r_frame_rate(getStream());
     FrameRate videoFrameRate{ frameRate.num, frameRate.den };
     if (videoFrameRate != Properties::get().getFrameRate())
     {
@@ -491,8 +490,7 @@ void VideoFile::saveDecodedFrame(AVCodecContext* codec, AVFrame* frame, const wx
     AVFrame* pWriteToDiskFrame{ av_frame_alloc() };
     int bufferSizeToDisk{ av_image_get_buffer_size(AV_PIX_FMT_RGB24, codec->width, codec->height, 1) };
     boost::uint8_t* bufferToDisk{ static_cast<boost::uint8_t*>(av_malloc(bufferSizeToDisk * sizeof(uint8_t))) };
-    AVPicture* picture{ reinterpret_cast<AVPicture*>(pWriteToDiskFrame) };
-    av_image_fill_arrays(picture->data, picture->linesize, bufferToDisk, AV_PIX_FMT_RGB24, codec->width, codec->height, 1);
+    av_image_fill_arrays(pWriteToDiskFrame->data, pWriteToDiskFrame->linesize, bufferToDisk, AV_PIX_FMT_RGB24, codec->width, codec->height, 1);
     swsContext = sws_getCachedContext(swsContext,codec->width,
         codec->height,
         codec->pix_fmt,

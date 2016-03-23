@@ -158,7 +158,7 @@ bool VideoCodec::open(AVCodecContext* context) const
     }
     if (result < 0)
     {
-        return showError(_("Details") + ":\n" + Avcodec::getMostRecentLogLine());
+        return showError(_("There was an error when opening the video codec.") + "\n");
     }
     return true;
 }

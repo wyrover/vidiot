@@ -42,7 +42,6 @@ std::map<LogLevelAvcodec, wxString> LogLevelAvcodecConverter::getMapToHumanReadi
 const int Avcodec::sMaxLogSize{ 500 };
 char* Avcodec::sFixedBuffer{ 0 };
 int Avcodec::sLevel{ AV_LOG_FATAL };
-wxString Avcodec::sMostRecentLogLine{ "Increase the avcodec logging level in the .ini file to get detailed information." };
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
@@ -89,11 +88,6 @@ void Avcodec::configureLog()
     av_log_set_callback(Avcodec::log);
 }
 
-wxString Avcodec::getMostRecentLogLine()
-{
-    return sMostRecentLogLine;
-}
-
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
@@ -105,7 +99,7 @@ void Avcodec::log(void *ptr, int level, const char * msg, va_list ap)
     if ( len > 0 && sFixedBuffer[len-1] == '\n' )
     {
         // Strip new line in logged line
-        sFixedBuffer[len-1] = '.';
+        sFixedBuffer[len-1] = 0; // Terminate at the new line
     }
 
     std::ostringstream osComponent;
@@ -123,6 +117,5 @@ void Avcodec::log(void *ptr, int level, const char * msg, va_list ap)
         }
     }
 
-    sMostRecentLogLine = sFixedBuffer;
     Log().get("AVCODEC ") << osComponent.str() << " [" << sFixedBuffer << "]";
 }

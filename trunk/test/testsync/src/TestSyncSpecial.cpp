@@ -36,8 +36,14 @@ void TestSyncSpecial::test_AudioAndVideoStreamsHaveDifferentStartTimes()
         model::VideoCompositionParameters videoParameters =
             model::VideoCompositionParameters().setBoundingBox(wxSize{ 1280,1024 }).setOptimizeForQuality().setPts(0);
 
+        TimelinePositionCursor(0);
+
         ASSERT_AUDIO_CHUNK(sequence->getNextAudio(audioParameters), { -147,159,-178,144,-251,96,-388,-26,-540,-190,-687 });
+#ifdef _MSC_VER
         ASSERT_VIDEO_FRAME(sequence->getNextVideo(videoParameters), { 106, 100, 100, 106, 102, 79, 62 }, { 52, 51, 53, 65, 68, 51, 38 }, { 55, 52, 57, 68, 68, 49, 35 });
+#else
+        ASSERT_VIDEO_FRAME(sequence->getNextVideo(videoParameters), { 112,105,95,91,94,101,89 }, { 56,49,49,46,55,62,63 }, { 62,55,54,51,59,66,61 });
+#endif
 
         TimelinePositionCursor(getTimeline().getZoom().timeToPixels(4000));
 

@@ -158,7 +158,7 @@ bool AudioCodec::open(AVCodecContext* context) const
     }
     if (result < 0)
     {
-        return showError(_("Details") + ":\n" + Avcodec::getMostRecentLogLine());
+        return showError(_("There was an error when opening the audio codec.") + "\n");
     }
     return true;
 }

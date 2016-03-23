@@ -34,7 +34,7 @@ Packet::~Packet()
 {
     if (mPacket->data)
     {
-        av_free_packet(mPacket);
+        av_packet_unref(mPacket);
     }
     delete mPacket;
 }

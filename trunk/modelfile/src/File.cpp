@@ -625,7 +625,7 @@ void File::openFile()
 
     auto setNumberOfFrames = [this](pts nFrames)
     {
-        if ((nFrames != AV_NOPTS_VALUE) && 
+        if ((nFrames != AV_NOPTS_VALUE) &&
             (nFrames != 0) &&
             (!mNumberOfFrames || *mNumberOfFrames < nFrames))
         {
@@ -710,10 +710,10 @@ void File::openFile()
             if (stream->nb_frames != AV_NOPTS_VALUE)
             {
                 // Convert to the Project frame rate.
-                AVRational rate{ av_stream_get_r_frame_rate(stream) };
+                AVRational rate = av_stream_get_r_frame_rate(stream);
                 setNumberOfFrames(Convert::timeToPts(Convert::ptsToTime(stream->nb_frames, FrameRate{ rate.num, rate.den })));
             }
-            if (stream->start_time != AV_NOPTS_VALUE && 
+            if (stream->start_time != AV_NOPTS_VALUE &&
                 stream->start_time > mMaximumStartPts)
             {
                 mMaximumStartPts = stream->start_time;
@@ -729,7 +729,7 @@ void File::openFile()
             {
                 setNumberOfFrames(getFrameCount(stream, stream->duration));
             }
-            if (stream->start_time != AV_NOPTS_VALUE && 
+            if (stream->start_time != AV_NOPTS_VALUE &&
                 stream->start_time > mMaximumStartPts)
             {
                 mMaximumStartPts = stream->start_time;
@@ -752,7 +752,7 @@ void File::openFile()
         }
     }
 
-    if (!mNumberOfFrames && 
+    if (!mNumberOfFrames &&
         mFileContext->nb_streams > 0)
     {
         VAR_WARNING(*this);
@@ -775,7 +775,7 @@ void File::openFile()
         {
             // Try to extract length data by looking at the pts values in the packets.
             std::vector<pts>::iterator it{ std::max_element(streamPts.begin(), streamPts.end()) };
-            int index{ std::distance(streamPts.begin(), it) };
+            int index{ narrow_cast<int>(std::distance(streamPts.begin(), it)) };
             pts nFrames{ getFrameCount(mFileContext->streams[index], *it) };
             setNumberOfFrames(nFrames);
             VAR_WARNING(*this)(nFrames);
