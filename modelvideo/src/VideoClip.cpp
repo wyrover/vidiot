@@ -184,7 +184,7 @@ VideoFramePtr VideoClip::getNextVideo(const VideoCompositionParameters& paramete
                     // for which the audio data is longer than the video data. Instead of clipping the
                     // extra audio part, empty video is added here (the user can make the clip shorter if
                     // required - thus removing the extra audio, but that's a user decision to be made).
-                    LOG_WARNING << *this << ": (" << getDescription() << ") Adding extra video frame to make video length equal to audio length";
+                    VAR_WARNING(getDescription())(*this);
                     videoFrame = boost::static_pointer_cast<VideoFrame>(boost::make_shared<EmptyFrame>(parameters));
                 }
             }

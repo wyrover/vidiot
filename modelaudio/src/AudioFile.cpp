@@ -126,6 +126,9 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
         pts position = *mNewStartPosition;
         samplecount nextSample = Convert::ptsToSamplesPerChannel(position, getCodec()->sample_rate);
 
+        // Reset the codec. Otherwise, the first audio output after a move is not always the desired sound...
+        avcodec_flush_buffers(getCodec());
+
         auto positionInfoAvailable = [&audioPacket]() -> bool
         {
             return audioPacket && audioPacket->getPacket()->pts != AV_NOPTS_VALUE;

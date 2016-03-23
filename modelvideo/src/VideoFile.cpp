@@ -126,7 +126,7 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
     AVPacket nullPacket;
     memset(&nullPacket,0,sizeof(AVPacket));
 
-    AVCodecContext* codec = getCodec();
+    AVCodecContext* codec{ getCodec() };
     ASSERT_NONZERO(avcodec_is_open(codec));
 
     ASSERT_ZERO(codec->refcounted_frames); // for new version of avcodec, see avcodec_decode_video2 docs

@@ -47,10 +47,8 @@ void executeFormatTest(wxString path, bool audio, bool video)
         // todo encode parameters of the file in the file name (length in #frames,  for example) such that these can be checked.
 
         model::IClipPtr clip{ VideoClip(0,0) };
-        model::AudioCompositionParameters audioParameters =
-            model::AudioCompositionParameters().setNrChannels(2).setSampleRate(48000).setPts(0);
-        model::VideoCompositionParameters videoParameters =
-            model::VideoCompositionParameters().setBoundingBox(wxSize{ 1280,1024 }).setOptimizeForQuality().setPts(0);
+        model::AudioCompositionParameters audioParameters{ model::AudioCompositionParameters().setPts(0) };
+        model::VideoCompositionParameters videoParameters{ model::VideoCompositionParameters().setBoundingBox(wxSize{1280,1024}).setOptimizeForQuality().setPts(0) };
 
         ASSERT(!getSequence()->getNextAudio(audioParameters)->getError());
         ASSERT(!getSequence()->getNextVideo(videoParameters)->getError());
@@ -86,7 +84,8 @@ void TestFileTypesFormat::testFileTypes_formats_new()
 {
     StartTestSuite();
     ConfigOverrule<long> overruleChannels(Config::sPathAudioDefaultNumberOfChannels, 2);
-    //executeFormatTest(R"*(D:/samples/todo_codecnotfound/1sec-dv25.lxf)*", true, true);
+    ConfigOverrule<long> overruleSampleRate(Config::sPathAudioDefaultSampleRate, 44100);
+    //executeFormatTest(R"*(D:\samples\todo_initialaudiodistortedaftermove\01 - Pumpkin and Honey Bunny (dialogue) - Dick Dale & His Del-Tones , Misirlou.mpc)*", true, false);
 }
 
 void TestFileTypesFormat::testFileTypes_formats_audio()
