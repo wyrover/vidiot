@@ -77,8 +77,11 @@ public:
     rational64 getTime() const;
     void setTime(rational64 time);
 
-    void setForceKeyFrame(bool force);
+    void setForceKeyFrame();
     bool getForceKeyFrame() const;
+
+    void setError();
+    bool getError() const;
 
     VideoCompositionParameters getParameters() const;
 
@@ -98,7 +101,7 @@ public:
 
     void draw(wxGraphicsContext* gc) const;
 
-protected:
+private:
 
     //////////////////////////////////////////////////////////////////////////
     // MEMBERS
@@ -106,13 +109,14 @@ protected:
 
     VideoFrameLayers mLayers;
     boost::scoped_ptr<VideoCompositionParameters> mParameters;
-    boost::optional<pts> mPts;
-    rational64 mTime;
-    bool mForceKeyFrame;
+    boost::optional<pts> mPts = boost::none;
+    rational64 mTime = 0;
 
-private:
+private: //todo remove
 
-    boost::optional<wxBitmapPtr> mCachedBitmap;
+    boost::optional<wxBitmapPtr> mCachedBitmap = boost::none;
+    bool mForceKeyFrame = false;
+    bool mError = false; ///< True if this is an error frame.
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

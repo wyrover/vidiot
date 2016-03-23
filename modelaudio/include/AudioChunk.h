@@ -97,6 +97,9 @@ public:
     pts getPts() const;
     void setPts(pts position);
 
+    void setError();
+    bool getError() const;
+
 protected:
 
     sample* mBuffer;                ///< Actual data storage area
@@ -105,6 +108,7 @@ protected:
     samplecount mNrSamples;         ///< Total number of samples allocated in memory
     samplecount mNrSkippedSamples;  ///< Set if the length of the chunk is truncated after decoding (for stopping at right pts)
     boost::optional<pts> mPts;
+    bool mError = 0;                ///< True if this is an error chunk.
 
 private:
 

@@ -139,6 +139,16 @@ void AudioChunk::setPts(pts position)
     mPts.reset(position);
 }
 
+void AudioChunk::setError()
+{
+    mError = true;
+}
+
+bool AudioChunk::getError() const
+{
+    return mError;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // LOGGING
 //////////////////////////////////////////////////////////////////////////

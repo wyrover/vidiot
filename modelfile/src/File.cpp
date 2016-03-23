@@ -47,7 +47,7 @@ const int File::STREAMINDEX_UNDEFINED = -1;
 const int File::LENGTH_UNDEFINED = std::numeric_limits<int>::max();
 
 // static
-wxString File::sSupportedVideoExtensions{ "*.asf;*.avi;*.ogm;*.mov;*.mp4;*.mpeg;*.mpg;*.mkv;*.dv;*.gxf;*.m2t;*.m2ts;*.m2v;*.m4v;*.mts;*.3gp;*.3g2;*.asx;*.flv;*.f4v;*.ogv;*.webm;*.duk;*.dvr-ms;*.mv;*.pva;*.rm;*.rmvb;*.smv;*.ts;*.vob;*.wmv" };
+wxString File::sSupportedVideoExtensions{ "*.asf;*.avi;*.ogm;*.mov;*.mp4;*.mpeg;*.mpg;*.mkv;*.dv;*.gxf;*.lxf;*.m2t;*.m2ts;*.m2v;*.m4v;*.mts;*.3gp;*.3g2;*.asx;*.flv;*.f4v;*.ogv;*.webm;*.duk;*.dvr-ms;*.mv;*.pva;*.rm;*.rmvb;*.smv;*.ts;*.vob;*.wmv" };
 // static
 wxString File::sSupportedAudioExtensions{ "*.wav;*.mp3;*.flac;*.m2a;*.m4a;*.8svx;*.aa3;*.aac;*.aacp;*.ac3;*.act;*.aif;*.aiff;*.amr;*.ape;*.au;*.caf;*.dts;*.mid;*.mka;*.mp1;*.mpc;*.mpp;*.mp+;*.ogg;*.oma;*.qcp;*.rso;*.tta;*.voc;*.vqf;*.wma;*.xwma" };
 //static
@@ -276,24 +276,27 @@ void File::moveTo(pts position)
                 {
                     // Last resort, any frame will do.
                     result = avformat_seek_file(mFileContext, -1, std::numeric_limits<int64_t>::min(), timestamp, std::numeric_limits<int64_t>::max(), AVSEEK_FLAG_BACKWARD | AVSEEK_FLAG_ANY);
-                    LOG_WARNING << "Seek to " << position << " resulted in non-keyframe position and result " << result << " for file " << *this;
                     if (result < 0)
                     {
+                        VAR_WARNING(position)(avcodecErrorString(result))(*this);
+
                         // Extracting data from an improperly initialized file will cause a crash.
-                        mFileOpenedOk = false;
+                        // However, some files can be read (only) when starting at the beginning.
+                        // Close the file to ensure reading starts at the beginning.
+                        // Then the 'skip frames' and 'skip samples' algorithms in VideoFile/AudioFile
+                        // will cause the initial (unwanted) data to be discarded. Not efficient, but
+                        // at least the files can be read in that case - and possibly converted.
+                        // 
+                        // Note: original implementation here was to set 'mFileOpenedOk' to false and 
+                        //       avoid reading the data in the file (because I sometimes saw crashes)
+                        //       when not doing so.
+                        //
+                        // Close file completely. It will be reopened (at the beginning) when its 
+                        // data is required.
+                        stopReadingPackets();
+                        closeFile();
                     }
                 }
-            }
-            if (mFileOpenedOk)
-            {
-                ASSERT_MORE_THAN_EQUALS_ZERO(result)(avcodecErrorString(result))(*this);
-            }
-            else
-            {
-                // Error. Do not try again, but trigger reopening the file to start at the beginning.
-                VAR_ERROR(mFileOpenedOk);
-                stopReadingPackets();
-                closeFile();
             }
         }
     }

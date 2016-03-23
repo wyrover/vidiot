@@ -750,5 +750,5 @@ wxString avcodecErrorString(int errorcode)
     {
         return wxString::Format("Avcodec error code not found (%d)", errorcode);
     }
-    return wxString::Format("%s", buffer );
+    return wxString::Format("%s (%d)", buffer, errorcode );
 }

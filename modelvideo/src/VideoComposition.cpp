@@ -58,8 +58,6 @@ void VideoComposition::add(const VideoFramePtr& frame)
 VideoFramePtr VideoComposition::generate()
 {
     model::VideoFramePtr result;
-    bool keyFrame = false;
-
     if (mFrames.empty())
     {
         result = boost::make_shared<EmptyFrame>(mParameters);
@@ -70,14 +68,20 @@ VideoFramePtr VideoComposition::generate()
         VideoFrameLayers layers;
         for ( auto frame : mFrames )
         {
-            keyFrame = keyFrame || frame->getForceKeyFrame();
+            if (frame->getForceKeyFrame())
+            {
+                result->setForceKeyFrame();
+            }
+            if (frame->getError())
+            {
+                result->setError();
+            }
             for ( auto layer : frame->getLayers() )
             {
                 result->addLayer(layer);
             }
         }
     }
-    result->setForceKeyFrame(keyFrame);
     if (mParameters.hasPts())
     {
         result->setPts(mParameters.getPts());

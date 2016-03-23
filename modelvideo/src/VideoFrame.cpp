@@ -31,20 +31,14 @@ namespace model {
 VideoFrame::VideoFrame(const VideoCompositionParameters& parameters)
     : mLayers()
     , mParameters(new VideoCompositionParameters(parameters))
-    , mPts(boost::none)
     , mTime(0)
-    , mForceKeyFrame(false)
-    , mCachedBitmap(boost::none)
 {
 }
 
 VideoFrame::VideoFrame(const VideoCompositionParameters& parameters, const VideoFrameLayerPtr& layer)
     : mLayers()
     , mParameters(new VideoCompositionParameters(parameters))
-    , mPts(boost::none)
     , mTime(0)
-    , mForceKeyFrame(false)
-    , mCachedBitmap(boost::none)
 {
     mLayers.push_back(layer);
 }
@@ -52,10 +46,7 @@ VideoFrame::VideoFrame(const VideoCompositionParameters& parameters, const Video
 VideoFrame::VideoFrame(const VideoCompositionParameters& parameters, const VideoFrameLayers& layers)
     : mLayers(layers)
     , mParameters(new VideoCompositionParameters(parameters))
-    , mPts(boost::none)
     , mTime(0)
-    , mForceKeyFrame(false)
-    , mCachedBitmap(boost::none)
 {
 }
 
@@ -64,8 +55,6 @@ VideoFrame::VideoFrame(const VideoFrame& other)
     , mParameters(new VideoCompositionParameters(*other.mParameters))
     , mPts(other.mPts)
     , mTime(other.mTime)
-    , mForceKeyFrame(false)
-    , mCachedBitmap(boost::none)
 {
 }
 
@@ -107,14 +96,24 @@ void VideoFrame::setTime(rational64 time)
     mTime = time;
 }
 
-void VideoFrame::setForceKeyFrame(bool force)
+void VideoFrame::setForceKeyFrame()
 {
-    mForceKeyFrame = force;
+    mForceKeyFrame = true;
 }
 
 bool VideoFrame::getForceKeyFrame() const
 {
     return mForceKeyFrame;
+}
+
+void VideoFrame::setError()
+{
+    mError = true;
+}
+
+bool VideoFrame::getError() const
+{
+    return mError;
 }
 
 VideoCompositionParameters VideoFrame::getParameters() const
