@@ -165,7 +165,7 @@ AudioChunkPtr AudioClip::getNextAudio(const AudioCompositionParameters& paramete
                     // for which the video data is longer than the audio data. Instead of clipping the
                     // extra video part, silence is added here (the user can make the clip shorter if
                     // required - thus removing the extra video, but that's a user decision to be made).
-                    LOG_WARNING << *this << ": (" << getDescription() << ") Adding " << remainingSamples << " samples to make audio length equal to video length";
+                    VAR_WARNING(getDescription())(*this)(remainingSamples);
                     memset(buffer + generatedSamples, 0, remainingSamples  * AudioChunk::sBytesPerSample);
                     generatedSamples = requiredSamples;
                 }

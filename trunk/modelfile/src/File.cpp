@@ -259,15 +259,13 @@ void File::moveTo(pts position)
         if (timestamp > 0)
         {
             // Do not seek if == 0, may mess up some files. See remark at top of method.
-
             if (mFileContext->start_time != AV_NOPTS_VALUE)
             {
                 timestamp += mFileContext->start_time;
             }
 
             // First, try seeking to a keyframe at the given position.
-            int result = 0;
-            result = avformat_seek_file(mFileContext, -1, std::numeric_limits<int64_t>::min(), timestamp, std::numeric_limits<int64_t>::max(), 0);
+            int result{ avformat_seek_file(mFileContext, -1, std::numeric_limits<int64_t>::min(), timestamp, std::numeric_limits<int64_t>::max(), 0) };
             if (result < 0)
             {
                 // Second, try seeking to a keyframe before the given position.
@@ -276,27 +274,26 @@ void File::moveTo(pts position)
                 {
                     // Last resort, any frame will do.
                     result = avformat_seek_file(mFileContext, -1, std::numeric_limits<int64_t>::min(), timestamp, std::numeric_limits<int64_t>::max(), AVSEEK_FLAG_BACKWARD | AVSEEK_FLAG_ANY);
-                    if (result < 0)
-                    {
-                        VAR_WARNING(position)(avcodecErrorString(result))(*this);
-
-                        // Extracting data from an improperly initialized file will cause a crash.
-                        // However, some files can be read (only) when starting at the beginning.
-                        // Close the file to ensure reading starts at the beginning.
-                        // Then the 'skip frames' and 'skip samples' algorithms in VideoFile/AudioFile
-                        // will cause the initial (unwanted) data to be discarded. Not efficient, but
-                        // at least the files can be read in that case - and possibly converted.
-                        // 
-                        // Note: original implementation here was to set 'mFileOpenedOk' to false and 
-                        //       avoid reading the data in the file (because I sometimes saw crashes)
-                        //       when not doing so.
-                        //
-                        // Close file completely. It will be reopened (at the beginning) when its 
-                        // data is required.
-                        stopReadingPackets();
-                        closeFile();
-                    }
                 }
+            }
+            if (result < 0) 
+            {
+                VAR_WARNING(position)(avcodecErrorString(result))(*this);
+                // Extracting data from an improperly initialized file will cause a crash.
+                // However, some files can be read (only) when starting at the beginning.
+                // Close the file to ensure reading starts at the beginning.
+                // Then the 'skip frames' and 'skip samples' algorithms in VideoFile/AudioFile
+                // will cause the initial (unwanted) data to be discarded. Not efficient, but
+                // at least the files can be read in that case - and possibly converted.
+                // 
+                // Note: original implementation here was to set 'mFileOpenedOk' to false and 
+                //       avoid reading the data in the file (because I sometimes saw crashes)
+                //       when not doing so.
+                //
+                // Close file completely. It will be reopened (at the beginning) when its 
+                // data is required.
+                stopReadingPackets();
+                closeFile();
             }
         }
     }
@@ -770,6 +767,8 @@ void File::openFile()
             if (isVideoSupported(mFileContext->streams[packet->stream_index])) { streamPackets[packet->stream_index]++; }
             av_packet_unref(packet);
         }
+        gui::StatusBar::get().popInfoText();
+
         // Reset position to beginning again. Otherwise, first playback (without 'moveTo' first) will cause errors.
         avformat_seek_file(mFileContext, -1, std::numeric_limits<int64_t>::min(), 0, std::numeric_limits<int64_t>::max(), 0);
 
