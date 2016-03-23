@@ -119,6 +119,7 @@ VideoFramePtr VideoClip::getNextVideo(const VideoCompositionParameters& paramete
         if (!generator->canBeOpened())
         {
             videoFrame = boost::make_shared<VideoFrame>(parameters, boost::make_shared<VideoFrameLayer>(getErrorImage(getDescription())));
+            videoFrame->setError();
         }
         else
         {
@@ -190,10 +191,10 @@ VideoFramePtr VideoClip::getNextVideo(const VideoCompositionParameters& paramete
         }
     }
 
-    if (videoFrame)
+    if (videoFrame && enforceKeyFrame)
     {
         // Note: for some clips, due to framerate resampling, the first and second frames might be the exact same frame. However, only for the first one the keyframe flag is desired
-        videoFrame->setForceKeyFrame(enforceKeyFrame);
+        videoFrame->setForceKeyFrame();
     }
     mProgress++;
     return videoFrame;

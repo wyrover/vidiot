@@ -47,6 +47,9 @@ void TestSyncSpecial::test_AudioAndVideoStreamsHaveDifferentStartTimes()
 
         TimelinePositionCursor(getTimeline().getZoom().timeToPixels(4000));
 
+        audioParameters = model::AudioCompositionParameters(audioParameters).setPts(model::Convert::timeToPts(4000));
+        videoParameters = model::VideoCompositionParameters(videoParameters).setPts(model::Convert::timeToPts(4000));
+
         ASSERT_AUDIO_CHUNK(sequence->getNextAudio(audioParameters), { 579,-2280,270,-2439,-225,-2484,-778,-2497,-1225,-2566,-1456 });
         ASSERT_VIDEO_FRAME(sequence->getNextVideo(videoParameters), { 81,81,80,77,76,76,80 }, { 55,55,54,52,51,51,54 }, { 51,51,52,49,48,48,49 });
 

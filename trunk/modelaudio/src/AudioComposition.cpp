@@ -83,11 +83,14 @@ AudioChunkPtr AudioComposition::generate()
     {
         samplecount chunkSize = mParameters.getChunkSize();
         result = boost::make_shared<AudioChunk>(mParameters.getNrChannels(), chunkSize, true, true); // Fills with 0
-
         for (AudioChunkPtr inputChunk : mChunks)
         {
             ASSERT(inputChunk);
             ASSERT(!inputChunk->isA<EmptyChunk>());
+            if (inputChunk->getError()) 
+            {
+                result->setError();
+            }
             sample max = std::numeric_limits<sample>::max();
             sample* inputSample = inputChunk->getUnreadSamples(); // NOT: getBuffer()
             sample* resultingSample = result->getBuffer();

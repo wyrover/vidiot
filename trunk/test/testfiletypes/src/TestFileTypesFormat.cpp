@@ -19,12 +19,14 @@
 
 namespace test {
 
-void executeFormatTest(wxString filetypesDir, bool audio, bool video)
+void executeFormatTest(wxString path, bool audio, bool video)
 {
-    ExecuteOnAllFiles(filetypesDir, [audio, video] 
+    ExecuteOnAllFiles(path, [audio, video]
     {
         TimelineZoomIn(8);
         ASSERT(video || audio);
+
+
         // NOTE: For audio-only or video-only the counterpart becomes an EmptyClip
         if (!audio) 
         {
@@ -43,19 +45,39 @@ void executeFormatTest(wxString filetypesDir, bool audio, bool video)
             ASSERT_VIDEOTRACK0(VideoClip);
         }
         // todo encode parameters of the file in the file name (length in #frames,  for example) such that these can be checked.
+
         model::IClipPtr clip{ VideoClip(0,0) };
-        Play(LeftPixel(clip), 1000);
+        model::AudioCompositionParameters audioParameters =
+            model::AudioCompositionParameters().setNrChannels(2).setSampleRate(48000).setPts(0);
+        model::VideoCompositionParameters videoParameters =
+            model::VideoCompositionParameters().setBoundingBox(wxSize{ 1280,1024 }).setOptimizeForQuality().setPts(0);
+
+        ASSERT(!getSequence()->getNextAudio(audioParameters)->getError());
+        ASSERT(!getSequence()->getNextVideo(videoParameters)->getError());
+        Play(0, 1000);
+        
         TimelinePositionCursor(HCenter(clip));
         TimelineKeyPress('v'); // Show the part being played (for longer files)
+        audioParameters = model::AudioCompositionParameters(audioParameters).setPts(getTimeline().getZoom().pixelsToPts(HCenter(clip)));
+        videoParameters = model::VideoCompositionParameters(videoParameters).setPts(getTimeline().getZoom().pixelsToPts(HCenter(clip)));
+        ASSERT(!getSequence()->getNextAudio(audioParameters)->getError());
+        ASSERT(!getSequence()->getNextVideo(videoParameters)->getError());
         Play(HCenter(clip), 1000);
+
         TimelinePositionCursor(RightPixel(clip) - 25);
         TimelineKeyPress('v'); // Show the part being played (for longer files)
+        audioParameters = model::AudioCompositionParameters(audioParameters).setPts(getTimeline().getZoom().pixelsToPts(RightPixel(clip) - 25));
+        videoParameters = model::VideoCompositionParameters(videoParameters).setPts(getTimeline().getZoom().pixelsToPts(RightPixel(clip) - 25));
+        ASSERT(!getSequence()->getNextAudio(audioParameters)->getError());
+        ASSERT(!getSequence()->getNextVideo(videoParameters)->getError());
+        TimelinePositionCursor(RightPixel(clip) - 25);
+
         WaitForPlaybackStopped stopped;
         Play();
         stopped.wait();
     }, true);
 }
-
+             //todo add option for converting single files immediately
 //////////////////////////////////////////////////////////////////////////
 // TEST CASES
 //////////////////////////////////////////////////////////////////////////
@@ -64,7 +86,7 @@ void TestFileTypesFormat::testFileTypes_formats_new()
 {
     StartTestSuite();
     ConfigOverrule<long> overruleChannels(Config::sPathAudioDefaultNumberOfChannels, 2);
-    //executeFormatTest("filetypes_video/micro2.gif", false, true);
+    //executeFormatTest(R"*(D:/samples/todo_codecnotfound/1sec-dv25.lxf)*", true, true);
 }
 
 void TestFileTypesFormat::testFileTypes_formats_audio()

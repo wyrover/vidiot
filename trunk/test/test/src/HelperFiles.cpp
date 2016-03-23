@@ -24,16 +24,20 @@ void ExecuteOnAllFiles(wxString pathToFiles, std::function<void()> action, bool 
     model::SequencePtr sequence{ CreateProjectWithClosedSequence() };
 
     // Find input files in dir (must be done after creating a project, due to dependencies on project properties for opening/closing files)
-    wxFileName TestFilesPath{ util::path::toFileName(getTestPath().GetFullPath() + wxFileName::GetPathSeparator() + pathToFiles) };
+    if (!wxIsAbsolutePath(pathToFiles))
+    {
+        pathToFiles = getTestPath().GetFullPath() + wxFileName::GetPathSeparator() + pathToFiles;
+    }
+    wxFileName TestFilesPath{ util::path::toFileName(pathToFiles) };
     model::IPaths InputFiles;
     if (TestFilesPath.IsDir())
     {
-        ASSERT(TestFilesPath.DirExists());
+        ASSERT(TestFilesPath.DirExists())(TestFilesPath.GetFullPath());
         InputFiles = GetSupportedFiles(TestFilesPath);
     }
     else
     {
-        ASSERT(TestFilesPath.FileExists());
+        ASSERT(TestFilesPath.FileExists())(TestFilesPath.GetFullPath());
         model::FilePtr file{ boost::make_shared<model::File>(TestFilesPath) };
         ASSERT(file->canBeOpened());
         InputFiles.push_back(file);

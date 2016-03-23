@@ -229,20 +229,9 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
             ASSERT_NONZERO(nextToBeDecodedPacket);
 
             int len1{ avcodec_decode_video2(codec, pDecodedFrame, &frameFinished, nextToBeDecodedPacket) };
-            if (len1 != nextToBeDecodedPacket->size)
+            if (len1 < nextToBeDecodedPacket->size)
             {
-                if (len1 < 0)
-                {
-                    LOG_WARNING << "Decode error: " << *this;
-                }
-                else
-                {
-                    // ASSERT_LESS_THAN_EQUALS(len1, nextToBeDecodedPacket->size);
-                    if (len1 < nextToBeDecodedPacket->size)
-                    {
-                        VAR_WARNING(nextToBeDecodedPacket->size - len1);
-                    }
-                }
+                VAR_WARNING(len1)(nextToBeDecodedPacket->size)(*this);
             }
 
             if (frameFinished)
