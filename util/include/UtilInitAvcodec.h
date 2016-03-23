@@ -65,7 +65,6 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     static void configureLog();
-    static wxString getMostRecentLogLine();
 
     //////////////////////////////////////////////////////////////////////////
     // MEMBERS
@@ -74,7 +73,6 @@ public:
     static const int sMaxLogSize;
     static char* sFixedBuffer;
     static int sLevel;
-    static wxString sMostRecentLogLine;
 
 private:
 
