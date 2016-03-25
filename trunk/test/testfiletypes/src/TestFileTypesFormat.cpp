@@ -73,6 +73,7 @@ void executeFormatTest(wxString path, bool audio, bool video)
         WaitForPlaybackStopped stopped;
         Play();
         stopped.wait();
+        pause();
     }, true);
 }
              //todo add option for converting single files immediately
@@ -85,7 +86,7 @@ void TestFileTypesFormat::testFileTypes_formats_new()
     StartTestSuite();
     ConfigOverrule<long> overruleChannels(Config::sPathAudioDefaultNumberOfChannels, 2);
     ConfigOverrule<long> overruleSampleRate(Config::sPathAudioDefaultSampleRate, 44100);
-    //executeFormatTest(R"*(D:\samples\todo_initialaudiodistortedaftermove\01 - Pumpkin and Honey Bunny (dialogue) - Dick Dale & His Del-Tones , Misirlou.mpc)*", true, false);
+    //executeFormatTest(R"*(D:\samples\todo_movenotworking\frame_tags.yuv)*", false, true);
 }
 
 void TestFileTypesFormat::testFileTypes_formats_audio()
