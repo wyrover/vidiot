@@ -210,7 +210,14 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
 
                 // Whenever a packet STARTS a frame, avcodec_decode_video()
                 // calls avcodec_get_buffer() to allocate a buffer.
-                mVideoPacketPts = nextToBeDecodedPacket->pts;
+                if (nextToBeDecodedPacket->pts != AV_NOPTS_VALUE)
+                {
+                    mVideoPacketPts = nextToBeDecodedPacket->pts;
+                }
+                else
+                {
+                    mVideoPacketPts += floor(ticksPerFrame);
+                }
             }
             else // No packet. End of file.
             {
@@ -254,7 +261,8 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
                 }
                 else
                 {
-                    LOG_WARNING << "Could not deduce pts [" << *this << "]";
+                    decodedFramePts = AV_NOPTS_VALUE;
+                    VAR_WARNING(*this)(decodedFramePts); // Could not deduce pts value.
                 }
 
                 if (!frameTimeOk(decodedFramePts))
@@ -423,12 +431,16 @@ void VideoFile::startDecodingVideo(const VideoCompositionParameters& parameters)
     int result = avcodec_open2(avctx, videoCodec, 0);
     ASSERT_MORE_THAN_EQUALS_ZERO(result)(avcodecErrorString(result));
 
-    AVRational frameRate = av_stream_get_r_frame_rate(getStream());
+    AVStream* stream = getStream();
+    ASSERT_NONZERO(stream);
+    AVRational frameRate = av_stream_get_r_frame_rate(stream);
     FrameRate videoFrameRate{ frameRate.num, frameRate.den };
     if (videoFrameRate != Properties::get().getFrameRate())
     {
         LOG_DEBUG << "Frame rate conversion required from " << videoFrameRate << " to " << Properties::get().getFrameRate();
     }
+                              
+    mVideoPacketPts = stream->cur_dts;
 
     VAR_DEBUG(this)(getCodec());
 }
