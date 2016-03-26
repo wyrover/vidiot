@@ -121,7 +121,6 @@ void VideoFile::clean()
 
 VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& parameters)
 {
-    VAR_ERROR;
     startDecodingVideo(parameters);
     ASSERT(canBeOpened());
     AVPacket nullPacket;
