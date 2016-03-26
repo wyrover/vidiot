@@ -44,7 +44,6 @@ void executeFormatTest(wxString path, bool audio, bool video)
         {
             ASSERT_VIDEOTRACK0(VideoClip);
         }
-        // todo encode parameters of the file in the file name (length in #frames,  for example) such that these can be checked.
 
         model::IClipPtr clip{ VideoClip(0,0) };
         model::AudioCompositionParameters audioParameters{ model::AudioCompositionParameters().setPts(0) };
@@ -76,7 +75,7 @@ void executeFormatTest(wxString path, bool audio, bool video)
         pause();
     }, true);
 }
-             //todo add option for converting single files immediately
+
 //////////////////////////////////////////////////////////////////////////
 // TEST CASES
 //////////////////////////////////////////////////////////////////////////
@@ -86,7 +85,7 @@ void TestFileTypesFormat::testFileTypes_formats_new()
     StartTestSuite();
     ConfigOverrule<long> overruleChannels(Config::sPathAudioDefaultNumberOfChannels, 2);
     ConfigOverrule<long> overruleSampleRate(Config::sPathAudioDefaultSampleRate, 44100);
-    //executeFormatTest(R"*(D:\samples\todo_movenotworking\frame_tags.yuv)*", false, true);
+    //executeFormatTest(R"*(D:\samples\frame_tags.yuv)*", false, true);
 }
 
 void TestFileTypesFormat::testFileTypes_formats_audio()

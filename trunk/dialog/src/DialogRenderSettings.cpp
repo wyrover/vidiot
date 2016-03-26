@@ -74,9 +74,6 @@ DialogRenderSettings::DialogRenderSettings(model::SequencePtr sequence)
     , sIncompatibleHeader(_("Incompatible codec and file type"))
 {
     VAR_DEBUG(this);
-    LOG_STACKTRACE;
-    VAR_INFO(this);
-
 
     util::window::setIcons(this);
     mLength = mSequence->getLength();
@@ -182,9 +179,6 @@ DialogRenderSettings::DialogRenderSettings(model::SequencePtr sequence)
 
 DialogRenderSettings::~DialogRenderSettings()
 {
-    LOG_STACKTRACE;
-    VAR_INFO(this);
-
     VAR_DEBUG(this);
     mRenderSeparation->Unbind(wxEVT_COMMAND_CHECKBOX_CLICKED, &DialogRenderSettings::onRenderSeparationChanged, this);
     mFileButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, & DialogRenderSettings::onFileButtonPressed, this);

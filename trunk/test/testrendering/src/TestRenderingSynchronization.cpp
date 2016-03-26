@@ -96,6 +96,4 @@ void TestRenderingSynchronization::testLongSequence()
     WindowTriggerMenu(wxID_CLOSE);
 }
 
-// todo add test for checking the number of rendered frames
-
 } // namespace

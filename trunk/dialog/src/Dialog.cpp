@@ -361,6 +361,7 @@ int generateDebugReport(bool doexit, bool addcontext, bool screenShot, const wxR
         bool copyok = wxCopyFile(original, copy.GetLongPath(), false);
         if (copyok)
         {
+            // TRANSLATORS: %s == Name of application (executable)
             util::mail::sendDebugReport(wxString::Format(_("%s crash report"), CommandLine::get().ExeName), wxString::Format(_("I'm sorry, but %1$s crashed.\nBy sending this mail you'll provide me with helpful information for resolving the crash.\nThanks for your help.\n\nEric\n"), CommandLine::get().ExeName), boost::optional<wxString>(copy.GetLongPath()));
         }
     }
