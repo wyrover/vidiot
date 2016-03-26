@@ -121,6 +121,7 @@ void VideoFile::clean()
 
 VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& parameters)
 {
+    VAR_ERROR;
     startDecodingVideo(parameters);
     ASSERT(canBeOpened());
     AVPacket nullPacket;
@@ -128,6 +129,8 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
 
     AVCodecContext* codec{ getCodec() };
     ASSERT_NONZERO(avcodec_is_open(codec));
+
+    // todo use AVCodec->ticks_per_frame (see 3d_lg_cinema_3d_world_2-DWEU.m2ts example)_
 
     ASSERT_ZERO(codec->refcounted_frames); // for new version of avcodec, see avcodec_decode_video2 docs
 
@@ -174,10 +177,11 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
                 // NOTE: alternative might be stream->first_dts
                 inputPosition -= stream->start_time;
             }
-            rational64 nextTime = rational64(inputPosition + ticksPerFrame) * inputTimeBase * 1000;
-            milliseconds diffCurrent = abs(requiredTime - boost::rational_cast<milliseconds>(positionToFrameTime(inputPosition)));
-            milliseconds diffNext = abs(boost::rational_cast<milliseconds>(nextTime) - requiredTime);
-            result =  diffCurrent < diffNext;
+            milliseconds currentTime{ boost::rational_cast<milliseconds>(positionToFrameTime(inputPosition)) };
+            milliseconds nextTime{ currentTime + boost::rational_cast<milliseconds>(rational64(ticksPerFrame) * inputTimeBase * 1000) };
+            milliseconds diffCurrent = requiredTime - currentTime;
+            milliseconds diffNext = nextTime - requiredTime;
+            result = abs(diffCurrent) < abs(diffNext);
         }
         // else: Just deliver the first found frame.
         //       Typical case: directly after 'moveTo' during thumbnail generation,

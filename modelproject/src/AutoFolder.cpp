@@ -65,6 +65,7 @@ struct IndexAutoFolderWork
                 mPath.GetDirCount() >= 1 ? mPath.GetDirs().Last() + "/" :
                 mPath.HasVolume() ? mPath.GetVolume() :
                 "";
+            // TRANSLATORS: %s == Directory which is indexed
             showProgressText(wxString::Format(_("Updating %s"), pathname));
 
             ASSERT(dir.IsOpened());
@@ -86,6 +87,7 @@ struct IndexAutoFolderWork
                 else // New element. Add
                 {
                     wxFileName filename(mPath.GetLongPath(), nodename);
+                    // TRANSLATORS: %s == Directory which is indexed
                     showProgressText(wxString::Format(_("Updating %s"), pathname + nodename));
                     model::FilePtr file = boost::make_shared<model::File>(filename);
                     if (file->canBeOpened())

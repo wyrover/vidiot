@@ -242,7 +242,9 @@ std::function<float (int,int)> WipeImage::getRightMethod(const wxImagePtr& image
         VAR_WARNING(filename);
         wxString error =
             filename.IsOk() ?
+            // TRANSLATORS: This is shown when the Wipe Image transition at time %2$s used a file (named %1$s) which the application was unable to read.
             wxString::Format(_("Couldn't read %1$s at %2$s."), filename.GetFullName(), Convert::ptsToHumanReadibleString(getLeftPts())) :
+            // TRANSLATORS: This is shown when for the Wipe Image transition at time %s no image has been selected yet.
             wxString::Format(_("No image selected at %s."), Convert::ptsToHumanReadibleString(getLeftPts()));
             gui::StatusBar::get().timedInfoText(error, 10000);
     }

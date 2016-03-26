@@ -111,9 +111,6 @@ private:
     boost::scoped_ptr<VideoCompositionParameters> mParameters;
     boost::optional<pts> mPts = boost::none;
     rational64 mTime = 0;
-
-private: //todo remove
-
     boost::optional<wxBitmapPtr> mCachedBitmap = boost::none;
     bool mForceKeyFrame = false;
     bool mError = false; ///< True if this is an error frame.

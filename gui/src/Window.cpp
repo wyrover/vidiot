@@ -100,6 +100,7 @@ static const wxString sTitleDebug("");
 Window::Window()
     : wxDocParentFrame()
     , mDocManager(new wxDocManager())
+    // TRANSLATORS: %s == Name of application (executable)
     , mDocTemplate(new wxDocTemplate(mDocManager, wxString::Format(_("%s files"), CommandLine::get().ExeName), "*." + model::Project::sFileExtension, "", model::Project::sFileExtension, wxString::Format(_("%s Project"), CommandLine::get().ExeName), wxString::Format(_("%s Project View"), CommandLine::get().ExeName), CLASSINFO(model::Project), CLASSINFO(ViewHelper)))
     , mDialog(new Dialog())
     , mAudioTransitionFactory(new model::audio::AudioTransitionFactory())
@@ -870,6 +871,7 @@ void Window::onLog(wxCommandEvent& event)
 
     if (!wxLaunchDefaultApplication(util::path::getLogFilePath().GetFullPath()))
     {
+        // TRANSLATORS: %s == Path to file that cannot be opened
         Dialog::get().getConfirmation(_("Failed to open file"), wxString::Format(_("Failed to open '%s'"), util::path::getLogFilePath().GetFullPath()));
     }
     event.Skip();
@@ -895,6 +897,7 @@ void Window::onConfig(wxCommandEvent& event)
     }
     if (!wxLaunchDefaultApplication(util::path::getConfigFilePath().GetFullPath()))
     {
+        // TRANSLATORS: %s == Path to file that cannot be opened
         Dialog::get().getConfirmation(_("Failed to open file"), wxString::Format(_("Failed to open '%s'"), util::path::getConfigFilePath().GetFullPath()));
     }
     event.Skip();

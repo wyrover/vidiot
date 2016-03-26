@@ -47,9 +47,9 @@ const int File::STREAMINDEX_UNDEFINED = -1;
 const int File::LENGTH_UNDEFINED = std::numeric_limits<int>::max();
 
 // static
-wxString File::sSupportedVideoExtensions{ "*.asf;*.avi;*.ogm;*.mov;*.mp4;*.mpeg;*.mpg;*.mkv;*.dv;*.gxf;*.lxf;*.m2t;*.m2ts;*.m2v;*.m4v;*.mts;*.3gp;*.3g2;*.asx;*.flv;*.f4v;*.ogv;*.webm;*.duk;*.dvr-ms;*.mv;*.pva;*.rm;*.rmvb;*.smv;*.ts;*.vob;*.wmv" };
+wxString File::sSupportedVideoExtensions{ "*.asf;*.avi;*.ogm;*.mov;*.mp4;*.mpeg;*.mpg;*.mkv;*.dv;*.gxf;*.lxf;*.m2t;*.m2ts;*.m2v;*.m4v;*.mts;*.nut;*.3gp;*.3g2;*.amv;*.asx;*.flv;*.f4v;*.ogv;*.webm;*.duk;*.dvr-ms;*.mv;*.pva;*.rm;*.rmvb;*.smv;*.ts;*.vob;*.wmv;*.wtv" };
 // static
-wxString File::sSupportedAudioExtensions{ "*.wav;*.mp3;*.flac;*.m2a;*.m4a;*.8svx;*.aa3;*.aac;*.aacp;*.ac3;*.act;*.aif;*.aiff;*.amr;*.ape;*.au;*.caf;*.dts;*.mid;*.mka;*.mp1;*.mpc;*.mpp;*.mp+;*.ogg;*.oma;*.qcp;*.ra;*.rso;*.tta;*.voc;*.vqf;*.wma;*.xwma" };
+wxString File::sSupportedAudioExtensions{ "*.wav;*.mp3;*.flac;*.m2a;*.m4a;*.8svx;*.aa3;*.aac;*.aacp;*.ac3;*.act;*.aif;*.aiff;*.amr;*.ape;*.au;*.caf;*.dts;*.mid;*.mlp;*.mka;*.mp1;*.mpc;*.mpp;*.mp+;*.ogg;*.oma;*.qcp;*.ra;*.rso;*.tta;*.voc;*.vqf;*.wma;*.xwma" };
 //static
 wxString File::sSupportedImageExtensions{ "*.bmp;*.gif;*.jpg;*.png;*.tga;*.tif;*.tiff" };
 
@@ -174,6 +174,7 @@ void File::check(bool immediately)
             readMetaData();
             if (!canBeOpened())
             {
+                // TRANSLATORS: %s == Path to file that has been removed from disk.
                 gui::Dialog::get().getConfirmation(_("File removed"), wxString::Format(_("The file %s has been removed from disk. File is removed from project also."), util::path::toPath(mPath)));
                 parent->removeChild(self());
             }
@@ -221,7 +222,7 @@ pts File::getLength() const
     return *mNumberOfFrames;
 }
 
-void File::moveTo(pts position)
+void File::moveTo(pts position)   // todo multipass rendering?
 {
     VAR_DEBUG(this)(position);
     ASSERT_MORE_THAN_EQUALS_ZERO(position);
@@ -407,7 +408,7 @@ FileType File::getType() const
     {
         return it->second;
     }
-    return FileType_Video; // todo add filetype unknown + warning here?
+    return FileType_Video;
 }
 
 
@@ -756,38 +757,44 @@ void File::openFile()
         mFileContext->nb_streams > 0)
     {
         VAR_WARNING(*this);
-        gui::StatusBar::get().pushInfoText(wxString::Format(_("Scanning %s to determine media length."), mPath.GetFullName()));
-        AVPacket pkt1 = { 0 };
-        AVPacket* packet = &pkt1;
-        std::vector<pts> streamPts(mFileContext->nb_streams, 0); // Note: no {, since that'll cause the wrong size
-        std::vector<pts> streamPackets(mFileContext->nb_streams, 0);
-        while (av_read_frame(mFileContext, packet) >= 0)
-        {
-            if (packet->pts != AV_NOPTS_VALUE) { streamPts[packet->stream_index] = std::max(streamPts[packet->stream_index], packet->pts); }
-            if (isVideoSupported(mFileContext->streams[packet->stream_index])) { streamPackets[packet->stream_index]++; }
-            av_packet_unref(packet);
-        }
-        gui::StatusBar::get().popInfoText();
 
-        // Reset position to beginning again. Otherwise, first playback (without 'moveTo' first) will cause errors.
-        avformat_seek_file(mFileContext, -1, std::numeric_limits<int64_t>::min(), 0, std::numeric_limits<int64_t>::max(), 0);
+        mNumberOfFrames = FileMetaDataCache::get().getLength(getPath()); // Try to read from cache
+        if (!mNumberOfFrames)
+        {
 
-        // todo store this info in the cache?
-        if (std::any_of(streamPts.begin(), streamPts.end(), [](pts value) { return value > 0; }))
-        {
-            // Try to extract length data by looking at the pts values in the packets.
-            std::vector<pts>::iterator it{ std::max_element(streamPts.begin(), streamPts.end()) };
-            int index{ narrow_cast<int>(std::distance(streamPts.begin(), it)) };
-            pts nFrames{ getFrameCount(mFileContext->streams[index], *it) };
-            setNumberOfFrames(nFrames);
-            VAR_WARNING(*this)(nFrames);
-        }
-        else
-        {
-            // Fallback: use number of packets. May be too much, but then the user can still cut off the end of the clip.
-            pts nFrames{ *std::max_element(streamPackets.begin(), streamPackets.end()) };
-            setNumberOfFrames(nFrames);
-            VAR_WARNING(*this)(nFrames);
+            // TRANSLATORS: %s == Name of file which is scanned completely to determine the file length.
+            gui::StatusBar::get().pushInfoText(wxString::Format(_("Scanning %s to determine media length."), mPath.GetFullName()));
+            AVPacket pkt1 = { 0 };
+            AVPacket* packet = &pkt1;
+            std::vector<pts> streamPts(mFileContext->nb_streams, 0); // Note: no {, since that'll cause the wrong size
+            std::vector<pts> streamPackets(mFileContext->nb_streams, 0);
+            while (av_read_frame(mFileContext, packet) >= 0)
+            {
+                if (packet->pts != AV_NOPTS_VALUE) { streamPts[packet->stream_index] = std::max(streamPts[packet->stream_index], packet->pts); }
+                if (isVideoSupported(mFileContext->streams[packet->stream_index])) { streamPackets[packet->stream_index]++; }
+                av_packet_unref(packet);
+            }
+            gui::StatusBar::get().popInfoText();
+
+            // Reset position to beginning again. Otherwise, first playback (without 'moveTo' first) will cause errors.
+            avformat_seek_file(mFileContext, -1, std::numeric_limits<int64_t>::min(), 0, std::numeric_limits<int64_t>::max(), 0);
+
+            if (std::any_of(streamPts.begin(), streamPts.end(), [](pts value) { return value > 0; }))
+            {
+                // Try to extract length data by looking at the pts values in the packets.
+                std::vector<pts>::iterator it{ std::max_element(streamPts.begin(), streamPts.end()) };
+                int index{ narrow_cast<int>(std::distance(streamPts.begin(), it)) };
+                pts nFrames{ getFrameCount(mFileContext->streams[index], *it) };
+                setNumberOfFrames(nFrames);
+                VAR_WARNING(*this)(nFrames);
+            }
+            else
+            {
+                // Fallback: use number of packets. May be too much, but then the user can still cut off the end of the clip.
+                pts nFrames{ *std::max_element(streamPackets.begin(), streamPackets.end()) };
+                setNumberOfFrames(nFrames);
+                VAR_WARNING(*this)(nFrames);
+            }
         }
     }
 

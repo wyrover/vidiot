@@ -40,6 +40,8 @@ std::pair< RandomTempDirPtr, wxFileName > RenderTimeline(int lengthInS)
     WaitUntilMainWindowActive(true);
     expectation.wait();
     ASSERT(tempdir_and_filename.second.Exists());
+    model::FilePtr file{ boost::make_shared<model::File>(tempdir_and_filename.second) };
+    ASSERT_MORE_THAN_EQUALS(file->getLength(), model::Convert::timeToPts(lengthInS * 1000));
     return tempdir_and_filename;
 }
 

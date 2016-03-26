@@ -105,6 +105,11 @@ struct RenderThumbnailWork
             mVideoClipClone->moveTo(0);
             model::VideoFramePtr videoFrame = mVideoClipClone->getNextVideo(mParameters);
             result = videoFrame->getImage();
+            if (!result)
+            {
+                // No image returned. To avoid trying to get a thumbnail over and over again, generate black thumbnail here.
+                result = wxImagePtr(new wxImage(getSize()));
+            }
 
             // Ensure that any opened threads are closed again.
             // Avoid opening too much threads in parallel.

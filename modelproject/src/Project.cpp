@@ -210,6 +210,7 @@ bool Project::DoSaveDocument(const wxString& file)
     wxFileName saveFolder(file);
     saveFolder.SetFullName(""); // Remove name and ext
     mSaveFolder = util::path::normalize(saveFolder).GetLongPath();
+    // TRANSLATORS: %s == Name of project file
     gui::StatusBar::get().pushInfoText(wxString::Format(_("Saving %s"), saveFileName.GetFullName()) + " ...");
     if (saveFileName.Exists() &&
         Config::get().read<bool>(Config::sPathProjectBackupBeforeSaveEnabled))
@@ -276,6 +277,7 @@ bool Project::DoSaveDocument(const wxString& file)
         else
         {
             gui::StatusBar::get().popInfoText();
+            // TRANSLATORS: %s == Name of project file
             gui::StatusBar::get().timedInfoText(wxString::Format(_("%s saved successfully."), saveFileName.GetFullName()));
         }
     }
@@ -308,6 +310,7 @@ bool Project::DoOpenDocument(const wxString& file)
             // Memory leak of Properties. Causes crash when opening a new project.
             // ASSERT(mProperties.unique());
             LOG_ERROR;
+            // TRANSLATORS: %s == Project file name. %s (second) == Name of application (executable)
             gui::Dialog::get().getConfirmation(_("Open Failed"), wxString::Format(_("Could not read %s. \n%s must be restarted (known bug that opening a project after this will fail)"), file, gui::CommandLine::get().ExeName));
             Config::get().write<bool>(Config::sPathProjectAutoLoadEnabled, false); // Ensure that upon next startup not immediately a file is opened, possibly failing again.
             Config::get().Flush();
