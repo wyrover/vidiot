@@ -55,6 +55,7 @@ public:
     void deleteClips(bool shift = false);
 
     /// Unselect all clips
+    void selectAll(bool select = true);
     void unselectAll();
 
     /// Change the selection into the given list of clips.

@@ -168,6 +168,14 @@ boost::statechart::result Idle::react( const EvKeyDown& evt)
             evt.consumed();
             break;
         }
+        case 'a':
+        case 'A':
+            if (evt.CtrlDown)
+            {
+                getSelection().selectAll();
+                evt.consumed();
+            }
+            break;
         case 'b':
         case 'B':
         {

@@ -286,7 +286,7 @@ void Selection::deleteClips(bool shift)
     QueueEvent(new EventSelectionUpdate(0));
 }
 
-void Selection::unselectAll()
+void Selection::selectAll(bool select)
 {
     ASSERT(wxThread::IsMain());
     LOG_DEBUG;
@@ -294,11 +294,16 @@ void Selection::unselectAll()
     {
         for ( model::IClipPtr clip : track->getClips() )
         {
-            selectClip(clip,false);
+            selectClip(clip, select);
         }
     }
     setPreviouslyClicked(model::IClipPtr()); // reset
     QueueEvent(new EventSelectionUpdate(0));
+}
+
+void Selection::unselectAll()
+{
+    selectAll(false);
 }
 
 void Selection::change(const model::IClips& selection)
