@@ -568,6 +568,6 @@ void Config::updateCache()
     mCache.clear();
     SetPath("");
     indexEntries();
-    VAR_ERROR(mCache);
+    VAR_INFO(mCache);
 }
 
