@@ -19,8 +19,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-03-21 20:52+0100\n"
-"PO-Revision-Date: 2016-02-18 22:25+0100\n"
+"POT-Creation-Date: 2016-03-27 17:44+0200\n"
+"PO-Revision-Date: 2016-03-27 17:54+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -69,12 +69,13 @@ msgstr ""
 "Ein schwerwiegender Fehler ist aufgetreten. Drücken Sie auf OK, um die "
 "Debugbericht zu generieren. Klicken Sie auf Abbrechen zum beenden."
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:364
+#. TRANSLATORS: %s == Name of application (executable)
+#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:365
 #, c-format
 msgid "%s crash report"
 msgstr "%s Absturz Bericht"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:364
+#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:365
 #, c-format
 msgid ""
 "I'm sorry, but %1$s crashed.\n"
@@ -148,8 +149,8 @@ msgid "(requires restart)"
 msgstr "(Neustart erforderlich)"
 
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:63
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:125
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:181
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:122
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:182
 msgid "Options"
 msgstr "Optionen"
 
@@ -166,7 +167,7 @@ msgid "Load last project on startup"
 msgstr "Einlesen zuletzt geöffnete Projekt beim Start"
 
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:74
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:187
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:188
 msgid "Save"
 msgstr "Speichern"
 
@@ -210,7 +211,7 @@ msgstr "Länge des Namens (Präfix) welche die gleiche sein muß"
 
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:103
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogProjectProperties.cpp:44
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:113
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:110
 #: C:\Vidiot\vidiot_trunk\gui\src\EditProjectProperties.cpp:39
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:54
 msgid "Video"
@@ -251,7 +252,7 @@ msgstr "Standard Länge von Abbildungen (Frames)"
 
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:178
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogProjectProperties.cpp:73
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:119
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:116
 #: C:\Vidiot\vidiot_trunk\gui\src\EditProjectProperties.cpp:57
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:55
 msgid "Audio"
@@ -405,65 +406,65 @@ msgstr "Film machen"
 msgid "Incompatible codec and file type"
 msgstr "Inkompatible Codec und Dateityp"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:90
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:87
 msgid "Format"
 msgstr "Formatieren"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:96
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:93
 #: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterFilename.cpp:96
 msgid "Select"
 msgstr "Auswählen"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:107
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:104
 msgid "Output file"
 msgstr "Ausgabedatei"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:108
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:105
 msgid "Video codec"
 msgstr "Video-Codec"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:109
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:106
 msgid "Audio codec"
 msgstr "Audio-Codec"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:132
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:129
 msgid "Render separation between cuts"
 msgstr "Trennung zwischen Schnitte"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:136
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:133
 msgid "Actions"
 msgstr "Aktionen"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:139
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:136
 msgid "Set as default"
 msgstr "Als Standard einstellen"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:148
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:145
 msgid "OK && Render now"
 msgstr "OK && Machen"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:149
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:146
 msgid "OK"
 msgstr "Ok"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:150
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:147
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:151
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:148
 msgid "Apply"
 msgstr "Bewerben"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:237
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:231
 msgid "Select output file"
 msgstr "Wählen Sie die Ausgabedatei"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:396
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:390
 msgid "This audio codec can not be stored in the given file type"
 msgstr ""
 "Dieser Audio-Codec kann nicht in der angegebenen Dateityp gespeichert werden"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:401
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:395
 msgid ""
 "This audio codec may cause problems with the given file type (cannot "
 "determine if this will work properly)."
@@ -471,12 +472,12 @@ msgstr ""
 "Dieser Audio-Codec kann zu Problemen mit dem angegebenen Dateityp führen "
 "(kann nicht feststellen, ob dies richtig funktioniert)."
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:423
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:417
 msgid "This video codec can not be stored in the given file type"
 msgstr ""
 "Diese Video-Codec kann nicht in der angegebenen Dateityp gespeichert werden"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:428
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:422
 msgid ""
 "This video codec may cause problems with the given file type (cannot "
 "determine if this will work properly)."
@@ -484,19 +485,19 @@ msgstr ""
 "Diese Video-Codec kann zu Probleme mit dem angegebenen Dateityp führen (kann "
 "nicht feststellen, ob dies richtig funktioniert)."
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:523
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:517
 msgid "Select output file first."
 msgstr "Wählen Sie die Ausgabedatei."
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:523
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:517
 msgid "No file selected"
 msgstr "Keine Datei ausgewählt"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:528
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:522
 msgid "Nothing to render"
 msgstr "Nichts zu machen"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:528
+#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:522
 msgid "Select at least a video or audio codec."
 msgstr "Wählen Sie mindestens eine Video- oder Audio-Codec."
 
@@ -513,175 +514,174 @@ msgstr "Vorwärts"
 msgid "%d item(s) queued"
 msgstr "%d Aktion(en) in der Queue"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:103
+#. TRANSLATORS: %s == Name of application (executable)
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:104
 #, c-format
 msgid "%s files"
 msgstr "%s dateien"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:103
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:104
 #, c-format
 msgid "%s Project"
 msgstr "%s Projekt"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:103
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:104
 #, c-format
 msgid "%s Project View"
 msgstr "%s Projektübersicht"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:109
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:198
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:218
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:110
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:199
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:219
 msgid "Help"
 msgstr "Hilfe"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:110
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:206
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:111
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:207
 msgid "Project"
 msgstr "Projekt"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:111
-#: C:\Vidiot\vidiot_trunk\render\src\AudioCodec.cpp:161
-#: C:\Vidiot\vidiot_trunk\render\src\VideoCodec.cpp:161
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:112
 msgid "Details"
 msgstr "Einzelheiten"
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:112
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:113
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:154
 msgid "Preview"
 msgstr "Vorschau"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:113
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:114
 msgid "Timelines"
 msgstr "Zeitleisten"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:137
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:138
 msgid "Revert"
 msgstr "Wiederherstellung Original"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:141
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:142
 #: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewCreateFile.cpp:37
 msgid "Add files"
 msgstr "Dateien hinzufügen"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:141
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:142
 msgid "Add media files from disk."
 msgstr "Hinzufügen von Mediendateien von der Festplatte."
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:142
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:143
 msgid "Add folder"
 msgstr "Mappe hinzufügen"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:142
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:143
 msgid "Add folder with media files from disk."
 msgstr "Einfügen von eine Mappe von der Festplatte mit Mediendateien."
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:143
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:144
 msgid "Add sequence"
 msgstr "Film hinzufügen"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:143
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:144
 msgid "Add new (blank) movie sequence."
 msgstr "Einfügen eine leere Film."
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:147
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:148
 msgid "Exit"
 msgstr "Beenden"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:165
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:166
 msgid "Snap to clips"
 msgstr "Ankleben an Clips"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:167
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:168
 msgid "Snap to cursor"
 msgstr "Ankleben an Cursor"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:170
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:171
 msgid "Show bounding box"
 msgstr "Begrenzungsrahmen anzeigen"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:184
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:185
 msgid "Show captions"
 msgstr "Titel anzeigen"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:188
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:189
 msgid "Load"
 msgstr "Öffnen"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:189
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:190
 #: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:533
 #: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewDeleteAsset.cpp:33
 msgid "Delete"
 msgstr "Löschen"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:190
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:191
 msgid "Delete all"
 msgstr "Alles löschen"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:192
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:193
 msgid "Restore default"
 msgstr "Wiederherstellen der Standard"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:194
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:195
 msgid "Fullscreen"
 msgstr "Vollbild"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:194
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:195
 msgid "F11"
 msgstr "F11"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:200
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:201
 msgid "Open log file"
 msgstr "Öffnen von der log Datei"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:201
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:202
 msgid "Open config file"
 msgstr "Öffnen von der Konfigurationsdatei"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:203
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:204
 msgid "About..."
 msgstr "Über..."
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:207
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:208
 msgid "Edit"
 msgstr "Bearbeiten"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:208
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:209
 msgid "View"
 msgstr "Ansicht"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:209
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:988
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:210
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:991
 #: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:380
 #: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:566
 msgid "Sequence"
 msgstr "Film"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:211
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:212
 msgid "Tools"
 msgstr "Tools"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:212
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:213
 msgid "Workspace"
 msgstr "Arbeitsfläche"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:216
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:217
 msgid "Crash"
 msgstr "Absturz"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:390
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:398
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:391
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:399
 #: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:324
 #: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:325
 #: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:326
 msgid "Ctrl"
 msgstr "Ctrl"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:774
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:775
 msgid "Enter workspace name"
 msgstr "Geben Sie Name des Arbeitsfläche"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:774
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:775
 msgid ""
 "Enter name for the saved workspace.\n"
 "If this is an existing name it is overwritten."
@@ -689,31 +689,31 @@ msgstr ""
 "Geben Sie den Namen für den gespeicherten Arbeitsfläche.\n"
 "Wenn diesen Name schon besteht wird  Sie überschrieben."
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:791
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:792
 msgid "Select workspace"
 msgstr "Arbeitsfläche Wählen"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:797
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:798
 msgid "Select workspace to be restored."
 msgstr "Wählen Sie die Arbeitsfläche welche wiederhergestellt soll werden."
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:806
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:807
 msgid "Load workspace failed"
 msgstr "Wiederherstellen von der Arbeitsfläche ist fehlgeschlagen"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:806
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:807
 msgid "Something went wrong while trying to load the saved perspective. Sorry."
 msgstr "Wiederherstellen von der Arbeitsfläche ist fehlgeschlagen."
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:814
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:815
 msgid "Select workspace to be removed."
 msgstr "Wählen Sie Arbeitsfläche zu entfernen."
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:827
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:828
 msgid "Remove all saved workspaces"
 msgstr "Alle gespeicherten Arbeitsfläche entfernen"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:827
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:828
 msgid ""
 "This will remove all saved workspace layouts which cannot be undone.\n"
 "Are you sure?"
@@ -722,23 +722,24 @@ msgstr ""
 "gemacht werden.\n"
 "Sind Sie sicher?"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:873
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:898
+#. TRANSLATORS: %s == Path to file that cannot be opened
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:875
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:901
 #: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:573
 msgid "Failed to open file"
 msgstr "Fehler beim öffnen der Datei"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:873
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:898
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:875
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:901
 #, c-format
 msgid "Failed to open '%s'"
 msgstr "Fehler beim öffnen von '%s'"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:886
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:888
 msgid "Attention"
 msgstr "Achtung"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:887
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:889
 #, c-format
 msgid ""
 "Note that changing this file will not update the gui.\n"
@@ -801,11 +802,12 @@ msgstr "Spur"
 msgid "Audio crossfade"
 msgstr "Audio Überblendung"
 
-#: C:\Vidiot\vidiot_trunk\modelfile\src\File.cpp:177
+#. TRANSLATORS: %s == Path to file that has been removed from disk.
+#: C:\Vidiot\vidiot_trunk\modelfile\src\File.cpp:178
 msgid "File removed"
 msgstr "Datei entfernt"
 
-#: C:\Vidiot\vidiot_trunk\modelfile\src\File.cpp:177
+#: C:\Vidiot\vidiot_trunk\modelfile\src\File.cpp:178
 #, c-format
 msgid ""
 "The file %s has been removed from disk. File is removed from project also."
@@ -813,10 +815,11 @@ msgstr ""
 "Die Datei %s wurde von der Festplatte entfernt. Es wird aus dem Projekt "
 "ebenfalls entfernt."
 
-#: C:\Vidiot\vidiot_trunk\modelfile\src\File.cpp:769
+#. TRANSLATORS: %s == Name of file which is scanned completely to determine the file length.
+#: C:\Vidiot\vidiot_trunk\modelfile\src\File.cpp:766
 #, c-format
 msgid "Scanning %s to determine media length."
-msgstr ""
+msgstr "Bestimmen der Länge von %s."
 
 #: C:\Vidiot\vidiot_trunk\modelfile\src\FileAnalyzer.cpp:79
 msgid "Indexing files"
@@ -830,17 +833,18 @@ msgstr "Nur reguläre Dateien kunnen eingefügt werden."
 msgid "Some of these files cannot be used."
 msgstr "Einige dieser Dateien kunnen nicht verwendet werden."
 
-#: C:\Vidiot\vidiot_trunk\modelproject\src\AutoFolder.cpp:68
-#: C:\Vidiot\vidiot_trunk\modelproject\src\AutoFolder.cpp:89
+#. TRANSLATORS: %s == Directory which is indexed
+#: C:\Vidiot\vidiot_trunk\modelproject\src\AutoFolder.cpp:69
+#: C:\Vidiot\vidiot_trunk\modelproject\src\AutoFolder.cpp:91
 #, c-format
 msgid "Updating %s"
 msgstr "Aktualisieren von %s"
 
-#: C:\Vidiot\vidiot_trunk\modelproject\src\AutoFolder.cpp:237
+#: C:\Vidiot\vidiot_trunk\modelproject\src\AutoFolder.cpp:239
 msgid "Folder removed"
 msgstr "Mappe entfernt"
 
-#: C:\Vidiot\vidiot_trunk\modelproject\src\AutoFolder.cpp:237
+#: C:\Vidiot\vidiot_trunk\modelproject\src\AutoFolder.cpp:239
 #, c-format
 msgid ""
 "The folder %s has been removed from disk. It is removed from the project "
@@ -849,47 +853,50 @@ msgstr ""
 "Die Mappe %s wurde von der Festplatte entfernt. Es wird aus dem Projekt "
 "ebenfalls entfernt."
 
-#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:213
+#. TRANSLATORS: %s == Name of project file
+#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:214
 #, c-format
 msgid "Saving %s"
 msgstr "Speichern von %s"
 
-#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:244
+#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:245
 msgid "Backup failed"
 msgstr "Speichern von Sicherungsdatei fehlgeschlagen"
 
-#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:244
+#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:245
 msgid "Could not create backup file "
 msgstr "Sicherungs-Datei konnte nicht erstellt werden "
 
-#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:267
-#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:274
+#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:268
+#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:275
 msgid "Save Failed"
 msgstr "Speichern fehlgeschlagen"
 
-#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:267
+#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:268
 msgid "Could not open save file: "
 msgstr "Sicherungsdatei konnte nicht geöffnet werden:"
 
-#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:274
+#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:275
 msgid "Could not save: "
 msgstr "Konnte nicht gespeichert werden: "
 
-#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:279
+#. TRANSLATORS: %s == Name of project file
+#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:281
 #, c-format
 msgid "%s saved successfully."
 msgstr "%s wurde erfolgreich gespeichert."
 
-#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:301
-#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:311
+#. TRANSLATORS: %s == Project file name. %s (second) == Name of application (executable)
+#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:303
+#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:314
 msgid "Open Failed"
 msgstr "Öffnen ist fehlgeschlagen"
 
-#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:301
+#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:303
 msgid "Could not open: "
 msgstr "Konnte nicht öffnen: "
 
-#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:311
+#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:314
 #, c-format
 msgid ""
 "Could not read %s. \n"
@@ -1182,12 +1189,14 @@ msgstr "Wählen Sie zwischen verkleinern (normal) oder vergrößern (invertiert)
 msgid "Wipe Image"
 msgstr "Wischen Bild"
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:245
+#. TRANSLATORS: This is shown when the Wipe Image transition at time %2$s used a file (named %1$s) which the application was unable to read.
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:246
 #, c-format
 msgid "Couldn't read %1$s at %2$s."
 msgstr "Konnte %1$s an Position %2$s nicht lesen."
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:246
+#. TRANSLATORS: This is shown when for the Wipe Image transition at time %s no image has been selected yet.
+#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:248
 #, c-format
 msgid "No image selected at %s."
 msgstr "Kein Bild bei %s ausgewählt."
@@ -1520,6 +1529,7 @@ msgid "Error in audio codec"
 msgstr "Fehler bei der Audio-Codec"
 
 #: C:\Vidiot\vidiot_trunk\render\src\AudioCodec.cpp:144
+#: C:\Vidiot\vidiot_trunk\render\src\AudioCodec.cpp:161
 msgid "There was an error when opening the audio codec."
 msgstr "Es gab einen Fehler beim Öffnen des Audio-Codec."
 
@@ -1592,7 +1602,7 @@ msgstr "Fehler beim zuweisen der Speicher zum Resampling"
 
 #: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:582
 msgid "Failed to write file header"
-msgstr ""
+msgstr "Fehler beim schreiben der Dateikopf."
 
 #: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:623
 #, c-format
@@ -1628,6 +1638,7 @@ msgid "Error in video codec"
 msgstr "Fehler im Video-Codec"
 
 #: C:\Vidiot\vidiot_trunk\render\src\VideoCodec.cpp:148
+#: C:\Vidiot\vidiot_trunk\render\src\VideoCodec.cpp:161
 msgid "There was an error when opening the video codec."
 msgstr "Es gab einen Fehler beim Öffnen der Video-Codec."
 
@@ -1705,12 +1716,13 @@ msgstr "Einstellen der Länge vom Clip"
 msgid "%s (%ss)"
 msgstr "%s (%ss)"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_HelperMethods.cpp:140
+#. TRANSLATORS: This is shown in the undo history when a parameter of a transition has been edited. %1$s == Name of transition, %2$s == Name of parameter.
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_HelperMethods.cpp:141
 #, c-format
-msgid "Change %s (%s)"
-msgstr "Veränderung von %s (%s)"
+msgid "Change %1$s (%2$s)"
+msgstr "Veränderung von %1$s (%2$s)"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_HelperMethods.cpp:178
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_HelperMethods.cpp:179
 msgid "Change transition type"
 msgstr "Ändern Übergangstyp"
 
@@ -2292,6 +2304,9 @@ msgstr "Drücken Sie auf OK, um zu beenden."
 #: C:\Vidiot\vidiot_trunk\util\src\UtilPath.cpp:284
 msgid "Resources not found"
 msgstr "Ressourcen nicht gefunden"
+
+#~ msgid "Change %s (%s)"
+#~ msgstr "Veränderung von %s (%s)"
 
 #~ msgid "poedit"
 #~ msgstr "poedit"
