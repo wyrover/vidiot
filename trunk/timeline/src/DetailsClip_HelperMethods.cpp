@@ -137,9 +137,8 @@ void DetailsClip::submitEditCommandUponTransitionEdit(const wxString& parameter)
 {
     ASSERT_NONZERO(mTransitionClone);
 
-    // TRANSLATORS: This is shown in the undo history when a parameter of a transition has been edited. First %s == Name of transition, second %s == Name of parameter.
-    // todo replace with %1$s and %2$s
-    wxString message{ wxString::Format(_("Change %s (%s)"), mClip->getDescription(), parameter) };
+    // TRANSLATORS: This is shown in the undo history when a parameter of a transition has been edited. %1$s == Name of transition, %2$s == Name of parameter.
+    wxString message{ wxString::Format(_("Change %1$s (%2$s)"), mClip->getDescription(), parameter) };
 
     if (mEditCommand == nullptr || // No command submit yet
         mEditCommand != model::CommandProcessor::get().GetCurrentCommand() || // If another command was done inbetween
