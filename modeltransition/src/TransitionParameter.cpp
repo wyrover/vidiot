@@ -26,7 +26,8 @@ DEFINE_EVENT(EVENT_TRANSITION_PARAMETER_CHANGED, EventTransitionParameterChanged
 //////////////////////////////////////////////////////////////////////////
 
 TransitionParameter::TransitionParameter(const TransitionParameter& other)
-    : mName{ other.mName }
+    : wxEvtHandler()
+    , mName{ other.mName }
     , mDescription{ other.mDescription }
     , mToolTip{ other.mToolTip }
 {
@@ -37,33 +38,33 @@ TransitionParameter::TransitionParameter(const TransitionParameter& other)
 //////////////////////////////////////////////////////////////////////////
 
 wxString TransitionParameter::getName() const
-{ 
-    return mName; 
+{
+    return mName;
 }
 
-void TransitionParameter::setName(const wxString& name) 
-{ 
-    mName = name; 
+void TransitionParameter::setName(const wxString& name)
+{
+    mName = name;
 }
 
 wxString TransitionParameter::getDescription() const
-{ 
-    return mDescription; 
+{
+    return mDescription;
 }
 
-void TransitionParameter::setDescription(const wxString& description) 
-{ 
-    mDescription = description; 
+void TransitionParameter::setDescription(const wxString& description)
+{
+    mDescription = description;
 }
 
 wxString TransitionParameter::getToolTip() const
-{ 
-    return mToolTip; 
+{
+    return mToolTip;
 }
 
-void TransitionParameter::setToolTip(const wxString& tooltip) 
-{ 
-    mToolTip = tooltip; 
+void TransitionParameter::setToolTip(const wxString& tooltip)
+{
+    mToolTip = tooltip;
 }
 
 void TransitionParameter::setOnChanged(std::function<void(const wxString&)> onChange) { mOnChange = onChange; }

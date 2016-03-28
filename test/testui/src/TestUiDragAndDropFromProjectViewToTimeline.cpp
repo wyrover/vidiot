@@ -58,7 +58,6 @@ void TestUiDragAndDropFromProjectViewToTimeline::testDragAndDropAtEndOfSequence(
     model::NodePtrs fileNodes = mProjectFixture.mRoot->find("02.avi");
     ASSERT_EQUALS(fileNodes.size(),1);
     pts trackLength = VideoTrack(0)->getLength();
-    pts cliplength = VideoClip(0,2)->getLength();
     DragFromProjectViewToTimeline(fileNodes.front(),  getTimeline().GetScreenPosition() - getTimeline().getScrolling().getOffset() + wxPoint(RightPixel(VideoTrack(0)), VCenter(VideoTrack(0))) );
     ASSERT_EQUALS(NumberOfVideoClipsInTrack(0),8);
     ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip);
@@ -112,7 +111,7 @@ void TestUiDragAndDropFromProjectViewToTimeline::testDragAndDropIntoNewVideoTrac
     ASSERT_VIDEOTRACK1SIZE(1);
     ASSERT_EQUALS(VideoClip(1, 0)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,2));
 }
-    
+
 void TestUiDragAndDropFromProjectViewToTimeline::testDragAndDropIntoNewAudioTrack()
 {
     StartTestSuite();

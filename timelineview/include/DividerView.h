@@ -56,9 +56,9 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    pixel mHeight;
-    mutable boost::optional<pixel> mY;
-    model::TrackPtr mTrack;
+    pixel mHeight = 0;
+    mutable boost::optional<pixel> mY = boost::none;
+    model::TrackPtr mTrack = nullptr;
 };
 
 }} // namespace

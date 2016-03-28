@@ -118,7 +118,7 @@ private: \
 std::ostream& operator<<(std::ostream& os, const ENUMNAME& obj); \
 wxString ENUMNAME ## _toString( const ENUMNAME& value ); \
 ENUMNAME ENUMNAME ## _fromString( const wxString& value ); \
-ENUMNAME Enum_fromConfig(const wxString& value, const ENUMNAME& unused);
+ENUMNAME Enum_fromConfig(const wxString& value, const ENUMNAME& unused)
 
 #endif
 

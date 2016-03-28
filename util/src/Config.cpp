@@ -545,7 +545,7 @@ void Config::indexEntries()
     bool cont{ GetFirstEntry(key, cookie) };
     while (cont)
     {
-        bool ok{ Read(key, &value) };
+        Read(key, &value);
         mCache[GetPath() + "/" + key] = value;
         cont = GetNextEntry(key, cookie);
     }

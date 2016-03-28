@@ -39,7 +39,6 @@ DividerView::DividerView(View* parent, pixel height, const model::TrackPtr& trac
 :   View(parent)
 ,   mHeight(height)
 ,   mTrack(track)
-,   mY(boost::none)
 {
     VAR_DEBUG(this)(height);
     getViewMap().registerDivider(mTrack,this);

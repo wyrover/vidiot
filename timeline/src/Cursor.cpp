@@ -121,11 +121,9 @@ void Cursor::end()
 
 void Cursor::focus()
 {
-    wxPoint scroll = getScrolling().getOffset();
     wxSize size = getTimeline().GetClientSize();
 
     getScrolling().align(mCursorPosition, size.x / 4);
-
 }
 
 void Cursor::onPlaybackPosition(pts position)

@@ -27,9 +27,6 @@ namespace gui {
 
 EditDisplay::EditDisplay(wxWindow *parent)
 :   wxControl(parent, wxID_ANY)
-,	mWidth(0)
-,	mHeight(0)
-,   mCurrentBitmap()
 {
     GetClientSize(&mWidth,&mHeight);
     VAR_DEBUG(this)(mWidth)(mHeight);

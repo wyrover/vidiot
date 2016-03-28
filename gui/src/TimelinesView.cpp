@@ -193,7 +193,7 @@ void TimelinesView::updateActivation()
         size_t page = 0;
         while (page < mNotebook.GetPageCount())
         {
-            if (page != mNotebook.GetSelection())
+            if (narrow_cast<int>(page) != mNotebook.GetSelection())
             {
                 static_cast<timeline::Timeline*>(mNotebook.GetPage(page))->activate(false);
             }
@@ -215,8 +215,8 @@ const std::string sTimeline("timeline");
 template<class Archive>
 void TimelinesView::save(Archive & ar, const unsigned int version) const
 {
-    unsigned int notebookCount = mNotebook.GetPageCount();
-    unsigned int selectedPage = mNotebook.GetSelection();
+    unsigned int notebookCount{ narrow_cast<unsigned int>(mNotebook.GetPageCount()) };
+    int selectedPage{ mNotebook.GetSelection() };
 
     ar & boost::serialization::make_nvp(sCount.c_str(),notebookCount);
     ar & boost::serialization::make_nvp(sSelected.c_str(), selectedPage);
@@ -232,8 +232,8 @@ void TimelinesView::save(Archive & ar, const unsigned int version) const
 template<class Archive>
 void TimelinesView::load(Archive & ar, const unsigned int version)
 {
-    unsigned int notebookCount;
-    unsigned int selectedPage = wxNOT_FOUND;
+    unsigned int notebookCount{ 0 };
+    int selectedPage{ wxNOT_FOUND };
 
     ar & boost::serialization::make_nvp(sCount.c_str(),notebookCount);
     ar & boost::serialization::make_nvp(sSelected.c_str(), selectedPage);
@@ -250,7 +250,7 @@ void TimelinesView::load(Archive & ar, const unsigned int version)
     }
     if (selectedPage != wxNOT_FOUND)
     {
-        ASSERT_LESS_THAN(selectedPage,mNotebook.GetPageCount());
+        ASSERT_LESS_THAN(narrow_cast<size_t>(selectedPage),mNotebook.GetPageCount());
         mNotebook.SetSelection(selectedPage);
         updateActivation();
     }

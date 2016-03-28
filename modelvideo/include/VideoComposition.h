@@ -60,7 +60,6 @@ private:
 
     VideoCompositionParameters mParameters;
     std::vector<VideoFramePtr> mFrames;
-    wxSize mBoundingBox;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

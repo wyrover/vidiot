@@ -177,7 +177,7 @@ if (MSVC)
     if (NOT SINGLE_THREADED)
         set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP ")
     endif ()
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /WX ") # Treat warnings as errors
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /WX  /wd4068") # Treat warnings as errors, Ignore warning 4068 (unknown pragma)
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHa")
     set (CMAKE_EXE_LINKER_FLAGS "/SAFESEH:NO /PDBSTRIPPED:stripped.pdb") # SAFESEH:NO is required for avcodec, PDFSTRIPPED:stripped.pdb generates a separate PDB for inclusion in the installer
     string (REPLACE "/ZI" "/Zi" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}") # This ensures that in log lines not the full path is shown
@@ -185,7 +185,8 @@ if (MSVC)
     add_definitions (/D SOURCE_ROOT="${CMAKE_CURRENT_SOURCE_DIR}") # Used to fix the path to the test input files (part of sources) in the code, via the preprocessor.
   include_directories (AFTER ctypes)
 else ()
-    list (APPEND CMAKE_CXX_FLAGS "-std=c++14") # Add -H For checking that pch is used
+    # Add -H For checking that pch is used
+    list (APPEND CMAKE_CXX_FLAGS "-std=c++14 -Werror -Wall -Wextra -Wno-unused-parameter -Wno-unused-local-typedefs -Wno-unknown-pragmas -Wcast-align -Wdisabled-optimization -Wformat=2 -Winit-self -Wmissing-include-dirs -Wnoexcept -Wsign-promo -Wstrict-null-sentinel -Wstrict-overflow=5 -Wno-variadic-macros -Wno-parentheses -fdiagnostics-show-option") 
     add_definitions (-DSOURCE_ROOT=${CMAKE_CURRENT_SOURCE_DIR}) # Used to fix the path to the test input files (part of sources) in the code, via the preprocessor.
 endif ()
 

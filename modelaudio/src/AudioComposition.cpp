@@ -30,14 +30,14 @@ namespace model {
 //////////////////////////////////////////////////////////////////////////
 
 AudioComposition::AudioComposition(const AudioCompositionParameters& parameters)
-    : mChunks()
-    , mParameters(parameters)
+    : mParameters(parameters)
+    , mChunks()
 {
 }
 
 AudioComposition::AudioComposition(const AudioComposition& other)
-    : mChunks(other.mChunks)
-    , mParameters(other.mParameters)
+    : mParameters(other.mParameters)
+    , mChunks(other.mChunks)
 {
 }
 
@@ -87,7 +87,7 @@ AudioChunkPtr AudioComposition::generate()
         {
             ASSERT(inputChunk);
             ASSERT(!inputChunk->isA<EmptyChunk>());
-            if (inputChunk->getError()) 
+            if (inputChunk->getError())
             {
                 result->setError();
             }

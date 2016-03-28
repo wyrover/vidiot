@@ -133,7 +133,7 @@ VideoFramePtr VideoClip::getNextVideo(const VideoCompositionParameters& paramete
             wxSize outputsize = Properties::get().getVideoSize();
 
             rational64 scaleToBoundingBox(0);
-            wxSize requiredOutputSize = Convert::sizeInBoundingBox(outputsize, parameters.getBoundingBox(), scaleToBoundingBox);
+            Convert::sizeInBoundingBox(outputsize, parameters.getBoundingBox(), scaleToBoundingBox);
             ASSERT_NONZERO(scaleToBoundingBox);
             rational64 videoscaling = keyFrame->getScalingFactor() * scaleToBoundingBox;
             wxSize inputsize = generator->getSize();

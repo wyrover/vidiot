@@ -119,13 +119,14 @@ VideoFramePtr Slide::getVideo(pts position, const IClipPtr& leftClip, const ICli
         case model::Direction8LeftToRight:
             offset.x = std::trunc(factor * w) - w;
             break;
+        default: { FATAL("Wrong direction"); break; }
     }
 
     auto addClip = [parameters, result](const model::IClipPtr& clip, wxPoint offset)
     {
-        if (clip == nullptr) 
-        { 
-            return; 
+        if (clip == nullptr)
+        {
+            return;
         }
         VideoFramePtr frame{ boost::static_pointer_cast<VideoClip>(clip)->getNextVideo(parameters) };
         for (VideoFrameLayerPtr layer : frame->getLayers())

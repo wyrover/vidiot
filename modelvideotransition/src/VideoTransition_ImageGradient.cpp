@@ -63,11 +63,11 @@ wxString ImageGradient::getDescription(TransitionType type) const
 
 std::function<float (int,int)> ImageGradient::getRightMethod(const wxImagePtr& image, const float& factor) const
 {
-    wxFileName filename{ getParameter<TransitionParameterFilename>(TransitionParameterFilename::sParameterImageFilename)->getValue() };
-    bool inversed{ getParameter<TransitionParameterBool>(TransitionParameterBool::sParameterInversed)->getValue() };
+//    wxFileName filename{ getParameter<TransitionParameterFilename>(TransitionParameterFilename::sParameterImageFilename)->getValue() };
+//    bool inversed{ getParameter<TransitionParameterBool>(TransitionParameterBool::sParameterInversed)->getValue() };
 
-    double w{ static_cast<double>(image->GetWidth()) };
-    double h{ static_cast<double>(image->GetHeight()) };
+//    double w{ static_cast<double>(image->GetWidth()) };
+//    double h{ static_cast<double>(image->GetHeight()) };
     FATAL("Wrong direction");
     return nullptr;
 }

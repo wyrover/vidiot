@@ -40,20 +40,11 @@ TrimClip::TrimClip(const model::SequencePtr& sequence, const model::IClipPtr& cl
     : AClipEdit(sequence)
     , mOriginalClip(clip)
     , mOriginalLink(mOriginalClip->getLink())
-    , mClip()
-    , mLink()
     , mNewClip(mOriginalClip)
     , mNewLink(mOriginalLink)
     , mTransition(transition)
     , mLinkTransition()
-    , mLinkIsPartOfTransition(false)
-    , mClipIsPartOfTransition(false)
-    , mTrim(0)
-    , mShift(false)
-    , mTrimLink(true)
     , mPosition(position)
-    , mCursorPositionBefore(0)
-    , mCursorPositionAfter(0)
 {
     VAR_INFO(this)(mOriginalClip)(mOriginalLink)(mTransition);
     mCommandName = _("Adjust length");

@@ -49,8 +49,6 @@ const rational64 DetailsClip::sFactorMax{ 100,1 }; // 100
 
 DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     : DetailsPanel(parent, timeline)
-    , mVideoKeyFrameControls(std::make_shared<KeyFrameControlsImpl<model::VideoClip, model::VideoKeyFrame>>(this))
-    , mAudioKeyFrameControls(std::make_shared<KeyFrameControlsImpl<model::AudioClip, model::AudioKeyFrame>>(this))
     , sVideo(_("Video"))
     , sAudio(_("Audio"))
     , sTransition(_("Transition"))
@@ -65,6 +63,8 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     , sEditKeyFramesAdd(_("Add key frame to %s"))
     , sEditKeyFramesRemove(_("Remove key frame from %s"))
     , mPlaybackClipIndex{ std::make_pair(-1, -1) }
+    , mVideoKeyFrameControls(std::make_shared<KeyFrameControlsImpl<model::VideoClip, model::VideoKeyFrame>>(this))
+    , mAudioKeyFrameControls(std::make_shared<KeyFrameControlsImpl<model::AudioClip, model::AudioKeyFrame>>(this))
 {
     VAR_DEBUG(this);
 

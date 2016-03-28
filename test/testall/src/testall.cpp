@@ -17,6 +17,7 @@
 
 #include <wx/app.h>
 #include <wx/filename.h>
+#include <map>
 #include <sstream>
 #include <iostream>
 #include <iomanip>
@@ -53,6 +54,8 @@ int main(int argc, char *argv[])
     long starttime = time(0);
     long returnvalue{ 0 };
 
+    std::map<wxString, wxString> times;
+
     for (wxString test : get_tests())
     {
         log(test.Capitalize() + " ...");
@@ -76,10 +79,16 @@ int main(int argc, char *argv[])
             log(test.Capitalize() + " FAILED");
             break;
         }
-        log(test.Capitalize() + " done " + getTimes(teststarttime));
+        times[test] = getTimes(teststarttime);
+        log(test.Capitalize() + " done " + times[test]);
     }
 
-    log("Total running time: " + getTimes(starttime));
+    for (wxString test : get_tests())
+    {
+        log(test + "\t\t" + times[test]);
+    }
+
+    log("Total running time:\t" + getTimes(starttime));
     wxEntryCleanup();
     sleep_allowed();
 #ifdef _MSC_VER

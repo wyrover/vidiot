@@ -52,7 +52,7 @@ DialogNewProject::DialogNewProject()
     , sFolderShort(_("Select folder"))
     , sFilesShort(_("Select files"))
 {
-    
+
     Create(&Window::get(), wxID_ANY, sTitle, util::window::getBitmap("movie128.png"), wxDefaultPosition, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     util::window::setIcons(this);
     SetTitle(sTitle);
@@ -209,6 +209,9 @@ DialogNewProject::DialogNewProject()
     case model::DefaultNewProjectWizardStartBlank:
         mButtonBlank->SetValue(true);
         break;
+    default:
+        FATAL("Wrong default type");
+        break;
     }
 
     setLinks();
@@ -347,7 +350,7 @@ void DialogNewProject::onFinish(wxWizardEvent& event)
         else if (mFileAnalyzer->getNumberOfFolders() == 0 && mFileAnalyzer->getNumberOfMediaFiles() > 0)
         {
             // Create sequence of all given files
-            
+
             // Note: INode->getName may contain a full path to a file.
             wxFileName firstFileName{ util::path::toFileName(nodes.front()->getName()) };
 

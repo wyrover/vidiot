@@ -101,7 +101,7 @@ AVStream* AudioCodec::addStream(AVFormatContext* context) const
     ASSERT(stream);
 
     AVCodecContext* audio_codec = stream->codec;
-    ASSERT_EQUALS(audio_codec->codec_type,AVMEDIA_TYPE_AUDIO);
+    ASSERT_EQUALS(static_cast<int>(audio_codec->codec_type), static_cast<int>(AVMEDIA_TYPE_AUDIO));
 
     int result = avcodec_get_context_defaults3(audio_codec, encoder);
     ASSERT_MORE_THAN_EQUALS_ZERO(result);

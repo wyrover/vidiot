@@ -103,7 +103,7 @@ public:
     bool hasAudio();
 
     /// Determine file type based on the file name. No inspection of the file may
-    /// be done, since this method is also used for cases where file opening is 
+    /// be done, since this method is also used for cases where file opening is
     /// not allowed (in the project view) for performance reasons.
     /// \return type of this file
     FileType getType() const;
@@ -171,6 +171,7 @@ private:
     mutable boost::optional<pts> mNumberOfFrames;
     bool mHasVideo = false;
     bool mHasAudio = false;
+    int64_t mMaximumStartPts = 0; ///< Holds the maximum of the start positions of any stream. Any packet that is before this, is discarded, to ensure audio-video sync.
 
     // Status of opening
     bool mMetaDataKnown = false;    ///< True if the meta data (file path exists, canBeOpened) has been retrieved.
@@ -185,7 +186,6 @@ private:
 
     // Buffering
     int mMaxBufferSize = 0;
-    int64_t mMaximumStartPts = 0; ///< Holds the maximum of the start positions of any stream. Any packet that is before this, is discarded, to ensure audio-video sync.
     FifoPacket mPackets; ///< Holds retrieved packets until extracted with getNextPacket()
     int mTwoInARow = 0;
     std::unique_ptr<boost::thread> mBufferPacketsThreadPtr = nullptr;

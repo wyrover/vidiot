@@ -51,10 +51,10 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    wxBitmapPtr mCurrentBitmap;
+    wxBitmapPtr mCurrentBitmap = nullptr;
 
-    int mWidth;
-    int mHeight;
+    int mWidth = 0;
+    int mHeight = 0;
 
     //////////////////////////////////////////////////////////////////////////
     // GUI METHODS

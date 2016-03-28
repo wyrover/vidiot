@@ -55,7 +55,7 @@ void PortAudio::init()
     PaUtil_SetDebugPrintFunction(log);
 #endif
     PaError err = Pa_Initialize();
-    ASSERT_EQUALS(err,paNoError)(Pa_GetErrorText(err));
+    ASSERT_EQUALS(static_cast<int>(err), static_cast<int>(paNoError))(Pa_GetErrorText(err));
 
     PaHostApiIndex count = Pa_GetHostApiCount();
     ASSERT_MORE_THAN_EQUALS_ZERO(count);
@@ -80,7 +80,7 @@ void PortAudio::init()
 void PortAudio::exit()
 {
     PaError err = Pa_Terminate();
-    ASSERT_EQUALS(err,paNoError)(Pa_GetErrorText(err));
+    ASSERT_EQUALS(static_cast<int>(err),static_cast<int>(paNoError))(Pa_GetErrorText(err));
 }
 
 //////////////////////////////////////////////////////////////////////////

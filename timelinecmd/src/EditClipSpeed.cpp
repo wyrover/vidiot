@@ -74,18 +74,15 @@ EditClipSpeed::EditClipSpeed(
         }
     }
 
-    rational64 originalSpeed = clipInterval->getSpeed();
-    pts originalOffset = clipInterval->getOffset();
-    pts originalLength = clipInterval->getLength();
     pts originalLeftPts = mClip->getLeftPts();
     pts originalRightPts = mClip->getRightPts();
 
     adjustSpeedForClipBounds(mClip);
     adjustSpeedForClipBounds(mLink);
 
-    if (mSpeed == clipInterval->getSpeed()) 
-    { 
-        return; 
+    if (mSpeed == clipInterval->getSpeed())
+    {
+        return;
     }
 
     // Adjust speed
@@ -106,10 +103,10 @@ EditClipSpeed::EditClipSpeed(
         // Get the clip that is at the clip's begin position
         model::IClipPtr clipInOtherTrackAtBegin = track->getClip(originalLeftPts);
 
-        if (!clipInOtherTrackAtBegin) { continue; } // If no clip there (end of track). OK.                                      
+        if (!clipInOtherTrackAtBegin) { continue; } // If no clip there (end of track). OK.
 
         if (!clipInOtherTrackAtBegin->isA<model::EmptyClip>() ||         // If it's not an empty clip, then not OK.
-            clipInOtherTrackAtBegin->getRightPts() < originalRightPts)   // If it's an empty clip, but not large enough, then not OK.  
+            clipInOtherTrackAtBegin->getRightPts() < originalRightPts)   // If it's an empty clip, but not large enough, then not OK.
         {
             gui::StatusBar::get().timedInfoText(_("Can not change clip speed. There may not be clips in the same timeframe in other tracks."));
             return;
@@ -131,7 +128,7 @@ EditClipSpeed::~EditClipSpeed()
 }
 
 //////////////////////////////////////////////////////////////////////////
-// ROOTCOMMAND 
+// ROOTCOMMAND
 //////////////////////////////////////////////////////////////////////////
 
 bool EditClipSpeed::isPossible() const
@@ -191,7 +188,7 @@ void EditClipSpeed::adjustSpeedForClipBounds(model::IClipPtr clip)
     if (inTransition && *(inTransition->getRight()) > 0)
     {
         // Ensure there is still enough room for the transition frames (start at same frame)
-        //                                                                            render 
+        //                                                                            render
         // 0                     begin                                        end     length
         // |--------|--------------|-------------------------------------------|--------|
         // |        |//////////////|                                           |        |
@@ -199,7 +196,7 @@ void EditClipSpeed::adjustSpeedForClipBounds(model::IClipPtr clip)
         // |        |//////////////|                                           |        |
         // |--------|--------------|-------------------------------------------|--------|
         //           <    right   > <              length                     >
-        //  
+        //
         // begin / max_speed >= right    ====>    max_speed =< begin / right
         rational64 maxSpeed{ begin, inTransition->getLength() };
         if (mSpeed > maxSpeed)
@@ -215,7 +212,7 @@ void EditClipSpeed::adjustSpeedForClipBounds(model::IClipPtr clip)
     if (outTransition && *(outTransition->getLeft()) > 0)
     {
         // Ensure there is still enough room for the transition frames (end at same frame)
-        //                                                                               render 
+        //                                                                               render
         //            begin                                        end                   length
         // |------------|-------------------------------------------|--------------|--------|
         // |            |                                           |//////////////|        |
@@ -223,7 +220,7 @@ void EditClipSpeed::adjustSpeedForClipBounds(model::IClipPtr clip)
         // |            |                                           |//////////////|        |
         // |------------|-------------------------------------------|--------------|--------|
         //  <  offset  > <              length                     > <    left   >
-        // 
+        //
         // (renderlength - end) / max_speed >= left    ====>    max_speed =< (renderlength - end) / left
         rational64 maxSpeed{ clipInterval->getRenderSourceLength() - end, outTransition->getLength() };
         if (mSpeed > maxSpeed)
@@ -241,7 +238,7 @@ void EditClipSpeed::adjustSpeedForClipBounds(model::IClipPtr clip)
         message = wxString::Format(_("Can't scale beyond %s"), toString(maxSpeed)) + " " + _("(no clip remains).");
         mSpeed = maxSpeed;
     }
-    
+
     if (!message.IsEmpty())
     {
         gui::StatusBar::get().timedInfoText(message);

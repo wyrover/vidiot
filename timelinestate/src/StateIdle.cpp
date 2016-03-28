@@ -334,6 +334,7 @@ void Idle::updateMouseCursor()
                 case TransitionEnd:
                 case TransitionLeftClipEnd: // FALLTHROUGH
                 case ClipEnd:        image = getKeyboard().getShiftDown() ? PointerTrimShiftEnd : PointerTrimEnd;    break;
+                default: break;
                 }
             }
         }
@@ -429,9 +430,6 @@ void Idle::addTransition(model::TransitionType type)
     if (info.clip &&
         (info.clip->isA<model::VideoClip>() || info.clip->isA<model::AudioClip>()) )
     {
-        pts left = getViewMap().getView(info.clip)->getLeftPixel();
-        pts right = getViewMap().getView(info.clip)->getRightPixel();
-
         // Only if the mouse pointer is on a 'regular' clip, creating the transition is allowed.
         switch (info.logicalclipposition)
         {
@@ -453,6 +451,8 @@ void Idle::addTransition(model::TransitionType type)
         case model::TransitionTypeFadeOut:
         case model::TransitionTypeFadeOutToNext:
             if (info.clip->getOutTransition() != nullptr) { return; }
+            break;
+        default:
             break;
         }
 

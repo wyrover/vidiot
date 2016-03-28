@@ -81,8 +81,8 @@ private:
     AVCodecID mDefaultAudioCodec;
     AVCodecID mDefaultVideoCodec;
 
-    VideoCodecPtr mVideoCodec;
-    AudioCodecPtr mAudioCodec;
+    VideoCodecPtr mVideoCodec = nullptr;
+    AudioCodecPtr mAudioCodec = nullptr;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

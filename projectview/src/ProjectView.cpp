@@ -170,7 +170,7 @@ void ProjectView::select(const model::NodePtrs& nodes)
         VAR_DEBUG(node->id());
         mCtrl.Select( wxDataViewItem( node->id() ) );
     }
-    ASSERT_EQUALS(mCtrl.GetSelectedItemsCount(), nodes.size());
+    ASSERT_EQUALS(mCtrl.GetSelectedItemsCount(), static_cast<int>(nodes.size()));
 }
 
 void ProjectView::selectAll()
@@ -604,7 +604,7 @@ void ProjectView::onMotion(wxMouseEvent& event)
                     wxDataViewItem item;
                     wxDataViewColumn* col;
                     mCtrl.HitTest(mDragStart, item, col);
-                    if (item.GetID() && 
+                    if (item.GetID() &&
                         !getSelection().empty())
                     {
                         ProjectViewDataObject data(cmd::ProjectViewCommand::prune(getSelection()));

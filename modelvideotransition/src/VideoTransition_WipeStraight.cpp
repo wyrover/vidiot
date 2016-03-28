@@ -93,7 +93,6 @@ std::function<float (int,int)> WipeStraight::getRightMethod(const wxImagePtr& im
 
     double w{ static_cast<double>(image->GetWidth()) };
     double h{ static_cast<double>(image->GetHeight()) };
-    double diagonal_length{ pythagoras(w, h) };
 
     switch (direction)
     {
@@ -118,7 +117,7 @@ std::function<float (int,int)> WipeStraight::getRightMethod(const wxImagePtr& im
         case Direction8TopLeftToBottomRight:
         case Direction8BottomRightToTopLeft:
         {
-            // Normal slope (along this line the length is checked): 
+            // Normal slope (along this line the length is checked):
             //
             // y = ax + b
             //
@@ -144,7 +143,7 @@ std::function<float (int,int)> WipeStraight::getRightMethod(const wxImagePtr& im
         case Direction8BottomLeftToTopRight:
         case Direction8TopRightToBottomLeft:
         {
-            // Normal slope (along this line the length is checked): 
+            // Normal slope (along this line the length is checked):
             //
             // y = ax + b
             //
@@ -160,15 +159,16 @@ std::function<float (int,int)> WipeStraight::getRightMethod(const wxImagePtr& im
             // (x_intersect, y_intersect) is the point on the image diagonal (bottom left to top right) where the perpendicular line also goes through (x0,y0)
             // That intersect point is then used to determine the 'distance traveled so far'.
             // Note that the distance traveled so far is determined using the bottom left point of the image as starting point.
-            // 
+            //
             // DirectionTopRightToBottomLeft: same algo (goes 'along' the same line), except with a reversed animation.
             double a{ -1 * h / w };
             double b{ h };
             return getDiagonalMethod(w, h, a, b, nWipeStraight, factor, direction == Direction8TopRightToBottomLeft, soften);
             break;
         }
+        default: { FATAL("Wrong direction"); break; }
     }
-    FATAL("Wrong direction");
+
     return nullptr;
 }
 

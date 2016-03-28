@@ -93,8 +93,8 @@ std::function<float (int,int)> WipeBarnDoors::getRightMethod(const wxImagePtr& i
                 return (y < top || y >= bottom) ? outside : inside;
             };
         }
+        default: { FATAL("Wrong direction"); break; }
     }
-    FATAL("Wrong direction");
     return nullptr;
 }
 

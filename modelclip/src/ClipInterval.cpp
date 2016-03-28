@@ -228,8 +228,6 @@ std::pair<pts, pts> ClipInterval::getKeyFrameBoundaries(size_t index) const
     KeyFrameMap::const_iterator it{ std::next(keyFrames.begin(), index) };
     ASSERT(it != keyFrames.end())(index)(keyFrames)(*this);
 
-    pts current{ it->first };
-
     pts left{ 0 }; // For first frame the default
 
     if (it != keyFrames.begin())
@@ -264,8 +262,6 @@ void ClipInterval::setKeyFramePosition(size_t index, pts offset)
     offset += getPerceivedOffset();
 
     // Convert back to 1:1 speed
-    pts offsetWithSpeed{ model::Convert::positionToNewSpeed(offset, 1, getSpeed()) };
-
     size_t nKeyFrames{ mKeyFrames.size() };
     KeyFrameMap::const_iterator it{ std::next(mKeyFrames.begin(), index) };
     ASSERT(it != mKeyFrames.end())(index)(offset)(*this);

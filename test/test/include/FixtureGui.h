@@ -85,10 +85,10 @@ private:
 
     boost::mutex mEndMutex;
 
-    bool mEnd;
-    bool mStartingMainThread;
+    bool mEnd = false;
+    bool mStartingMainThread = false;
 
-    long mStartTime;
+    long mStartTime = 0;
 
     boost::shared_ptr<HelperTestSuite> mHelperTestSuite;
 };

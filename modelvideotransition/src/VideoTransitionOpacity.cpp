@@ -156,6 +156,8 @@ std::function<float(int, int)> VideoTransitionOpacity::getLeftMethod(const wxIma
             std::function<float(int, int)> rm{ getRightMethod(image,factor) };
             return [rm](int x, int y) -> float { return 1.0 - rm(x, y); };
         }
+        default:
+            break;
     }
     return [](int x, int y) -> float { return 1.0; };
 }

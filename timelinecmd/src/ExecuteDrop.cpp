@@ -85,11 +85,6 @@ template void Drop::serialize<boost::archive::xml_iarchive>(boost::archive::xml_
 ExecuteDrop::ExecuteDrop(const model::SequencePtr& sequence, bool external)
     : AClipEdit(sequence)
     , mExternal(external)
-    , mDrags()
-    , mDrops()
-    , mShift()
-    , mVideoClipDragged(false)
-    , mAudioClipDragged(false)
 {
     VAR_INFO(sequence)(external)(*this);
     mCommandName = _("Move clips");
@@ -413,9 +408,9 @@ bool ExecuteDrop::isAudioClipDragged() const
 
 std::ostream& operator<<(std::ostream& os, const ExecuteDrop& obj)
 {
-    os  << static_cast<const AClipEdit&>(obj) << '|' 
-        << obj.mExternal << '|' 
-        << obj.mDrags << '|' 
+    os  << static_cast<const AClipEdit&>(obj) << '|'
+        << obj.mExternal << '|'
+        << obj.mDrags << '|'
         << obj.mShift << '|'
         << obj.mNewVideoTrack << '|'
         << obj.mNewAudioTrack;

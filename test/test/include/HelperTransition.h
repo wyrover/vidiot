@@ -85,7 +85,7 @@ protected:
 
     model::IClipPtr GetClip(int track, int clip) const;
 
-    bool mUndo;
+    bool mUndo = true;
 
 private:
 
@@ -122,7 +122,7 @@ struct MakeOutTransitionAfterClip : public MakeTransitionAfterClip
 template <typename PARAMETERTYPE, typename TYPE>
 void setTransitionParameter(model::TransitionPtr transition, wxString name, TYPE value)
 {
-    util::thread::RunInMainAndWait([transition, name, value] 
+    util::thread::RunInMainAndWait([transition, name, value]
     {
         boost::shared_ptr<PARAMETERTYPE> parameter{ transition->getParameter<PARAMETERTYPE>(name) };
         ASSERT_NONZERO(parameter);

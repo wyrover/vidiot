@@ -78,8 +78,8 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     boost::optional<wxColour> mColor; ///< If set, indicates that this image is a solid color image
-    VideoFramePtr mInputFrame;
-    VideoFramePtr mOutputFrame;
+    VideoFramePtr mInputFrame = nullptr;
+    VideoFramePtr mOutputFrame = nullptr;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS

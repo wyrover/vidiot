@@ -135,7 +135,7 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
         };
 
         auto getFirstSampleOfNextPacket = [this](AVPacket* packet) -> samplecount
-        {                    
+        {
             if (packet->duration > 0)
             {
                 return getFirstSample(packet->pts + packet->duration);
@@ -143,7 +143,7 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
             return getFirstSample(packet->pts + 1);
         };
 
-        while (positionInfoAvailable() && 
+        while (positionInfoAvailable() &&
             getFirstSampleOfNextPacket(audioPacket->getPacket()) <= nextSample)
         {
             // The next packet starts also 'before' the required sample. Use that packet.
@@ -216,7 +216,7 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
                 // Only take planes with actual data into account.
                 // Example: resolutionchange_contains_6_audio_planes_but_not_for_all_packets.mpg
                 //          This file contains (according to the meta data from the AVCodecContext)
-                //          6 audio planes. However, for some packets in the audio stream there are 
+                //          6 audio planes. However, for some packets in the audio stream there are
                 //          only two contained planes.
                 memcpy(&(mAudioDecodeBuffer[i][offset]), frame->extended_data[i], decodedLineSize);
             }
@@ -296,8 +296,8 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
                 }
 
                 mSoftwareResampleContext = swr_alloc_set_opts(0,
-                    av_get_default_channel_layout(parameters.getNrChannels()), 
-                    AV_SAMPLE_FMT_S16, 
+                    av_get_default_channel_layout(parameters.getNrChannels()),
+                    AV_SAMPLE_FMT_S16,
                     Convert::samplerateToNewSpeed(parameters.getSampleRate(), parameters.getSpeed(), 1),
                     dec_channel_layout, codec->sample_fmt, frame->sample_rate, 0, 0);
                 ASSERT_NONZERO(mSoftwareResampleContext);
@@ -326,6 +326,7 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
             return AudioChunkPtr();
         }
 
+#pragma GCC diagnostic ignored "-Wunused-variable"
         int decodedLineSize{ copyFrame(frame, targetSizeInBytes) };  // decodedLineSize will contain the number of bytes per plane
 
         nDecodedSamplesPerChannel += frame->nb_samples;
@@ -436,14 +437,14 @@ AudioPeaks AudioFile::getPeaks(const AudioCompositionParameters& parameters, pts
         samplecount nextRequiredSample{ 0 };
         AudioChunkPtr chunk{ getNextAudio(parameters) };
 
-        pts length{ getLength() };
+        size_t data_length{ narrow_cast<size_t>(getLength()) };
 
-        while (chunk && allPeaks.size() < length)
+        while (chunk && allPeaks.size() < data_length)
         {
             samplecount chunksize = chunk->getUnreadSampleCount();
             sample* buffer = chunk->getBuffer();
 
-            for (int i = 0; (i < chunksize) && (allPeaks.size() < length); ++i)
+            for (int i = 0; (i < chunksize) && (allPeaks.size() < data_length); ++i)
             {
                 current.first = std::min(current.first, *buffer);
                 current.second = std::max(current.second, *buffer);
@@ -465,7 +466,7 @@ AudioPeaks AudioFile::getPeaks(const AudioCompositionParameters& parameters, pts
     }
 
     const AudioPeaks& allPeaks{ *peaks };
-    ASSERT_LESS_THAN_EQUALS(offset, allPeaks.size())(*this);
+    ASSERT_LESS_THAN_EQUALS(narrow_cast<size_t>(offset), allPeaks.size())(*this);
     // NOT: ASSERT_LESS_THAN_EQUALS(offset + length, allPeaks.size())(*this);
     //
     // See also  AudioClip::getNextAudio where sometimes extra audio is added, if the audio data length in a file is smaller than the audio length.
@@ -473,8 +474,8 @@ AudioPeaks AudioFile::getPeaks(const AudioCompositionParameters& parameters, pts
     // The audio clip may be slightly larger than the audio file data. This can be caused by the clip having (typically) the same length as a linked video clip.
     // The video data in a file may be slightly longer than the audio data, resulting in such a difference. Instead of truncating the video, the audio is extended
     // with silence, leaving the truncating (the choice) to the user.
-    AudioPeaks result(allPeaks.begin() + offset, allPeaks.begin() + std::min(static_cast<pts>(allPeaks.size()), offset + length)); // todo crash here when reducing speed ... a lot 
-    if (result.size() != length)
+    AudioPeaks result(allPeaks.begin() + offset, allPeaks.begin() + std::min(static_cast<pts>(allPeaks.size()), offset + length)); // todo crash here when reducing speed ... a lot
+    if (result.size() != narrow_cast<size_t>(length))
     {
         // Ensure resulting peaks length equals length of clip. Add 'silence' if required.
         result.resize(length,std::make_pair(0,0));

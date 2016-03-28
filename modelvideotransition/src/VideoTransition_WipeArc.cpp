@@ -84,8 +84,9 @@ std::function<float (int,int)> WipeArc::getRightMethod(const wxImagePtr& image, 
         case Direction8BottomRightToTopLeft: { x_origin = w; y_origin = h; break; }
         case Direction8BottomLeftToTopRight: { x_origin = 0; y_origin = h; break; }
         case Direction8TopRightToBottomLeft: { x_origin = w; y_origin = 0; break; }
+        default: { FATAL("Wrong direction"); break; }
     }
-    // Use the 'farthest away' point to determine the band size. 
+    // Use the 'farthest away' point to determine the band size.
     // Using a smaller size gives artifacts.
     // Example: Set nBands to 1, and use the left to right direction.
     //          Pixels farther away than width of image are shown too soon.

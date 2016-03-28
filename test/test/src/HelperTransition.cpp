@@ -106,7 +106,6 @@ MakeTransitionAfterClip::MakeTransitionAfterClip(int afterclip, bool audio)
     : clipNumberBeforeTransition(afterclip)
     , clipNumberAfterTransition(afterclip+1)
     , mAudio(audio)
-    , mUndo(true)
 {
     storeVariablesBeforeTrimming();
 }

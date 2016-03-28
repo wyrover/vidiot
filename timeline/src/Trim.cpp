@@ -51,13 +51,7 @@ namespace gui { namespace timeline {
 
 Trim::Trim(Timeline* timeline)
     : Part(timeline)
-    , mActive(false)
     , mStartPosition(0, 0)
-    , mStartPts(0)
-    , mFixedPixel(0)
-    , mCommand(0)
-    , mDc()
-    , mSnappingEnabled(true)
 {
     VAR_DEBUG(this);
 }
@@ -219,7 +213,7 @@ void Trim::start()
             {
                 // Special case: in case of a in-out transition, do not show the track's frame (which
                 // is a combination of both the trimmed clip and it's adjacent clip. Instead show the
-                // actual frames (for both the trimmed and the adjacent clip) around the 'touch' 
+                // actual frames (for both the trimmed and the adjacent clip) around the 'touch'
                 // position.
                 if (isBeginTrim)
                 {

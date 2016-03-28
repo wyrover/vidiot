@@ -41,7 +41,7 @@ void TestProjectView::testAdditionAndRemoval()
 {
     StartTestSuite();
 
-    int nDefaultItems = ProjectViewCount();
+    size_t nDefaultItems = ProjectViewCount();
 
     wxString sFolder1( "Folder1" );
     wxString sSequence1( "Sequence1" );
@@ -222,7 +222,7 @@ void TestProjectView::testClipboardPaste_ClipboardFiles()
 		StartTest("Paste from main menu (root selected, files in clipboard)");
         ProjectViewSelect({ getRoot() });
 		WindowTriggerMenu(wxID_PASTE);
-		ASSERT_EQUALS(ProjectViewCount(), 3 + +files.size());
+		ASSERT_EQUALS(ProjectViewCount(), 3 + files.size());
 		ASSERT_EQUALS(getRoot()->getChildren().size(), 2 + +files.size());
 		Undo();
 	}
@@ -232,7 +232,7 @@ void TestProjectView::testClipboardPaste_ClipboardFiles()
 		ASSERT_EQUALS(ProjectViewCount(), 4);
         ProjectViewSelect({ folder });
 		WindowTriggerMenu(wxID_PASTE);
-		ASSERT_EQUALS(ProjectViewCount(), 4 + +files.size());
+		ASSERT_EQUALS(ProjectViewCount(), 4 + files.size());
 		ASSERT_EQUALS(folder->getChildren().size(), + files.size());
 		Undo(2);
 	}

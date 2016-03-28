@@ -149,10 +149,10 @@ private:
     Tracks mAudioTracks;
     std::map<int, TrackPtr> mVideoTrackMap;
     std::map<int, TrackPtr> mAudioTrackMap;
-    pixel mDividerPosition;
-    pts mVideoPosition;
-    pts mAudioPosition;
-    render::RenderPtr mRender;
+    pixel mDividerPosition = 0;
+    pts mVideoPosition = 0;
+    pts mAudioPosition = 0;
+    render::RenderPtr mRender = nullptr;
 
     /// Some variables are only required for better performance.
     /// These contain 'duplicate/redundant' information.
