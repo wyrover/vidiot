@@ -116,23 +116,23 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     model::IClipPtr mOriginalClip;
-    model::TransitionPtr mTransition;       ///< The (optional) transition before or after mOriginalClip, or the transition which IS mClip
     model::IClipPtr mOriginalLink;
-    model::TransitionPtr mLinkTransition;   ///< The (optional) transition before or after mOriginalLink, or the transition which IS mClip
-    model::IClipPtr mClip;                  ///< Same as mOriginalClip or its replacement in case a transition was unapplied
-    model::IClipPtr mLink;                  ///< Same as mOriginalLink or its replacement in case a transition was unapplied
     model::IClipPtr mNewClip;               ///< Clip that replaces the original clip after the trim. Maybe be '0' if the clip was fully trimmed away.
     model::IClipPtr mNewLink;               ///< Clip that replaces the original link after the trim. Maybe be '0' if the clip was fully trimmed away.
-    bool mClipIsPartOfTransition;           ///< True if mClip is part of a transition (either before or after it). Used to avoid deleting the clip completely (which is prohibited, since a part of the clip must remain for the transition).
-    bool mLinkIsPartOfTransition;           ///< True if mLink is part of a transition (either before or after it). Used to avoid deleting the clip completely (which is prohibited, since a part of the clip must remain for the transition).
-    pts mTrim;                              ///< Actual trim adjustment that is applied to mClip
-    bool mShift;                            ///< True iff clips in other tracks must be shifted along with the trim operation
-    bool mTrimLink;                         ///< True iff the (trimmed) clip's link must be trimmed also.
+    model::TransitionPtr mTransition;       ///< The (optional) transition before or after mOriginalClip, or the transition which IS mClip
+    model::TransitionPtr mLinkTransition;   ///< The (optional) transition before or after mOriginalLink, or the transition which IS mClip
+    model::IClipPtr mClip = nullptr;        ///< Same as mOriginalClip or its replacement in case a transition was unapplied
+    model::IClipPtr mLink = nullptr;        ///< Same as mOriginalLink or its replacement in case a transition was unapplied
+    bool mClipIsPartOfTransition = false;   ///< True if mClip is part of a transition (either before or after it). Used to avoid deleting the clip completely (which is prohibited, since a part of the clip must remain for the transition).
+    bool mLinkIsPartOfTransition = false;   ///< True if mLink is part of a transition (either before or after it). Used to avoid deleting the clip completely (which is prohibited, since a part of the clip must remain for the transition).
+    pts mTrim = 0;                          ///< Actual trim adjustment that is applied to mClip
+    bool mShift = false;                    ///< True iff clips in other tracks must be shifted along with the trim operation
+    bool mTrimLink = true;                  ///< True iff the (trimmed) clip's link must be trimmed also.
     MouseOnClipPosition mPosition;          ///< Logical position where the trim is done
-    pts mShiftStart;                        ///< Position at which the shift will start
-    model::IClipPtr mReplacementClip;
-    pts mCursorPositionBefore;              ///< Position of the cursor before the trim is applied
-    pts mCursorPositionAfter;               ///< Position of the cursor after the trim is applied
+    pts mShiftStart = 0;                    ///< Position at which the shift will start
+    model::IClipPtr mReplacementClip = nullptr;
+    pts mCursorPositionBefore = 0;          ///< Position of the cursor before the trim is applied
+    pts mCursorPositionAfter = 0;           ///< Position of the cursor after the trim is applied
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS

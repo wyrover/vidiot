@@ -31,8 +31,6 @@ namespace model {
 
 ImageFile::ImageFile()
     : VideoFile{}
-    , mInputFrame{}
-    , mOutputFrame{}
     , mColor{ boost::none }
 {
     VAR_DEBUG(*this);
@@ -40,8 +38,6 @@ ImageFile::ImageFile()
 
 ImageFile::ImageFile(const wxFileName& path)
     : VideoFile(path)
-    , mInputFrame{}
-    , mOutputFrame{}
     , mColor{ boost::none }
 {
     VAR_DEBUG(*this);
@@ -49,8 +45,6 @@ ImageFile::ImageFile(const wxFileName& path)
 
 ImageFile::ImageFile(const wxColour& color)
     : VideoFile()
-    , mInputFrame{}
-    , mOutputFrame{}
     , mColor{ color }
 {
     VAR_DEBUG(*this);
@@ -58,8 +52,6 @@ ImageFile::ImageFile(const wxColour& color)
 
 ImageFile::ImageFile(const ImageFile& other)
     : VideoFile(other)
-    , mInputFrame{}
-    , mOutputFrame{}
     , mColor{ other.mColor }
 {
     VAR_DEBUG(*this);

@@ -52,7 +52,7 @@ public:
 
     AudioChunk(const AudioChunk& other) = delete;
     AudioChunk& operator=(const AudioChunk&) = delete;
-    
+
     virtual ~AudioChunk();
 
     //////////////////////////////////////////////////////////////////////////
@@ -104,8 +104,8 @@ protected:
 
     sample* mBuffer;                ///< Actual data storage area
     int mNrChannels;                ///< Number of audio channels
-    samplecount mNrReadSamples;     ///< Number of samples that has been marked as read using read()
     samplecount mNrSamples;         ///< Total number of samples allocated in memory
+    samplecount mNrReadSamples;     ///< Number of samples that has been marked as read using read()
     samplecount mNrSkippedSamples;  ///< Set if the length of the chunk is truncated after decoding (for stopping at right pts)
     boost::optional<pts> mPts;
     bool mError = 0;                ///< True if this is an error chunk.

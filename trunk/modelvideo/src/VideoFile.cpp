@@ -426,6 +426,8 @@ void VideoFile::startDecodingVideo(const VideoCompositionParameters& parameters)
             av_opt_set((void*)getCodec()->priv_data, "tune", "zerolatency,fastdecode", 0);
             av_opt_set((void*)getCodec()->priv_data, "x264opts", "rc-lookahead=0", 0);
             break;
+        default:
+            break;
         }
     }
 
@@ -442,7 +444,7 @@ void VideoFile::startDecodingVideo(const VideoCompositionParameters& parameters)
     {
         LOG_DEBUG << "Frame rate conversion required from " << videoFrameRate << " to " << Properties::get().getFrameRate();
     }
-                              
+
     mVideoPacketPts = stream->cur_dts;
 
     VAR_DEBUG(this)(getCodec());

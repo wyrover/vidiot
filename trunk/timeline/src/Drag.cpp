@@ -89,18 +89,12 @@ public:
 
 Drag::Drag(Timeline* timeline)
     :   Part(timeline)
-    ,   mCommand(0)
     ,   mHotspot(0,0)
     ,   mPosition(0,0)
     ,   mBitmapOffset(0,0)
-    ,   mBitmap()
-    ,   mActive(false)
-    ,   mDraggedTrack()
-    ,   mDropTrack()
+    ,   mShift()
     ,   mVideo(timeline, true)
     ,   mAudio(timeline, false)
-    ,   mShift()
-    ,   mSnappingEnabled(false)
 {
     VAR_DEBUG(this);
     getTimeline().SetDropTarget(new TimelineDropTarget(timeline)); // Drop target is deleted by wxWidgets
@@ -375,9 +369,9 @@ void Drag::stop()
         delete mCommand;
         mCommand = 0;
         // Ensure that any clips painted 'beyond' the current maximum sequence length during the drag, are painted over again.
-        // Example: Create sequence with only one audio clip. Move clip to the right. Then move up, outside timeline (abort). 
+        // Example: Create sequence with only one audio clip. Move clip to the right. Then move up, outside timeline (abort).
         // Without this refresh the clip's right position is not refreshed.
-        getTimeline().Refresh(); 
+        getTimeline().Refresh();
     }
     reset();
     getSequenceView().setMinimumLength(0);
@@ -537,10 +531,6 @@ void Drag::drawSnaps(wxDC& dc, const wxRegion& region, const wxPoint& offset) co
 Drag::DragInfo::DragInfo(Timeline* timeline, bool isVideo)
 :   Part(timeline)
 ,   mIsVideo(isVideo)
-,   mOffset(0)
-,   mMinOffset(0)
-,   mMaxOffset(0)
-,   mTempTrack()
 ,   mView(new DummyView(timeline))
 {
 }
@@ -555,13 +545,13 @@ void Drag::DragInfo::reset()
     mOffset = 0;
 
     // -1: nTracks is 1-based
-    mMinOffset = -1 * (nTracks() - 1);  
-    
+    mMinOffset = -1 * (nTracks() - 1);
+
     // -1: nTracks is 1-based
     // -1: at least a clip in track 1 is selected so can be used as default.
     // +1: at most one track can be added automatically
-    mMaxOffset = (nTracks() - 1) -1 + 1; 
-    
+    mMaxOffset = (nTracks() - 1) -1 + 1;
+
     if (mTempTrack)
     {
         // Remove previous track
@@ -811,7 +801,7 @@ void Drag::determineSnapOffset()
     }
 
     // Always snap to '>=0', since positioning the drop < 0 is not allowed.
-    // This is required for scenarios 
+    // This is required for scenarios
     // - where snapping is disabled, OR
     // - where no snaps are found (drag very large file)
     // (the checks in the loops are never encountered).
@@ -889,7 +879,6 @@ void Drag::determineShift()
     if (getKeyboard().getShiftDown())
     {
         pts origPos = getDragPtsPosition();
-        pts origLen = getDragPtsSize();
 
         pts pos = getDragPtsPosition();
         pts len = getDragPtsSize();

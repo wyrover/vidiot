@@ -32,8 +32,8 @@ namespace model {
 //////////////////////////////////////////////////////////////////////////
 
 VideoComposition::VideoComposition(const VideoCompositionParameters& parameters)
-    :   mFrames()
-    ,   mParameters(parameters)
+    :   mParameters(parameters)
+    ,   mFrames()
 {
 }
 

@@ -190,11 +190,6 @@ void VideoKeyFrame::setOpacity(int opacity)
 void VideoKeyFrame::setScaling(const VideoScaling& scaling, const boost::optional<rational64 >& factor)
 {
     ASSERT(!isInterpolated())(*this);
-    VideoScaling oldScaling = mScaling;
-    rational64 oldScalingFactor = mScalingFactor;
-    wxPoint oldPosition = mPosition;
-    wxPoint oldMinPosition = getMinPosition();
-    wxPoint oldMaxPosition = getMaxPosition();
 
     mScaling = scaling;
     if (factor)
@@ -227,10 +222,6 @@ void VideoKeyFrame::setScaling(const VideoScaling& scaling, const boost::optiona
 void VideoKeyFrame::setRotation(const rational64& rotation)
 {
     ASSERT(!isInterpolated())(*this);
-    rational64 oldRotation = mRotation;
-    wxPoint oldPosition = mPosition;
-    wxPoint oldMinPosition = getMinPosition();
-    wxPoint oldMaxPosition = getMaxPosition();
 
     mRotation = rotation;
 
@@ -239,14 +230,14 @@ void VideoKeyFrame::setRotation(const rational64& rotation)
 
 void VideoKeyFrame::setRotationPositionOffset(wxPoint position)
 {
+    ASSERT(!isInterpolated())(*this);
+
     mRotationPositionOffset = position;
 }
 
 void VideoKeyFrame::setAlignment(const VideoAlignment& alignment)
 {
     ASSERT(!isInterpolated())(*this);
-    VideoAlignment oldAlignment = mAlignment;
-    wxPoint oldPosition = mPosition;
 
     mAlignment = alignment;
 
@@ -256,8 +247,7 @@ void VideoKeyFrame::setAlignment(const VideoAlignment& alignment)
 void VideoKeyFrame::setPosition(const wxPoint& position)
 {
     ASSERT(!isInterpolated())(*this);
-    VAR_INFO(position);
-    wxPoint oldPosition = mPosition;
+
     mPosition = position;
 
     updateAutomatedPositioning();

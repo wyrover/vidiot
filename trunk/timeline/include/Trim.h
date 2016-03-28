@@ -84,29 +84,29 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    bool mActive;                   ///< True if a trim is currently being done
-    wxPoint mStartPosition;         ///< Mouse position (in unscrolled coordinates) when the trimming was started
-    MouseOnClipPosition mPosition;  ///< Logical positin where the trimming was started
-    pts mStartPts;                  ///< Position (in pts values) when the trimming was started
-    bool mSnappingEnabled;          ///< Used to overrule snapping during a trim operation.
-    bool mTrimLink;                 ///< Used to overrule trimming the link simultaneously.
+    bool mActive = false;                       ///< True if a trim is currently being done
+    wxPoint mStartPosition;                     ///< Mouse position (in unscrolled coordinates) when the trimming was started
+    MouseOnClipPosition mPosition;              ///< Logical positin where the trimming was started
+    pts mStartPts = 0;                          ///< Position (in pts values) when the trimming was started
+    bool mSnappingEnabled = true;               ///< Used to overrule snapping during a trim operation.
+    bool mTrimLink = false;                     ///< Used to overrule trimming the link simultaneously.
 
-    cmd::TrimClip* mCommand;    ///< The command that executes the Trim operation
+    cmd::TrimClip* mCommand = nullptr;          ///< The command that executes the Trim operation
 
-    pts mFixedPts;                  ///< Pts value (in the track) that must be kept at a fixed pixel position. Used for keeping the left/right position of the clip fixed as much as possible when shift trimming.
-    pixel mFixedPixel;              ///< Pixel value (physical) that mFixedPts must be aligned with. Used for keeping the left/right position of the clip fixed as much as possible when shift trimming.
+    pts mFixedPts = 0;                          ///< Pts value (in the track) that must be kept at a fixed pixel position. Used for keeping the left/right position of the clip fixed as much as possible when shift trimming.
+    pixel mFixedPixel = 0;                      ///< Pixel value (physical) that mFixedPts must be aligned with. Used for keeping the left/right position of the clip fixed as much as possible when shift trimming.
 
-    std::vector<pts> mSnapPoints;     ///< Sorted list containing all possible 'snap to' points (pts values). Filled upon start of trim.
-    boost::optional<pts> mSnap;     ///< Current snapping position (that is, where the trim position 'touches' the pts position of another clip)
+    std::vector<pts> mSnapPoints;               ///< Sorted list containing all possible 'snap to' points (pts values). Filled upon start of trim.
+    boost::optional<pts> mSnap = boost::none;   ///< Current snapping position (that is, where the trim position 'touches' the pts position of another clip)
 
-    pts mCursorPositionBefore;      ///< Cursor position before the trim is started.
+    pts mCursorPositionBefore = 0;              ///< Cursor position before the trim is started.
 
-    model::VideoClipPtr mVideoClip; ///< Videoclip to be used for showing a preview of the trim operation.
-    wxBitmapPtr mAdjacentBitmap;    ///< Adjacent bitmap to be used for showing a preview of a shift-trim operation.
+    model::VideoClipPtr mVideoClip = nullptr;   ///< Videoclip to be used for showing a preview of the trim operation.
+    wxBitmapPtr mAdjacentBitmap = nullptr;      ///< Adjacent bitmap to be used for showing a preview of a shift-trim operation.
     wxMemoryDC mDc;
-    pts mStartPositionPreview;
-    wxBitmapPtr mBitmapSingle;
-    wxBitmapPtr mBitmapSideBySide;
+    pts mStartPositionPreview = 0;
+    wxBitmapPtr mBitmapSingle = nullptr;
+    wxBitmapPtr mBitmapSideBySide = nullptr;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS

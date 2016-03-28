@@ -44,10 +44,7 @@ namespace gui { namespace timeline { namespace cmd {
 
 AClipEdit::AClipEdit(const model::SequencePtr& sequence)
     : ATimelineCommand(sequence)
-    , mParams()
-    , mParamsUndo()
     , mReplacements(boost::make_shared<LinkReplacementMap>())
-    , mInitialized(false)
 {
     VAR_INFO(this);
 }
@@ -179,7 +176,7 @@ bool AClipEdit::isInitialized()
 // HELPER METHODS FOR OTHER CLASSES
 //////////////////////////////////////////////////////////////////////////
 
-// static 
+// static
 std::pair<model::IClipPtr, model::IClipPtr> AClipEdit::clone(model::IClipPtr clip)
 {
     ASSERT_NONZERO(clip);

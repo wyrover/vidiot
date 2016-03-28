@@ -28,8 +28,8 @@ namespace cmd {
 
 ProjectViewCreateFile::ProjectViewCreateFile(const model::FolderPtr& parent, const std::vector<wxFileName>& paths)
 :   ProjectViewCommand()
-,   mParent(parent)
 ,   mPaths(paths)
+,   mParent(parent)
 ,   mPairs()
 {
     VAR_INFO(this)(mParent)(mPaths);

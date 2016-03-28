@@ -61,25 +61,15 @@ static int portaudio_callback( const void *inputBuffer, void *outputBuffer,
 
 VideoDisplay::VideoDisplay(wxWindow *parent, model::SequencePtr sequence)
     : wxControl(parent, wxID_ANY)
+    , mSequence(sequence)
+    , mAbortThreads(false)
+    , mPlaying(false)
+    , mSkipFrames(0)
+    , mAudioChunks(1000)
+    , mSoundTouchLatency(-1)
+    , mVideoFrames(200)
     , mWidth(200)
     , mHeight(100)
-    , mPlaying(false)
-    , mSequence(sequence)
-    , mVideoFrames(200)
-    , mAudioChunks(1000)
-    , mAbortThreads(false)
-    , mAudioBufferThreadPtr(0)
-    , mVideoBufferThreadPtr(0)
-    , mVideoTimer()
-    , mCurrentAudioChunk()
-    , mCurrentBitmap()
-    , mStartTime(0)
-    , mAudioLatency(0)
-    , mStartPts(0)
-    , mSkipFrames(0)
-    , mSpeed(sDefaultSpeed)
-    , mSoundTouchLatency(-1)
-    , mSpeedFactor(1.0)
 {
     VAR_DEBUG(this);
 
@@ -191,8 +181,8 @@ void VideoDisplay::play()
 
         // Done always, regardless of 'startAudio'. The audio stream time is used for synchronization.
         PaError err = Pa_OpenDefaultStream( &mAudioOutputStream, 0, mAudioParameters->getNrChannels(), paInt16, mAudioParameters->getSampleRate(), bufferSize, portaudio_callback, this );
-        if (!verify(err, _("Opening audio stream failed:"))) 
-        { 
+        if (!verify(err, _("Opening audio stream failed:")))
+        {
             mAudioOutputStream = nullptr;
             mPlaying = true; // Ensure that 'stop' code is executed.
             stop();
@@ -256,7 +246,7 @@ void VideoDisplay::stop()
                 // fully stopped after aborting. Then, the subsequent
                 // Pa_CloseStream seems to trigger the crash/hangup.
                 PaError err{ Pa_StopStream(mAudioOutputStream) };
-                ASSERT_EQUALS(err, paNoError)(Pa_GetErrorText(err));
+                ASSERT_EQUALS(err, static_cast<int>(paNoError))(Pa_GetErrorText(err));
             }
             if (Pa_IsStreamStopped(mAudioOutputStream) != 1)
             {
@@ -265,7 +255,7 @@ void VideoDisplay::stop()
             }
 
             PaError err{ Pa_CloseStream(mAudioOutputStream) };
-            ASSERT_EQUALS(err, paNoError)(Pa_GetErrorText(err));
+            ASSERT_EQUALS(err, static_cast<int>(paNoError))(Pa_GetErrorText(err));
         }
         mAudioOutputStream = nullptr;
 
@@ -316,7 +306,7 @@ void VideoDisplay::moveTo(pts position)
     VAR_DEBUG(this)(position);
     ASSERT(wxThread::IsMain());
 
-    // Remove any range-based playing 
+    // Remove any range-based playing
     mRange.reset();
 
     stop(); // Stop playback
@@ -377,7 +367,7 @@ void VideoDisplay::resume(const ResumeInfo& info)
     // The reset of the cursor position must be done always. After an edit,
     // the playback needs to be reset. The model iterators need to be reset
     // to the proper position.
-    moveTo(info.position); 
+    moveTo(info.position);
     if (info.playing)
     {
         mRange = info.range;

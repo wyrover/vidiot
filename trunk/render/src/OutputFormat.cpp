@@ -36,8 +36,8 @@ OutputFormat::OutputFormat()
     ,   mFormat(new AVOutputFormat())
     ,   mDefaultAudioCodec(AudioCodecs::getDefault()->getId())
     ,   mDefaultVideoCodec(VideoCodecs::getDefault()->getId())
-    ,   mAudioCodec(AudioCodecs::getDefault())
     ,   mVideoCodec(VideoCodecs::getDefault())
+    ,   mAudioCodec(AudioCodecs::getDefault())
 {
     ASSERT(mFormat); // mFormat initialized by boost serialization
     memset(mFormat, 0, sizeof(AVOutputFormat));
@@ -50,8 +50,8 @@ OutputFormat::OutputFormat(const wxString& name, const wxString& longname, const
     ,   mFormat(new AVOutputFormat())
     ,   mDefaultAudioCodec(defaultaudiocodec)
     ,   mDefaultVideoCodec(defaultvideocodec)
-    ,   mAudioCodec(AudioCodecs::find(defaultaudiocodec))
     ,   mVideoCodec(VideoCodecs::find(defaultvideocodec))
+    ,   mAudioCodec(AudioCodecs::find(defaultaudiocodec))
 {
     VAR_INFO(name)(longname)(extensions)(defaultaudiocodec)(defaultvideocodec);
     ASSERT(mFormat);
@@ -67,8 +67,8 @@ OutputFormat::OutputFormat(const OutputFormat& other)
     ,   mFormat(new AVOutputFormat())
     ,   mDefaultAudioCodec(other.mDefaultAudioCodec)
     ,   mDefaultVideoCodec(other.mDefaultVideoCodec)
-    ,   mAudioCodec(make_cloned<AudioCodec>(other.getAudioCodec()))
     ,   mVideoCodec(make_cloned<VideoCodec>(other.getVideoCodec()))
+    ,   mAudioCodec(make_cloned<AudioCodec>(other.getAudioCodec()))
 {
     ASSERT(mFormat);
     memcpy(mFormat, other.mFormat, sizeof(AVOutputFormat));

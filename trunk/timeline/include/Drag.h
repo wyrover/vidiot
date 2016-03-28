@@ -37,7 +37,7 @@ class Drag
 public:
 
     static const pixel Threshold;
-    
+
     //////////////////////////////////////////////////////////////////////////
     // INITIALIZATION METHODS
     //////////////////////////////////////////////////////////////////////////
@@ -106,19 +106,19 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    cmd::ExecuteDrop* mCommand;             ///< The command that is submitted when the drop operation finishes.
+    cmd::ExecuteDrop* mCommand = nullptr;       ///< The command that is submitted when the drop operation finishes.
     wxPoint mHotspot;                           ///< Hotspot within the timeline. Basically: pointer position at start of dragging.
-    pts mHotspotPts;                            ///< The pts value that corresponds to the hotspot's x position. Required when changing zoom/scrolling.
+    pts mHotspotPts = 0;                        ///< The pts value that corresponds to the hotspot's x position. Required when changing zoom/scrolling.
     wxPoint mPosition;                          ///< Current pointer drag position. In timeline coordinates.
     wxBitmap mBitmap;                           ///< The bitmap containing the dragged clips. It is reduced to 'only visible area'.
     wxPoint mBitmapOffset;                      ///< This offset ensures that correct areas can be used when positioning on the timeline.
-    bool mActive;                               ///< True if dragging is currently active.
-    std::vector<pts> mSnapPoints;                 ///< Sorted list containing all possible 'snap to' points (pts values). Filled upon start of drag.
-    std::vector<pts> mDragPoints;                 ///< Sorted list containing all possible 'snapping' points (pts values) in the dragged area. Filled upon start of drag.
-    pts mSnapOffset;                            ///< Resulting offset caused by 'snapping to' a clip
-    std::vector<pts> mSnaps;                      ///< List of current snapping positions (that is, where one of the dragged clips 'touches' the pts position of another clip)
+    bool mActive = false;                       ///< True if dragging is currently active.
+    std::vector<pts> mSnapPoints;               ///< Sorted list containing all possible 'snap to' points (pts values). Filled upon start of drag.
+    std::vector<pts> mDragPoints;               ///< Sorted list containing all possible 'snapping' points (pts values) in the dragged area. Filled upon start of drag.
+    pts mSnapOffset = 0;                        ///< Resulting offset caused by 'snapping to' a clip
+    std::vector<pts> mSnaps;                    ///< List of current snapping positions (that is, where one of the dragged clips 'touches' the pts position of another clip)
     Shift mShift;                               ///< Uninitialized if no shift active. When initialized holds info on the current shift.
-    bool mSnappingEnabled;                      ///< Used to overrule snapping during a drag operation.
+    bool mSnappingEnabled = false;              ///< Used to overrule snapping during a drag operation.
 
     //////////////////////////////////////////////////////////////////////////
     // DRAGINFO
@@ -131,9 +131,9 @@ private:
         :   public Part
     {
     public:
-        int mOffset;                ///< Offset by which to draw dragged tracks. Note that for 'outside' drags, it contains the id over which the new assets are being dragged.
-        int mMinOffset;             ///< Min allowed value for offset (to avoid that tracks are moved into the void)
-        int mMaxOffset;             ///< Mix allowed value for offset (to avoid that tracks are moved into the void)
+        int mOffset = 0;    ///< Offset by which to draw dragged tracks. Note that for 'outside' drags, it contains the id over which the new assets are being dragged.
+        int mMinOffset = 0; ///< Min allowed value for offset (to avoid that tracks are moved into the void)
+        int mMaxOffset = 0; ///< Mix allowed value for offset (to avoid that tracks are moved into the void)
 
         /// Default constructor
         DragInfo(Timeline* timeline, bool isVideo);
@@ -171,16 +171,16 @@ private:
 
         friend std::ostream& operator<<(std::ostream& os, const DragInfo& obj);
 
-        model::TrackPtr mTempTrack; ///< For 'outside' drags, holds the temporary track that contains the new assets
-        bool mIsVideo;              ///< true if this object applies to about video tracks, false if this object applies to audio tracks
-        DummyView* mView;           ///< This view can be used as a container for temporary tracks used for drawing a 'outside' drag operation
+        model::TrackPtr mTempTrack = nullptr;   ///< For 'outside' drags, holds the temporary track that contains the new assets
+        bool mIsVideo = false;                  ///< true if this object applies to about video tracks, false if this object applies to audio tracks
+        DummyView* mView = nullptr;             ///< This view can be used as a container for temporary tracks used for drawing a 'outside' drag operation
     };
 
     DragInfo mVideo;
     DragInfo mAudio;
 
-    model::TrackPtr mDraggedTrack;      ///< Holds, when dragging, the track directly under the mouse pointer when starting the drag (the track which is dragged)
-    model::TrackPtr mDropTrack;         ///< Holds, when dragging, the track directly under the mouse pointer when dragging (the track onto which is dropped)
+    model::TrackPtr mDraggedTrack = nullptr;    ///< Holds, when dragging, the track directly under the mouse pointer when starting the drag (the track which is dragged)
+    model::TrackPtr mDropTrack = nullptr;       ///< Holds, when dragging, the track directly under the mouse pointer when dragging (the track onto which is dropped)
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS

@@ -31,33 +31,17 @@ namespace model {
 //////////////////////////////////////////////////////////////////////////
 
 Clip::Clip()
-    :   mTrack()
-    ,   mPrev()
-    ,   mNext()
-    ,   mLeftPtsInTrack(0)
-    ,   mIndex(0)
-    ,   mLink()
-    ,   mNewStartPosition(boost::none)
-    ,   mSelected(false)
-    ,   mDragged(false)
-    ,   mGeneratedPts(0)
-    ,   mDescription("")
+:   IClip()
 {
     // NOT: VAR_DEBUG(*this); -- Uses virtual methods that only have an implementation in derived classes (which are not yet initialized)
 }
 
 Clip::Clip(const Clip& other)
-    :   mTrack(model::TrackPtr())   // Clone is not automatically part of same track!!!
-    ,   mPrev()                     // Clone is not automatically part of same track!!!
-    ,   mNext()                     // Clone is not automatically part of same track!!!
-    ,   mLeftPtsInTrack(0)          // Clone is not automatically part of same track!!!
-    ,   mIndex(0)                   // Clone is not automatically part of same track!!!
-    ,   mLink()                     // Clone is not automatically linked to same clip, since it will typically be used in ClipEdit derived classes, using link mapping for maintaining the links
-    ,   mNewStartPosition(boost::none)
-    ,   mSelected(other.mSelected)
-    ,   mDragged(false)             // Clone is not automatically also dragged!!!
-    ,   mGeneratedPts(0)
-    ,   mDescription(other.mDescription)
+:   IClip()
+// NOTE: Clone is not automatically part of same track!!!
+// NOTE: Clone is not automatically linked to same clip, since it will typically be used in ClipEdit derived classes, using link mapping for maintaining the links
+,   mSelected(other.mSelected)
+,   mDescription(other.mDescription)
 {
     // NOT: VAR_DEBUG(*this)(other); -- Uses virtual methods that only have an implementation in derived classes (which are not yet initialized)
 }
@@ -279,7 +263,7 @@ pts Clip::getPerceivedRightPts() const
 IClipPtr Clip::getExtendedClone() const
 {
     model::IClipPtr c{ clone() };
-    
+
     pts addBegin{ getInTransition() ? *getInTransition()->getRight() : 0 };
     pts addEnd{ getOutTransition() ? *getOutTransition()->getLeft() : 0 };
 

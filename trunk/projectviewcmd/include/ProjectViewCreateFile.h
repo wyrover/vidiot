@@ -50,7 +50,7 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     std::vector<wxFileName> mPaths;
-    model::FolderPtr mParent;
+    model::FolderPtr mParent = nullptr;
     ParentAndChildPairs mPairs;
 };
 

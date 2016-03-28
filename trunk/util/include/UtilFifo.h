@@ -23,9 +23,8 @@ template<class ELEMENT>
 class Fifo
 {
 public:
-    explicit Fifo(const unsigned int& maxSize)
+    explicit Fifo(const size_t& maxSize)
         :   mMaxSize(maxSize)
-        ,	mSize(0)
     {
     }
 
@@ -33,13 +32,13 @@ public:
     Fifo& operator=(const Fifo&) = delete;
     ~Fifo() = default;
 
-    long getSize()
+    size_t getSize()
     {
         boost::mutex::scoped_lock lock(mMutex);
-        return mSize;
+        return mSize; // todo remove lock and make atomic?
     }
 
-    void resize(const long& newMaxSize)
+    void resize(const size_t& newMaxSize)
     {
         {
             boost::mutex::scoped_lock lock(mMutex);
@@ -96,12 +95,12 @@ public:
     }
 
 private:
-    long mMaxSize;
+    size_t mMaxSize = 0;
     std::deque<ELEMENT> items;
 
     boost::mutex mMutex;
     boost::condition_variable conditionNotEmpty;
     boost::condition_variable conditionNotFull;
 
-    long mSize;
+    size_t mSize = 0;
 };

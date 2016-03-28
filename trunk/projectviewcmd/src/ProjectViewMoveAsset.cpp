@@ -25,8 +25,8 @@ namespace cmd {
 
 ProjectViewMoveAsset::ProjectViewMoveAsset(const model::NodePtrs& nodes, const model::NodePtr& parent)
 :   ProjectViewCommand()
-,   mNewParent(parent)
 ,   mPairs(ProjectViewCommand::makeParentAndChildPairs(nodes))
+,   mNewParent(parent)
 {
     VAR_INFO(this)(mNewParent)(mPairs);
     ASSERT_NONZERO(mNewParent);

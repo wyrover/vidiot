@@ -147,8 +147,6 @@ void TestDetailsClip::testChangeLengthTooMuch()
     TimelineLeftClick(Center(AudioClip(0,2))); // Selects both the video and the audio clip
 
     model::IClipPtr clip = AudioClip(0,2);
-    pts minLength = *(clip->getInTransition()->getRight()) + *(clip->getOutTransition()->getLeft());
-    pts maxLength = clip->getLength() + clip->getMinAdjustBegin() + clip->getMaxAdjustEnd();
 
     for (int index : { 0, 1, 8 })
     {
@@ -190,7 +188,6 @@ void TestDetailsClip::testChangeLengthOfTransition()
             wxToggleButton* button = DetailsClipView()->getLengthButtons()[index];
             pts length = DetailsClipView()->getLength(button);
             ASSERT(button->IsEnabled());
-            pts oldLength = VideoClip(0, 2)->getLength();
             std::ostringstream o;
             o << "LengthButton: Change transition length to " << length;
             StartTest(o.str().c_str());
@@ -241,7 +238,6 @@ void TestDetailsClip::testChangeLengthAfterCreatingTransition()
         for (int index : enabledButtons)
         {
             wxToggleButton* button = DetailsClipView()->getLengthButtons()[index];
-            pts oldLength = VideoClip(0,2)->getPerceivedLength();
             pts buttonLength = DetailsClipView()->getLength(button);
             ASSERT(button->IsEnabled());
             std::ostringstream o;
@@ -652,7 +648,7 @@ void TestDetailsClip::testChangeVolume()
         audioclip->moveTo(10);
         referenceChunk = audioclip->getNextAudio(parameters);
         ASSERT_VOLUME(getAudioClip(AudioClip(0,4)),100,referenceChunk);
-              // todo stop build on warnings on linux 
+              // todo stop build on warnings on linux
         TimelineLeftClick(Center(AudioClip(0, 4)));
         SetValue(DetailsClipView()->getVolumeSlider(), 70);
         ASSERT_HISTORY_END(gui::timeline::cmd::EditClipDetails); // Verify that only one command object was added to the undo history
@@ -711,7 +707,7 @@ void TestDetailsClip::testClipUpdatedAfterDragAndDrop()
         ASSERT(button->IsEnabled());
     }
     TimelineDrag(From(Center(VideoClip(1, 1))).AlignLeft(LeftPixel(VideoClip(0, 1))));
-    // Now the clip is updated after the drop. All clips have become disabled. 
+    // Now the clip is updated after the drop. All clips have become disabled.
     // Clip can't be shortened anymore due to the clip in the other track
     for (int index : { 0, 1, 2, 3, 4, 5, 6, 7 })
     {

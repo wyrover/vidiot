@@ -36,15 +36,12 @@ namespace model {
 
 FileAnalyzer::FileAnalyzer(wxStrings fileNames, wxWindow* parent)
     : mParent(parent)
+    , mMostFrequentVideoSize(Config::get().read<long>(Config::sPathVideoDefaultWidth), Config::get().read<long>(Config::sPathVideoDefaultHeight))
 	, mMostFrequentFrameRate(Config::get().read<wxString>(Config::sPathVideoDefaultFrameRate))
     , mMostFrequentAudioRate(std::make_pair(Config::get().read<long>(Config::sPathAudioDefaultSampleRate), Config::get().read<long>(Config::sPathAudioDefaultNumberOfChannels)))
-    , mMostFrequentVideoSize(Config::get().read<long>(Config::sPathVideoDefaultWidth), Config::get().read<long>(Config::sPathVideoDefaultHeight))
     , mVideoSizeOccurrence({ { mMostFrequentVideoSize, 0 } })
     , mFrameRateOccurrence({ { mMostFrequentFrameRate, 0 } })
     , mAudioRateOccurrence({ { mMostFrequentAudioRate, 0 } })
-    , mNumberOfProjects{ 0 }
-    , mNumberOfMediaFiles{ 0 }
-    , mFolders{ 0 }
 {
 	for (wxString path : fileNames)
 	{
@@ -55,15 +52,12 @@ FileAnalyzer::FileAnalyzer(wxStrings fileNames, wxWindow* parent)
 
 FileAnalyzer::FileAnalyzer(const wxArrayString& fileNames, wxWindow* parent)
 	: mParent(parent)
+	, mMostFrequentVideoSize(Config::get().read<long>(Config::sPathVideoDefaultWidth), Config::get().read<long>(Config::sPathVideoDefaultHeight))
 	, mMostFrequentFrameRate(Config::get().read<wxString>(Config::sPathVideoDefaultFrameRate))
 	, mMostFrequentAudioRate(std::make_pair(Config::get().read<long>(Config::sPathAudioDefaultSampleRate), Config::get().read<long>(Config::sPathAudioDefaultNumberOfChannels)))
-	, mMostFrequentVideoSize(Config::get().read<long>(Config::sPathVideoDefaultWidth), Config::get().read<long>(Config::sPathVideoDefaultHeight))
     , mVideoSizeOccurrence({ { mMostFrequentVideoSize, 0 } })
     , mFrameRateOccurrence({ { mMostFrequentFrameRate, 0 } })
     , mAudioRateOccurrence({ { mMostFrequentAudioRate, 0 } })
-    , mNumberOfProjects{ 0 }
-    , mNumberOfMediaFiles{ 0 }
-    , mFolders{ 0 }
 {
 	for (wxString filename : fileNames)
 	{

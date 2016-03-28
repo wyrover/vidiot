@@ -33,8 +33,6 @@ namespace model {
 //////////////////////////////////////////////////////////////////////////
 
 FileWatcher::FileWatcher()
-    :   mWatcher(0)
-    ,   mWatches()
 {
     VAR_DEBUG(this);
 

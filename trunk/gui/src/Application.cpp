@@ -370,6 +370,7 @@ void Application::OnFatalException()
 
 void Application::OnInitCmdLine (wxCmdLineParser &parser)
 {
+#pragma GCC diagnostic ignored "-Wmissing-field-initializers"
     static const wxCmdLineEntryDesc cmdLineDesc[] =
     {
         { wxCMD_LINE_PARAM, "file", "file to be opened", "project file (*." + model::Project::sFileExtension + ")", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },

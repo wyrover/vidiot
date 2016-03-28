@@ -101,7 +101,7 @@ AVStream* VideoCodec::addStream(AVFormatContext* context) const
     ASSERT(stream);
 
     AVCodecContext* video_codec = stream->codec;
-    ASSERT_EQUALS(video_codec->codec_type,AVMEDIA_TYPE_VIDEO);
+    ASSERT_EQUALS(static_cast<int>(video_codec->codec_type), static_cast<int>(AVMEDIA_TYPE_VIDEO));
 
     int result = avcodec_get_context_defaults3(video_codec, encoder);
     ASSERT_MORE_THAN_EQUALS_ZERO(result);

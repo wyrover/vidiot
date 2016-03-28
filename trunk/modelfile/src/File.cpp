@@ -218,7 +218,6 @@ pts File::getLength() const
         }
     }
     ASSERT(mNumberOfFrames);
-    pts result{ *mNumberOfFrames };
     return *mNumberOfFrames;
 }
 
@@ -242,7 +241,6 @@ void File::moveTo(pts position)   // todo multipass rendering?
     stopReadingPackets();
 
     int64_t timestamp = model::Convert::ptsToMicroseconds(position);
-    int flags{ mFileContext->flags };
     if ((mFileContext->duration != AV_NOPTS_VALUE && timestamp >= mFileContext->duration) ||
         (position >= mNumberOfFrames))
     {
@@ -277,7 +275,7 @@ void File::moveTo(pts position)   // todo multipass rendering?
                     result = avformat_seek_file(mFileContext, -1, std::numeric_limits<int64_t>::min(), timestamp, std::numeric_limits<int64_t>::max(), AVSEEK_FLAG_BACKWARD | AVSEEK_FLAG_ANY);
                 }
             }
-            if (result < 0) 
+            if (result < 0)
             {
                 VAR_WARNING(position)(avcodecErrorString(result))(*this);
                 // Extracting data from an improperly initialized file will cause a crash.
@@ -286,12 +284,12 @@ void File::moveTo(pts position)   // todo multipass rendering?
                 // Then the 'skip frames' and 'skip samples' algorithms in VideoFile/AudioFile
                 // will cause the initial (unwanted) data to be discarded. Not efficient, but
                 // at least the files can be read in that case - and possibly converted.
-                // 
-                // Note: original implementation here was to set 'mFileOpenedOk' to false and 
+                //
+                // Note: original implementation here was to set 'mFileOpenedOk' to false and
                 //       avoid reading the data in the file (because I sometimes saw crashes)
                 //       when not doing so.
                 //
-                // Close file completely. It will be reopened (at the beginning) when its 
+                // Close file completely. It will be reopened (at the beginning) when its
                 // data is required.
                 stopReadingPackets();
                 closeFile();
@@ -764,6 +762,7 @@ void File::openFile()
 
             // TRANSLATORS: %s == Name of file which is scanned completely to determine the file length.
             gui::StatusBar::get().pushInfoText(wxString::Format(_("Scanning %s to determine media length."), mPath.GetFullName()));
+#pragma GCC diagnostic ignored "-Wmissing-field-initializers"
             AVPacket pkt1 = { 0 };
             AVPacket* packet = &pkt1;
             std::vector<pts> streamPts(mFileContext->nb_streams, 0); // Note: no {, since that'll cause the wrong size

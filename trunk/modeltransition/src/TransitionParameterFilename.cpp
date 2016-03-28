@@ -38,10 +38,10 @@ TransitionParameterFilename::TransitionParameterFilename()
 TransitionParameterFilename::TransitionParameterFilename(const wxString& fileDescriptor, bool requiresMaskOrAlpha, bool requiresAlpha, const wxString& defaultPath)
     : TransitionParameter()
     , mValue{ }
+    , mDefaultPath{ defaultPath }
     , mFileDescriptor{ fileDescriptor }
     , mMaskOrAlpha{ requiresMaskOrAlpha }
     , mAlpha{ requiresAlpha }
-    , mDefaultPath{ defaultPath }
 {
     VAR_DEBUG(*this);
     ASSERT_IMPLIES(mAlpha, !mMaskOrAlpha);
@@ -51,10 +51,10 @@ TransitionParameterFilename::TransitionParameterFilename(const wxString& fileDes
 TransitionParameterFilename::TransitionParameterFilename(const TransitionParameterFilename& other)
     : TransitionParameter(other)
     , mValue{ other.mValue }
+    , mDefaultPath{ other.mDefaultPath }
     , mFileDescriptor{ other.mFileDescriptor }
     , mMaskOrAlpha{ other.mMaskOrAlpha }
     , mAlpha{ other.mAlpha }
-    , mDefaultPath{ other.mDefaultPath }
 {
     VAR_DEBUG(*this);
 }
@@ -118,9 +118,9 @@ void TransitionParameterFilename::destroyWidget()
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-wxFileName TransitionParameterFilename::getValue() const 
-{ 
-    return mValue; 
+wxFileName TransitionParameterFilename::getValue() const
+{
+    return mValue;
 }
 
 void TransitionParameterFilename::setValue(wxFileName value)
@@ -145,7 +145,7 @@ void TransitionParameterFilename::setValue(wxFileName value)
 void TransitionParameterFilename::onFileButtonPressed(wxCommandEvent& event)
 {
     CatchExceptions([this]
-    {                                        
+    {
         ASSERT_NONZERO(mPanel);
         wxString selected{ gui::Dialog::get().getFile(getDescription(), mDefaultPath, mFileDescriptor, mPanel) };
         if (!selected.IsEmpty())

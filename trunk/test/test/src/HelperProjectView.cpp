@@ -118,7 +118,7 @@ model::SequencePtr ProjectViewCreateSequence( model::FolderPtr folder )
     {
         nodes = util::thread::RunInMainReturning<model::NodePtrs>(std::bind(&model::Node::find, getRoot(), folder->getName()));
         ASSERT_EQUALS(nodes.size(),1); // The folder
-        nodes = getRoot()->find( folder->getSequenceName() );
+        nodes = util::thread::RunInMainReturning<model::NodePtrs>(std::bind(&model::Node::find, getRoot(), folder->getSequenceName()));
         ASSERT_EQUALS(nodes.size(),1); // The sequence
     }
     model::SequencePtr result;
@@ -193,7 +193,7 @@ model::IPaths GetSupportedFiles( wxFileName directory )
     return result;
 }
 
-int ProjectViewCount()
+size_t ProjectViewCount()
 {
     WaitForIdle;
     util::thread::RunInMainAndWait([]
@@ -201,7 +201,7 @@ int ProjectViewCount()
         GetProjectView().selectAll();
     });
     model::NodePtrs selection = GetProjectView().getSelection();
-    int result = selection.size();
+    size_t result = selection.size();
     VAR_DEBUG(result);
     return result;
 }

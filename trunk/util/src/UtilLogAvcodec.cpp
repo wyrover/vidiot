@@ -199,10 +199,10 @@ std::ostream& operator<<(std::ostream& os, const AVCodec* obj)
     if (obj)
     {
         os  << '{'
-            << "name="           << obj->name         << ','
-            << "long_name="      << obj->long_name    << ','
-            << "type="           << obj->type         << ','
-            << "id="             << obj->id           << ','
+            << "name="           << obj->name                       << ','
+            << "long_name="      << obj->long_name                  << ','
+            << "type="           << static_cast<int>(obj->type)     << ','
+            << "id="             << obj->id                         << ','
             << "max_lowres="     << (unsigned int)obj->max_lowres   << ','
             << "capabilities="   << obj->capabilities;
         std::vector< std::string > caps;
@@ -339,7 +339,7 @@ std::ostream& operator<<(std::ostream& os, const AVStream* obj)
             << "r_frame_rate="                  << obj->r_frame_rate                    << ','
             << "time_base="                     << obj->time_base                       << ','
             << "pts_wrap_bits="                 << obj->pts_wrap_bits                   << ','
-            << "discard="                       << obj->discard                         << ','
+            << "discard="                       << static_cast<int>(obj->discard)       << ','
             << "start_time="                    << obj->start_time                      << ','
             << "duration="                      << obj->duration                        << ','
             << "cur_dts="                       << obj->cur_dts                         << ','

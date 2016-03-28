@@ -72,7 +72,7 @@ void Selection::updateOnLeftDown(const PointerPositionInfo& info)
             previouslyClickedWasSelected = mPreviouslyClicked->getSelected();
         }
     }
-    
+
     // Determine the 'logically clicked' clip and track
     model::IClipPtr clip = getClip(info);
     mLeftDown = clip;
@@ -145,7 +145,7 @@ void Selection::updateOnLeftDown(const PointerPositionInfo& info)
         else if (ctrlPressed)
         {
             // To facilitate dragging when (CTRL) clicking on one of the
-            // already selected clips, deselecting is delayed until the 
+            // already selected clips, deselecting is delayed until the
             // left up event.
             if (!mLeftDownWasSelected)
             {
@@ -227,9 +227,6 @@ void Selection::updateOnRightClick(const PointerPositionInfo& info)
     VAR_DEBUG(clip)(ctrlPressed)(shiftPressed)(altPressed);
 
     model::TrackPtr track = clip ? clip->getTrack() : model::TrackPtr();
-
-    // Must be determined before deselecting all clips.
-    bool mLeftDownWasSelected = clip ? clip->getSelected() : false;
 
     // Deselect clips first, in certain cases
     if (!ctrlPressed && (!clip || !clip->getSelected()))
@@ -333,7 +330,7 @@ void Selection::updateOnEdit()
 model::IClipPtr Selection::getClip(const PointerPositionInfo& info) const
 {
     model::IClipPtr result = info.getLogicalClip();
-    if (result && 
+    if (result &&
         result->isA<model::EmptyClip>())
     {
         // Empty clips cannot be selected.

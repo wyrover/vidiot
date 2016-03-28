@@ -87,7 +87,7 @@ private:
     model::SequencePtr mSequence;
 
     /// Current playing speed
-    int mSpeed;
+    int mSpeed = sDefaultSpeed;
 
     /// If set, indicates that video and audio buffers must end.
     std::atomic<bool> mAbortThreads;
@@ -98,14 +98,14 @@ private:
     /// Holds the time at which the first audio buffer will be played.
     /// Effectively, that's the start time of the playback. Time is in
     /// seconds since starting the audio playback.
-    double mStartTime;
+    double mStartTime = 0.0;
 
     /// Delta between the expected time at which audio is output and the
     /// actual time at which time are reported to be output by PortAudio.
-    double mAudioLatency;
+    double mAudioLatency = 0.0;
 
     /// Holds the pts at which the playback was started (thus, the 0-point timewise)
-    pts mStartPts;
+    pts mStartPts = 0;
 
     std::atomic<int> mSkipFrames;
 
@@ -116,10 +116,10 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     model::FifoAudio mAudioChunks;
-    model::AudioChunkPtr mCurrentAudioChunk;
+    model::AudioChunkPtr mCurrentAudioChunk  = nullptr;
+    std::unique_ptr<model::AudioCompositionParameters> mAudioParameters = nullptr;
+    std::unique_ptr<boost::thread> mAudioBufferThreadPtr;
 
-    std::unique_ptr<model::AudioCompositionParameters> mAudioParameters;
-    boost::scoped_ptr<boost::thread> mAudioBufferThreadPtr;
     void sendToSoundTouch(model::AudioChunkPtr chunk);
     samplecount receiveFromSoundTouch(model::AudioChunkPtr chunk, samplecount nSamples, samplecount nSamplesRequired);
     void audioBufferThread();
@@ -130,22 +130,22 @@ private:
     /// Required for SoundTouch
     soundtouch::SoundTouch mSoundTouch;
     std::atomic<samplecount> mSoundTouchLatency;
-    double mSpeedFactor;
+    double mSpeedFactor = 1.0;
 
     //////////////////////////////////////////////////////////////////////////
     // VIDEO
     //////////////////////////////////////////////////////////////////////////
 
     model::FifoVideo mVideoFrames;
-    model::VideoFramePtr mCurrentVideoFrame;
-    boost::shared_ptr<wxBitmap> mCurrentBitmap;
+    model::VideoFramePtr mCurrentVideoFrame = nullptr;
+    boost::shared_ptr<wxBitmap> mCurrentBitmap = nullptr;
 
     std::atomic<int> mWidth;
     std::atomic<int> mHeight;
     wxBitmapPtr mBufferBitmap = nullptr;
 
     std::unique_ptr<model::VideoCompositionParameters> mVideoParameters;
-    boost::scoped_ptr<boost::thread> mVideoBufferThreadPtr;
+    std::unique_ptr<boost::thread> mVideoBufferThreadPtr = nullptr;
     void videoBufferThread();
 
     void showNextFrame();

@@ -82,7 +82,7 @@ void AssertClipSpeed(model::IClipPtr clip, rational64 speed)
 void AssertAudioChunk(model::AudioChunkPtr chunk, std::vector<sample> reference, size_t offset)
 {
     ASSERT_NONZERO(chunk);
-    ASSERT_LESS_THAN(offset, chunk->getUnreadSampleCount());
+    ASSERT_LESS_THAN(static_cast<int>(offset), chunk->getUnreadSampleCount());
     ASSERT_MORE_THAN_ZERO(reference.size());
     std::vector<sample> current;
     sample* s{ chunk->getUnreadSamples() };

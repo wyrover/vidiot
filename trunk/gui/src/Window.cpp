@@ -99,20 +99,19 @@ static const wxString sTitleDebug("");
 
 Window::Window()
     : wxDocParentFrame()
+    , sPaneCaptionHelp(_("Help"))
+    , sPaneCaptionProject(_("Project"))
+    , sPaneCaptionDetails(_("Details"))
+    , sPaneCaptionPreview(_("Preview"))
+    , sPaneCaptionTimelines(_("Timelines"))
     , mDocManager(new wxDocManager())
     // TRANSLATORS: %s == Name of application (executable)
     , mDocTemplate(new wxDocTemplate(mDocManager, wxString::Format(_("%s files"), CommandLine::get().ExeName), "*." + model::Project::sFileExtension, "", model::Project::sFileExtension, wxString::Format(_("%s Project"), CommandLine::get().ExeName), wxString::Format(_("%s Project View"), CommandLine::get().ExeName), CLASSINFO(model::Project), CLASSINFO(ViewHelper)))
     , mDialog(new Dialog())
     , mAudioTransitionFactory(new model::audio::AudioTransitionFactory())
     , mVideoTransitionFactory(new model::video::VideoTransitionFactory())
-    , mProjectOpen(false)
-    , mDialogOpen(false)
-    , sPaneCaptionHelp(_("Help"))
-    , sPaneCaptionProject(_("Project"))
-    , sPaneCaptionDetails(_("Details"))
-    , sPaneCaptionPreview(_("Preview"))
-    , sPaneCaptionTimelines(_("Timelines"))
     , mTitle{ CommandLine::get().ExeName + sTitleDebug }
+    , mDialogOpen{ false }
 {
     Create(mDocManager, 0, wxID_ANY, mTitle, wxDefaultPosition, wxSize(1000,700));
 

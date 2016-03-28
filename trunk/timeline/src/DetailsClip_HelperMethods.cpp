@@ -318,8 +318,8 @@ void DetailsClip::updateAlignment(bool horizontalchange)
         case model::VideoAlignmentCenter:           return (horizontalchange ? model::VideoAlignmentCenterVertical      : model::VideoAlignmentCenterHorizontal);
         case model::VideoAlignmentCenterHorizontal: return (horizontalchange ? model::VideoAlignmentCustom              : model::VideoAlignmentCenterHorizontal);
         case model::VideoAlignmentCenterVertical:   return (horizontalchange ? model::VideoAlignmentCenterVertical      : model::VideoAlignmentCustom);
+        default:                                    return mSelectAlignment->getValue();
         }
-        return mSelectAlignment->getValue();
     };
     mVideoKeyFrameControls->getKeyFrame()->setAlignment(getAlignment());
 }

@@ -74,7 +74,7 @@ model::IPaths GetSupportedFiles( wxFileName path );
 /// Count the number of nodes currently visible in the project view.
 /// This is implemented by selecting all nodes, and counting the selection size.
 /// Thus, as a side effect changes the selection of the project view.
-int ProjectViewCount();
+size_t ProjectViewCount();
 
 /// \return the coordinates of the given node
 /// \param node node to be found

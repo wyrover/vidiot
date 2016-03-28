@@ -102,6 +102,7 @@ void Render::initialize()
 
 Render::Render()
     :   wxEvtHandler()
+    ,   boost::enable_shared_from_this<Render>()
     ,   mFileName()
     ,   mOutputFormat(OutputFormats::getDefault())
     ,   mSeparateAtCuts(false)
@@ -114,6 +115,7 @@ Render::Render()
 
 Render::Render(const Render& other)
     :   wxEvtHandler()
+    ,   boost::enable_shared_from_this<Render>()
     ,   mFileName(other.mFileName)
     ,   mOutputFormat(make_cloned<OutputFormat>(other.mOutputFormat))
     ,   mSeparateAtCuts(other.mSeparateAtCuts)
@@ -392,7 +394,6 @@ void RenderWork::generate()
     bool audioOpened = false;
 
     bool videoEnd = false; // Video end seen
-    bool audioEnd = false; // Audio end seen
 
     AVStream* videoStream = 0;
     AVStream* audioStream = 0;

@@ -72,7 +72,6 @@ void executeFormatTest(wxString path, bool audio, bool video)
         WaitForPlaybackStopped stopped;
         Play();
         stopped.wait();
-        pause();
     }, true);
 }
 

@@ -29,8 +29,7 @@ struct CommandLine
     //////////////////////////////////////////////////////////////////////////
 
     CommandLine(const wxString& exeName)
-        : EditFile(boost::none)
-        , ExeName(exeName)
+        : ExeName(exeName)
     {
     }
 
@@ -43,7 +42,7 @@ struct CommandLine
     //////////////////////////////////////////////////////////////////////////
 
     wxString ExeName;
-    boost::optional<wxString> EditFile;
+    boost::optional<wxString> EditFile = boost::none;
 };
 
 } // namespace

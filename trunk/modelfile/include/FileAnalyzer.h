@@ -19,9 +19,9 @@
 
 #include "UtilFrameRate.h"
 
-inline bool operator<(const wxSize l, const wxSize& r) 
-{ 
-    return l.x < r.x || (l.x == r.x && l.y < r.y); 
+inline bool operator<(const wxSize l, const wxSize& r)
+{
+    return l.x < r.x || (l.x == r.x && l.y < r.y);
 }
 
 namespace model {
@@ -61,9 +61,9 @@ public:
 
     wxSize getMostFrequentVideoSize() const;
     FrameRate getMostFrequentFrameRate() const;
-    
+
     /// \return most requent audio type as a pair of framerate and number of channels
-    std::pair<int,int> getMostFrequentAudioRate() const; 
+    std::pair<int,int> getMostFrequentAudioRate() const;
 
     void addNodesToProjectView() const;
 
@@ -89,9 +89,9 @@ private:
     std::map<FrameRate, int> mFrameRateOccurrence;
     std::map<std::pair<int,int>, int> mAudioRateOccurrence;
 
-    int mNumberOfProjects;
-    int mFolders;
-    int mNumberOfMediaFiles;
+    int mNumberOfProjects = 0;
+    int mFolders = 0;
+    int mNumberOfMediaFiles = 0;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS

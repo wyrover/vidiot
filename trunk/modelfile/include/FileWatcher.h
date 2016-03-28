@@ -69,9 +69,9 @@ private:
     // destroyed and restarted again, upon each change. This ensures that
     // the overlapped io is aborted (PostEmptyStatus() in file watcher
     // internals is called when destroying the watcher, which does the trick).
-     wxFileSystemWatcher* mWatcher;
+     wxFileSystemWatcher* mWatcher = nullptr;
 
-     bool mRestartRequired;
+     bool mRestartRequired = false;
 
     //////////////////////////////////////////////////////////////////////////
     // PROJECT EVENTS

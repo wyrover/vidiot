@@ -37,7 +37,7 @@ extern "C" {
 #include <libswresample/swresample.h>
 #include <libswscale/swscale.h>
 #pragma warning(default:4244)
-};
+}
 
 #ifdef _MSC_VER
 #define __STDC_LIMIT_MACROS

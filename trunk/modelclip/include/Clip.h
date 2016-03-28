@@ -109,19 +109,19 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    WeakTrackPtr mTrack;    ///< Track which holds this clip. 0 if current clip is not part of a track. Stored as weak_ptr to avoid cyclic dependencies (leading to memory leaks).
-    WeakIClipPtr mPrev;     ///< Previous clip in the track. 0 if current clip is not part of a track. Stored as weak_ptr to avoid cyclic dependencies (leading to memory leaks).
-    WeakIClipPtr mNext;     ///< Next clip in the track. 0 if current clip is not part of a track. Stored as weak_ptr to avoid cyclic dependencies (leading to memory leaks).
-    pts mLeftPtsInTrack;    ///< Position inside the track. 0 if not in a track.
-    int mIndex;             ///< Index of this clip in the track
+    WeakTrackPtr mTrack;        ///< Track which holds this clip. 0 if current clip is not part of a track. Stored as weak_ptr to avoid cyclic dependencies (leading to memory leaks).
+    WeakIClipPtr mPrev;         ///< Previous clip in the track. 0 if current clip is not part of a track. Stored as weak_ptr to avoid cyclic dependencies (leading to memory leaks).
+    WeakIClipPtr mNext;         ///< Next clip in the track. 0 if current clip is not part of a track. Stored as weak_ptr to avoid cyclic dependencies (leading to memory leaks).
+    pts mLeftPtsInTrack = 0;    ///< Position inside the track. 0 if not in a track.
+    int mIndex = 0;             ///< Index of this clip in the track
 
-    WeakIClipPtr mLink;     ///< Clip that this clip is linked with. Stored as weak_ptr to avoid circular dependency between two linked clips which causes memory leaks.
+    WeakIClipPtr mLink;         ///< Clip that this clip is linked with. Stored as weak_ptr to avoid circular dependency between two linked clips which causes memory leaks.
 
-    boost::optional<pts> mNewStartPosition;  ///< The most recent position as specified in 'moveTo()'.
-    pts mGeneratedPts;                      ///< (approximate) pts value of last video/audio returned with getNext*
+    boost::optional<pts> mNewStartPosition = boost::none;   ///< The most recent position as specified in 'moveTo()'.
+    pts mGeneratedPts = 0;                                  ///< (approximate) pts value of last video/audio returned with getNext*
 
-    bool mSelected;                         ///< True if this clip is currently selected
-    bool mDragged;                          ///< True if this clip is currently dragged
+    bool mSelected = false;     ///< True if this clip is currently selected
+    bool mDragged = false;      ///< True if this clip is currently dragged
 
     mutable wxString mDescription;  ///< Stored for performance (cached) and for easier debugging.
 

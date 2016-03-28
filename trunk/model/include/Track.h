@@ -133,8 +133,8 @@ private:
 
     IClips::const_iterator mItClips;
 
-    int mHeight;    ///< Height of this track when viewed in a timeline
-    int mIndex;     ///< Index in the list of video/audio tracks
+    int mHeight = sDefaultTrackHeight;  ///< Height of this track when viewed in a timeline
+    int mIndex = 0;                     ///< Index in the list of video/audio tracks
 
     /// Some variables are only required for better performance.
     /// These contain 'duplicate/redundant' information.

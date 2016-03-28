@@ -32,13 +32,10 @@ bool FixtureGui::UseRealUiEvents = false;;
 //////////////////////////////////////////////////////////////////////////
 
 FixtureGui::FixtureGui()
-    :   mEnd(false)
-    ,   mStartingMainThread(false)
-    ,   mBarrierConfigRead(2)
+    :   mBarrierConfigRead(2)
     ,   mBarrierStart(2)
     ,   mBarrierStarted(2)
     ,   mBarrierStopped(2)
-    ,   mStartTime(0)
     ,   mHelperTestSuite(new HelperTestSuite())
 {
 }

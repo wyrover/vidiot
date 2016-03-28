@@ -20,20 +20,20 @@
 namespace gui { namespace timeline { namespace state {
 
 EvKey::EvKey(wxKeyEvent& wxEvent)
-    : mEvent(wxEvent)
-    , CtrlDown(wxEvent.ControlDown())
+    : CtrlDown(wxEvent.ControlDown())
     , ShiftDown(wxEvent.ShiftDown())
     , AltDown(wxEvent.AltDown())
     , KeyCode(wxEvent.GetKeyCode())
+    , mEvent(wxEvent)
 {
 };
 
 EvKey::EvKey(wxMouseState& state, int key)
-    : mEvent(boost::none)
-    , CtrlDown(state.ControlDown())
+    : CtrlDown(state.ControlDown())
     , ShiftDown(state.ShiftDown())
     , AltDown(state.AltDown())
     , KeyCode(key)
+    , mEvent(boost::none)
 {
 }
 

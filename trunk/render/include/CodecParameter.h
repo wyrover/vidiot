@@ -40,7 +40,6 @@ public:
         ,   mMinimum(std::numeric_limits<int>::max())
         ,   mMaximum(std::numeric_limits<int>::min())
         ,   mValue(0)
-        ,   mWindow(0)
     {
     }
 
@@ -50,7 +49,6 @@ public:
         ,   mMinimum(other.mMinimum)
         ,   mMaximum(other.mMaximum)
         ,   mValue(other.mValue)
-        ,   mWindow(0)
     {
     }
 
@@ -146,7 +144,7 @@ public:
 
 protected:
 
-    wxWindow* mWindow;
+    wxWindow* mWindow = nullptr;
 
 private:
 

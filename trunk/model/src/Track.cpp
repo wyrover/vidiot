@@ -30,23 +30,21 @@
 namespace model {
 
 Track::Track()
-:	IControl()
-,   wxEvtHandler()
+:   wxEvtHandler()
+,	IControl()
 ,   mClips()
 ,   mItClips(mClips.end())
-,   mHeight(sDefaultTrackHeight)
 ,   mIndex(0)
 {
     VAR_DEBUG(this);
 }
 
 Track::Track(const Track& other)
-:	IControl()
-,   wxEvtHandler()
+:   wxEvtHandler()
+,	IControl()
 ,   mClips(make_cloned<IClip>(other.mClips))
 ,   mItClips(mClips.end())
 ,   mHeight(other.mHeight)
-,   mIndex(0)
 {
     VAR_DEBUG(this);
 }

@@ -259,7 +259,7 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    bool mInitialized;                      ///< True if Do has been executed at least once.
+    bool mInitialized = false;              ///< True if Do has been executed at least once.
     model::MoveParameters mParams;          ///< Holds the actions to make the 'forward' (Do) change
     model::MoveParameters mParamsUndo;      ///< Holds the actions to make the 'reverse' (Undo) change
 
