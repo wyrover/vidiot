@@ -39,7 +39,7 @@ VideoTransitionFactory::VideoTransitionFactory()
     add(boost::make_shared<model::video::transition::FadeToColor>());
     add(boost::make_shared<model::video::transition::Push>());
     add(boost::make_shared<model::video::transition::Slide>());
-    // todo   add(boost::make_shared<model::video::transition::ImageGradient>());
+    add(boost::make_shared<model::video::transition::ImageGradient>());
     add(boost::make_shared<model::video::transition::WipeArc>());
     add(boost::make_shared<model::video::transition::WipeBarnDoors>());
     add(boost::make_shared<model::video::transition::WipeCircle>());

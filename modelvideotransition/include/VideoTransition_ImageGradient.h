@@ -26,6 +26,8 @@ class ImageGradient
 {
 public:
 
+    static wxString getDefaultImageGradientPath();
+
     //////////////////////////////////////////////////////////////////////////
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
@@ -40,11 +42,11 @@ public:
     // TRANSITION
     //////////////////////////////////////////////////////////////////////////
 
-    bool supports(TransitionType type) const override;
-
     ParameterAttributes getAvailableParameters() const override;
 
     wxString getDescription(TransitionType type) const override;
+
+    void onParameterChanged(const wxString& name) override;
 
     //////////////////////////////////////////////////////////////////////////
     // VIDEOTRANSITIONOPACITY
@@ -63,6 +65,16 @@ public:
     ImageGradient(const ImageGradient& other) = default;
 
 private:
+
+    //////////////////////////////////////////////////////////////////////////
+    // MEMBERS
+    //////////////////////////////////////////////////////////////////////////
+
+    mutable wxImagePtr mImage = nullptr;
+    mutable wxFileName mImageFileName;
+    mutable bool mErrorShown = false;
+    mutable float mDarkest = 0.0f;
+    mutable float mLightest = 255.0f;
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

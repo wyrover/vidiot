@@ -627,7 +627,6 @@ wxString DialogNewProject::getOverviewMessage(boost::shared_ptr<model::FileAnaly
     }
     else
     {
-        // todo make test that touches this for every language!
         result << nFiles << ".";
     }
     return result;

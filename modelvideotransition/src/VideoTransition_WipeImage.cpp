@@ -86,7 +86,7 @@ ParameterAttributes WipeImage::getAvailableParameters() const
         { TransitionParameterInt::sParameterRotations, _("Rotations"), _("Select the number of rotations to be applied to the image during the transition."), boost::make_shared<TransitionParameterInt>(0, 0, 100) },
         { TransitionParameterRotationDirection::sParameterRotationDirection, _("Rotation direction"), _("Select the clockwise direction of the rotation."), boost::make_shared<TransitionParameterRotationDirection>(RotationDirectionClockWise) },
         { TransitionParameterBool::sParameterInversed, _("Inversed"), _("Select between 'zooming in' (normal) or 'zooming out' (inversed)"), boost::make_shared<TransitionParameterBool>(false) },
-    };
+    };           // todo add and test blur?
 }
 
 wxString WipeImage::getDescription(TransitionType type) const
@@ -242,9 +242,9 @@ std::function<float (int,int)> WipeImage::getRightMethod(const wxImagePtr& image
         VAR_WARNING(filename);
         wxString error =
             filename.IsOk() ?
-            // TRANSLATORS: This is shown when the Wipe Image transition at time %2$s used a file (named %1$s) which the application was unable to read.
+            // TRANSLATORS: This is shown when the Wipe Image/Image Gradient transition at time %2$s used a file (named %1$s) which the application was unable to read.
             wxString::Format(_("Couldn't read %1$s at %2$s."), filename.GetFullName(), Convert::ptsToHumanReadibleString(getLeftPts())) :
-            // TRANSLATORS: This is shown when for the Wipe Image transition at time %s no image has been selected yet.
+            // TRANSLATORS: This is shown when for the Wipe Image/Image Gradient transition at time %s no image has been selected yet.
             wxString::Format(_("No image selected at %s."), Convert::ptsToHumanReadibleString(getLeftPts()));
             gui::StatusBar::get().timedInfoText(error, 10000);
     }
