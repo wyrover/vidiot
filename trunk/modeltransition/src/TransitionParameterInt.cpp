@@ -24,6 +24,8 @@ namespace model {
 wxString TransitionParameterInt::sParameterAngle{ "angle" };
 wxString TransitionParameterInt::sParameterRotations{ "rotations" };
 wxString TransitionParameterInt::sParameterBandsCount{ "bandscount" };
+wxString TransitionParameterInt::sParameterSoften{ "softenfactor" };
+wxString TransitionParameterInt::sParameterBlur{ "blur" };
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION

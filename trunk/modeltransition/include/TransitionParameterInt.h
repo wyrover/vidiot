@@ -32,6 +32,8 @@ public:
     static wxString sParameterAngle;
     static wxString sParameterRotations;
     static wxString sParameterBandsCount;
+    static wxString sParameterSoften;
+    static wxString sParameterBlur;
 
     //////////////////////////////////////////////////////////////////////////
     // INITIALIZATION

@@ -51,7 +51,7 @@ VideoFramePtr VideoTransitionOpacity::getVideo(pts position, const IClipPtr& lef
                         if (layer)
                         {
                             wxImagePtr image = layer->getImage();
-                            float factor = (float)position / (float)getLength();
+                            float factor{ static_cast<float>(position) / static_cast<float>(getLength() - 1) };
                             if (image)
                             {
                                 std::function<float (int,int)> f =
@@ -72,7 +72,6 @@ VideoFramePtr VideoTransitionOpacity::getVideo(pts position, const IClipPtr& lef
                 }
             }
         }
-
     };
 
     if (getLeftOnTop())
