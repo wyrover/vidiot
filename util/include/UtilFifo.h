@@ -35,7 +35,7 @@ public:
     size_t getSize()
     {
         boost::mutex::scoped_lock lock(mMutex);
-        return mSize; // todo remove lock and make atomic?
+        return mSize;
     }
 
     void resize(const size_t& newMaxSize)

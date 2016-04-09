@@ -46,8 +46,6 @@ public:
 
     void clean() override;
 
-    bool supports(TransitionType type) const override;
-
     ParameterAttributes getAvailableParameters() const override;
 
     wxString getDescription(TransitionType type) const override;

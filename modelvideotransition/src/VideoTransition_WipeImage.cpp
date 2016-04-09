@@ -69,13 +69,6 @@ void WipeImage::clean()
     mErrorShown = false;
 }
 
-bool WipeImage::supports(TransitionType type) const
-{
-    return true;
-        //type == TransitionTypeFadeInFromPrevious ||
-        //type == TransitionTypeFadeOutToNext;
-}
-
 ParameterAttributes WipeImage::getAvailableParameters() const
 {
     wxString descriptor{ _("Images") + " (" + File::sSupportedImageExtensions + ")|" + File::sSupportedImageExtensions + ";" + File::sSupportedImageExtensions.Upper() };
@@ -86,7 +79,7 @@ ParameterAttributes WipeImage::getAvailableParameters() const
         { TransitionParameterInt::sParameterRotations, _("Rotations"), _("Select the number of rotations to be applied to the image during the transition."), boost::make_shared<TransitionParameterInt>(0, 0, 100) },
         { TransitionParameterRotationDirection::sParameterRotationDirection, _("Rotation direction"), _("Select the clockwise direction of the rotation."), boost::make_shared<TransitionParameterRotationDirection>(RotationDirectionClockWise) },
         { TransitionParameterBool::sParameterInversed, _("Inversed"), _("Select between 'zooming in' (normal) or 'zooming out' (inversed)"), boost::make_shared<TransitionParameterBool>(false) },
-    };           // todo add and test blur?
+    };
 }
 
 wxString WipeImage::getDescription(TransitionType type) const
@@ -168,17 +161,20 @@ std::function<float (int,int)> WipeImage::getRightMethod(const wxImagePtr& image
     {
         mImage = boost::make_shared<wxImage>(filename.GetFullPath());
         mImageFileName = filename;
+
+        if (mImage && mImage->IsOk())
+        {
+            if (!mImage->HasAlpha())
+            {
+                // Initialize the image from mask data, or initialize default alpha (can happen if images are manipulated after being added).
+                mImage->InitAlpha();
+            }
+            ASSERT(mImage->HasAlpha())(filename);
+        }
     }
 
     if (mImage && mImage->IsOk())
     {
-        if (!mImage->HasAlpha())
-        {
-            // Initialize the image from mask data, or initialize default alpha (can happen if images are manipulated after being added).
-            mImage->InitAlpha();
-        }
-        ASSERT(mImage->HasAlpha())(filename);
-
         float directedFactor{ inversed ? 1.0f - factor : factor };
 
         // Ensure proper WYSIWYG, scale the image extra in case the preview size differs from the output size of the project.

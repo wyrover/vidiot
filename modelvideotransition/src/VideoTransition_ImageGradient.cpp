@@ -101,6 +101,13 @@ std::function<float (int,int)> ImageGradient::getRightMethod(const wxImagePtr& i
 
         if (mImage && mImage->IsOk())
         {
+            if (!mImage->HasAlpha())
+            {
+                // Initialize the image from mask data, or initialize default alpha (can happen if images are manipulated after being added).
+                mImage->InitAlpha();
+            }
+            ASSERT(mImage->HasAlpha())(filename);
+
             // Apply blur to image
             if (blur != 0)
             {
