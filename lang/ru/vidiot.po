@@ -20,7 +20,7 @@ msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-04-09 16:57+0200\n"
-"PO-Revision-Date: 2016-02-24 20:37+0300\n"
+"PO-Revision-Date: 2016-04-14 12:12+0300\n"
 "Last-Translator: Ted Mossolov <teodorrrro@gmail.com>\n"
 "Language-Team: Ted Mossolov <teodorrrro@gmail.com>\n"
 "Language: ru\n"
@@ -815,7 +815,7 @@ msgstr ""
 #: C:\Vidiot\vidiot_trunk\modelfile\src\File.cpp:764
 #, c-format
 msgid "Scanning %s to determine media length."
-msgstr ""
+msgstr "Определение продолжительности %s."
 
 #: C:\Vidiot\vidiot_trunk\modelfile\src\FileAnalyzer.cpp:73
 msgid "Indexing files"
@@ -1006,22 +1006,30 @@ msgid ""
 "are determined from the image. Therefore, the gradient does not have to end "
 "exactly at white or black."
 msgstr ""
+"Выберите изображение, используемое для эффекта. Цвета этого изображения "
+"определят, каким образом при переходе появится второй клип. Будут появляться "
+"сначала самые светлые области, затем более темные. В прозрачных областях "
+"изображения видеоклип не отображается. Чтобы создать такое изображение в "
+"GIMP, выберите инструмент \"Градиентная заливка\" или \"Кисть\" с параметром "
+"\"Динамика: Взять цвет из градиента\". Учтите, что самые темные/светлые "
+"цвета берутся из изображения. Поэтому градиент не должен обязательно "
+"заканчиваться точно на черном или белом цвете."
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_ImageGradient.cpp:63
 msgid "Soften"
-msgstr ""
+msgstr "Сглаживание"
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_ImageGradient.cpp:63
 msgid "Select how much to soften the effect."
-msgstr ""
+msgstr "Выберите степень сглаживания эффекта."
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_ImageGradient.cpp:64
 msgid "Blur"
-msgstr ""
+msgstr "Размытие"
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_ImageGradient.cpp:64
 msgid "Select how much to blur the image."
-msgstr ""
+msgstr "Выберите степень размытия изображения."
 
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_ImageGradient.cpp:70
 msgid "Image gradient"
@@ -1627,7 +1635,7 @@ msgstr "Не удалось выделить память на передиск�
 
 #: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:583
 msgid "Failed to write file header"
-msgstr ""
+msgstr "Не удалось записать заголовок файла"
 
 #: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:624
 #, c-format
