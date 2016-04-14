@@ -186,7 +186,7 @@ if (MSVC)
   include_directories (AFTER ctypes)
 else ()
     # Add -H For checking that pch is used
-    list (APPEND CMAKE_CXX_FLAGS "-std=c++14 -Werror -Wall -Wextra -Wno-unused-parameter -Wno-unused-local-typedefs -Wno-unknown-pragmas -Wcast-align -Wdisabled-optimization -Wformat=2 -Winit-self -Wmissing-include-dirs -Wnoexcept -Wsign-promo -Wstrict-null-sentinel -Wstrict-overflow=5 -Wno-variadic-macros -Wno-parentheses -fdiagnostics-show-option") 
+    list (APPEND CMAKE_CXX_FLAGS "-std=c++14 -Werror -Wall -Wextra -Wno-unused-parameter -Wno-unused-local-typedefs -Wno-unknown-pragmas -Wcast-align -Wdisabled-optimization -Wformat=2 -Winit-self -Wmissing-include-dirs -Wnoexcept -Wsign-promo -Wstrict-null-sentinel -Wno-variadic-macros -Wno-parentheses -fdiagnostics-show-option") 
     add_definitions (-DSOURCE_ROOT=${CMAKE_CURRENT_SOURCE_DIR}) # Used to fix the path to the test input files (part of sources) in the code, via the preprocessor.
 endif ()
 
