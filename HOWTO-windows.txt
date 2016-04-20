@@ -7,7 +7,7 @@ NOTE: <VIDIOT_DIR> is the dir in which all 'vidiot' work is done.
 * set VIDIOT_COMPILE_SINGLETHREADED to 1 to disable parallel compilation
 
 ================ VISUAL STUDIO ================
-* Install MSVS2013
+* Install MSVS2015 & Update 2
 * Set Tabs to 4 spaces, via Tools
 * NOTE: Ensure to install with the runtimes (for packaging)
 * NOTE: Install and set environment variables (vcvars) for cmake

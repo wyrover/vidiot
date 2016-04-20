@@ -433,17 +433,15 @@ void Window::init()
     }
     else
     {
-        if (Config::get().read<bool>(Config::sPathProjectAutoLoadEnabled))
+        bool autoload{ Config::get().read<bool>(Config::sPathProjectAutoLoadEnabled) };
+        wxString mostRecent{ Config::get().read<wxString>(Config::sPathProjectLastOpened) };
+        if (autoload && !mostRecent.IsEmpty())
         {
-            wxFileHistory* history = GetDocumentManager()->GetFileHistory();
-            if (history->GetCount() > 0)
+            Config::get().write<bool>(Config::sPathProjectAutoLoadEnabled, false); // If loading fails, then the next startup won't load by default.
+            wxDocument* doc{ GetDocumentManager()->CreateDocument(mostRecent, wxDOC_SILENT) };
+            if (doc != nullptr)
             {
-                Config::get().write<bool>(Config::sPathProjectAutoLoadEnabled, false); // If loading fails, then the next startup won't load by default.
-                wxDocument* doc{ GetDocumentManager()->CreateDocument(history->GetHistoryFile(0), wxDOC_SILENT) };
-                if (doc != nullptr)
-                {
-                    Config::get().write<bool>(Config::sPathProjectAutoLoadEnabled, true); // Loading ok, reset bool for next startup
-                }
+                Config::get().write<bool>(Config::sPathProjectAutoLoadEnabled, true); // Loading ok, reset bool for next startup
             }
         }
     }
@@ -624,6 +622,7 @@ void Window::onMaximize(wxMaximizeEvent& event)
 void Window::onClose(wxCloseEvent& event)
 {
     Config::get().write<wxString>(Config::sPathWorkspacePerspectiveCurrent, mUiManager.SavePerspective());
+    Config::get().write<wxString>(Config::sPathProjectLastOpened, mProjectOpen ? util::path::toPath(model::Project::get().GetFilename()) : "");
     mVisibleWorker->abort();
     mInvisibleWorker->abort();
     event.Skip();
