@@ -318,6 +318,18 @@ void DetailsClip::updateAlignment(bool horizontalchange)
         case model::VideoAlignmentCenter:           return (horizontalchange ? model::VideoAlignmentCenterVertical      : model::VideoAlignmentCenterHorizontal);
         case model::VideoAlignmentCenterHorizontal: return (horizontalchange ? model::VideoAlignmentCustom              : model::VideoAlignmentCenterHorizontal);
         case model::VideoAlignmentCenterVertical:   return (horizontalchange ? model::VideoAlignmentCenterVertical      : model::VideoAlignmentCustom);
+        case model::VideoAlignmentTopLeft:          return (horizontalchange ? model::VideoAlignmentTop                 : model::VideoAlignmentLeft);
+        case model::VideoAlignmentTop:              return (horizontalchange ? model::VideoAlignmentTop                 : model::VideoAlignmentCustom);
+        case model::VideoAlignmentTopCenter:        return (horizontalchange ? model::VideoAlignmentTop                 : model::VideoAlignmentCenterHorizontal);
+        case model::VideoAlignmentTopRight:         return (horizontalchange ? model::VideoAlignmentTop                 : model::VideoAlignmentRight);
+        case model::VideoAlignmentRight:            return (horizontalchange ? model::VideoAlignmentCustom              : model::VideoAlignmentRight);
+        case model::VideoAlignmentRightCenter:      return (horizontalchange ? model::VideoAlignmentCenterVertical      : model::VideoAlignmentRight);
+        case model::VideoAlignmentBottomRight:      return (horizontalchange ? model::VideoAlignmentBottom              : model::VideoAlignmentRight);
+        case model::VideoAlignmentBottom:           return (horizontalchange ? model::VideoAlignmentBottom              : model::VideoAlignmentCustom);
+        case model::VideoAlignmentBottomCenter:     return (horizontalchange ? model::VideoAlignmentBottom              : model::VideoAlignmentCenterHorizontal);
+        case model::VideoAlignmentBottomLeft:       return (horizontalchange ? model::VideoAlignmentBottom              : model::VideoAlignmentLeft);
+        case model::VideoAlignmentLeft:             return (horizontalchange ? model::VideoAlignmentCustom              : model::VideoAlignmentLeft);
+        case model::VideoAlignmentLeftCenter:       return (horizontalchange ? model::VideoAlignmentCenterVertical      : model::VideoAlignmentLeft);
         default:                                    return mSelectAlignment->getValue();
         }
     };

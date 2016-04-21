@@ -29,13 +29,28 @@ DECLAREENUM(VideoScaling, \
             VideoScalingFitAll, \
             VideoScalingFitToFill, \
             VideoScalingNone, \
-            VideoScalingCustom);
+            VideoScalingCustom, \
+            VideoScalingHalf, \
+            VideoScalingThird, \
+            VideoScalingFourth);
 
 DECLAREENUM(VideoAlignment, \
             VideoAlignmentCenter, \
             VideoAlignmentCenterHorizontal, \
             VideoAlignmentCenterVertical, \
-            VideoAlignmentCustom);
+            VideoAlignmentCustom, \
+            VideoAlignmentTopLeft, \
+            VideoAlignmentTopCenter, \
+            VideoAlignmentTop, \
+            VideoAlignmentTopRight, \
+            VideoAlignmentRight, \
+            VideoAlignmentRightCenter, \
+            VideoAlignmentBottomRight, \
+            VideoAlignmentBottom, \
+            VideoAlignmentBottomCenter, \
+            VideoAlignmentBottomLeft, \
+            VideoAlignmentLeft, \
+            VideoAlignmentLeftCenter);
 
 DECLAREENUM(TransitionType, \
             TransitionTypeFadeIn, \

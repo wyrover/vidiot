@@ -781,7 +781,7 @@ void RenderWork::generate()
                             outputPicture->key_frame = 0;
                             outputPicture->pict_type = AV_PICTURE_TYPE_NONE;
                         }
-                        wxImagePtr image = frame->isA<model::EmptyFrame>() ? wxImagePtr() : frame->getImage(); // Performance optimization for empty frames (do not create useless 0 data).
+                        wxImagePtr image = frame->isA<model::EmptyFrame>() ? nullptr : frame->getImage(); // Performance optimization for empty frames (do not create useless 0 data).
 
                         //////////////////////////////////////////////////////////////////////////
                         // CONVERT VIDEO TO REQUIRED FORMAT FOR ENCODER
@@ -789,7 +789,7 @@ void RenderWork::generate()
 
                         int rgbImageSize{ av_image_get_buffer_size(AV_PIX_FMT_RGB24, videoCodec->width, videoCodec->height, 1) };
                         AVFrame* toBeFilledPicture{ (colorSpaceConversionContext == 0) ? outputPicture : colorSpaceConversionPicture };
-                        if (!image)
+                        if (image == nullptr)
                         {
                             memset(toBeFilledPicture->data[0], 0, rgbImageSize); // Empty. Fill with 0.
                         }
