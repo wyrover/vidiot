@@ -138,6 +138,7 @@ wxImagePtr VideoFrame::getImage()
         return wxImagePtr();
     }
     wxImagePtr compositeImage(boost::make_shared<wxImage>(mParameters->getBoundingBox()));
+    ASSERT(compositeImage->IsOk())(mParameters->getBoundingBox());
     wxGraphicsContext* gc = wxGraphicsContext::Create(*compositeImage);
     if (mParameters->getOptimizeForQuality())
     {
@@ -154,6 +155,7 @@ wxImagePtr VideoFrame::getImage()
     VAR_DEBUG(*gc);
     draw(gc);
     delete gc;
+    ASSERT(compositeImage->IsOk());
     return compositeImage;
 }
 

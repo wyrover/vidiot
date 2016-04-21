@@ -190,7 +190,7 @@ void VideoKeyFrame::setOpacity(int opacity)
 void VideoKeyFrame::setScaling(const VideoScaling& scaling, const boost::optional<rational64 >& factor)
 {
     ASSERT(!isInterpolated())(*this);
-
+                        
     mScaling = scaling;
     if (factor)
     {
@@ -294,6 +294,21 @@ void VideoKeyFrame::updateAutomatedScaling()
         mScalingFactor = 1;
         break;
     }
+    case VideoScalingHalf:
+    {
+        mScalingFactor = rational64(1, 2);
+        break;
+    }
+    case VideoScalingThird:
+    {
+        mScalingFactor = rational64(1, 3);
+        break;
+    }
+    case VideoScalingFourth:
+    {
+        mScalingFactor = rational64(1, 4);
+        break;
+    }
     case VideoScalingCustom:
     default:
         // Do not automatically determine scaling factor
@@ -323,26 +338,95 @@ void VideoKeyFrame::updateAutomatedPositioning()
 
     switch (mAlignment)
     {
-    case VideoAlignmentCenter:
-    {
-        mPosition.x = (outputsize.GetWidth() - scaledsize.GetWidth()) / 2;
-        mPosition.y = (outputsize.GetHeight() - scaledsize.GetHeight()) / 2;
-        break;
-    }
-    case VideoAlignmentCenterHorizontal:
-    {
-        mPosition.x = (outputsize.GetWidth() - scaledsize.GetWidth()) / 2;
-        break;
-    }
-    case VideoAlignmentCenterVertical:
-    {
-        mPosition.y = (outputsize.GetHeight() - scaledsize.GetHeight()) / 2;
-        break;
-    }
-    case VideoAlignmentCustom:
-        // Use current offsets
-    default:
-        break;
+        //todo
+        case VideoAlignmentCenter:
+        {
+            mPosition.x = (outputsize.GetWidth() - scaledsize.GetWidth()) / 2;
+            mPosition.y = (outputsize.GetHeight() - scaledsize.GetHeight()) / 2;
+            break;
+        }
+        case VideoAlignmentCenterHorizontal:
+        {
+            mPosition.x = (outputsize.GetWidth() - scaledsize.GetWidth()) / 2;
+            break;
+        }
+        case VideoAlignmentCenterVertical:
+        {
+            mPosition.y = (outputsize.GetHeight() - scaledsize.GetHeight()) / 2;
+            break;
+        }
+        case model::VideoAlignmentTopLeft:
+        {
+            mPosition.x = 0;
+            mPosition.y = 0;
+            break;
+        }
+        case model::VideoAlignmentTop:
+        {
+            mPosition.y = 0;
+            break;
+        }
+        case model::VideoAlignmentTopCenter:
+        {
+            mPosition.x = (outputsize.GetWidth() - scaledsize.GetWidth()) / 2;
+            mPosition.y = 0;
+            break;
+        }
+        case model::VideoAlignmentTopRight:
+        {
+            mPosition.y = 0;
+            mPosition.x = outputsize.GetWidth() - scaledsize.GetWidth();
+            break;
+        }
+        case model::VideoAlignmentRight:
+        {
+            mPosition.x = outputsize.GetWidth() - scaledsize.GetWidth();
+            break;
+        }
+        case model::VideoAlignmentRightCenter:
+        {
+            mPosition.x = outputsize.GetWidth() - scaledsize.GetWidth();
+            mPosition.y = (outputsize.GetHeight() - scaledsize.GetHeight()) / 2;
+            break;
+        }
+        case model::VideoAlignmentBottomRight:
+        {
+            mPosition.x = outputsize.GetWidth() - scaledsize.GetWidth();
+            mPosition.y = outputsize.GetHeight() - scaledsize.GetHeight();
+            break;
+        }
+        case model::VideoAlignmentBottom:
+        {
+            mPosition.y = outputsize.GetHeight() - scaledsize.GetHeight();
+            break;
+        }
+        case model::VideoAlignmentBottomCenter:
+        {
+            mPosition.x = (outputsize.GetWidth() - scaledsize.GetWidth()) / 2;
+            mPosition.y = outputsize.GetHeight() - scaledsize.GetHeight();
+            break;
+        }
+        case model::VideoAlignmentBottomLeft:
+        {
+            mPosition.x = 0;
+            mPosition.y = outputsize.GetHeight() - scaledsize.GetHeight();
+            break;
+        }
+        case model::VideoAlignmentLeft:
+        {
+            mPosition.x = 0;
+            break;
+        }
+        case model::VideoAlignmentLeftCenter:
+        {
+            mPosition.x = 0;
+            mPosition.y = (outputsize.GetHeight() - scaledsize.GetHeight()) / 2;
+            break;
+        }
+        case VideoAlignmentCustom:
+            // Use current offsets
+        default:
+            break;
     }
 
     if (mPosition.x < getMinPosition().x) { mPosition.x = getMinPosition().x; } // Avoid setting illegal values. This can happen if events for new boundaries

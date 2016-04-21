@@ -37,6 +37,9 @@ std::map<VideoScaling, wxString> VideoScalingConverter::getMapToHumanReadibleStr
         { VideoScalingFitToFill, _("Fit to fill") },
         { VideoScalingNone, _("Original size") },
         { VideoScalingCustom, _("Custom") },
+        { VideoScalingHalf, _("1/2") },
+        { VideoScalingThird, _("1/3") },
+        { VideoScalingFourth, _("1/4") },
     };
 };
 
@@ -47,7 +50,19 @@ std::map<VideoAlignment, wxString> VideoAlignmentConverter::getMapToHumanReadibl
         { VideoAlignmentCenter, _("Centered") },
         { VideoAlignmentCenterHorizontal, _("Centered horizontally") },
         { VideoAlignmentCenterVertical, _("Centered vertically") },
-        { VideoAlignmentCustom, _("Custom") },
+        { VideoAlignmentCustom, _("Custom") },                 
+        { VideoAlignmentTopLeft, _("Top left") },
+        { VideoAlignmentTop, _("Top") },         
+        { VideoAlignmentTopCenter, _("Top center") },
+        { VideoAlignmentTopRight, _("Top right") },
+        { VideoAlignmentRight, _("Right") },
+        { VideoAlignmentRightCenter, _("Right center") },
+        { VideoAlignmentBottomRight, _("Bottom right") },
+        { VideoAlignmentBottom, _("Bottom") },
+        { VideoAlignmentBottomCenter, _("Bottom centered") },
+        { VideoAlignmentBottomLeft, _("Bottom left") },
+        { VideoAlignmentLeft, _("Left") },
+        { VideoAlignmentLeftCenter, _("Left centered") },
     };
 }
 
