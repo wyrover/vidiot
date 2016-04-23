@@ -57,6 +57,7 @@ enum
     // Help menu
     ID_OPENLOGFILE,
     ID_OPENCONFIGFILE,
+    ID_SUBMITBUG,
     // Project view popup menu specific
     ID_CREATE_SEQUENCE,
     ID_DELETE_UNUSED,

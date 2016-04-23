@@ -199,6 +199,7 @@ Window::Window()
     mMenuHelp->AppendSeparator();
     mMenuHelp->Append(ID_OPENLOGFILE, _("Open log file"));
     mMenuHelp->Append(ID_OPENCONFIGFILE, _("Open config file"));
+    mMenuHelp->Append(ID_SUBMITBUG, _("Report bug/request feature"));
     mMenuHelp->AppendSeparator();
     mMenuHelp->Append(wxID_ABOUT, _("About..."));
 
@@ -357,6 +358,7 @@ Window::Window()
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onHelp,             this, wxID_HELP);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onLog,              this, ID_OPENLOGFILE);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onConfig,           this, ID_OPENCONFIGFILE);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onBug,              this, ID_SUBMITBUG);
 
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onAbout,            this, wxID_ABOUT);
 
@@ -492,6 +494,7 @@ Window::~Window()
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onHelp,             this, wxID_HELP);
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onLog,              this, ID_OPENLOGFILE);
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onConfig,           this, ID_OPENCONFIGFILE);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,     &Window::onBug,              this, ID_SUBMITBUG);
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onAbout,            this, wxID_ABOUT);
 
     Unbind(wxEVT_DROP_FILES,              &Window::onDropFiles,        this);
@@ -898,6 +901,12 @@ void Window::onConfig(wxCommandEvent& event)
         // TRANSLATORS: %s == Path to file that cannot be opened
         Dialog::get().getConfirmation(_("Failed to open file"), wxString::Format(_("Failed to open '%s'"), util::path::getConfigFilePath().GetFullPath()));
     }
+    event.Skip();
+}
+
+void Window::onBug(wxCommandEvent& event)
+{
+    Dialog::get().getDebugReport(false,false);
     event.Skip();
 }
 

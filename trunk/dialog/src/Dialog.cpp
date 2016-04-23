@@ -301,70 +301,99 @@ wxStrings Dialog::getStringsSelection(const wxString& title, const wxString& mes
 int generateDebugReport(bool doexit, bool addcontext, bool screenShot, const wxRect& screenRect)
 {
     VAR_ERROR(doexit);
-    if (doexit && wxCANCEL == wxMessageBox(_("A fatal error was encountered. Press OK to generate debug report. Press Cancel to terminate."), "Error", wxOK | wxCANCEL, &Window::get()))
+    bool include = false;
+    bool send = true;
+    wxString title;
+    wxString text;
+    boost::optional<wxString> zipfile = boost::none;
+
+    if (doexit)
     {
-        exit(-1);
-        return 0;
-    }
-
-    wxDebugReportCompress report;
-
-    if (screenShot)
-    {
-        // Screen shot added first. This to reduce the changes of the report taking a long time and the
-        // user then moving focus to another window.
-
-        // Ensure that 'fatal error encountered' dialog is gone.
-        boost::this_thread::sleep(boost::posix_time::milliseconds(250));
-
-        wxFileName screenShotFile(wxStandardPaths::Get().GetTempDir(),""); // Store in TEMP
-        wxString nameWithProcessId; nameWithProcessId << "screenshot_" << wxGetProcessId();
-        screenShotFile.SetName(nameWithProcessId);
-        screenShotFile.SetExt("png");
-        wxScreenDC screen;
-        wxMemoryDC memory;
-        if (!screenRect.IsEmpty())
+        if (wxCANCEL == wxMessageBox(_("A fatal error was encountered. Press OK to generate debug report. Press Cancel to terminate."), _("Error"), wxOK | wxCANCEL, &Window::get()))
         {
-            wxBitmap screenshot(screenRect.width, screenRect.height);
-            memory.SelectObject(screenshot);
-            memory.Blit(0, 0, screenRect.width, screenRect.height, &screen, screenRect.x, screenRect.y);
-            memory.SelectObject(wxNullBitmap);
-            screenshot.SaveFile(screenShotFile.GetFullPath(), wxBITMAP_TYPE_PNG);
-            report.AddFile(screenShotFile.GetFullPath(), wxT("Screen shot"));
+            exit(-1);
+            return 0;
         }
+        include = true;
+        // TRANSLATORS: %s == Name of application (executable)
+        title = wxString::Format(_("%s crash report"), CommandLine::get().ExeName);
+        text = wxString::Format(_("I'm sorry, but %1$s crashed.\nBy sending this mail you'll provide me with helpful information for resolving the crash.\nThanks for your help.\n\nEric\n"), CommandLine::get().ExeName);
+    }
+    else
+    {
+        include = wxYES == wxMessageBox(_("Do you want to include debugging information (log file, screen shot, etc.) with your request?"), _("Submit"), wxYES | wxNO, &Window::get());
+        // TRANSLATORS: %s == Name of application (executable)
+        title = wxString::Format(_("%s bug report/feature request"), CommandLine::get().ExeName);
+        text = wxString::Format(_("\n\nEnter your request/remark here.\n\nThanks for your help.\n\nEric\n"), CommandLine::get().ExeName);
     }
 
-    if (addcontext)
+    if (include)
     {
-        report.AddCurrentContext();
+        wxDebugReportCompress report;
+
+        if (screenShot)
+        {
+            // Screen shot added first. This to reduce the changes of the report taking a long time and the
+            // user then moving focus to another window.
+
+            // Ensure that 'fatal error encountered' dialog is gone.
+            boost::this_thread::sleep(boost::posix_time::milliseconds(250));
+
+            wxFileName screenShotFile(wxStandardPaths::Get().GetTempDir(), ""); // Store in TEMP
+            wxString nameWithProcessId; nameWithProcessId << "screenshot_" << wxGetProcessId();
+            screenShotFile.SetName(nameWithProcessId);
+            screenShotFile.SetExt("png");
+            wxScreenDC screen;
+            wxMemoryDC memory;
+            if (!screenRect.IsEmpty())
+            {
+                wxBitmap screenshot(screenRect.width, screenRect.height);
+                memory.SelectObject(screenshot);
+                memory.Blit(0, 0, screenRect.width, screenRect.height, &screen, screenRect.x, screenRect.y);
+                memory.SelectObject(wxNullBitmap);
+                screenshot.SaveFile(screenShotFile.GetFullPath(), wxBITMAP_TYPE_PNG);
+                report.AddFile(screenShotFile.GetFullPath(), wxT("Screen shot"));
+            }
+        }
+
+        if (addcontext)
+        {
+            report.AddCurrentContext();
 #ifdef _MSC_VER
-        report.AddCurrentDump();
+            report.AddCurrentDump();
 #endif
-    }
+        }
 
-    if (util::path::getConfigFilePath().FileExists())
-    {
-        report.AddFile(util::path::getConfigFilePath().GetFullPath(), wxT("Options file"));
-    }
-
-    if (util::path::getLogFilePath().FileExists())
-    {
-        report.AddFile(util::path::getLogFilePath().GetFullPath(), wxT("Log file"));
-    }
-
-    if ( wxDebugReportPreviewStd().Show(report) )
-    {
-        report.Process();
-        wxString original{ report.GetCompressedFileName() };
-        wxFileName copy{ original };
-        copy.SetExt("rpt"); // Sourcefourge doesn't allow zip files...
-        bool copyok = wxCopyFile(original, copy.GetLongPath(), false);
-        if (copyok)
+        if (util::path::getConfigFilePath().FileExists())
         {
-            // TRANSLATORS: %s == Name of application (executable)
-            util::mail::sendDebugReport(wxString::Format(_("%s crash report"), CommandLine::get().ExeName), wxString::Format(_("I'm sorry, but %1$s crashed.\nBy sending this mail you'll provide me with helpful information for resolving the crash.\nThanks for your help.\n\nEric\n"), CommandLine::get().ExeName), boost::optional<wxString>(copy.GetLongPath()));
+            report.AddFile(util::path::getConfigFilePath().GetFullPath(), wxT("Options file"));
+        }
+
+        if (util::path::getLogFilePath().FileExists())
+        {
+            report.AddFile(util::path::getLogFilePath().GetFullPath(), wxT("Log file"));
+        }
+
+        if (wxDebugReportPreviewStd().Show(report))
+        {
+            report.Process();
+            wxString original{ report.GetCompressedFileName() };
+            wxFileName copy{ original };
+            copy.SetExt("rpt"); // Sourcefourge doesn't allow zip files...
+            zipfile.reset(copy.GetLongPath());
+            send = wxCopyFile(original, copy.GetLongPath(), false); // If file copy fails, just exit (mail won't be helpful anyway).
+        }
+        else
+        {
+            send = false; // If cancel is pressed, abort the generation altogether (even if it's a feature request, the button says Cancel and should behave as Cancel)
         }
     }
+
+    if (send)
+    {
+        util::mail::sendDebugReport(title, text, zipfile);
+    }
+
     if (doexit)
     {
         exit(-1);
@@ -378,8 +407,12 @@ void Dialog::getDebugReport(bool doexit, bool addcontext)
     VAR_ERROR(doexit);
     if (!mDebugReportGenerated)
     {
-       mDebugReportGenerated = true;
-       util::thread::RunInMainAndWait([this, doexit, addcontext] { generateDebugReport(doexit, addcontext, mIncludeScreenshot, mScreenRect); });
+        if (doexit)
+        {
+            // Only generate one report upon crashes.
+            mDebugReportGenerated = true;
+        }
+        util::thread::RunInMainAndWait([this, doexit, addcontext] { generateDebugReport(doexit, addcontext, mIncludeScreenshot, mScreenRect); });
     }
 }
 

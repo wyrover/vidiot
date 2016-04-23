@@ -172,6 +172,7 @@ public:
     void onHelp(wxCommandEvent& event);
     void onLog(wxCommandEvent& event);
     void onConfig(wxCommandEvent& event);
+    void onBug(wxCommandEvent& event);
     void onAbout(wxCommandEvent& event);
 
     //////////////////////////////////////////////////////////////////////////
