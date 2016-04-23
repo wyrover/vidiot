@@ -105,7 +105,7 @@ Application::Application(test::IEventLoopListener* eventLoopListener)
     :   wxApp()
     ,   mEventLoopListener(eventLoopListener)
     ,   mEventLoopStarted(false)
-    ,   mCommandLine(boost::make_shared<CommandLine>(GetAppName()))
+    ,   mCommandLine(boost::make_shared<CommandLine>(GetAppName().Capitalize()))
 {
     // NOT: wxHandleFatalExceptions();
     // These are handled via the exception handlers in Main.cpp.
