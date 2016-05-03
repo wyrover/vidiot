@@ -55,7 +55,7 @@ bool ProjectViewCreateFile::Do()
             model::FilePtr file = boost::make_shared<model::File>(path);
             if (file && file->canBeOpened())
             {
-                mPairs.push_back(std::make_pair(mParent,file));
+                mPairs.emplace_back(std::make_pair(mParent,file));
             }
         }
         if (mPairs.size() == 1)

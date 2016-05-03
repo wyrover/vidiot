@@ -52,7 +52,7 @@ void VideoComposition::add(const VideoFramePtr& frame)
         // Skip empty frames.
         return;
     }
-    mFrames.push_back(frame);
+    mFrames.emplace_back(frame);
 }
 
 VideoFramePtr VideoComposition::generate()

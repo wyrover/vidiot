@@ -57,13 +57,13 @@ TimelineDataObject::TimelineDataObject(model::SequencePtr sequence)
         {
             ASSERT(itReplacement != d.clips.end());
             model::IClips replacements;
-            replacements.push_back(*itReplacement);
+            replacements.emplace_back(*itReplacement);
             replacementMap.add(*itOriginal,replacements);
             ++itOriginal;
             ++itReplacement;
         }
         d.track = track;
-        drops.push_back(d);
+        drops.emplace_back(d);
         clips.clear();
     };
 
@@ -90,7 +90,7 @@ TimelineDataObject::TimelineDataObject(model::SequencePtr sequence)
         {
             if (clip->getSelected() || transitions.count(clip) != 0)
             {
-                clips.push_back(clip);
+                clips.emplace_back(clip);
             }
             else if (!clips.empty())
             {
@@ -183,7 +183,7 @@ cmd::Drops TimelineDataObject::getDrops(const model::SequencePtr& sequence, pts 
 		}
 		drop.track = sequence->getVideoTrack(drop.track->getIndex());
 		drop.position += (-clipsOrigin) + sequenceOrigin;
-		result.push_back(drop);
+		result.emplace_back(drop);
 	}
 	for (cmd::Drop drop : mDropsAudio)
 	{
@@ -194,7 +194,7 @@ cmd::Drops TimelineDataObject::getDrops(const model::SequencePtr& sequence, pts 
 		}
 		drop.track = sequence->getAudioTrack(drop.track->getIndex());
 		drop.position += (-clipsOrigin) + sequenceOrigin;
-		result.push_back(drop);
+		result.emplace_back(drop);
 	}
 
 	return result;

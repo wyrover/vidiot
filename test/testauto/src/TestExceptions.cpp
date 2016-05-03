@@ -65,7 +65,7 @@ void TestExceptions::testRemovedFileUsedForTransitionsBeforeOpening()
             bool copyok = wxCopyFile(InputFiles.front()->getPath().GetLongPath(), filepath.GetLongPath(), false);
             ASSERT(copyok);
 
-            fileNames.push_back(filepath);
+            fileNames.emplace_back(filepath);
         }
         model::FolderPtr folder = ProjectViewAddAutoFolder(tempDir->getFileName());
         WaitForChildCount(root, 2 + InputFiles.size());

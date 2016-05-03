@@ -307,8 +307,8 @@ void MenuHandler::onTriggerPopupMenu(wxCommandEvent& event)
             if (clip1->getLink() == clip2)
             {
                 ASSERT_EQUALS(clip1, clip2->getLink());
-                unlink.push_back(clip1);
-                unlink.push_back(clip2);
+                unlink.emplace_back(clip1);
+                unlink.emplace_back(clip2);
                 enableUnlink = true;
             }
         }

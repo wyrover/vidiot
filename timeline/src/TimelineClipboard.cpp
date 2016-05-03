@@ -173,8 +173,8 @@ void TimelineClipboard::onPaste(bool atCursor)
 				audioDrop.clips = audio->getClips();
 				audioDrop.position = dropPosition;
 				audioDrop.track = getSequence()->getAudioTrack(0);
-				drops.push_back(videoDrop);
-				drops.push_back(audioDrop);
+				drops.emplace_back(videoDrop);
+				drops.emplace_back(audioDrop);
 				cmd::ExecuteDrop* command = new cmd::ExecuteDrop(getSequence(), true);
 				command->onDrop(drops);
 				command->submit();

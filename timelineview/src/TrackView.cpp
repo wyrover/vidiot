@@ -201,7 +201,7 @@ void TrackView::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) co
     {
         if (clip->isA<model::Transition>())
         {
-            transitions.push_back(clip); // Handle later (shown on top of clips)
+            transitions.emplace_back(clip); // Handle later (shown on top of clips)
         }
         else
         {
@@ -290,7 +290,7 @@ void TrackView::drawForDragging(const wxPoint& position, int height, wxDC& dc, w
     {
         if (clip->isA<model::Transition>())
         {
-            transitions.push_back(clip); // Handle later (are shown on top of clips)
+            transitions.emplace_back(clip); // Handle later (are shown on top of clips)
             continue;
         }
         ClipView* view = getViewMap().getView(clip);

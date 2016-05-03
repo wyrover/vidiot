@@ -206,16 +206,16 @@ std::ostream& operator<<(std::ostream& os, const AVCodec* obj)
             << "max_lowres="     << (unsigned int)obj->max_lowres   << ','
             << "capabilities="   << obj->capabilities;
         std::vector< std::string > caps;
-        if (obj->capabilities & CODEC_CAP_DELAY)               { caps.push_back("CODEC_CAP_DELAY");  }
-        if (obj->capabilities & CODEC_CAP_SMALL_LAST_FRAME)    { caps.push_back("CODEC_CAP_SMALL_LAST_FRAME");  }
-        if (obj->capabilities & CODEC_CAP_SUBFRAMES)           { caps.push_back("CODEC_CAP_SUBFRAMES");  }
-        if (obj->capabilities & CODEC_CAP_CHANNEL_CONF)        { caps.push_back("CODEC_CAP_CHANNEL_CONF");  }
-        if (obj->capabilities & CODEC_CAP_FRAME_THREADS)       { caps.push_back("CODEC_CAP_FRAME_THREADS");  }
-        if (obj->capabilities & CODEC_CAP_SLICE_THREADS)       { caps.push_back("CODEC_CAP_SLICE_THREADS");  }
-        if (obj->capabilities & CODEC_CAP_AUTO_THREADS)        { caps.push_back("CODEC_CAP_AUTO_THREADS");  }
-        if (obj->capabilities & CODEC_CAP_VARIABLE_FRAME_SIZE) { caps.push_back("CODEC_CAP_VARIABLE_FRAME_SIZE");  }
-        if (obj->capabilities & CODEC_CAP_INTRA_ONLY)          { caps.push_back("CODEC_CAP_INTRA_ONLY");  }
-        if (obj->capabilities & CODEC_CAP_LOSSLESS)            { caps.push_back("CODEC_CAP_LOSSLESS");  }
+        if (obj->capabilities & CODEC_CAP_DELAY)               { caps.emplace_back("CODEC_CAP_DELAY");  }
+        if (obj->capabilities & CODEC_CAP_SMALL_LAST_FRAME)    { caps.emplace_back("CODEC_CAP_SMALL_LAST_FRAME");  }
+        if (obj->capabilities & CODEC_CAP_SUBFRAMES)           { caps.emplace_back("CODEC_CAP_SUBFRAMES");  }
+        if (obj->capabilities & CODEC_CAP_CHANNEL_CONF)        { caps.emplace_back("CODEC_CAP_CHANNEL_CONF");  }
+        if (obj->capabilities & CODEC_CAP_FRAME_THREADS)       { caps.emplace_back("CODEC_CAP_FRAME_THREADS");  }
+        if (obj->capabilities & CODEC_CAP_SLICE_THREADS)       { caps.emplace_back("CODEC_CAP_SLICE_THREADS");  }
+        if (obj->capabilities & CODEC_CAP_AUTO_THREADS)        { caps.emplace_back("CODEC_CAP_AUTO_THREADS");  }
+        if (obj->capabilities & CODEC_CAP_VARIABLE_FRAME_SIZE) { caps.emplace_back("CODEC_CAP_VARIABLE_FRAME_SIZE");  }
+        if (obj->capabilities & CODEC_CAP_INTRA_ONLY)          { caps.emplace_back("CODEC_CAP_INTRA_ONLY");  }
+        if (obj->capabilities & CODEC_CAP_LOSSLESS)            { caps.emplace_back("CODEC_CAP_LOSSLESS");  }
         if (caps.size() > 0)
         {
             os << '(';

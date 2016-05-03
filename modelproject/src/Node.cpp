@@ -76,7 +76,7 @@ void Node::setParent(const NodePtr& parent)
 
 NodePtr Node::addChild(const NodePtr& newChild)
 {
-    mChildren.push_back(newChild);
+    mChildren.emplace_back(newChild);
     newChild->setParent(self());
     // Do not use ProcessEvent: this will cause problems with auto-updating autofolders upon
     // first expansion.
@@ -169,9 +169,9 @@ NodePtrs Node::find(const wxString& name)
 {
     NodePtrs result;
     wxString _name = getName();
-    if (getName().IsSameAs(name))
+    if (_name.IsSameAs(name))
     {
-        result.push_back(self());
+        result.emplace_back(self());
     }
     for ( NodePtr child : mChildren )
     {

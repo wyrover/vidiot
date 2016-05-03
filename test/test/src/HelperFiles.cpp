@@ -40,7 +40,7 @@ void ExecuteOnAllFiles(wxString pathToFiles, std::function<void()> action, bool 
         ASSERT(TestFilesPath.FileExists())(TestFilesPath.GetFullPath());
         model::FilePtr file{ boost::make_shared<model::File>(TestFilesPath) };
         ASSERT(file->canBeOpened());
-        InputFiles.push_back(file);
+        InputFiles.emplace_back(file);
     }
 
     for ( model::IPathPtr path : InputFiles )

@@ -89,7 +89,7 @@ void AssertAudioChunk(model::AudioChunkPtr chunk, std::vector<sample> reference,
     s += offset;
     for (size_t i{ 0 }; i < reference.size(); ++i)
     {
-        current.push_back(*s++);
+        current.emplace_back(*s++);
     }
     ASSERT_EQUALS(current, reference);
 }
@@ -106,9 +106,9 @@ void AssertVideoFrame(model::VideoFramePtr frame, std::vector<int> referenceRed,
     std::vector<int> currentBlue;
     for (int x{ offset.x }; x < offset.x + static_cast<int>(referenceRed.size()); ++x)
     {
-        currentRed.push_back(image->GetRed(x, offset.y));
-        currentGreen.push_back(image->GetGreen(x, offset.y));
-        currentBlue.push_back(image->GetBlue(x, offset.y));
+        currentRed.emplace_back(image->GetRed(x, offset.y));
+        currentGreen.emplace_back(image->GetGreen(x, offset.y));
+        currentBlue.emplace_back(image->GetBlue(x, offset.y));
     }
     ASSERT_EQUALS(currentRed, referenceRed)(currentGreen)(currentBlue);
     ASSERT_EQUALS(currentGreen, referenceGreen)(currentRed)(currentBlue);

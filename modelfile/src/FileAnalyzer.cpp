@@ -45,7 +45,7 @@ FileAnalyzer::FileAnalyzer(wxStrings fileNames, wxWindow* parent)
 {
 	for (wxString path : fileNames)
 	{
-		mFileNames.push_back(::util::path::toFileName(path));
+		mFileNames.emplace_back(::util::path::toFileName(path));
 	}
 	init();
 }
@@ -61,7 +61,7 @@ FileAnalyzer::FileAnalyzer(const wxArrayString& fileNames, wxWindow* parent)
 {
 	for (wxString filename : fileNames)
 	{
-		mFileNames.push_back(::util::path::toFileName(filename));
+		mFileNames.emplace_back(::util::path::toFileName(filename));
 	}
 	init();
 }
@@ -85,7 +85,7 @@ void FileAnalyzer::init()
 		{
 			if (filename.IsDir())
 			{
-				mNodes.push_back(boost::make_shared<AutoFolder>(filename));
+				mNodes.emplace_back(boost::make_shared<AutoFolder>(filename));
 				indexFolder(filename, mFileNames.size() != 1); // Do not recurse if only one folder is given
 			}
             else if (wxFileName(filename).GetExt().IsSameAs(Project::sFileExtension))
@@ -97,7 +97,7 @@ void FileAnalyzer::init()
 				FilePtr file = indexFile(filename);
 				if (file)
 				{
-					mNodes.push_back(file);
+					mNodes.emplace_back(file);
 				}
 			}
 		}
@@ -234,13 +234,13 @@ void FileAnalyzer::indexFolder(const wxFileName& dirName, bool recurse)
     wxString nodename;
     for (bool cont = dir.GetFirst(&nodename,wxEmptyString,wxDIR_FILES); cont; cont = dir.GetNext(&nodename))
     {
-        files.push_back(wxFileName(dirName.GetLongPath(), nodename));
+        files.emplace_back(wxFileName(dirName.GetLongPath(), nodename));
     }
     for (bool cont = dir.GetFirst(&nodename,wxEmptyString,wxDIR_DIRS); cont; cont = dir.GetNext(&nodename))
     {
         wxFileName filename(dirName.GetLongPath(), "");
         filename.AppendDir(nodename);
-        subdirs.push_back(filename);
+        subdirs.emplace_back(filename);
     }
 
     for (const wxFileName& file : files)

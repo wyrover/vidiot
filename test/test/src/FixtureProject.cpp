@@ -51,13 +51,13 @@ void FixtureProject::init()
 
     for ( model::IClipPtr clip : mSequence->getVideoTrack(0)->getClips() )
     {
-        mOriginalLengthOfVideoClip.push_back(clip->getLength());
-        mOriginalPtsOfVideoClip.push_back(clip->getLeftPts());
+        mOriginalLengthOfVideoClip.emplace_back(clip->getLength());
+        mOriginalPtsOfVideoClip.emplace_back(clip->getLeftPts());
     }
     for ( model::IClipPtr clip : mSequence->getAudioTrack(0)->getClips() )
     {
-        mOriginalLengthOfAudioClip.push_back(clip->getLength());
-        mOriginalPtsOfAudioClip.push_back(clip->getLeftPts());
+        mOriginalLengthOfAudioClip.emplace_back(clip->getLength());
+        mOriginalPtsOfAudioClip.emplace_back(clip->getLeftPts());
     }
 
     WaitForIdle;

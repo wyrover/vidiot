@@ -65,7 +65,7 @@ bool Combiner::Undo()
 
 void Combiner::add(wxCommand* command)
 {
-    mCommands.push_back(command);
+    mCommands.emplace_back(command);
     mCommandName = command->GetName();
 }
 

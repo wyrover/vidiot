@@ -101,7 +101,7 @@ void serialize(Archive &ar, boost::icl::interval_set<TYPE>& set, const unsigned 
             std::deque< Pair > list;
             for ( AnInterval interval : set )
             {
-                list.push_back(std::pair<TYPE,TYPE>(interval.lower(),interval.upper()));
+                list.emplace_back(std::pair<TYPE,TYPE>(interval.lower(),interval.upper()));
             }
             ar & boost::serialization::make_nvp(sList.c_str(),list);
         }

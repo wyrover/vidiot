@@ -478,7 +478,7 @@ void TrimClip::applyTrim()
             // The clips in the same track as mClip and linked are shifted automatically
             // because of the enlargement/reduction of these two clips.
             model::Tracks exclude = { mClip->getTrack() };
-            if (mLink) { exclude.push_back(mLink->getTrack()); }
+            if (mLink) { exclude.emplace_back(mLink->getTrack()); }
 
             if (isBeginTrim())
             {
@@ -543,9 +543,9 @@ void TrimClip::applyTrim()
                         {
                             ASSERT(!outtransition->getRight())(outtransition); // If the transition was in-out then it should have been removed at the beginning of the trim operation
                             removeClip(outtransition);                             // Remove from the timeline...
-                            replacement.push_back(make_cloned(outtransition));     // ...and add again in the correct position (clone is added to avoid issues when expanding the link replacements)
+                            replacement.emplace_back(make_cloned(outtransition));     // ...and add again in the correct position (clone is added to avoid issues when expanding the link replacements)
                         }
-                        replacement.push_back(boost::make_shared<model::EmptyClip>(-mTrim)); // Add empty space to keep all clips after the trim in exact the same position
+                        replacement.emplace_back(boost::make_shared<model::EmptyClip>(-mTrim)); // Add empty space to keep all clips after the trim in exact the same position
                     };
                     adjustEmptySpace(mClip, replaceclip);
                     if (mLink && mTrimLink) { adjustEmptySpace(mLink, replacelink); }

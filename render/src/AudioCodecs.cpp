@@ -88,7 +88,7 @@ std::vector<AVCodecID> AudioCodecs::all()
     std::vector<AVCodecID> result;
     for ( AudioCodecMap::value_type entry : sAudioCodecs )
     {
-        result.push_back(entry.first);
+        result.emplace_back(entry.first);
     }
     return result;
 }

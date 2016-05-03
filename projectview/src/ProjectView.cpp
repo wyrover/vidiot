@@ -224,7 +224,7 @@ model::NodePtrs ProjectView::getSelection() const
     {
         model::NodePtr node = model::INode::Ptr(static_cast<model::NodeId>(wxItem.GetID()));
         ASSERT_NONZERO(node);
-        l.push_back(node);
+        l.emplace_back(node);
     }
     return l;
 }
@@ -405,7 +405,7 @@ void ProjectView::onNewFile(const model::FolderPtr& parent)
         model::FilePtr file = boost::make_shared<model::File>(filename);
         if (file->canBeOpened())
         {
-            list.push_back(filename);
+            list.emplace_back(filename);
         }
     }
     if (list.size() > 0 )
@@ -730,7 +730,7 @@ void ProjectView::onExpanded(wxDataViewEvent &event)
         ASSERT(folder);
         if (!UtilVector<model::FolderPtr>(mOpenFolders).hasElement(folder))
         {
-            mOpenFolders.push_back(folder);
+            mOpenFolders.emplace_back(folder);
         }
         event.Skip();
     });

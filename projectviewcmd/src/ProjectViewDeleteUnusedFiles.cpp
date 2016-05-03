@@ -48,7 +48,7 @@ ProjectViewDeleteUnusedFiles::ProjectViewDeleteUnusedFiles(const model::AutoFold
         model::FilePtr file = boost::dynamic_pointer_cast<model::File>(child);
         if (file && !findInProject(file))
         {
-            mFiles.push_back(file);
+            mFiles.emplace_back(file);
         }
     }
 
@@ -100,7 +100,7 @@ void ProjectViewDeleteUnusedFiles::recycleFiles()
     wxStrings fileNames;
     for ( model::FilePtr file : mFiles )
     {
-        fileNames.push_back(util::path::normalize(file->getPath()).GetFullPath());
+        fileNames.emplace_back(util::path::normalize(file->getPath()).GetFullPath());
     }
 
     wxStrings deleted = gui::Dialog::get().getStringsSelection(

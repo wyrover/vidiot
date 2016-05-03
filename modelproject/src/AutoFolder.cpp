@@ -47,7 +47,7 @@ struct IndexAutoFolderWork
         ASSERT(mPath.IsDir() && mPath.IsAbsolute())(mPath);
         for ( NodePtr child : mFolder->getChildren() )
         {
-            mRemove.push_back(child->getName());
+            mRemove.emplace_back(child->getName());
         }
     }
 
@@ -92,7 +92,7 @@ struct IndexAutoFolderWork
                     model::FilePtr file = boost::make_shared<model::File>(filename);
                     if (file->canBeOpened())
                     {
-                        mAdd.push_back(file);
+                        mAdd.emplace_back(file);
                     }
                 }
                 showProgress(++progress);
@@ -160,7 +160,7 @@ NodePtrs AutoFolder::findPath(const wxString& path)
     NodePtrs result = Node::findPath(path); // Traverse the tree
     if (util::path::equals(mPath,path))
     {
-        result.push_back(self());
+        result.emplace_back(self());
     }
     return result;
 }
@@ -264,7 +264,7 @@ void AutoFolder::handleWorkDone(boost::shared_ptr<IndexAutoFolderWork> work, boo
                 {
                     if (child->getName().IsSameAs(name))
                     {
-                        nodes.push_back(child);
+                        nodes.emplace_back(child);
                         break;
                     }
                 }

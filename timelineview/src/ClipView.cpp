@@ -430,7 +430,7 @@ void ClipView::getKeyframePositionInfo(const wxPoint& position, PointerPositionI
             r.x = std::max(getX(), r.x);
             r.y += getH() - kfi.GetHeight() - ClipView::BorderSize;
             r.SetSize(kfi.GetSize());
-            keyFrameRects.push_back(r);
+            keyFrameRects.emplace_back(r);
         }
     }
 

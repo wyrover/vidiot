@@ -827,7 +827,7 @@ void Drag::determineSnapOffset()
         pts pts_drag = *itDrag + ptsoffset + mSnapOffset;
         if (pts_timeline == pts_drag)
         {
-            mSnaps.push_back(pts_timeline);
+            mSnaps.emplace_back(pts_timeline);
         }
         if (pts_timeline <= pts_drag)
         {
@@ -849,7 +849,7 @@ void Drag::determinePossibleSnapPoints()
     }
     if (mSnappingEnabled && Config::get().read<bool>(Config::sPathTimelineSnapCursor))
     {
-        mSnapPoints.push_back(getCursor().getLogicalPosition());
+        mSnapPoints.emplace_back(getCursor().getLogicalPosition());
     }
 
     std::sort(mSnapPoints.begin(), mSnapPoints.end());
@@ -864,8 +864,8 @@ void Drag::determinePossibleDragPoints()
 
     for ( model::IClipPtr clip : mCommand->getDrags() )
     {
-        mDragPoints.push_back(clip->getLeftPts());
-        mDragPoints.push_back(clip->getRightPts());
+        mDragPoints.emplace_back(clip->getLeftPts());
+        mDragPoints.emplace_back(clip->getRightPts());
     }
 
     std::sort(mDragPoints.begin(), mDragPoints.end());
@@ -948,19 +948,19 @@ cmd::Drops Drag::getDrops(const model::TrackPtr& track)
             if (inregion && !contains(clip))
             {
                 inregion = false;
-                drops.push_back(pi);
+                drops.emplace_back(pi);
                 pi.position = -1; // Prepare for new region
                 pi.clips.clear(); // Prepare for new region
             }
             if (inregion)
             {
-                pi.clips.push_back(clip);
+                pi.clips.emplace_back(clip);
             }
             position += clip->getLength();
         }
         if (inregion)
         {
-            drops.push_back(pi); // Insertion at end
+            drops.emplace_back(pi); // Insertion at end
         }
     }
     return drops;

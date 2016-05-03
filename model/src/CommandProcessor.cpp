@@ -28,7 +28,7 @@ std::vector<std::pair<IPlayer*, ResumeInfo>> pausePlayers(std::vector<IPlayer*> 
     std::vector<std::pair<IPlayer*, ResumeInfo>> result;
     for (IPlayer* player : players)
     {
-        result.push_back(std::make_pair(player, player->pause()));
+        result.emplace_back(std::make_pair(player, player->pause()));
     }
     return result;
 }
@@ -87,7 +87,7 @@ std::vector<wxCommand*> CommandProcessor::getUndoHistory() const
     std::vector<wxCommand*> result;
     for (wxCommand* c : GetCommands().AsVector<wxCommand*>())
     {
-        result.push_back(c);
+        result.emplace_back(c);
     }
 
     // Remove any 'Undone' commands.
@@ -103,7 +103,7 @@ std::vector<wxCommand*> CommandProcessor::getUndoHistory() const
 
 void CommandProcessor::registerPlayer(IPlayer* player)
 {
-    mPlayers.push_back(player);
+    mPlayers.emplace_back(player);
 }
 
 void CommandProcessor::unregisterPlayer(IPlayer* player)

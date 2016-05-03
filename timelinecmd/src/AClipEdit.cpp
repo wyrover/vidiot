@@ -374,7 +374,7 @@ AClipEdit::ClipsWithPosition AClipEdit::findClips(const model::TrackPtr& track, 
     }
     while (it != track->getClips().end() && *it != to)
     {
-        removedClips.push_back(*it);
+        removedClips.emplace_back(*it);
         ++it;
     }
     return make_pair(removedClips,to);
@@ -527,7 +527,7 @@ model::IClips AClipEdit::unapplyTransition(const model::TransitionPtr& transitio
             replacement->adjustEnd(*left);
         }
         replaceClip(prev, { replacement });
-        replacements.push_back(replacement);
+        replacements.emplace_back(replacement);
 
         cloneLinkIfRequired(prev->getLink());
     }
@@ -549,7 +549,7 @@ model::IClips AClipEdit::unapplyTransition(const model::TransitionPtr& transitio
             replacement->adjustBegin(-1 * *right);
         }
         replaceClip(next, { replacement });
-        replacements.push_back(replacement);
+        replacements.emplace_back(replacement);
 
         cloneLinkIfRequired(next->getLink());
     }
@@ -585,7 +585,7 @@ void AClipEdit::animatedDeleteAndTrim(const model::IClips& clipsToBeRemoved)
         ASSERT(track);
 
         model::IClipPtr empty = boost::make_shared<model::EmptyClip>(clip->getLength());
-        emptyareas.push_back(empty);
+        emptyareas.emplace_back(empty);
 
         model::MoveParameterPtr move = boost::make_shared<model::MoveParameter>(track, clip->getNext(), model::IClips({ empty }), track, clip->getNext(), model::IClips({ clip }));
         undo.insert(undo.begin(),move->make_inverted()); // Must be executed in reverse order
@@ -656,7 +656,7 @@ model::IClips AClipEdit::splitTracksAndFindClipsToBeRemoved(const PtsIntervals& 
                 }
                 if (clip->getLeftPts() >= first)
                 {
-                    removedInTrack.push_back(clip);
+                    removedInTrack.emplace_back(clip);
                 }
             }
             UtilVector<model::IClipPtr>(result).addElements(removedInTrack, model::IClipPtr());
@@ -674,7 +674,7 @@ void AClipEdit::storeSelection()
         {
             if (clip->getSelected())
             {
-                selected.push_back(clip);
+                selected.emplace_back(clip);
             }
         }
     }
@@ -715,7 +715,7 @@ void AClipEdit::newMove(
         LOG_DEBUG << DUMP(removeClips) << DUMP(removeTrack) << DUMP(removePosition);
     }
     model::MoveParameterPtr move = boost::make_shared<model::MoveParameter>(addTrack, addPosition, addClips, removeTrack, removePosition, removeClips);
-    mParams.push_back(move);
+    mParams.emplace_back(move);
     mParamsUndo.insert(mParamsUndo.begin(), move->make_inverted()); // Must be executed in reverse order
     doMove(move);
 }
@@ -773,7 +773,7 @@ void AClipEdit::mergeConsecutiveEmptyClips(const model::Tracks& tracks)
             // Ensure that for regions the 'extra' space for transitions is added.
             // Basically the 'extra' space at the beginning of the first clip and the extra
             // space at the ending of the last clip must be added to the region.
-            replacement.push_back(model::EmptyClip::replace(clips));
+            replacement.emplace_back(model::EmptyClip::replace(clips));
         }
         // else: Simply replace with an empty list, thus remove the clip(s)
 
@@ -794,7 +794,7 @@ void AClipEdit::mergeConsecutiveEmptyClips(const model::Tracks& tracks)
             {
                 inregion = true;
                 length += clip->getLength();
-                removed.push_back(clip);
+                removed.emplace_back(clip);
             }
             else // !clip->isA<model::EmptyClip>()
             {

@@ -25,7 +25,7 @@ std::pair< RandomTempDirPtr, wxFileName > OpenRenderDialogAndSetFilename()
     WaitUntilDialogOpen(true);
 
     RandomTempDirPtr tempdir = boost::make_shared<RandomTempDir>();
-    wxFileName path(tempdir->getFileName().GetFullPath(), "out", "avi");
+    wxFileName path(tempdir->getFileName().GetFullPath(), "out", "avi");      // todo replace getfullpath with getlongpath everywhere
     gui::Dialog::get().setSaveFile(path.GetFullPath());
     ButtonTriggerPressed(gui::DialogRenderSettings::get().getFileButton());
     return std::make_pair(tempdir,path);
@@ -59,7 +59,7 @@ void PlaybackRenderedTimeline(const wxFileName& path, pixel start, milliseconds 
 void RenderAndPlaybackCurrentTimeline(int renderedlengthInS, pixel playbackStart, milliseconds playbackLength)
 {
     RandomTempDir tempdir;
-    std::pair< RandomTempDirPtr, wxFileName > tempdir_and_filename =  RenderTimeline(renderedlengthInS);
+    std::pair< RandomTempDirPtr, wxFileName > tempdir_and_filename = RenderTimeline(renderedlengthInS);
     WindowTriggerMenu(ID_CLOSESEQUENCE);
     PlaybackRenderedTimeline(tempdir_and_filename.second, playbackStart, playbackLength);
 }

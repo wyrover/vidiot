@@ -314,7 +314,7 @@ std::vector<TransitionParameterPtr> Transition::getSortedParameters() const
     {
         ASSERT_MAP_CONTAINS(mParameters, attributes.Name);
         std::map<wxString, TransitionParameterPtr>::const_iterator it{ mParameters.find(attributes.Name) };
-        result.push_back(it->second);
+        result.emplace_back(it->second);
     }
     return result;
 }

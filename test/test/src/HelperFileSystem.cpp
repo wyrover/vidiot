@@ -49,7 +49,7 @@ RandomTempDir::RandomTempDir(bool cleanup)
     : mFileName(wxFileName::GetTempDir(), "")
     , mCleanup(cleanup)
 {
-    mFileName.AppendDir(gui::CommandLine::get().ExeName);
+    mFileName.AppendDir(gui::CommandLine::get().ExeName.Lower());
     if (!wxDirExists(mFileName.GetLongPath()))
     {
         mFileName.Mkdir();
@@ -154,7 +154,7 @@ model::IPaths getListOfInputPaths(wxFileName path)
 	{
         for (model::IPathPtr apath : GetSupportedFiles(path))
         {
-            result.push_back(boost::make_shared<CachedPath>(apath->getPath()));
+            result.emplace_back(boost::make_shared<CachedPath>(apath->getPath()));
         }
 		cache[key] = result;
 	}
@@ -166,7 +166,7 @@ wxStrings getListOfInputPathsAsStrings(wxFileName path)
     wxStrings result;
     for (auto f : getListOfInputPathsAsFileNames(path))
     {
-        result.push_back(f.GetFullPath());
+        result.emplace_back(f.GetFullPath());
     }
     return result;
 }
@@ -176,7 +176,7 @@ wxFileNames getListOfInputPathsAsFileNames(wxFileName path)
     wxFileNames result;
     for (auto f : getListOfInputPaths(path))
     {
-        result.push_back(f->getPath());
+        result.emplace_back(f->getPath());
     }
     return result;
 }

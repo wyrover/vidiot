@@ -41,7 +41,7 @@ ParentAndChildren::ParentAndChildren(const NodePtr& parent, const NodePtr& child
     :  mParent(parent)
     ,  mChildren()
 {
-    mChildren.push_back(child);
+    mChildren.emplace_back(child);
 }
 
 //////////////////////////////////////////////////////////////////////////

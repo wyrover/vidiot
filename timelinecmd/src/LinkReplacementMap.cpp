@@ -53,7 +53,7 @@ model::IClips LinkReplacementMap::danglingLinks()
         model::IClipPtr originallink = original->getLink();
         if (originallink && mReplacements.find(originallink) == mReplacements.end())
         {
-            result.push_back(originallink);
+            result.emplace_back(originallink);
         }
     }
     return result;
@@ -153,7 +153,7 @@ model::IClips LinkReplacementMap::expand(const model::IClips& original)
         if (mReplacements.find(clip) == mReplacements.end())
         {
             // The replacement clip is not replaced
-            result.push_back(clip);
+            result.emplace_back(clip);
         }
         else
         {

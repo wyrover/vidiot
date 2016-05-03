@@ -43,7 +43,7 @@ struct HistoryCommandAsserter
     template<class type>
     HistoryCommandAsserter& AssertEntry()
     {
-        Expected.push_back(getName(typeid(type)));
+        Expected.emplace_back(getName(typeid(type)));
         return *this;
     }
 

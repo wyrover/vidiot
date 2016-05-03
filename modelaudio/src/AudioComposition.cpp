@@ -55,7 +55,7 @@ void AudioComposition::add(const AudioChunkPtr& chunk)
         !chunk->isA<model::EmptyChunk>())
     {
         // Skip empty chunks.
-        mChunks.push_back(chunk);
+        mChunks.emplace_back(chunk);
         ASSERT_EQUALS(chunk->getUnreadSampleCount(), mParameters.getChunkSize());
     }
 }
