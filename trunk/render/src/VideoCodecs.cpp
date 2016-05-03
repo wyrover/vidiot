@@ -103,7 +103,7 @@ std::vector<AVCodecID> VideoCodecs::all()
     std::vector<AVCodecID> result;
     for ( VideoCodecMap::value_type entry : sVideoCodecs )
     {
-        result.push_back(entry.first);
+        result.emplace_back(entry.first);
     }
     return result;
 }

@@ -87,7 +87,7 @@ public:
             {
                 conditionNotFull.wait(lock);
             }
-            items.push_back(e);
+            items.emplace_back(e);
             ++mSize;
             ASSERT_MORE_THAN_ZERO(mSize);
         }

@@ -33,7 +33,7 @@ HistoryCommandAsserter::~HistoryCommandAsserter()
     wxStrings Actual;
     for (wxCommand* c : commands)
     {
-        Actual.push_back(getName(typeid(*c)));
+        Actual.emplace_back(getName(typeid(*c)));
     }
 
     ASSERT_LESS_THAN_EQUALS(Expected.size(), Actual.size())(Expected)(Actual)(commands);

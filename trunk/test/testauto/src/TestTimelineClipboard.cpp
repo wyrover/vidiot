@@ -146,7 +146,7 @@ void TestTimelineClipboard::testPasteFromFileSystem_IllegalNodes()
 	{
 		StartTest("Preparation: Files and one folder in clipboard.");
 		wxFileNames l(getListOfInputPathsAsFileNames());
-		l.push_back(getTestFilesPath().GetFullPath());
+		l.emplace_back(getTestFilesPath().GetFullPath());
 		FillClipboardWithFiles(l);
 	}
 	{

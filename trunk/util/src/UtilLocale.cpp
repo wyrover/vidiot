@@ -47,7 +47,7 @@ std::vector<std::pair<wxString, wxString>> getSupportedLanguages()
                     // Use translatable language name if available
                     languageName = sLanguages.find(filename)->second;
                 }
-                result.push_back(std::make_pair(languageName, filename));
+                result.emplace_back(std::make_pair(languageName, filename));
             }
         }
     }

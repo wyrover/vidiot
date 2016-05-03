@@ -157,7 +157,7 @@ wxStrings getFilesList(const wxString& message, const wxString& filetypes, wxWin
         dialog.GetPaths(paths);
         for (wxString path : paths)
         {
-            result.push_back(path);
+            result.emplace_back(path);
         }
     }
     return result;
@@ -289,7 +289,7 @@ wxStrings Dialog::getStringsSelection(const wxString& title, const wxString& mes
     {
         for ( int selection : selected )
         {
-            result.push_back(choices.Item(selection));
+            result.emplace_back(choices.Item(selection));
         }
     }
 

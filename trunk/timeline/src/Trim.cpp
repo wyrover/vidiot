@@ -476,7 +476,7 @@ void Trim::determinePossibleSnapPoints(const model::IClipPtr& originalclip)
     }
     if (Config::get().read<bool>(Config::sPathTimelineSnapCursor))
     {
-        mSnapPoints.push_back(getCursor().getLogicalPosition());
+        mSnapPoints.emplace_back(getCursor().getLogicalPosition());
     }
     std::sort(mSnapPoints.begin(), mSnapPoints.end());
     std::unique(mSnapPoints.begin(), mSnapPoints.end());

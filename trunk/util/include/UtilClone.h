@@ -33,7 +33,7 @@ std::vector< boost::shared_ptr<T> > make_cloned(const std::vector< boost::shared
     std::vector< boost::shared_ptr<T> > result;
     for ( boost::shared_ptr<T> element : elements )
     {
-        result.push_back(make_cloned<T>(element));
+        result.emplace_back(make_cloned<T>(element));
     }
     return result;
 }

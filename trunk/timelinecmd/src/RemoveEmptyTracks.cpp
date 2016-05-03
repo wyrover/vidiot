@@ -46,13 +46,13 @@ RemoveEmptyTracks::~RemoveEmptyTracks()
 
 void RemoveEmptyTracks::onVideoTracksRemoved(model::EventRemoveVideoTracks& event )
 {
-    mVideoUndo.push_back(event.getValue().make_inverted());
+    mVideoUndo.emplace_back(event.getValue().make_inverted());
     event.Skip();
 }
 
 void RemoveEmptyTracks::onAudioTracksRemoved(model::EventRemoveAudioTracks& event )
 {
-    mAudioUndo.push_back(event.getValue().make_inverted());
+    mAudioUndo.emplace_back(event.getValue().make_inverted());
     event.Skip();
 }
 

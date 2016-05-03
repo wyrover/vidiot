@@ -67,7 +67,7 @@ std::vector<FrameRate> FrameRate::getSupported()
     std::vector<FrameRate> result;
     for (unsigned int i = 0; i < sPossibleFrameRates.size(); ++i)
     {
-        result.push_back(boost::get<1>(sPossibleFrameRates[i]));
+        result.emplace_back(boost::get<1>(sPossibleFrameRates[i]));
     };
     return result;
 }

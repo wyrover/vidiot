@@ -96,7 +96,7 @@ public:
     {
         for ( ELEMENT element : set )
         {
-            mList.push_back(element);
+            mList.emplace_back(element);
         }
     }
 

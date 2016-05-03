@@ -85,7 +85,7 @@ VideoCodec& VideoCodec::addParameter(ICodecParameter& parameter)
     ASSERT(clone);
     ICodecParameterPtr newParam = boost::shared_ptr<ICodecParameter>(clone);
     ASSERT(newParam);
-    mParameters.push_back(newParam);
+    mParameters.emplace_back(newParam);
     return *this;
 }
 

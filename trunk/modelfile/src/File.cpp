@@ -143,7 +143,7 @@ NodePtrs File::findPath(const wxString& path)
     NodePtrs result;
     if (util::path::equals(mPath,path))
     {
-        result.push_back(self());
+        result.emplace_back(self());
     }
     return result;
 }

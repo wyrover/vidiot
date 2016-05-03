@@ -97,7 +97,7 @@ void DeleteSelectedClips::initialize()
                     ASSERT(!clip->isA<model::Transition>()); // Should have been unapplied already
                     ASSERT(!clip->getInTransition()); // Should have been unapplied already
                     ASSERT(!clip->getOutTransition()); // Should have been unapplied already
-                    clipsToBeRemoved.push_back(clip);
+                    clipsToBeRemoved.emplace_back(clip);
                     deletionRegion += PtsInterval(clip->getLeftPts(), clip->getRightPts());
                     deletionRegionTrack[track] += PtsInterval(clip->getLeftPts(), clip->getRightPts());
                 }
@@ -162,7 +162,7 @@ void DeleteSelectedClips::initialize()
                 model::IClipPtr toBeRemoved = track->getClip(interval.lower());
                 ASSERT_EQUALS(toBeRemoved->getLeftPts(), interval.lower());
                 ASSERT_EQUALS(toBeRemoved->getRightPts(), interval.upper());
-                clipsToBeRemoved.push_back(toBeRemoved);
+                clipsToBeRemoved.emplace_back(toBeRemoved);
             }
         }
         else

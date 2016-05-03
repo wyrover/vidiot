@@ -38,8 +38,8 @@ Details::Details(wxWindow* parent, Timeline* timeline)
     LOG_INFO;
 
     // The order in this list is the order of priority in case two panels want to be shown
-    mDetails.push_back(new DetailsTrim(this,*timeline));
-    mDetails.push_back(new DetailsClip(this,*timeline));
+    mDetails.emplace_back(new DetailsTrim(this,*timeline));
+    mDetails.emplace_back(new DetailsClip(this,*timeline));
 
     wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
     for ( DetailsPanel* details : mDetails )

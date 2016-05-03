@@ -43,7 +43,7 @@ std::vector<model::TransitionPtr> TransitionFactory::getAllPossibleTransitions()
     std::vector<model::TransitionPtr> result;
     for ( auto t : mTransitions )
     {
-        result.push_back(make_cloned<model::Transition>(t));
+        result.emplace_back(make_cloned<model::Transition>(t));
     }
     return result;
 }
@@ -55,7 +55,7 @@ std::vector<model::TransitionPtr> TransitionFactory::getAllPossibleTransitionsOf
     {
         if (t->supports(type))
         {
-            result.push_back(make_cloned<model::Transition>(t));
+            result.emplace_back(make_cloned<model::Transition>(t));
         }
     }
     return result;
@@ -73,7 +73,7 @@ TransitionPtr TransitionFactory::getDefault()
 
 void TransitionFactory::add(const TransitionPtr& transition)
 {
-    mTransitions.push_back(transition);
+    mTransitions.emplace_back(transition);
 }
 
 //////////////////////////////////////////////////////////////////////////

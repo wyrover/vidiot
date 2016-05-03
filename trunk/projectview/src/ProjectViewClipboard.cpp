@@ -228,11 +228,11 @@ void ProjectViewClipboard::pasteFromClipboard()
                             StatusBar::get().timedInfoText(_("File " + file->getName() + " is not supported."));
                             return;
                         }
-                        nodes.push_back(file);
+                        nodes.emplace_back(file);
                     }
                     else
                     {
-                        nodes.push_back(boost::make_shared<model::AutoFolder>(filename));
+                        nodes.emplace_back(boost::make_shared<model::AutoFolder>(filename));
                     }
                 }
                 if (!model::ProjectModification::submitIfPossible(new cmd::ProjectViewAddAsset(target, nodes)))

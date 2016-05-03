@@ -788,7 +788,7 @@ wxString selectWorkspace(wxString text)
     wxStrings entries;
     for ( Config::Perspectives::value_type name_perspective : perspectives )
     {
-        entries.push_back(name_perspective.first);
+        entries.emplace_back(name_perspective.first);
     }
     wxString result = Dialog::get().getComboText(_("Select workspace"),text, entries);
     return result;
@@ -927,7 +927,7 @@ void Window::onDropFiles(wxDropFilesEvent& event)
     wxStrings filenames;
     for (int i = 0; i < event.GetNumberOfFiles(); ++i)
     {
-        filenames.push_back(event.GetFiles()[i]);
+        filenames.emplace_back(event.GetFiles()[i]);
     }
     // Required for some operations (determining file lengths in the file analyzer)
     model::PropertiesPtr tempProperties = isProjectOpened() ? nullptr : boost::make_shared<model::Properties>();

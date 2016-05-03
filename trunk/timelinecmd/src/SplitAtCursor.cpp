@@ -69,7 +69,7 @@ void SplitAtCursor::doExtraAfter()
             clip->getPrev() &&
             !clip->getPrev()->isA<model::EmptyClip>())
         {
-            clipsBeforeSplit.push_back(clip->getPrev());
+            clipsBeforeSplit.emplace_back(clip->getPrev());
         }
     }
     getTimeline().getSelection().change(clipsBeforeSplit);

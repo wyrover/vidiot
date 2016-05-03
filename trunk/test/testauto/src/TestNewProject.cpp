@@ -130,7 +130,7 @@ void TestNewProject::testFiles()
     wxStrings files;
     for ( model::IPathPtr path : getListOfInputPaths() )
     {
-        files.push_back(path->getPath().GetFullPath());
+        files.emplace_back(path->getPath().GetFullPath());
     }
     gui::Dialog::get().setFiles(files);
     ASSERT_EQUALS(gui::DialogNewProject::get().GetCurrentPage(), gui::DialogNewProject::get().getPageStart());

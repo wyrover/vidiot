@@ -452,7 +452,7 @@ AudioPeaks AudioFile::getPeaks(const AudioCompositionParameters& parameters, pts
                 {
                     ASSERT_LESS_THAN_EQUALS_ZERO(current.first);
                     ASSERT_MORE_THAN_EQUALS_ZERO(current.second);
-                    allPeaks.push_back(current);
+                    allPeaks.emplace_back(current);
                     current = AudioPeak(0, 0);
                     nextRequiredSample = Convert::ptsToSamplesPerChannel(Convert::samplerateToNewSpeed(parameters.getSampleRate(), parameters.getSpeed(), 1), allPeaks.size());
                 }

@@ -40,7 +40,7 @@ VideoFrame::VideoFrame(const VideoCompositionParameters& parameters, const Video
     , mParameters(new VideoCompositionParameters(parameters))
     , mTime(0)
 {
-    mLayers.push_back(layer);
+    mLayers.emplace_back(layer);
 }
 
 VideoFrame::VideoFrame(const VideoCompositionParameters& parameters, const VideoFrameLayers& layers)
@@ -128,7 +128,7 @@ VideoFrameLayers VideoFrame::getLayers()
 
 void VideoFrame::addLayer(const VideoFrameLayerPtr& layer)
 {
-    mLayers.push_back(layer);
+    mLayers.emplace_back(layer);
 }
 
 wxImagePtr VideoFrame::getImage()

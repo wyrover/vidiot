@@ -80,7 +80,7 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
             int length{ wxAtoi(token) };
             length = std::max(length, 100); // Too small values may cause errors in clip length logic.
             length = std::min(length, 3600000);
-            mLengths.push_back(length);
+            mLengths.emplace_back(length);
             std::sort(mLengths.begin(), mLengths.end());
             auto endIt = std::unique(mLengths.begin(), mLengths.end());
             mLengths.resize( std::distance(mLengths.begin(), endIt) );
@@ -111,7 +111,7 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
         button->SetToolTip(_("Change the length of the clip to this length. Will shift other clips to avoid introducing a black area.") + " " + _("Shortcut key") + ": '" + wxString::Format("%d", i + 1) + "'");
         mLengthPanel->GetSizer()->Add(button,wxSizerFlags(1));
         button->Bind( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, &DetailsClip::onLengthButtonPressed, this);
-        mLengthButtons.push_back(button);
+        mLengthButtons.emplace_back(button);
     }
     updateLengthButtons();
     // TRANSLATORS: Do not let the string exceed 20 characters.

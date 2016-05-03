@@ -49,7 +49,7 @@ ParentAndChildPairs ProjectViewCommand::makeParentAndChildPairs(const model::Nod
     ParentAndChildPairs pairs;
     for ( model::NodePtr child : prunedlist )
     {
-        pairs.push_back(std::make_pair(child->getParent(),child));
+        pairs.emplace_back(std::make_pair(child->getParent(),child));
     }
     return pairs;
 }
@@ -96,7 +96,7 @@ model::NodePtrs ProjectViewCommand::prune(const model::NodePtrs& children)
             // a move of this node is ignored. Its position
             // within that ascendant child trees is kept intact, only
             // the ascendant will be added/deleted/moved/etc.
-            newlist.push_back(child);
+            newlist.emplace_back(child);
         }
     }
     return newlist;

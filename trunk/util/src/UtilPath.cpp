@@ -237,7 +237,7 @@ wxFileName getResourcesPath()
     // - Windows portable version
     wxFileName path{ wxStandardPaths::Get().GetExecutablePath() };
     path.SetFullName("");
-    paths.push_back(path);
+    paths.emplace_back(path);
 
     // Try to find <exedir>/../share/vidiot
     // - Linux installed version (/usr/bin and /usr/share/vidiot)
@@ -245,7 +245,7 @@ wxFileName getResourcesPath()
     path.RemoveLastDir();
     path.AppendDir("share");
     path.AppendDir("vidiot");
-    paths.push_back(path);
+    paths.emplace_back(path);
 
     for ( wxFileName path : paths )
     {

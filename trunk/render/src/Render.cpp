@@ -282,7 +282,7 @@ void findSequences(const FolderPtr& node, Sequences& result)
     {
         if (child->isA<Sequence>())
         {
-            result.push_back(boost::dynamic_pointer_cast<Sequence>(child));
+            result.emplace_back(boost::dynamic_pointer_cast<Sequence>(child));
         }
         else if (child->isA<Folder>())
         {
@@ -305,7 +305,7 @@ void Render::scheduleAll()
     wxFileNames allFilenames;
     for ( SequencePtr sequence : seqs )
     {
-        allFilenames.push_back(sequence->getRender()->getFileName());
+        allFilenames.emplace_back(sequence->getRender()->getFileName());
     }
 
     for ( SequencePtr sequence : seqs )

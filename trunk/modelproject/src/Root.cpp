@@ -27,7 +27,7 @@ Root::Root()
     : Folder("Root")
 {
     VAR_DEBUG(this);
-    sInstance.push_back(this);
+    sInstance.emplace_back(this);
 };
 
 Root::~Root()

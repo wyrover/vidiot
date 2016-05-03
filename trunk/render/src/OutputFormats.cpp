@@ -29,7 +29,7 @@ OutputFormatList OutputFormats::sOutputFormats;
 // static
 void OutputFormats::add(const OutputFormat& format)
 {
-    sOutputFormats.push_back(boost::make_shared<OutputFormat>(format));
+    sOutputFormats.emplace_back(boost::make_shared<OutputFormat>(format));
 }
 
 // static
@@ -62,7 +62,7 @@ void OutputFormats::initialize()
             wxStrings extensions;
             while ( tokenizer.HasMoreTokens() )
             {
-                extensions.push_back(tokenizer.GetNextToken());
+                extensions.emplace_back(tokenizer.GetNextToken());
             }
             if (!extensions.empty())
             {
@@ -85,7 +85,7 @@ wxStrings OutputFormats::getNames()
     wxStrings result;
     for ( OutputFormatPtr format : sOutputFormats )
     {
-        result.push_back(format->getLongName());
+        result.emplace_back(format->getLongName());
     }
     return result;
 }

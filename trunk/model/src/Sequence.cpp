@@ -62,8 +62,8 @@ Sequence::Sequence(const wxString& name)
     , mName(name)
 {
     VAR_DEBUG(this);
-    mVideoTracks.push_back(boost::make_shared<VideoTrack>());
-    mAudioTracks.push_back(boost::make_shared<AudioTrack>());
+    mVideoTracks.emplace_back(boost::make_shared<VideoTrack>());
+    mAudioTracks.emplace_back(boost::make_shared<AudioTrack>());
     updateTracks();
 }
 
