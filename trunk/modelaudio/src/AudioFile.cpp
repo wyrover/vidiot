@@ -422,6 +422,8 @@ AudioPeaks AudioFile::getPeaks(const AudioCompositionParameters& parameters, pts
     {
         return AudioPeaks();
     }
+    ASSERT_MORE_THAN_EQUALS_ZERO(offset);
+    ASSERT_MORE_THAN_EQUALS_ZERO(length);
 
     boost::optional<AudioPeaks> peaks{ FileMetaDataCache::get().getPeaks(getPath()) };
 
@@ -466,15 +468,28 @@ AudioPeaks AudioFile::getPeaks(const AudioCompositionParameters& parameters, pts
     }
 
     const AudioPeaks& allPeaks{ *peaks };
-    ASSERT_LESS_THAN_EQUALS(narrow_cast<size_t>(offset), allPeaks.size())(*this);
-    // NOT: ASSERT_LESS_THAN_EQUALS(offset + length, allPeaks.size())(*this);
+    pts total{ allPeaks.size() };
+
+    AudioPeaks result;
+
+    // NOT: ASSERT_LESS_THAN_EQUALS(narrow_cast<size_t>(offset), allPeaks.size())(*this);
+    // ==> Sometimes the number of peaks equals '0' at this point (decoding error?). Do not crash but use 'empty' peaks.
     //
-    // See also  AudioClip::getNextAudio where sometimes extra audio is added, if the audio data length in a file is smaller than the audio length.
+    // NOT: ASSERT_LESS_THAN_EQUALS(offset + length, allPeaks.size())(*this);
+    // ==> See also  AudioClip::getNextAudio where sometimes extra audio is added, if the audio data length in a file is smaller than the audio length.
     //
     // The audio clip may be slightly larger than the audio file data. This can be caused by the clip having (typically) the same length as a linked video clip.
     // The video data in a file may be slightly longer than the audio data, resulting in such a difference. Instead of truncating the video, the audio is extended
     // with silence, leaving the truncating (the choice) to the user.
-    AudioPeaks result(allPeaks.begin() + offset, allPeaks.begin() + std::min(static_cast<pts>(allPeaks.size()), offset + length)); // todo crash here when reducing speed ... a lot
+
+    auto itBegin = allPeaks.begin() + offset;
+    auto itEnd = allPeaks.begin() + std::min(total, offset + length);
+    if ((std::distance(allPeaks.begin(), itBegin) < total) &&
+        (std::distance(allPeaks.begin(), itEnd) <= total))
+    {
+        result = std::move(AudioPeaks(itBegin, itEnd));
+    }
+    
     if (result.size() != narrow_cast<size_t>(length))
     {
         // Ensure resulting peaks length equals length of clip. Add 'silence' if required.
