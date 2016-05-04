@@ -568,10 +568,13 @@ void RenderWork::generate()
         //////////////////////////////////////////////////////////////////////////
 
         ASSERT(!(context->flags & AVFMT_NOFILE))(context);
-        if (avio_open(&context->pb, filename.c_str(), AVIO_FLAG_WRITE) < 0)
         {
-            VAR_ERROR(filename);
-            throw EncodingError(_("Failed to open file"));
+            boost::mutex::scoped_lock lock(Avcodec::sMutex);
+            if (avio_open(&context->pb, filename.c_str(), AVIO_FLAG_WRITE) < 0)
+            {
+                VAR_ERROR(filename);
+                throw EncodingError(_("Failed to open file"));
+            }
         }
 
         fileOpened = true;
@@ -903,7 +906,10 @@ void RenderWork::generate()
 
     if (videoOpened)
     {
-        avcodec_close(videoCodec);
+        {
+            boost::mutex::scoped_lock lock(Avcodec::sMutex);
+            avcodec_close(videoCodec);
+        }
         av_freep(&outputPicture->data[0]);
         av_frame_free(&outputPicture);
         if (colorSpaceConversionPicture)
@@ -921,7 +927,10 @@ void RenderWork::generate()
             delete[] resampledAudioData;
             swr_free(&audioSampleFormatResampleContext);
         }
-        avcodec_close(audioCodec);
+        {
+            boost::mutex::scoped_lock lock(Avcodec::sMutex);
+            avcodec_close(audioCodec);
+        }
         av_freep(&samples);
     }
 
@@ -943,6 +952,7 @@ void RenderWork::generate()
 
     if (fileOpened)
     {
+        boost::mutex::scoped_lock lock(Avcodec::sMutex);
         avio_close(context->pb);
     }
 
