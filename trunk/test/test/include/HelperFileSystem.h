@@ -59,6 +59,11 @@ wxFileName getTestPath();
 /// \return path to input files
 wxFileName getTestFilesPath(wxString subdir = "input");
 
+/// Get a filename pointing to a 'special' file in filetypes_special
+/// \param filename name of file (including extension)
+/// \return full filename towards the file
+wxFileName SpecialFile(wxString filename);
+
 /// Get the input files in the test input folder
 /// \return list of paths to input files
 model::IPaths getListOfInputPaths(wxFileName path = getTestFilesPath());

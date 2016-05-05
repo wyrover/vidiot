@@ -42,14 +42,7 @@ void TestUiBugs::testDragAndDropVideoFileLargerThanTimeline()
     StartTestSuite();
     TimelineZoomIn(2);
 
-    wxFileName file = getTestPath();
-    file.AppendDir("filetypes_special");
-    ASSERT(file.IsDir());
-    ASSERT(file.DirExists());
-    file.SetFullName("long_black_10min.avi"); // long file
-    ASSERT(file.FileExists());
-
-    model::Files files = ProjectViewAddFiles({ file });
+    model::Files files = ProjectViewAddFiles({ SpecialFile("long_black_10min.avi") });
 
     DragFromProjectViewToTimeline(files.front(), getTimeline().GetScreenPosition() + wxPoint(5, VCenter(VideoTrack(0))));
     ASSERT_EQUALS(NumberOfVideoClipsInTrack(0), 1); // Dropped clip obscured entire track
@@ -62,14 +55,7 @@ void TestUiBugs::testDragAndDropAudioFileLargerThanTimeline()
     StartTestSuite();
     TimelineZoomIn(2);
 
-    wxFileName file = getTestPath();
-    file.AppendDir("filetypes_special");
-    ASSERT(file.IsDir());
-    ASSERT(file.DirExists());
-    file.SetFullName("Dawn - Another Day.mp3"); // long file
-    ASSERT(file.FileExists());
-
-    model::Files files = ProjectViewAddFiles({ file });
+    model::Files files = ProjectViewAddFiles({ SpecialFile("Dawn - Another Day.mp3") });
 
     DragFromProjectViewToTimeline(files.front(), getTimeline().GetScreenPosition() + wxPoint(5, VCenter(AudioTrack(0))));
     ASSERT_EQUALS(NumberOfVideoClipsInTrack(0), 7);

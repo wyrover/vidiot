@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-04-14 22:04+0200\n"
+"POT-Creation-Date: 2016-05-05 09:53+0200\n"
 "PO-Revision-Date: 2015-11-01 11:44+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -44,24 +44,56 @@ msgstr ""
 msgid "All files"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:304
+#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:312
 msgid ""
 "A fatal error was encountered. Press OK to generate debug report. Press "
 "Cancel to terminate."
 msgstr ""
 
+#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:312
+#: C:\Vidiot\vidiot_trunk\util\src\UtilInitAvcodec.cpp:31
+msgid "Error"
+msgstr ""
+
 #. TRANSLATORS: %s == Name of application (executable)
-#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:365
+#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:319
 #, c-format
 msgid "%s crash report"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:365
+#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:320
 #, c-format
 msgid ""
 "I'm sorry, but %1$s crashed.\n"
 "By sending this mail you'll provide me with helpful information for "
 "resolving the crash.\n"
+"Thanks for your help.\n"
+"\n"
+"Eric\n"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:324
+msgid ""
+"Do you want to include debugging information (log file, screen shot, etc.) "
+"with your request?"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:324
+msgid "Submit"
+msgstr ""
+
+#. TRANSLATORS: %s == Name of application (executable)
+#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:326
+#, c-format
+msgid "%s bug report/feature request"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:327
+msgid ""
+"\n"
+"\n"
+"Enter your request/remark here.\n"
+"\n"
 "Thanks for your help.\n"
 "\n"
 "Eric\n"
@@ -474,12 +506,12 @@ msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:102
 #: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:198
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:218
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:219
 msgid "Help"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:103
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:206
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:207
 msgid "Project"
 msgstr ""
 
@@ -596,103 +628,107 @@ msgstr ""
 msgid "Open config file"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:203
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:202
+msgid "Report bug/request feature"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:204
 msgid "About..."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:207
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:208
 msgid "Edit"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:208
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:209
 msgid "View"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:209
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:990
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:210
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:998
 #: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:380
 #: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:566
 msgid "Sequence"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:211
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:212
 msgid "Tools"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:212
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:213
 msgid "Workspace"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:216
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:217
 msgid "Crash"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:390
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:398
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:392
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:400
 #: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:324
 #: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:325
 #: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:326
 msgid "Ctrl"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:774
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:776
 msgid "Enter workspace name"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:774
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:776
 msgid ""
 "Enter name for the saved workspace.\n"
 "If this is an existing name it is overwritten."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:791
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:793
 msgid "Select workspace"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:797
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:799
 msgid "Select workspace to be restored."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:806
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:808
 msgid "Load workspace failed"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:806
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:808
 msgid "Something went wrong while trying to load the saved perspective. Sorry."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:814
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:816
 msgid "Select workspace to be removed."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:827
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:829
 msgid "Remove all saved workspaces"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:827
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:829
 msgid ""
 "This will remove all saved workspace layouts which cannot be undone.\n"
 "Are you sure?"
 msgstr ""
 
 #. TRANSLATORS: %s == Path to file that cannot be opened
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:874
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:900
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:574
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:876
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:902
+#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:576
 msgid "Failed to open file"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:874
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:900
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:876
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:902
 #, c-format
 msgid "Failed to open '%s'"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:887
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:889
 msgid "Attention"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:888
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:890
 #, c-format
 msgid ""
 "Note that changing this file will not update the gui.\n"
@@ -719,20 +755,80 @@ msgid "Original size"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:39
-#: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:50
+#: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:53
 msgid "Custom"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:47
+#: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:40
+msgid "1/2"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:41
+msgid "1/3"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:42
+msgid "1/4"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:50
 msgid "Centered"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:48
+#: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:51
 msgid "Centered horizontally"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:49
+#: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:52
 msgid "Centered vertically"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:54
+msgid "Top left"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:55
+msgid "Top"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:56
+msgid "Top center"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:57
+msgid "Top right"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:58
+msgid "Right"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:59
+msgid "Right center"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:60
+msgid "Bottom right"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:61
+msgid "Bottom"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:62
+msgid "Bottom centered"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:63
+msgid "Bottom left"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:64
+msgid "Left"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:65
+msgid "Left centered"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\model\src\Track.cpp:122
@@ -1531,36 +1627,36 @@ msgstr ""
 msgid "Failed to allocate memory for resampling"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:583
+#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:586
 msgid "Failed to write file header"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:624
+#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:627
 #, c-format
 msgid "Frame %1$<PRId64> out of %2$<PRId64>"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:724
+#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:727
 msgid "Failed to encode audio"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:743
+#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:746
 msgid "Failed to write audio"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:834
+#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:837
 msgid "Failed to write raw video"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:848
+#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:851
 msgid "Failed to encode video"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:863
+#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:866
 msgid "Failed to write video"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:876
+#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:879
 msgid "Failed to close file"
 msgstr ""
 
@@ -2133,10 +2229,6 @@ msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\util\src\UtilInitAvcodec.cpp:30
 msgid "Fatal"
-msgstr ""
-
-#: C:\Vidiot\vidiot_trunk\util\src\UtilInitAvcodec.cpp:31
-msgid "Error"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\util\src\UtilInitAvcodec.cpp:32
