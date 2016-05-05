@@ -41,6 +41,16 @@ public:
     /// Therefore, playback is not done at the default positions.
     void testFileTypes_formats_audio_with_wrong_duration();
 
+    /// User reported error. A file format was used in which both an audio stream and
+    /// a video stream were present. The audio stream, however, did not contain any
+    /// actual data. Then, after trimming the clip, generating audio peaks caused
+    /// an assert to fail.
+    void testFileTypes_formats_empty_audio_channel();
+
+    /// See testFileTypes_formats_empty_audio_channel. Same test, but now with empty
+    /// video channel. Not an actual bug, but may become one ;-)
+    void testFileTypes_formats_empty_video_channel();
+
 };
 
 } // namespace

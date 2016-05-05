@@ -121,4 +121,35 @@ void TestFileTypesFormat::testFileTypes_formats_audio_with_wrong_duration()
     }, true);
 }
 
+void TestFileTypesFormat::testFileTypes_formats_empty_audio_channel()
+{
+    StartTestSuite();
+
+    model::FolderPtr root = WindowCreateProject();
+    model::FolderPtr folder1 = ProjectViewAddFolder("Folder1");
+    model::Files files1 = ProjectViewAddFiles({ SpecialFile("FileWithAudioStreamButNoAudioPackets.avi") }, folder1);
+    ASSERT_WATCHED_PATHS_COUNT(1);
+    model::SequencePtr sequence = ProjectViewCreateSequence(folder1);
+
+    // This Trim caused a crash when generating audio peaks.
+    // The offset (of the clip) was larger than the number of audio peaks
+    // actually in the file: although the file contained an audio track, it
+    // did not seem to contain actual audio data.
+    //
+    // Note: the updating of peaks/thumbnails is done synchronously in the main
+    //       thread during trimming. Therefore, no need for additional waits here.
+    TimelineTrimLeft(VideoClip(0, 0), 10, false);
+}
+
+void TestFileTypesFormat::testFileTypes_formats_empty_video_channel()
+{
+    StartTestSuite();
+    model::FolderPtr root = WindowCreateProject();
+    model::FolderPtr folder1 = ProjectViewAddFolder("Folder1");
+    model::Files files1 = ProjectViewAddFiles({ SpecialFile("FileWithVideoStreamButNoVideoPackets.avi") }, folder1);
+    ASSERT_WATCHED_PATHS_COUNT(1);
+    model::SequencePtr sequence = ProjectViewCreateSequence(folder1);
+    TimelineTrimLeft(VideoClip(0, 0), 10, false);
+}
+
 } // namespace

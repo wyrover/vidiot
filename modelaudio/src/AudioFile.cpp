@@ -482,12 +482,15 @@ AudioPeaks AudioFile::getPeaks(const AudioCompositionParameters& parameters, pts
     // The video data in a file may be slightly longer than the audio data, resulting in such a difference. Instead of truncating the video, the audio is extended
     // with silence, leaving the truncating (the choice) to the user.
 
-    auto itBegin = allPeaks.begin() + offset;
-    auto itEnd = allPeaks.begin() + std::min(total, offset + length);
-    if ((std::distance(allPeaks.begin(), itBegin) < total) &&
-        (std::distance(allPeaks.begin(), itEnd) <= total))
+    if (offset < total)
     {
-        result = std::move(AudioPeaks(itBegin, itEnd));
+        auto itBegin = allPeaks.begin() + offset;
+        auto itEnd = allPeaks.begin() + std::min(total, offset + length);
+        if ((std::distance(allPeaks.begin(), itBegin) < total) &&
+            (std::distance(allPeaks.begin(), itEnd) <= total))
+        {
+            result = std::move(AudioPeaks(itBegin, itEnd));
+        }
     }
     
     if (result.size() != narrow_cast<size_t>(length))

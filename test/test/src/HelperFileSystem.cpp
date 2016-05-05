@@ -129,6 +129,17 @@ wxFileName getTestFilesPath(wxString subdir)
     return result;
 }
 
+wxFileName SpecialFile(wxString filename)
+{
+    wxFileName file = getTestPath();
+    file.AppendDir("filetypes_special");
+    ASSERT(file.IsDir());
+    ASSERT(file.DirExists());
+    file.SetFullName(filename);
+    ASSERT(file.FileExists());
+    return file;
+}
+
 model::IPaths getListOfInputPaths(wxFileName path)
 {
     // Not store model::FilePtr objects in the cache.
