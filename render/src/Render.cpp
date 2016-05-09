@@ -464,6 +464,7 @@ void RenderWork::generate()
             VAR_INFO(audioCodec);
         }
 
+        VAR_INFO(context)(filename);
         av_dump_format(context, 0, filename.c_str(), 1);
 
         //////////////////////////////////////////////////////////////////////////
@@ -494,6 +495,7 @@ void RenderWork::generate()
             mVideoParameters.setBoundingBox(wxSize(videoCodec->width, videoCodec->height)).setDrawBoundingBox(false).setOptimizeForQuality();
 
             videoOpened = true;
+            VAR_INFO(videoOpened);
         }
 
         if (storeAudio)
@@ -561,6 +563,7 @@ void RenderWork::generate()
             mAudioParameters.setSampleRate(audioCodec->sample_rate).setNrChannels(audioCodec->channels);
 
             audioOpened = true;
+            VAR_INFO(audioOpened);
         }
 
         //////////////////////////////////////////////////////////////////////////
@@ -578,6 +581,7 @@ void RenderWork::generate()
         }
 
         fileOpened = true;
+        VAR_INFO(fileOpened);
 
         int result{ avformat_write_header(context, 0) };
         if (0 != result)
@@ -592,6 +596,7 @@ void RenderWork::generate()
             ASSERT_MORE_THAN_EQUALS_ZERO(videoStream->time_base.num);
             ASSERT_MORE_THAN_EQUALS_ZERO(videoStream->time_base.num);
             videoTimeFactor = static_cast<double>(videoStream->time_base.num) / static_cast<double>(videoStream->time_base.den);
+            VAR_INFO(videoTimeFactor);
         }
 
         if (storeAudio)
@@ -599,6 +604,7 @@ void RenderWork::generate()
             ASSERT_MORE_THAN_EQUALS_ZERO(audioStream->time_base.num);
             ASSERT_MORE_THAN_EQUALS_ZERO(audioStream->time_base.num);
             audioTimeFactor = static_cast<double>(audioStream->time_base.num) / static_cast<double>(audioStream->time_base.den);
+            VAR_INFO(audioTimeFactor);
         }
 
         //////////////////////////////////////////////////////////////////////////
@@ -624,6 +630,11 @@ void RenderWork::generate()
             // SHOW PROGRESS
             //////////////////////////////////////////////////////////////////////////
 
+            pts progress{ position - mFrom };
+            if (progress % 100 == 0) 
+            {
+                VAR_INFO(progress); // For debugging rendering crashes log every 100th progress.
+            }
             showProgressText(ps + " " + wxString::Format(_("Frame %1$" PRId64 " out of %2$" PRId64), position - mFrom, mLength));
             showProgress(position - mFrom);
 
