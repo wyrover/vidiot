@@ -17,6 +17,7 @@
 
 #include "StatePlaying.h"
 
+#include "CommandProcessor.h"
 #include "EventDrag.h"
 #include "EventKey.h"
 #include "EventMouse.h"
@@ -40,6 +41,8 @@ Playing::Playing( my_context ctx ) // entry
     LOG_DEBUG;
     getMouse().set(PointerNormal);
     getPlayer()->showPlayer();
+    // CommandProcessor has special code for handling undo/redo during playback
+    model::CommandProcessor::get().enableUndoRedo(true);
 }
 
 Playing::~Playing() // exit

@@ -17,6 +17,7 @@
 
 #include "StateRightDown.h"
 
+#include "CommandProcessor.h"
 #include "EventDrag.h"
 #include "EventKey.h"
 #include "EventMouse.h"
@@ -38,11 +39,13 @@ StateRightDown::StateRightDown( my_context ctx ) // entry
     :   TimeLineState( ctx )
 {
     LOG_DEBUG;
+    model::CommandProcessor::get().enableUndoRedo(false);
 }
 
 StateRightDown::~StateRightDown() // exit
 {
     LOG_DEBUG;
+    model::CommandProcessor::get().enableUndoRedo(true);
 }
 
 //////////////////////////////////////////////////////////////////////////

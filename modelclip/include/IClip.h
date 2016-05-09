@@ -209,6 +209,19 @@ protected:
     /// uninitialized when there was playback progress after the moveTo.
     /// \see invalidateNewStartPosition
     virtual boost::optional<pts> getNewStartPosition() const = 0;
+
+private:
+
+    //////////////////////////////////////////////////////////////////////////
+    // LOGGING
+    //////////////////////////////////////////////////////////////////////////
+
+    friend std::ostream& operator<<(std::ostream& os, const IClip& obj)
+    {
+        return obj.dump(os);
+    }
+
+
 };
 
 } // namespace

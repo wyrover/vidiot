@@ -54,12 +54,15 @@ MoveKeyFrame::MoveKeyFrame( my_context ctx ) // entry
     mKeyFramePosition = interval->getKeyFramePosition(mKeyFrameIndex);
 
     getSequenceView().setRealtimeRedrawing(true);
+    model::CommandProcessor::get().enableUndoRedo(false);
 }
 
 MoveKeyFrame::~MoveKeyFrame() // exit
 {
-    getSequenceView().setRealtimeRedrawing(false);
     LOG_DEBUG;
+
+    model::CommandProcessor::get().enableUndoRedo(true);
+    getSequenceView().setRealtimeRedrawing(false);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -131,8 +134,9 @@ boost::statechart::result MoveKeyFrame::abort()
 {
     if (mEditCommand != nullptr)
     {
+        model::CommandProcessor::get().enableUndoRedo(true);
         // Accepted: this leaves the command as the 'redoable' command.
-        model::CommandProcessor::get().Undo();
+        model::CommandProcessor::get().Undo();           
         mEditCommand = nullptr;
     }
     return transit<Idle>();

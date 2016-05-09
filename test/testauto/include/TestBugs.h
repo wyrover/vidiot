@@ -221,6 +221,14 @@ public:
     /// resulting in an assert in ClipView.
     void testCrashWhenMovingCursorOutsideTimelineWhenShiftBeginTrimming();
 
+    /// During the drag and drop operation undo-ing/redo-ing must not be done.
+    /// Otherwise, the model is changed before the operation is finished.
+    void testUndoRedoDuringDragAndDrop();
+
+    /// During the trimming operation undo-ing/redo-ing must not be done.
+    /// Otherwise, the model is changed before the operation is finished.
+    void testUndoRedoDuringTrimming();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////
