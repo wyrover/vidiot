@@ -140,7 +140,8 @@ void ExecuteDrop::onDragStart(const Drags& drags)
         {
             if (transition->getLeft() && transition->getRight())
             {
-                ASSERT(transition->getPrev() && transition->getNext())(transition);
+                ASSERT(transition->getPrev())(*transition);
+                ASSERT(transition->getNext())(*transition);
                 if (!transition->getPrev()->getSelected() || !transition->getNext()->getSelected())
                 {
                     unapplied.insert(transition);
