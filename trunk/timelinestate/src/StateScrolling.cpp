@@ -17,6 +17,7 @@
 
 #include "StateScrolling.h"
 
+#include "CommandProcessor.h"
 #include "EventKey.h"
 #include "EventMouse.h"
 #include "Menu.h"
@@ -34,11 +35,13 @@ StateScrolling::StateScrolling( my_context ctx ) // entry
     :   TimeLineState( ctx )
 {
     LOG_DEBUG;
+    model::CommandProcessor::get().enableUndoRedo(false);
 }
 
 StateScrolling::~StateScrolling() // exit
 {
     LOG_DEBUG;
+    model::CommandProcessor::get().enableUndoRedo(true);
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -40,6 +40,9 @@ public:
     // wxCommandProcessor
     //////////////////////////////////////////////////////////////////////////
 
+    bool CanUndo() const override;
+    bool CanRedo() const override;
+
     bool Redo() override;
     bool Submit (wxCommand *command, bool storeIt=true) override;
     bool Undo() override;
@@ -52,12 +55,21 @@ public:
     void registerPlayer(IPlayer* player);
     void unregisterPlayer(IPlayer* player);
 
+    /// Used for ensuring no undo/redo is triggered when 'busy' with another edit.
+    /// Typically used to avoid changing the model after starting a drag and drop
+    /// or trim operation and pressing CTRL-Z while the drag/trim is active.
+    /// The Undo causes the underlying model to be changed, resulting in a 
+    /// (possible) crash when finalizing the drop/trim.
+    /// \param enable iff true, Undo/Redo is allowed.
+    void enableUndoRedo(bool enable);
+
 private:
 
     //////////////////////////////////////////////////////////////////////////
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
+    bool mUndoRedoEnabled = true; ///< True iff the document may be changed via undo/redo.
     size_t mRedo = 0; ///< Number of commands in the command list that is redo-able.
     std::vector<IPlayer*> mPlayers;
 };

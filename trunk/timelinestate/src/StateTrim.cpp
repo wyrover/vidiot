@@ -17,6 +17,7 @@
 
 #include "StateTrim.h"
 
+#include "CommandProcessor.h"
 #include "EventDrag.h"
 #include "EventKey.h"
 #include "EventMouse.h"
@@ -36,12 +37,16 @@ StateTrim::StateTrim( my_context ctx ) // entry
     : TimeLineState(ctx)
     , mShiftDown(getKeyboard().getShiftDown())
 {
+    LOG_DEBUG;
     getTrim().start();
     getSequenceView().setRealtimeRedrawing(true);
+    model::CommandProcessor::get().enableUndoRedo(false);
 }
 
 StateTrim::~StateTrim() // exit
 {
+    LOG_DEBUG;
+    model::CommandProcessor::get().enableUndoRedo(true);
     getSequenceView().setRealtimeRedrawing(false);
     getTrim().stop();
 }

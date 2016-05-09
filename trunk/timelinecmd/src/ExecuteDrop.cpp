@@ -175,8 +175,10 @@ void ExecuteDrop::onDragStart(const Drags& drags)
             // and thus the transition must be dragged also.
             if (unapplied.find(transition) != unapplied.end()) continue;
 
-            ASSERT_IMPLIES(transition->getLeft() && *(transition->getLeft()) > 0, transition->getPrev() && transition->getPrev()->getSelected());
-            ASSERT_IMPLIES(transition->getRight() && *(transition->getRight())  > 0, transition->getNext() && transition->getNext()->getSelected());
+            ASSERT_IMPLIES(transition->getLeft() && *(transition->getLeft()) > 0, transition->getPrev())(*transition);
+            ASSERT_IMPLIES(transition->getLeft() && *(transition->getLeft()) > 0, transition->getPrev()->getSelected())(*transition)(*(transition->getPrev()));
+            ASSERT_IMPLIES(transition->getRight() && *(transition->getRight())  > 0, transition->getNext())(*transition);
+            ASSERT_IMPLIES(transition->getRight() && *(transition->getRight())  > 0, transition->getNext()->getSelected())(*transition)(*(transition->getNext()));
 
             UtilSet<model::IClipPtr>(mDrags).addElement(transition); // This insertion is not 'in order'. If the transition already was part, then the use of std::set ensures that it's only present once.
         }

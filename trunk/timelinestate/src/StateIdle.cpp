@@ -21,6 +21,7 @@
 #include "Clip.h"
 #include "ClipInterval.h"
 #include "ClipView.h"
+#include "CommandProcessor.h"
 #include "CreateTransitionHelper.h"
 #include "Cursor.h"
 #include "Details.h"

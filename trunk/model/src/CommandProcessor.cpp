@@ -47,8 +47,22 @@ namespace model {
 // wxCommandProcessor
 //////////////////////////////////////////////////////////////////////////
 
+bool CommandProcessor::CanUndo() const
+{
+    return mUndoRedoEnabled && wxCommandProcessor::CanUndo();
+}
+
+bool CommandProcessor::CanRedo() const
+{
+    return mUndoRedoEnabled && wxCommandProcessor::CanRedo();
+}
+
 bool CommandProcessor::Redo()
 {
+    if (!mUndoRedoEnabled) 
+    {
+        return false;
+    }
     LOG_INFO;
     ASSERT_MORE_THAN_ZERO(mRedo);
     mRedo--;
@@ -70,6 +84,10 @@ bool CommandProcessor::Submit(wxCommand *command, bool storeIt)
 
 bool CommandProcessor::Undo()
 {
+    if (!mUndoRedoEnabled)
+    {
+        return false;
+    }
     LOG_INFO;
     mRedo++;
     std::vector<std::pair<IPlayer*, ResumeInfo>> players{ pausePlayers(mPlayers) };
@@ -111,6 +129,11 @@ void CommandProcessor::unregisterPlayer(IPlayer* player)
     std::vector<IPlayer*>::iterator it{ std::find(mPlayers.begin(), mPlayers.end(), player) };
     ASSERT(it != mPlayers.end())(mPlayers)(player);
     mPlayers.erase(it);
+}
+
+void CommandProcessor::enableUndoRedo(bool enable)
+{
+    mUndoRedoEnabled = enable;
 }
 
 } // namespace

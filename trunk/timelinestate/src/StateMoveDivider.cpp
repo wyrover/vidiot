@@ -17,6 +17,7 @@
 
 #include "StateMoveDivider.h"
 
+#include "CommandProcessor.h"
 #include "EventDrag.h"
 #include "EventKey.h"
 #include "EventMouse.h"
@@ -37,11 +38,13 @@ MoveDivider::MoveDivider( my_context ctx ) // entry
 ,   mOriginalPosition(getSequence()->getDividerPosition())
 {
     LOG_DEBUG;
+    model::CommandProcessor::get().enableUndoRedo(false);
 }
 
 MoveDivider::~MoveDivider() // exit
 {
     LOG_DEBUG;
+    model::CommandProcessor::get().enableUndoRedo(true);
 }
 
 //////////////////////////////////////////////////////////////////////////

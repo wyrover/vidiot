@@ -792,4 +792,28 @@ void TestBugs::testCrashWhenMovingCursorOutsideTimelineWhenShiftBeginTrimming()
     TimelineEndTrim();
 }
 
+void TestBugs::testUndoRedoDuringDragAndDrop()
+{
+    StartTestSuite();    
+    ASSERT_HISTORY_END(cmd::ProjectViewCreateAutoFolder)(cmd::ProjectViewCreateSequence);
+    TimelineDrag(From(Center(VideoClip(0, 0))).To(Center(VideoClip(0, 4))));
+    ASSERT_HISTORY_END(cmd::ProjectViewCreateAutoFolder)(cmd::ProjectViewCreateSequence)(gui::timeline::cmd::ExecuteDrop);
+    TimelineDrag(From(Center(VideoClip(0, 6))).To(Center(VideoClip(0, 7))).DontReleaseMouse()); 
+    Undo();
+    ASSERT_HISTORY_END(cmd::ProjectViewCreateAutoFolder)(cmd::ProjectViewCreateSequence)(gui::timeline::cmd::ExecuteDrop);
+    TimelineDrag(To(Center(VideoClip(0, 1))));
+}
+
+void TestBugs::testUndoRedoDuringTrimming()
+{
+    StartTestSuite();
+    ASSERT_HISTORY_END(cmd::ProjectViewCreateAutoFolder)(cmd::ProjectViewCreateSequence);
+    TimelineTrimLeft(VideoClip(0, 4), 100, false);
+    ASSERT_HISTORY_END(cmd::ProjectViewCreateAutoFolder)(cmd::ProjectViewCreateSequence)(gui::timeline::cmd::TrimClip);
+    TimelineTrimLeft(VideoClip(0, 5), 50, false, false);
+    Undo();
+    ASSERT_HISTORY_END(cmd::ProjectViewCreateAutoFolder)(cmd::ProjectViewCreateSequence)(gui::timeline::cmd::TrimClip);
+    TimelineEndTrim(false);
+}
+
 } // namespace

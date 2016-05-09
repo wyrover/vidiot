@@ -17,6 +17,7 @@
 
 #include "StateLeftDown.h"
 
+#include "CommandProcessor.h"
 #include "Drag.h"
 #include "EventDrag.h"
 #include "EventKey.h"
@@ -38,11 +39,13 @@ StateLeftDown::StateLeftDown( my_context ctx ) // entry
     ,   mSelectionEmpty(getSelection().isEmpty()) // Cached for performance
 {
     LOG_DEBUG;
+    model::CommandProcessor::get().enableUndoRedo(false);
 }
 
 StateLeftDown::~StateLeftDown() // exit
 {
     LOG_DEBUG;
+    model::CommandProcessor::get().enableUndoRedo(true);
 }
 //////////////////////////////////////////////////////////////////////////
 // EVENTS

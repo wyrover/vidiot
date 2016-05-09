@@ -20,6 +20,7 @@
 #include "AudioClip.h"
 #include "AudioTrack.h"
 #include "ClipView.h"
+#include "CommandProcessor.h"
 #include "EventDrag.h"
 #include "EventKey.h"
 #include "EventPart.h"
@@ -51,11 +52,14 @@ MoveTrackDivider::MoveTrackDivider( my_context ctx ) // entry
 
     mTrack = info.track;
     mOriginalHeight = mTrack->getHeight();
+    model::CommandProcessor::get().enableUndoRedo(false);
+
 }
 
 MoveTrackDivider::~MoveTrackDivider() // exit
 {
     LOG_DEBUG;
+    model::CommandProcessor::get().enableUndoRedo(true);
 }
 
 //////////////////////////////////////////////////////////////////////////

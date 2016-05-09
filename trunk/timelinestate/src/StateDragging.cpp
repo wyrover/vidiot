@@ -17,6 +17,7 @@
 
 #include "StateDragging.h"
 
+#include "CommandProcessor.h"
 #include "Drag.h"
 #include "EventDrag.h"
 #include "EventKey.h"
@@ -36,12 +37,13 @@ Dragging::Dragging( my_context ctx ) // entry
     :   TimeLineState( ctx )
 {
     LOG_DEBUG;
-
+    model::CommandProcessor::get().enableUndoRedo(false);
 }
 
 Dragging::~Dragging() // exit
 {
     LOG_DEBUG;
+    model::CommandProcessor::get().enableUndoRedo(true);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -114,7 +116,8 @@ boost::statechart::result Dragging::react( const EvKeyDown& evt )
         break;
     case WXK_ESCAPE:    
         evt.consumed();
-        getDrag().stop(); return transit<Idle>();        
+        getDrag().stop(); 
+        return transit<Idle>();        
         break;
     case 'd':
     case 'D':           

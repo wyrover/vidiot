@@ -17,6 +17,7 @@
 
 #include "StateMovingCursor.h"
 
+#include "CommandProcessor.h"
 #include "Cursor.h"
 #include "EventDrag.h"
 #include "EventKey.h"
@@ -45,11 +46,13 @@ MovingCursor::MovingCursor( my_context ctx ) // entry
         triggerToggleStart();
     }
     getPlayer()->showPlayer();
+    model::CommandProcessor::get().enableUndoRedo(false);
 }
 
 MovingCursor::~MovingCursor() // exit
 {
     LOG_DEBUG;
+    model::CommandProcessor::get().enableUndoRedo(true);
 }
 
 //////////////////////////////////////////////////////////////////////////
