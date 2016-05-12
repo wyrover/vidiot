@@ -138,12 +138,20 @@ void Drag::start(const wxPoint& hotspot, bool external)
         mDraggedTrack = mVideo.getTempTrack();
 
         if (getSequence()->getLength() < mVideo.getTempTrack()->getLength())
-        {
+        {                             
             // Extend sequence view if it is not big enough to hold the dragged data.
             getSequenceView().setMinimumLength(getSequenceView().getDefaultLength() + mVideo.getTempTrack()->getLength());
         }
 
+        // By default, position the hotspot centered in the new content, for easiest placement.
         mHotspot.x = getZoom().ptsToPixels(mVideo.getTempTrack()->getLength() / 2);
+        if (mHotspot.x >= getScrolling().getRightPixel())
+        {
+            // If the newly dragged clip(s) is much larger than the original sequence, using a hotspot position
+            // outside the visible region can cause the 'clips to be dropped' to positioned at a currently invisible
+            // position. Ensure that the clips are always dragged into the visible area.
+            mHotspot.x = getScrolling().getVirtualPosition(getMouse().getPhysicalPosition()).x - getScrolling().getLeftPixel();
+        }
         mHotspotPts = getZoom().pixelsToPts(mHotspot.x);
 
         // When dragging new clips into the timeline, the clips also need to be removed first.
@@ -489,20 +497,20 @@ void Drag::updateDragBitmap()
     temp.SetMask(new wxMask(mask));
 
     VAR_DEBUG(bitmapSize)(roi_x)(roi_y)(size_x)(size_y);
-    ASSERT_MORE_THAN_ZERO(size_x);
-    ASSERT_MORE_THAN_ZERO(size_y);
+    ASSERT_MORE_THAN_ZERO(size_x)(bitmapSize)(roi_x)(roi_y)(size_x)(size_y);
+    ASSERT_MORE_THAN_ZERO(size_y)(bitmapSize)(roi_x)(roi_y)(size_x)(size_y);
     mBitmapOffset.x = dragBitmapOffsetX + roi_x;
     mBitmapOffset.y = dragBitmapOffsetY + roi_y;
 
     ASSERT(temp.IsOk());
-    ASSERT_MORE_THAN_EQUALS_ZERO(roi_x);
-    ASSERT_MORE_THAN_EQUALS_ZERO(roi_y);
-    ASSERT_LESS_THAN_EQUALS(roi_x + size_x, temp.GetWidth());
-    ASSERT_LESS_THAN_EQUALS(roi_y + size_y, temp.GetHeight());
+    ASSERT_MORE_THAN_EQUALS_ZERO(roi_x)(bitmapSize)(roi_x)(roi_y)(size_x)(size_y);
+    ASSERT_MORE_THAN_EQUALS_ZERO(roi_y)(bitmapSize)(roi_x)(roi_y)(size_x)(size_y);
+    ASSERT_LESS_THAN_EQUALS(roi_x + size_x, temp.GetWidth())(bitmapSize)(roi_x)(roi_y)(size_x)(size_y);
+    ASSERT_LESS_THAN_EQUALS(roi_y + size_y, temp.GetHeight())(bitmapSize)(roi_x)(roi_y)(size_x)(size_y);
     // GetSubBitmap is not an obsolete call: the bitmap becomes smaller, although only
     // slightly. Furthermore, dragging to the left doesn't work, if the 'unclipped'
     // bitmap still touches the left edge of the timeline (low scrolling offset) 6.
-    mBitmap =  temp.GetSubBitmap(wxRect(roi_x,roi_y,size_x,size_y));
+    mBitmap = temp.GetSubBitmap(wxRect(roi_x,roi_y,size_x,size_y));
 }
 
 void Drag::drawDraggedClips(wxDC& dc, const wxRegion& region, const wxPoint& offset) const
