@@ -156,6 +156,16 @@ pts Scrolling::getFourthPts() const
     return getZoom().pixelsToPts( position.x + size.x / 4 );
 }
 
+pixel Scrolling::getLeftPixel() const
+{
+    return getOffset().x;
+}
+
+pixel Scrolling::getRightPixel() const
+{
+    return getOffset().x + getTimeline().GetClientSize().x;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
