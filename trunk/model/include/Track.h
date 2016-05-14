@@ -30,7 +30,7 @@ class Track
 {
 public:
 
-    const int sDefaultTrackHeight = 50;
+    static const int sDefaultTrackHeight = 50;
 
     //////////////////////////////////////////////////////////////////////////
     // INITIALIZATION
