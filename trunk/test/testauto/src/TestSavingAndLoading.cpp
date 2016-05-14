@@ -299,8 +299,7 @@ void TestSavingAndLoading::checkDocument(wxFileName path)
         // Known bug at some point: mLastModified not known for a recently opened file (in the project view).
         // The method geteLastModified was accessed when the date column comes into view.
         StartTest(path.GetName() + ": " + "Open folder");
-        wxString s = util::path::toPath(util::path::normalize(getTestFilesPath().GetFullPath()));
-        gui::ProjectView::get().expand(getRoot()->find(s).front());
+        ProjectViewExpandInput();
     });
     util::thread::RunInMainAndWait([]()
     {

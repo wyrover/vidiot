@@ -113,7 +113,7 @@ void Drag::start(const wxPoint& hotspot, bool external)
 {
     PointerPositionInfo info = getMouse().getInfo(hotspot);
 
-    reset();
+    reset(external);
     mActive = true;
     mSnappingEnabled = true;
     mHotspot = hotspot;
@@ -381,7 +381,7 @@ void Drag::stop()
         // Without this refresh the clip's right position is not refreshed.
         getTimeline().Refresh();
     }
-    reset();
+    reset(false);
     getSequenceView().setMinimumLength(0);
     getTimeline().resize();
 }
@@ -548,7 +548,7 @@ Drag::DragInfo::~DragInfo()
     delete mView;
 }
 
-void Drag::DragInfo::reset()
+void Drag::DragInfo::reset(bool external)
 {
     mOffset = 0;
 
@@ -558,7 +558,7 @@ void Drag::DragInfo::reset()
     // -1: nTracks is 1-based
     // -1: at least a clip in track 1 is selected so can be used as default.
     // +1: at most one track can be added automatically
-    mMaxOffset = (nTracks() - 1) -1 + 1;
+    mMaxOffset = (nTracks() - 1) - 1 + 1;
 
     if (mTempTrack)
     {
@@ -568,22 +568,21 @@ void Drag::DragInfo::reset()
     mTempTrack.reset();
 
     // Determine boundaries for 'inside' drags
-    for ( model::IClipPtr clip : getSequence()->getSelectedClips() )
+    if (!external)
     {
-        model::TrackPtr track = clip->getTrack();
-        if (track->isA<model::VideoTrack>() == mIsVideo)
+        for (model::IClipPtr clip : getSequence()->getSelectedClips())
         {
-            mMinOffset = std::max(mMinOffset, track->getIndex() * -1);
-            mMaxOffset = std::min(mMaxOffset, nTracks() - track->getIndex() - 1); // -1: nTracks is 1-based, getIndex() is 0-based.
+            model::TrackPtr track = clip->getTrack();
+            if (track->isA<model::VideoTrack>() == mIsVideo)
+            {
+                mMinOffset = std::max(mMinOffset, track->getIndex() * -1);
+                mMaxOffset = std::min(mMaxOffset, nTracks() - track->getIndex() - 1); // -1: nTracks is 1-based, getIndex() is 0-based.
+            }
         }
     }
 
-    if (!mTempTrack)
-    {
-        // One track may be added during the drag operation.
-        // This is done for only internal drags since for external drags it leads to confusing behavior.
-        mMaxOffset += 1; // now it works nicely for external drags, including adding the required track.
-    }
+    // One track may be added during the drag operation.
+    mMaxOffset += 1; // works also for external drags, including adding the required track.
 }
 
 void Drag::DragInfo::updateOffset(int indexOfTrackInTimeline, int indexOfDraggedTrack)
@@ -675,7 +674,7 @@ int Drag::DragInfo::nTracks()
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-void Drag::reset()
+void Drag::reset(bool external)
 {
     delete mCommand;
     mHotspot = wxPoint(0,0);
@@ -686,8 +685,8 @@ void Drag::reset()
     mDragPoints.clear();
     mSnapOffset = 0;
     mSnaps.clear();
-    mVideo.reset();
-    mAudio.reset();
+    mVideo.reset(external);
+    mAudio.reset(external);
     mDraggedTrack.reset();
     mDropTrack.reset();
     mShift.reset();

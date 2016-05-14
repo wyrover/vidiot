@@ -70,4 +70,147 @@ void TestUiBugs::testCrashWhenRightClickingOutsideAllTracks()
     TimelineKeyPress(WXK_ESCAPE);
 }
 
+void TestUiBugs::testDragAndDropWithAddingTracksWithSelectedClipInTopMostTrackForVideo()
+{
+    StartTestSuite();
+
+    wxPoint PositionForTriggeringAddTrack{ getTimeline().GetScreenPosition() + wxPoint(50, gui::timeline::TimescaleView::TimeScaleHeight + 4) };
+    wxPoint PositionInsideAddedTrack{ getTimeline().GetScreenPosition() + wxPoint(50, gui::timeline::TimescaleView::TimeScaleHeight + 25) };
+
+    model::NodePtr node = ProjectViewFind("01.avi");
+    ProjectViewExpandInput();
+    DragFromProjectViewToTimeline(node, PositionForTriggeringAddTrack);
+    ASSERT_VIDEOTRACKS(2);
+    ASSERT_VIDEOTRACK1(EmptyClip)(VideoClip);
+    DragFromProjectViewToTimeline(node, PositionForTriggeringAddTrack);
+    ASSERT_VIDEOTRACKS(3);
+    ASSERT_VIDEOTRACK2(EmptyClip)(VideoClip);
+    TimelineSelectClips({ VideoClip(2, 1) });
+    // Dragged further: When the mouse pointer was inside the newly created track during the DND,
+    // the drag feedback was flickering (visible/invisible continously) and the drop caused an error when deleting all clips.
+    DragFromProjectViewToTimeline(node, PositionInsideAddedTrack, { PositionForTriggeringAddTrack });
+    // todo pressing ctrl->rightarrow at this point causes crash in getcolumnheader in wxdataviewctrl???
+
+    TimelineLeftClick(wxPoint{ 5,5 }); // Give focus
+    TimelineKeyPress(WXK_CONTROL, 'a'); // Select all clips
+    TimelineKeyPress(WXK_DELETE);  // Delete all clips (including the clip that caused the crash when being deleted)
+
+    ASSERT_VIDEOTRACKS(4);
+    ASSERT_VIDEOTRACK0SIZE(0);
+    ASSERT_VIDEOTRACK1SIZE(0);
+    ASSERT_VIDEOTRACK2SIZE(0);
+    ASSERT_VIDEOTRACK3SIZE(0);
+}
+
+void TestUiBugs::testDragAndDropWithAddingTracksWithSelectedClipInTopMostTrackForVideoOnly()
+{
+    StartTestSuite();
+
+    wxPoint PositionForTriggeringAddTrack{ getTimeline().GetScreenPosition() + wxPoint(50, gui::timeline::TimescaleView::TimeScaleHeight + 4) };
+    wxPoint PositionInsideAddedTrack{ getTimeline().GetScreenPosition() + wxPoint(50, gui::timeline::TimescaleView::TimeScaleHeight + 25) };
+
+    model::NodePtr node = ProjectViewAddFiles({ SpecialFile("1_minute_black_video_only.avi") }).front(); // Video only
+    ProjectViewExpandInput();
+    DragFromProjectViewToTimeline(node, PositionForTriggeringAddTrack);
+    ASSERT_VIDEOTRACKS(2);
+    ASSERT_VIDEOTRACK1(VideoClip);
+    DragFromProjectViewToTimeline(node, PositionForTriggeringAddTrack);
+    ASSERT_VIDEOTRACKS(3);
+    ASSERT_VIDEOTRACK2(VideoClip);
+    TimelineSelectClips({ VideoClip(2, 0) });
+    // Dragged further: When the mouse pointer was inside the newly created track during the DND,
+    // the drag feedback was flickering (visible/invisible continously) and the drop caused an error when deleting all clips.
+    DragFromProjectViewToTimeline(node, PositionInsideAddedTrack, { PositionForTriggeringAddTrack });
+    // todo pressing ctrl->rightarrow at this point causes crash in getcolumnheader in wxdataviewctrl???
+
+    TimelineLeftClick(wxPoint{ 5,5 }); // Give focus
+    TimelineKeyPress(WXK_CONTROL, 'a'); // Select all clips
+    TimelineKeyPress(WXK_DELETE);  // Delete all clips (including the clip that caused the crash when being deleted)
+
+    ASSERT_VIDEOTRACKS(4);
+    ASSERT_VIDEOTRACK0SIZE(0);
+    ASSERT_VIDEOTRACK1SIZE(0);
+    ASSERT_VIDEOTRACK2SIZE(0);
+    ASSERT_VIDEOTRACK3SIZE(0);
+}
+
+void TestUiBugs::testDragAndDropWithAddingTracksWithSelectedClipInTopMostTrackForAudio()
+{
+    StartTestSuite();
+
+    model::NodePtr node = ProjectViewFind("01.avi");
+    ProjectViewExpandInput();
+
+    wxPoint PositionForTriggeringAddTrack{ getTimeline().GetScreenPosition() + wxPoint(50, getTimeline().GetSize().GetHeight() - 5) };
+
+    DragFromProjectViewToTimeline(node, PositionForTriggeringAddTrack);
+    ASSERT_AUDIOTRACKS(2);
+    ASSERT_AUDIOTRACK1(EmptyClip)(AudioClip);
+    DragFromProjectViewToTimeline(node, PositionForTriggeringAddTrack);
+    ASSERT_AUDIOTRACKS(3);
+    ASSERT_AUDIOTRACK2(EmptyClip)(AudioClip);
+
+    DragTrackDivider(VideoTrack(0), 30);
+    DragAudioVideoDivider(-30);
+    DragTrackDivider(AudioTrack(0), -30);
+    DragTrackDivider(AudioTrack(1), -30);
+    
+    wxPoint PositionInsideAddedTrack{ getTimeline().GetScreenPosition() + wxPoint(50, BottomPixel(AudioTrack(2)) + gui::timeline::DividerView::TrackDividerHeight + (model::Track::sDefaultTrackHeight / 2)) };
+    wxPoint PositionInsideTrackAboveAddedTrack{ getTimeline().GetScreenPosition() + wxPoint(50, VCenter(AudioTrack(2))) };
+
+    TimelineSelectClips({ AudioClip(2, 1) }); 
+    // Drag sequence: When the mouse pointer was moved inside the newly created track during the DND, from the track above it,
+    // the drag feedback was flickering (visible/invisible continously) and the drop caused an error when deleting all clips.
+    DragFromProjectViewToTimeline(node, PositionInsideAddedTrack, { PositionForTriggeringAddTrack, PositionInsideAddedTrack, PositionInsideTrackAboveAddedTrack });
+
+    TimelineLeftClick(wxPoint{ 5,5 }); // Give focus
+    TimelineKeyPress(WXK_CONTROL, 'a'); // Select all clips
+    TimelineKeyPress(WXK_DELETE);  // Delete all clips (including the clip that caused the crash when being deleted)
+
+    ASSERT_AUDIOTRACKS(4);
+    ASSERT_AUDIOTRACK0SIZE(0);
+    ASSERT_AUDIOTRACK1SIZE(0);
+    ASSERT_AUDIOTRACK2SIZE(0);
+    ASSERT_AUDIOTRACK3SIZE(0);
+}
+
+void TestUiBugs::testDragAndDropWithAddingTracksWithSelectedClipInTopMostTrackForAudioOnly()
+{
+    StartTestSuite();
+
+    model::NodePtr node = ProjectViewAddFiles({ SpecialFile("30_seconds_silence_audio_only.wav") }).front();
+    ProjectViewExpandInput();
+
+    wxPoint PositionForTriggeringAddTrack{ getTimeline().GetScreenPosition() + wxPoint(50, getTimeline().GetSize().GetHeight() - 5) };
+
+    DragFromProjectViewToTimeline(node, PositionForTriggeringAddTrack);
+    ASSERT_AUDIOTRACKS(2);
+    ASSERT_AUDIOTRACK1(AudioClip);
+    DragFromProjectViewToTimeline(node, PositionForTriggeringAddTrack);
+    ASSERT_AUDIOTRACKS(3);
+    ASSERT_AUDIOTRACK2(AudioClip);
+
+    DragTrackDivider(VideoTrack(0), 30);
+    DragAudioVideoDivider(-30);
+    DragTrackDivider(AudioTrack(0), -30);
+    DragTrackDivider(AudioTrack(1), -30);
+
+    wxPoint PositionInsideAddedTrack{ getTimeline().GetScreenPosition() + wxPoint(50, BottomPixel(AudioTrack(2)) + gui::timeline::DividerView::TrackDividerHeight + (model::Track::sDefaultTrackHeight / 2)) };
+    wxPoint PositionInsideTrackAboveAddedTrack{ getTimeline().GetScreenPosition() + wxPoint(50, VCenter(AudioTrack(2))) };
+
+    TimelineSelectClips({ AudioClip(2, 0) });
+    // Drag sequence: When the mouse pointer was moved inside the newly created track during the DND, from the track above it,
+    // the drag feedback was flickering (visible/invisible continously) and the drop caused an error when deleting all clips.
+    DragFromProjectViewToTimeline(node, PositionInsideAddedTrack, { PositionForTriggeringAddTrack, PositionInsideAddedTrack, PositionInsideTrackAboveAddedTrack });
+
+    TimelineLeftClick(wxPoint{ 5,5 }); // Give focus
+    TimelineKeyPress(WXK_CONTROL, 'a'); // Select all clips
+    TimelineKeyPress(WXK_DELETE);  // Delete all clips (including the clip that caused the crash when being deleted)
+
+    ASSERT_AUDIOTRACKS(4);
+    ASSERT_AUDIOTRACK0SIZE(0);
+    ASSERT_AUDIOTRACK1SIZE(0);
+    ASSERT_AUDIOTRACK2SIZE(0);
+    ASSERT_AUDIOTRACK3SIZE(0);
+}
 } // namespace

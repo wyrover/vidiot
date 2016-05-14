@@ -41,6 +41,8 @@ void ProjectViewSetFocus();
 /// All nodes not in the list will be unselected.
 void ProjectViewSelect(model::NodePtrs nodes);
 
+void ProjectViewExpandInput();
+
 /// Create a new autofolder to the given path in a given parent folder or in the root (default)
 /// \return new autofolder
 model::FolderPtr ProjectViewAddAutoFolder( wxFileName path, model::FolderPtr parent = getRoot() );
@@ -80,13 +82,19 @@ size_t ProjectViewCount();
 /// \param node node to be found
 wxPoint ProjectViewFindNode( model::NodePtr node );
 
+/// \return first node in the project view with the given name
+/// \param name name to be searched in the project view
+/// \pre project view contains a node with the given name
+model::NodePtr ProjectViewFind(const wxString& name);
+
 /// \return center position of given node, in screen coordinates
 wxPoint ProjectViewCenteredPosition(model::NodePtr node);
 
 /// Perform a drag and drop operation from project view to the timeline
 /// \param from position within project view
 /// \param to position within timeline
-void DragFromProjectViewToTimeline(model::NodePtr node, wxPoint to);
+/// \param via if != wxDefaultPosition then the drag moves to this point first
+void DragFromProjectViewToTimeline(model::NodePtr node, wxPoint to, std::list<wxPoint> via = {});
 
 /// Open the timeline for a sequence
 /// \param sequence sequence for which a timeline must be opened

@@ -72,6 +72,8 @@ pixel RightPixel(model::TrackPtr track);
 
 pixel TopPixel(model::TrackPtr track);
 
+pixel BottomPixel(model::TrackPtr track);
+
 pixel VBottomQuarter(model::TrackPtr clip);
 
 pixel LeftPixel(model::IClipPtr clip);
@@ -171,6 +173,18 @@ void TimelineShiftDeleteClip(model::IClipPtr clip);
 /// Delete the given clips (and their links, if any) from the timeline via shift-delete
 /// \param clips clips to be deleted from the timeline
 void TimelineShiftDeleteClips(model::IClips clips);
+
+/// Move the audio video divider
+/// \param offset how much to move the divider down (>0) or up (<0)
+/// \pre offset != 0
+void DragAudioVideoDivider(pixel offset);
+
+/// Move the audio video or a track divider
+/// \param track indicates which track divider must be moved (this track's height will be changed), so it's the track divider 'beyond' this tracki.
+/// \param offset how much to move the divider down (>0) or up (<0)
+/// \pre track != nullptr
+/// \pre offset != 0
+void DragTrackDivider(model::TrackPtr track, pixel offset);
 
 /// Dump the current sequence.
 void DumpSequence();

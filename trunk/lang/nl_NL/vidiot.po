@@ -19,7 +19,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-05-08 20:19+0200\n"
+"POT-Creation-Date: 2016-05-14 13:24+0200\n"
 "PO-Revision-Date: 2016-04-21 19:16+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -768,7 +768,7 @@ msgstr ""
 #. TRANSLATORS: %s == Path to file that cannot be opened
 #: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:876
 #: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:902
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:576
+#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:579
 msgid "Failed to open file"
 msgstr "Het openen van het bestand is mislukt"
 
@@ -1729,56 +1729,56 @@ msgstr "Bezig met genereren van film %s"
 msgid "Unsupported number of ticks per frame in target codec"
 msgstr "Niet ondersteund aantal 'ticks per frame' in codec"
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:477
+#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:478
 msgid "Failed to open video codec"
 msgstr "Het openen van de video codec is mislukt"
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:503
+#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:505
 msgid "Failed to open audio codec"
 msgstr "Het openen van de audio codec is mislukt"
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:534
+#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:536
 msgid "Failed to determine audio sample size"
 msgstr "Het bepalen van de audio sample grootte is mislukt"
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:546
+#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:548
 msgid "Failed to initialize audio resampler"
 msgstr "Het initializeren van de audio resampler is mislukt"
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:555
+#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:557
 msgid "Failed to allocate memory for resampling"
 msgstr "Het reserveren van geheugen voor resampling is mislukt"
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:586
+#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:590
 msgid "Failed to write file header"
 msgstr "Het schrijven van de header van het bestand is mislukt."
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:627
+#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:638
 #, c-format
 msgid "Frame %1$<PRId64> out of %2$<PRId64>"
 msgstr "Beeld %1$<PRId64> van %2$<PRId64>"
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:727
+#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:738
 msgid "Failed to encode audio"
 msgstr "Het encoderen van audio is mislukt"
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:746
+#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:757
 msgid "Failed to write audio"
 msgstr "Het schrijven van audio is mislukt"
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:837
+#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:848
 msgid "Failed to write raw video"
 msgstr "Het schrijven van ruwe video data is mislukt"
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:851
+#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:862
 msgid "Failed to encode video"
 msgstr "Het encoderen van video data is mislukt"
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:866
+#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:877
 msgid "Failed to write video"
 msgstr "Het schrijven van video data is mislukt"
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:879
+#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:890
 msgid "Failed to close file"
 msgstr "Het sluiten van het bestand is mislukt"
 
@@ -2362,7 +2362,7 @@ msgstr "clip"
 msgid "Unlink clips"
 msgstr "Ontkoppel clips"
 
-#: C:\Vidiot\vidiot_trunk\timelinestate\src\StateMoveKeyFrame.cpp:82
+#: C:\Vidiot\vidiot_trunk\timelinestate\src\StateMoveKeyFrame.cpp:85
 msgid "Move key frame"
 msgstr "Verplaats sleutelbeeld"
 

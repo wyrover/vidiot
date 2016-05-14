@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-05-08 20:19+0200\n"
+"POT-Creation-Date: 2016-05-14 13:24+0200\n"
 "PO-Revision-Date: 2015-11-01 11:44+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -714,7 +714,7 @@ msgstr ""
 #. TRANSLATORS: %s == Path to file that cannot be opened
 #: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:876
 #: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:902
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:576
+#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:579
 msgid "Failed to open file"
 msgstr ""
 
@@ -1607,56 +1607,56 @@ msgstr ""
 msgid "Unsupported number of ticks per frame in target codec"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:477
+#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:478
 msgid "Failed to open video codec"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:503
+#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:505
 msgid "Failed to open audio codec"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:534
+#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:536
 msgid "Failed to determine audio sample size"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:546
+#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:548
 msgid "Failed to initialize audio resampler"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:555
+#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:557
 msgid "Failed to allocate memory for resampling"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:586
+#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:590
 msgid "Failed to write file header"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:627
+#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:638
 #, c-format
 msgid "Frame %1$<PRId64> out of %2$<PRId64>"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:727
+#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:738
 msgid "Failed to encode audio"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:746
+#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:757
 msgid "Failed to write audio"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:837
+#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:848
 msgid "Failed to write raw video"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:851
+#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:862
 msgid "Failed to encode video"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:866
+#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:877
 msgid "Failed to write video"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:879
+#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:890
 msgid "Failed to close file"
 msgstr ""
 
@@ -2215,7 +2215,7 @@ msgstr ""
 msgid "Unlink clips"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timelinestate\src\StateMoveKeyFrame.cpp:82
+#: C:\Vidiot\vidiot_trunk\timelinestate\src\StateMoveKeyFrame.cpp:85
 msgid "Move key frame"
 msgstr ""
 

@@ -415,6 +415,14 @@ void TimelineKeyPress(int key)
     TimelineKeyUp(key);
 }
 
+void TimelineKeyPress(int modifier, int key)
+{
+    TimelineKeyDown(modifier);
+    TimelineKeyDown(key);
+    TimelineKeyUp(key);
+    TimelineKeyUp(modifier);
+}
+
 void TimelineKeyPressN(int count, int keycode)
 {
     for (int i = 0; i < count; ++i) { TimelineKeyPress(keycode); }
