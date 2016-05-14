@@ -89,7 +89,6 @@ void TestUiBugs::testDragAndDropWithAddingTracksWithSelectedClipInTopMostTrackFo
     // Dragged further: When the mouse pointer was inside the newly created track during the DND,
     // the drag feedback was flickering (visible/invisible continously) and the drop caused an error when deleting all clips.
     DragFromProjectViewToTimeline(node, PositionInsideAddedTrack, { PositionForTriggeringAddTrack });
-    // todo pressing ctrl->rightarrow at this point causes crash in getcolumnheader in wxdataviewctrl???
 
     TimelineLeftClick(wxPoint{ 5,5 }); // Give focus
     TimelineKeyPress(WXK_CONTROL, 'a'); // Select all clips
@@ -121,7 +120,6 @@ void TestUiBugs::testDragAndDropWithAddingTracksWithSelectedClipInTopMostTrackFo
     // Dragged further: When the mouse pointer was inside the newly created track during the DND,
     // the drag feedback was flickering (visible/invisible continously) and the drop caused an error when deleting all clips.
     DragFromProjectViewToTimeline(node, PositionInsideAddedTrack, { PositionForTriggeringAddTrack });
-    // todo pressing ctrl->rightarrow at this point causes crash in getcolumnheader in wxdataviewctrl???
 
     TimelineLeftClick(wxPoint{ 5,5 }); // Give focus
     TimelineKeyPress(WXK_CONTROL, 'a'); // Select all clips
