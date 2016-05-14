@@ -634,6 +634,24 @@ void File::openFile()
         }
     };
 
+    auto isCodecSupported = [this, path](AVStream* stream) -> bool
+    {
+        AVCodec* codec = avcodec_find_decoder(stream->codec->codec_id);
+        if (codec == nullptr)
+        {
+            LOG_WARNING << "Unsupported codec (could not find) '" << path << "'. Codec id " << stream->codec->codec_id << ".";
+            return false;
+        }
+        boost::mutex::scoped_lock lock(Avcodec::sMutex);
+        int result = avcodec_open2(stream->codec, codec, 0);
+        if (result != 0)
+        {
+            LOG_WARNING << "Unsupported codec (could not open) '" << path << "'. Codec id " << stream->codec->codec_id << ". Error code: " << avcodecErrorString(result);
+            return false;
+        }
+        avcodec_close(stream->codec);
+        return true;
+    };
     auto isAudioSupported = [this,path](AVStream* stream) -> bool
     {
         if (stream->codec->codec_type != AVMEDIA_TYPE_AUDIO)
@@ -666,6 +684,8 @@ void File::openFile()
 
     auto isVideoSupported = [this,path](AVStream* stream) -> bool
     {
+        // Note: Called very often when scanning through the entire file for determining the video length.
+        //       Therefore, do not add lengthy operations here.
         if (stream->codec->codec_type != AVMEDIA_TYPE_VIDEO)
         {
             return false;
@@ -689,65 +709,73 @@ void File::openFile()
         return true;
     };
 
-    mNumberOfFrames = boost::none;
-    mStreamIndex = STREAMINDEX_UNDEFINED;
-    mMaximumStartPts = 0;
-    for (unsigned int i=0; i < mFileContext->nb_streams; ++i)
+    if (!mNumberOfFrames || 
+        mStreamIndex == STREAMINDEX_UNDEFINED)
     {
-        AVStream* stream = mFileContext->streams[i];
+        // Determine number of frames and correct stream index.
+        // Not determined again if already known for performance (opening the codec)
+        mNumberOfFrames = boost::none;
+        mStreamIndex = STREAMINDEX_UNDEFINED;
+        mMaximumStartPts = 0;
+        for (unsigned int i = 0; i < mFileContext->nb_streams; ++i)
+        {
+            AVStream* stream = mFileContext->streams[i];
 
-        stream->discard = AVDISCARD_NONE;
+            stream->discard = AVDISCARD_NONE;
 
-        if (isVideoSupported(stream))
-        {
-            mHasVideo = true;
+            if (isCodecSupported(stream) && 
+                isVideoSupported(stream))
+            {
+                mHasVideo = true;
 
-            if (stream->duration != AV_NOPTS_VALUE)
-            {
-                setNumberOfFrames(getFrameCount(stream, stream->duration));
+                if (stream->duration != AV_NOPTS_VALUE)
+                {
+                    setNumberOfFrames(getFrameCount(stream, stream->duration));
+                }
+                if (stream->nb_frames != AV_NOPTS_VALUE)
+                {
+                    // Convert to the Project frame rate.
+                    AVRational rate = av_stream_get_r_frame_rate(stream);
+                    setNumberOfFrames(Convert::timeToPts(Convert::ptsToTime(stream->nb_frames, FrameRate{ rate.num, rate.den })));
+                }
+                if (stream->start_time != AV_NOPTS_VALUE &&
+                    stream->start_time > mMaximumStartPts)
+                {
+                    mMaximumStartPts = stream->start_time;
+                }
+                // todo BBC News_BBC TWO_2010_06_30_01_23_00.wtv has multiple audio streams
+                // add a (optional) setting to 'details' for selecting the audio (and video) stream in case of multiple streams.
             }
-            if (stream->nb_frames != AV_NOPTS_VALUE)
+            else if (isCodecSupported(stream) && 
+                isAudioSupported(stream))
             {
-                // Convert to the Project frame rate.
-                AVRational rate = av_stream_get_r_frame_rate(stream);
-                setNumberOfFrames(Convert::timeToPts(Convert::ptsToTime(stream->nb_frames, FrameRate{ rate.num, rate.den })));
+                mHasAudio = true;
+                // For files without video, determine the number of 'virtual video frames'.
+                if (stream->duration != AV_NOPTS_VALUE)
+                {
+                    setNumberOfFrames(getFrameCount(stream, stream->duration));
+                }
+                if (stream->start_time != AV_NOPTS_VALUE &&
+                    stream->start_time > mMaximumStartPts)
+                {
+                    mMaximumStartPts = stream->start_time;
+                }
             }
-            if (stream->start_time != AV_NOPTS_VALUE &&
-                stream->start_time > mMaximumStartPts)
+            else
             {
-                mMaximumStartPts = stream->start_time;
+                VAR_DEBUG(stream);
+                stream->discard = AVDISCARD_ALL;
+                continue; // To ensure that this stream is not used in case the video/audio contents is not supported
             }
-            // todo BBC News_BBC TWO_2010_06_30_01_23_00.wtv has multiple audio streams
-            // add a (optional) setting to 'details' for selecting the audio (and video) stream in case of multiple streams.
-        }
-        else if (isAudioSupported(stream))
-        {
-            mHasAudio = true;
-            // For files without video, determine the number of 'virtual video frames'.
-            if (stream->duration != AV_NOPTS_VALUE)
-            {
-                setNumberOfFrames(getFrameCount(stream, stream->duration));
-            }
-            if (stream->start_time != AV_NOPTS_VALUE &&
-                stream->start_time > mMaximumStartPts)
-            {
-                mMaximumStartPts = stream->start_time;
-            }
-        }
-        else
-        {
-            VAR_DEBUG(stream);
-            stream->discard = AVDISCARD_ALL;
-            continue; // To ensure that this stream is not used in case the video/audio contents is not supported
-        }
 
-        if ((mStreamIndex == STREAMINDEX_UNDEFINED) && useStream(stream->codec->codec_type))
-        {
-            mStreamIndex = i;
-        }
-        else
-        {
-            // NOT: stream->discard = AVDISCARD_ALL; -- if a file has both audio and video use the maximum length of these two streams
+            if ((mStreamIndex == STREAMINDEX_UNDEFINED) && useStream(stream->codec->codec_type))
+            {
+                mStreamIndex = i;
+            }
+            else
+            {
+                // NOT: stream->discard = AVDISCARD_ALL; -- if a file has both audio and video use the maximum length of these two streams
+            }
         }
     }
 
