@@ -141,7 +141,8 @@ private:
         virtual ~DragInfo();
 
         /// Reset all offsets when a new drag operation is started
-        void reset();
+        /// \param external true if the new drag operation originates from outside the timeline
+        void reset(bool external);
 
         /// Update the offset of tracks of this type, given a track in the timeline and a dragged track
         /// that is currently dragged above that track in the timeline.
@@ -187,7 +188,8 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     /// Reset all members used for the dragging process.
-    void reset();
+    /// \param external true if the new drag operation originates from outside the timeline
+    void reset(bool external);
 
     /// \return the track that is currently dragged on top of 'track'
     /// \return 0 if no track is found on top of this track

@@ -44,6 +44,24 @@ public:
     /// caused a crash when accessing the clip's data.
     void testCrashWhenRightClickingOutsideAllTracks();
 
+    /// This caused flickering feedback during the drag operation AND a crash
+    /// after deleting the dropped clip (the dropped clip's link was nonexistent).
+    void testDragAndDropWithAddingTracksWithSelectedClipInTopMostTrackForVideo();
+
+    /// This caused flickering feedback during the drag operation AND a crash
+    /// after deleting the dropped clip (the dropped clip's link was nonexistent).
+    void testDragAndDropWithAddingTracksWithSelectedClipInTopMostTrackForAudio();
+
+    /// \see testDragAndDropWithAddingTracksWithSelectedClipInTopMostTrackForVideo
+    /// Same scenario but with a media file that ONLY contained video.
+    /// This caused a crash during the drag operation.
+    void testDragAndDropWithAddingTracksWithSelectedClipInTopMostTrackForVideoOnly();
+
+    /// \see testDragAndDropWithAddingTracksWithSelectedClipInTopMostTrackForAudio
+    /// Same scenario but with a media file that ONLY contained audio.
+    /// This caused a crash during the drag operation.
+    void testDragAndDropWithAddingTracksWithSelectedClipInTopMostTrackForAudioOnly();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////

@@ -45,6 +45,15 @@ void ProjectViewSelect(model::NodePtrs nodes)
     });
 }
 
+void ProjectViewExpandInput()
+{
+    util::thread::RunInMainAndWait([]
+    {
+        wxString s = util::path::toPath(util::path::normalize(getTestFilesPath().GetFullPath()));
+        gui::ProjectView::get().expand(getRoot()->find(s).front());
+    });
+}
+
 model::FolderPtr ProjectViewAddAutoFolder( wxFileName path, model::FolderPtr parent )
 {
     gui::Dialog::get().setDir( path.GetShortPath() ); // Add with short path to check that normalizing works
@@ -215,6 +224,13 @@ wxPoint ProjectViewFindNode( model::NodePtr node )
     return GetProjectView().find(node);
 }
 
+model::NodePtr ProjectViewFind(const wxString& name)
+{
+    model::NodePtrs nodes = model::Project::get().getRoot()->find(name);
+    ASSERT_NONZERO(nodes.size());
+    return nodes.front();
+}
+
 void ProjectViewMove(wxPoint position)
 {
     MouseMoveWithinWidget(position, GetProjectView().GetScreenPosition());
@@ -225,7 +241,7 @@ wxPoint ProjectViewCenteredPosition( model::NodePtr node )
     return ProjectViewPosition() + ProjectViewFindNode( node );
 }
 
-void DragFromProjectViewToTimeline( model::NodePtr node, wxPoint to )
+void DragFromProjectViewToTimeline( model::NodePtr node, wxPoint to, std::list<wxPoint> via)
 {
     ASSERT(FixtureGui::UseRealUiEvents);
     wxPoint position = ProjectViewCenteredPosition(node);
@@ -243,9 +259,22 @@ void DragFromProjectViewToTimeline( model::NodePtr node, wxPoint to )
         position.x += 1;
         MouseMoveOnScreen(position);
         pause(10);
-        //pause(1000);
     }
     ASSERT_LESS_THAN(count,100);
+
+    // Move to via point if required
+    for (auto pos : via)
+    {
+        count = 0;
+        while (wxGetMouseState().GetPosition() != pos && count++ < 3)
+        {
+            // Loop is required since sometimes the move fails the first time.
+            // Particularly seen when working through remote desktop/using touchpad.
+            MouseMoveOnScreen(pos);
+            pause(100); // Do not use waitforidle: does not work during drag and drop
+        }
+        ASSERT_LESS_THAN(count, 3);
+    }
 
     // Drop onto target point
     count = 0;
@@ -256,7 +285,7 @@ void DragFromProjectViewToTimeline( model::NodePtr node, wxPoint to )
         MouseMoveOnScreen(to);
         pause(100); // Do not use waitforidle: does not work during drag and drop
     }
-    ASSERT_LESS_THAN(count,3);
+    ASSERT_LESS_THAN(count, 3);
 
     wxUIActionSimulator().MouseUp();
     while (gui::ProjectViewDropSource::get().isDragActive())

@@ -113,6 +113,11 @@ void TimelineKeyUp(int key);
 /// \param key wx key code for key (may be wxMOD_* to generate events for modifiers)
 void TimelineKeyPress(int key);
 
+/// Trigger a modifier down, then key down then key up, then modifier up event in the timeline for the given key.
+/// \param modifier wx key code for modifier key (WXK_CONTROL, etc.)
+/// \param key wx key code for key
+void TimelineKeyPress(int modifier, int key);
+
 /// Trigger a key down then up event in the timeline for the given key.
 /// \param key wx key code for key (may be wxMOD_* to generate events for modifiers)
 /// \param count number of times the event is generated

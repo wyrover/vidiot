@@ -118,6 +118,11 @@ pixel TopPixel(model::TrackPtr track)
     return getTimeline().getViewMap().getView(track)->getY();
 }
 
+pixel BottomPixel(model::TrackPtr track)
+{
+    return getTimeline().getViewMap().getView(track)->getRect().GetBottom();
+}
+
 pixel VBottomQuarter(model::TrackPtr track)
 {
     return TopPixel(track) + (track->getHeight() * 3 / 4);
@@ -478,6 +483,34 @@ void TimelineShiftDeleteClip(model::IClipPtr clip)
 void TimelineShiftDeleteClips(model::IClips clips)
 {
     TimelineDeleteClips(clips,true);
+}
+
+void DragAudioVideoDivider(pixel offset)
+{
+    ASSERT_NONZERO(offset);
+    static const pixel fixedX = 100; // Fixed x position on timeline
+    const pixel vcenter = getSequence()->getDividerPosition() + (gui::timeline::DividerView::AudioVideoDividerHeight / 2);
+    TimelineMove({ fixedX, vcenter });
+    TimelineLeftDown();
+    TimelineMove({ fixedX, vcenter + offset });
+    TimelineLeftUp();
+}
+
+void DragTrackDivider(model::TrackPtr track, pixel offset)
+{
+    ASSERT_NONZERO(track);
+    ASSERT_NONZERO(offset);
+    ASSERT_LESS_THAN_EQUALS(std::abs(offset), track->getHeight());
+    static const pixel fixedX = 100; // Fixed x position on timeline
+    const pixel vcenter =
+        getTimeline().getViewMap().getView(track)->getY() +
+        (track->isA<model::VideoTrack>() ? - gui::timeline::DividerView::TrackDividerHeight : track->getHeight()) +
+        (gui::timeline::DividerView::TrackDividerHeight / 2);
+
+    TimelineMove({ fixedX, vcenter });
+    TimelineLeftDown();
+    TimelineMove({ fixedX, vcenter + offset });
+    TimelineLeftUp();
 }
 
 void DumpSequence()
