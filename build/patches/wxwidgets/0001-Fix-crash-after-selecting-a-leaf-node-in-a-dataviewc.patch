@@ -1,0 +1,26 @@
+From 05aabf8df54d9073950fff7fbf5a537c8259337c Mon Sep 17 00:00:00 2001
+From: Eric Raijmakers <ericraijmakers74@gmail.com>
+Date: Sat, 14 May 2016 15:53:28 +0200
+Subject: [PATCH] Fix crash after selecting a leaf node in a dataviewctrl and
+ then pressing the right arrow key.
+
+---
+ src/generic/datavgen.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/generic/datavgen.cpp b/src/generic/datavgen.cpp
+index 95d235e..a18f8a5 100644
+--- a/src/generic/datavgen.cpp
++++ b/src/generic/datavgen.cpp
+@@ -3959,7 +3959,7 @@ bool wxDataViewMainWindow::TryAdvanceCurrentColumn(wxDataViewTreeNode *node, wxK
+     {
+         if ( forward )
+         {
+-            m_currentCol = GetOwner()->GetColumnAt(1);
++            m_currentCol = GetOwner()->GetColumnAt(0);
+             m_currentColSetByKeyboard = true;
+             RefreshRow(m_currentRow);
+             return true;
+-- 
+1.9.5.msysgit.1
+

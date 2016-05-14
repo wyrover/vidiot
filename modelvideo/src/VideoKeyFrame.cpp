@@ -338,7 +338,6 @@ void VideoKeyFrame::updateAutomatedPositioning()
 
     switch (mAlignment)
     {
-        //todo
         case VideoAlignmentCenter:
         {
             mPosition.x = (outputsize.GetWidth() - scaledsize.GetWidth()) / 2;
