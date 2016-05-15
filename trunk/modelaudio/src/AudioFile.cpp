@@ -275,11 +275,6 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
             // required for initializing resampling is available.
             if (mNeedsResampling && mSoftwareResampleContext == 0)
             {
-                // Code taken from ffplay.c
-                int64_t dec_channel_layout =
-                    (frame->channel_layout && av_frame_get_channels(frame.get()) == av_get_channel_layout_nb_channels(frame->channel_layout)) ?
-                    frame->channel_layout : av_get_default_channel_layout(av_frame_get_channels(frame.get()));
-
                 // Only take planes with actual data into account.
                 // Some files have packets with fewer frames than described in the codec.
                 int nPlanesInFrame{ 0 };
@@ -290,9 +285,27 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
                         nPlanesInFrame++;
                     }
                 }
-                if (nPlanesInFrame != mNrPlanes)
+                // Code taken from ffplay.c
+                int nChannels = av_frame_get_channels(frame.get());
+                int framelayout = av_frame_get_channel_layout(frame.get());
+                int nChannelsInFrameLayout = av_get_channel_layout_nb_channels(framelayout);
+
+                // Default: use default layout for number of channels
+                int64_t dec_channel_layout = av_get_default_channel_layout(nChannels);
+
+                if ((nPlanesInFrame != mNrPlanes) ||
+                    (mNrPlanes > 1 && (nPlanesInFrame != nChannelsInFrameLayout)))
                 {
+                    // In case of inconsistencies: Revert to default channel layout for number of planes in frame
                     dec_channel_layout = av_get_default_channel_layout(nPlanesInFrame);
+                }
+                else
+                {
+                    // If data in frame consistent with expected format, use layout as specified in frame
+                    if (framelayout != 0 && nChannels == nChannelsInFrameLayout)
+                    {
+                        dec_channel_layout = framelayout; // Use frame layout as specified in the frame
+                    }
                 }
 
                 mSoftwareResampleContext = swr_alloc_set_opts(0,
@@ -307,7 +320,7 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
             }
         }
     }
-
+             //todo set minimum track height to transition height (try making a track with a transition as small as possible)
     if (!done) // audioPacket == nullptr: flush with 0 packets until no more data returned
     {
         AVPacket packet;

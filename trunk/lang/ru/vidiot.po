@@ -19,7 +19,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-05-14 13:24+0200\n"
+"POT-Creation-Date: 2016-05-14 20:28+0200\n"
 "PO-Revision-Date: 2016-04-14 12:12+0300\n"
 "Last-Translator: Ted Mossolov <teodorrrro@gmail.com>\n"
 "Language-Team: Ted Mossolov <teodorrrro@gmail.com>\n"
@@ -908,7 +908,7 @@ msgstr ""
 "Так как файл \"%s\" был удален с диска, он также был удален из проекта."
 
 #. TRANSLATORS: %s == Name of file which is scanned completely to determine the file length.
-#: C:\Vidiot\vidiot_trunk\modelfile\src\File.cpp:764
+#: C:\Vidiot\vidiot_trunk\modelfile\src\File.cpp:792
 #, c-format
 msgid "Scanning %s to determine media length."
 msgstr "Определение продолжительности %s."

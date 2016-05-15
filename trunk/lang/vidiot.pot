@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-05-14 18:15+0200\n"
+"POT-Creation-Date: 2016-05-14 20:28+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -850,7 +850,7 @@ msgid ""
 msgstr ""
 
 #. TRANSLATORS: %s == Name of file which is scanned completely to determine the file length.
-#: C:\Vidiot\vidiot_trunk\modelfile\src\File.cpp:764
+#: C:\Vidiot\vidiot_trunk\modelfile\src\File.cpp:792
 #, c-format
 msgid "Scanning %s to determine media length."
 msgstr ""
