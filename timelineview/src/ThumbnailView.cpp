@@ -44,7 +44,11 @@ struct RenderThumbnailWork
     explicit RenderThumbnailWork(const model::IClipPtr& clip, const wxSize& size, rational64 zoom)
         : RenderClipPreviewWork(clip,size,zoom)
     {
-        mParameters.setBoundingBox(mSize).setDrawBoundingBox(false);
+        // setPts(0) is required to ensure that the same frame is shown as the first frame shown when actually
+        // rendering the video. Otherwise, it is possible that (due to frame rate / time adjustments) the first 
+        // frame shown in the play (when the cursor is on the leftmost cut of the clip) does not equal the
+        // frame shown in the thumbnail.
+        mParameters.setBoundingBox(mSize).setDrawBoundingBox(false).setPts(0);
 
         // Can't make the clone in the separate thread, hence this duplication.
         // Otherwise, the clip may be (partially) opened/opening in the main thread at the moment
