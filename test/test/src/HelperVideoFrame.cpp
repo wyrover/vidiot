@@ -50,8 +50,8 @@ void assertFramesEqual(model::VideoFramePtr frame1, model::VideoFramePtr frame2)
 {
     wxImagePtr image1 = frame1->getImage();
     wxImagePtr image2 = frame2->getImage();
-    //image1->SaveFile(wxFileName(wxStandardPaths::Get().GetTempDir(), "image1.png").GetFullPath());
-    //image2->SaveFile(wxFileName(wxStandardPaths::Get().GetTempDir(), "image2.png").GetFullPath());
+    //image1->SaveFile(wxFileName(wxStandardPaths::Get().GetTempDir(), "image1.png").GetLongPath());
+    //image2->SaveFile(wxFileName(wxStandardPaths::Get().GetTempDir(), "image2.png").GetLongPath());
     pts ft1{ boost::rational_cast<pts>(frame1->getTime()) };
     pts ft2{ boost::rational_cast<pts>(frame2->getTime()) };
     ASSERT_EQUALS(frame1->getTime(), frame2->getTime())(ft1)(ft2);

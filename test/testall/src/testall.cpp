@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
         path.AppendDir("RelWithDebInfo");
 #endif
 #endif // _MSC_VER
-        returnvalue = wxExecute(path.GetFullPath(), wxEXEC_SYNC);
+        returnvalue = wxExecute(path.GetLongPath(), wxEXEC_SYNC);
         if (returnvalue != 0)
         {
             log(test.Capitalize() + " FAILED");

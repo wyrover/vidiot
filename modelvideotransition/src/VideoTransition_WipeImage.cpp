@@ -33,7 +33,7 @@ namespace model { namespace video { namespace transition {
 // static
 wxString WipeImage::getDefaultZoomImagesPath()
 {
-    return util::path::getCombinedPath(util::path::getResourcesPath(), { "images","wipeimage" }).GetFullPath();
+    return util::path::getCombinedPath(util::path::getResourcesPath(), { "images","wipeimage" }).GetLongPath();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -101,7 +101,7 @@ void WipeImage::onParameterChanged(const wxString& name)
             wxFileName infofile{ getDefaultZoomImagesPath(), "info.txt" };
 
             wxTextFile file;
-            bool found{ file.Open(infofile.GetFullPath()) };
+            bool found{ file.Open(infofile.GetLongPath()) };
             if (found)
             {
                 wxString s;
@@ -159,7 +159,7 @@ std::function<float (int,int)> WipeImage::getRightMethod(const wxImagePtr& image
     if (mImage == nullptr ||         // No cached image yet
         mImageFileName != filename)  // Cached image was for another file
     {
-        mImage = boost::make_shared<wxImage>(filename.GetFullPath());
+        mImage = boost::make_shared<wxImage>(filename.GetLongPath());
         mImageFileName = filename;
 
         if (mImage && mImage->IsOk())

@@ -98,7 +98,7 @@ void FileWatcher::onChange(wxFileSystemWatcherEvent& event)
         // - Second, modify events are given while the file contents is updated.
         {
             wxFileName changedPath = event.GetPath();
-            model::NodePtrs nodes = model::Project::get().getRoot()->findPath(changedPath.GetFullPath());
+            model::NodePtrs nodes = model::Project::get().getRoot()->findPath(changedPath.GetLongPath());
             if (!nodes.empty())
             {
                 // Existing file: update
@@ -110,7 +110,7 @@ void FileWatcher::onChange(wxFileSystemWatcherEvent& event)
             else
             {
                 changedPath.SetFullName(""); // Take the folder (this is probably a file that has just been created)
-                model::NodePtrs nodes = model::Project::get().getRoot()->findPath(changedPath.GetFullPath());
+                model::NodePtrs nodes = model::Project::get().getRoot()->findPath(changedPath.GetLongPath());
                 for ( model::NodePtr node : nodes )
                 {
                     node->check();

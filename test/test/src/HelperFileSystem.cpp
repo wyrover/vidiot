@@ -116,7 +116,7 @@ wxFileName getTestPath()
 {
     wxFileName result(getSourceRoot());
     result.AppendDir("test");
-    ASSERT(result.IsDir())(result.GetFullPath());
+    ASSERT(result.IsDir())(result.GetLongPath());
     return result;
 }
 
@@ -124,8 +124,8 @@ wxFileName getTestFilesPath(wxString subdir)
 {
     wxFileName result(getTestPath());
     result.AppendDir(subdir);
-    ASSERT(result.IsDir())(result.GetFullPath());
-    ASSERT(result.DirExists())(result.GetFullPath());
+    ASSERT(result.IsDir())(result.GetLongPath());
+    ASSERT(result.DirExists())(result.GetLongPath());
     return result;
 }
 
@@ -155,7 +155,7 @@ model::IPaths getListOfInputPaths(wxFileName path)
 	static std::map< wxString, model::IPaths > cache;
 
     model::IPaths result;
-	wxString key = path.GetFullPath();
+	wxString key = path.GetLongPath();
 	auto it = cache.find(key);
 	if (it != cache.end())
 	{
@@ -177,7 +177,7 @@ wxStrings getListOfInputPathsAsStrings(wxFileName path)
     wxStrings result;
     for (auto f : getListOfInputPathsAsFileNames(path))
     {
-        result.emplace_back(f.GetFullPath());
+        result.emplace_back(f.GetLongPath());
     }
     return result;
 }
@@ -196,8 +196,8 @@ wxFileName getStillImagePath()
 {
     wxFileName result = getTestPath();
     result.AppendDir("filetypes_image");
-    ASSERT(result.IsDir())(result.GetFullPath());
-    ASSERT(result.DirExists())(result.GetFullPath());
+    ASSERT(result.IsDir())(result.GetLongPath());
+    ASSERT(result.DirExists())(result.GetLongPath());
     result.SetFullName("Laney -6th best amp.jpg");
     return result;
 }
@@ -205,7 +205,7 @@ wxFileName getStillImagePath()
 wxString getFileContents(wxFileName path)
 {
     ASSERT(path.Exists());
-    wxFile file(path.GetFullPath());
+    wxFile file(path.GetLongPath());
     ASSERT(file.IsOpened());
     wxString contents;
     file.ReadAll(&contents);
@@ -227,7 +227,7 @@ void OpenFileExplorer(wxFileName dir)
     util::thread::RunInMainAndWait([dir]()
     {
         wxString cmd;
-        cmd << "explorer " << dir.GetFullPath();
+        cmd << "explorer " << dir.GetLongPath();
         ::wxExecute(cmd, wxEXEC_ASYNC, NULL);
     });
 }

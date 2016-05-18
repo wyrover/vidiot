@@ -374,7 +374,7 @@ void RenderWork::generate()
     AVFormatContext* context = outputformat->getContext();
     ASSERT(mRender->getFileName().IsOk());
     ASSERT_NONZERO(context);
-    wxString filename = mRender->getFileName().GetFullPath();
+    wxString filename = mRender->getFileName().GetLongPath();
     ASSERT_LESS_THAN_EQUALS(sizeof(filename.c_str()),sizeof(context->filename));
     #ifdef _MSC_VER
     _snprintf(context->filename, sizeof(context->filename), "%s", filename.c_str().AsChar());

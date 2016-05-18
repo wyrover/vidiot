@@ -85,12 +85,12 @@ bool recycle(const wxString& file)
         }
 
         // Create .trashinfo file
-        wxTextFile infofiletext(infofile.GetFullPath());
-        success = infofiletext.Create(infofile.GetFullPath());
+        wxTextFile infofiletext(infofile.GetLongPath());
+        success = infofiletext.Create(infofile.GetLongPath());
         if (success)
         {
             infofiletext.AddLine("[Trash Info]");
-            infofiletext.AddLine("Path=" + wxURI(filename.GetFullPath()).BuildURI());
+            infofiletext.AddLine("Path=" + wxURI(filename.GetLongPath()).BuildURI());
             infofiletext.AddLine("DeletionDate=" + wxDateTime::Now().Format("%FT%T"));
             success = infofiletext.Write();
             infofiletext.Close();
@@ -103,18 +103,18 @@ bool recycle(const wxString& file)
             trashedfile.AppendDir("files");
             trashedfile.SetFullName(infofile.GetFullName()); // Use the indexed name
             trashedfile.ClearExt(); // Remove the .trashinfo extension
-            success = wxCopyFile(filename.GetFullPath(), trashedfile.GetFullPath());
+            success = wxCopyFile(filename.GetLongPath(), trashedfile.GetLongPath());
         }
 
         // Remove file from original location
         if (success)
         {
-            success = wxRemoveFile(filename.GetFullPath());
+            success = wxRemoveFile(filename.GetLongPath());
         }
     }
     else
     {
-        success = wxRemoveFile(filename.GetFullPath());
+        success = wxRemoveFile(filename.GetLongPath());
     }
     return success;
 }

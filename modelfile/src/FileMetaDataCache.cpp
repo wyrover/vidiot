@@ -106,7 +106,7 @@ FileMetaDataPtr FileMetaDataCache::getDataForFile(const wxFileName& file)
         cachedFileTime.SetMillisecond(0);  // one test case. Ignore changes < 1 second.
         if (!currentFileTime.IsEqualTo(cachedFileTime))
         {
-            VAR_INFO(file.GetFullPath())(currentFileTime)(cachedFileTime);
+            VAR_INFO(file.GetLongPath())(currentFileTime)(cachedFileTime);
             mMetaData.erase(ret.first);
             return getDataForFile(file); // Will cause insert of new empty item.
         }

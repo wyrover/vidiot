@@ -89,7 +89,7 @@ DialogRenderSettings::DialogRenderSettings(model::SequencePtr sequence)
 
     wxPanel* fileselect = new wxPanel(formatbox);
     fileselect->SetSizer(new wxBoxSizer(wxHORIZONTAL));
-    mFile = new wxTextCtrl(fileselect,wxID_ANY,mNew->getFileName().GetFullPath(),wxDefaultPosition,wxDefaultSize,wxTE_READONLY);
+    mFile = new wxTextCtrl(fileselect,wxID_ANY,mNew->getFileName().GetLongPath(),wxDefaultPosition,wxDefaultSize,wxTE_READONLY);
     mFileButton = new wxButton(fileselect,wxID_ANY,_("Select"));
     mFileButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &DialogRenderSettings::onFileButtonPressed, this);
     fileselect->GetSizer()->Add(mFile,wxSizerFlags(1).Expand());
@@ -244,7 +244,7 @@ void DialogRenderSettings::onFileButtonPressed(wxCommandEvent& event)
                 format =  model::render::OutputFormats::getByExtension(newName.GetExt());
                 ASSERT(format)(newName);
                 Config::get().write<wxString>(Config::sPathFileDefaultExtension, newName.GetExt());
-                mFile->ChangeValue(newName.GetFullPath()); // ChangeValue() does not trigger event for text ctrl
+                mFile->ChangeValue(newName.GetLongPath()); // ChangeValue() does not trigger event for text ctrl
                 mVideoCodec->select(format->getDefaultVideoCodec());
                 mAudioCodec->select(format->getDefaultAudioCodec());
                 updateVideoCodec();

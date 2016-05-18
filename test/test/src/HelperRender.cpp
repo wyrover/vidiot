@@ -25,8 +25,8 @@ std::pair< RandomTempDirPtr, wxFileName > OpenRenderDialogAndSetFilename()
     WaitUntilDialogOpen(true);
 
     RandomTempDirPtr tempdir = boost::make_shared<RandomTempDir>();
-    wxFileName path(tempdir->getFileName().GetFullPath(), "out", "avi");      // todo replace getfullpath with getlongpath everywhere
-    gui::Dialog::get().setSaveFile(path.GetFullPath());
+    wxFileName path(tempdir->getFileName().GetLongPath(), "out", "avi");
+    gui::Dialog::get().setSaveFile(path.GetLongPath());
     ButtonTriggerPressed(gui::DialogRenderSettings::get().getFileButton());
     return std::make_pair(tempdir,path);
 }

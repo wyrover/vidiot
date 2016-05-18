@@ -29,7 +29,7 @@ void TestNewProject::testEmptyFolder()
 {
     StartTestSuite();
     RandomTempDirPtr tempDir = RandomTempDir::generate();
-    gui::Dialog::get().setDir(tempDir->getFileName().GetFullPath());
+    gui::Dialog::get().setDir(tempDir->getFileName().GetLongPath());
     ASSERT(!util::thread::RunInMainReturning<bool>([] { return gui::Window::get().isProjectOpened(); } ));
     ConfigOverrule<wxString> openwizard(Config::sPathProjectDefaultNewProjectType, model::DefaultNewProjectWizardStart_toString(model::DefaultNewProjectWizardStartFiles));
     WindowTriggerMenu(wxID_NEW);
@@ -64,7 +64,7 @@ void TestNewProject::testFolder()
 
         wxFileName input = getTestFilesPath(foldername);
         model::IPaths paths = getListOfInputPaths(input);
-        gui::Dialog::get().setDir(input.GetFullPath());
+        gui::Dialog::get().setDir(input.GetLongPath());
 
         ASSERT_EQUALS(gui::DialogNewProject::get().GetCurrentPage(), gui::DialogNewProject::get().getPageStart());
         ASSERT(gui::DialogNewProject::get().isNextEnabled());
@@ -130,7 +130,7 @@ void TestNewProject::testFiles()
     wxStrings files;
     for ( model::IPathPtr path : getListOfInputPaths() )
     {
-        files.emplace_back(path->getPath().GetFullPath());
+        files.emplace_back(path->getPath().GetLongPath());
     }
     gui::Dialog::get().setFiles(files);
     ASSERT_EQUALS(gui::DialogNewProject::get().GetCurrentPage(), gui::DialogNewProject::get().getPageStart());

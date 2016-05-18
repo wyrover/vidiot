@@ -137,7 +137,7 @@ void WximageFile::readImage()
 {
     if (mInputImage == nullptr)
     {
-        mInputImage = boost::make_shared<wxImage>(getPath().GetFullPath());
+        mInputImage = boost::make_shared<wxImage>(getPath().GetLongPath());
     }
 }
 

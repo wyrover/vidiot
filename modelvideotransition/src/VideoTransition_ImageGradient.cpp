@@ -31,7 +31,7 @@ namespace model { namespace video { namespace transition {
 // static
 wxString ImageGradient::getDefaultImageGradientPath()
 {
-    return util::path::getCombinedPath(util::path::getResourcesPath(), { "images","imagegradient" }).GetFullPath();
+    return util::path::getCombinedPath(util::path::getResourcesPath(), { "images","imagegradient" }).GetLongPath();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -97,7 +97,7 @@ std::function<float (int,int)> ImageGradient::getRightMethod(const wxImagePtr& i
         mImageFileName != filename)  // Cached image was for another file
     {
         mImageFileName = filename;
-        mImage = boost::make_shared<wxImage>(filename.GetFullPath());
+        mImage = boost::make_shared<wxImage>(filename.GetLongPath());
 
         if (mImage && mImage->IsOk())
         {

@@ -26,18 +26,18 @@ void ExecuteOnAllFiles(wxString pathToFiles, std::function<void()> action, bool 
     // Find input files in dir (must be done after creating a project, due to dependencies on project properties for opening/closing files)
     if (!wxIsAbsolutePath(pathToFiles))
     {
-        pathToFiles = getTestPath().GetFullPath() + wxFileName::GetPathSeparator() + pathToFiles;
+        pathToFiles = getTestPath().GetLongPath() + wxFileName::GetPathSeparator() + pathToFiles;
     }
     wxFileName TestFilesPath{ util::path::toFileName(pathToFiles) };
     model::IPaths InputFiles;
     if (TestFilesPath.IsDir())
     {
-        ASSERT(TestFilesPath.DirExists())(TestFilesPath.GetFullPath());
+        ASSERT(TestFilesPath.DirExists())(TestFilesPath.GetLongPath());
         InputFiles = GetSupportedFiles(TestFilesPath);
     }
     else
     {
-        ASSERT(TestFilesPath.FileExists())(TestFilesPath.GetFullPath());
+        ASSERT(TestFilesPath.FileExists())(TestFilesPath.GetLongPath());
         model::FilePtr file{ boost::make_shared<model::File>(TestFilesPath) };
         ASSERT(file->canBeOpened());
         InputFiles.emplace_back(file);

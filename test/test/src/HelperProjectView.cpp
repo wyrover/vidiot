@@ -49,7 +49,7 @@ void ProjectViewExpandInput()
 {
     util::thread::RunInMainAndWait([]
     {
-        wxString s = util::path::toPath(util::path::normalize(getTestFilesPath().GetFullPath()));
+        wxString s = util::path::toPath(util::path::normalize(getTestFilesPath().GetLongPath()));
         gui::ProjectView::get().expand(getRoot()->find(s).front());
     });
 }

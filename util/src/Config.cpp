@@ -119,7 +119,7 @@ void checkColour(const wxString& path)
 void Config::init(const wxString& applicationName, const wxString& vendorName, bool inCxxTestMode)
 {
     // Initialize config object. Will be destructed by wxWidgets at the end of the application
-    wxString ConfigFile(util::path::getConfigFilePath().GetFullPath());
+    wxString ConfigFile(util::path::getConfigFilePath().GetLongPath());
     VAR_ERROR(ConfigFile);
     Config* config{ new Config(applicationName, vendorName, ConfigFile) };
     wxConfigBase::Set(config);
@@ -146,7 +146,7 @@ void Config::init(bool inCxxTestMode)
         }
     }
 
-    wxLocale::AddCatalogLookupPathPrefix(util::path::getLanguagesPath().GetFullPath());
+    wxLocale::AddCatalogLookupPathPrefix(util::path::getLanguagesPath().GetLongPath());
     mLocale.reset(new wxLocale());
     wxLanguage languageId{ getLanguageId(Language) };
     bool LocaleInitialization{ mLocale->Init(languageId, wxLOCALE_LOAD_DEFAULT) };

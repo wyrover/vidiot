@@ -870,10 +870,10 @@ void Window::onHelp(wxCommandEvent& event)
 void Window::onLog(wxCommandEvent& event)
 {
 
-    if (!wxLaunchDefaultApplication(util::path::getLogFilePath().GetFullPath()))
+    if (!wxLaunchDefaultApplication(util::path::getLogFilePath().GetLongPath()))
     {
         // TRANSLATORS: %s == Path to file that cannot be opened
-        Dialog::get().getConfirmation(_("Failed to open file"), wxString::Format(_("Failed to open '%s'"), util::path::getLogFilePath().GetFullPath()));
+        Dialog::get().getConfirmation(_("Failed to open file"), wxString::Format(_("Failed to open '%s'"), util::path::getLogFilePath().GetLongPath()));
     }
     event.Skip();
 }
@@ -896,10 +896,10 @@ void Window::onConfig(wxCommandEvent& event)
             "If that happens, delete the file from disk (or make the file empty) and restart %1$s.\n"), CommandLine::get().ExeName));
         shown = true;
     }
-    if (!wxLaunchDefaultApplication(util::path::getConfigFilePath().GetFullPath()))
+    if (!wxLaunchDefaultApplication(util::path::getConfigFilePath().GetLongPath()))
     {
         // TRANSLATORS: %s == Path to file that cannot be opened
-        Dialog::get().getConfirmation(_("Failed to open file"), wxString::Format(_("Failed to open '%s'"), util::path::getConfigFilePath().GetFullPath()));
+        Dialog::get().getConfirmation(_("Failed to open file"), wxString::Format(_("Failed to open '%s'"), util::path::getConfigFilePath().GetLongPath()));
     }
     event.Skip();
 }

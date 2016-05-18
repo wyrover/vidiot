@@ -53,7 +53,7 @@ wxString toName(const wxFileName& filename)
 
 wxString toPath(const wxFileName& filename)
 {
-    wxString result = normalize(filename).GetFullPath();
+    wxString result = normalize(filename).GetLongPath();
     if ( wxEndsWithPathSeparator(result) )
     {
         result.erase(result.length() - 1);
@@ -188,7 +188,7 @@ wxString getResource(wxString subdirs, wxString filename)
             result.AppendDir(tokenizer.GetNextToken());
         }
     }
-    return result.GetFullPath();
+    return result.GetLongPath();
 }
 
 bool isInstalledOnWindows()
@@ -278,7 +278,7 @@ wxFileName getResourcesPath()
     wxString error{_("Could not locate resources (images/translations/html files) in the following folders:") + "\n"};
     for ( wxFileName path : paths )
     {
-        error += path.GetFullPath() + "\n";
+        error += path.GetLongPath() + "\n";
     }
     error += _("Press OK to exit.");
     wxMessageBox( error, _("Resources not found")) ;

@@ -160,8 +160,8 @@ void TestSavingAndLoading::testSaveAndLoad()
 
     checkDocument(tempDir_fileName.second);
 
-    bool ok = wxRemoveFile(tempDir_fileName.second.GetFullPath());
-    ASSERT(ok)(tempDir_fileName.second.GetFullPath());
+    bool ok = wxRemoveFile(tempDir_fileName.second.GetLongPath());
+    ASSERT(ok)(tempDir_fileName.second.GetLongPath());
 }
 
 void TestSavingAndLoading::testLoadOldVersions()
@@ -211,7 +211,7 @@ void TestSavingAndLoading::testBackupBeforeSave()
     auto ASSERT_FILE_CREATED = [&](wxFileName prefix, int count)
     {
         wxFileName filename = model::Project::createBackupFileName(prefix,count);
-        ASSERT(wxFile::Exists(filename.GetFullPath()));
+        ASSERT(wxFile::Exists(filename.GetLongPath()));
         ASSERT(getSavedFileContents(filename).IsSameAs(ExpectedContents));
     };
 
@@ -242,7 +242,7 @@ void TestSavingAndLoading::testRevert()
     StartTest("Create temp dir and existing file");
     mProjectFixture.destroy();
     std::pair<RandomTempDirPtr, wxFileName> tempDir_fileName = SaveProjectAndClose(RandomTempDir::generate(), "");
-    OpenProject(tempDir_fileName.second.GetFullPath());
+    OpenProject(tempDir_fileName.second.GetLongPath());
 
     TimelineTrimLeft(VideoClip(0,3), 10, false);
     TimelineDeleteClip(VideoClip(0,5));
@@ -274,7 +274,7 @@ void TestSavingAndLoading::testRevert()
 void TestSavingAndLoading::checkDocument(wxFileName path)
 {
     StartTest(path.GetName() + ": "  + "Load document");
-    OpenProject(path.GetFullPath());
+    OpenProject(path.GetLongPath());
 
     // Checks on loaded document
     // Must wait for Idle twice, since the timeline class uses
