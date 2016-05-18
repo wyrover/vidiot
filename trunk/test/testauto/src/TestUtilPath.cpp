@@ -67,8 +67,8 @@ void TestUtilPath::testEqualsAndIsParentOf()
     root.RemoveLastDir();
     root.RemoveLastDir();
     wxString sep =  wxFileName::GetPathSeparator();
-    wxString path1 = root.GetFullPath() + sep + "test" + sep + "dir" + sep + "dir" + sep + "file.ext";
-    wxString path2 = path.GetFullPath() + sep + ".." + sep + ".." + sep + ".." + sep + "test" + sep + "dir" + sep + "dir" + sep + "file.ext";
+    wxString path1 = root.GetLongPath() + sep + "test" + sep + "dir" + sep + "dir" + sep + "file.ext";
+    wxString path2 = path.GetLongPath() + sep + ".." + sep + ".." + sep + ".." + sep + "test" + sep + "dir" + sep + "dir" + sep + "file.ext";
     wxFileName fn1 = root;
     fn1.AppendDir("test");
     fn1.AppendDir("dir");
@@ -99,20 +99,20 @@ void TestUtilPath::testEqualsAndIsParentOf()
 
     ASSERT( !util::path::equals( fn1, fnWrong ) );
 
-    ASSERT( util::path::isParentOf( root.GetFullPath(), path1 ) )(root)(path1);
+    ASSERT( util::path::isParentOf( root.GetLongPath(), path1 ) )(root)(path1);
     ASSERT( util::path::isParentOf( root, path2 ) );
-    ASSERT( util::path::isParentOf( root.GetFullPath(), fn1 ) );
+    ASSERT( util::path::isParentOf( root.GetLongPath(), fn1 ) );
     ASSERT( util::path::isParentOf( root, fn2 ) );
 
     ASSERT( !util::path::isParentOf( root, root ) );
-    ASSERT( !util::path::isParentOf( root, root.GetFullPath() ) );
-    ASSERT( !util::path::isParentOf( root.GetFullPath(), root ) );
-    ASSERT( !util::path::isParentOf( root.GetFullPath(), root.GetFullPath() ) );
+    ASSERT( !util::path::isParentOf( root, root.GetLongPath() ) );
+    ASSERT( !util::path::isParentOf( root.GetLongPath(), root ) );
+    ASSERT( !util::path::isParentOf( root.GetLongPath(), root.GetLongPath() ) );
 
     ASSERT( !util::path::isParentOf( path1, root ) );
-    ASSERT( !util::path::isParentOf( path2, root.GetFullPath() ) );
+    ASSERT( !util::path::isParentOf( path2, root.GetLongPath() ) );
     ASSERT( !util::path::isParentOf( fn1, root ) );
-    ASSERT( !util::path::isParentOf( fn2, root.GetFullPath() ) );
+    ASSERT( !util::path::isParentOf( fn2, root.GetLongPath() ) );
 
     subdir2.reset();
     subdir1.reset();

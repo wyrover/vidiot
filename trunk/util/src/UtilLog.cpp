@@ -183,7 +183,7 @@ void Log::flush()
 
 void Log::init()
 {
-    sFilename = std::string(util::path::getLogFilePath().GetFullPath());
+    sFilename = std::string(util::path::getLogFilePath().GetLongPath());
 
     // Start the logger
     sWriter = new LogWriter();

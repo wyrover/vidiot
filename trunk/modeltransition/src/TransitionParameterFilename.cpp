@@ -90,8 +90,8 @@ wxWindow* TransitionParameterFilename::makeWidget(wxWindow *parent)
 
     mPanel = new wxPanel(parent);
     mPanel->SetSizer(new wxBoxSizer(wxHORIZONTAL));
-    mFile = new wxTextCtrl(mPanel, wxID_ANY, mValue.GetFullPath(), wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
-    mFile->SetValue(mValue.GetFullPath());
+    mFile = new wxTextCtrl(mPanel, wxID_ANY, mValue.GetLongPath(), wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
+    mFile->SetValue(mValue.GetLongPath());
     mFile->SetToolTip(getToolTip());
     mFileButton = new wxButton(mPanel, wxID_ANY, _("Select"));
     mFileButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &TransitionParameterFilename::onFileButtonPressed, this);
@@ -131,7 +131,7 @@ void TransitionParameterFilename::setValue(wxFileName value)
         mValue = value;
         if (mFile != nullptr)
         {
-            mFile->SetValue(mValue.GetFullPath());
+            mFile->SetValue(mValue.GetLongPath());
         }
         signalUpdate();
     }

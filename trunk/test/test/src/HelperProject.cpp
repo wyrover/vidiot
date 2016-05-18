@@ -79,8 +79,8 @@ DirAndFile SaveProject(boost::optional<RandomTempDirPtr> tempDir, wxString files
     util::thread::RunInMainAndWait([filename]()
     {
         // Causes occasional crashes (can't write to recent file list):
-        // gui::Window::get().GetDocumentManager()->GetCurrentDocument()->SetFilename(filename.GetFullPath());
-        gui::Window::get().GetDocumentManager()->GetCurrentDocument()->OnSaveDocument(filename.GetFullPath());
+        // gui::Window::get().GetDocumentManager()->GetCurrentDocument()->SetFilename(filename.GetLongPath());
+        gui::Window::get().GetDocumentManager()->GetCurrentDocument()->OnSaveDocument(filename.GetLongPath());
     });
     return std::make_pair(tempDirProject, filename);
 }

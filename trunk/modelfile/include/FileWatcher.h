@@ -17,7 +17,7 @@
 
 #pragma once
 
-inline bool operator<(wxFileName l, const wxFileName& r) { return l.GetFullPath() < r.GetFullPath(); }
+inline bool operator<(wxFileName l, const wxFileName& r) { return l.GetLongPath() < r.GetLongPath(); }
 
 namespace model {
     class EventAddNode;

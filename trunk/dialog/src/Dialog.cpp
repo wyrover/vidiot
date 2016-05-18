@@ -351,8 +351,8 @@ int generateDebugReport(bool doexit, bool addcontext, bool screenShot, const wxR
                 memory.SelectObject(screenshot);
                 memory.Blit(0, 0, screenRect.width, screenRect.height, &screen, screenRect.x, screenRect.y);
                 memory.SelectObject(wxNullBitmap);
-                screenshot.SaveFile(screenShotFile.GetFullPath(), wxBITMAP_TYPE_PNG);
-                report.AddFile(screenShotFile.GetFullPath(), wxT("Screen shot"));
+                screenshot.SaveFile(screenShotFile.GetLongPath(), wxBITMAP_TYPE_PNG);
+                report.AddFile(screenShotFile.GetLongPath(), wxT("Screen shot"));
             }
         }
 
@@ -366,12 +366,12 @@ int generateDebugReport(bool doexit, bool addcontext, bool screenShot, const wxR
 
         if (util::path::getConfigFilePath().FileExists())
         {
-            report.AddFile(util::path::getConfigFilePath().GetFullPath(), wxT("Options file"));
+            report.AddFile(util::path::getConfigFilePath().GetLongPath(), wxT("Options file"));
         }
 
         if (util::path::getLogFilePath().FileExists())
         {
-            report.AddFile(util::path::getLogFilePath().GetFullPath(), wxT("Log file"));
+            report.AddFile(util::path::getLogFilePath().GetLongPath(), wxT("Log file"));
         }
 
         if (wxDebugReportPreviewStd().Show(report))

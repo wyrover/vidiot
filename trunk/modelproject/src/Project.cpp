@@ -241,7 +241,7 @@ bool Project::DoSaveDocument(const wxString& file)
         // Create the new backup file
         wxFileName backup = createBackupFileName(saveFileName, nextFreeNumber);
         ASSERT(!backup.Exists());
-        if (!wxCopyFile(saveFileName.GetFullPath(), backup.GetFullPath(),false) &&
+        if (!wxCopyFile(saveFileName.GetLongPath(), backup.GetLongPath(),false) &&
             wxNO == gui::Dialog::get().getConfirmation(_("Backup failed"),_("Could not create backup file " + backup.GetFullName() + " of the existing save.\n Do you still want to overwrite " + file + "?"), wxYES | wxNO ))
         {
             return true;
@@ -253,9 +253,9 @@ bool Project::DoSaveDocument(const wxString& file)
         if (maximumNumberOfFiles > 0 && nExistingBackupFiles >= maximumNumberOfFiles)
         {
             wxFileName backup = createBackupFileName(saveFileName, lowestNumber);
-            if (!backup.Exists() || !util::path::recycle(backup.GetFullPath()))
+            if (!backup.Exists() || !util::path::recycle(backup.GetLongPath()))
             {
-                VAR_ERROR(backup.Exists())(backup.GetFullPath());
+                VAR_ERROR(backup.Exists())(backup.GetLongPath());
             }
         }
     }

@@ -79,7 +79,7 @@ void FillClipboardWithFiles(wxFileNames files)
     wxFileDataObject* data = new wxFileDataObject();
 	for (wxFileName file : files)
 	{
-		data->AddFile(file.GetFullPath());
+		data->AddFile(file.GetLongPath());
 	}
 	util::thread::RunInMainAndWait([data]
 	{

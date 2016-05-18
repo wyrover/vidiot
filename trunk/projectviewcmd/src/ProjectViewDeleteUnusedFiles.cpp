@@ -100,7 +100,7 @@ void ProjectViewDeleteUnusedFiles::recycleFiles()
     wxStrings fileNames;
     for ( model::FilePtr file : mFiles )
     {
-        fileNames.emplace_back(util::path::normalize(file->getPath()).GetFullPath());
+        fileNames.emplace_back(util::path::normalize(file->getPath()).GetLongPath());
     }
 
     wxStrings deleted = gui::Dialog::get().getStringsSelection(
@@ -145,7 +145,7 @@ void ProjectViewDeleteUnusedFiles::recycleFiles()
 bool ProjectViewDeleteUnusedFiles::findInProject(const model::FilePtr& file)
 {
     model::NodePtr root = model::Project::get().getRoot();
-    wxString path = util::path::normalize(file->getPath()).GetFullPath();
+    wxString path = util::path::normalize(file->getPath()).GetLongPath();
     for ( model::NodePtr node : root->getAllDescendants() )
     {
         model::SequencePtr sequence = boost::dynamic_pointer_cast<model::Sequence>(node);
@@ -159,7 +159,7 @@ bool ProjectViewDeleteUnusedFiles::findInProject(const model::FilePtr& file)
                     {
                         if (clip->getFile())
                         {
-                            if (util::path::normalize(clip->getFile()->getPath()).GetFullPath().IsSameAs(path))
+                            if (util::path::normalize(clip->getFile()->getPath()).GetLongPath().IsSameAs(path))
                             {
                                 return true;
                             }

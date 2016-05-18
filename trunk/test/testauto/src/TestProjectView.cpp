@@ -46,7 +46,7 @@ void TestProjectView::testAdditionAndRemoval()
     wxString sFolder1( "Folder1" );
     wxString sSequence1( "Sequence1" );
     wxString sFile( "05.avi" );
-    wxFileName filepath(getTestFilesPath().GetFullPath(), sFile);
+    wxFileName filepath(getTestFilesPath().GetLongPath(), sFile);
 
     model::FolderPtr folder1 = ProjectViewAddFolder( sFolder1 );
     model::SequencePtr sequence1 = ProjectViewAddSequence( sSequence1, folder1 );

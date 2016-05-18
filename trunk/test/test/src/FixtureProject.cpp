@@ -89,7 +89,7 @@ DirAndFile FixtureProject::saveAndReload()
 {
     destroy(); // Release all references
     DirAndFile tempDir_fileName = SaveProjectAndClose();
-    OpenProject(tempDir_fileName.second.GetFullPath());
+    OpenProject(tempDir_fileName.second.GetLongPath());
     return tempDir_fileName;
 }
 

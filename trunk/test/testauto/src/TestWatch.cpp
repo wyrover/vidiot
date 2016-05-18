@@ -63,7 +63,7 @@ void TestWatch::testAddAndRemoveFileToWatchedAutoFolder()
         ASSERT_EQUALS(mRoot->find(util::path::toName(filepath)).size(),1); // File is present
 
         StartTest("Remove file on disk");
-        bool removeok = wxRemoveFile(filepath.GetFullPath());
+        bool removeok = wxRemoveFile(filepath.GetLongPath());
         ASSERT(removeok);
         WaitForChildCount(mRoot, 2);
 
@@ -116,8 +116,8 @@ void TestWatch::testAddAndRemoveFileToWatchedNonAutoFolder()
 
     StartTest("Add two files to a non-auto folder");
     RandomTempDirPtr tempDir = RandomTempDir::generate();
-    wxFileName filepath1_input(getTestFilesPath().GetFullPath(), "01.avi");
-    wxFileName filepath2_input(getTestFilesPath().GetFullPath(), "03.avi");
+    wxFileName filepath1_input(getTestFilesPath().GetLongPath(), "01.avi");
+    wxFileName filepath2_input(getTestFilesPath().GetLongPath(), "03.avi");
     wxFileName filepath1(tempDir->getFileName().GetLongPath(), "01.avi");
     wxFileName filepath2(tempDir->getFileName().GetLongPath(), "03.avi");
     bool copyok = wxCopyFile( filepath1_input.GetLongPath(), filepath1.GetLongPath(), false );
@@ -131,14 +131,14 @@ void TestWatch::testAddAndRemoveFileToWatchedNonAutoFolder()
 
     StartTest("Remove one file (on disk) that is child of a non-auto folder - one other file remains");
     gui::Dialog::get().setConfirmation();
-    bool removeok = wxRemoveFile(filepath1.GetFullPath());
+    bool removeok = wxRemoveFile(filepath1.GetLongPath());
     ASSERT(removeok);
     WaitForChildCount(mRoot, 3);
     ASSERT_WATCHED_PATHS_COUNT(1);
 
     StartTest("Remove last file (on disk) that is child of a non-auto folder - no other file remains");
     gui::Dialog::get().setConfirmation();
-    removeok = wxRemoveFile(filepath2.GetFullPath());
+    removeok = wxRemoveFile(filepath2.GetLongPath());
     ASSERT(removeok);
     WaitForChildCount(mRoot, 2);
     ASSERT_WATCHED_PATHS_COUNT(0); // Nothing is being watched anymore

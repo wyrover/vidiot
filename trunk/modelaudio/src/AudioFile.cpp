@@ -481,7 +481,7 @@ AudioPeaks AudioFile::getPeaks(const AudioCompositionParameters& parameters, pts
     }
 
     const AudioPeaks& allPeaks{ *peaks };
-    pts total{ allPeaks.size() };
+    pts total{ narrow_cast<pts>(allPeaks.size()) };
 
     AudioPeaks result;
 
@@ -505,7 +505,7 @@ AudioPeaks AudioFile::getPeaks(const AudioCompositionParameters& parameters, pts
             result = std::move(AudioPeaks(itBegin, itEnd));
         }
     }
-    
+
     if (result.size() != narrow_cast<size_t>(length))
     {
         // Ensure resulting peaks length equals length of clip. Add 'silence' if required.

@@ -431,7 +431,7 @@ void TestTimeline::testUndo()
         (gui::timeline::cmd::TrimClip)
         (gui::timeline::cmd::CreateTransition)
         (gui::timeline::cmd::ExecuteDrop);
-    Undo(5); 
+    Undo(5);
     ASSERT_HISTORY_END(cmd::ProjectViewCreateAutoFolder);
     Redo(5);
     ASSERT_HISTORY_END
@@ -491,8 +491,6 @@ void TestTimeline::testDividers()
     {
         StartTest("Move audio track divider up and down again.");
         const pixel originalHeight = AudioTrack(0)->getHeight();
-        const pixel originalDividerPosition = getTimeline().getViewMap().getView(AudioTrack(0))->getY() + AudioTrack(0)->getHeight();
-        const pixel adjustedDividerPosition = originalDividerPosition - changeY;
         DragTrackDivider(AudioTrack(0), - changeY);
         TimelineMove(wxPoint(fixedX, 10)); // Was a bug once: the mouse release did not 'release' the move operation, and thus this move back up caused the divider back to its original position.
         ASSERT_EQUALS(AudioTrack(0)->getHeight(), originalHeight - changeY);
@@ -502,8 +500,6 @@ void TestTimeline::testDividers()
     {
         StartTest("Move video track divider down and up again.");
         const pixel originalHeight = VideoTrack(0)->getHeight();
-        const pixel originalDividerPosition = getTimeline().getViewMap().getView(VideoTrack(0))->getY() - gui::timeline::DividerView::TrackDividerHeight;
-        const pixel adjustedDividerPosition = originalDividerPosition + changeY;
         DragTrackDivider(VideoTrack(0), changeY);
         TimelineMove(wxPoint(fixedX, 10)); // Was a bug once: the mouse release did not 'release' the move operation, and thus this move back up caused the divider back to its original position.
         ASSERT_EQUALS(VideoTrack(0)->getHeight(), originalHeight - changeY);

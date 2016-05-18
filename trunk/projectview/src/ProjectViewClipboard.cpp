@@ -174,7 +174,7 @@ void ProjectViewClipboard::pasteFromClipboard()
                     if (node->isA<model::File>())
                     {
                         model::FilePtr file = boost::dynamic_pointer_cast<model::File>(node);
-                        if (!wxFileExists(file->getPath().GetFullPath()))
+                        if (!wxFileExists(file->getPath().GetLongPath()))
                         {
                             StatusBar::get().timedInfoText(_("File was removed from disk. Cannot paste."));
                             return;
@@ -183,7 +183,7 @@ void ProjectViewClipboard::pasteFromClipboard()
                     else if (node->isA<model::AutoFolder>())
                     {
                         model::AutoFolderPtr folder = boost::dynamic_pointer_cast<model::AutoFolder>(node);
-                        if (!wxDirExists(folder->getPath().GetFullPath()))
+                        if (!wxDirExists(folder->getPath().GetLongPath()))
                         {
                             StatusBar::get().timedInfoText(_("Folder was removed from disk. Cannot paste."));
                             return;

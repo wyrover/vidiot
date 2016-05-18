@@ -110,7 +110,7 @@ bool ProjectViewCommand::addNodes(const ParentAndChildPairs& pairs)
         model::IPathPtr path = boost::dynamic_pointer_cast<model::IPath>(p.second);
         if (path && !path->getPath().Exists())
         {
-            gui::Dialog::get().getConfirmation(sCant, wxString::Format(_("%s has been removed from disk."), path->getPath().GetFullPath()));
+            gui::Dialog::get().getConfirmation(sCant, wxString::Format(_("%s has been removed from disk."), path->getPath().GetLongPath()));
             return false;
         }
         model::FilePtr file = boost::dynamic_pointer_cast<model::File>(p.second);

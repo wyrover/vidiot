@@ -83,7 +83,7 @@ void TestUiDragAndDropFromProjectViewToTimeline::testDragAndDropStillImageAndUnd
 
     wxString sFolder1( "Folder1" );
     model::FolderPtr folder1 = ProjectViewAddFolder( sFolder1 );
-    model::Files files1{ ProjectViewAddFiles({ getStillImagePath().GetFullPath() }, folder1) };
+    model::Files files1{ ProjectViewAddFiles({ getStillImagePath().GetLongPath() }, folder1) };
     model::FilePtr imageFile{ files1.front() };
 
     DragFromProjectViewToTimeline( imageFile,  getTimeline().GetScreenPosition() - getTimeline().getScrolling().getOffset()  + wxPoint(HCenter(VideoClip(0,4)), VCenter(VideoTrack(0))) );
