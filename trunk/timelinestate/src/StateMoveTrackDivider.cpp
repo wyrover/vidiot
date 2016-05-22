@@ -91,7 +91,7 @@ boost::statechart::result MoveTrackDivider::react( const EvMotion& evt )
         diff *= -1;
     }
     int height = mOriginalHeight + diff;
-    static const pixel MinTrackHeight{ 10 };
+    static const pixel MinTrackHeight{ ClipView::getTransitionHeight() }; // Ensure that minimum track height is large enough to show the transition, always.
     static const pixel MaxTrackHeight{ 250 };
     if (height >= MinTrackHeight && height <= MaxTrackHeight)
     {

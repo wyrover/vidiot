@@ -320,7 +320,7 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
             }
         }
     }
-             //todo set minimum track height to transition height (try making a track with a transition as small as possible)
+
     if (!done) // audioPacket == nullptr: flush with 0 packets until no more data returned
     {
         AVPacket packet;
