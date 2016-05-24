@@ -24,6 +24,7 @@
 #include "Properties.h"
 #include "Sequence.h"
 #include "UtilException.h"
+#include "UtilSoundTouch.h"
 #include "UtilThread.h"
 #include "VideoCompositionParameters.h"
 #include "VideoDisplayEvent.h"
@@ -66,7 +67,6 @@ VideoDisplay::VideoDisplay(wxWindow *parent, model::SequencePtr sequence)
     , mPlaying(false)
     , mSkipFrames(0)
     , mAudioChunks(1000)
-    , mSoundTouchLatency(-1)
     , mVideoFrames(200)
     , mWidth(200)
     , mHeight(100)
@@ -131,17 +131,7 @@ void VideoDisplay::play()
 
         // SoundTouch must be initialized before starting the audio buffer thread
         mSpeedFactor = static_cast<double>(sDefaultSpeed) / static_cast<double>(mSpeed);
-        mSoundTouch.setSampleRate(mAudioParameters->getSampleRate());
-        mSoundTouch.setChannels(mAudioParameters->getNrChannels());
-        mSoundTouch.setTempo(1.0);
-        mSoundTouch.setTempoChange(mSpeed - sDefaultSpeed);
-        mSoundTouch.setRate(1.0);
-        mSoundTouch.setRateChange(0);
-        mSoundTouch.setSetting(SETTING_USE_AA_FILTER, 0);//1
-        mSoundTouch.setSetting(SETTING_SEQUENCE_MS, 40);    // Optimize for speech
-        mSoundTouch.setSetting(SETTING_SEEKWINDOW_MS, 15);  // Optimize for speech
-        mSoundTouch.setSetting(SETTING_OVERLAP_MS, 8);      // Optimize for speech
-        mSoundTouchLatency = -1;
+        mSoundTouch = std::make_unique<util::SoundTouch>(mAudioParameters->getSampleRate(), mAudioParameters->getNrChannels(), mSpeed);
 
         // Used for determining inter frame sleep time. Is used for the buffered
         // audio packets and is therefore initialized before starting the thread.
@@ -271,7 +261,7 @@ void VideoDisplay::stop()
             mAudioBufferThreadPtr->join(); // One extra chunk may have been inserted by 'push()'
         }
 
-        mSoundTouch.clear(); // Must be done after joining the audio buffer thread.
+        mSoundTouch = nullptr; // Must be done after joining the audio buffer thread.
 
         if (mAudioBufferThreadPtr != nullptr)
         {
@@ -415,53 +405,6 @@ void VideoDisplay::stopRange()
 // AUDIO METHODS
 //////////////////////////////////////////////////////////////////////////
 
-void VideoDisplay::sendToSoundTouch(model::AudioChunkPtr chunk)
-{
-#ifdef SOUNDTOUCH_INTEGER_SAMPLES
-    mSoundTouch.putSamples(reinterpret_cast<const short *>(chunk->getUnreadSamples()), chunk->getUnreadSampleCount() / mAudioParameters->getNrChannels());
-#else
-    float *convertTo = new float[chunk->getUnreadSampleCount()];
-    sample* s = chunk->getUnreadSamples();
-    float* t = convertTo;
-    static const float M = 32767.0; // 2 ^ 15
-    for (int i = 0; i < chunk->getUnreadSampleCount(); ++i)
-    {
-        *t++ = static_cast<float>(*s++) / M;
-    }
-    mSoundTouch.putSamples(convertTo, chunk->getUnreadSampleCount() / mAudioParameters->getNrChannels());
-    delete[] convertTo;
-#endif
-}
-
-samplecount VideoDisplay::receiveFromSoundTouch(model::AudioChunkPtr chunk, samplecount offset, samplecount nSamplesRequired)
-{
-    int nFramesAvailable = mSoundTouch.numSamples();
-    int nFramesRequired = nSamplesRequired / mAudioParameters->getNrChannels();
-#ifdef SOUNDTOUCH_INTEGER_SAMPLES
-    samplecount nFrames = mSoundTouch.receiveSamples(reinterpret_cast<short*>(chunk->getBuffer()) + offset, nFramesRequired);
-    ASSERT_LESS_THAN_EQUALS(nFrames, nFramesAvailable);
- #else // SOUNDTOUCH_FLOAT_SAMPLES
-    static const float M = 32767.0; // 2 ^ 15
-    float* convertFrom = new float[nSamplesRequired];
-    samplecount nFrames = mSoundTouch.receiveSamples(convertFrom, nFramesRequired);
-    ASSERT_LESS_THAN_EQUALS(nFrames, nFramesAvailable);
-    ASSERT_LESS_THAN_EQUALS(nFrames, nFramesRequired);
-
-    int nSamples = nFrames * mAudioParameters->getNrChannels();
-    sample* t = chunk->getBuffer() + offset;
-    float* s = convertFrom;
-    for (int i = 0; i < nSamples; ++i)
-    {
-        float f = *s++ * M;
-        if ( f < -M )  { f = -M; }
-        if ( f > M-1 ) { f = M - 1; }
-        *t++ = static_cast<sample>(f);
-    }
-    delete[] convertFrom;
-#endif
-    return nFrames * mAudioParameters->getNrChannels();
-}
-
 void VideoDisplay::audioBufferThread()
 {
     util::thread::setCurrentThreadName("AudioBufferThread");
@@ -479,7 +422,6 @@ void VideoDisplay::audioBufferThread()
         }
         else
         {
-            bool atEnd = false;
             pts outputPts = mStartPts;
             while (!mAbortThreads)
             {
@@ -488,24 +430,20 @@ void VideoDisplay::audioBufferThread()
                 samplecount writtenSamples = 0;
                 while (writtenSamples < chunksize)
                 {
-                    if (!mSoundTouch.isEmpty())
-                    {
-                        writtenSamples += receiveFromSoundTouch(outputChunk, writtenSamples, chunksize - writtenSamples);
-                    }
-                    else if (atEnd)
+                    if (mSoundTouch->atEnd())
                     {
                         mAudioChunks.push(model::AudioChunkPtr()); // Signal end
                         return;
                     }
-                    else
+                    else if (mSoundTouch->isEmpty())
                     {
                         model::AudioCompositionParameters parameters(*mAudioParameters);
                         model::AudioChunkPtr chunk = mSequence->getNextAudio(parameters);
-                        atEnd = chunk == nullptr;
-                        if (!atEnd)
-                        {
-                            sendToSoundTouch(chunk);
-                        }
+                        mSoundTouch->send(chunk);
+                    }
+                    else
+                    {
+                        writtenSamples += mSoundTouch->receive(outputChunk, writtenSamples, chunksize - writtenSamples);
                     }
                 }
                 outputChunk->setPts(outputPts++);
