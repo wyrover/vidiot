@@ -17,13 +17,16 @@
 
 #pragma once
 
-#include <SoundTouch.h>
 #include "VideoFrame.h"
 #include "AudioChunk.h"
 
 namespace model {
     class AudioCompositionParameters;
     class VideoCompositionParameters;
+}
+
+namespace util {
+    class SoundTouch;
 }
 
 namespace gui {
@@ -120,16 +123,13 @@ private:
     std::unique_ptr<model::AudioCompositionParameters> mAudioParameters = nullptr;
     std::unique_ptr<boost::thread> mAudioBufferThreadPtr;
 
-    void sendToSoundTouch(model::AudioChunkPtr chunk);
-    samplecount receiveFromSoundTouch(model::AudioChunkPtr chunk, samplecount nSamples, samplecount nSamplesRequired);
     void audioBufferThread();
 
     /// Required for portaudio
     void* mAudioOutputStream = nullptr;
 
     /// Required for SoundTouch
-    soundtouch::SoundTouch mSoundTouch;
-    std::atomic<samplecount> mSoundTouchLatency;
+    std::unique_ptr<util::SoundTouch> mSoundTouch = nullptr;
     double mSpeedFactor = 1.0;
 
     //////////////////////////////////////////////////////////////////////////

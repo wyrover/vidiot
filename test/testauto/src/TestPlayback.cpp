@@ -87,6 +87,11 @@ void TestPlayback::testPlaybackWithDifferentSpeed()
     util::thread::RunInMainAndWait([] { getTimeline().getPlayer()->setSpeed(150); });
     TimelinePositionCursor(HCenter(VideoClip(0, 3)));
     Play(1000);
+
+    WaitForPlaybackStopped wait;
+    TimelinePositionCursor(RightPixel(VideoClip(0, 6)) - 10);
+    TimelineKeyPress(WXK_SPACE);
+    wait.wait();
 }
 
 void TestPlayback::testPlaybackAfterRangedPlayback()
