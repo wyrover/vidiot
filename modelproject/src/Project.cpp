@@ -17,6 +17,7 @@
 
 #include "Project.h"
 
+#include "Application.h"
 #include "CommandLine.h"
 #include "CommandProcessor.h"
 #include "Config.h"
@@ -301,10 +302,11 @@ bool Project::DoOpenDocument(const wxString& file)
     if ( !store )
     {
         gui::Dialog::get().getConfirmation(_("Open Failed"),_("Could not open: " + file));
+        return false;
     }
     else
     {
-        if ( !LoadObject(store) )
+        if ( !LoadObject(store))
         {
             // The bug is in 'mProperties' having a use count of '2' at this point:
             // Memory leak of Properties. Causes crash when opening a new project.
@@ -316,13 +318,9 @@ bool Project::DoOpenDocument(const wxString& file)
             Config::get().Flush();
             gui::Window::get().GetEventHandler()->QueueEvent(new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED,wxID_EXIT));
         }
-        else
-        {
-            return true;
-        }
     }
-
-    return false;
+    // Even in the 'exit' case, true must be returned, to ensure that the Project class is not destroyed too soon.
+    return true;
 }
 
 bool Project::Revert()
