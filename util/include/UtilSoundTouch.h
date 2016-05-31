@@ -43,7 +43,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     void send(model::AudioChunkPtr chunk);
-    samplecount receive(model::AudioChunkPtr chunk, samplecount nSamples, samplecount nSamplesRequired);
+    samplecount receive(model::AudioChunkPtr chunk, samplecount offset, samplecount nSamplesRequired);
 
     bool isEmpty();
     bool atEnd();
