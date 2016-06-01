@@ -440,6 +440,9 @@ AudioPeaks AudioFile::getPeaks(const AudioCompositionParameters& parameters, pts
 
     boost::optional<AudioPeaks> peaks{ FileMetaDataCache::get().getPeaks(getPath()) };
 
+    // todo add to metadatacache WITH speed
+    peaks.reset();
+
     if (!peaks)
     {
         // The setPts() & determineChunkSize() below is required for the case where the file has been removed from disk,
@@ -461,7 +464,7 @@ AudioPeaks AudioFile::getPeaks(const AudioCompositionParameters& parameters, pts
 
             for (int i = 0; (i < chunksize) && (allPeaks.size() < data_length); ++i)
             {
-                current.first = std::min(current.first, *buffer);
+                current.first = std::min(current.first, *buffer);   // todo this algo checks ALL samples? Can't we skip about 40000? (or at least reduce a lot)
                 current.second = std::max(current.second, *buffer);
                 if (samplePosition == nextRequiredSample)
                 {
@@ -469,14 +472,22 @@ AudioPeaks AudioFile::getPeaks(const AudioCompositionParameters& parameters, pts
                     ASSERT_MORE_THAN_EQUALS_ZERO(current.second);
                     allPeaks.emplace_back(current);
                     current = AudioPeak(0, 0);
-                    nextRequiredSample = Convert::ptsToSamplesPerChannel(Convert::samplerateToNewSpeed(parameters.getSampleRate(), parameters.getSpeed(), 1), allPeaks.size());
+                    // Note: new speed has been taken into account by getNextAudio already!
+                    // Note: computation for peaks is the same for with and without soundtouch usage. So may be slightly off, in case SoundTouch is used.
+                    nextRequiredSample = Convert::ptsToSamplesPerChannel(parameters.getSampleRate(), allPeaks.size());
                 }
                 ++samplePosition;
                 ++buffer;
             }
             chunk = getNextAudio(parameters);
         }
-        FileMetaDataCache::get().setPeaks(getPath(), allPeaks);
+        if (parameters.getSpeed() == 1)
+        {
+            // Only cache for default speed 
+            // todo add caching for nondefault speeds
+            FileMetaDataCache::get().setPeaks(getPath(), allPeaks);
+            // todo clean up metadatacache in case files no longer used! upon startup???
+        }
         peaks.reset(allPeaks);
     }
 

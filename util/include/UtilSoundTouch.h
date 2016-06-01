@@ -35,7 +35,7 @@ public:
     // INITIALIZATION 
     //////////////////////////////////////////////////////////////////////////
 
-    SoundTouch(int samplerate, int channels, int speed);
+    SoundTouch(int samplerate, int channels, rational64 speed);
     virtual ~SoundTouch();
 
     //////////////////////////////////////////////////////////////////////////
@@ -47,6 +47,8 @@ public:
 
     bool isEmpty();
     bool atEnd();
+
+    rational64 getSpeed() const;
 
 private:
 
@@ -61,8 +63,7 @@ private:
     std::unique_ptr<soundtouch::SoundTouch> mSoundTouch;
     int mSampleRate = 0;
     int mChannels = 0;
-    int mSpeed = sDefaultSpeed;
-    double mSpeedFactor = 1.0;
+    rational64 mSpeed = 1;
     bool mAtEnd = false;
 
     //////////////////////////////////////////////////////////////////////////

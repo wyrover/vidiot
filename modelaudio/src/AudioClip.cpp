@@ -25,6 +25,7 @@
 #include "EmptyChunk.h"
 #include "Node.h"
 #include "Transition.h"
+#include "UtilSoundTouch.h"
 
 namespace model {
 
@@ -32,7 +33,7 @@ namespace model {
 //auto Linear = [](const double& volume, sample& s) { s = std::floor(volume * s); };
 //auto IncreasedLowVolumeSensitivity = [](const double& volume, sample& s) { s = std::floor(std::sin(volume * M_PI / 2) * s); }; // Note: Does not work for higher values (sine probably too far, resulting in lower volume instead of higher).
 
-    void adjustSampleVolume(const double& volume, sample& s)
+void adjustSampleVolume(const double& volume, sample& s)
 {
     double base{ M_E };
     double adjustedSample{ std::trunc((std::pow(base, volume) - 1) / (base - 1) * s) };
@@ -51,18 +52,14 @@ namespace model {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-AudioClip::AudioClip()
-    : ClipInterval()
-    , mProgress(0)
-    , mInputChunk()
-{
-    VAR_DEBUG(*this);
-}
+//AudioClip::AudioClip()
+//    : ClipInterval()
+//{
+//    VAR_DEBUG(*this);
+//}
 
 AudioClip::AudioClip(const AudioFilePtr& file)
     : ClipInterval(file)
-    , mProgress(0)
-    , mInputChunk()
 {
     VAR_DEBUG(*this);
     setDefaultKeyFrame(boost::make_shared<AudioKeyFrame>());
@@ -70,8 +67,6 @@ AudioClip::AudioClip(const AudioFilePtr& file)
 
 AudioClip::AudioClip(const AudioClip& other)
     : ClipInterval(other)
-    , mProgress(0)
-    , mInputChunk()
 {
     VAR_DEBUG(other)(*this);
 }
@@ -79,11 +74,6 @@ AudioClip::AudioClip(const AudioClip& other)
 AudioClip* AudioClip::clone() const
 {
     return new AudioClip(static_cast<const AudioClip&>(*this));
-}
-
-AudioClip::~AudioClip()
-{
-    VAR_DEBUG(this);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -95,6 +85,7 @@ void AudioClip::clean()
     VAR_DEBUG(this);
     mProgress = 0;
     mInputChunk.reset();
+    mSoundTouch.reset();
     ClipInterval::clean();
 }
 
@@ -123,6 +114,7 @@ AudioChunkPtr AudioClip::getNextAudio(const AudioCompositionParameters& paramete
     {
         mProgress = *getNewStartPosition(); // Reinitialize mProgress to the last value set in ::moveTo
         mInputChunk.reset(); // Do not use any cached data
+        mSoundTouch.reset(); // Do not use any cached data
         invalidateNewStartPosition();
     }
 
@@ -130,56 +122,92 @@ AudioChunkPtr AudioClip::getNextAudio(const AudioCompositionParameters& paramete
 
     pts length{ getLength() };
 
+    if (getSpeed() >= rational64(util::SoundTouch::sMaximumSpeed, util::SoundTouch::sDefaultSpeed) && 
+        getSpeed() <= rational64(util::SoundTouch::sMinimumSpeed, util::SoundTouch::sDefaultSpeed) &&
+        getSpeed() != rational64(1) &&
+        (mSoundTouch == nullptr || mSoundTouch->getSpeed() != getSpeed()))
+    {
+        mSoundTouch = std::make_unique<util::SoundTouch>(parameters.getSampleRate(), parameters.getNrChannels(), getSpeed());
+    }
+    
     if (mProgress < length)
     {
 
         samplecount requiredSamples{ parameters.getChunkSize() };
-        samplecount generatedSamples{ 0 };
+        samplecount writtenSamples{ 0 };
+        AudioCompositionParameters fileparameters(parameters);
 
         result = boost::make_shared<AudioChunk>(parameters.getNrChannels(), requiredSamples, true, false);
-        sample* buffer{ result->getBuffer() };
 
-        while (generatedSamples < requiredSamples)
+        if (mSoundTouch)
         {
-            samplecount remainingSamples{ requiredSamples - generatedSamples };
-            if (mInputChunk &&
-                mInputChunk->getUnreadSampleCount() > 0)
+            while (writtenSamples < requiredSamples)
             {
-                generatedSamples += mInputChunk->extract(buffer + generatedSamples, remainingSamples);
-            }
-            else
-            {
-                AudioCompositionParameters fileparameters(parameters);
-                fileparameters.setSpeed(getSpeed());
-                if (parameters.hasPts())
+                if (mSoundTouch->atEnd())
                 {
-                    pts requiredPts = Convert::positionToNormalSpeed(getOffset() + parameters.getPts(), getSpeed());
-                    fileparameters.setPts(requiredPts);
+                    break; // No more data available
                 }
-                mInputChunk = getDataGenerator<AudioFile>()->getNextAudio(fileparameters);
-
-                if (!mInputChunk)
+                else if (mSoundTouch->isEmpty())
                 {
-                    // The clip has not provided enough audio data yet (for the pts length of the clip)
-                    // but there is no more audio data. This can typically happen by using a avi file
-                    // for which the video data is longer than the audio data. Instead of clipping the
-                    // extra video part, silence is added here (the user can make the clip shorter if
-                    // required - thus removing the extra video, but that's a user decision to be made).
-                    VAR_WARNING(getDescription())(*this)(remainingSamples);
-                    memset(buffer + generatedSamples, 0, remainingSamples  * AudioChunk::sBytesPerSample);
-                    generatedSamples = requiredSamples;
+                    model::AudioChunkPtr chunk = getDataGenerator<AudioFile>()->getNextAudio(fileparameters);
+                    mSoundTouch->send(chunk);
+                }
+                else
+                {
+                    writtenSamples += mSoundTouch->receive(result, writtenSamples, requiredSamples - writtenSamples);
+                }
+            }
+            if (writtenSamples == 0)
+            {
+                result = nullptr;
+                return result;
+            }
+        }
+        else
+        {
+            fileparameters.setSpeed(getSpeed());
+            if (parameters.hasPts())
+            {
+                pts requiredPts = Convert::positionToNormalSpeed(getOffset() + parameters.getPts(), getSpeed());
+                fileparameters.setPts(requiredPts);
+            }
+            while (writtenSamples < requiredSamples)
+            {
+                if (mInputChunk &&
+                    mInputChunk->getUnreadSampleCount() > 0)
+                {
+                    writtenSamples += mInputChunk->extract(result->getBuffer() + writtenSamples, requiredSamples - writtenSamples);
+                }
+                else
+                {
+                    mInputChunk = getDataGenerator<AudioFile>()->getNextAudio(fileparameters);
+                    if (!mInputChunk)
+                    {
+                        break; // No more data available
+                    }
                 }
             }
         }
         VAR_DEBUG(mProgress)(requiredSamples)(*this);
+
+        if (writtenSamples < requiredSamples)
+        {
+            // The clip has not provided enough audio data yet (for the pts length of the clip)
+            // but there is no more audio data. This can typically happen by using a avi file
+            // for which the video data is longer than the audio data. Instead of clipping the
+            // extra video part, silence is added here (the user can make the clip shorter if
+            // required - thus removing the extra video, but that's a user decision to be made).
+            VAR_WARNING(getDescription())(*this)(mProgress)(requiredSamples)(writtenSamples);
+            memset(result->getBuffer() + writtenSamples, 0, (requiredSamples - writtenSamples)  * AudioChunk::sBytesPerSample);
+        }
 
         int volumeBefore{ boost::dynamic_pointer_cast<AudioKeyFrame>(getFrameAt(mProgress))->getVolume() };
         int volumeAfter{ boost::dynamic_pointer_cast<AudioKeyFrame>(getFrameAt(mProgress + 1))->getVolume() };
 
         if (volumeBefore != AudioKeyFrame::sVolumeDefault || volumeAfter != AudioKeyFrame::sVolumeDefault)
         {
-            sample* sEnd{ buffer + requiredSamples };
-            sample* s{ buffer };
+            sample* sEnd{ result->getBuffer() + requiredSamples };
+            sample* s{ result->getBuffer() };
             int64_t requiredFrames{ narrow_cast<int64_t>(requiredSamples) / parameters.getNrChannels() }; // divide the volume change over this many frames
             int64_t count{ 0 };
             rational64 beginVolume{ volumeBefore,100 };
@@ -233,7 +261,9 @@ AudioPeaks AudioClip::getPeaks(const AudioCompositionParameters& parameters)
     }
 
     KeyFrameMap keyFrames{ getKeyFramesOfPerceivedClip() };
-    model::AudioPeaks peaks{ getDataGenerator<AudioFile>()->getPeaks(parameters, Convert::positionToNormalSpeed(offset, getSpeed()), length) };
+    AudioCompositionParameters fileparameters(parameters);
+    fileparameters.setSpeed(getSpeed());
+    model::AudioPeaks peaks{ getDataGenerator<AudioFile>()->getPeaks(fileparameters, offset, length) };
     AudioPeaks result;
 
     if (keyFrames.empty() && boost::dynamic_pointer_cast<AudioKeyFrame>(getDefaultKeyFrame())->getVolume() == AudioKeyFrame::sVolumeDefault)

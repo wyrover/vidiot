@@ -26,17 +26,17 @@ const int SoundTouch::sMinimumSpeed = 50;
 const int SoundTouch::sMaximumSpeed = 200;
 const int SoundTouch::sDefaultSpeed = 100;
 
-SoundTouch::SoundTouch(int samplerate, int channels, int speed)
+SoundTouch::SoundTouch(int samplerate, int channels, rational64 speed)
     : mSoundTouch{ std::make_unique<soundtouch::SoundTouch>() }
     , mSampleRate{ samplerate }
     , mChannels{ channels }
     , mSpeed{ speed }
-    , mSpeedFactor{ static_cast<double>(sDefaultSpeed) / static_cast<double>(mSpeed) }
 {
     mSoundTouch->setSampleRate(mSampleRate);
     mSoundTouch->setChannels(mChannels);
     mSoundTouch->setTempo(1.0);
-    mSoundTouch->setTempoChange(mSpeed - sDefaultSpeed);
+    int newspeed{ narrow_cast<int>(trunc(boost::rational_cast<double>(mSpeed * rational64(100, 1)))) };
+    mSoundTouch->setTempoChange(newspeed - sDefaultSpeed);
     mSoundTouch->setRate(1.0);
     mSoundTouch->setRateChange(0);
     mSoundTouch->setSetting(SETTING_USE_AA_FILTER, 0);//1
@@ -121,7 +121,12 @@ bool SoundTouch::isEmpty()
 
 bool SoundTouch::atEnd()
 {
-    return mAtEnd && !isEmpty();
+    return mAtEnd && isEmpty();
+}
+
+rational64 SoundTouch::getSpeed() const
+{
+    return mSpeed;
 }
 
 }

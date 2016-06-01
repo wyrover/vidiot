@@ -19,7 +19,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-05-24 19:27+0200\n"
+"POT-Creation-Date: 2016-06-01 14:00+0200\n"
 "PO-Revision-Date: 2016-05-14 18:23+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -966,49 +966,49 @@ msgstr ""
 "uit het project."
 
 #. TRANSLATORS: %s == Name of project file
-#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:214
+#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:215
 #, c-format
 msgid "Saving %s"
 msgstr "Bezig met opslaan van %s"
 
-#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:245
+#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:246
 msgid "Backup failed"
 msgstr "Het maken van een backup faalde"
 
-#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:245
+#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:246
 msgid "Could not create backup file "
 msgstr "Kon geen backup bestand maken"
 
-#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:268
-#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:275
+#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:269
+#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:276
 msgid "Save Failed"
 msgstr "Opslaan mislukt"
 
-#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:268
+#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:269
 msgid "Could not open save file: "
 msgstr "Kon het op te slaan bestand niet openen:"
 
-#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:275
+#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:276
 msgid "Could not save: "
 msgstr "Kon niet opslaan:"
 
 #. TRANSLATORS: %s == Name of project file
-#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:281
+#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:282
 #, c-format
 msgid "%s saved successfully."
 msgstr "%s is succesvol opgeslagen."
 
 #. TRANSLATORS: %s == Project file name. %s (second) == Name of application (executable)
-#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:303
-#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:314
+#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:304
+#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:316
 msgid "Open Failed"
 msgstr "Openen mislukt"
 
-#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:303
+#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:304
 msgid "Could not open: "
 msgstr "Kon niet openen:"
 
-#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:314
+#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:316
 #, c-format
 msgid ""
 "Could not read %s. \n"
@@ -2259,7 +2259,7 @@ msgstr "Verwijder geselecteerde clips"
 msgid "Could not shift clips. Part of the region is still in use."
 msgstr "Kon clips niet opschuiven. Gedeelte van het gebied is nog in gebruik."
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:72
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:70
 msgid ""
 "Can not change length if start position, length, or speed for two linked "
 "clips are not equal."
@@ -2267,7 +2267,7 @@ msgstr ""
 "Kan de lengte niet aanpassen als start positie, lengte of snelheid van twee "
 "gekoppelde clips niet gelijk zijn."
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:111
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:109
 msgid ""
 "Can not change clip speed. There may not be clips in the same timeframe in "
 "other tracks."
@@ -2275,27 +2275,27 @@ msgstr ""
 "Kan clip snelheid niet aanpassen. Er mogen geen clips in hetzelfde "
 "tijdsbestek in andere sporen zijn."
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:118
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:116
 #, c-format
 msgid "Adjust speed of %s"
 msgstr "Pas snelheid van %s aan"
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:204
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:228
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:238
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:202
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:226
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:236
 #, c-format
 msgid "Can't scale beyond %s"
 msgstr "Kan niet verder schalen dan %s"
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:204
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:202
 msgid "(no room for left transition)."
 msgstr "(er blijft niet genoeg ruimte over voor linker overgang)"
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:228
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:226
 msgid "(no room for right transition)."
 msgstr "(er blijft niet genoeg ruimte over voor rechter overgang)"
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:238
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:236
 msgid "(no clip remains)."
 msgstr "(er blijft geen clip over)"
 

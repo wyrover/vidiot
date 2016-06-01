@@ -550,47 +550,46 @@ void TestAudioKeyFrames::testGetKeyFrameWithTransition()
 void TestAudioKeyFrames::testChangeClipSpeed()
 {
     StartTestSuite();
-    //TimelineZoomIn(4); // Zooming in required to ensure that the last 'center positioning' is at exactly the key frame (on the clip with an increased speed)
+    TimelineZoomIn(4); // Zooming in required to ensure that the last 'center positioning' is at exactly the key frame (on the clip with an increased speed)
 
-    //StartTest("Make key frame in center");
-    //Unlink(AudioClip(0, 4));
-    //TimelineDeleteClip(AudioClip(0, 4));
-    //TimelinePositionCursor(HCenter(AudioClip(0, 4)));
-    //TimelineSelectClips({ AudioClip(0,4) });
-    //ButtonTriggerPressed(DetailsClipView()->getAudioKeyFramesAddButton());
-    //SetValue(DetailsClipView()->getRotationSlider(), 9000); // 90 degrees
-    //ASSERT_HISTORY_END
-    //    (cmd::ProjectViewCreateAutoFolder)
-    //    (cmd::ProjectViewCreateSequence)
-    //    (gui::timeline::cmd::UnlinkClips)
-    //    (gui::timeline::cmd::DeleteSelectedClips)
-    //    (gui::timeline::cmd::EditClipDetails) // Add key frame
-    //    (gui::timeline::cmd::EditClipDetails); // Rotate
-    //{
-    //    StartTest("Increase speed and verify key frame");
-    //    SetValue(DetailsClipView()->getSpeedSpin(), 10.0);
-    //    ASSERT(DetailsView(AudioClip(0, 4)).NoKeyframe());
-    //    ASSERT_CLIP_SPEED(AudioClip(0, 4), rational64(10, 1));
-    //    ASSERT(KeyFrame(AudioClip(0, 4)).KeyFrameIndex(0).Rotation(90));
-    //    TimelinePositionCursor(HCenter(AudioClip(0, 4)));
-    //    ASSERT(DetailsView(AudioClip(0, 4)).KeyFrameIndex(0));
-    //    ASSERT_HISTORY_END(gui::timeline::cmd::EditClipDetails)(gui::timeline::cmd::EditClipDetails)(gui::timeline::cmd::EditClipSpeed);
-    //    Undo();
-    //    ASSERT_HISTORY_END(gui::timeline::cmd::EditClipDetails)(gui::timeline::cmd::EditClipDetails);
-    //}
-    //{
-    //    StartTest("Decrease speed and verify key frame");
-    //    SetValue(DetailsClipView()->getSpeedSlider(), 5000); // 5000 'to the left' sets speed to 0.5
-    //    ASSERT(DetailsView(AudioClip(0, 4)).NoKeyframe());
-    //    ASSERT_CLIP_SPEED(AudioClip(0, 4), rational64(1, 2));
-    //    ASSERT(KeyFrame(AudioClip(0, 4)).KeyFrameIndex(0).Rotation(90));
-    //    TimelinePositionCursor(HCenter(AudioClip(0, 4)));
-    //    ASSERT(DetailsView(AudioClip(0, 4)).KeyFrameIndex(0));
-    //    ASSERT_HISTORY_END(gui::timeline::cmd::EditClipDetails)(gui::timeline::cmd::EditClipDetails)(gui::timeline::cmd::EditClipSpeed);
-    //    Undo();
-    //    ASSERT_HISTORY_END(gui::timeline::cmd::EditClipDetails)(gui::timeline::cmd::EditClipDetails);
-    //}
-    // todo later after changing audio speed is implemented
+    StartTest("Make key frame in center");
+    Unlink(AudioClip(0, 4));
+    TimelineDeleteClip(VideoClip(0, 4));
+    TimelinePositionCursor(HCenter(AudioClip(0, 4)));
+    TimelineSelectClips({ AudioClip(0,4) });
+    ButtonTriggerPressed(DetailsClipView()->getAudioKeyFramesAddButton());
+    SetValue(DetailsClipView()->getVolumeSlider(), 90);
+    ASSERT_HISTORY_END
+        (cmd::ProjectViewCreateAutoFolder)
+        (cmd::ProjectViewCreateSequence)
+        (gui::timeline::cmd::UnlinkClips)
+        (gui::timeline::cmd::DeleteSelectedClips)
+        (gui::timeline::cmd::EditClipDetails) // Add key frame
+        (gui::timeline::cmd::EditClipDetails); // Volume change
+    {
+        StartTest("Increase speed and verify key frame");
+        SetValue(DetailsClipView()->getSpeedSpin(), 10.0);
+        ASSERT(DetailsView(AudioClip(0, 4)).NoKeyframe());
+        ASSERT_CLIP_SPEED(AudioClip(0, 4), rational64(10, 1));
+        ASSERT(KeyFrame(AudioClip(0, 4)).KeyFrameIndex(0).Volume(90));
+        TimelinePositionCursor(HCenter(AudioClip(0, 4)));
+        ASSERT(DetailsView(AudioClip(0, 4)).KeyFrameIndex(0));
+        ASSERT_HISTORY_END(gui::timeline::cmd::EditClipDetails)(gui::timeline::cmd::EditClipDetails)(gui::timeline::cmd::EditClipSpeed);
+        Undo();
+        ASSERT_HISTORY_END(gui::timeline::cmd::EditClipDetails)(gui::timeline::cmd::EditClipDetails);
+    }
+    {
+        StartTest("Decrease speed and verify key frame");
+        SetValue(DetailsClipView()->getSpeedSlider(), 5000); // 5000 'to the left' sets speed to 0.5
+        ASSERT(DetailsView(AudioClip(0, 4)).NoKeyframe());
+        ASSERT_CLIP_SPEED(AudioClip(0, 4), rational64(1, 2));
+        ASSERT(KeyFrame(AudioClip(0, 4)).KeyFrameIndex(0).Volume(90));
+        TimelinePositionCursor(HCenter(AudioClip(0, 4)));
+        ASSERT(DetailsView(AudioClip(0, 4)).KeyFrameIndex(0));
+        ASSERT_HISTORY_END(gui::timeline::cmd::EditClipDetails)(gui::timeline::cmd::EditClipDetails)(gui::timeline::cmd::EditClipSpeed);
+        Undo();
+        ASSERT_HISTORY_END(gui::timeline::cmd::EditClipDetails)(gui::timeline::cmd::EditClipDetails);
+    }
 }
 
 void TestAudioKeyFrames::testTrimAwayKeyFrames()

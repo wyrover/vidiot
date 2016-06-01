@@ -20,6 +20,10 @@
 #include "ClipInterval.h"
 #include "IAudio.h"
 
+namespace util {
+    class SoundTouch;
+}
+
 namespace model {
 
 class AudioPeaks;
@@ -41,19 +45,19 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    AudioClip();
+    AudioClip() = default;
 
     AudioClip(const AudioFilePtr& clip);
 
     virtual AudioClip* clone() const override;
 
-    virtual ~AudioClip();
+    virtual ~AudioClip() = default;
 
     //////////////////////////////////////////////////////////////////////////
     // ICONTROL
     //////////////////////////////////////////////////////////////////////////
 
-    virtual void clean() override;
+    void clean() override;
 
     //////////////////////////////////////////////////////////////////////////
     // ICLIP
@@ -96,9 +100,11 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    pts mProgress; ///< Current render position
+    pts mProgress = 0; ///< Current render position
 
-    AudioChunkPtr mInputChunk;
+    AudioChunkPtr mInputChunk = nullptr;
+
+    std::unique_ptr<util::SoundTouch> mSoundTouch = nullptr;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING
