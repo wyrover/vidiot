@@ -42,6 +42,8 @@ public:
 
     void testChangeClipSpeedWithOffsetAndLength();
 
+    void testChangeClipSpeedWithMismatchingTransitions();
+
     void testChangeClipSpeedWithInTransition();
 
     void testChangeClipSpeedWithOutTransition();

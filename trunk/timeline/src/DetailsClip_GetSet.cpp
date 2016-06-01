@@ -20,6 +20,7 @@
 #include "AudioClip.h"
 #include "AudioKeyFrame.h"
 #include "Convert.h"
+#include "EditClipSpeed.h"
 #include "Transition.h"
 #include "TransitionParameter.h"
 #include "Config.h"
@@ -73,17 +74,14 @@ void DetailsClip::setClip(const model::IClipPtr& clip)
         // For audio/video clips and transitions, the length can be edited.
         updateLengthButtons();
 
-        mSpeedSlider->Enable(video && !audio);
-        mSpeedSpin->Enable(video && !audio);
+        mSpeedSlider->Enable((video || audio) && (cmd::EditClipSpeed::isPossible(mClip, mClip->getLink())));
+        mSpeedSpin->Enable((video || audio) && (cmd::EditClipSpeed::isPossible(mClip, mClip->getLink())));
 
-        if (video && !audio)
+        if (video || audio)
         {
-            if (!audio)
-            {
-                rational64 speed = boost::dynamic_pointer_cast<model::ClipInterval>(mClip)->getSpeed();
-                mSpeedSlider->SetValue(factorToSliderValue(speed));
-                mSpeedSpin->SetValue(boost::rational_cast<double>(speed));
-            }
+            rational64 speed = boost::dynamic_pointer_cast<model::ClipInterval>(mClip)->getSpeed();
+            mSpeedSlider->SetValue(factorToSliderValue(speed));
+            mSpeedSpin->SetValue(boost::rational_cast<double>(speed));
         }
 
         if (transition)

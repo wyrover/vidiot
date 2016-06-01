@@ -142,6 +142,7 @@ typedef std::pair<RandomTempDirPtr, wxFileName> DirAndFile;
 #include "FixtureGui.h"
 #include "FixtureProject.h"
 #include "HelperApplication.h"
+#include "HelperAudioChunk.h"
 #include "HelperClipboard.h"
 #include "HelperConfig.h"
 #include "HelperDetails.h"

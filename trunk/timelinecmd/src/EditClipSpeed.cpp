@@ -55,23 +55,15 @@ EditClipSpeed::EditClipSpeed(
     ASSERT_MORE_THAN_ZERO(speed);
     ASSERT_DIFFERS(mClip,mClipClone);
     ASSERT(!mClip->isA<model::EmptyClip>());
-    ASSERT(!mClip->isA<model::AudioClip>());
     ASSERT(!mClip->isA<model::Transition>());
 
     boost::shared_ptr<model::ClipInterval> clipInterval{ boost::dynamic_pointer_cast<model::ClipInterval>(mClipClone) };
     boost::shared_ptr<model::ClipInterval> linkInterval{ mLinkClone ? boost::dynamic_pointer_cast<model::ClipInterval>(mLinkClone) : nullptr };
 
-    ASSERT(linkInterval == nullptr); // Only video speed can be changed for now.
-
-    if (linkInterval)
+    if (!isPossible(mClip, mLink))
     {
-        if ((linkInterval->getSpeed() != clipInterval->getSpeed()) ||
-            (linkInterval->getOffset() != clipInterval->getOffset()) ||
-            (linkInterval->getLength() != clipInterval->getLength()))
-        {
-            gui::StatusBar::get().timedInfoText(_("Can not change length if start position, length, or speed for two linked clips are not equal."));
-            return;
-        }
+        gui::StatusBar::get().timedInfoText(_("Can not change length if start position, length, or speed for two linked clips are not equal."));
+        return;
     }
 
     pts originalLeftPts = mClip->getLeftPts();
@@ -130,6 +122,30 @@ EditClipSpeed::~EditClipSpeed()
 //////////////////////////////////////////////////////////////////////////
 // ROOTCOMMAND
 //////////////////////////////////////////////////////////////////////////
+
+// static 
+bool EditClipSpeed::isPossible(model::IClipPtr clip, model::IClipPtr link)
+{
+    boost::shared_ptr<model::ClipInterval> clipInterval{ boost::dynamic_pointer_cast<model::ClipInterval>(clip) };
+    boost::shared_ptr<model::ClipInterval> linkInterval{ link ? boost::dynamic_pointer_cast<model::ClipInterval>(link) : nullptr };
+
+    ASSERT(clipInterval);
+    ASSERT_NONZERO(clipInterval->getTrack());
+    if (!linkInterval)
+    {
+        return true;
+    }
+    ASSERT(linkInterval);
+    ASSERT_NONZERO(linkInterval->getTrack());
+    if ((linkInterval->getSpeed() != clipInterval->getSpeed()) ||
+        (linkInterval->getOffset() != clipInterval->getOffset()) ||
+        (linkInterval->getLength() != clipInterval->getLength()) ||
+        (linkInterval->getLeftPts() != clipInterval->getLeftPts()))
+    {
+        return false;
+    }
+    return true;
+}
 
 bool EditClipSpeed::isPossible() const
 {

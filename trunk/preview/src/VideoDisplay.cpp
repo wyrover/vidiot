@@ -131,7 +131,7 @@ void VideoDisplay::play()
 
         // SoundTouch must be initialized before starting the audio buffer thread
         mSpeedFactor = static_cast<double>(sDefaultSpeed) / static_cast<double>(mSpeed);
-        mSoundTouch = std::make_unique<util::SoundTouch>(mAudioParameters->getSampleRate(), mAudioParameters->getNrChannels(), mSpeed);
+        mSoundTouch = std::make_unique<util::SoundTouch>(mAudioParameters->getSampleRate(), mAudioParameters->getNrChannels(), rational64(mSpeed, 100));
 
         // Used for determining inter frame sleep time. Is used for the buffered
         // audio packets and is therefore initialized before starting the thread.
