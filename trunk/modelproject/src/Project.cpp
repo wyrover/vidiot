@@ -316,7 +316,10 @@ bool Project::DoOpenDocument(const wxString& file)
             gui::Dialog::get().getConfirmation(_("Open Failed"), wxString::Format(_("Could not read %s. \n%s must be restarted (known bug that opening a project after this will fail)"), file, gui::CommandLine::get().ExeName));
             Config::get().write<bool>(Config::sPathProjectAutoLoadEnabled, false); // Ensure that upon next startup not immediately a file is opened, possibly failing again.
             Config::get().Flush();
-            gui::Window::get().GetEventHandler()->QueueEvent(new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED,wxID_EXIT));
+            // Any attempt to close 'gracefully' may cause an assert to fail 
+            // Thus, exit... now.
+            exit(0);
+            // gui::Window::get().GetEventHandler()->QueueEvent(new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED,wxID_EXIT));
         }
     }
     // Even in the 'exit' case, true must be returned, to ensure that the Project class is not destroyed too soon.
