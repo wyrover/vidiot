@@ -17,6 +17,7 @@
 
 #pragma once
 
+#include "AudioPeaks.h"
 #include "ClipInterval.h"
 #include "IAudio.h"
 
@@ -25,8 +26,6 @@ namespace util {
 }
 
 namespace model {
-
-class AudioPeaks;
 
 /// Change the volume of the given sample
 /// To decrease the volume pass a value < 1.0
@@ -106,6 +105,12 @@ private:
 
     std::unique_ptr<util::SoundTouch> mSoundTouch = nullptr;
 
+    /// Cached for performance (stored in the save file to avoid recalculating)
+    /// If the clip has a non-default speed and/or volume, the caching is done in
+    /// the clip. For default clips (volume/speed) the caching is done 'per file'
+    /// in the FileMetaDataCache.
+    boost::optional<AudioPeaks> mPeaks = boost::none; 
+
     //////////////////////////////////////////////////////////////////////////
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
@@ -123,5 +128,5 @@ private:
 
 } // namespace
 
-BOOST_CLASS_VERSION(model::AudioClip, 3)
+BOOST_CLASS_VERSION(model::AudioClip, 4)
 BOOST_CLASS_EXPORT_KEY(model::AudioClip)

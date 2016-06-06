@@ -662,7 +662,7 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																<Clip class_id="50" tracking_level="0" version="2">
 																	<mLink class_id="51" tracking_level="0" version="0">
 																		<ptr>
-																			<px class_id="52" class_name="model::AudioClip" tracking_level="1" version="3" object_id="_32">
+																			<px class_id="52" class_name="model::AudioClip" tracking_level="1" version="4" object_id="_32">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
@@ -712,6 +712,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -851,6 +854,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -976,6 +982,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -1101,6 +1110,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -1319,6 +1331,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -1472,6 +1487,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -1627,6 +1645,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -1752,6 +1773,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -1905,6 +1929,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -2060,6 +2087,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -2231,6 +2261,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -2356,6 +2389,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -2566,6 +2602,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -2732,6 +2771,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -2857,6 +2899,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -3021,6 +3066,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -3187,6 +3235,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -3362,6 +3413,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -3539,6 +3593,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -3664,6 +3721,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -3841,6 +3901,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -4031,6 +4094,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -4223,6 +4289,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -4348,6 +4417,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -4538,6 +4610,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -4730,6 +4805,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -4927,6 +5005,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -5126,6 +5207,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -5251,6 +5335,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -5448,6 +5535,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -5647,6 +5737,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -5822,6 +5915,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -5999,6 +6095,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -6124,6 +6223,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -6299,6 +6401,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -6476,6 +6581,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -6662,6 +6770,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -6850,6 +6961,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -6975,6 +7089,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -7161,6 +7278,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -7349,6 +7469,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -7524,6 +7647,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -7701,6 +7827,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -7826,6 +7955,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -8001,6 +8133,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -8178,6 +8313,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -8375,6 +8513,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -8574,6 +8715,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -8699,6 +8843,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -8896,6 +9043,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -9095,6 +9245,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -9307,6 +9460,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -9521,6 +9677,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -9646,6 +9805,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -9858,6 +10020,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -10072,6 +10237,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -10258,6 +10426,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -10446,6 +10617,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -10571,6 +10745,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -10757,6 +10934,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -10945,6 +11125,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -11070,6 +11253,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -11195,6 +11381,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -11320,6 +11509,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -11445,6 +11637,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -11570,6 +11765,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -11695,6 +11893,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -11820,6 +12021,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -11945,6 +12149,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -12070,6 +12277,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -12195,6 +12405,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -12320,6 +12533,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -12445,6 +12661,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -12570,6 +12789,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -12695,6 +12917,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -12820,6 +13045,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -12945,6 +13173,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -13070,6 +13301,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -13195,6 +13429,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -13320,6 +13557,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -13445,6 +13685,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -13570,6 +13813,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -13695,6 +13941,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -13820,6 +14069,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -13945,6 +14197,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -14070,6 +14325,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -14195,6 +14453,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -14320,6 +14581,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -14445,6 +14709,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -14570,6 +14837,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -14695,6 +14965,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -14820,6 +15093,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -14945,6 +15221,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -15070,6 +15349,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -15195,6 +15477,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -15320,6 +15605,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -15445,6 +15733,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -15570,6 +15861,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -15695,6 +15989,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -15820,6 +16117,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -15945,6 +16245,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -16070,6 +16373,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -16195,6 +16501,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -16320,6 +16629,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -16445,6 +16757,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -16570,6 +16885,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -16695,6 +17013,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -16820,6 +17141,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -16945,6 +17269,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -17070,6 +17397,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -17195,6 +17525,9 @@ TvIUDkfp1Q2t6QcNlvIjCubyKwi38ckKaPB8DLjw7w3n624MTPG2CkTrUAtP6wEOs/UQDNT16AmV
 																					</mDefaultKeyFrame>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mPeaks>
+																					<initialized>0</initialized>
+																				</mPeaks>
 																			</px>
 																		</ptr>
 																	</mLink>
