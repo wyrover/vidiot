@@ -243,46 +243,54 @@ AudioChunkPtr AudioClip::getNextAudio(const AudioCompositionParameters& paramete
 
 AudioPeaks AudioClip::getPeaks(const AudioCompositionParameters& parameters)
 {
-    pts offset{ getOffset() };
-    pts length{ getLength() };
-    if (getInTransition())
+    if (!mPeaks)
     {
-        boost::optional<pts> left{ getInTransition()->getRight() };
-        ASSERT(left);
-        ASSERT_NONZERO(*left);
-        offset -= *left;
-    }
-    if (getOutTransition())
-    {
-        boost::optional<pts> right{ getOutTransition()->getLeft() };
-        ASSERT(right);
-        ASSERT_NONZERO(*right);
-        length += *right;
-    }
+        pts offset{ getOffset() };
+        pts length{ getLength() };
+        if (getInTransition())
+        {
+            boost::optional<pts> left{ getInTransition()->getRight() };
+            ASSERT(left);
+            ASSERT_NONZERO(*left);
+            offset -= *left;
+        }
+        if (getOutTransition())
+        {
+            boost::optional<pts> right{ getOutTransition()->getLeft() };
+            ASSERT(right);
+            ASSERT_NONZERO(*right);
+            length += *right;
+        }
 
-    KeyFrameMap keyFrames{ getKeyFramesOfPerceivedClip() };
-    AudioCompositionParameters fileparameters(parameters);
-    fileparameters.setSpeed(getSpeed());
-    model::AudioPeaks peaks{ getDataGenerator<AudioFile>()->getPeaks(fileparameters, offset, length) };
-    AudioPeaks result;
+        KeyFrameMap keyFrames{ getKeyFramesOfPerceivedClip() };
+        AudioCompositionParameters fileparameters(parameters);
+        fileparameters.setSpeed(getSpeed());
+        model::AudioPeaks peaks{ getDataGenerator<AudioFile>()->getPeaks(fileparameters, offset, length) };
+        AudioPeaks result;
 
-    if (keyFrames.empty() && boost::dynamic_pointer_cast<AudioKeyFrame>(getDefaultKeyFrame())->getVolume() == AudioKeyFrame::sVolumeDefault)
-    {
-        // Performance optimization for default case. Return unchanged peaks from the file.
-        return peaks;
-    }
+        if (keyFrames.empty() &&
+            (boost::dynamic_pointer_cast<AudioKeyFrame>(getDefaultKeyFrame())->getVolume() == AudioKeyFrame::sVolumeDefault) &&
+            (getSpeed() == util::SoundTouch::sDefaultSpeed))
+        {
+            // Performance optimization for default case (store the peaks for the file only once).
+            // Return unchanged peaks from the file.
+            return peaks;
+        }
 
-    pts position{ 0 };
-    int volumeBefore{ boost::dynamic_pointer_cast<AudioKeyFrame>(getFrameAt(position))->getVolume() };
-    for (AudioPeak& peak : peaks)
-    {
-        int volumeAfter{ boost::dynamic_pointer_cast<AudioKeyFrame>(getFrameAt(++position))->getVolume() };
-        double volume{ (volumeBefore + volumeAfter) / 200.0 }; // /200: first /2 for the average of the two volumes. Then /100 to get a percentage.
-        adjustSampleVolume(volume, peak.first);
-        adjustSampleVolume(volume, peak.second);
-        volumeBefore = volumeAfter;
+        pts position{ 0 };
+        int volumeBefore{ boost::dynamic_pointer_cast<AudioKeyFrame>(getFrameAt(position))->getVolume() };
+        for (AudioPeak& peak : peaks)
+        {
+            int volumeAfter{ boost::dynamic_pointer_cast<AudioKeyFrame>(getFrameAt(++position))->getVolume() };
+            double volume{ (volumeBefore + volumeAfter) / 200.0 }; // /200: first /2 for the average of the two volumes. Then /100 to get a percentage.
+            adjustSampleVolume(volume, peak.first);
+            adjustSampleVolume(volume, peak.second);
+            volumeBefore = volumeAfter;
+        }
+
+        mPeaks.reset(peaks);
     }
-    return peaks;
+    return *mPeaks;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -293,7 +301,6 @@ KeyFramePtr AudioClip::interpolate(KeyFramePtr before, KeyFramePtr after, pts po
 {
     return boost::make_shared<AudioKeyFrame>(boost::dynamic_pointer_cast<AudioKeyFrame>(before), boost::dynamic_pointer_cast<AudioKeyFrame>(after), positionBefore, position, positionAfter);
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 // LOGGING
@@ -328,6 +335,10 @@ void AudioClip::serialize(Archive & ar, const unsigned int version)
             AudioKeyFramePtr keyFrame{ boost::make_shared<AudioKeyFrame>() };
             keyFrame->setVolume(mVolume);
             setDefaultKeyFrame(keyFrame);
+        }
+        if (version >= 4)
+        {
+            ar & BOOST_SERIALIZATION_NVP(mPeaks);
         }
     }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }

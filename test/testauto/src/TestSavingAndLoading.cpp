@@ -154,7 +154,7 @@ void TestSavingAndLoading::testSaveAndLoad()
             OpenFileExplorer(referenceDirName);
             FATAL("File contents are not equal");
         }
-    }
+    }       // todo zip the save files?
 
     //////////////////////////////////////////////////////////////////////////
 

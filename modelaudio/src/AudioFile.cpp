@@ -440,10 +440,8 @@ AudioPeaks AudioFile::getPeaks(const AudioCompositionParameters& parameters, pts
 
     boost::optional<AudioPeaks> peaks{ FileMetaDataCache::get().getPeaks(getPath()) };
 
-    // todo add to metadatacache WITH speed
-    peaks.reset();
-
-    if (!peaks)
+    if (!peaks || 
+        parameters.getSpeed() != 1)
     {
         // The setPts() & determineChunkSize() below is required for the case where the file has been removed from disk,
         // and the chunk size is used to initialize a chunk of silence.
@@ -483,10 +481,10 @@ AudioPeaks AudioFile::getPeaks(const AudioCompositionParameters& parameters, pts
         }
         if (parameters.getSpeed() == 1)
         {
-            // Only cache for default speed 
-            // todo add caching for nondefault speeds
+            // Only cache for default speed.
+            // Caching for nondefault speeds is done in AudioClip, to ensure
+            // that only actually used speed values are retained.
             FileMetaDataCache::get().setPeaks(getPath(), allPeaks);
-            // todo clean up metadatacache in case files no longer used! upon startup???
         }
         peaks.reset(allPeaks);
     }
