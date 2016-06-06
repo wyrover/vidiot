@@ -121,7 +121,7 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     wxBoxSizer* speedsizer = new wxBoxSizer(wxHORIZONTAL);
     mSpeedSlider = new wxSlider(mSpeedPanel, wxID_ANY, factorToSliderValue(sFactorMax), factorToSliderValue(sFactorMin), factorToSliderValue(sFactorMax));
     mSpeedSlider->SetPageSize(sFactorPageSize);
-    mSpeedSlider->SetToolTip(_("Change the speed of the clip. Note that currently only changing the speed of video-only clips is supported. Furthermore, changing the clip speed is only allowed when a there are no other clips 'under' and 'above' the clip in the timeline."));
+    mSpeedSlider->SetToolTip(_("Change the speed of the clip. Changing the clip speed is only allowed when the clip and its linked clip (if any) are both of an equal size and position. Furthermore, there may be no other clips in the same time span as the clip. Note that, when selecting a speed smaller than 0.5 or larger than 2.0 the pitch of the audio will change."));
     mSpeedSpin = new wxSpinCtrlDouble(mSpeedPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(55,-1));
     mSpeedSpin->SetWindowVariant( wxWINDOW_VARIANT_SMALL );
     mSpeedSpin->SetDigits(sFactorPrecision);
