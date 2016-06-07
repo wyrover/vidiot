@@ -20,10 +20,7 @@
 #include "AudioPeaks.h"
 #include "ClipInterval.h"
 #include "IAudio.h"
-
-namespace util {
-    class SoundTouch;
-}
+#include "UtilSoundTouch.h"
 
 namespace model {
 
@@ -109,7 +106,7 @@ private:
     /// If the clip has a non-default speed and/or volume, the caching is done in
     /// the clip. For default clips (volume/speed) the caching is done 'per file'
     /// in the FileMetaDataCache.
-    boost::optional<AudioPeaks> mPeaks = boost::none; 
+    boost::optional<AudioPeaks> mPeaks = boost::none;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

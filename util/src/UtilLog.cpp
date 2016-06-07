@@ -113,7 +113,7 @@ public:
         }
         mFifo.flush();
     }
-    void write(const std::string& logLine)
+    void write(std::string&& logLine)
     {
         if (mEnabled)
         {
@@ -167,7 +167,7 @@ private:
 Log::~Log()
 {
     os << std::endl;
-    sWriter->write(os.str());
+    sWriter->write(std::move(os.str()));
 }
 
 void Log::setReportingLevel(const LogLevel& level)

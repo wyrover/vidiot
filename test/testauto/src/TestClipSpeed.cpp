@@ -562,6 +562,8 @@ void TestClipSpeed::testChangeClipSpeedWithInTransition()
     TimelineZoomIn(3);
     Unlink(VideoClip(0, 4));
 
+#ifndef __GNUC__
+
     /////////////////////////////////////////////////////////////////////////////////////////////////
 
     TimelineDeleteClip(AudioClip(0, 4));
@@ -573,7 +575,6 @@ void TestClipSpeed::testChangeClipSpeedWithInTransition()
         model::VideoFramePtr referenceLastFrame{ LastFrame(VideoClip(0, 5)) };
 
         // todo gdi calls in non main thread cause crash: thumbnail being generated during scrubbing....
-#ifndef __GNUC__
         {
             StartTest("Video: Speed decrease: Enlarging clip allowed, begin and end frames stay the same");
             TimelineLeftClick(Center(VideoClip(0, 5)));
@@ -688,7 +689,7 @@ void TestClipSpeed::testChangeClipSpeedWithInTransition()
     Undo(); // Delete audio clip
 
     /////////////////////////////////////////////////////////////////////////////////////////////////
-    
+
     Undo(); // Unlink
 
     {

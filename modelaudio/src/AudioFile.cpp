@@ -479,6 +479,11 @@ AudioPeaks AudioFile::getPeaks(const AudioCompositionParameters& parameters, pts
             }
             chunk = getNextAudio(parameters);
         }
+
+        {
+            // todo new algo here (with % 100?) and compare with old algo values.
+        }
+
         if (parameters.getSpeed() == 1)
         {
             // Only cache for default speed.

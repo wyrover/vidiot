@@ -25,7 +25,6 @@
 #include "EmptyChunk.h"
 #include "Node.h"
 #include "Transition.h"
-#include "UtilSoundTouch.h"
 
 namespace model {
 
@@ -122,14 +121,14 @@ AudioChunkPtr AudioClip::getNextAudio(const AudioCompositionParameters& paramete
 
     pts length{ getLength() };
 
-    if (getSpeed() >= rational64(util::SoundTouch::sMaximumSpeed, util::SoundTouch::sDefaultSpeed) && 
+    if (getSpeed() >= rational64(util::SoundTouch::sMaximumSpeed, util::SoundTouch::sDefaultSpeed) &&
         getSpeed() <= rational64(util::SoundTouch::sMinimumSpeed, util::SoundTouch::sDefaultSpeed) &&
         getSpeed() != rational64(1) &&
         (mSoundTouch == nullptr || mSoundTouch->getSpeed() != getSpeed()))
     {
         mSoundTouch = std::make_unique<util::SoundTouch>(parameters.getSampleRate(), parameters.getNrChannels(), getSpeed());
     }
-    
+
     if (mProgress < length)
     {
 
