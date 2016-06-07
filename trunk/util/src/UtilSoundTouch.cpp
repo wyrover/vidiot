@@ -105,8 +105,7 @@ samplecount SoundTouch::receive(model::AudioChunkPtr chunk, samplecount offset, 
     if (mAtEnd)
     {
         // Fill remainder with silence
-        // todo removeafter testing on both platforms.
-        // check to see if memset with 0 size is allowed.
+        // Note: memset with 0 size is allowed.
         memset(chunk->getBuffer() + offset + nFramesAvailable, 0, 0);
         memset(chunk->getBuffer() + offset + nFramesAvailable, 0, (nFramesRequired - nFramesAvailable) * model::AudioChunk::sBytesPerSample);
         nFrames = nFramesRequired;

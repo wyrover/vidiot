@@ -210,7 +210,7 @@ struct LogVar
 
     /// Append one variable to the list of logged variables.
     template<class type>
-    LogVar& logVar(const type& varValue, const char* varName)
+    LogVar& logVar(type&& varValue, const char* varName)
     {
         osVars << "[" << varName << "=" << varValue << "]";
         return *this;
