@@ -22,5 +22,6 @@ namespace model {
 DECLARE_EVENT(EVENT_DRAG_CLIP, EventDragClip, bool);
 DECLARE_EVENT(EVENT_SELECT_CLIP, EventSelectClip, bool);
 DECLARE_EVENT(EVENT_CHANGE_CLIP_KEYFRAMES, EventChangeClipKeyFrames, pts);
+DECLARE_EVENT(EVENT_CHANGE_CLIP_SPEED, EventChangeClipSpeed, rational64);
 
 } // namespace

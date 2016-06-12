@@ -19,11 +19,7 @@
 
 #include "UtilSingleInstance.h"
 
-#include "AudioPeaks.h"
-
 namespace model {
-
-class AudioPeaks;
 
 struct FileMetaData;
 typedef boost::shared_ptr<FileMetaData> FileMetaDataPtr;
@@ -47,9 +43,6 @@ public:
 
     boost::optional<pts> getLength(const wxFileName& file);
     void setLength(const wxFileName& file, const pts& length);
-
-    boost::optional<AudioPeaks> getPeaks(const wxFileName& file);
-    void setPeaks(const wxFileName& file, const AudioPeaks& peaks);
 
 protected:
 
@@ -90,5 +83,5 @@ private:
 
 } // namespace
 
-BOOST_CLASS_VERSION(model::FileMetaDataCache, 1)
+BOOST_CLASS_VERSION(model::FileMetaDataCache, 2)
 BOOST_CLASS_EXPORT_KEY(model::FileMetaDataCache)

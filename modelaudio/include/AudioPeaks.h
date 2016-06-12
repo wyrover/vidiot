@@ -19,7 +19,7 @@
 
 namespace model {
 
-typedef std::pair<sample,sample> AudioPeak;
+typedef std::pair< std::pair<sample,sample>, std::pair<sample, sample> > AudioPeak;
 
 class AudioPeaks : public std::vector < AudioPeak >
 {
@@ -43,5 +43,5 @@ public:
 
 } // namespace
 
-BOOST_CLASS_VERSION(model::AudioPeaks, 1)
+BOOST_CLASS_VERSION(model::AudioPeaks, 2)
 BOOST_CLASS_EXPORT_KEY(model::AudioPeaks)

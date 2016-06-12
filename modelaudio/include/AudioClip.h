@@ -24,6 +24,9 @@
 
 namespace model {
 
+class EventChangeClipKeyFrames;
+class EventChangeClipSpeed;
+
 /// Change the volume of the given sample
 /// To decrease the volume pass a value < 1.0
 /// To increase the volume pass a value > 1.0
@@ -37,6 +40,8 @@ class AudioClip
 {
 public:
 
+    static const int sPeaksPerPts = 2;
+
     //////////////////////////////////////////////////////////////////////////
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
@@ -47,7 +52,7 @@ public:
 
     virtual AudioClip* clone() const override;
 
-    virtual ~AudioClip() = default;
+    virtual ~AudioClip();
 
     //////////////////////////////////////////////////////////////////////////
     // ICONTROL
@@ -90,6 +95,13 @@ protected:
 
     KeyFramePtr interpolate(KeyFramePtr before, KeyFramePtr after, pts positionBefore, pts position, pts positionAfter) const override;
 
+    //////////////////////////////////////////////////////////////////////////
+    // CLIP INTERVAL EVENTS
+    //////////////////////////////////////////////////////////////////////////
+
+    void onKeyFramesChanged(EventChangeClipKeyFrames& event);
+    void onSpeedChanged(EventChangeClipSpeed& event);
+
 private:
 
     //////////////////////////////////////////////////////////////////////////
@@ -102,11 +114,9 @@ private:
 
     std::unique_ptr<util::SoundTouch> mSoundTouch = nullptr;
 
-    /// Cached for performance (stored in the save file to avoid recalculating)
-    /// If the clip has a non-default speed and/or volume, the caching is done in
-    /// the clip. For default clips (volume/speed) the caching is done 'per file'
-    /// in the FileMetaDataCache.
-    boost::optional<AudioPeaks> mPeaks = boost::none;
+    /// Cached for performance (stored in the save file to avoid recalculating).
+    /// \note peaks are stored, given a clip's speed and key frames.
+    boost::shared_ptr<AudioPeaks> mPeaks = nullptr;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

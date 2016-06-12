@@ -45,7 +45,8 @@ static zoomlist sZooms = {
     { rational64{1, 3} },
     { rational64{1, 2} },
     { rational64{1, 1} },
-    { rational64{2, 1} },
+    { rational64{2, 1} },      
+    // NOTE: If this table is extended for further zooming in, increase the amount of generated audio peaks also.
 };
 
 //////////////////////////////////////////////////////////////////////////

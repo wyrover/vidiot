@@ -49,8 +49,19 @@ void AudioPeaks::serialize(Archive & ar, const unsigned int version)
         {
             unsigned int s{ 0 };
             ar & boost::serialization::make_nvp(sCount.c_str(), s);
-            resize(s);
-            ar & boost::serialization::make_nvp(sPeaks.c_str(), boost::serialization::make_binary_object(data(), s * sizeof(AudioPeak)));
+            if (version < 2)
+            {
+                // Ensure file reading ok (old peaks did not contain RMS values), read info is discarded. See FileMetaDataCache.
+                typedef std::pair< sample, sample > OldAudioPeak;
+                std::vector < OldAudioPeak > peaks;
+                peaks.resize(s);
+                ar & boost::serialization::make_nvp(sPeaks.c_str(), boost::serialization::make_binary_object(peaks.data(), s * sizeof(OldAudioPeak)));
+            }
+            else
+            {
+                resize(s);
+                ar & boost::serialization::make_nvp(sPeaks.c_str(), boost::serialization::make_binary_object(data(), s * sizeof(AudioPeak)));
+            }
         }
         else
         {

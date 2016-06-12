@@ -54,7 +54,8 @@ SoundTouch::~SoundTouch()
 
 void SoundTouch::send(model::AudioChunkPtr chunk)
 {
-    if (chunk == nullptr)
+    if (chunk == nullptr || 
+        chunk->getError())
     {
         mAtEnd = true;
         return;

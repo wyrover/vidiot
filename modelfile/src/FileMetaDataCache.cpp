@@ -18,6 +18,7 @@
 #include "FileMetaDataCache.h"
 
 #include <boost/serialization/map.hpp>
+#include "AudioPeaks.h"
 #include "UtilSerializeBoost.h"
 #include "UtilSerializeWxwidgets.h"
 
@@ -33,7 +34,6 @@ namespace model {
 
     wxDateTime LastModified;
     boost::optional<pts> Length = boost::none;
-    boost::optional<AudioPeaks> Peaks = boost::none;
 
     friend class boost::serialization::access;
     template<class Archive>
@@ -41,7 +41,12 @@ namespace model {
     {
         ar & BOOST_SERIALIZATION_NVP(LastModified);
         ar & BOOST_SERIALIZATION_NVP(Length);
-        ar & BOOST_SERIALIZATION_NVP(Peaks);
+        if (version < 2)
+        {
+            // In version 2, the peaks were moved to the AudioClip class.
+            boost::optional< AudioPeaks > Peaks;
+            ar & BOOST_SERIALIZATION_NVP(Peaks);
+        }
     }
 };
 
@@ -73,18 +78,6 @@ void FileMetaDataCache::setLength(const wxFileName& file, const pts& length)
 {
     boost::mutex::scoped_lock lock(mMutex);
     getDataForFile(file)->Length.reset(length);
-}
-
-boost::optional<AudioPeaks> FileMetaDataCache::getPeaks(const wxFileName& file)
-{
-    boost::mutex::scoped_lock lock(mMutex);
-    return getDataForFile(file)->Peaks;
-}
-
-void FileMetaDataCache::setPeaks(const wxFileName& file, const AudioPeaks& peaks)
-{
-    boost::mutex::scoped_lock lock(mMutex);
-    getDataForFile(file)->Peaks.reset(peaks);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -150,3 +143,4 @@ template void FileMetaData::serialize<boost::archive::xml_iarchive>(boost::archi
 } //namespace
 
 BOOST_CLASS_EXPORT_IMPLEMENT(model::FileMetaDataCache)
+BOOST_CLASS_VERSION(model::FileMetaData, 2)

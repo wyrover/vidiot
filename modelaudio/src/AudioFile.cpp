@@ -21,7 +21,6 @@
 #include "AudioCompositionParameters.h"
 #include "Convert.h"
 #include "EmptyChunk.h"
-#include "FileMetaDataCache.h"
 #include "UtilInitAvcodec.h"
 #include "UtilPath.h"
 
@@ -119,7 +118,6 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
 
     PacketPtr audioPacket = getNextPacket();
     samplecount nSkipSamples = 0;
-
 
     if (mNewStartPosition)
     {
@@ -427,105 +425,6 @@ int AudioFile::getChannels()
 boost::optional<pts> AudioFile::getNewStartPosition() const
 {
     return mNewStartPosition;
-}
-
-AudioPeaks AudioFile::getPeaks(const AudioCompositionParameters& parameters, pts offset, pts length) // todo add speed here!
-{
-    if (!canBeOpened())
-    {
-        return AudioPeaks();
-    }
-    ASSERT_MORE_THAN_EQUALS_ZERO(offset);
-    ASSERT_MORE_THAN_EQUALS_ZERO(length);
-
-    boost::optional<AudioPeaks> peaks{ FileMetaDataCache::get().getPeaks(getPath()) };
-
-    if (!peaks || 
-        parameters.getSpeed() != 1)
-    {
-        // The setPts() & determineChunkSize() below is required for the case where the file has been removed from disk,
-        // and the chunk size is used to initialize a chunk of silence.
-        moveTo(0);
-
-        AudioPeaks allPeaks;
-        AudioPeak current{ 0, 0 };
-        samplecount samplePosition{ 0 };
-        samplecount nextRequiredSample{ 0 };
-        AudioChunkPtr chunk{ getNextAudio(parameters) };
-
-        size_t data_length{ narrow_cast<size_t>(getLength()) };
-
-        while (chunk && allPeaks.size() < data_length)
-        {
-            samplecount chunksize = chunk->getUnreadSampleCount();
-            sample* buffer = chunk->getBuffer();
-
-            for (int i = 0; (i < chunksize) && (allPeaks.size() < data_length); ++i)
-            {
-                current.first = std::min(current.first, *buffer);   // todo this algo checks ALL samples? Can't we skip about 40000? (or at least reduce a lot)
-                current.second = std::max(current.second, *buffer);
-                if (samplePosition == nextRequiredSample)
-                {
-                    ASSERT_LESS_THAN_EQUALS_ZERO(current.first);
-                    ASSERT_MORE_THAN_EQUALS_ZERO(current.second);
-                    allPeaks.emplace_back(current);
-                    current = AudioPeak(0, 0);
-                    // Note: new speed has been taken into account by getNextAudio already!
-                    // Note: computation for peaks is the same for with and without soundtouch usage. So may be slightly off, in case SoundTouch is used.
-                    nextRequiredSample = Convert::ptsToSamplesPerChannel(parameters.getSampleRate(), allPeaks.size());
-                }
-                ++samplePosition;
-                ++buffer;
-            }
-            chunk = getNextAudio(parameters);
-        }
-
-        {
-            // todo new algo here (with % 100?) and compare with old algo values.
-        }
-
-        if (parameters.getSpeed() == 1)
-        {
-            // Only cache for default speed.
-            // Caching for nondefault speeds is done in AudioClip, to ensure
-            // that only actually used speed values are retained.
-            FileMetaDataCache::get().setPeaks(getPath(), allPeaks);
-        }
-        peaks.reset(allPeaks);
-    }
-
-    const AudioPeaks& allPeaks{ *peaks };
-    pts total{ narrow_cast<pts>(allPeaks.size()) };
-
-    AudioPeaks result;
-
-    // NOT: ASSERT_LESS_THAN_EQUALS(narrow_cast<size_t>(offset), allPeaks.size())(*this);
-    // ==> Sometimes the number of peaks equals '0' at this point (decoding error?). Do not crash but use 'empty' peaks.
-    //
-    // NOT: ASSERT_LESS_THAN_EQUALS(offset + length, allPeaks.size())(*this);
-    // ==> See also  AudioClip::getNextAudio where sometimes extra audio is added, if the audio data length in a file is smaller than the audio length.
-    //
-    // The audio clip may be slightly larger than the audio file data. This can be caused by the clip having (typically) the same length as a linked video clip.
-    // The video data in a file may be slightly longer than the audio data, resulting in such a difference. Instead of truncating the video, the audio is extended
-    // with silence, leaving the truncating (the choice) to the user.
-
-    if (offset < total)
-    {
-        auto itBegin = allPeaks.begin() + offset;
-        auto itEnd = allPeaks.begin() + std::min(total, offset + length);
-        if ((std::distance(allPeaks.begin(), itBegin) < total) &&
-            (std::distance(allPeaks.begin(), itEnd) <= total))
-        {
-            result = std::move(AudioPeaks(itBegin, itEnd));
-        }
-    }
-
-    if (result.size() != narrow_cast<size_t>(length))
-    {
-        // Ensure resulting peaks length equals length of clip. Add 'silence' if required.
-        result.resize(length,std::make_pair(0,0));
-    }
-    return result;
 }
 
 //////////////////////////////////////////////////////////////////////////
