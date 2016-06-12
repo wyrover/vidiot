@@ -21,6 +21,7 @@
 #include "AudioFile.h"
 #include "AudioKeyFrame.h"
 #include "AudioPeaks.h"
+#include "ClipEvent.h"
 #include "Convert.h"
 #include "EmptyChunk.h"
 #include "Node.h"
@@ -62,17 +63,31 @@ AudioClip::AudioClip(const AudioFilePtr& file)
 {
     VAR_DEBUG(*this);
     setDefaultKeyFrame(boost::make_shared<AudioKeyFrame>());
+
+    Bind(model::EVENT_CHANGE_CLIP_KEYFRAMES, &AudioClip::onKeyFramesChanged, this);
+    Bind(model::EVENT_CHANGE_CLIP_SPEED, &AudioClip::onSpeedChanged, this);
 }
 
+// Cached peaks are explicitly copied to avoid cloned clips having duplicates of the peaks.
+// Furthermore, during edits (trimming) the cached peaks (for the entire file) can be reused.
 AudioClip::AudioClip(const AudioClip& other)
     : ClipInterval(other)
+    , mPeaks(other.mPeaks)
 {
     VAR_DEBUG(other)(*this);
+    Bind(model::EVENT_CHANGE_CLIP_KEYFRAMES, &AudioClip::onKeyFramesChanged, this);
+    Bind(model::EVENT_CHANGE_CLIP_SPEED, &AudioClip::onSpeedChanged, this);
 }
 
 AudioClip* AudioClip::clone() const
 {
     return new AudioClip(static_cast<const AudioClip&>(*this));
+}
+
+AudioClip::~AudioClip()
+{
+    Unbind(model::EVENT_CHANGE_CLIP_SPEED, &AudioClip::onSpeedChanged, this);
+    Unbind(model::EVENT_CHANGE_CLIP_KEYFRAMES, &AudioClip::onKeyFramesChanged, this);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -149,6 +164,10 @@ AudioChunkPtr AudioClip::getNextAudio(const AudioCompositionParameters& paramete
                 else if (mSoundTouch->isEmpty())
                 {
                     model::AudioChunkPtr chunk = getDataGenerator<AudioFile>()->getNextAudio(fileparameters);
+                    if (chunk->getError())
+                    {
+                        result->setError();
+                    }
                     mSoundTouch->send(chunk);
                 }
                 else
@@ -172,9 +191,14 @@ AudioChunkPtr AudioClip::getNextAudio(const AudioCompositionParameters& paramete
             }
             while (writtenSamples < requiredSamples)
             {
-                if (mInputChunk &&
+                if (mInputChunk &&     
                     mInputChunk->getUnreadSampleCount() > 0)
                 {
+                    if (mInputChunk->getError())
+                    {
+                        result->setError();
+                        break; // No more data available
+                    }
                     writtenSamples += mInputChunk->extract(result->getBuffer() + writtenSamples, requiredSamples - writtenSamples);
                 }
                 else
@@ -242,54 +266,136 @@ AudioChunkPtr AudioClip::getNextAudio(const AudioCompositionParameters& paramete
 
 AudioPeaks AudioClip::getPeaks(const AudioCompositionParameters& parameters)
 {
+    pts offset{ getOffset() };
+    pts length{ getLength() };
+    if (getInTransition())
+    {
+        boost::optional<pts> left{ getInTransition()->getRight() };
+        ASSERT(left);
+        ASSERT_NONZERO(*left);
+        offset -= *left;
+    }
+    if (getOutTransition())
+    {
+        boost::optional<pts> right{ getOutTransition()->getLeft() };
+        ASSERT(right);
+        ASSERT_NONZERO(*right);
+        length += *right;
+    }
+
     if (!mPeaks)
     {
-        pts offset{ getOffset() };
-        pts length{ getLength() };
-        if (getInTransition())
+        // Store cached peaks (with adjusted volume/key frames) in save file.
+        mPeaks = boost::make_shared<AudioPeaks>();
+
+        // The setPts() & determineChunkSize() below is required for the case where the file has been removed from disk,
+        // and the chunk size is used to initialize a chunk of silence.
+        maximize(); // When caching, cache the entire file.
+        moveTo(0);
+
+        samplecount samplePosition{ 0 };
+        samplecount nextRequiredSample{ 0 };
+        AudioChunkPtr chunk{ getNextAudio(parameters) };
+
+        size_t data_length{ narrow_cast<size_t>(getLength()) * sPeaksPerPts };
+
+        sample negativePeak = 0;
+        sample positivePeak = 0;
+        int64_t positiveSum = 0;
+        int64_t negativeSum = 0;
+        int count = 0;
+
+        while (chunk && !chunk->getError())
         {
-            boost::optional<pts> left{ getInTransition()->getRight() };
-            ASSERT(left);
-            ASSERT_NONZERO(*left);
-            offset -= *left;
-        }
-        if (getOutTransition())
-        {
-            boost::optional<pts> right{ getOutTransition()->getLeft() };
-            ASSERT(right);
-            ASSERT_NONZERO(*right);
-            length += *right;
+            // todo verify files with reading errors (cannot open entirely and has less data than expected)
+            samplecount chunksize = chunk->getUnreadSampleCount();
+            sample* buffer = chunk->getBuffer();
+
+            for (int i = 0; (i < chunksize) && (mPeaks->size() < data_length); ++i)
+            {
+                ++count;
+                if (*buffer > 0)
+                {
+                    positiveSum += (*buffer * *buffer);
+                    positivePeak = std::max(positivePeak, *buffer);
+                }
+                else
+                {
+                    negativeSum += (*buffer * *buffer); // - * - = + !
+                    negativePeak = std::min(negativePeak, *buffer);
+                }
+
+                if (samplePosition == nextRequiredSample)
+                {
+                    ASSERT_LESS_THAN_EQUALS_ZERO(negativePeak);
+                    ASSERT_MORE_THAN_EQUALS_ZERO(negativeSum);
+                    ASSERT_MORE_THAN_EQUALS_ZERO(positivePeak);
+                    ASSERT_MORE_THAN_EQUALS_ZERO(positiveSum);
+                    mPeaks->emplace_back(AudioPeak({ { negativePeak, positivePeak },{ -narrow_cast<sample>(std::trunc(sqrt(negativeSum / count))),  narrow_cast<sample>(std::trunc(sqrt(positiveSum / count))) } }));
+                    count = 0;
+                    positiveSum = 0;
+                    negativeSum = 0;
+                    negativePeak = 0;
+                    positivePeak = 0;
+                    // Note: new speed has been taken into account by getNextAudio already!
+                    nextRequiredSample = Convert::ptsToSamplesPerChannel(parameters.getSampleRate(), mPeaks->size()) / sPeaksPerPts;
+                }
+                ++samplePosition;
+                ++buffer;
+            }
+            chunk = getNextAudio(parameters);
         }
 
         KeyFrameMap keyFrames{ getKeyFramesOfPerceivedClip() };
-        AudioCompositionParameters fileparameters(parameters);
-        fileparameters.setSpeed(getSpeed());
-        model::AudioPeaks peaks{ getDataGenerator<AudioFile>()->getPeaks(fileparameters, offset, length) };
-        AudioPeaks result;
-
         if (keyFrames.empty() &&
             (boost::dynamic_pointer_cast<AudioKeyFrame>(getDefaultKeyFrame())->getVolume() == AudioKeyFrame::sVolumeDefault) &&
             (getSpeed() == util::SoundTouch::sDefaultSpeed))
         {
-            // Performance optimization for default case (store the peaks for the file only once).
-            // Return unchanged peaks from the file.
-            return peaks;
+            // Performance optimization for default case.
         }
-
-        pts position{ 0 };
-        int volumeBefore{ boost::dynamic_pointer_cast<AudioKeyFrame>(getFrameAt(position))->getVolume() };
-        for (AudioPeak& peak : peaks)
+        else
         {
-            int volumeAfter{ boost::dynamic_pointer_cast<AudioKeyFrame>(getFrameAt(++position))->getVolume() };
-            double volume{ (volumeBefore + volumeAfter) / 200.0 }; // /200: first /2 for the average of the two volumes. Then /100 to get a percentage.
-            adjustSampleVolume(volume, peak.first);
-            adjustSampleVolume(volume, peak.second);
-            volumeBefore = volumeAfter;
+            pts position{ 0 };
+            int volumeBefore{ boost::dynamic_pointer_cast<AudioKeyFrame>(getFrameAt(position / sPeaksPerPts))->getVolume() };
+            for (AudioPeak& peak : *mPeaks)
+            {
+                ++position;
+                int volumeAfter{ boost::dynamic_pointer_cast<AudioKeyFrame>(getFrameAt(position / sPeaksPerPts))->getVolume() };
+                double volume{ (volumeBefore + volumeAfter) / 200.0 }; // /200: first /2 for the average of the two volumes. Then /100 to get a percentage.
+                adjustSampleVolume(volume, peak.first.first);
+                adjustSampleVolume(volume, peak.first.second);     // todo obsolete?
+                adjustSampleVolume(volume, peak.second.first);
+                adjustSampleVolume(volume, peak.second.second);
+                volumeBefore = volumeAfter;
+            }
         }
 
-        mPeaks.reset(peaks);
+        // No asserts on 'enough data' here:
+        // The audio clip may be slightly larger than the audio file data. This can be caused by the clip having (typically) the same length as a linked video clip.
+        // The video data in a file may be slightly longer than the audio data, resulting in such a difference. Instead of truncating the video, the audio is extended
+        // with silence, leaving the truncating (the choice) to the user.
+
     }
-    return *mPeaks;
+
+
+    int offsetInPeaks = offset * sPeaksPerPts;
+    int lengthInPeaks = length * sPeaksPerPts;
+    int nPeaks = mPeaks->size();
+
+    auto itBegin = mPeaks->cbegin() + std::min(offsetInPeaks, nPeaks);
+    auto itEnd = mPeaks->cbegin() + std::min(offsetInPeaks + lengthInPeaks, nPeaks);
+    if ((std::distance(mPeaks->cbegin(), itBegin) < nPeaks) &&
+        (std::distance(mPeaks->cbegin(), itEnd) <= nPeaks))
+    {
+        return std::move(AudioPeaks(itBegin, itEnd));
+    }
+    if (mPeaks->size() < length)
+    {
+        // Ensure resulting peaks length equals length of clip. Add 'silence' if required.
+        mPeaks->resize(length, AudioPeak({ { 0,0 },{ 0,0 } }));
+    }
+
+    return AudioPeaks();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -299,6 +405,22 @@ AudioPeaks AudioClip::getPeaks(const AudioCompositionParameters& parameters)
 KeyFramePtr AudioClip::interpolate(KeyFramePtr before, KeyFramePtr after, pts positionBefore, pts position, pts positionAfter) const
 {
     return boost::make_shared<AudioKeyFrame>(boost::dynamic_pointer_cast<AudioKeyFrame>(before), boost::dynamic_pointer_cast<AudioKeyFrame>(after), positionBefore, position, positionAfter);
+}
+
+//////////////////////////////////////////////////////////////////////////
+// CLIP INTERVAL EVENTS
+//////////////////////////////////////////////////////////////////////////
+
+void AudioClip::onKeyFramesChanged(EventChangeClipKeyFrames& event)
+{
+    mPeaks = nullptr;
+    event.Skip();
+}
+
+void AudioClip::onSpeedChanged(EventChangeClipSpeed& event)
+{
+    mPeaks = nullptr;
+    event.Skip();
 }
 
 //////////////////////////////////////////////////////////////////////////

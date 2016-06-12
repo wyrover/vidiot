@@ -135,6 +135,9 @@ void ClipInterval::setSpeed(const rational64& speed)
 
         ASSERT_MORE_THAN_EQUALS_ZERO(mOffset);
         ASSERT_LESS_THAN_EQUALS(mLength, getRenderLength() - mOffset)(mLength)(mRender->getLength())(mSpeed)(getRenderLength())(mOffset)(*this);
+
+        EventChangeClipSpeed event(mSpeed);
+        ProcessEvent(event);
     }
 }
 

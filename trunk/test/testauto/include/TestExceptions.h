@@ -48,6 +48,10 @@ public:
 
     void testRemovedFileUsedForTransitionsBeforeOpening();
 
+    /// Particularly required for testing the generation of audio peaks for
+    /// a missing file, where the speed triggers SoundTouch.
+    void testRemovedFileWithAdjustedSpeed();
+
     void testRemovedFileInProjectViewBeforeOpening();
 
     void testRemovedFolderInProjectViewBeforeOpening();
@@ -60,7 +64,7 @@ private:
 
     std::pair< model::SequencePtr, RandomTempDirPtr> createProjectWithOneFile(const wxFileName& file);
 
-    void testRemovedFileInSequence(const wxFileName& file);
+    void testRemovedFileInSequence(const wxFileName& file, std::function<void()> adjustment = std::function<void()>());
 
     void testRemovedFileInSequenceBeforeOpening(const wxFileName& file);
 

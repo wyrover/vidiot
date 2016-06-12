@@ -95,6 +95,19 @@ void TestExceptions::testRemovedFileUsedForTransitionsBeforeOpening()
     CloseProjectAndAvoidSaveDialog(); // Avoid files being in use when deleted
 }
 
+void TestExceptions::testRemovedFileWithAdjustedSpeed()
+{
+    StartTestSuite();
+    testRemovedFileInSequence(getFileName("input", "00.avi"), []
+    {
+        TimelineLeftClick(Center(VideoClip(0, 0)));
+        ASSERT(DetailsView(VideoClip(0, 0)));
+        ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
+        SetValue(DetailsClipView()->getSpeedSlider(), 10050);
+        ASSERT_CLIP_SPEED(AudioClip(0, 0), rational64(3, 2)); // At this speed the soundtouch calculation is used
+    });
+}
+
 void TestExceptions::testRemovedFileInProjectViewBeforeOpening()
 {
     StartTestSuite();
@@ -176,9 +189,13 @@ std::pair< model::SequencePtr, RandomTempDirPtr> TestExceptions::createProjectWi
     return std::make_pair(sequence, tempDir);
 }
 
-void TestExceptions::testRemovedFileInSequence(const wxFileName& file)
+void TestExceptions::testRemovedFileInSequence(const wxFileName& file, std::function<void()> adjustment)
 {
     std::pair< model::SequencePtr, RandomTempDirPtr> projectfolder_and_dirtoberemoved = createProjectWithOneFile(file);
+    if (adjustment)
+    {
+        adjustment();
+    }
     WindowTriggerMenu(ID_CLOSESEQUENCE);
 
     projectfolder_and_dirtoberemoved.second.reset(); // Deletes the file (still used in the sequence) from disk
