@@ -307,7 +307,6 @@ AudioPeaks AudioClip::getPeaks(const AudioCompositionParameters& parameters)
 
         while (chunk && !chunk->getError())
         {
-            // todo verify files with reading errors (cannot open entirely and has less data than expected)
             samplecount chunksize = chunk->getUnreadSampleCount();
             sample* buffer = chunk->getBuffer();
 
