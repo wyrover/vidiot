@@ -17,6 +17,8 @@
 
 #include "TransitionParameter.h"
 
+#include "UtilWindow.h"
+
 namespace model {
 
 DEFINE_EVENT(EVENT_TRANSITION_PARAMETER_CHANGED, EventTransitionParameterChanged, wxString);
@@ -30,6 +32,7 @@ TransitionParameter::TransitionParameter(const TransitionParameter& other)
     , mName{ other.mName }
     , mDescription{ other.mDescription }
     , mToolTip{ other.mToolTip }
+    , mBitmap{ other.mBitmap }
 {
 }
 
@@ -65,6 +68,16 @@ wxString TransitionParameter::getToolTip() const
 void TransitionParameter::setToolTip(const wxString& tooltip)
 {
     mToolTip = tooltip;
+}
+
+wxBitmap TransitionParameter::getBitmap()
+{
+    return mBitmap;
+}
+
+void TransitionParameter::setBitmap(const wxString& name)
+{
+    mBitmap = util::window::getBitmap(name);
 }
 
 void TransitionParameter::setOnChanged(std::function<void(const wxString&)> onChange) { mOnChange = onChange; }

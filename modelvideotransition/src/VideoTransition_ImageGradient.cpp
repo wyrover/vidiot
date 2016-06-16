@@ -59,9 +59,9 @@ ParameterAttributes ImageGradient::getAvailableParameters() const
             "Transparent areas in the image will cause the video of the right clip not to be shown at all in those areas. "
             "In GIMP, use the Blend tool, or a Paint Brush with 'Dynamics: Color from gradient' to create such images. "
             "Note that the darkest/lightest colours are determined from the image. "
-            "Therefore, the gradient does not have to end exactly at white or black."), boost::make_shared<TransitionParameterFilename>("", false, true, getDefaultImageGradientPath()) },
-        { TransitionParameterInt::sParameterSoften, _("Soften"), _("Select how much to soften the effect.") , boost::make_shared<TransitionParameterInt>(0, 0, 100) },
-        { TransitionParameterInt::sParameterBlur, _("Blur"), _("Select how much to blur the image.") , boost::make_shared<TransitionParameterInt>(0, 0, 100) },
+            "Therefore, the gradient does not have to end exactly at white or black."), "image.png", boost::make_shared<TransitionParameterFilename>("", false, true, getDefaultImageGradientPath()) },
+        { TransitionParameterInt::sParameterSoften, _("Soften"), _("Select how much to soften the effect.") , "cushion-blue.png", boost::make_shared<TransitionParameterInt>(0, 0, 100) },
+        { TransitionParameterInt::sParameterBlur, _("Blur"), _("Select how much to blur the image."), "water.png", boost::make_shared<TransitionParameterInt>(0, 0, 100) },
     };
 }
 

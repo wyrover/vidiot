@@ -47,7 +47,7 @@ ParameterAttributes Push::getAvailableParameters() const
 {
     return
     {
-        { TransitionParameterDirection4::sParameterDirection4, _("Direction"), _("Select the movement direction."), boost::make_shared<TransitionParameterDirection4>(Direction4LeftToRight) }
+        { TransitionParameterDirection4::sParameterDirection4, _("Direction"), _("Select the movement direction."), "direction-blue.png", boost::make_shared<TransitionParameterDirection4>(Direction4LeftToRight) }
     };
 }
 

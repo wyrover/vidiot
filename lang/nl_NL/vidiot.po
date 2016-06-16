@@ -19,8 +19,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-01 14:00+0200\n"
-"PO-Revision-Date: 2016-05-14 18:23+0200\n"
+"POT-Creation-Date: 2016-06-12 12:34+0200\n"
+"PO-Revision-Date: 2016-06-15 15:39+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: nl_NL\n"
@@ -1955,15 +1955,12 @@ msgstr "Standaard duur (s)"
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:124
 msgid ""
-"Change the speed of the clip. Note that currently only changing the speed of "
-"video-only clips is supported. Furthermore, changing the clip speed is only "
-"allowed when a there are no other clips 'under' and 'above' the clip in the "
-"timeline."
+"Change the speed of the clip. Changing the clip speed is only allowed when "
+"the clip and its linked clip (if any) are both of an equal size and "
+"position. Furthermore, there may be no other clips in the same time span as "
+"the clip. Note that, when selecting a speed smaller than 0.5 or larger than "
+"2.0 the pitch of the audio will change."
 msgstr ""
-"Verander de snelheid van de clip. Op dit moment is alleen het veranderen van "
-"de snelheid van clips met alleen video ondersteund. Verder is het niet "
-"mogelijk om de snelheid aan te passsen wanneer er clips in andere sporen "
-"zijn, in hetzelfde tijdsbestek als de aan te passen clip."
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:136
@@ -2008,7 +2005,7 @@ msgstr ""
 #. TRANSLATORS: Do not let the string exceed 20 characters.
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:184
 msgid "Opacity"
-msgstr "Ondoorzichtigheid"
+msgstr "Doorzichtigheid"
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:190
 msgid "Select the rotation (in degrees) of the video frame."
@@ -2036,7 +2033,7 @@ msgid ""
 "Select between several automated positioning strategies or manually select "
 "the (custom) position of the video frame."
 msgstr ""
-"Kies tussen verschillende automatische positioneringsstrategieën of stel "
+"Kies tussen verschillende automatische positionerings strategieën of stel "
 "handmatig de positie van de video in."
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:236
@@ -2259,7 +2256,7 @@ msgstr "Verwijder geselecteerde clips"
 msgid "Could not shift clips. Part of the region is still in use."
 msgstr "Kon clips niet opschuiven. Gedeelte van het gebied is nog in gebruik."
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:70
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:65
 msgid ""
 "Can not change length if start position, length, or speed for two linked "
 "clips are not equal."
@@ -2267,7 +2264,7 @@ msgstr ""
 "Kan de lengte niet aanpassen als start positie, lengte of snelheid van twee "
 "gekoppelde clips niet gelijk zijn."
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:109
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:103
 msgid ""
 "Can not change clip speed. There may not be clips in the same timeframe in "
 "other tracks."
@@ -2275,27 +2272,27 @@ msgstr ""
 "Kan clip snelheid niet aanpassen. Er mogen geen clips in hetzelfde "
 "tijdsbestek in andere sporen zijn."
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:116
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:110
 #, c-format
 msgid "Adjust speed of %s"
 msgstr "Pas snelheid van %s aan"
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:202
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:226
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:236
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:220
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:244
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:254
 #, c-format
 msgid "Can't scale beyond %s"
 msgstr "Kan niet verder schalen dan %s"
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:202
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:220
 msgid "(no room for left transition)."
 msgstr "(er blijft niet genoeg ruimte over voor linker overgang)"
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:226
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:244
 msgid "(no room for right transition)."
 msgstr "(er blijft niet genoeg ruimte over voor rechter overgang)"
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:236
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:254
 msgid "(no clip remains)."
 msgstr "(er blijft geen clip over)"
 
@@ -2457,6 +2454,17 @@ msgstr "Druk op OK om af te sluiten."
 #: C:\Vidiot\vidiot_trunk\util\src\UtilPath.cpp:284
 msgid "Resources not found"
 msgstr "Hulpbestanden niet gevonden"
+
+#~ msgid ""
+#~ "Change the speed of the clip. Note that currently only changing the speed "
+#~ "of video-only clips is supported. Furthermore, changing the clip speed is "
+#~ "only allowed when a there are no other clips 'under' and 'above' the clip "
+#~ "in the timeline."
+#~ msgstr ""
+#~ "Verander de snelheid van de clip. Op dit moment is alleen het veranderen "
+#~ "van de snelheid van clips met alleen video ondersteund. Verder is het "
+#~ "niet mogelijk om de snelheid aan te passsen wanneer er clips in andere "
+#~ "sporen zijn, in hetzelfde tijdsbestek als de aan te passen clip."
 
 #~ msgid "poedit"
 #~ msgstr "poedit"

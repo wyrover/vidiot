@@ -287,6 +287,7 @@ void Transition::initParameters(std::map<wxString, TransitionParameterPtr> curre
         attributes.Parameter->setName(attributes.Name);
         attributes.Parameter->setDescription(attributes.Description);
         attributes.Parameter->setToolTip(attributes.Tooltip);
+        attributes.Parameter->setBitmap(attributes.Bitmap);
 
         if (currentValues.find(attributes.Name) != currentValues.end())
         {

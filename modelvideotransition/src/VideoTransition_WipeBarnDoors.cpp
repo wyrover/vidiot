@@ -44,8 +44,8 @@ ParameterAttributes WipeBarnDoors::getAvailableParameters() const
 {
     return
     {
-        { TransitionParameterDirection2::sParameterDirection2, _("Direction"), _("Select between a horizontal or a vertical effect"), boost::make_shared<TransitionParameterDirection2>(Direction2Horizontal) },
-        { TransitionParameterBool::sParameterInversed, _("Inversed"), _("Select between making the second clip visible from the inside (normal) or from the outside (inversed)"), boost::make_shared<TransitionParameterBool>(false) },
+        { TransitionParameterDirection2::sParameterDirection2, _("Direction"), _("Select between a horizontal or a vertical effect"), "direction-blue.png", boost::make_shared<TransitionParameterDirection2>(Direction2Horizontal) },
+        { TransitionParameterBool::sParameterInversed, _("Inversed"), _("Select between making the second clip visible from the inside (normal) or from the outside (inversed)"), "arrow-return-180.png", boost::make_shared<TransitionParameterBool>(false) },
     };
 }
 

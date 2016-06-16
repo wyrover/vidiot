@@ -19,7 +19,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-01 14:00+0200\n"
+"POT-Creation-Date: 2016-06-12 12:34+0200\n"
 "PO-Revision-Date: 2016-05-14 18:31+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -1943,13 +1943,12 @@ msgstr "Vordefinierte Länge (s)"
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:124
 msgid ""
-"Change the speed of the clip. Note that currently only changing the speed of "
-"video-only clips is supported. Furthermore, changing the clip speed is only "
-"allowed when a there are no other clips 'under' and 'above' the clip in the "
-"timeline."
+"Change the speed of the clip. Changing the clip speed is only allowed when "
+"the clip and its linked clip (if any) are both of an equal size and "
+"position. Furthermore, there may be no other clips in the same time span as "
+"the clip. Note that, when selecting a speed smaller than 0.5 or larger than "
+"2.0 the pitch of the audio will change."
 msgstr ""
-"Ändern der Geschwindigkeit des Clips. Beachten Sie, dass nur die Veränderung "
-"von Video dateien unterstützt wird."
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:136
@@ -2246,7 +2245,7 @@ msgstr "Ausgewählte  Clips löschen"
 msgid "Could not shift clips. Part of the region is still in use."
 msgstr "Konnte Clips nicht verschieben. Teil der Region ist noch in Gebrauch."
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:70
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:65
 msgid ""
 "Can not change length if start position, length, or speed for two linked "
 "clips are not equal."
@@ -2254,7 +2253,7 @@ msgstr ""
 "Kann Länge nicht ändern, wenn die Startposition, Länge oder Geschwindigkeit "
 "für zwei verknüpften Clips nicht gleich sind."
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:109
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:103
 msgid ""
 "Can not change clip speed. There may not be clips in the same timeframe in "
 "other tracks."
@@ -2262,27 +2261,27 @@ msgstr ""
 "Kann Geschwindigkeit nicht ändern. Es können kein Clips im gleichen Zeitraum "
 "in anderen Spuren sein."
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:116
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:110
 #, c-format
 msgid "Adjust speed of %s"
 msgstr "Bearbeiten der Geschwindigkeit von %s"
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:202
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:226
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:236
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:220
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:244
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:254
 #, c-format
 msgid "Can't scale beyond %s"
 msgstr "Kann nicht über %s erhöhen"
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:202
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:220
 msgid "(no room for left transition)."
 msgstr "(kein Platz für linke Übergang)."
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:226
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:244
 msgid "(no room for right transition)."
 msgstr "(kein Platz für rechte Übergang)."
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:236
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:254
 msgid "(no clip remains)."
 msgstr "(kein Clip bleibt)."
 
@@ -2444,6 +2443,15 @@ msgstr "Drücken Sie auf OK, um zu beenden."
 #: C:\Vidiot\vidiot_trunk\util\src\UtilPath.cpp:284
 msgid "Resources not found"
 msgstr "Ressourcen nicht gefunden"
+
+#~ msgid ""
+#~ "Change the speed of the clip. Note that currently only changing the speed "
+#~ "of video-only clips is supported. Furthermore, changing the clip speed is "
+#~ "only allowed when a there are no other clips 'under' and 'above' the clip "
+#~ "in the timeline."
+#~ msgstr ""
+#~ "Ändern der Geschwindigkeit des Clips. Beachten Sie, dass nur die "
+#~ "Veränderung von Video dateien unterstützt wird."
 
 #~ msgid "Change %s (%s)"
 #~ msgstr "Veränderung von %s (%s)"

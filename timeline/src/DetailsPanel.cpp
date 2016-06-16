@@ -117,12 +117,16 @@ void DetailsPanel::showBox(const wxString& name, bool show)
     mTopSizer->Show(mBoxes[name], show);
 }
 
-void DetailsPanel::addOption(const wxString& name, wxWindow* widget)
+void DetailsPanel::addOption(const wxString& name, wxWindow* widget, const wxString& tooltiptext)
 {
     ASSERT(mBoxSizer);
     wxStaticText* title = new wxStaticText(this, wxID_ANY, name, wxDefaultPosition, wxSize(120,-1), wxST_ELLIPSIZE_END);
+    if (!tooltiptext.IsEmpty())
+    {
+        title->SetToolTip(tooltiptext);
+    }
     mBoxSizer->Add(title, wxSizerFlags(0).CenterVertical().Left());//, 0, wxALL|wxALIGN_TOP, 0);
-    mBoxSizer->Add(widget, wxSizerFlags(1).Expand());
+    mBoxSizer->Add(widget, wxSizerFlags(1).CenterVertical().Expand());
 
     mMapWindowToSizer[widget] = mBoxSizer;
     mMapWindowToTitle[widget] = title;

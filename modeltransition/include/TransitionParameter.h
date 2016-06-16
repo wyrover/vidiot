@@ -57,6 +57,9 @@ public:
     wxString getToolTip() const;
     void setToolTip(const wxString& tooltip);
 
+    wxBitmap getBitmap();
+    void setBitmap(const wxString& name);
+    
     void setOnChanged(std::function<void(const wxString&)> onChange);
 
 protected:
@@ -85,6 +88,7 @@ private:
     wxString mName; // Never serialize this
     wxString mDescription; // Never serialize this
     wxString mToolTip; // Never serialize this
+    wxBitmap mBitmap; // Never serialize this
     std::function<void(const wxString&)> mOnChange = nullptr;
 
     //////////////////////////////////////////////////////////////////////////

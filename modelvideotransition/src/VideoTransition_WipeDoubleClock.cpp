@@ -46,8 +46,8 @@ ParameterAttributes WipeDoubleClock::getAvailableParameters() const
 {
     return
     {
-        { TransitionParameterInt::sParameterAngle, _("Angle"), _("Select the starting angle."), boost::make_shared<TransitionParameterInt>(0, 0, 360) },
-        { TransitionParameterBool::sParameterSoftenEdges, _("Soften edges"), _("Select to enable smoothing at the edges."), boost::make_shared<TransitionParameterBool>(true) },
+        { TransitionParameterInt::sParameterAngle, _("Angle"), _("Select the starting angle."), "arrow-circle-double-135.png", boost::make_shared<TransitionParameterInt>(0, 0, 360) },
+        { TransitionParameterBool::sParameterSoftenEdges, _("Soften edges"), _("Select to enable smoothing at the edges."), "cushion-blue.png", boost::make_shared<TransitionParameterBool>(true) },
     };
 }
 

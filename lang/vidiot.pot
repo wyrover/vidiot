@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-01 14:00+0200\n"
+"POT-Creation-Date: 2016-06-12 12:34+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1819,10 +1819,11 @@ msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:124
 msgid ""
-"Change the speed of the clip. Note that currently only changing the speed of "
-"video-only clips is supported. Furthermore, changing the clip speed is only "
-"allowed when a there are no other clips 'under' and 'above' the clip in the "
-"timeline."
+"Change the speed of the clip. Changing the clip speed is only allowed when "
+"the clip and its linked clip (if any) are both of an equal size and "
+"position. Furthermore, there may be no other clips in the same time span as "
+"the clip. Note that, when selecting a speed smaller than 0.5 or larger than "
+"2.0 the pitch of the audio will change."
 msgstr ""
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
@@ -2109,39 +2110,39 @@ msgstr ""
 msgid "Could not shift clips. Part of the region is still in use."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:70
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:65
 msgid ""
 "Can not change length if start position, length, or speed for two linked "
 "clips are not equal."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:109
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:103
 msgid ""
 "Can not change clip speed. There may not be clips in the same timeframe in "
 "other tracks."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:116
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:110
 #, c-format
 msgid "Adjust speed of %s"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:202
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:226
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:236
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:220
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:244
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:254
 #, c-format
 msgid "Can't scale beyond %s"
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:202
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:220
 msgid "(no room for left transition)."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:226
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:244
 msgid "(no room for right transition)."
 msgstr ""
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:236
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:254
 msgid "(no clip remains)."
 msgstr ""
 

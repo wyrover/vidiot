@@ -47,11 +47,14 @@ boost::shared_ptr<CLIPTYPE> getClipOfType(const model::IClipPtr& clip)
 template <typename CLIPTYPE, typename KEYFRAMETYPE>
 struct KeyFrameControlsImpl
 {
-    KeyFrameControlsImpl(DetailsClip* parent)
+    KeyFrameControlsImpl(DetailsClip* parent, const wxString& tooltip)
         : mParent(parent)
+        , mToolTip(tooltip)
     {
         mEditPanel = new wxPanel(mParent);
         wxBoxSizer* sizer = new wxBoxSizer(wxHORIZONTAL);
+        mBitmapKeyFrames = new wxStaticBitmap(mEditPanel, wxID_ANY, util::window::getBitmap("key-blue.png"));
+        mBitmapKeyFrames->SetToolTip(mToolTip);
         std::map<wxButton**, std::pair<wxString, wxString>> buttons
         {
             { &mHomeButton,{ "icon-home.png", _("Go to first key frame.") } },
@@ -69,6 +72,8 @@ struct KeyFrameControlsImpl
             (*button.first)->SetMinSize(wxSize{ wxDefaultCoord, wxButton::GetDefaultSize().GetHeight() });
             (*button.first)->SetToolTip(button.second.second);
         }
+        sizer->Add(mBitmapKeyFrames, wxSizerFlags(0).Left().CenterVertical());
+
         sizer->Add(mHomeButton, wxSizerFlags(0));
         sizer->Add(mPrevButton, wxSizerFlags(0));
         mPanel = new wxPanel(mEditPanel);
@@ -140,10 +145,10 @@ struct KeyFrameControlsImpl
         }
         ASSERT_EQUALS(mKeyFramesButtons.size(), keyframes.size());
 
-        mHomeButton->Enable(!keyframes.empty() && keyFrameOffset > keyframes.begin()->first);
-        mPrevButton->Enable(!keyframes.empty() && keyFrameOffset > keyframes.begin()->first);
-        mNextButton->Enable(!keyframes.empty() && keyFrameOffset < keyframes.rbegin()->first);
-        mEndButton->Enable(!keyframes.empty() && keyFrameOffset < keyframes.rbegin()->first);
+        mHomeButton->Enable(!keyframes.empty() && keyFrameOffset > keyframes.cbegin()->first);
+        mPrevButton->Enable(!keyframes.empty() && keyFrameOffset > keyframes.cbegin()->first);
+        mNextButton->Enable(!keyframes.empty() && keyFrameOffset < keyframes.crbegin()->first);
+        mEndButton->Enable(!keyframes.empty() && keyFrameOffset < keyframes.crbegin()->first);
         mRemoveButton->Enable(!keyframes.empty() && keyframes.find(keyFrameOffset) != keyframes.end());
         // Note: if there are no keyframes, there are no buttons to dis/enable.
         model::KeyFrameMap::const_iterator it{ keyframes.begin() };
@@ -156,6 +161,7 @@ struct KeyFrameControlsImpl
         // Only enable if cursor is 'inside' clip visible region
         bool cursorInBetween{ typedclip->getPerceivedLeftPts() <= getCursor() && typedclip->getPerceivedRightPts() >= getCursor() }; // The inclusion on the right hand size (getPerceivedRightPts() >= cursor) is required for enabling a key frame AFTER the last frame position.
         mAddButton->Enable(cursorInBetween && (keyframes.empty() || keyFrame->isInterpolated()));
+        mBitmapKeyFrames->SetBitmap(util::window::getBitmap(!keyframes.empty() || mAddButton->IsEnabled() ? "key-blue.png" : "key-bw.png"));
 
         int availableSize{ mPanel->GetSize().x };
         int requiredSize{ mPanel->GetEffectiveMinSize().x };
@@ -394,6 +400,7 @@ struct KeyFrameControlsImpl
     DetailsClip* mParent = nullptr;
 
     wxPanel* mEditPanel = nullptr;
+    wxStaticBitmap* mBitmapKeyFrames = nullptr;
     wxButton* mHomeButton = nullptr;
     wxButton* mPrevButton = nullptr;
     wxButton* mNextButton = nullptr;
@@ -402,6 +409,7 @@ struct KeyFrameControlsImpl
     wxButton* mRemoveButton = nullptr;
     wxPanel* mPanel = nullptr;
     std::map<size_t, wxToggleButton*> mKeyFramesButtons;
+    wxString mToolTip;
 };
 
 typedef KeyFrameControlsImpl < model::VideoClip, model::VideoKeyFrame > VideoKeyFrameControls;
@@ -413,6 +421,7 @@ void VideoKeyFrameControls::updateKeyFrameSettings()
     model::VideoKeyFramePtr videoKeyFrame{ getKeyFrame() };
 
     mParent->showOption(mParent->mOpacityPanel, videoKeyFrame != nullptr);
+    mParent->showOption(mParent->mCropPanel, videoKeyFrame != nullptr);
     mParent->showOption(mParent->mScalingPanel, videoKeyFrame != nullptr);
     mParent->showOption(mParent->mRotationPanel, videoKeyFrame != nullptr);
     mParent->showOption(mParent->mAlignmentPanel, videoKeyFrame != nullptr);
@@ -425,9 +434,22 @@ void VideoKeyFrameControls::updateKeyFrameSettings()
     wxPoint maxpos{ videoKeyFrame->getMaxPosition() };
     wxPoint minpos{ videoKeyFrame->getMinPosition() };
     int opacity{ videoKeyFrame->getOpacity() };
+    int cropTop{ videoKeyFrame->getCropTop() };
+    int cropBottom{ videoKeyFrame->getCropBottom() };
+    int cropLeft{ videoKeyFrame->getCropLeft() };
+    int cropRight{ videoKeyFrame->getCropRight() };
 
     mParent->mOpacitySlider->SetValue(opacity);
     mParent->mOpacitySpin->SetValue(opacity);
+
+    mParent->mCropTopSlider->SetValue(cropTop);
+    mParent->mCropTopSpin->SetValue(cropTop);
+    mParent->mCropBottomSlider->SetValue(cropBottom);
+    mParent->mCropBottomSpin->SetValue(cropBottom);
+    mParent->mCropLeftSlider->SetValue(cropLeft);
+    mParent->mCropLeftSpin->SetValue(cropLeft);
+    mParent->mCropRightSlider->SetValue(cropRight);
+    mParent->mCropRightSpin->SetValue(cropRight);
 
     mParent->mSelectScaling->select(videoKeyFrame->getScaling());
     mParent->mScalingSlider->SetValue(DetailsClip::factorToSliderValue(factor));
@@ -458,6 +480,14 @@ void VideoKeyFrameControls::updateKeyFrameSettings()
 
     mParent->mOpacitySlider->Enable(!videoKeyFrame->isInterpolated());
     mParent->mOpacitySpin->Enable(!videoKeyFrame->isInterpolated());
+    mParent->mCropTopSlider->Enable(!videoKeyFrame->isInterpolated());
+    mParent->mCropTopSpin->Enable(!videoKeyFrame->isInterpolated());
+    mParent->mCropBottomSlider->Enable(!videoKeyFrame->isInterpolated());
+    mParent->mCropBottomSpin->Enable(!videoKeyFrame->isInterpolated());
+    mParent->mCropLeftSlider->Enable(!videoKeyFrame->isInterpolated());
+    mParent->mCropLeftSpin->Enable(!videoKeyFrame->isInterpolated());
+    mParent->mCropRightSlider->Enable(!videoKeyFrame->isInterpolated());
+    mParent->mCropRightSpin->Enable(!videoKeyFrame->isInterpolated());
     mParent->mSelectScaling->Enable(!videoKeyFrame->isInterpolated());
     mParent->mScalingSlider->Enable(!videoKeyFrame->isInterpolated());
     mParent->mScalingSpin->Enable(!videoKeyFrame->isInterpolated());

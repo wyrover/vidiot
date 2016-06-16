@@ -142,6 +142,118 @@ void DetailsClip::onOpacitySpinChanged(wxSpinEvent& event)
     event.Skip();
 }
 
+void DetailsClip::onCropTopSliderChanged(wxCommandEvent& event)
+{
+    VAR_INFO(mCropTopSlider->GetValue());
+    VAR_ERROR(mCropTopSlider->GetValue());
+    CatchExceptions([this]
+    {
+        submitEditCommandUponAudioVideoEdit(sEditCropTop, true, [this]
+        {
+            mVideoKeyFrameControls->getKeyFrame()->setCropTop(mCropTopSlider->GetValue());
+        });
+    });
+    event.Skip();
+}
+
+void DetailsClip::onCropTopSpinChanged(wxSpinEvent& event)
+{
+    VAR_INFO(mCropTopSpin->GetValue()); // NOT: event.GetValue() -- The event's value may be outside the range boundaries
+    CatchExceptions([this]
+    {
+        // Changes same clip aspect as the slider
+        submitEditCommandUponAudioVideoEdit(sEditCropTop, true, [this]
+        {
+            mVideoKeyFrameControls->getKeyFrame()->setCropTop(mCropTopSpin->GetValue());
+        });
+    });
+    event.Skip();
+}
+
+void DetailsClip::onCropBottomSliderChanged(wxCommandEvent& event)
+{
+    VAR_INFO(mCropBottomSlider->GetValue());
+    VAR_ERROR(mCropBottomSlider->GetValue());
+    CatchExceptions([this]
+    {
+        submitEditCommandUponAudioVideoEdit(sEditCropBottom, true, [this]
+        {
+            mVideoKeyFrameControls->getKeyFrame()->setCropBottom(mCropBottomSlider->GetValue());
+        });
+    });
+    event.Skip();
+}
+
+void DetailsClip::onCropBottomSpinChanged(wxSpinEvent& event)
+{
+    VAR_INFO(mCropBottomSpin->GetValue()); // NOT: event.GetValue() -- The event's value may be outside the range boundaries
+    CatchExceptions([this]
+    {
+        // Changes same clip aspect as the slider
+        submitEditCommandUponAudioVideoEdit(sEditCropBottom, true, [this]
+        {
+            mVideoKeyFrameControls->getKeyFrame()->setCropBottom(mCropBottomSpin->GetValue());
+        });
+    });
+    event.Skip();
+}
+
+void DetailsClip::onCropLeftSliderChanged(wxCommandEvent& event)
+{
+    VAR_INFO(mCropLeftSlider->GetValue());
+    VAR_ERROR(mCropLeftSlider->GetValue());
+    CatchExceptions([this]
+    {
+        submitEditCommandUponAudioVideoEdit(sEditCropLeft, true, [this]
+        {
+            mVideoKeyFrameControls->getKeyFrame()->setCropLeft(mCropLeftSlider->GetValue());
+        });
+    });
+    event.Skip();
+}
+
+void DetailsClip::onCropLeftSpinChanged(wxSpinEvent& event)
+{
+    VAR_INFO(mCropLeftSpin->GetValue()); // NOT: event.GetValue() -- The event's value may be outside the range boundaries
+    CatchExceptions([this]
+    {
+        // Changes same clip aspect as the slider
+        submitEditCommandUponAudioVideoEdit(sEditCropLeft, true, [this]
+        {
+            mVideoKeyFrameControls->getKeyFrame()->setCropLeft(mCropLeftSpin->GetValue());
+        });
+    });
+    event.Skip();
+}
+
+void DetailsClip::onCropRightSliderChanged(wxCommandEvent& event)
+{
+    VAR_INFO(mCropRightSlider->GetValue());
+    VAR_ERROR(mCropRightSlider->GetValue());
+    CatchExceptions([this]
+    {
+        submitEditCommandUponAudioVideoEdit(sEditCropRight, true, [this]
+        {
+            mVideoKeyFrameControls->getKeyFrame()->setCropRight(mCropRightSlider->GetValue());
+        });
+    });
+    event.Skip();
+}
+
+void DetailsClip::onCropRightSpinChanged(wxSpinEvent& event)
+{
+    VAR_INFO(mCropRightSpin->GetValue()); // NOT: event.GetValue() -- The event's value may be outside the range boundaries
+    CatchExceptions([this]
+    {
+        // Changes same clip aspect as the slider
+        submitEditCommandUponAudioVideoEdit(sEditCropRight, true, [this]
+        {
+            mVideoKeyFrameControls->getKeyFrame()->setCropRight(mCropRightSpin->GetValue());
+        });
+    });
+    event.Skip();
+}
+
 void DetailsClip::onScalingChoiceChanged(wxCommandEvent& event)
 {
     VAR_INFO(mSelectScaling->getValue());

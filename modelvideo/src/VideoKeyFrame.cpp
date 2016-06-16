@@ -79,14 +79,14 @@ VideoKeyFrame::VideoKeyFrame(VideoKeyFramePtr before, VideoKeyFramePtr after, pt
 {
     ASSERT_NONZERO(before);
     ASSERT_NONZERO(after);
-    ASSERT_EQUALS(before->getSize(), after->getSize());
+    ASSERT_EQUALS(before->getInputSize(), after->getInputSize());
     ASSERT_LESS_THAN(positionBefore, position);
     ASSERT_LESS_THAN(position, positionAfter);
     rational64 factor{ position - positionBefore, positionAfter - positionBefore };
     ASSERT_MORE_THAN_EQUALS_ZERO(factor);
     ASSERT_LESS_THAN(factor, 1);
 
-    mInputSize = before->getSize();
+    mInputSize = before->getInputSize();
     mOpacity = before->getOpacity() + boost::rational_cast<int>(factor * (rational64(after->getOpacity() - before->getOpacity())));
     mScaling = model::VideoScalingCustom;
     mScalingFactor = before->getScalingFactor() + (factor * (rational64(after->getScalingFactor() - before->getScalingFactor())));
@@ -95,6 +95,10 @@ VideoKeyFrame::VideoKeyFrame(VideoKeyFramePtr before, VideoKeyFramePtr after, pt
     mAlignment = model::VideoAlignmentCustom;
     mPosition.x = before->getPosition().x + boost::rational_cast<int>(factor * (rational64(after->getPosition().x - before->getPosition().x)));
     mPosition.y = before->getPosition().y + boost::rational_cast<int>(factor * (rational64(after->getPosition().y - before->getPosition().y)));
+    mCropTop = before->getCropTop() + boost::rational_cast<int>(factor * (rational64(after->getCropTop() - before->getCropTop())));
+    mCropBottom = before->getCropBottom() + boost::rational_cast<int>(factor * (rational64(after->getCropBottom() - before->getCropBottom())));
+    mCropLeft = before->getCropLeft() + boost::rational_cast<int>(factor * (rational64(after->getCropLeft() - before->getCropLeft())));
+    mCropRight = before->getCropRight() + boost::rational_cast<int>(factor * (rational64(after->getCropRight() - before->getCropRight())));
     updateAutomatedPositioning(); //Update mRotationPositionOffset
 }
 
@@ -108,6 +112,10 @@ VideoKeyFrame::VideoKeyFrame(const VideoKeyFrame& other)
     , mRotationPositionOffset{ other.mRotationPositionOffset }
     , mAlignment{ other.mAlignment }
     , mPosition{ other.mPosition }
+    , mCropTop{ other.mCropTop }
+    , mCropBottom{ other.mCropBottom }
+    , mCropLeft{ other.mCropLeft }
+    , mCropRight{ other.mCropRight }
 {
     VAR_DEBUG(other)(*this);
 }
@@ -125,6 +133,28 @@ VideoKeyFrame::~VideoKeyFrame()
 //////////////////////////////////////////////////////////////////////////
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
+
+wxRect VideoKeyFrame::getCroppedRect() const
+{
+    int x{ 0 };
+    int y{ 0 };
+    int w{ mInputSize.x };
+    int h{ mInputSize.y };
+    x += mCropLeft;
+    y += mCropTop;
+    w -= mCropLeft + mCropRight;
+    h -= mCropTop + mCropBottom;
+    ASSERT_MORE_THAN_ZERO(w); // Required for computations. This may never be
+    ASSERT_MORE_THAN_ZERO(h); // zero, since it might be used as a denominator.
+    return wxRect{ x,y,w,h };
+}
+
+wxSize VideoKeyFrame::getOutputSize() const
+{
+    wxSize croppedSize{ getCroppedRect().GetSize() };
+    wxSize scaledsize = Convert::scale(croppedSize, getScalingFactor());
+    return scaledsize;
+}
 
 int VideoKeyFrame::getOpacity() const
 {
@@ -161,6 +191,26 @@ wxPoint VideoKeyFrame::getPosition() const
     return mPosition;
 }
 
+int VideoKeyFrame::getCropTop()
+{
+    return mCropTop;
+}
+
+int VideoKeyFrame::getCropBottom()
+{
+    return mCropBottom;
+}
+
+int VideoKeyFrame::getCropLeft()
+{
+    return mCropLeft;
+}
+
+int VideoKeyFrame::getCropRight()
+{
+    return mCropRight;
+}
+
 wxPoint VideoKeyFrame::getMinPosition()
 {
     wxSize boundingBox = getBoundingBox();
@@ -169,10 +219,10 @@ wxPoint VideoKeyFrame::getMinPosition()
 
 wxPoint VideoKeyFrame::getMaxPosition()
 {
-    wxSize outputsize = Properties::get().getVideoSize();
+    wxSize targetSize = Properties::get().getVideoSize();
     wxSize boundingBox = getBoundingBox();
-    int maxX = std::max(boundingBox.x, outputsize.x);
-    int maxY = std::max(boundingBox.y, outputsize.y);
+    int maxX = std::max(boundingBox.x, targetSize.x);
+    int maxY = std::max(boundingBox.y, targetSize.y);
     return wxPoint(maxX, maxY) + mRotationPositionOffset;
 }
 
@@ -187,6 +237,50 @@ void VideoKeyFrame::setOpacity(int opacity)
     }
 }
 
+void VideoKeyFrame::setCropTop(int crop)
+{
+    ASSERT(!isInterpolated())(*this);
+    if (mCropTop != crop)
+    {
+        ASSERT_MORE_THAN_EQUALS(crop, sCropMin);
+        ASSERT_LESS_THAN_EQUALS(crop, sCropMax);
+        mCropTop = crop;
+    }
+}
+
+void VideoKeyFrame::setCropBottom(int crop)
+{
+    ASSERT(!isInterpolated())(*this);
+    if (mCropBottom != crop)
+    {
+        ASSERT_MORE_THAN_EQUALS(crop, sCropMin);
+        ASSERT_LESS_THAN_EQUALS(crop, sCropMax);
+        mCropBottom = crop;
+    }
+}
+
+void VideoKeyFrame::setCropLeft(int crop)
+{
+    ASSERT(!isInterpolated())(*this);
+    if (mCropLeft != crop)
+    {
+        ASSERT_MORE_THAN_EQUALS(crop, sCropMin);
+        ASSERT_LESS_THAN_EQUALS(crop, sCropMax);
+        mCropLeft = crop;
+    }
+}
+
+void VideoKeyFrame::setCropRight(int crop)
+{
+    ASSERT(!isInterpolated())(*this);
+    if (mCropRight != crop)
+    {
+        ASSERT_MORE_THAN_EQUALS(crop, sCropMin);
+        ASSERT_LESS_THAN_EQUALS(crop, sCropMax);
+        mCropRight = crop;
+    }
+}
+
 void VideoKeyFrame::setScaling(const VideoScaling& scaling, const boost::optional<rational64 >& factor)
 {
     ASSERT(!isInterpolated())(*this);
@@ -194,9 +288,10 @@ void VideoKeyFrame::setScaling(const VideoScaling& scaling, const boost::optiona
     mScaling = scaling;
     if (factor)
     {
+        wxSize outputSize{ getOutputSize() };
         ASSERT_MORE_THAN_ZERO(*factor)(*factor);
-        unsigned int w{ boost::rational_cast<unsigned int>(mInputSize.GetWidth() * *factor) };
-        unsigned int h{ boost::rational_cast<unsigned int>(mInputSize.GetHeight() * *factor) };
+        unsigned int w{ boost::rational_cast<unsigned int>(outputSize.GetWidth() * *factor) };
+        unsigned int h{ boost::rational_cast<unsigned int>(outputSize.GetHeight() * *factor) };
         if (w == 0)
         {
             gui::StatusBar::get().timedInfoText(_("Width becomes 0."));
@@ -259,34 +354,36 @@ void VideoKeyFrame::setPosition(const wxPoint& position)
 
 wxSize VideoKeyFrame::getBoundingBox()
 {
-    ASSERT_DIFFERS(mInputSize, wxSize(0, 0));
-    wxSize scaledsize = Convert::scale(mInputSize, getScalingFactor());
+    wxSize outputSize{ getOutputSize() };
     if (mRotation == rational64(0))
     {
-        return scaledsize;
+        return outputSize;
     }
 
-    int boundingBoxHeight = abs(scaledsize.x * sin(Convert::degreesToRadians(mRotation))) + abs(scaledsize.y * cos(Convert::degreesToRadians(mRotation)));
-    int boundingBoxWidth = abs(scaledsize.x * cos(Convert::degreesToRadians(mRotation))) + abs(scaledsize.y * sin(Convert::degreesToRadians(mRotation)));
+    int boundingBoxHeight = abs(outputSize.x * sin(Convert::degreesToRadians(mRotation))) + abs(outputSize.y * cos(Convert::degreesToRadians(mRotation)));
+    int boundingBoxWidth = abs(outputSize.x * cos(Convert::degreesToRadians(mRotation))) + abs(outputSize.y * sin(Convert::degreesToRadians(mRotation)));
     return wxSize(boundingBoxWidth, boundingBoxHeight);
 }
 
 void VideoKeyFrame::updateAutomatedScaling()
 {
-    wxSize outputsize{ Properties::get().getVideoSize() };
+    wxSize croppedSize{ getCroppedRect().GetSize() };
+    wxSize outputSize{ getOutputSize() };
+    wxSize boundingBoxSize{ getBoundingBox() };
+    wxSize targetSize{ Properties::get().getVideoSize() };
 
     switch (mScaling)
     {
     case VideoScalingFitToFill:
     {
         rational64 scalingfactor;
-        Convert::sizeInBoundingBox(mInputSize, outputsize, mScalingFactor, true); // The true ensures that the bounding box is filled
+        Convert::sizeInBoundingBox(croppedSize, targetSize, mScalingFactor, true); // The true ensures that the bounding box is filled
         break;
     }
     case VideoScalingFitAll:
     {
         rational64 scalingfactor;
-        Convert::sizeInBoundingBox(mInputSize, outputsize, mScalingFactor, false); // The false ensures that the entire video contents is shown (with black bars to fill the bounding box)
+        Convert::sizeInBoundingBox(croppedSize, targetSize, mScalingFactor, false); // The false ensures that the entire video contents is shown (with black bars to fill the bounding box)
         break;
     }
     case VideoScalingNone:
@@ -329,29 +426,28 @@ void VideoKeyFrame::updateAutomatedScaling()
 
 void VideoKeyFrame::updateAutomatedPositioning()
 {
-    ASSERT_DIFFERS(mInputSize, wxSize(0,0));
-    wxSize scaledsize = Convert::scale(mInputSize, getScalingFactor());
-    wxSize outputsize = Properties::get().getVideoSize();
+    wxSize outputSize{ getOutputSize() };
+    wxSize targetSize = Properties::get().getVideoSize();
     wxSize boundingBox = getBoundingBox();
 
-    mRotationPositionOffset = wxPoint((boundingBox.x - scaledsize.x) / 2, (boundingBox.y - scaledsize.y) / 2);
+    mRotationPositionOffset = wxPoint((boundingBox.x - outputSize.x) / 2, (boundingBox.y - outputSize.y) / 2);
 
     switch (mAlignment)
     {
         case VideoAlignmentCenter:
         {
-            mPosition.x = (outputsize.GetWidth() - scaledsize.GetWidth()) / 2;
-            mPosition.y = (outputsize.GetHeight() - scaledsize.GetHeight()) / 2;
+            mPosition.x = (targetSize.GetWidth() - outputSize.GetWidth()) / 2;
+            mPosition.y = (targetSize.GetHeight() - outputSize.GetHeight()) / 2;
             break;
         }
         case VideoAlignmentCenterHorizontal:
         {
-            mPosition.x = (outputsize.GetWidth() - scaledsize.GetWidth()) / 2;
+            mPosition.x = (targetSize.GetWidth() - outputSize.GetWidth()) / 2;
             break;
         }
         case VideoAlignmentCenterVertical:
         {
-            mPosition.y = (outputsize.GetHeight() - scaledsize.GetHeight()) / 2;
+            mPosition.y = (targetSize.GetHeight() - outputSize.GetHeight()) / 2;
             break;
         }
         case model::VideoAlignmentTopLeft:
@@ -367,48 +463,48 @@ void VideoKeyFrame::updateAutomatedPositioning()
         }
         case model::VideoAlignmentTopCenter:
         {
-            mPosition.x = (outputsize.GetWidth() - scaledsize.GetWidth()) / 2;
+            mPosition.x = (targetSize.GetWidth() - outputSize.GetWidth()) / 2;
             mPosition.y = 0;
             break;
         }
         case model::VideoAlignmentTopRight:
         {
             mPosition.y = 0;
-            mPosition.x = outputsize.GetWidth() - scaledsize.GetWidth();
+            mPosition.x = targetSize.GetWidth() - outputSize.GetWidth();
             break;
         }
         case model::VideoAlignmentRight:
         {
-            mPosition.x = outputsize.GetWidth() - scaledsize.GetWidth();
+            mPosition.x = targetSize.GetWidth() - outputSize.GetWidth();
             break;
         }
         case model::VideoAlignmentRightCenter:
         {
-            mPosition.x = outputsize.GetWidth() - scaledsize.GetWidth();
-            mPosition.y = (outputsize.GetHeight() - scaledsize.GetHeight()) / 2;
+            mPosition.x = targetSize.GetWidth() - outputSize.GetWidth();
+            mPosition.y = (targetSize.GetHeight() - outputSize.GetHeight()) / 2;
             break;
         }
         case model::VideoAlignmentBottomRight:
         {
-            mPosition.x = outputsize.GetWidth() - scaledsize.GetWidth();
-            mPosition.y = outputsize.GetHeight() - scaledsize.GetHeight();
+            mPosition.x = targetSize.GetWidth() - outputSize.GetWidth();
+            mPosition.y = targetSize.GetHeight() - outputSize.GetHeight();
             break;
         }
         case model::VideoAlignmentBottom:
         {
-            mPosition.y = outputsize.GetHeight() - scaledsize.GetHeight();
+            mPosition.y = targetSize.GetHeight() - outputSize.GetHeight();
             break;
         }
         case model::VideoAlignmentBottomCenter:
         {
-            mPosition.x = (outputsize.GetWidth() - scaledsize.GetWidth()) / 2;
-            mPosition.y = outputsize.GetHeight() - scaledsize.GetHeight();
+            mPosition.x = (targetSize.GetWidth() - outputSize.GetWidth()) / 2;
+            mPosition.y = targetSize.GetHeight() - outputSize.GetHeight();
             break;
         }
         case model::VideoAlignmentBottomLeft:
         {
             mPosition.x = 0;
-            mPosition.y = outputsize.GetHeight() - scaledsize.GetHeight();
+            mPosition.y = targetSize.GetHeight() - outputSize.GetHeight();
             break;
         }
         case model::VideoAlignmentLeft:
@@ -419,7 +515,7 @@ void VideoKeyFrame::updateAutomatedPositioning()
         case model::VideoAlignmentLeftCenter:
         {
             mPosition.x = 0;
-            mPosition.y = (outputsize.GetHeight() - scaledsize.GetHeight()) / 2;
+            mPosition.y = (targetSize.GetHeight() - outputSize.GetHeight()) / 2;
             break;
         }
         case VideoAlignmentCustom:
@@ -448,8 +544,12 @@ std::ostream& operator<<(std::ostream& os, const VideoKeyFrame& obj)
         << obj.mRotation << '|'
         << obj.mRotationPositionOffset << '|'
         << obj.mAlignment << '|'
-        << obj.mPosition;
-    return os;
+        << obj.mPosition << '|'
+        << obj.mCropTop << '|'
+        << obj.mCropBottom << '|'
+        << obj.mCropLeft << '|'
+        << obj.mCropRight;
+        return os;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -470,6 +570,13 @@ void VideoKeyFrame::serialize(Archive & ar, const unsigned int version)
         ar & BOOST_SERIALIZATION_NVP(mRotationPositionOffset);
         ar & BOOST_SERIALIZATION_NVP(mAlignment);
         ar & BOOST_SERIALIZATION_NVP(mPosition);
+        if (version >= 2)
+        {
+            ar & BOOST_SERIALIZATION_NVP(mCropTop);
+            ar & BOOST_SERIALIZATION_NVP(mCropBottom);
+            ar & BOOST_SERIALIZATION_NVP(mCropLeft);
+            ar & BOOST_SERIALIZATION_NVP(mCropRight);
+        }
     }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
     catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }

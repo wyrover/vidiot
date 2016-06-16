@@ -105,6 +105,7 @@ wxWindow* TransitionParameterDouble::makeWidget(wxWindow *parent)
     sizer->Add(mSlider, wxSizerFlags(1000).Expand());
     sizer->Add(mSpin, wxSizerFlags(0).Expand());
     mPanel->SetSizer(sizer);
+    mPanel->SetToolTip(getToolTip());
 
     mSlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED, &TransitionParameterDouble::onSlider, this);
     mSpin->Bind(wxEVT_COMMAND_SPINCTRLDOUBLE_UPDATED, &TransitionParameterDouble::onSpin, this);

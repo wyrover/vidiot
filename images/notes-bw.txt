@@ -1,0 +1,4 @@
+bw bitmaps:
+- edit original bitmap in paint .net
+- adjustment -> b&w
+- adjustment -> brightness 50

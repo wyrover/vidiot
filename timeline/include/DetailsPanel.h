@@ -57,7 +57,7 @@ protected:
     void show(wxWindow* box, bool show = true);
     void showBox(const wxString& name, bool show = true);
 
-    void addOption(const wxString& name, wxWindow* widget);
+    void addOption(const wxString& name, wxWindow* widget, const wxString& tooltiptext = "");
 
     /// Show/hide an option and its title
     /// \param widget option that must be shown/hidden

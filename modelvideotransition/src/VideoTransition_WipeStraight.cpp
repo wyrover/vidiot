@@ -46,9 +46,9 @@ ParameterAttributes WipeStraight::getAvailableParameters() const
 {
     return
     {
-        { TransitionParameterInt::sParameterBandsCount, _("Number of lines"), _("Select the number of simultaneous wipes."), boost::make_shared<TransitionParameterInt>(1, 1, 100) },
-        { TransitionParameterDirection8::sParameterDirection8, _("Direction"), _("Select the direction of the wipes."), boost::make_shared<TransitionParameterDirection8>(Direction8LeftToRight) },
-        { TransitionParameterBool::sParameterSoftenEdges, _("Soften edges"), _("Select to enable smoothing at the edges."), boost::make_shared<TransitionParameterBool>(true) },
+        { TransitionParameterInt::sParameterBandsCount, _("Number of lines"), _("Select the number of simultaneous wipes."), "counter-blue.png", boost::make_shared<TransitionParameterInt>(1, 1, 100) },
+        { TransitionParameterDirection8::sParameterDirection8, _("Direction"), _("Select the direction of the wipes."), "direction-blue.png", boost::make_shared<TransitionParameterDirection8>(Direction8LeftToRight) },
+        { TransitionParameterBool::sParameterSoftenEdges, _("Soften edges"), _("Select to enable smoothing at the edges."), "cushion-blue.png", boost::make_shared<TransitionParameterBool>(true) },
     };
 }
 
