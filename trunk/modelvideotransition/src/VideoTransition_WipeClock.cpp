@@ -47,10 +47,10 @@ ParameterAttributes WipeClock::getAvailableParameters() const
 {
     return
     {
-        { TransitionParameterInt::sParameterAngle, _("Angle"), _("Select the starting angle."), boost::make_shared<TransitionParameterInt>(0, 0, 360) },
-        { TransitionParameterInt::sParameterBandsCount, _("Number of lines"), _("Select the number of simultaneous wipes."), boost::make_shared<TransitionParameterInt>(1, 1, 100) },
-        { TransitionParameterRotationDirection::sParameterRotationDirection, _("Rotation direction"), _("Select the clockwise direction of the wipes."), boost::make_shared<TransitionParameterRotationDirection>(RotationDirectionClockWise) },
-        { TransitionParameterBool::sParameterSoftenEdges, _("Soften edges"), _("Select to enable smoothing at the edges."), boost::make_shared<TransitionParameterBool>(true) },
+        { TransitionParameterInt::sParameterAngle, _("Angle"), _("Select the starting angle."), "arrow-circle-double-135.png", boost::make_shared<TransitionParameterInt>(0, 0, 360) },
+        { TransitionParameterInt::sParameterBandsCount, _("Number of lines"), _("Select the number of simultaneous wipes."), "counter-blue.png", boost::make_shared<TransitionParameterInt>(1, 1, 100) },
+        { TransitionParameterRotationDirection::sParameterRotationDirection, _("Rotation direction"), _("Select the clockwise direction of the wipes."), "direction-blue.png", boost::make_shared<TransitionParameterRotationDirection>(RotationDirectionClockWise) },
+        { TransitionParameterBool::sParameterSoftenEdges, _("Soften edges"), _("Select to enable smoothing at the edges."), "cushion-blue.png", boost::make_shared<TransitionParameterBool>(true) },
     };
 }
 

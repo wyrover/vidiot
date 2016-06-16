@@ -48,8 +48,8 @@ ParameterAttributes Slide::getAvailableParameters() const
 {
     return
     {
-        { TransitionParameterDirection8::sParameterDirection8, _("Direction"), _("Select the movement direction."), boost::make_shared<TransitionParameterDirection8>(Direction8RightToLeft) },
-        { TransitionParameterBool::sParameterInversed, _("Inversed"), _("Select between 'sliding in' the second clip or 'sliding away' the first clip."), boost::make_shared<TransitionParameterBool>(false) },
+        { TransitionParameterDirection8::sParameterDirection8, _("Direction"), _("Select the movement direction."), "direction-blue.png", boost::make_shared<TransitionParameterDirection8>(Direction8RightToLeft) },
+        { TransitionParameterBool::sParameterInversed, _("Inversed"), _("Select between 'sliding in' the second clip or 'sliding away' the first clip."), "arrow-return-180.png", boost::make_shared<TransitionParameterBool>(false) },
     };
 }
 

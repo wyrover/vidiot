@@ -395,7 +395,7 @@
 																	<item_version>0</item_version>
 																</mKeyFrames>
 																<mDefaultKeyFrame>
-																	<px class_id="56" class_name="model::VideoKeyFrame" tracking_level="1" version="1" object_id="_32">
+																	<px class_id="56" class_name="model::VideoKeyFrame" tracking_level="1" version="2" object_id="_32">
 																		<KeyFrame object_id="_33"></KeyFrame>
 																		<mInputSize class_id="57" tracking_level="0" version="0">
 																			<x>1280</x>
@@ -420,6 +420,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -562,6 +566,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -690,6 +698,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -819,6 +831,10 @@
 																					<x>192</x>
 																					<y>108</y>
 																				</mPosition>
+																				<mCropTop>0</mCropTop>
+																				<mCropBottom>0</mCropBottom>
+																				<mCropLeft>0</mCropLeft>
+																				<mCropRight>0</mCropRight>
 																			</px>
 																		</second>
 																	</item>
@@ -850,6 +866,10 @@
 																					<x>192</x>
 																					<y>108</y>
 																				</mPosition>
+																				<mCropTop>0</mCropTop>
+																				<mCropBottom>0</mCropBottom>
+																				<mCropLeft>0</mCropLeft>
+																				<mCropRight>0</mCropRight>
 																			</px>
 																		</second>
 																	</item>
@@ -881,6 +901,10 @@
 																					<x>-200</x>
 																					<y>-111</y>
 																				</mPosition>
+																				<mCropTop>0</mCropTop>
+																				<mCropBottom>0</mCropBottom>
+																				<mCropLeft>0</mCropLeft>
+																				<mCropRight>0</mCropRight>
 																			</px>
 																		</second>
 																	</item>
@@ -911,6 +935,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -1039,6 +1067,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -1195,6 +1227,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -1353,6 +1389,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -1481,6 +1521,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -1637,6 +1681,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -1795,6 +1843,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -1969,6 +2021,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -2097,6 +2153,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -2310,6 +2370,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -2479,6 +2543,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -2607,6 +2675,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -2774,6 +2846,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -2943,6 +3019,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -3121,6 +3201,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -3301,6 +3385,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -3429,6 +3517,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -3609,6 +3701,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -3802,6 +3898,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -3997,6 +4097,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -4125,6 +4229,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -4318,6 +4426,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -4513,6 +4625,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -4713,6 +4829,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -4915,6 +5035,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -5043,6 +5167,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -5243,6 +5371,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -5445,6 +5577,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -5623,6 +5759,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -5803,6 +5943,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -5931,6 +6075,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -6109,6 +6257,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -6289,6 +6441,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -6478,6 +6634,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -6669,6 +6829,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -6797,6 +6961,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -6986,6 +7154,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -7177,6 +7349,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -7355,6 +7531,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -7535,6 +7715,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -7663,6 +7847,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -7841,6 +8029,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -8021,6 +8213,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -8221,6 +8417,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -8423,6 +8623,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -8551,6 +8755,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -8751,6 +8959,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -8953,6 +9165,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -9168,6 +9384,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -9385,6 +9605,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -9513,6 +9737,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -9728,6 +9956,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -9945,6 +10177,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -10134,6 +10370,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -10325,6 +10565,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -10453,6 +10697,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -10642,6 +10890,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -10833,6 +11085,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -10961,6 +11217,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -11089,6 +11349,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -11217,6 +11481,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -11345,6 +11613,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -11473,6 +11745,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -11601,6 +11877,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -11729,6 +12009,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -11857,6 +12141,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -11985,6 +12273,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -12113,6 +12405,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -12241,6 +12537,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -12369,6 +12669,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -12497,6 +12801,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -12625,6 +12933,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -12753,6 +13065,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -12881,6 +13197,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -13009,6 +13329,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -13137,6 +13461,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -13265,6 +13593,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -13393,6 +13725,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -13521,6 +13857,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -13649,6 +13989,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -13777,6 +14121,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -13905,6 +14253,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -14033,6 +14385,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -14161,6 +14517,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -14289,6 +14649,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -14417,6 +14781,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -14545,6 +14913,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -14673,6 +15045,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -14801,6 +15177,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -14929,6 +15309,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -15057,6 +15441,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -15185,6 +15573,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -15313,6 +15705,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -15441,6 +15837,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -15569,6 +15969,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -15697,6 +16101,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -15825,6 +16233,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -15953,6 +16365,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -16081,6 +16497,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -16209,6 +16629,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -16337,6 +16761,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -16465,6 +16893,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -16593,6 +17025,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -16721,6 +17157,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -16849,6 +17289,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -16977,6 +17421,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -17105,6 +17553,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -17233,6 +17685,10 @@
 																			<x>0</x>
 																			<y>0</y>
 																		</mPosition>
+																		<mCropTop>0</mCropTop>
+																		<mCropBottom>0</mCropBottom>
+																		<mCropLeft>0</mCropLeft>
+																		<mCropRight>0</mCropRight>
 																	</px>
 																</mDefaultKeyFrame>
 															</ClipInterval>
@@ -17314,6 +17770,10 @@
 																				<x>0</x>
 																				<y>-372</y>
 																			</mPosition>
+																			<mCropTop>0</mCropTop>
+																			<mCropBottom>0</mCropBottom>
+																			<mCropLeft>0</mCropLeft>
+																			<mCropRight>0</mCropRight>
 																		</px>
 																	</mDefaultKeyFrame>
 																</ClipInterval>

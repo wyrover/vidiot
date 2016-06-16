@@ -28,6 +28,7 @@ struct ParameterAttribute
     wxString Name;
     wxString Description;
     wxString Tooltip;
+    wxString Bitmap;
     TransitionParameterPtr Parameter;
 };
 typedef std::vector < ParameterAttribute > ParameterAttributes;
@@ -104,9 +105,6 @@ public:
     boost::optional<pts> getRight() const;
 
     TransitionType getTransitionType() const;
-
-    std::vector<wxWindow*> makeParameterWidgets(wxWindow* parent);
-    void destroyParameterWidgets();
 
     /// Make the 'in' clip that is to be used for rendering data
     /// This takes the previous clip in the track, clones it, and adjust the

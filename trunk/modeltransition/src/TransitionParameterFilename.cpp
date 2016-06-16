@@ -98,6 +98,7 @@ wxWindow* TransitionParameterFilename::makeWidget(wxWindow *parent)
     mFileButton->SetToolTip(getToolTip());
     mPanel->GetSizer()->Add(mFile, wxSizerFlags(1).Expand());
     mPanel->GetSizer()->Add(mFileButton, wxSizerFlags(0));
+    mPanel->SetToolTip(getToolTip());
 
     return mPanel;
 }

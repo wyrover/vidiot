@@ -92,9 +92,6 @@ NOTE: <VIDIOT_DIR> is the dir in which all 'vidiot' work is done.
   Without this patch, generating stack traces (unicode) for long function names causes stack corruption.
   See 0001-Trigger-error-for-generating-stack-frame-for-unicode.patch for how to test this in the debugrpt sample.
   http://trac.wxwidgets.org/ticket/17108
-* Apply 0001-Fix-crash-after-selecting-a-leaf-node-in-a-dataviewc.patch
-  Without this patch typing (CTRL) right arrow when one of the (media) nodes in the project view is selected causes a crash.
-  http://trac.wxwidgets.org/ticket/17537 
 * (MSVC) build solution Release & Debug
 * Remove temporary files from
   <VIDIOT_DIR>\wxWidgets\build\msw (ipch, vc_mswu, vc_mswud)

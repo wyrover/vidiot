@@ -454,6 +454,7 @@ void DetailsClip::updateLengthButtons()
     ASSERT_MORE_THAN_EQUALS(currentLength, minimumClipLength);
     ASSERT_LESS_THAN_EQUALS(currentLength, maximumClipLength);
 
+    bool oneButtonEnabled = false;
     for ( wxToggleButton* button : mLengthButtons )
     {
         pts length = getLength(button);
@@ -466,8 +467,34 @@ void DetailsClip::updateLengthButtons()
         if (mTrimAtEnd[length] != 0 || mTrimAtBegin[length] != 0)
         {
             button->Enable();
+            oneButtonEnabled = true;
         }
     }
+    mBitmapLength->SetBitmap(util::window::getBitmap(oneButtonEnabled ? "clock-select-blue.png" : "clock-select-bw.png" ));
+
+}
+
+void DetailsClip::updateSpeedControls()
+{
+    bool video = mClip->isA<model::VideoClip>();
+    bool audio = mClip->isA<model::AudioClip>();
+    // todo apparently when there's 'other' clips in another track this ispossible gives true.
+    // however when submitting the command, it is not allowed. Improve 'enabling' here.
+    bool enable = (video || audio) && (cmd::EditClipSpeed::isPossible(mClip, mClip->getLink()));
+    mSpeedSlider->Enable(enable);
+    mSpeedSpin->Enable(enable);
+    mBitmapSpeed->SetBitmap(util::window::getBitmap(enable ? "dashboard-blue.png" : "dashboard-bw.png"));
+    if (video || audio)
+    {
+        rational64 speed = boost::dynamic_pointer_cast<model::ClipInterval>(mClip)->getSpeed();
+        mSpeedSlider->SetValue(factorToSliderValue(speed));
+        mSpeedSpin->SetValue(boost::rational_cast<double>(speed));
+    }
+}
+
+int DetailsClip::getNumberOfColumns() const
+{
+    return 3;
 }
 
 void DetailsClip::makeTransitionCloneAndCreateTransitionParameterWidgets(model::IClipPtr clip)
@@ -493,10 +520,24 @@ void DetailsClip::createTransitionParameterWidgets()
 
         for (auto parameter : mTransitionClone->getSortedParameters())
         {
+            for (int i = 0; i < getNumberOfColumns(); ++i)
+            {
+                mTransitionBoxSizer->AddSpacer(2);
+            }
             wxStaticText* title{ new wxStaticText(mTransitionPanel, wxID_ANY, parameter->getDescription(), wxDefaultPosition, wxSize(120, -1), wxST_ELLIPSIZE_END) };
+            wxStaticBitmap* bitmapParameter = new wxStaticBitmap(mTransitionBoxSizer->GetContainingWindow(), wxID_ANY, parameter->getBitmap());
             mTransitionBoxSizer->Add(title, wxSizerFlags(0).CenterVertical().Left());//, 0, wxALL|wxALIGN_TOP, 0);
-            mTransitionBoxSizer->Add(parameter->makeWidget(mTransitionPanel), wxSizerFlags(1).Expand());
+            mTransitionBoxSizer->Add(bitmapParameter, wxSizerFlags(0).Left().CenterVertical());
+            wxWindow* window = parameter->makeWidget(mTransitionPanel);
+            mTransitionBoxSizer->Add(window, wxSizerFlags(1).Expand());
+            bitmapParameter->SetToolTip(window->GetToolTipText());
+            title->SetToolTip(window->GetToolTipText());
             parameter->Bind(model::EVENT_TRANSITION_PARAMETER_CHANGED, &DetailsClip::onTransitionParameterChanged, this);
+        }
+
+        for (auto rh : mTransitionBoxSizer->GetRowHeights())
+        {
+            VAR_ERROR(rh);
         }
         mTransitionPanel->Layout();
         mTransitionPanel->Update();

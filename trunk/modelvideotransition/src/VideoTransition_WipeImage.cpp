@@ -74,11 +74,11 @@ ParameterAttributes WipeImage::getAvailableParameters() const
     wxString descriptor{ _("Images") + " (" + File::sSupportedImageExtensions + ")|" + File::sSupportedImageExtensions + ";" + File::sSupportedImageExtensions.Upper() };
     return
     {
-        { TransitionParameterFilename::sParameterImageFilename, _("Image"), _("Select an image with an alpha channel or a mask. That information is then used to create the transition. Make sure that the image is sufficiently large to cover the entire video."), boost::make_shared<TransitionParameterFilename>(descriptor, true, false, getDefaultZoomImagesPath()) },
-        { TransitionParameterDouble::sParameterScaling, _("Scaling"), _("Select a scaling factor to be applied to the image. This can be used to make sure the transition covers exactly the entire clip(s) at the start or end of the transition."), boost::make_shared<TransitionParameterDouble>(1.0, 0.0, 10.0) },
-        { TransitionParameterInt::sParameterRotations, _("Rotations"), _("Select the number of rotations to be applied to the image during the transition."), boost::make_shared<TransitionParameterInt>(0, 0, 100) },
-        { TransitionParameterRotationDirection::sParameterRotationDirection, _("Rotation direction"), _("Select the clockwise direction of the rotation."), boost::make_shared<TransitionParameterRotationDirection>(RotationDirectionClockWise) },
-        { TransitionParameterBool::sParameterInversed, _("Inversed"), _("Select between 'zooming in' (normal) or 'zooming out' (inversed)"), boost::make_shared<TransitionParameterBool>(false) },
+        { TransitionParameterFilename::sParameterImageFilename, _("Image"), _("Select an image with an alpha channel or a mask. That information is then used to create the transition. Make sure that the image is sufficiently large to cover the entire video."), "image.png", boost::make_shared<TransitionParameterFilename>(descriptor, true, false, getDefaultZoomImagesPath()) },
+        { TransitionParameterDouble::sParameterScaling, _("Scaling"), _("Select a scaling factor to be applied to the image. This can be used to make sure the transition covers exactly the entire clip(s) at the start or end of the transition."), "arrow-in-out.png", boost::make_shared<TransitionParameterDouble>(1.0, 0.0, 10.0) },
+        { TransitionParameterInt::sParameterRotations, _("Rotations"), _("Select the number of rotations to be applied to the image during the transition."), "counter-blue.png", boost::make_shared<TransitionParameterInt>(0, 0, 100) },
+        { TransitionParameterRotationDirection::sParameterRotationDirection, _("Rotation direction"), _("Select the clockwise direction of the rotation."), "direction-blue.png", boost::make_shared<TransitionParameterRotationDirection>(RotationDirectionClockWise) },
+        { TransitionParameterBool::sParameterInversed, _("Inversed"), _("Select between 'zooming in' (normal) or 'zooming out' (inversed)"), "arrow-return-180.png", boost::make_shared<TransitionParameterBool>(false) },
     };
 }
 

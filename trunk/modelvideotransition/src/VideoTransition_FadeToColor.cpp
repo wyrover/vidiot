@@ -47,7 +47,7 @@ ParameterAttributes FadeToColor::getAvailableParameters() const
 {
     return
     {
-        {TransitionParameterColor::sParameterColor, _("Color"), _("Select the color to use as the start/end of the transition."), boost::make_shared<TransitionParameterColor>(wxColour{ 255, 255, 255 })},
+        {TransitionParameterColor::sParameterColor, _("Color"), _("Select the color to use as the start/end of the transition."), "color.png", boost::make_shared<TransitionParameterColor>(wxColour{ 255, 255, 255 })},
     };
 }
 

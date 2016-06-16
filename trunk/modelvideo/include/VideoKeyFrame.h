@@ -33,6 +33,8 @@ public:
     static const rational64 sScalingMax;
     static const int sOpacityMin;
     static const int sOpacityMax;
+    static constexpr int sCropMin = 0;
+    static constexpr int sCropMax = 100; // todo check that ever size 0 remains!   // todo use maximum values of image?
 
 
     //////////////////////////////////////////////////////////////////////////
@@ -53,7 +55,9 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    wxSize getSize() const { return mInputSize; }
+    wxSize getInputSize() const { return mInputSize; }
+    wxSize getOutputSize() const;
+    wxRect getCroppedRect() const;
 
     int getOpacity() const;
     VideoScaling getScaling() const;
@@ -62,11 +66,19 @@ public:
     wxPoint getRotationPositionOffset() const;
     VideoAlignment getAlignment() const;
     wxPoint getPosition() const; ///< \return the logical position as observed by the user. That is the combination of the alignment offset and the shift because of the region of interest.
+    int getCropTop();
+    int getCropBottom();
+    int getCropLeft();
+    int getCropRight();
 
     wxPoint getMinPosition();
     wxPoint getMaxPosition();
 
     void setOpacity(int opacity);
+    void setCropTop(int crop);
+    void setCropBottom(int crop);
+    void setCropLeft(int crop);
+    void setCropRight(int crop);
     void setScaling(const VideoScaling& scaling, const boost::optional< rational64 >& factor = boost::optional< rational64 >());
     void setRotation(const rational64& rotation);
     void setRotationPositionOffset(wxPoint position);
@@ -89,7 +101,7 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    wxSize mInputSize;
+    wxSize mInputSize = wxSize{ 0,0 };
 
     int mOpacity = sOpacityMax;
 
@@ -98,20 +110,24 @@ private:
     /// Uses Constants::sScalingPrecisionFactor as denominator.
     /// Avoid rounding errors with doubles
     /// (leads to small diffs which cause test asserts to fail).
-    rational64 mScalingFactor;
+    rational64 mScalingFactor = 1;
 
     /// Uses Constants::sRotationPrecisionFactor as denominator.
     /// Avoid rounding errors with doubles
     /// (leads to small diffs which cause test asserts to fail).
-    rational64 mRotation;
+    rational64 mRotation = 0;
 
     /// Offset added to the position to avoid the image being
     /// moved when rotating. Furthermore, guarantees that automated
     /// positioning also works correctly for rotated images.
-    wxPoint mRotationPositionOffset;
+    wxPoint mRotationPositionOffset = wxPoint{ 0,0 };
 
-    VideoAlignment mAlignment;
-    wxPoint mPosition;
+    VideoAlignment mAlignment = VideoAlignmentCenter;
+    wxPoint mPosition = wxPoint{ 0,0 };
+    int mCropTop = 0;
+    int mCropBottom = 0;
+    int mCropLeft = 0;
+    int mCropRight = 0;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
@@ -142,5 +158,5 @@ private:
 
 } // namespace
 
-BOOST_CLASS_VERSION(model::VideoKeyFrame, 1)
+BOOST_CLASS_VERSION(model::VideoKeyFrame, 2)
 BOOST_CLASS_EXPORT_KEY(model::VideoKeyFrame)

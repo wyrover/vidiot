@@ -27,6 +27,10 @@ namespace model {
     class EventChangeVideoClipMaxPosition;
     class EventChangeVideoClipMinPosition;
     class EventChangeVideoClipOpacity;
+    class EventChangeVideoClipCropTop;
+    class EventChangeVideoClipCropBottom;
+    class EventChangeVideoClipCropLeft;
+    class EventChangeVideoClipCropRight;
     class EventChangeVideoClipPosition;
     class EventChangeVideoClipRotation;
     class EventChangeVideoClipScaling;
@@ -68,6 +72,8 @@ public:
     static const int sRotationMinKeyFrames;
     static const int sRotationMaxKeyFrames;
 
+    static constexpr int sCropPageSize = 10;
+
     static constexpr int sFactorPrecision = 2;
     static const int sFactorPrecisionFactor;
     static const int sFactorPageSize;
@@ -79,6 +85,10 @@ public:
     const wxString sTransition;
 
     const wxString sEditOpacity;
+    const wxString sEditCropTop;
+    const wxString sEditCropBottom;
+    const wxString sEditCropLeft;
+    const wxString sEditCropRight;
     const wxString sEditScalingType;
     const wxString sEditScaling;
     const wxString sEditRotation;
@@ -125,6 +135,14 @@ public:
 
     void onOpacitySliderChanged(wxCommandEvent& event);
     void onOpacitySpinChanged(wxSpinEvent& event);
+    void onCropTopSliderChanged(wxCommandEvent& event);
+    void onCropTopSpinChanged(wxSpinEvent& event);
+    void onCropBottomSliderChanged(wxCommandEvent& event);
+    void onCropBottomSpinChanged(wxSpinEvent& event);
+    void onCropLeftSliderChanged(wxCommandEvent& event);
+    void onCropLeftSpinChanged(wxSpinEvent& event);
+    void onCropRightSliderChanged(wxCommandEvent& event);
+    void onCropRightSpinChanged(wxSpinEvent& event);
     void onScalingChoiceChanged(wxCommandEvent& event);
     void onScalingSliderChanged(wxCommandEvent& event);
     void onScalingSpinChanged(wxSpinDoubleEvent& event);
@@ -169,6 +187,14 @@ public:
 
     wxSlider* getOpacitySlider() const;
     wxSpinCtrl* getOpacitySpin() const;
+    wxSlider* getCropTopSlider() const;
+    wxSpinCtrl* getCropTopSpin() const;
+    wxSlider* getCropBottomSlider() const;
+    wxSpinCtrl* getCropBottomSpin() const;
+    wxSlider* getCropLeftSlider() const;
+    wxSpinCtrl* getCropLeftSpin() const;
+    wxSlider* getCropRightSlider() const;
+    wxSpinCtrl* getCropRightSpin() const;
     EnumSelector<model::VideoScaling>* getScalingSelector() const;
     wxSlider* getScalingSlider() const;
     wxSpinCtrlDouble* getScalingSpin() const;
@@ -216,6 +242,7 @@ private:
     pts mLastEditKeyFrameOffset = -1;
 
     wxPanel* mLengthPanel = nullptr;
+    wxStaticBitmap* mBitmapLength = nullptr;
     std::vector<pts> mLengths;
     std::vector<wxToggleButton*> mLengthButtons;
     std::map<pts, pts> mTrimAtBegin;
@@ -230,12 +257,23 @@ private:
     wxChoice* mTransitionType = nullptr;
 
     wxPanel*  mSpeedPanel = nullptr;
+    wxStaticBitmap* mBitmapSpeed = nullptr;
     wxSpinCtrlDouble* mSpeedSpin = nullptr;
     wxSlider* mSpeedSlider = nullptr;
 
     wxPanel* mOpacityPanel = nullptr;
     wxSpinCtrl* mOpacitySpin = nullptr;
     wxSlider* mOpacitySlider = nullptr;
+
+    wxPanel* mCropPanel = nullptr;
+    wxSpinCtrl* mCropTopSpin = nullptr;
+    wxSlider* mCropTopSlider = nullptr;
+    wxSpinCtrl* mCropBottomSpin = nullptr;
+    wxSlider* mCropBottomSlider = nullptr;
+    wxSpinCtrl* mCropLeftSpin = nullptr;
+    wxSlider* mCropLeftSlider = nullptr;
+    wxSpinCtrl* mCropRightSpin = nullptr;
+    wxSlider* mCropRightSlider = nullptr;
 
     wxPanel* mRotationPanel = nullptr;
     wxSpinCtrlDouble* mRotationSpin = nullptr;
@@ -294,6 +332,10 @@ private:
     void determineClipSizeBounds();
 
     void updateLengthButtons();
+
+    void updateSpeedControls();
+
+    int getNumberOfColumns() const;
 
     void makeTransitionCloneAndCreateTransitionParameterWidgets(model::IClipPtr clip);
     void createTransitionParameterWidgets();

@@ -63,6 +63,46 @@ wxSpinCtrl* DetailsClip::getOpacitySpin() const
     return mOpacitySpin;
 }
 
+wxSlider* DetailsClip::getCropTopSlider() const
+{
+    return mCropTopSlider;
+}
+
+wxSpinCtrl* DetailsClip::getCropTopSpin() const
+{
+    return mCropTopSpin;
+}
+
+wxSlider* DetailsClip::getCropBottomSlider() const
+{
+    return mCropBottomSlider;
+}
+
+wxSpinCtrl* DetailsClip::getCropBottomSpin() const
+{
+    return mCropBottomSpin;
+}
+
+wxSlider* DetailsClip::getCropLeftSlider() const
+{
+    return mCropLeftSlider;
+}
+
+wxSpinCtrl* DetailsClip::getCropLeftSpin() const
+{
+    return mCropLeftSpin;
+}
+
+wxSlider* DetailsClip::getCropRightSlider() const
+{
+    return mCropRightSlider;
+}
+
+wxSpinCtrl* DetailsClip::getCropRightSpin() const
+{
+    return mCropRightSpin;
+}
+
 EnumSelector<model::VideoScaling>* DetailsClip::getScalingSelector() const
 {
     return mSelectScaling;

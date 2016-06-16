@@ -19,7 +19,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-01 14:00+0200\n"
+"POT-Creation-Date: 2016-06-12 12:34+0200\n"
 "PO-Revision-Date: 2016-04-14 12:12+0300\n"
 "Last-Translator: Ted Mossolov <teodorrrro@gmail.com>\n"
 "Language-Team: Ted Mossolov <teodorrrro@gmail.com>\n"
@@ -1928,14 +1928,12 @@ msgstr "Заготовки (с.)"
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:124
 msgid ""
-"Change the speed of the clip. Note that currently only changing the speed of "
-"video-only clips is supported. Furthermore, changing the clip speed is only "
-"allowed when a there are no other clips 'under' and 'above' the clip in the "
-"timeline."
+"Change the speed of the clip. Changing the clip speed is only allowed when "
+"the clip and its linked clip (if any) are both of an equal size and "
+"position. Furthermore, there may be no other clips in the same time span as "
+"the clip. Note that, when selecting a speed smaller than 0.5 or larger than "
+"2.0 the pitch of the audio will change."
 msgstr ""
-"Изменить скорость клипа. В данный момент поддерживается изменение скорости "
-"только клипов видео. Кроме того, можно изменять скорость клипа только если "
-"выше и ниже него нет других клипов."
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:136
@@ -2229,7 +2227,7 @@ msgstr "Удалить выбранные клипы"
 msgid "Could not shift clips. Part of the region is still in use."
 msgstr "Не удалось переместить клипы. Часть региона все еще используется."
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:70
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:65
 msgid ""
 "Can not change length if start position, length, or speed for two linked "
 "clips are not equal."
@@ -2237,7 +2235,7 @@ msgstr ""
 "Длительность изменять нельзя, если начало, длительность или скорость "
 "связанных клипов не равны."
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:109
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:103
 msgid ""
 "Can not change clip speed. There may not be clips in the same timeframe in "
 "other tracks."
@@ -2245,27 +2243,27 @@ msgstr ""
 "Не удалось изменить скорость клипа. Возможно, на других дорожках отсутствуют "
 "клипы в том же временном диапазоне."
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:116
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:110
 #, c-format
 msgid "Adjust speed of %s"
 msgstr "Изменить скорость \"%s\""
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:202
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:226
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:236
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:220
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:244
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:254
 #, c-format
 msgid "Can't scale beyond %s"
 msgstr "Нельзя масштабировать больше \"%s\""
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:202
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:220
 msgid "(no room for left transition)."
 msgstr "(нет места для перехода слева)."
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:226
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:244
 msgid "(no room for right transition)."
 msgstr "(нет места для перехода справа)."
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:236
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:254
 msgid "(no clip remains)."
 msgstr "(нет клипа)."
 
@@ -2428,6 +2426,16 @@ msgstr "Нажмите \"OK\" для выхода."
 #: C:\Vidiot\vidiot_trunk\util\src\UtilPath.cpp:284
 msgid "Resources not found"
 msgstr "Ресурсы не найдены"
+
+#~ msgid ""
+#~ "Change the speed of the clip. Note that currently only changing the speed "
+#~ "of video-only clips is supported. Furthermore, changing the clip speed is "
+#~ "only allowed when a there are no other clips 'under' and 'above' the clip "
+#~ "in the timeline."
+#~ msgstr ""
+#~ "Изменить скорость клипа. В данный момент поддерживается изменение "
+#~ "скорости только клипов видео. Кроме того, можно изменять скорость клипа "
+#~ "только если выше и ниже него нет других клипов."
 
 #~ msgid "Change %s (%s)"
 #~ msgstr "Изменить %s (%s)"
