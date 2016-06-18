@@ -241,6 +241,8 @@ private:
     cmd::EditClipSpeed* mEditSpeedCommand = nullptr;
     pts mLastEditKeyFrameOffset = -1;
 
+    std::vector<wxStaticBitmap*> mBitmaps;
+
     wxPanel* mLengthPanel = nullptr;
     wxStaticBitmap* mBitmapLength = nullptr;
     std::vector<pts> mLengths;
@@ -249,6 +251,7 @@ private:
     std::map<pts, pts> mTrimAtEnd;
 
     wxPanel* mPlaybackPanel = nullptr;
+    wxStaticBitmap* mBitmapPlayback = nullptr;
     wxToggleButton* mPlayButton = nullptr;
     wxCheckBox* mAutoPlayButton = nullptr;
     std::pair<int, int> mPlaybackClipIndex;
@@ -262,29 +265,39 @@ private:
     wxSlider* mSpeedSlider = nullptr;
 
     wxPanel* mOpacityPanel = nullptr;
+    wxStaticBitmap* mBitmapOpacity = nullptr;
     wxSpinCtrl* mOpacitySpin = nullptr;
     wxSlider* mOpacitySlider = nullptr;
 
     wxPanel* mCropPanel = nullptr;
+    wxStaticBitmap* mBitmapCropTop = nullptr;
     wxSpinCtrl* mCropTopSpin = nullptr;
     wxSlider* mCropTopSlider = nullptr;
+    wxStaticBitmap* mBitmapCropBottom = nullptr;
     wxSpinCtrl* mCropBottomSpin = nullptr;
     wxSlider* mCropBottomSlider = nullptr;
+    wxStaticBitmap* mBitmapCropLeft = nullptr;
     wxSpinCtrl* mCropLeftSpin = nullptr;
     wxSlider* mCropLeftSlider = nullptr;
+    wxStaticBitmap* mBitmapCropRight = nullptr;
     wxSpinCtrl* mCropRightSpin = nullptr;
     wxSlider* mCropRightSlider = nullptr;
 
     wxPanel* mRotationPanel = nullptr;
+    wxStaticBitmap* mBitmapRotation = nullptr;
     wxSpinCtrlDouble* mRotationSpin = nullptr;
     wxSlider* mRotationSlider = nullptr;
 
     wxPanel* mScalingPanel = nullptr;
+    wxStaticBitmap* mBitmapScaling = nullptr;
     EnumSelector<model::VideoScaling>* mSelectScaling = nullptr;
     wxSpinCtrlDouble* mScalingSpin = nullptr;
     wxSlider* mScalingSlider = nullptr;
 
     wxPanel* mAlignmentPanel = nullptr;
+    wxStaticBitmap* mBitmapAlignment = nullptr;
+    wxStaticBitmap* mBitmapX = nullptr;
+    wxStaticBitmap* mBitmapY = nullptr;
     EnumSelector<model::VideoAlignment>* mSelectAlignment = nullptr;
     wxSpinCtrl* mPositionXSpin = nullptr;
     wxSlider* mPositionXSlider = nullptr;
@@ -301,12 +314,16 @@ private:
     pts mMaximumLengthWhenBothTrimming = 0;
 
     wxPanel* mVolumePanel = nullptr;
+    wxStaticBitmap* mBitmapVolume = nullptr;
     wxSpinCtrl* mVolumeSpin = nullptr;
     wxSlider* mVolumeSlider = nullptr;
 
     std::shared_ptr<KeyFrameControlsImpl<model::AudioClip, model::AudioKeyFrame>> mAudioKeyFrameControls;
 
     wxPanel* mTransitionPanel = nullptr;
+    wxStaticBitmap* mBitmapTransitionType = nullptr;
+    std::vector<wxStaticBitmap*> mBitmapsTransitionParameters;
+    std::vector<wxStaticText*> mTitlesTransitionParameters;
     wxFlexGridSizer* mTransitionBoxSizer = nullptr;
 
     //////////////////////////////////////////////////////////////////////////
@@ -334,6 +351,10 @@ private:
     void updateLengthButtons();
 
     void updateSpeedControls();
+
+    void updateIcons() override;
+
+    void updateTitles() override;
 
     int getNumberOfColumns() const;
 

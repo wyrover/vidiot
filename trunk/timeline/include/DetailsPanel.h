@@ -64,9 +64,17 @@ protected:
     /// \param show if true then show, otherwise hide
     void showOption(wxWindow* widget, bool show = true);
 
-    wxWindow* getTitle(wxWindow* widget) const;
+    wxStaticText* getTitle(wxWindow* widget) const;
+    virtual void updateTitles();
+    virtual void updateIcons();
 
 private:
+
+    //////////////////////////////////////////////////////////////////////////
+    // PROJECT EVENTS
+    //////////////////////////////////////////////////////////////////////////
+
+    void onConfigUpdated(EventConfigUpdated& event);
 
     //////////////////////////////////////////////////////////////////////////
     // MEMBERS

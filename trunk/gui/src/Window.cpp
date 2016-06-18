@@ -162,18 +162,30 @@ Window::Window()
 	mMenuEdit->Enable(wxID_PASTE,false);
 
     mMenuView = new wxMenu();
-    mMenuView->AppendCheckItem(ID_SNAP_CLIPS, _("Snap to clips"));
-    mMenuView->Check(ID_SNAP_CLIPS, Config::get().read<bool>(Config::sPathTimelineSnapClips));
-    mMenuView->AppendCheckItem(ID_SNAP_CURSOR, _("Snap to cursor"));
-    mMenuView->Check(ID_SNAP_CURSOR, Config::get().read<bool>(Config::sPathTimelineSnapCursor));
-    mMenuView->AppendSeparator();
-    mMenuView->AppendCheckItem(ID_SHOW_BOUNDINGBOX, _("Show bounding box"));
-    mMenuView->Check(ID_SHOW_BOUNDINGBOX, Config::get().read<bool>(Config::sPathVideoShowBoundingBox));
-    mMenuView->AppendSeparator();
     mMenuView->AppendCheckItem(ID_SHOW_PROJECT, sPaneCaptionProject);
     mMenuView->AppendCheckItem(ID_SHOW_DETAILS, sPaneCaptionDetails);
     mMenuView->AppendCheckItem(ID_SHOW_PREVIEW, sPaneCaptionPreview);
     mMenuView->AppendCheckItem(ID_SHOW_TIMELINES, sPaneCaptionTimelines);
+    mMenuView->AppendSeparator();
+    //
+    wxMenu* menuViewDetails = new wxMenu();
+    menuViewDetails->AppendCheckItem(ID_DETAILS_SHOW_ICONS, _("Show icons"));
+    menuViewDetails->Check(ID_DETAILS_SHOW_ICONS, Config::get().read<bool>(Config::sPathDetailsShowIcons));
+    menuViewDetails->AppendCheckItem(ID_DETAILS_SHOW_LABELS, _("Show labels"));
+    menuViewDetails->Check(ID_DETAILS_SHOW_LABELS, Config::get().read<bool>(Config::sPathDetailsShowTitles));
+    mMenuView->AppendSubMenu(menuViewDetails, _("Details"));
+    //
+    wxMenu* menuViewPreview = new wxMenu();
+    menuViewPreview->AppendCheckItem(ID_PREVIEW_SHOW_BOUNDINGBOX, _("Show bounding box"));
+    menuViewPreview->Check(ID_PREVIEW_SHOW_BOUNDINGBOX, Config::get().read<bool>(Config::sPathPreviewShowBoundingBox));
+    mMenuView->AppendSubMenu(menuViewPreview, _("Preview"));
+    //
+    wxMenu* menuViewTimeline = new wxMenu();
+    menuViewTimeline->AppendCheckItem(ID_TIMELINE_SNAP_CLIPS, _("Snap to clips"));
+    menuViewTimeline->Check(ID_TIMELINE_SNAP_CLIPS, Config::get().read<bool>(Config::sPathTimelineSnapClips));
+    menuViewTimeline->AppendCheckItem(ID_TIMELINE_SNAP_CURSOR, _("Snap to cursor"));
+    menuViewTimeline->Check(ID_TIMELINE_SNAP_CURSOR, Config::get().read<bool>(Config::sPathTimelineSnapCursor));
+    mMenuView->AppendSubMenu(menuViewTimeline, _("Timeline"));
 
     mMenuSequence = new wxMenu();
 
@@ -337,9 +349,11 @@ Window::Window()
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnUndo,          GetDocumentManager(), wxID_UNDO);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnRedo,          GetDocumentManager(), wxID_REDO);
 
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onSnapClips,        this, ID_SNAP_CLIPS);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onSnapCursor,       this, ID_SNAP_CURSOR);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onShowBoundingBox,  this, ID_SHOW_BOUNDINGBOX);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onSnapClips,        this, ID_TIMELINE_SNAP_CLIPS);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onSnapCursor,       this, ID_TIMELINE_SNAP_CURSOR);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onShowBoundingBox,  this, ID_PREVIEW_SHOW_BOUNDINGBOX);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onShowLabels,       this, ID_DETAILS_SHOW_LABELS);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onShowIcons,        this, ID_DETAILS_SHOW_ICONS);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onShowProject,      this, ID_SHOW_PROJECT);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onShowDetails,      this, ID_SHOW_DETAILS);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onShowPreview,      this, ID_SHOW_PREVIEW);
@@ -473,9 +487,11 @@ Window::~Window()
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnUndo,          GetDocumentManager(), wxID_UNDO);
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnRedo,          GetDocumentManager(), wxID_REDO);
 
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onSnapClips, this, ID_SNAP_CLIPS);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onSnapCursor,       this, ID_SNAP_CURSOR);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onShowBoundingBox,  this, ID_SHOW_BOUNDINGBOX);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onSnapClips,        this, ID_TIMELINE_SNAP_CLIPS);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onSnapCursor,       this, ID_TIMELINE_SNAP_CURSOR);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onShowBoundingBox,  this, ID_PREVIEW_SHOW_BOUNDINGBOX);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onShowLabels,       this, ID_DETAILS_SHOW_LABELS);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onShowIcons,        this, ID_DETAILS_SHOW_ICONS);
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onShowProject,      this, ID_SHOW_PROJECT);
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onShowDetails,      this, ID_SHOW_DETAILS);
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onShowPreview,      this, ID_SHOW_PREVIEW);
@@ -718,7 +734,19 @@ void Window::onSnapCursor(wxCommandEvent& event)
 
 void Window::onShowBoundingBox(wxCommandEvent& event)
 {
-    Config::get().write<bool>(Config::sPathVideoShowBoundingBox, event.IsChecked());
+    Config::get().write<bool>(Config::sPathPreviewShowBoundingBox, event.IsChecked());
+    event.Skip();
+}
+
+void Window::onShowLabels(wxCommandEvent& event)
+{
+    Config::get().write<bool>(Config::sPathDetailsShowTitles, event.IsChecked());
+    event.Skip();
+}
+
+void Window::onShowIcons(wxCommandEvent& event)
+{
+    Config::get().write<bool>(Config::sPathDetailsShowIcons, event.IsChecked());
     event.Skip();
 }
 

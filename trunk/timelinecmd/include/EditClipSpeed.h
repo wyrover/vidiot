@@ -48,7 +48,7 @@ public:
     // ROOTCOMMAND
     //////////////////////////////////////////////////////////////////////////
 
-    static bool isPossible(model::IClipPtr clip, model::IClipPtr link);
+    static std::pair<bool, wxString> isPossible(model::SequencePtr sequence, model::IClipPtr clip, model::IClipPtr link);
     bool isPossible() const override;
 
     //////////////////////////////////////////////////////////////////////////

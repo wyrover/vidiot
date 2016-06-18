@@ -42,12 +42,12 @@ FixtureConfig& FixtureConfig::SetDefaults()
 
 FixtureConfig& FixtureConfig::SnapToClips(bool snap)
 {
-    WindowCheckMenu(ID_SNAP_CLIPS, snap);
+    WindowCheckMenu(ID_TIMELINE_SNAP_CLIPS, snap);
     return *this;
 }
 FixtureConfig& FixtureConfig::SnapToCursor(bool snap)
 {
-    WindowCheckMenu(ID_SNAP_CURSOR, snap);
+    WindowCheckMenu(ID_TIMELINE_SNAP_CURSOR, snap);
     return *this;
 }
 

@@ -27,13 +27,18 @@ enum
     ID_NEW_SEQUENCE,
     ID_NEW_FOLDER,
     // View menu
-    ID_SNAP_CLIPS,
-    ID_SNAP_CURSOR,
-    ID_SHOW_BOUNDINGBOX,
     ID_SHOW_PROJECT,
     ID_SHOW_DETAILS,
     ID_SHOW_PREVIEW,
     ID_SHOW_TIMELINES,
+    // View menu -> Details
+    ID_DETAILS_SHOW_LABELS,
+    ID_DETAILS_SHOW_ICONS,
+    // View menu -> Preview
+    ID_PREVIEW_SHOW_BOUNDINGBOX,
+    // View menu -> Timeline
+    ID_TIMELINE_SNAP_CLIPS,
+    ID_TIMELINE_SNAP_CURSOR,
     // Sequence menu
     ID_ADDVIDEOTRACK,
     ID_ADDAUDIOTRACK,

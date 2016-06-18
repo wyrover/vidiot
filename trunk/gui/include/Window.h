@@ -138,6 +138,8 @@ public:
     void onSnapClips(wxCommandEvent& event);
     void onSnapCursor(wxCommandEvent& event);
     void onShowBoundingBox(wxCommandEvent& event);
+    void onShowLabels(wxCommandEvent& event);
+    void onShowIcons(wxCommandEvent& event);
     void onShowProject(wxCommandEvent& event);
     void onShowDetails(wxCommandEvent& event);
     void onShowPreview(wxCommandEvent& event);

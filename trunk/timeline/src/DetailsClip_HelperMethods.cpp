@@ -478,9 +478,7 @@ void DetailsClip::updateSpeedControls()
 {
     bool video = mClip->isA<model::VideoClip>();
     bool audio = mClip->isA<model::AudioClip>();
-    // todo apparently when there's 'other' clips in another track this ispossible gives true.
-    // however when submitting the command, it is not allowed. Improve 'enabling' here.
-    bool enable = (video || audio) && (cmd::EditClipSpeed::isPossible(mClip, mClip->getLink()));
+    bool enable = (video || audio) && (cmd::EditClipSpeed::isPossible(getSequence(), mClip, mClip->getLink()).first);
     mSpeedSlider->Enable(enable);
     mSpeedSpin->Enable(enable);
     mBitmapSpeed->SetBitmap(util::window::getBitmap(enable ? "dashboard-blue.png" : "dashboard-bw.png"));
@@ -490,6 +488,30 @@ void DetailsClip::updateSpeedControls()
         mSpeedSlider->SetValue(factorToSliderValue(speed));
         mSpeedSpin->SetValue(boost::rational_cast<double>(speed));
     }
+}
+
+void DetailsClip::updateIcons()
+{
+    bool show = Config::get().read<bool>(Config::sPathDetailsShowIcons);
+    for (auto bitmap : mBitmaps)
+    {
+        bitmap->Show(show);                
+    }
+    for (auto bitmap : mBitmapsTransitionParameters)
+    {
+        bitmap->Show(show);
+    }
+    DetailsPanel::updateIcons();
+}
+
+void DetailsClip::updateTitles()
+{
+    bool show = Config::get().read<bool>(Config::sPathDetailsShowTitles);
+    for (auto title : mTitlesTransitionParameters)
+    {
+        title->Show(show && mClip && mClip->isA<model::Transition>() && mClip->isA<model::IVideo>());
+    }
+    DetailsPanel::updateTitles();
 }
 
 int DetailsClip::getNumberOfColumns() const
@@ -517,6 +539,11 @@ void DetailsClip::createTransitionParameterWidgets()
             mTransitionType->Append(n_and_transition.second->getDescription(mTransitionClone->getTransitionType()));
         }
         mTransitionType->SetStringSelection(mTransitionClone->getDescription());
+        mBitmapsTransitionParameters.clear();
+        mTitlesTransitionParameters.clear();
+
+        bool showTitles = Config::get().read<bool>(Config::sPathDetailsShowTitles);
+        bool showIcons = Config::get().read<bool>(Config::sPathDetailsShowIcons);
 
         for (auto parameter : mTransitionClone->getSortedParameters())
         {
@@ -525,7 +552,9 @@ void DetailsClip::createTransitionParameterWidgets()
                 mTransitionBoxSizer->AddSpacer(2);
             }
             wxStaticText* title{ new wxStaticText(mTransitionPanel, wxID_ANY, parameter->getDescription(), wxDefaultPosition, wxSize(120, -1), wxST_ELLIPSIZE_END) };
+            mTitlesTransitionParameters.push_back(title);
             wxStaticBitmap* bitmapParameter = new wxStaticBitmap(mTransitionBoxSizer->GetContainingWindow(), wxID_ANY, parameter->getBitmap());
+            mBitmapsTransitionParameters.push_back(bitmapParameter);
             mTransitionBoxSizer->Add(title, wxSizerFlags(0).CenterVertical().Left());//, 0, wxALL|wxALIGN_TOP, 0);
             mTransitionBoxSizer->Add(bitmapParameter, wxSizerFlags(0).Left().CenterVertical());
             wxWindow* window = parameter->makeWidget(mTransitionPanel);
@@ -533,12 +562,10 @@ void DetailsClip::createTransitionParameterWidgets()
             bitmapParameter->SetToolTip(window->GetToolTipText());
             title->SetToolTip(window->GetToolTipText());
             parameter->Bind(model::EVENT_TRANSITION_PARAMETER_CHANGED, &DetailsClip::onTransitionParameterChanged, this);
+            title->Show(showTitles);
+            bitmapParameter->Show(showIcons);
         }
 
-        for (auto rh : mTransitionBoxSizer->GetRowHeights())
-        {
-            VAR_ERROR(rh);
-        }
         mTransitionPanel->Layout();
         mTransitionPanel->Update();
         mTransitionBoxSizer->Layout();
@@ -554,6 +581,8 @@ void DetailsClip::destroyTransitionParameterWidgets()
 
     if (mTransitionClone)
     {
+        mBitmapsTransitionParameters.clear();
+        mTitlesTransitionParameters.clear();
         for (auto parameter : mTransitionClone->getSortedParameters())
         {
             parameter->Unbind(model::EVENT_TRANSITION_PARAMETER_CHANGED, &DetailsClip::onTransitionParameterChanged, this);

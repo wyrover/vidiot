@@ -146,7 +146,7 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
 
     mPlaybackPanel = new wxPanel(this);
     wxBoxSizer* playbacksizer = new wxBoxSizer(wxHORIZONTAL);
-    wxStaticBitmap* bitmapPlayback = new wxStaticBitmap(mPlaybackPanel, wxID_ANY, util::window::getBitmap("arrow-repeat.png"));
+    mBitmapPlayback = new wxStaticBitmap(mPlaybackPanel, wxID_ANY, util::window::getBitmap("arrow-repeat.png"));
     mPlayButton = new wxToggleButton(mPlaybackPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
     mPlayButton->SetBitmap(util::window::getIcon("icon-pauseplay.png"), wxTOP);
     mPlayButton->SetToolTip(_("Press this button to start/stop continuous playback of the transition."));
@@ -154,24 +154,24 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     mAutoPlayButton = new wxCheckBox(mPlaybackPanel, wxID_ANY, _("Start automatically"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
     mAutoPlayButton->SetToolTip(_("Select this to immediately start continuous playback of transition when a transition is selected."));
     mAutoPlayButton->SetValue(Config::get().read<bool>(Config::sPathEditAutoStartPlayback));
-    bitmapPlayback->SetToolTip(_("Start/stop continous playback of the transition."));       
-    playbacksizer->Add(bitmapPlayback, wxSizerFlags(0).Left().CenterVertical());
+    mBitmapPlayback->SetToolTip(_("Start/stop continous playback of the transition."));       
+    playbacksizer->Add(mBitmapPlayback, wxSizerFlags(0).Left().CenterVertical());
     playbacksizer->Add(mPlayButton, wxSizerFlags(0));
     playbacksizer->Add(mAutoPlayButton, wxSizerFlags(0).CenterVertical());
     mPlaybackPanel->SetSizer(playbacksizer);
     // TRANSLATORS: Do not let the string exceed 20 characters.
-    addOption(_("Preview"), mPlaybackPanel, bitmapPlayback->GetToolTipText());
+    addOption(_("Preview"), mPlaybackPanel, mBitmapPlayback->GetToolTipText());
 
     mPlayButton->Bind(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, &DetailsClip::onPlayButtonPressed, this);
     mAutoPlayButton->Bind(wxEVT_CHECKBOX, &DetailsClip::onAutoPlayToggled, this);
 
     mTransitionTypePanel = new wxPanel(this);
     wxBoxSizer* transitiontypesizer = new wxBoxSizer(wxHORIZONTAL);
-    wxStaticBitmap* bitmapTransitionType = new wxStaticBitmap(mTransitionTypePanel, wxID_ANY, util::window::getBitmap("question-blue.png"));
+    mBitmapTransitionType = new wxStaticBitmap(mTransitionTypePanel, wxID_ANY, util::window::getBitmap("question-blue.png"));
     mTransitionType = new wxChoice(mTransitionTypePanel, wxID_ANY);
     mTransitionType->SetToolTip(_("Select the effect used for the transition towards the second clip."));
-    bitmapTransitionType->SetToolTip(mTransitionType->GetToolTipText());
-    transitiontypesizer->Add(bitmapTransitionType, wxSizerFlags(0).Left().CenterVertical());
+    mBitmapTransitionType->SetToolTip(mTransitionType->GetToolTipText());
+    transitiontypesizer->Add(mBitmapTransitionType, wxSizerFlags(0).Left().CenterVertical());
     transitiontypesizer->Add(mTransitionType, wxSizerFlags(1));
     mTransitionTypePanel->SetSizer(transitiontypesizer);     
     // TRANSLATORS: Do not let the string exceed 20 characters.
@@ -181,7 +181,7 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
 
     mOpacityPanel = new wxPanel(this);
     wxBoxSizer* opacitysizer = new wxBoxSizer(wxHORIZONTAL);
-    wxStaticBitmap* bitmapOpacity = new wxStaticBitmap(mOpacityPanel, wxID_ANY, util::window::getBitmap("gradient-blue2.png"));
+    mBitmapOpacity = new wxStaticBitmap(mOpacityPanel, wxID_ANY, util::window::getBitmap("gradient-blue2.png"));
     mOpacitySlider = new wxSlider(mOpacityPanel, wxID_ANY, model::VideoKeyFrame::sOpacityMax, model::VideoKeyFrame::sOpacityMin, model::VideoKeyFrame::sOpacityMax );
     mOpacitySlider->SetPageSize(sOpacityPageSize);
     mOpacitySlider->SetToolTip(_("Select the opacity of the video frame. A value of '0' means fully transparent. A value of '255' means fully opaque."));
@@ -190,8 +190,8 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     mOpacitySpin->SetValue(model::VideoKeyFrame::sOpacityMax);
     mOpacitySpin->SetWindowVariant( wxWINDOW_VARIANT_SMALL );
     mOpacitySpin->SetToolTip(mOpacitySlider->GetToolTipText());
-    bitmapOpacity->SetToolTip(mOpacitySlider->GetToolTipText());
-    opacitysizer->Add(bitmapOpacity, wxSizerFlags(0).Left().CenterVertical());
+    mBitmapOpacity->SetToolTip(mOpacitySlider->GetToolTipText());
+    opacitysizer->Add(mBitmapOpacity, wxSizerFlags(0).Left().CenterVertical());
     opacitysizer->Add(mOpacitySlider, wxSizerFlags(1).Expand());
     opacitysizer->Add(mOpacitySpin, wxSizerFlags(0));
     mOpacityPanel->SetSizer(opacitysizer);
@@ -200,59 +200,59 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
 
     mCropPanel = new wxPanel(this);
     wxBoxSizer* cropsizer = new wxBoxSizer(wxHORIZONTAL);
-    wxStaticBitmap* bitmapCroptop = new wxStaticBitmap(mCropPanel, wxID_ANY, util::window::getBitmap("arrow-transition-090.png"));
+    mBitmapCropTop = new wxStaticBitmap(mCropPanel, wxID_ANY, util::window::getBitmap("arrow-transition-090.png"));
     mCropTopSlider = new wxSlider(mCropPanel, wxID_ANY, model::VideoKeyFrame::sCropMax, model::VideoKeyFrame::sCropMin, model::VideoKeyFrame::sCropMax);
     mCropTopSlider->SetPageSize(sCropPageSize);
     mCropTopSlider->SetToolTip(_("Select the area to remove from the top of the video."));
-    bitmapCroptop->SetToolTip(mCropTopSlider->GetToolTipText());
+    mBitmapCropTop->SetToolTip(mCropTopSlider->GetToolTipText());
     mCropTopSpin = new wxSpinCtrl(mCropPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(55, -1));
     mCropTopSpin->SetRange(model::VideoKeyFrame::sCropMin, model::VideoKeyFrame::sCropMax);
     mCropTopSpin->SetValue(model::VideoKeyFrame::sCropMin);
     mCropTopSpin->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
     mCropTopSpin->SetToolTip(mCropTopSlider->GetToolTipText());
-    wxStaticBitmap* bitmapCropBottom = new wxStaticBitmap(mCropPanel, wxID_ANY, util::window::getBitmap("arrow-transition-270.png"));
+    mBitmapCropBottom = new wxStaticBitmap(mCropPanel, wxID_ANY, util::window::getBitmap("arrow-transition-270.png"));
     mCropBottomSlider = new wxSlider(mCropPanel, wxID_ANY, model::VideoKeyFrame::sCropMax, model::VideoKeyFrame::sCropMin, model::VideoKeyFrame::sCropMax);
     mCropBottomSlider->SetPageSize(sCropPageSize);
     mCropBottomSlider->SetToolTip(_("Select the area to remove from the bottom of the video."));
-    bitmapCropBottom->SetToolTip(mCropBottomSlider->GetToolTipText());
+    mBitmapCropBottom->SetToolTip(mCropBottomSlider->GetToolTipText());
     mCropBottomSpin = new wxSpinCtrl(mCropPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(55, -1));
     mCropBottomSpin->SetRange(model::VideoKeyFrame::sCropMin, model::VideoKeyFrame::sCropMax);
     mCropBottomSpin->SetValue(model::VideoKeyFrame::sCropMin);
     mCropBottomSpin->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
     mCropBottomSpin->SetToolTip(mCropBottomSlider->GetToolTipText());
-    wxStaticBitmap* bitmapCropLeft = new wxStaticBitmap(mCropPanel, wxID_ANY, util::window::getBitmap("arrow-transition-180.png"));
+    mBitmapCropLeft = new wxStaticBitmap(mCropPanel, wxID_ANY, util::window::getBitmap("arrow-transition-180.png"));
     mCropLeftSlider = new wxSlider(mCropPanel, wxID_ANY, model::VideoKeyFrame::sCropMax, model::VideoKeyFrame::sCropMin, model::VideoKeyFrame::sCropMax);
     mCropLeftSlider->SetPageSize(sCropPageSize);
     mCropLeftSlider->SetToolTip(_("Select the area to remove from the left side of the video."));
-    bitmapCropLeft->SetToolTip(mCropLeftSlider->GetToolTipText());
+    mBitmapCropLeft->SetToolTip(mCropLeftSlider->GetToolTipText());
     mCropLeftSpin = new wxSpinCtrl(mCropPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(55, -1));
     mCropLeftSpin->SetRange(model::VideoKeyFrame::sCropMin, model::VideoKeyFrame::sCropMax);
     mCropLeftSpin->SetValue(model::VideoKeyFrame::sCropMin);
     mCropLeftSpin->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
     mCropLeftSpin->SetToolTip(mCropLeftSlider->GetToolTipText());
-    wxStaticBitmap* bitmapCropRight = new wxStaticBitmap(mCropPanel, wxID_ANY, util::window::getBitmap("arrow-transition.png"));
+    mBitmapCropRight = new wxStaticBitmap(mCropPanel, wxID_ANY, util::window::getBitmap("arrow-transition.png"));
     mCropRightSlider = new wxSlider(mCropPanel, wxID_ANY, model::VideoKeyFrame::sCropMax, model::VideoKeyFrame::sCropMin, model::VideoKeyFrame::sCropMax);
     mCropRightSlider->SetPageSize(sCropPageSize);
     mCropRightSlider->SetToolTip(_("Select the area to remove from the right side of the video."));
-    bitmapCropRight->SetToolTip(mCropRightSlider->GetToolTipText());
+    mBitmapCropRight->SetToolTip(mCropRightSlider->GetToolTipText());
     mCropRightSpin = new wxSpinCtrl(mCropPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(55, -1));
     mCropRightSpin->SetRange(model::VideoKeyFrame::sCropMin, model::VideoKeyFrame::sCropMax);
     mCropRightSpin->SetValue(model::VideoKeyFrame::sCropMin);
     mCropRightSpin->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
     mCropRightSpin->SetToolTip(mCropRightSlider->GetToolTipText());
-    cropsizer->Add(bitmapCroptop, wxSizerFlags(0).Left().CenterVertical());
+    cropsizer->Add(mBitmapCropTop, wxSizerFlags(0).Left().CenterVertical());
     cropsizer->Add(mCropTopSlider, wxSizerFlags(1).Expand());
     cropsizer->Add(mCropTopSpin, wxSizerFlags(0));
     cropsizer->AddSpacer(4);
-    cropsizer->Add(bitmapCropBottom, wxSizerFlags(0).Left().CenterVertical());
+    cropsizer->Add(mBitmapCropBottom, wxSizerFlags(0).Left().CenterVertical());
     cropsizer->Add(mCropBottomSlider, wxSizerFlags(1).Expand());
     cropsizer->Add(mCropBottomSpin, wxSizerFlags(0));
     cropsizer->AddSpacer(4);
-    cropsizer->Add(bitmapCropLeft, wxSizerFlags(0).Left().CenterVertical());
+    cropsizer->Add(mBitmapCropLeft, wxSizerFlags(0).Left().CenterVertical());
     cropsizer->Add(mCropLeftSlider, wxSizerFlags(1).Expand());
     cropsizer->Add(mCropLeftSpin, wxSizerFlags(0));
     cropsizer->AddSpacer(4);
-    cropsizer->Add(bitmapCropRight, wxSizerFlags(0).Left().CenterVertical());
+    cropsizer->Add(mBitmapCropRight, wxSizerFlags(0).Left().CenterVertical());
     cropsizer->Add(mCropRightSlider, wxSizerFlags(1).Expand());
     cropsizer->Add(mCropRightSpin, wxSizerFlags(0));
     mCropPanel->SetSizer(cropsizer);
@@ -261,11 +261,11 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
 
     mRotationPanel = new wxPanel(this);
     wxBoxSizer* rotationsizer = new wxBoxSizer(wxHORIZONTAL);
-    wxStaticBitmap* bitmapRotation = new wxStaticBitmap(mRotationPanel, wxID_ANY, util::window::getBitmap("arrow-circle-double-135.png"));
+    mBitmapRotation = new wxStaticBitmap(mRotationPanel, wxID_ANY, util::window::getBitmap("arrow-circle-double-135.png"));
     mRotationSlider = new wxSlider(mRotationPanel,wxID_ANY, 1 * sRotationPrecisionFactor, sRotationMinNoKeyFrames, sRotationMaxNoKeyFrames);
     mRotationSlider->SetPageSize(sRotationPageSize);
     mRotationSlider->SetToolTip(_("Select the rotation (in degrees) of the video frame."));
-    bitmapRotation->SetToolTip(mRotationSlider->GetToolTipText());
+    mBitmapRotation->SetToolTip(mRotationSlider->GetToolTipText());
     mRotationSpin = new wxSpinCtrlDouble(mRotationPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(55,-1));
     mRotationSpin->SetWindowVariant( wxWINDOW_VARIANT_SMALL );
     mRotationSpin->SetDigits(sRotationPrecision);
@@ -275,7 +275,7 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
         static_cast<double>(sRotationMaxNoKeyFrames) / static_cast<double>(sRotationPrecisionFactor));
     mRotationSpin->SetIncrement(sRotationIncrement);
     mRotationSpin->SetToolTip(mRotationSlider->GetToolTipText());
-    rotationsizer->Add(bitmapRotation, wxSizerFlags(0).Left().CenterVertical());
+    rotationsizer->Add(mBitmapRotation, wxSizerFlags(0).Left().CenterVertical());
     rotationsizer->Add(mRotationSlider, wxSizerFlags(1).Expand());
     rotationsizer->Add(mRotationSpin, wxSizerFlags(0));
     mRotationPanel->SetSizer(rotationsizer);
@@ -284,11 +284,11 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
 
     mScalingPanel = new wxPanel(this);
     wxBoxSizer* scalingsizer = new wxBoxSizer(wxHORIZONTAL);
-    wxStaticBitmap* bitmapScaling = new wxStaticBitmap(mScalingPanel, wxID_ANY, util::window::getBitmap("arrow-in-out.png"));
+    mBitmapScaling = new wxStaticBitmap(mScalingPanel, wxID_ANY, util::window::getBitmap("arrow-in-out.png"));
     mSelectScaling = new EnumSelector<model::VideoScaling>(mScalingPanel, model::VideoScalingConverter::getMapToHumanReadibleString(), model::VideoScalingNone);
     mSelectScaling->SetWindowVariant( wxWINDOW_VARIANT_SMALL );
     mSelectScaling->SetToolTip(_("Select between several automated scaling strategies or manually select the (custom) scaling factor of the video frame."));
-    bitmapScaling->SetToolTip(mSelectScaling->GetToolTipText());
+    mBitmapScaling->SetToolTip(mSelectScaling->GetToolTipText());
     mScalingSlider = new wxSlider(mScalingPanel,wxID_ANY, factorToSliderValue(model::VideoKeyFrame::sScalingMax), factorToSliderValue(model::VideoKeyFrame::sScalingMin), factorToSliderValue(model::VideoKeyFrame::sScalingMax));
     mScalingSlider->SetPageSize(sFactorPageSize);
     mScalingSlider->SetToolTip(_("Select the scaling factor to be applied to the video frame."));
@@ -299,7 +299,7 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     mScalingSpin->SetRange(boost::rational_cast<double>(model::VideoKeyFrame::sScalingMin), boost::rational_cast<double>(model::VideoKeyFrame::sScalingMax));
     mScalingSpin->SetIncrement(sFactorIncrement);
     mScalingSpin->SetToolTip(mScalingSlider->GetToolTipText());
-    scalingsizer->Add(bitmapScaling, wxSizerFlags(0).Left().CenterVertical());
+    scalingsizer->Add(mBitmapScaling, wxSizerFlags(0).Left().CenterVertical());
     scalingsizer->Add(mSelectScaling, wxSizerFlags(0).Right().CenterVertical());
     scalingsizer->Add(mScalingSlider, wxSizerFlags(1).Expand());
     scalingsizer->Add(mScalingSpin, wxSizerFlags(0));
@@ -309,39 +309,39 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
 
     mAlignmentPanel = new wxPanel(this);
     wxBoxSizer* alignmentsizer = new wxBoxSizer(wxHORIZONTAL);
-    wxStaticBitmap* bitmapAlignment = new wxStaticBitmap(mAlignmentPanel, wxID_ANY, util::window::getBitmap("arrow-move.png"));
+    mBitmapAlignment = new wxStaticBitmap(mAlignmentPanel, wxID_ANY, util::window::getBitmap("arrow-move.png"));
     mSelectAlignment = new EnumSelector<model::VideoAlignment>(mAlignmentPanel, model::VideoAlignmentConverter::getMapToHumanReadibleString(), model::VideoAlignmentCustom);
     mSelectAlignment->SetWindowVariant( wxWINDOW_VARIANT_SMALL );
     mSelectAlignment->SetToolTip(_("Select between several automated positioning strategies or manually select the (custom) position of the video frame."));
-    bitmapAlignment->SetToolTip(mSelectAlignment->GetToolTipText());
-    wxStaticBitmap* bitmapX = new wxStaticBitmap(mAlignmentPanel, wxID_ANY, util::window::getBitmap("arrow-resize.png"));
+    mBitmapAlignment->SetToolTip(mSelectAlignment->GetToolTipText());
+    mBitmapX = new wxStaticBitmap(mAlignmentPanel, wxID_ANY, util::window::getBitmap("arrow-resize.png"));
     mPositionXSlider = new wxSlider(mAlignmentPanel, wxID_ANY, 0, 0, 1);
     mPositionXSlider->SetPageSize(sPositionPageSize);
     mPositionXSlider->SetToolTip(_("Select the horizontal position of the video frame."));
-    bitmapX->SetToolTip(mPositionXSlider->GetToolTipText());
+    mBitmapX->SetToolTip(mPositionXSlider->GetToolTipText());
     mPositionXSpin = new wxSpinCtrl(mAlignmentPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(55,-1));
     mPositionXSpin->SetWindowVariant( wxWINDOW_VARIANT_SMALL );
     mPositionXSpin->SetRange(0,1);
     mPositionXSpin->SetValue(0);
     mPositionXSpin->SetToolTip(mPositionXSlider->GetToolTipText());
-    wxStaticBitmap* bitmapY = new wxStaticBitmap(mAlignmentPanel, wxID_ANY, util::window::getBitmap("arrow-resize-090.png"));
+    mBitmapY = new wxStaticBitmap(mAlignmentPanel, wxID_ANY, util::window::getBitmap("arrow-resize-090.png"));
     mPositionYSlider = new wxSlider(mAlignmentPanel, wxID_ANY, 0, 0, 1);
     mPositionYSlider->SetPageSize(sPositionPageSize);
     mPositionYSlider->SetToolTip(_("Select the vertical position of the video frame."));
-    bitmapY->SetToolTip(mPositionYSlider->GetToolTipText());
+    mBitmapY->SetToolTip(mPositionYSlider->GetToolTipText());
     mPositionYSpin = new wxSpinCtrl(mAlignmentPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(55,-1));
     mPositionYSpin->SetWindowVariant( wxWINDOW_VARIANT_SMALL );
     mPositionYSpin->SetRange(0,1);                   
     mPositionYSpin->SetValue(0);
     mPositionYSpin->SetToolTip(mPositionYSlider->GetToolTipText());
-    alignmentsizer->Add(bitmapAlignment, wxSizerFlags(0).Left().CenterVertical());
+    alignmentsizer->Add(mBitmapAlignment, wxSizerFlags(0).Left().CenterVertical());
     alignmentsizer->Add(mSelectAlignment, wxSizerFlags(0).Right().CenterVertical());
     alignmentsizer->AddSpacer(4);
-    alignmentsizer->Add(bitmapX, wxSizerFlags(0).Left().CenterHorizontal().CenterVertical());
+    alignmentsizer->Add(mBitmapX, wxSizerFlags(0).Left().CenterHorizontal().CenterVertical());
     alignmentsizer->Add(mPositionXSlider, wxSizerFlags(1000).Expand());
     alignmentsizer->Add(mPositionXSpin, wxSizerFlags(0).Expand());
     alignmentsizer->AddSpacer(4);
-    alignmentsizer->Add(bitmapY, wxSizerFlags(0).Left().CenterHorizontal().CenterVertical());
+    alignmentsizer->Add(mBitmapY, wxSizerFlags(0).Left().CenterHorizontal().CenterVertical());
     alignmentsizer->Add(mPositionYSlider, wxSizerFlags(1000));
     alignmentsizer->Add(mPositionYSpin, wxSizerFlags(0).Expand());
     mAlignmentPanel->SetSizer(alignmentsizer);
@@ -378,17 +378,17 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
 
     mVolumePanel = new wxPanel(this);
     wxBoxSizer* volumesizer = new wxBoxSizer(wxHORIZONTAL);
-    wxStaticBitmap* bitmapVolume = new wxStaticBitmap(mVolumePanel, wxID_ANY, util::window::getBitmap("speaker-volume-blue.png"));
+    mBitmapVolume = new wxStaticBitmap(mVolumePanel, wxID_ANY, util::window::getBitmap("speaker-volume-blue.png"));
     mVolumeSlider = new wxSlider(mVolumePanel, wxID_ANY, model::AudioKeyFrame::sVolumeDefault, model::AudioKeyFrame::sVolumeMin, model::AudioKeyFrame::sVolumeMax );
     mVolumeSlider->SetPageSize(sVolumePageSize);
     mVolumeSlider->SetToolTip(_("Select the audio volume."));
-    bitmapVolume->SetToolTip(mVolumeSlider->GetToolTipText());
+    mBitmapVolume->SetToolTip(mVolumeSlider->GetToolTipText());
     mVolumeSpin = new wxSpinCtrl(mVolumePanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(55,-1));
     mVolumeSpin->SetWindowVariant( wxWINDOW_VARIANT_SMALL );
     mVolumeSpin->SetRange(model::AudioKeyFrame::sVolumeMin, model::AudioKeyFrame::sVolumeMax);
     mVolumeSpin->SetValue(model::AudioKeyFrame::sVolumeDefault);
     mVolumeSpin->SetToolTip(mVolumeSlider->GetToolTipText());
-    volumesizer->Add(bitmapVolume, wxSizerFlags(0).Left().CenterVertical());
+    volumesizer->Add(mBitmapVolume, wxSizerFlags(0).Left().CenterVertical());
     volumesizer->Add(mVolumeSlider, wxSizerFlags(1).Expand());
     volumesizer->Add(mVolumeSpin, wxSizerFlags(0));
     mVolumePanel->SetSizer(volumesizer);
@@ -409,6 +409,30 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
 
     Bind(wxEVT_SHOW, &DetailsClip::onShow, this);
     Bind(wxEVT_SIZE, &DetailsClip::onSize, this);
+
+    mBitmaps =
+    {
+        mBitmapLength,
+        mBitmapPlayback,
+        mBitmapSpeed,
+        mBitmapOpacity,
+        mBitmapCropTop,
+        mBitmapCropBottom,
+        mBitmapCropLeft,
+        mBitmapCropRight,
+        mBitmapRotation,
+        mBitmapScaling,
+        mBitmapAlignment,
+        mBitmapX,
+        mBitmapY,
+        mBitmapVolume,
+        mBitmapTransitionType,
+        mVideoKeyFrameControls->mBitmapKeyFrames,
+        mAudioKeyFrameControls->mBitmapKeyFrames
+    };
+
+    updateTitles();
+    updateIcons();
 
     setClip(nullptr); // Ensures disabling all controls
 
@@ -454,6 +478,9 @@ DetailsClip::~DetailsClip()
     mPositionYSpin->Unbind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onPositionYSpinChanged, this);
     mVolumeSlider->Unbind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onVolumeSliderChanged, this);
     mVolumeSpin->Unbind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onVolumeSpinChanged, this);
+
+    Unbind(wxEVT_SHOW, &DetailsClip::onShow, this);
+    Unbind(wxEVT_SIZE, &DetailsClip::onSize, this);
 
     mClip = nullptr;
     mTransitionClone = nullptr;

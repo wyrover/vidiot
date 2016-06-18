@@ -93,7 +93,7 @@ void DetailsClip::setClip(const model::IClipPtr& clip)
     showOption(mPlaybackPanel, transition != nullptr && transition->isA<model::IVideo>());
     showOption(mTransitionTypePanel, transition != nullptr && transition->isA<model::IVideo>());
     mTransitionPanel->Show(transition != nullptr && transition->isA<model::IVideo>());
-    showOption(mSpeedPanel, video  != nullptr|| audio != nullptr);
+    showOption(mSpeedPanel, video  != nullptr || audio != nullptr);
     mVideoKeyFrameControls->update();
     mAudioKeyFrameControls->update();
 
