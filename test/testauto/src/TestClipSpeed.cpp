@@ -51,59 +51,36 @@ void TestClipSpeed::testChangeClipSpeed()
     Unlink(VideoClip(0, 4));
     TimelineSelectClips({});
     {
+        StartTest("Not allowed for unlinked video if an audio clip is present in the same time frame");
+        TimelineLeftClick(Center(VideoClip(0, 4)));
+        ASSERT(DetailsView(VideoClip(0, 4)));
+        ASSERT(!DetailsClipView()->getSpeedSlider()->IsEnabled());
+        ASSERT(!DetailsClipView()->getSpeedSpin()->IsEnabled());
+    }
+    {
+        StartTest("Not allowed for unlinked audio if a video clip is present in the same time frame");
+        TimelineLeftClick(Center(AudioClip(0, 4)));
+        ASSERT(DetailsView(AudioClip(0, 4)));
+        ASSERT(!DetailsClipView()->getSpeedSlider()->IsEnabled());
+        ASSERT(!DetailsClipView()->getSpeedSpin()->IsEnabled());
+    }
+    {
         StartTest("Allowed for unlinked video");
+        TimelineDeleteClip(AudioClip(0, 4));
         TimelineLeftClick(Center(VideoClip(0, 4)));
         ASSERT(DetailsView(VideoClip(0, 4)));
         ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
         ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
+        Undo();
     }
     {
         StartTest("Allowed for unlinked audio");
+        TimelineDeleteClip(VideoClip(0, 4));
         TimelineLeftClick(Center(AudioClip(0, 4)));
         ASSERT(DetailsView(AudioClip(0, 4)));
         ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
         ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
-    }
-    /////////////////////////////////////////////////////////////////////////////////////////////////
-    {
-        StartTest("Decrease (size enlargement) not allowed when unlinked audio clip in other track");
-        TimelineLeftClick(Center(VideoClip(0, 4)));
-        ASSERT(DetailsView(VideoClip(0, 4)));
-        ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
-        ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
-        SetValue(DetailsClipView()->getSpeedSlider(), 5000); // 5000 'to the left' sets speed to 0.5
-        ASSERT_CLIP_SPEED(VideoClip(0, 4), rational64(1, 1));
-        ASSERT_EQUALS(DetailsClipView()->getSpeedSpin()->GetValue(), 1.0);
-    }
-    {
-        StartTest("Increase (size reduction) not allowed when unlinked audio clip in other track");
-        TimelineLeftClick(Center(VideoClip(0, 4)));
-        ASSERT(DetailsView(VideoClip(0, 4)));
-        ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
-        ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
-        SetValue(DetailsClipView()->getSpeedSlider(), 15000); // 5000 'to the right' sets speed to 50.5
-        ASSERT_CLIP_SPEED(VideoClip(0, 4), 1);
-        ASSERT_EQUALS(DetailsClipView()->getSpeedSpin()->GetValue(), 1.0);
-    }
-    {
-        StartTest("Decrease (size enlargement) not allowed when unlinked audio clip in other track");
-        TimelineLeftClick(Center(AudioClip(0, 4)));
-        ASSERT(DetailsView(AudioClip(0, 4)));
-        ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
-        ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
-        SetValue(DetailsClipView()->getSpeedSlider(), 5000); // 5000 'to the left' sets speed to 0.5
-        ASSERT_CLIP_SPEED(AudioClip(0, 4), rational64(1, 1));
-        ASSERT_EQUALS(DetailsClipView()->getSpeedSpin()->GetValue(), 1.0);
-    }
-    {
-        StartTest("Increase (size reduction) not allowed when unlinked audio clip in other track");
-        TimelineLeftClick(Center(AudioClip(0, 4)));
-        ASSERT(DetailsView(AudioClip(0, 4)));
-        ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
-        ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
-        SetValue(DetailsClipView()->getSpeedSlider(), 15000); // 5000 'to the right' sets speed to 50.5
-        ASSERT_CLIP_SPEED(AudioClip(0, 4), 1);
-        ASSERT_EQUALS(DetailsClipView()->getSpeedSpin()->GetValue(), 1.0);
+        Undo();
     }
     /////////////////////////////////////////////////////////////////////////////////////////////////
     {
@@ -112,12 +89,9 @@ void TestClipSpeed::testChangeClipSpeed()
         TimelineDrag(From(Center(AudioClip(0, 4))).To(LeftCenter(AudioClip(0, 4))));
         TimelineLeftClick(Center(VideoClip(0, 4)));
         ASSERT(DetailsView(VideoClip(0, 4)));
-        ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
-        ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
-        SetValue(DetailsClipView()->getSpeedSlider(), 15000);
-        ASSERT_CLIP_SPEED(VideoClip(0, 4), 1);
-        ASSERT_EQUALS(DetailsClipView()->getSpeedSpin()->GetValue(), 1.0);
-        Undo(1);
+        ASSERT(!DetailsClipView()->getSpeedSlider()->IsEnabled());
+        ASSERT(!DetailsClipView()->getSpeedSpin()->IsEnabled());
+        Undo();
     }
     {
         StartTest("Increase (size reduction) not allowed when unlinked audio clip in other track (partial on end)");
@@ -125,12 +99,9 @@ void TestClipSpeed::testChangeClipSpeed()
         TimelineDrag(From(Center(AudioClip(0, 4))).To(RightCenter(AudioClip(0, 4))));
         TimelineLeftClick(Center(VideoClip(0, 4)));
         ASSERT(DetailsView(VideoClip(0, 4)));
-        ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
-        ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
-        SetValue(DetailsClipView()->getSpeedSlider(), 15000);
-        ASSERT_CLIP_SPEED(VideoClip(0, 4), 1);
-        ASSERT_EQUALS(DetailsClipView()->getSpeedSpin()->GetValue(), 1.0);
-        Undo(1);
+        ASSERT(!DetailsClipView()->getSpeedSlider()->IsEnabled());
+        ASSERT(!DetailsClipView()->getSpeedSpin()->IsEnabled());
+        Undo();
     }
     {
         StartTest("Increase (size reduction) not allowed when unlinked audio clip in other track (partial on begin)");
@@ -138,12 +109,9 @@ void TestClipSpeed::testChangeClipSpeed()
         TimelineDrag(From(Center(VideoClip(0, 4))).To(LeftCenter(VideoClip(0, 4))));
         TimelineLeftClick(Center(AudioClip(0, 4)));
         ASSERT(DetailsView(AudioClip(0, 4)));
-        ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
-        ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
-        SetValue(DetailsClipView()->getSpeedSlider(), 15000);
-        ASSERT_CLIP_SPEED(AudioClip(0, 4), 1);
-        ASSERT_EQUALS(DetailsClipView()->getSpeedSpin()->GetValue(), 1.0);
-        Undo(1);
+        ASSERT(!DetailsClipView()->getSpeedSlider()->IsEnabled());
+        ASSERT(!DetailsClipView()->getSpeedSpin()->IsEnabled());
+        Undo();
     }
     {
         StartTest("Increase (size reduction) not allowed when unlinked audio clip in other track (partial on end)");
@@ -151,12 +119,9 @@ void TestClipSpeed::testChangeClipSpeed()
         TimelineDrag(From(Center(VideoClip(0, 4))).To(RightCenter(VideoClip(0, 4))));
         TimelineLeftClick(Center(AudioClip(0, 4)));
         ASSERT(DetailsView(AudioClip(0, 4)));
-        ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
-        ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
-        SetValue(DetailsClipView()->getSpeedSlider(), 15000);
-        ASSERT_CLIP_SPEED(AudioClip(0, 4), 1);
-        ASSERT_EQUALS(DetailsClipView()->getSpeedSpin()->GetValue(), 1.0);
-        Undo(1);
+        ASSERT(!DetailsClipView()->getSpeedSlider()->IsEnabled());
+        ASSERT(!DetailsClipView()->getSpeedSpin()->IsEnabled());
+        Undo();
     }
     /////////////////////////////////////////////////////////////////////////////////////////////////
     {
@@ -223,10 +188,8 @@ void TestClipSpeed::testChangeClipSpeed()
         TimelineDrag(From(Center(AudioClip(0, 5))).MoveLeft(20)); // Now the empty clip 'under' the to-be-changed clip has a large enough length, but does not fully cover the clip timeframe.
         TimelineLeftClick(Center(VideoClip(0, 4)));
         ASSERT(DetailsView(VideoClip(0, 4)));
-        ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
-        ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
-        SetValue(DetailsClipView()->getSpeedSlider(), 15000);
-        ASSERT_CLIP_SPEED(VideoClip(0, 4), rational64(1, 1));
+        ASSERT(!DetailsClipView()->getSpeedSlider()->IsEnabled());
+        ASSERT(!DetailsClipView()->getSpeedSpin()->IsEnabled());
         Undo(5);
         ASSERT_EQUALS(VideoClip(0, 6)->getLeftPts(), AudioClip(0, 6)->getLeftPts()); // Verify proper shifting
     }
@@ -239,11 +202,8 @@ void TestClipSpeed::testChangeClipSpeed()
         TimelineDrag(From(Center(AudioClip(0, 5))).MoveLeft(20)); // Now the empty clip 'under' the to-be-changed clip has a large enough length, but does not fully cover the clip timeframe.
         TimelineLeftClick(Center(VideoClip(0, 4)));
         ASSERT(DetailsView(VideoClip(0, 4)));
-        ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
-        ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
-        SetValue(DetailsClipView()->getSpeedSlider(), 5000); // 5000 'to the left' sets speed to 0.5
-        ASSERT_CLIP_SPEED(VideoClip(0, 4), rational64(1, 1));
-        ASSERT_EQUALS(DetailsClipView()->getSpeedSpin()->GetValue(), 1.0);
+        ASSERT(!DetailsClipView()->getSpeedSlider()->IsEnabled());
+        ASSERT(!DetailsClipView()->getSpeedSpin()->IsEnabled());
         Undo(5);
         ASSERT_EQUALS(VideoClip(0, 6)->getLeftPts(), AudioClip(0, 6)->getLeftPts()); // Verify proper shifting
     }
@@ -256,10 +216,8 @@ void TestClipSpeed::testChangeClipSpeed()
         TimelineDrag(From(Center(VideoClip(0, 5))).MoveLeft(20)); // Now the empty clip 'under' the to-be-changed clip has a large enough length, but does not fully cover the clip timeframe.
         TimelineLeftClick(Center(AudioClip(0, 4)));
         ASSERT(DetailsView(AudioClip(0, 4)));
-        ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
-        ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
-        SetValue(DetailsClipView()->getSpeedSlider(), 15000);
-        ASSERT_CLIP_SPEED(AudioClip(0, 4), rational64(1, 1));
+        ASSERT(!DetailsClipView()->getSpeedSlider()->IsEnabled());
+        ASSERT(!DetailsClipView()->getSpeedSpin()->IsEnabled());
         Undo(5);
         ASSERT_EQUALS(AudioClip(0, 6)->getLeftPts(), VideoClip(0, 6)->getLeftPts()); // Verify proper shifting
     }
@@ -272,11 +230,8 @@ void TestClipSpeed::testChangeClipSpeed()
         TimelineDrag(From(Center(VideoClip(0, 5))).MoveLeft(20)); // Now the empty clip 'under' the to-be-changed clip has a large enough length, but does not fully cover the clip timeframe.
         TimelineLeftClick(Center(AudioClip(0, 4)));
         ASSERT(DetailsView(AudioClip(0, 4)));
-        ASSERT(DetailsClipView()->getSpeedSlider()->IsEnabled());
-        ASSERT(DetailsClipView()->getSpeedSpin()->IsEnabled());
-        SetValue(DetailsClipView()->getSpeedSlider(), 5000); // 5000 'to the left' sets speed to 0.5
-        ASSERT_CLIP_SPEED(AudioClip(0, 4), rational64(1, 1));
-        ASSERT_EQUALS(DetailsClipView()->getSpeedSpin()->GetValue(), 1.0);
+        ASSERT(!DetailsClipView()->getSpeedSlider()->IsEnabled());
+        ASSERT(!DetailsClipView()->getSpeedSpin()->IsEnabled());
         Undo(5);
         ASSERT_EQUALS(AudioClip(0, 6)->getLeftPts(), VideoClip(0, 6)->getLeftPts()); // Verify proper shifting
     }

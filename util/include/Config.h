@@ -110,11 +110,14 @@ public:
     static const wxString sPathDebugShowCrashMenu;
     static const wxString sPathDebugShowDebugInfoOnWidgets;
     static const wxString sPathDebugShowFrameNumbers;
+    static const wxString sPathDetailsShowIcons;
+    static const wxString sPathDetailsShowTitles;
     static const wxString sPathEditAutoStartPlayback;
     static const wxString sPathFileDefaultExtension;
     static const wxString sPathMakeSequenceEmptyClipLength;
     static const wxString sPathMakeSequencePrefixLength;
-    static const wxString sPathProjectAutoLoadEnabled; 
+    static const wxString sPathPreviewShowBoundingBox;
+    static const wxString sPathProjectAutoLoadEnabled;
     static const wxString sPathProjectBackupBeforeSaveEnabled;
     static const wxString sPathProjectBackupBeforeSaveMaximum;
     static const wxString sPathProjectDefaultNewProjectType;
@@ -139,7 +142,6 @@ public:
     static const wxString sPathVideoDefaultScaling;
     static const wxString sPathVideoDefaultWidth;
     static const wxString sPathVideoOverruleFourCC; ///< Used to overrule the FourCC for encoding MPEG4 formy Car DVD player (only swallows MPEG4 labeled with XVID)
-    static const wxString sPathVideoShowBoundingBox;
     static const wxString sPathWorkspaceLanguage;
     static const wxString sPathWorkspaceH;
     static const wxString sPathWorkspaceMaximized;

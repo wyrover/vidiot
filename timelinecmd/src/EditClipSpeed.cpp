@@ -60,9 +60,10 @@ EditClipSpeed::EditClipSpeed(
     boost::shared_ptr<model::ClipInterval> clipInterval{ boost::dynamic_pointer_cast<model::ClipInterval>(mClipClone) };
     boost::shared_ptr<model::ClipInterval> linkInterval{ mLinkClone ? boost::dynamic_pointer_cast<model::ClipInterval>(mLinkClone) : nullptr };
 
-    if (!isPossible(mClip, mLink))
+    auto possible_reason = isPossible(getSequence(), mClip, mLink);
+    if (!possible_reason.first)
     {
-        gui::StatusBar::get().timedInfoText(_("Can not change length if start position, length, or speed for two linked clips are not equal."));
+        gui::StatusBar::get().timedInfoText(possible_reason.second);
         return;
     }
 
@@ -97,13 +98,6 @@ EditClipSpeed::EditClipSpeed(
 
         if (!clipInOtherTrackAtBegin) { continue; } // If no clip there (end of track). OK.
 
-        if (!clipInOtherTrackAtBegin->isA<model::EmptyClip>() ||         // If it's not an empty clip, then not OK.
-            clipInOtherTrackAtBegin->getRightPts() < originalRightPts)   // If it's an empty clip, but not large enough, then not OK.
-        {
-            gui::StatusBar::get().timedInfoText(_("Can not change clip speed. There may not be clips in the same timeframe in other tracks."));
-            return;
-        }
-
         replaceClip(clipInOtherTrackAtBegin, { boost::make_shared<model::EmptyClip>(clipInOtherTrackAtBegin->getLength() - diff) });
     }
 
@@ -124,27 +118,58 @@ EditClipSpeed::~EditClipSpeed()
 //////////////////////////////////////////////////////////////////////////
 
 // static 
-bool EditClipSpeed::isPossible(model::IClipPtr clip, model::IClipPtr link)
+std::pair<bool, wxString> EditClipSpeed::isPossible(model::SequencePtr sequence, model::IClipPtr clip, model::IClipPtr link)
 {
+    bool possible = true;
+    wxString reason;
+
     boost::shared_ptr<model::ClipInterval> clipInterval{ boost::dynamic_pointer_cast<model::ClipInterval>(clip) };
     boost::shared_ptr<model::ClipInterval> linkInterval{ link ? boost::dynamic_pointer_cast<model::ClipInterval>(link) : nullptr };
 
     ASSERT(clipInterval);
     ASSERT_NONZERO(clipInterval->getTrack());
-    if (!linkInterval)
+    if (linkInterval)
     {
-        return true;
+        ASSERT_NONZERO(linkInterval->getTrack());
+        if (linkInterval->getSpeed() != clipInterval->getSpeed())
+        {
+            return std::make_pair(false, _("Can not change speed if speed of linked clip is different."));
+        }
+        else if (linkInterval->getLength() != clipInterval->getLength())
+        {
+            return std::make_pair(false, _("Can not change speed if length of linked clip is different."));
+        }
+        else if (linkInterval->getOffset() != clipInterval->getOffset())
+        {
+            return std::make_pair(false, _("Can not change speed if start offset (in file) of linked clip is different."));
+        }
+        else if (linkInterval->getLeftPts() != clipInterval->getLeftPts())
+        {
+            return std::make_pair(false, _("Can not change speed if start position (in track) of linked clip is different."));
+        }
     }
-    ASSERT(linkInterval);
-    ASSERT_NONZERO(linkInterval->getTrack());
-    if ((linkInterval->getSpeed() != clipInterval->getSpeed()) ||
-        (linkInterval->getOffset() != clipInterval->getOffset()) ||
-        (linkInterval->getLength() != clipInterval->getLength()) ||
-        (linkInterval->getLeftPts() != clipInterval->getLeftPts()))
+
+    pts originalLeftPts = clipInterval->getLeftPts();
+    pts originalRightPts = clipInterval->getRightPts();
+
+    for (model::TrackPtr track : sequence->getTracks())
     {
-        return false;
+        if (track == clipInterval->getTrack()) { continue; }
+        if (linkInterval && track == linkInterval->getTrack()) { continue; }
+
+        // Get the clip that is at the clip's begin position
+        model::IClipPtr clipInOtherTrackAtBegin = track->getClip(originalLeftPts);
+
+        if (!clipInOtherTrackAtBegin) { continue; } // If no clip there (end of track). OK.
+
+        if (!clipInOtherTrackAtBegin->isA<model::EmptyClip>() ||         // If it's not an empty clip, then not OK.
+            clipInOtherTrackAtBegin->getRightPts() < originalRightPts)   // If it's an empty clip, but not large enough, then not OK.
+        {
+            return std::make_pair(false, _("Can not change clip speed. There may not be clips in the same timeframe in other tracks."));
+        }
     }
-    return true;
+
+    return std::make_pair(true, "");
 }
 
 bool EditClipSpeed::isPossible() const

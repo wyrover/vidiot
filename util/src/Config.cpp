@@ -158,6 +158,8 @@ void Config::init(bool inCxxTestMode)
     // Check values, delete from config if incorrect
     checkLong(sPathMakeSequenceEmptyClipLength, 0, 100000);
     checkLong(sPathMakeSequencePrefixLength, 1, 100);
+    checkBool(sPathDetailsShowTitles);
+    checkBool(sPathDetailsShowIcons);
     checkBool(sPathProjectAutoLoadEnabled);
     checkBool(sPathProjectBackupBeforeSaveEnabled);
     checkLong(sPathProjectBackupBeforeSaveMaximum, 0, 10000);
@@ -179,7 +181,7 @@ void Config::init(bool inCxxTestMode)
     checkBool(sPathDebugShowDebugInfoOnWidgets);
     checkBool(sPathTimelineSnapClips);
     checkBool(sPathTimelineSnapCursor);
-    checkBool(sPathVideoShowBoundingBox);
+    checkBool(sPathPreviewShowBoundingBox);
     checkBool(sPathEditAutoStartPlayback);
     checkLong(sPathDebugMaxRenderLength, 0, 1000000);
     checkBool(sPathDebugShowCrashMenu);
@@ -217,7 +219,7 @@ void Config::init(bool inCxxTestMode)
     setDefault(sPathTimelineMarkerBeginAddition, 0);
     setDefault(sPathTimelineMarkerEndAddition, 0);
     setDefault(sPathTimelineLengthButtons, "250,500,1000,1500,2000,2500,3000,5000,10000"); // Keep in sync with defaults in DetailsClip
-    setDefault(sPathVideoShowBoundingBox, true);
+    setDefault(sPathPreviewShowBoundingBox, true);
     setDefault(sPathDebugShowDebugInfoOnWidgets, false);
     setDefault(sPathTimelineSnapClips, true);
     setDefault(sPathTimelineSnapCursor, true);
@@ -232,6 +234,8 @@ void Config::init(bool inCxxTestMode)
     setDefault(sPathWorkspaceX, -1);
     setDefault(sPathWorkspaceY, -1);
     setDefault(sPathWorkspacePerspectiveCurrent,"");
+    setDefault(sPathDetailsShowIcons, true);
+    setDefault(sPathDetailsShowTitles, true);
 
     if (inCxxTestMode)
     {
@@ -493,10 +497,13 @@ const wxString Config::sPathDebugMaxRenderLength("/Debug/MaxRenderLength");
 const wxString Config::sPathDebugShowCrashMenu("/Debug/ShowCrashMenu");
 const wxString Config::sPathDebugShowDebugInfoOnWidgets("/Debug/ShowDebugInfoOnWidgets");
 const wxString Config::sPathDebugShowFrameNumbers("/Debug/ShowFrameNumbers");
+const wxString Config::sPathDetailsShowIcons("/Details/ShowIcons");
+const wxString Config::sPathDetailsShowTitles("/Details/ShowLabels");
 const wxString Config::sPathFileDefaultExtension("/File/DefaultExtension");
 const wxString Config::sPathEditAutoStartPlayback("/Edit/AutoStartPlayback");
 const wxString Config::sPathMakeSequenceEmptyClipLength("/MakeSequence/EmptyClipLength");
 const wxString Config::sPathMakeSequencePrefixLength("/MakeSequence/PrefixLength");
+const wxString Config::sPathPreviewShowBoundingBox("/Preview/ShowBoundingBox");
 const wxString Config::sPathProjectAutoLoadEnabled("/Project/AutoLoadEnabled");
 const wxString Config::sPathProjectBackupBeforeSaveEnabled("/Project/BackupBeforeSaveEnabled");
 const wxString Config::sPathProjectBackupBeforeSaveMaximum("/Project/BackupBeforeSaveMaximumFileCount");
@@ -522,7 +529,6 @@ const wxString Config::sPathVideoDefaultHeight("/Video/DefaultHeight");
 const wxString Config::sPathVideoDefaultScaling("/Video/DefaultScaling");
 const wxString Config::sPathVideoDefaultWidth("/Video/DefaultWidth");
 const wxString Config::sPathVideoOverruleFourCC("/Video/FourCC");
-const wxString Config::sPathVideoShowBoundingBox("/Video/ShowBoundingBox");
 const wxString Config::sPathWorkspaceLanguage("/Workspace/Language");
 const wxString Config::sPathWorkspaceH("/Workspace/H");
 const wxString Config::sPathWorkspaceMaximized("/Workspace/Maximized");

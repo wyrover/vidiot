@@ -35,10 +35,16 @@ DetailsPanel::DetailsPanel(wxWindow* parent, Timeline& timeline)
 {
     mTopSizer = new wxBoxSizer(wxVERTICAL);
     SetSizer(mTopSizer);
+    Config::get().Bind(EVENT_CONFIG_UPDATED, &DetailsPanel::onConfigUpdated, this);
+
+
 }
 
 DetailsPanel::~DetailsPanel()
 {
+    Config::get().Unbind(EVENT_CONFIG_UPDATED, &DetailsPanel::onConfigUpdated, this);
+
+
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -137,14 +143,48 @@ void DetailsPanel::showOption(wxWindow* widget, bool show)
     ASSERT_MAP_CONTAINS(mMapWindowToSizer,widget);
     ASSERT_MAP_CONTAINS(mMapWindowToTitle,widget);
     mMapWindowToSizer[widget]->Show(widget,show);
-    mMapWindowToSizer[widget]->Show(mMapWindowToTitle[widget],show);
+    mMapWindowToSizer[widget]->Show(mMapWindowToTitle[widget], show && Config::get().read<bool>(Config::sPathDetailsShowTitles));
 }
 
-wxWindow* DetailsPanel::getTitle(wxWindow* widget) const
+wxStaticText* DetailsPanel::getTitle(wxWindow* widget) const
 {
     ASSERT_MAP_CONTAINS(mMapWindowToTitle,widget);
     return mMapWindowToTitle.find(widget)->second;
 }
 
+void DetailsPanel::updateTitles()
+{
+    bool show = Config::get().read<bool>(Config::sPathDetailsShowTitles);
+    for (auto&& kvp : mMapWindowToTitle)
+    {
+        kvp.second->Show(kvp.first->IsShown() && show);
+    }
+    Layout();
+}
+
+void DetailsPanel::updateIcons()
+{
+    Layout();
+}
+
+//////////////////////////////////////////////////////////////////////////
+// PROJECT EVENTS
+//////////////////////////////////////////////////////////////////////////
+
+void DetailsPanel::onConfigUpdated(EventConfigUpdated& event)
+{
+    CatchExceptions([this, event]
+    {
+        if (event.getValue() == Config::sPathDetailsShowIcons)
+        {
+            updateIcons();
+        }
+        if (event.getValue() == Config::sPathDetailsShowTitles)
+        {
+            updateTitles();
+        }
+    });
+    event.Skip();
+}
 
 }} // namespace
