@@ -65,6 +65,26 @@ VideoFrameLayer::~VideoFrameLayer()
 // META DATA
 //////////////////////////////////////////////////////////////////////////
 
+void VideoFrameLayer::setCropTop(int crop)
+{
+    mCropTop = crop;
+}
+
+void VideoFrameLayer::setCropBottom(int crop)
+{
+    mCropBottom = crop;
+}
+
+void VideoFrameLayer::setCropLeft(int crop)
+{
+    mCropLeft = crop;
+}
+
+void VideoFrameLayer::setCropRight(int crop)
+{
+    mCropRight = crop;
+}
+
 void VideoFrameLayer::setPosition(const wxPoint& position)
 {
     mPosition = position;
@@ -110,6 +130,25 @@ wxImagePtr VideoFrameLayer::getImage()
     else
     {
         ASSERT(mImage);
+
+        if (mCropTop != 0 ||
+            mCropBottom != 0 ||
+            mCropLeft != 0 ||
+            mCropRight != 0)
+        {
+            wxSize size{ mImage->GetSize() };
+            wxPoint position{ 0,0 };
+            ASSERT_MORE_THAN_EQUALS_ZERO(mCropTop);
+            ASSERT_MORE_THAN_EQUALS_ZERO(mCropBottom);
+            ASSERT_MORE_THAN_EQUALS_ZERO(mCropLeft);
+            ASSERT_MORE_THAN_EQUALS_ZERO(mCropRight);
+            position.x += mCropLeft;
+            position.y += mCropTop;
+            size.x -= mCropLeft + mCropRight;
+            size.y -= mCropTop + mCropBottom;
+            mImage = boost::make_shared<wxImage>(mImage->GetSubImage(wxRect(position, size)));
+        }
+
         if (!mImage->HasAlpha())
         {
             // Init alpha done as late as possible (avoid creating needlessly).

@@ -50,6 +50,11 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
+    void setCropTop(int crop);
+    void setCropBottom(int crop);
+    void setCropLeft(int crop);
+    void setCropRight(int crop);
+
     void setPosition(const wxPoint& position);
     wxPoint getPosition() const;
 
@@ -80,6 +85,10 @@ private:
 
     wxImagePtr mImage;
     boost::optional<wxImagePtr> mResultingImage; ///< Image with the changes (position, etc.) imposed by the layer
+    int mCropTop = 0;
+    int mCropBottom = 0;
+    int mCropLeft = 0;
+    int mCropRight = 0;
     wxPoint mPosition;
     int mOpacity;
     boost::optional< rational64 > mRotation;

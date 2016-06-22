@@ -33,9 +33,7 @@ public:
     static const rational64 sScalingMax;
     static const int sOpacityMin;
     static const int sOpacityMax;
-    static constexpr int sCropMin = 0;
-    static constexpr int sCropMax = 100; // todo check that ever size 0 remains!   // todo use maximum values of image?
-
+    // todo check that ever size 0 remains!
 
     //////////////////////////////////////////////////////////////////////////
     // INITIALIZATION
@@ -67,9 +65,13 @@ public:
     VideoAlignment getAlignment() const;
     wxPoint getPosition() const; ///< \return the logical position as observed by the user. That is the combination of the alignment offset and the shift because of the region of interest.
     int getCropTop();
+    int getCropTopMax();
     int getCropBottom();
+    int getCropBottomMax();
     int getCropLeft();
+    int getCropLeftMax();
     int getCropRight();
+    int getCropRightMax();
 
     wxPoint getMinPosition();
     wxPoint getMaxPosition();
@@ -79,6 +81,7 @@ public:
     void setCropBottom(int crop);
     void setCropLeft(int crop);
     void setCropRight(int crop);
+    void setScalingFactor(const rational64 & factor);
     void setScaling(const VideoScaling& scaling, const boost::optional< rational64 >& factor = boost::optional< rational64 >());
     void setRotation(const rational64& rotation);
     void setRotationPositionOffset(wxPoint position);

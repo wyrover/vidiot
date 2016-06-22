@@ -64,6 +64,26 @@ KeyFrame::operator bool() const
             ASSERT(keyFrameVideo);
             ASSERT_EQUALS(*mOpacity, keyFrameVideo->getOpacity());
         }
+        if (mCropTop)
+        {
+            ASSERT(keyFrameVideo);
+            ASSERT_EQUALS(*mCropTop, keyFrameVideo->getCropTop());
+        }
+        if (mCropBottom)
+        {
+            ASSERT(keyFrameVideo);
+            ASSERT_EQUALS(*mCropBottom, keyFrameVideo->getCropBottom());
+        }
+        if (mCropLeft)
+        {
+            ASSERT(keyFrameVideo);
+            ASSERT_EQUALS(*mCropLeft, keyFrameVideo->getCropLeft());
+        }
+        if (mCropRight)
+        {
+            ASSERT(keyFrameVideo);
+            ASSERT_EQUALS(*mCropRight, keyFrameVideo->getCropRight());
+        }
         if (mScaling)
         {
             ASSERT(keyFrameVideo);
@@ -105,6 +125,14 @@ DetailsView::operator bool() const
     model::VideoScaling widget_scaling{ model::VideoScalingCustom };
     int widget_opacityslider{ 0 };
     int widget_opacityspin{ 0 };
+    int widget_croptopslider{ 0 };
+    int widget_croptopspin{ 0 };
+    int widget_cropbottomslider{ 0 };
+    int widget_cropbottomspin{ 0 };
+    int widget_cropleftslider{ 0 };
+    int widget_cropleftspin{ 0 };
+    int widget_croprightslider{ 0 };
+    int widget_croprightspin{ 0 };
     int widget_scalingdigits{ 0 };
     double widget_scalingspin{ 0.0 };
     model::VideoAlignment widget_alignment{ model::VideoAlignmentCustom };
@@ -140,6 +168,14 @@ DetailsView::operator bool() const
             {
                 widget_opacityslider = detailsclip->getOpacitySlider()->GetValue();
                 widget_opacityspin = detailsclip->getOpacitySpin()->GetValue();
+                widget_croptopslider = detailsclip->getCropTopSlider()->GetValue();
+                widget_croptopspin = detailsclip->getCropTopSpin()->GetValue();
+                widget_cropbottomslider = detailsclip->getCropBottomSlider()->GetValue();
+                widget_cropbottomspin = detailsclip->getCropBottomSpin()->GetValue();
+                widget_cropleftslider = detailsclip->getCropLeftSlider()->GetValue();
+                widget_cropleftspin = detailsclip->getCropLeftSpin()->GetValue();
+                widget_croprightslider = detailsclip->getCropRightSlider()->GetValue();
+                widget_croprightspin = detailsclip->getCropRightSpin()->GetValue();
                 widget_scaling = detailsclip->getScalingSelector()->getValue();
                 widget_scalingdigits = detailsclip->getScalingSlider()->GetValue();
                 widget_scalingspin = detailsclip->getScalingSpin()->GetValue();
@@ -202,6 +238,26 @@ DetailsView::operator bool() const
         ASSERT_EQUALS(*mOpacity, widget_opacityslider);
         ASSERT_EQUALS(*mOpacity, widget_opacityspin);
     }
+    if (mCropTop)
+    {
+        ASSERT_EQUALS(*mCropTop, widget_croptopslider);
+        ASSERT_EQUALS(*mCropTop, widget_croptopspin);
+    }
+    if (mCropBottom)
+    {
+        ASSERT_EQUALS(*mCropBottom, widget_cropbottomslider);
+        ASSERT_EQUALS(*mCropBottom, widget_cropbottomspin);
+    }
+    if (mCropLeft)
+    {
+        ASSERT_EQUALS(*mCropLeft, widget_cropleftslider);
+        ASSERT_EQUALS(*mCropLeft, widget_cropleftspin);
+    }
+    if (mCropRight)
+    {
+        ASSERT_EQUALS(*mCropRight, widget_croprightslider);
+        ASSERT_EQUALS(*mCropRight, widget_croprightspin);
+    }
     if (mScaling)
     {
         ASSERT_EQUALS(*mScaling, widget_scaling);
@@ -209,7 +265,7 @@ DetailsView::operator bool() const
     if (mScalingFactor)
     {
         ASSERT_EQUALS(*mScalingFactor, gui::timeline::DetailsClip::sliderValueToFactor(widget_scalingdigits));
-        ASSERT_EQUALS(floor(boost::rational_cast<double>(*mScalingFactor) * 100), floor(widget_scalingspin * 100)); // floor + *100 : ensure that only two digits are used
+        ASSERT_EQUALS(round(boost::rational_cast<double>(*mScalingFactor) * 100), round(widget_scalingspin * 100)); // floor + *100 : ensure that only two digits are used
     }
     if (mAlignment)
     {
