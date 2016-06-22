@@ -34,6 +34,10 @@ struct KeyFrameValues
     inline KeyFrameValues& KeyFrameIndex(size_t keyFrameIndex) { mKeyFrameIndex.reset(keyFrameIndex); return *this; };
     inline KeyFrameValues& KeyFrameOffset(pts offset) { mKeyFrameOffset.reset(offset); return *this; };
     inline KeyFrameValues& Opacity(int opacity) { mOpacity.reset(opacity); return *this; }
+    inline KeyFrameValues& CropTop(int crop) { mCropTop.reset(crop); return *this; }
+    inline KeyFrameValues& CropBottom(int crop) { mCropBottom.reset(crop); return *this; }
+    inline KeyFrameValues& CropLeft(int crop) { mCropLeft.reset(crop); return *this; }
+    inline KeyFrameValues& CropRight(int crop) { mCropRight.reset(crop); return *this; }
     inline KeyFrameValues& Scaling(model::VideoScaling scaling) { mScaling.reset(scaling); return *this; }
     inline KeyFrameValues& ScalingFactor(rational64 scalingfactor) { mScalingFactor.reset(scalingfactor); return *this; }
     inline KeyFrameValues& Alignment(model::VideoAlignment alignment) { mAlignment.reset(alignment); return *this; }
@@ -49,6 +53,10 @@ protected:
     boost::optional<size_t> mKeyFrameIndex = boost::none;
     boost::optional<pts> mKeyFrameOffset = boost::none;
     boost::optional<int> mOpacity = boost::none;
+    boost::optional<int> mCropTop = boost::none;
+    boost::optional<int> mCropBottom = boost::none;
+    boost::optional<int> mCropLeft = boost::none;
+    boost::optional<int> mCropRight = boost::none;
     boost::optional<model::VideoScaling> mScaling = boost::none;
     boost::optional<rational64> mScalingFactor = boost::none;
     boost::optional<model::VideoAlignment> mAlignment = boost::none;

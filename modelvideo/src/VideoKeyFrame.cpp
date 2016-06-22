@@ -67,6 +67,8 @@ VideoKeyFrame::VideoKeyFrame(const wxSize& size)
     , mPosition{ 0, 0 }
 {
     mInputSize = size;
+    ASSERT_NONZERO(mInputSize.x); // Avoid crop max (used for slider/spin) ever to be '0'
+    ASSERT_NONZERO(mInputSize.y); // Avoid crop max (used for slider/spin) ever to be '0'
     mScaling = Config::get().ReadEnum<VideoScaling>(Config::sPathVideoDefaultScaling);
     mAlignment = Config::get().ReadEnum<VideoAlignment>(Config::sPathVideoDefaultAlignment);
     updateAutomatedScaling();
@@ -144,14 +146,24 @@ wxRect VideoKeyFrame::getCroppedRect() const
     y += mCropTop;
     w -= mCropLeft + mCropRight;
     h -= mCropTop + mCropBottom;
-    ASSERT_MORE_THAN_ZERO(w); // Required for computations. This may never be
-    ASSERT_MORE_THAN_ZERO(h); // zero, since it might be used as a denominator.
+    if (w < 0)
+    {
+        w = 0;
+    }
+    if (h < 0)
+    {
+        h = 0;
+    }
     return wxRect{ x,y,w,h };
 }
 
 wxSize VideoKeyFrame::getOutputSize() const
 {
     wxSize croppedSize{ getCroppedRect().GetSize() };
+    if (croppedSize.x == 0 || croppedSize.y == 0)
+    {
+        return wxSize(0, 0);
+    }
     wxSize scaledsize = Convert::scale(croppedSize, getScalingFactor());
     return scaledsize;
 }
@@ -196,9 +208,19 @@ int VideoKeyFrame::getCropTop()
     return mCropTop;
 }
 
+int VideoKeyFrame::getCropTopMax()
+{
+    return mInputSize.y;
+}
+
 int VideoKeyFrame::getCropBottom()
 {
     return mCropBottom;
+}
+
+int VideoKeyFrame::getCropBottomMax()
+{
+    return mInputSize.y;
 }
 
 int VideoKeyFrame::getCropLeft()
@@ -206,15 +228,28 @@ int VideoKeyFrame::getCropLeft()
     return mCropLeft;
 }
 
+int VideoKeyFrame::getCropLeftMax()
+{
+    return mInputSize.x;
+}
+
 int VideoKeyFrame::getCropRight()
 {
     return mCropRight;
 }
 
+int VideoKeyFrame::getCropRightMax()
+{
+    return mInputSize.x;
+}
+
 wxPoint VideoKeyFrame::getMinPosition()
 {
+    wxSize targetSize = Properties::get().getVideoSize();
     wxSize boundingBox = getBoundingBox();
-    return wxPoint(-boundingBox.x, -boundingBox.y);
+    int minX = std::min(-boundingBox.x, -targetSize.x);
+    int minY = std::min(-boundingBox.y, -targetSize.y);
+    return wxPoint(minX, minY) - mRotationPositionOffset;
 }
 
 wxPoint VideoKeyFrame::getMaxPosition()
@@ -242,9 +277,17 @@ void VideoKeyFrame::setCropTop(int crop)
     ASSERT(!isInterpolated())(*this);
     if (mCropTop != crop)
     {
-        ASSERT_MORE_THAN_EQUALS(crop, sCropMin);
-        ASSERT_LESS_THAN_EQUALS(crop, sCropMax);
+        if (mScaling == VideoScalingCustom &&
+            mAlignment == VideoAlignmentCustom)
+        {
+            // Adjust position to keep the image in the same position
+            int cropDiff = mCropTop - crop;
+            mPosition.y -= cropDiff;
+        }
+
         mCropTop = crop;
+        updateAutomatedScaling();
+        updateAutomatedPositioning();
     }
 }
 
@@ -253,9 +296,9 @@ void VideoKeyFrame::setCropBottom(int crop)
     ASSERT(!isInterpolated())(*this);
     if (mCropBottom != crop)
     {
-        ASSERT_MORE_THAN_EQUALS(crop, sCropMin);
-        ASSERT_LESS_THAN_EQUALS(crop, sCropMax);
         mCropBottom = crop;
+        updateAutomatedScaling();
+        updateAutomatedPositioning();
     }
 }
 
@@ -264,9 +307,18 @@ void VideoKeyFrame::setCropLeft(int crop)
     ASSERT(!isInterpolated())(*this);
     if (mCropLeft != crop)
     {
-        ASSERT_MORE_THAN_EQUALS(crop, sCropMin);
-        ASSERT_LESS_THAN_EQUALS(crop, sCropMax);
+        if (mScaling == VideoScalingCustom &&
+            mAlignment == VideoAlignmentCustom)
+        {
+            // Adjust position to keep the image in the same position
+            int cropDiff = mCropLeft - crop;
+            mPosition.x -= cropDiff;
+        }
+
+
         mCropLeft = crop;
+        updateAutomatedScaling();
+        updateAutomatedPositioning();
     }
 }
 
@@ -275,9 +327,33 @@ void VideoKeyFrame::setCropRight(int crop)
     ASSERT(!isInterpolated())(*this);
     if (mCropRight != crop)
     {
-        ASSERT_MORE_THAN_EQUALS(crop, sCropMin);
-        ASSERT_LESS_THAN_EQUALS(crop, sCropMax);
         mCropRight = crop;
+        updateAutomatedScaling();
+        updateAutomatedPositioning();
+    }
+}
+
+void VideoKeyFrame::setScalingFactor(const rational64 & factor)
+{
+    wxSize outputSize{ getOutputSize() };
+    ASSERT_MORE_THAN_ZERO(factor);
+    unsigned int w{ boost::rational_cast<unsigned int>(outputSize.GetWidth() * factor) };
+    unsigned int h{ boost::rational_cast<unsigned int>(outputSize.GetHeight() * factor) };
+    if (w == 0)
+    {
+        gui::StatusBar::get().timedInfoText(_("Width becomes 0."));
+    }
+    else if (h == 0)
+    {
+        gui::StatusBar::get().timedInfoText(_("Height becomes 0."));
+    }
+    else if (av_image_check_size(w, h, 0, 0) < 0)
+    {
+        gui::StatusBar::get().timedInfoText(_("Image becomes too large."));
+    }
+    else
+    {
+        mScalingFactor = factor;
     }
 }
 
@@ -288,26 +364,7 @@ void VideoKeyFrame::setScaling(const VideoScaling& scaling, const boost::optiona
     mScaling = scaling;
     if (factor)
     {
-        wxSize outputSize{ getOutputSize() };
-        ASSERT_MORE_THAN_ZERO(*factor)(*factor);
-        unsigned int w{ boost::rational_cast<unsigned int>(outputSize.GetWidth() * *factor) };
-        unsigned int h{ boost::rational_cast<unsigned int>(outputSize.GetHeight() * *factor) };
-        if (w == 0)
-        {
-            gui::StatusBar::get().timedInfoText(_("Width becomes 0."));
-        }
-        else if (h == 0)
-        {
-            gui::StatusBar::get().timedInfoText(_("Height becomes 0."));
-        }
-        else if (av_image_check_size(w, h, 0, 0) < 0)
-        {
-            gui::StatusBar::get().timedInfoText(_("Image becomes too large."));
-        }
-        else
-        {
-            mScalingFactor = *factor;
-        }
+        setScalingFactor(*factor);
     }
 
     updateAutomatedScaling();
@@ -355,6 +412,10 @@ void VideoKeyFrame::setPosition(const wxPoint& position)
 wxSize VideoKeyFrame::getBoundingBox()
 {
     wxSize outputSize{ getOutputSize() };
+    if (outputSize.x == 0 || outputSize.y == 0)
+    {
+        return wxSize(0, 0);
+    }
     if (mRotation == rational64(0))
     {
         return outputSize;
@@ -369,6 +430,10 @@ void VideoKeyFrame::updateAutomatedScaling()
 {
     wxSize croppedSize{ getCroppedRect().GetSize() };
     wxSize outputSize{ getOutputSize() };
+    if (outputSize.x == 0 || outputSize.y == 0)
+    {
+        return;
+    }
     wxSize boundingBoxSize{ getBoundingBox() };
     wxSize targetSize{ Properties::get().getVideoSize() };
 
@@ -377,33 +442,35 @@ void VideoKeyFrame::updateAutomatedScaling()
     case VideoScalingFitToFill:
     {
         rational64 scalingfactor;
-        Convert::sizeInBoundingBox(croppedSize, targetSize, mScalingFactor, true); // The true ensures that the bounding box is filled
+        Convert::sizeInBoundingBox(croppedSize, targetSize, scalingfactor, true); // The true ensures that the bounding box is filled
+        setScalingFactor(scalingfactor);
         break;
     }
     case VideoScalingFitAll:
     {
         rational64 scalingfactor;
-        Convert::sizeInBoundingBox(croppedSize, targetSize, mScalingFactor, false); // The false ensures that the entire video contents is shown (with black bars to fill the bounding box)
+        Convert::sizeInBoundingBox(croppedSize, targetSize, scalingfactor, false); // The false ensures that the entire video contents is shown (with black bars to fill the bounding box)
+        setScalingFactor(scalingfactor);
         break;
     }
     case VideoScalingNone:
     {
-        mScalingFactor = 1;
+        setScalingFactor(1);
         break;
     }
     case VideoScalingHalf:
     {
-        mScalingFactor = rational64(1, 2);
+        setScalingFactor(rational64(1, 2));
         break;
     }
     case VideoScalingThird:
     {
-        mScalingFactor = rational64(1, 3);
+        setScalingFactor(rational64(1, 3));
         break;
     }
     case VideoScalingFourth:
     {
-        mScalingFactor = rational64(1, 4);
+        setScalingFactor(rational64(1, 4));
         break;
     }
     case VideoScalingCustom:
@@ -412,7 +479,7 @@ void VideoKeyFrame::updateAutomatedScaling()
         break;
     }
 
-    // Ensure that automated scaling never causes the scaling to exceed on of the scaling bounds
+    // Ensure that automated scaling never causes the scaling to exceed one of the scaling bounds
     if (mScalingFactor > VideoKeyFrame::sScalingMax)
     {
         mScalingFactor = VideoKeyFrame::sScalingMax;
@@ -427,6 +494,10 @@ void VideoKeyFrame::updateAutomatedScaling()
 void VideoKeyFrame::updateAutomatedPositioning()
 {
     wxSize outputSize{ getOutputSize() };
+    if (outputSize.x == 0 || outputSize.y == 0)
+    {
+        return;
+    }
     wxSize targetSize = Properties::get().getVideoSize();
     wxSize boundingBox = getBoundingBox();
 

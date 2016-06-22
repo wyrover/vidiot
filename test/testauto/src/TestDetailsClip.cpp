@@ -559,6 +559,181 @@ void TestDetailsClip::testTransform()
     }
 }
 
+void TestDetailsClip::testCrop()
+{
+    StartTestSuite();
+
+    gui::Window::get().getUiManager().GetPane("Project").Hide();
+    gui::Window::get().getUiManager().GetPane("Details").MinSize(wxSize(600, -1));
+
+    auto ASSERT_ORIGINAL_CLIPPROPERTIES = []
+    {
+        ASSERT(DefaultKeyFrame(VideoClip(0, 3)).Scaling(model::VideoScalingFitToFill).ScalingFactor(rational64{ 4,5 }).Alignment(model::VideoAlignmentCenter).Position(wxPoint{ -152,0 }));
+        ASSERT(DetailsView(VideoClip(0, 3)).Scaling(model::VideoScalingFitToFill).ScalingFactor(rational64{ 4,5 }).Alignment(model::VideoAlignmentCenter).Position(wxPoint{ -152,0 }));
+        // verify only one command is added to the history when doing multiple edits.
+        ASSERT_HISTORY_END(cmd::ProjectViewCreateSequence);
+    };
+
+    StartTest("If one clip is selected the details view changes accordingly.");
+    TimelineLeftClick(Center(VideoClip(0, 3)));
+    ASSERT(DetailsView(VideoClip(0, 3)));
+    ASSERT_ORIGINAL_CLIPPROPERTIES();
+    ASSERT_HISTORY_END(cmd::ProjectViewCreateSequence);
+
+    {
+        StartTest("CropTop: Slider.");
+        SetValue(DetailsClipView()->getCropTopSlider(), 100);
+        ASSERT_HISTORY_END(gui::timeline::cmd::EditClipDetails);
+        ASSERT(DefaultKeyFrame(VideoClip(0, 3)).CropTop(100).CropBottom(0).CropLeft(0).CropRight(0).Position(wxPoint{ -234, 0 }));
+        ASSERT(DetailsView(VideoClip(0, 3)).CropTop(100).CropBottom(0).CropLeft(0).CropRight(0).ScalingFactor(rational64{ 929, 1000 }).Position(wxPoint{ -234, 0 }));
+        Undo();
+        ASSERT_ORIGINAL_CLIPPROPERTIES();
+    }
+    {
+        StartTest("CropTop: Spin");
+        SetValue(DetailsClipView()->getCropTopSpin(), 100);
+        ASSERT_HISTORY_END(gui::timeline::cmd::EditClipDetails);
+        ASSERT(DefaultKeyFrame(VideoClip(0, 3)).CropTop(100).CropBottom(0).CropLeft(0).CropRight(0).Position(wxPoint{ -234, 0 }));
+        ASSERT(DetailsView(VideoClip(0, 3)).CropTop(100).CropBottom(0).CropLeft(0).CropRight(0).ScalingFactor(rational64{ 929, 1000 }).Position(wxPoint{ -234, 0 }));
+        Undo();
+        ASSERT_ORIGINAL_CLIPPROPERTIES();
+    }
+    {
+        StartTest("CropBottom: Slider");
+        SetValue(DetailsClipView()->getCropBottomSlider(), 100);
+        ASSERT_HISTORY_END(gui::timeline::cmd::EditClipDetails);
+        ASSERT(DefaultKeyFrame(VideoClip(0, 3)).CropTop(0).CropBottom(100).CropLeft(0).CropRight(0).Position(wxPoint{ -234, 0 }));
+        ASSERT(DetailsView(VideoClip(0, 3)).CropTop(0).CropBottom(100).CropLeft(0).CropRight(0).ScalingFactor(rational64{ 929, 1000 }).Position(wxPoint{ -234, 0 }));
+        Undo();
+        ASSERT_ORIGINAL_CLIPPROPERTIES();
+    }
+    {
+        StartTest("CropBottom: Spin");
+        SetValue(DetailsClipView()->getCropBottomSpin(), 100);
+        ASSERT_HISTORY_END(gui::timeline::cmd::EditClipDetails);
+        ASSERT(DefaultKeyFrame(VideoClip(0, 3)).CropTop(0).CropBottom(100).CropLeft(0).CropRight(0).Position(wxPoint{ -234, 0 }));
+        ASSERT(DetailsView(VideoClip(0, 3)).CropTop(0).CropBottom(100).CropLeft(0).CropRight(0).ScalingFactor(rational64{ 929, 1000 }).Position(wxPoint{ -234, 0 }));
+        Undo();
+        ASSERT_ORIGINAL_CLIPPROPERTIES();
+    }
+    {
+        StartTest("CropLeft: Slider");
+        SetValue(DetailsClipView()->getCropLeftSlider(), 100);
+        ASSERT_HISTORY_END(gui::timeline::cmd::EditClipDetails);
+        ASSERT(DefaultKeyFrame(VideoClip(0, 3)).CropTop(0).CropBottom(0).CropLeft(100).CropRight(0).Position(wxPoint{ -112, 0 }));
+        ASSERT(DetailsView(VideoClip(0, 3)).CropTop(0).CropBottom(0).CropLeft(100).CropRight(0).ScalingFactor(rational64{ 4, 5 }).Position(wxPoint{ -112, 0 }));
+        Undo();
+        ASSERT_ORIGINAL_CLIPPROPERTIES();
+    }
+    {
+        StartTest("CropLeft: Spin");
+        SetValue(DetailsClipView()->getCropLeftSpin(), 100);
+        ASSERT_HISTORY_END(gui::timeline::cmd::EditClipDetails);
+        ASSERT(DefaultKeyFrame(VideoClip(0, 3)).CropTop(0).CropBottom(0).CropLeft(100).CropRight(0).Position(wxPoint{ -112, 0 }));
+        ASSERT(DetailsView(VideoClip(0, 3)).CropTop(0).CropBottom(0).CropLeft(100).CropRight(0).ScalingFactor(rational64{ 4, 5 }).Position(wxPoint{ -112, 0 }));
+        Undo();
+        ASSERT_ORIGINAL_CLIPPROPERTIES();
+    }
+    {
+        StartTest("CropRight: Slider");
+        SetValue(DetailsClipView()->getCropRightSlider(), 100);
+        ASSERT_HISTORY_END(gui::timeline::cmd::EditClipDetails);
+        ASSERT(DefaultKeyFrame(VideoClip(0, 3)).CropTop(0).CropBottom(0).CropLeft(0).CropRight(100).Position(wxPoint{ -112, 0 }));
+        ASSERT(DetailsView(VideoClip(0, 3)).CropTop(0).CropBottom(0).CropLeft(0).CropRight(100).ScalingFactor(rational64{ 4, 5 }).Position(wxPoint{ -112, 0 }));
+        Undo();
+        ASSERT_ORIGINAL_CLIPPROPERTIES();
+    }
+    {
+        StartTest("CropRight: Spin");
+        SetValue(DetailsClipView()->getCropRightSpin(), 100);
+        ASSERT_HISTORY_END(gui::timeline::cmd::EditClipDetails);
+        ASSERT(DefaultKeyFrame(VideoClip(0, 3)).CropTop(0).CropBottom(0).CropLeft(0).CropRight(100).Position(wxPoint{ -112, 0 }));
+        ASSERT(DetailsView(VideoClip(0, 3)).CropTop(0).CropBottom(0).CropLeft(0).CropRight(100).ScalingFactor(rational64{ 4, 5 }).Position(wxPoint{ -112, 0 }));
+        Undo();
+        ASSERT_ORIGINAL_CLIPPROPERTIES();
+    }
+    {
+        StartTest("CropTop: Maximum");
+        SetValue(DetailsClipView()->getCropTopSlider(), 12000);
+        ASSERT_HISTORY_END(gui::timeline::cmd::EditClipDetails);
+        ASSERT(DefaultKeyFrame(VideoClip(0, 3)).CropTop(720).Position(wxPoint{ -152, 0 }));
+        ASSERT(DetailsView(VideoClip(0, 3)).CropTop(720).ScalingFactor(rational64{ 4, 5 }).Position(wxPoint{ -152, 0 }));
+        Undo();
+        ASSERT_ORIGINAL_CLIPPROPERTIES();
+    }
+    {
+        StartTest("CropBottom: Maximum");
+        SetValue(DetailsClipView()->getCropBottomSlider(), 12000);
+        ASSERT_HISTORY_END(gui::timeline::cmd::EditClipDetails);
+        ASSERT(DefaultKeyFrame(VideoClip(0, 3)).CropBottom(720).Position(wxPoint{ -152, 0 }));
+        ASSERT(DetailsView(VideoClip(0, 3)).CropBottom(720).ScalingFactor(rational64{ 4, 5 }).Position(wxPoint{ -152, 0 }));
+        Undo();
+        ASSERT_ORIGINAL_CLIPPROPERTIES();
+    }
+    {
+        StartTest("CropLeft: Maximum");
+        SetValue(DetailsClipView()->getCropLeftSlider(), 12000);
+        ASSERT_HISTORY_END(gui::timeline::cmd::EditClipDetails);
+        ASSERT(DefaultKeyFrame(VideoClip(0, 3)).CropLeft(1280).Position(wxPoint{ -152, 0 }));
+        ASSERT(DetailsView(VideoClip(0, 3)).CropLeft(1280).ScalingFactor(rational64{ 4, 5 }).Position(wxPoint{ -152, 0 }));
+        Undo();
+        ASSERT_ORIGINAL_CLIPPROPERTIES();
+    }
+    {
+        StartTest("CropRight: Maximum");
+        SetValue(DetailsClipView()->getCropRightSlider(), 12000);
+        ASSERT_HISTORY_END(gui::timeline::cmd::EditClipDetails);
+        ASSERT(DefaultKeyFrame(VideoClip(0, 3)).CropRight(1280).Position(wxPoint{ -152, 0 }));
+        ASSERT(DetailsView(VideoClip(0, 3)).CropRight(1280).ScalingFactor(rational64{ 4, 5 }).Position(wxPoint{ -152, 0 }));
+        Undo();
+        ASSERT_ORIGINAL_CLIPPROPERTIES();
+    }
+    {
+        StartTest("Set scaling and alignment to custom");
+        SetValue(DetailsClipView()->getScalingSelector(), model::VideoScalingCustom);
+        SetValue(DetailsClipView()->getAlignmentSelector(), model::VideoAlignmentCustom);
+        ASSERT(DefaultKeyFrame(VideoClip(0, 3)).Scaling(model::VideoScalingCustom).ScalingFactor(rational64{ 4,5 }).Alignment(model::VideoAlignmentCustom).Position(wxPoint{ -152,0 }));
+        ASSERT(DetailsView(VideoClip(0, 3)).Scaling(model::VideoScalingCustom).ScalingFactor(rational64{ 4,5 }).Alignment(model::VideoAlignmentCustom).Position(wxPoint{ -152,0 }));
+        {
+            StartTest("CropTop: Keep position");
+            SetValue(DetailsClipView()->getCropTopSlider(), 200);
+            ASSERT(DefaultKeyFrame(VideoClip(0, 3)).CropTop(200).Position(wxPoint{ -152, 200 }));
+            ASSERT(DetailsView(VideoClip(0, 3)).CropTop(200).ScalingFactor(rational64{ 4, 5 }).Position(wxPoint{ -152, 200 }));
+            Undo();
+            ASSERT(DefaultKeyFrame(VideoClip(0, 3)).CropTop(0).Position(wxPoint{ -152, 0 }));
+            ASSERT(DetailsView(VideoClip(0, 3)).CropTop(0).ScalingFactor(rational64{ 4, 5 }).Position(wxPoint{ -152, 0 }));
+        }
+        {
+            StartTest("CropBottom: Keep position");
+            SetValue(DetailsClipView()->getCropBottomSlider(), 200);
+            ASSERT(DefaultKeyFrame(VideoClip(0, 3)).CropBottom(200).Position(wxPoint{ -152, 0 }));
+            ASSERT(DetailsView(VideoClip(0, 3)).CropBottom(200).ScalingFactor(rational64{ 4, 5 }).Position(wxPoint{ -152, 0 }));
+            Undo();
+            ASSERT(DefaultKeyFrame(VideoClip(0, 3)).CropBottom(0).Position(wxPoint{ -152, 0 }));
+            ASSERT(DetailsView(VideoClip(0, 3)).CropBottom(0).ScalingFactor(rational64{ 4, 5 }).Position(wxPoint{ -152, 0 }));
+        }
+        {
+            StartTest("CropLeft: Keep position");
+            SetValue(DetailsClipView()->getCropLeftSlider(), 200);
+            ASSERT(DefaultKeyFrame(VideoClip(0, 3)).CropLeft(200).Position(wxPoint{ 48, 0 }));
+            ASSERT(DetailsView(VideoClip(0, 3)).CropLeft(200).ScalingFactor(rational64{ 4, 5 }).Position(wxPoint{ 48, 0 }));
+            Undo();
+            ASSERT(DefaultKeyFrame(VideoClip(0, 3)).CropLeft(0).Position(wxPoint{ -152, 0 }));
+            ASSERT(DetailsView(VideoClip(0, 3)).CropLeft(0).ScalingFactor(rational64{ 4, 5 }).Position(wxPoint{ -152, 0 }));
+        }
+        {
+            StartTest("CropRight: Keep position");
+            SetValue(DetailsClipView()->getCropRightSlider(), 200);
+            ASSERT(DefaultKeyFrame(VideoClip(0, 3)).CropRight(200).Position(wxPoint{ -152, 0 }));
+            ASSERT(DetailsView(VideoClip(0, 3)).CropRight(200).ScalingFactor(rational64{ 4, 5 }).Position(wxPoint{ -152, 0 }));
+            Undo();
+            ASSERT(DefaultKeyFrame(VideoClip(0, 3)).CropRight(0).Position(wxPoint{ -152, 0 }));
+            ASSERT(DetailsView(VideoClip(0, 3)).CropRight(0).ScalingFactor(rational64{ 4, 5 }).Position(wxPoint{ -152, 0 }));
+        }
+        Undo(2);
+        ASSERT_ORIGINAL_CLIPPROPERTIES();
+    }
+}
 void TestDetailsClip::testChangeVolume()
 {
     StartTestSuite();

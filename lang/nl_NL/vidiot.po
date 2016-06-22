@@ -20,7 +20,7 @@ msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-06-12 12:34+0200\n"
-"PO-Revision-Date: 2016-06-15 15:39+0200\n"
+"PO-Revision-Date: 2016-06-18 18:04+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: nl_NL\n"
@@ -2157,7 +2157,7 @@ msgstr "Genereer %s"
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:101
 msgid "Render all modified sequences"
-msgstr "Genereer voor alle films"
+msgstr "Genereer alle films"
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:103
 msgid "Close"

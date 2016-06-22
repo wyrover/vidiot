@@ -61,6 +61,8 @@ public:
 
     void testTransform();
 
+    void testCrop();
+
     void testChangeVolume();
 
     /// See [#210]

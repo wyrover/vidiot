@@ -137,9 +137,17 @@ VideoFramePtr VideoClip::getNextVideo(const VideoCompositionParameters& paramete
             ASSERT_NONZERO(scaleToBoundingBox);
             rational64 videoscaling = keyFrame->getScalingFactor() * scaleToBoundingBox;
             wxSize inputsize = generator->getSize();
+
             wxSize requiredVideoSize = Convert::scale(inputsize, videoscaling);
 
-            bool isEmpty = (requiredVideoSize.GetWidth() == 0) || (requiredVideoSize.GetHeight() == 0);
+            int cropTop = Convert::scale(keyFrame->getCropTop(), videoscaling);
+            int cropBottom = Convert::scale(keyFrame->getCropBottom(), videoscaling);
+            int cropLeft = Convert::scale(keyFrame->getCropLeft(), videoscaling);
+            int cropRight = Convert::scale(keyFrame->getCropRight(), videoscaling);
+
+            bool isEmpty = 
+                (requiredVideoSize.GetWidth() - cropLeft - cropRight <= 0) ||
+                (requiredVideoSize.GetHeight() - cropTop - cropBottom <= 0);
 
             if (isEmpty)
             {
@@ -170,6 +178,11 @@ VideoFramePtr VideoClip::getNextVideo(const VideoCompositionParameters& paramete
                         ASSERT(!fileFrame->isA<VideoSkipFrame>());
                         ASSERT_EQUALS(fileFrame->getLayers().size(), 1);
                         videoFrame = boost::make_shared<VideoFrame>(parameters, fileFrame->getLayers().front());
+
+                        videoFrame->getLayers().front()->setCropTop(cropTop);
+                        videoFrame->getLayers().front()->setCropBottom(cropBottom);
+                        videoFrame->getLayers().front()->setCropLeft(cropLeft);
+                        videoFrame->getLayers().front()->setCropRight(cropRight);
                         videoFrame->getLayers().front()->setPosition(Convert::scale(keyFrame->getPosition() - keyFrame->getRotationPositionOffset(), scaleToBoundingBox));
                         videoFrame->getLayers().front()->setOpacity(keyFrame->getOpacity());
                         videoFrame->getLayers().front()->setRotation(keyFrame->getRotation());

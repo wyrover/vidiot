@@ -435,9 +435,13 @@ void VideoKeyFrameControls::updateKeyFrameSettings()
     wxPoint minpos{ videoKeyFrame->getMinPosition() };
     int opacity{ videoKeyFrame->getOpacity() };
     int cropTop{ videoKeyFrame->getCropTop() };
+    int cropTopMax{ videoKeyFrame->getCropTopMax() };
     int cropBottom{ videoKeyFrame->getCropBottom() };
+    int cropBottomMax{ videoKeyFrame->getCropBottomMax() };
     int cropLeft{ videoKeyFrame->getCropLeft() };
+    int cropLeftMax{ videoKeyFrame->getCropLeftMax() };
     int cropRight{ videoKeyFrame->getCropRight() };
+    int cropRightMax{ videoKeyFrame->getCropRightMax() };
 
     mParent->mOpacitySlider->SetValue(opacity);
     mParent->mOpacitySpin->SetValue(opacity);
@@ -450,6 +454,15 @@ void VideoKeyFrameControls::updateKeyFrameSettings()
     mParent->mCropLeftSpin->SetValue(cropLeft);
     mParent->mCropRightSlider->SetValue(cropRight);
     mParent->mCropRightSpin->SetValue(cropRight);
+
+    mParent->mCropTopSlider->SetMax(cropTopMax);
+    mParent->mCropTopSpin->SetMax(cropTopMax);
+    mParent->mCropBottomSlider->SetMax(cropBottomMax);
+    mParent->mCropBottomSpin->SetMax(cropBottomMax);
+    mParent->mCropLeftSlider->SetMax(cropLeftMax);
+    mParent->mCropLeftSpin->SetMax(cropLeftMax);
+    mParent->mCropRightSlider->SetMax(cropRightMax);
+    mParent->mCropRightSpin->SetMax(cropRightMax);
 
     mParent->mSelectScaling->select(videoKeyFrame->getScaling());
     mParent->mScalingSlider->SetValue(DetailsClip::factorToSliderValue(factor));
