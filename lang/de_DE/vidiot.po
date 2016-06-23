@@ -19,8 +19,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-12 12:34+0200\n"
-"PO-Revision-Date: 2016-05-14 18:31+0200\n"
+"POT-Creation-Date: 2016-06-23 18:07+0200\n"
+"PO-Revision-Date: 2016-06-23 19:56+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -191,7 +191,7 @@ msgstr "(Neustart erforderlich)"
 
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:63
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:122
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:181
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:193
 msgid "Options"
 msgstr "Optionen"
 
@@ -208,7 +208,7 @@ msgid "Load last project on startup"
 msgstr "Einlesen zuletzt geöffnete Projekt beim Start"
 
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:74
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:187
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:199
 msgid "Save"
 msgstr "Speichern"
 
@@ -308,6 +308,7 @@ msgid "Default number of audio channels"
 msgstr "Standard Anzahl Audiokanälen"
 
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:204
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:188
 msgid "Timeline"
 msgstr "Zeitleiste"
 
@@ -556,23 +557,25 @@ msgid "%d item(s) queued"
 msgstr "%d Aktion(en) in der Queue"
 
 #: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:102
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:198
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:219
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:210
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:231
 msgid "Help"
 msgstr "Hilfe"
 
 #: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:103
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:207
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:219
 msgid "Project"
 msgstr "Projekt"
 
 #: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:104
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:176
 msgid "Details"
 msgstr "Einzelheiten"
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
 #: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:105
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:154
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:181
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:163
 msgid "Preview"
 msgstr "Vorschau"
 
@@ -629,104 +632,112 @@ msgstr "Einfügen eine leere Film."
 msgid "Exit"
 msgstr "Beenden"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:165
-msgid "Snap to clips"
-msgstr "Ankleben an Clips"
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:172
+msgid "Show icons"
+msgstr "Symbole anzeigen"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:167
-msgid "Snap to cursor"
-msgstr "Ankleben an Cursor"
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:174
+msgid "Show labels"
+msgstr "Titel anzeigen"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:170
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:179
 msgid "Show bounding box"
 msgstr "Begrenzungsrahmen anzeigen"
 
 #: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:184
+msgid "Snap to clips"
+msgstr "Ankleben an Clips"
+
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:186
+msgid "Snap to cursor"
+msgstr "Ankleben an Cursor"
+
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:196
 msgid "Show captions"
 msgstr "Titel anzeigen"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:188
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:200
 msgid "Load"
 msgstr "Öffnen"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:189
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:201
 #: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:533
 #: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewDeleteAsset.cpp:33
 msgid "Delete"
 msgstr "Löschen"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:190
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:202
 msgid "Delete all"
 msgstr "Alles löschen"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:192
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:204
 msgid "Restore default"
 msgstr "Wiederherstellen der Standard"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:194
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:206
 msgid "Fullscreen"
 msgstr "Vollbild"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:194
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:206
 msgid "F11"
 msgstr "F11"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:200
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:212
 msgid "Open log file"
 msgstr "Öffnen von der log Datei"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:201
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:213
 msgid "Open config file"
 msgstr "Öffnen von der Konfigurationsdatei"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:202
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:214
 msgid "Report bug/request feature"
 msgstr "Fehler melden/Anfrage einer neuen Funktion"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:204
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:216
 msgid "About..."
 msgstr "Über..."
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:208
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:220
 msgid "Edit"
 msgstr "Bearbeiten"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:209
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:221
 msgid "View"
 msgstr "Ansicht"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:210
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:998
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:222
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:1026
 #: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:380
 #: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:566
 msgid "Sequence"
 msgstr "Film"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:212
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:224
 msgid "Tools"
 msgstr "Tools"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:213
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:225
 msgid "Workspace"
 msgstr "Arbeitsfläche"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:217
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:229
 msgid "Crash"
 msgstr "Absturz"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:392
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:400
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:406
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:414
 #: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:324
 #: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:325
 #: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:326
 msgid "Ctrl"
 msgstr "Ctrl"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:776
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:804
 msgid "Enter workspace name"
 msgstr "Geben Sie Name des Arbeitsfläche"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:776
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:804
 msgid ""
 "Enter name for the saved workspace.\n"
 "If this is an existing name it is overwritten."
@@ -734,31 +745,31 @@ msgstr ""
 "Geben Sie den Namen für den gespeicherten Arbeitsfläche.\n"
 "Wenn diesen Name schon besteht wird  Sie überschrieben."
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:793
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:821
 msgid "Select workspace"
 msgstr "Arbeitsfläche Wählen"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:799
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:827
 msgid "Select workspace to be restored."
 msgstr "Wählen Sie die Arbeitsfläche welche wiederhergestellt soll werden."
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:808
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:836
 msgid "Load workspace failed"
 msgstr "Wiederherstellen von der Arbeitsfläche ist fehlgeschlagen"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:808
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:836
 msgid "Something went wrong while trying to load the saved perspective. Sorry."
 msgstr "Wiederherstellen von der Arbeitsfläche ist fehlgeschlagen."
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:816
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:844
 msgid "Select workspace to be removed."
 msgstr "Wählen Sie Arbeitsfläche zu entfernen."
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:829
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:857
 msgid "Remove all saved workspaces"
 msgstr "Alle gespeicherten Arbeitsfläche entfernen"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:829
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:857
 msgid ""
 "This will remove all saved workspace layouts which cannot be undone.\n"
 "Are you sure?"
@@ -768,23 +779,23 @@ msgstr ""
 "Sind Sie sicher?"
 
 #. TRANSLATORS: %s == Path to file that cannot be opened
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:876
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:902
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:904
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:930
 #: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:579
 msgid "Failed to open file"
 msgstr "Fehler beim öffnen der Datei"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:876
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:902
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:904
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:930
 #, c-format
 msgid "Failed to open '%s'"
 msgstr "Fehler beim öffnen von '%s'"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:889
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:917
 msgid "Attention"
 msgstr "Achtung"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:890
+#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:918
 #, c-format
 msgid ""
 "Note that changing this file will not update the gui.\n"
@@ -1067,15 +1078,15 @@ msgstr "Gegen Uhrzeigersinn"
 msgid "Missing file: "
 msgstr "Fehlende Datei: "
 
-#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoKeyFrame.cpp:202
+#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoKeyFrame.cpp:344
 msgid "Width becomes 0."
 msgstr "Breite wird 0."
 
-#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoKeyFrame.cpp:206
+#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoKeyFrame.cpp:348
 msgid "Height becomes 0."
 msgstr "Höhe wird 0."
 
-#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoKeyFrame.cpp:210
+#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoKeyFrame.cpp:352
 msgid "Image becomes too large."
 msgstr "Bild wird zu groß."
 
@@ -1309,7 +1320,7 @@ msgstr ""
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
 #: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:78
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:226
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:309
 msgid "Scaling"
 msgstr "Scaling"
 
@@ -1810,31 +1821,31 @@ msgstr "Least bits"
 msgid "Rate distortion"
 msgstr "Rate distortion"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Generic.cpp:57
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Generic.cpp:60
 msgid "Go to first key frame."
 msgstr "Erste Schlüsselbild zeigen."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Generic.cpp:58
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Generic.cpp:61
 msgid "Go to previous key frame."
 msgstr "Vorherige Schlüsselbild zeigen."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Generic.cpp:59
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Generic.cpp:62
 msgid "Go to next key frame."
 msgstr "Nächste Schlüsselbild zeigen."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Generic.cpp:60
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Generic.cpp:63
 msgid "Go to last key frame."
 msgstr "Letzte Schlüsselbild zeigen."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Generic.cpp:61
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Generic.cpp:64
 msgid "Add a key frame at the current position."
 msgstr "Schlüsselbild an der aktuellen Position hinzufügen."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Generic.cpp:62
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Generic.cpp:65
 msgid "Remove the key frame at the current position."
 msgstr "Schlüsselbild an der aktuellen Position entfernen."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Generic.cpp:133
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Generic.cpp:138
 #, c-format
 msgid ""
 "Select key frame number %ld. Clicking on the key frame indicator in the "
@@ -1843,14 +1854,14 @@ msgstr ""
 "Wählen Schlüsselbild Nummer %ld. Klicken auf ein Schlüsselbild Anzeige in "
 "der Zeitleiste hat den gleichen Effekt. "
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_GuiEvents.cpp:410
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_GuiEvents.cpp:522
 msgid ""
 "Could not execute the length change without messing up clips in other tracks."
 msgstr ""
 "Die Längenänderung wurde die ordnung von Clips in anderen Spuren "
 "Durcheinander bringen. Deshalb ist Sie nicht ausgeführt."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_GuiEvents.cpp:416
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_GuiEvents.cpp:528
 msgid "Set length of clip"
 msgstr "Einstellen der Länge vom Clip"
 
@@ -1924,7 +1935,23 @@ msgstr "Schlüsselbild an %s hinzufügen"
 msgid "Remove key frame from %s"
 msgstr "Schlüsselbild von %s entfernen"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:111
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:66
+msgid "Add/remove/select video key frames"
+msgstr "Video Schlüsselbild hinzufügen/entfernen/wählen."
+
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:67
+msgid "Add/remove/select audio key frames"
+msgstr "Audio Schlüsselbild hinzufügen/entfernen/wählen."
+
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:101
+msgid ""
+"Change the length of the clip to one of the standard lengths. Will shift "
+"other clips to avoid introducing a black area."
+msgstr ""
+"Ändern Sie die Länge des Clips zu einer der Standardlängen. Verschiebt sich "
+"andere Clips zu vermeiden das einer schwarzen Region eingeführt werd."
+
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:114
 msgid ""
 "Change the length of the clip to this length. Will shift other clips to "
 "avoid introducing a black area."
@@ -1932,16 +1959,16 @@ msgstr ""
 "Ändern Sie die Länge des Clips auf diese Länge. Verschiebt sich andere Clips "
 "zu vermeiden das einer schwarzen Region eingeführt werd."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:111
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:114
 msgid "Shortcut key"
 msgstr "Tastenkürzel"
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:118
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:121
 msgid "Fixed lengths (s)"
 msgstr "Vordefinierte Länge (s)"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:124
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:128
 msgid ""
 "Change the speed of the clip. Changing the clip speed is only allowed when "
 "the clip and its linked clip (if any) are both of an equal size and "
@@ -1949,23 +1976,28 @@ msgid ""
 "the clip. Note that, when selecting a speed smaller than 0.5 or larger than "
 "2.0 the pitch of the audio will change."
 msgstr ""
+"Ändern der Geschwindigkeit des Clips. Dies ist nur möglich, wenn die Länge "
+"und Position des Clips und seine verbundenen Clips gleich sind. Auch kann in "
+"der gleichen Zeitspanne wie der Clip kein andere Clip sein. Wenn eine "
+"Geschwindigkeit von weniger als 0,5 oder größer als 2,0 ausgewählt ist, wird "
+"die Tonhöhe des Audiomaterials geändert."
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:136
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:142
 msgid "Speed"
 msgstr "Geschwindigkeit"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:145
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:152
 msgid "Press this button to start/stop continuous playback of the transition."
 msgstr ""
 "Drücken Sie diese Taste zum Starten/Stoppen kontinuierliche Wiedergabe des "
 "Übergangs."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:147
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:154
 msgid "Start automatically"
 msgstr "Automatisch starten"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:148
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:155
 msgid ""
 "Select this to immediately start continuous playback of transition when a "
 "transition is selected."
@@ -1973,16 +2005,20 @@ msgstr ""
 "Wählen Sie diese um sofort eine kontinuierliche Wiedergabe des Transitions "
 "zu starten Wenn ein Übergang gewählt wird."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:162
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:157
+msgid "Start/stop continous playback of the transition."
+msgstr "Starten/Stoppen kontinuierliche Wiedergabe des Übergangs."
+
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:172
 msgid "Select the effect used for the transition towards the second clip."
 msgstr "Wählen Sie den Effekt für den Übergang."
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:166
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:178
 msgid "Type"
 msgstr "Typ"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:174
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:187
 msgid ""
 "Select the opacity of the video frame. A value of '0' means fully "
 "transparent. A value of '255' means fully opaque."
@@ -1991,20 +2027,56 @@ msgstr ""
 "vollständig transparant. Ein Wert von \"255\" ist völlig undurchsichtig."
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:184
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:199
 msgid "Opacity"
 msgstr "Opazität"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:190
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:202
+msgid ""
+"Note that automated scaling and positioning apply to the cropped (smaller) "
+"image. If the image should not be rescaled/repositioned after cropping, "
+"select Custom for the automated scaling and the automated positioning."
+msgstr ""
+"Beachten Sie dass automatische Skalierung und Positionierung auf die "
+"beschnitten (kleineren) Bild angewendet wird. Wenn das Bild nicht neu "
+"skaliert/positioniert  werden soll, wählen Sie Benutzerdefiniert für die "
+"automatische Skalierung und die automatische Positionierung."
+
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:207
+msgid "Select the area to remove from the top of the video."
+msgstr "Wählen Sie den Bereich zu entfernen von der obere seite des Videos."
+
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:217
+msgid "Select the area to remove from the bottom of the video."
+msgstr "Wählen Sie den Bereich zu entfernen von der untere seite des Videos."
+
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:227
+msgid "Select the area to remove from the left side of the video."
+msgstr "Wählen Sie den Bereich zu entfernen von die linke Seite des Videos."
+
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:237
+msgid "Select the area to remove from the right side of the video."
+msgstr "Wählen Sie den Bereich zu entfernen von die rechte Seite des Videos."
+
+#. TRANSLATORS: Do not let the string exceed 20 characters.
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:261
+msgid "Crop"
+msgstr "Abschneiden"
+
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:261
+msgid "Remove unwanted regions from the side of the video."
+msgstr "Entfernen unerwünschter Bereiche von der Seite des Videos."
+
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:268
 msgid "Select the rotation (in degrees) of the video frame."
 msgstr "Wählen Sie die Rotation (in Grad) des Video bild ."
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:204
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:284
 msgid "Rotation"
 msgstr "Rotation"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:210
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:291
 msgid ""
 "Select between several automated scaling strategies or manually select the "
 "(custom) scaling factor of the video frame."
@@ -2012,11 +2084,11 @@ msgstr ""
 "Wählen Sie zwischen mehreren automatischen Skalierung Strategien oder wählen "
 "Sie die manuell."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:213
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:295
 msgid "Select the scaling factor to be applied to the video frame."
 msgstr "Wählen Sie den Skalierungsfaktor fur das Videobild."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:232
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:316
 msgid ""
 "Select between several automated positioning strategies or manually select "
 "the (custom) position of the video frame."
@@ -2024,35 +2096,35 @@ msgstr ""
 "Wählen Sie zwischen mehreren automatischen Positionierungsstrategien oder "
 "wählen Sie die manuell."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:236
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:321
 msgid "Select the horizontal position of the video frame."
 msgstr "Wählen Sie die horizontale Position des Videobildes."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:245
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:331
 msgid "Select the vertical position of the video frame."
 msgstr "Select the vertikalen position of the video frame."
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:260
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:350
 msgid "Position"
 msgstr "Position"
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:267
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:357
 msgid "Video key frames"
 msgstr "Videoschlüsselbilder"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:286
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:385
 msgid "Select the audio volume."
 msgstr "Wählen Sie die Lautstärke."
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:296
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:397
 msgid "Volume (%)"
 msgstr "Volume (%)"
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:302
+#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:403
 msgid "Audio key frames"
 msgstr "Audioschlüsselbilder"
 
@@ -2245,15 +2317,39 @@ msgstr "Ausgewählte  Clips löschen"
 msgid "Could not shift clips. Part of the region is still in use."
 msgstr "Konnte Clips nicht verschieben. Teil der Region ist noch in Gebrauch."
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:65
-msgid ""
-"Can not change length if start position, length, or speed for two linked "
-"clips are not equal."
-msgstr ""
-"Kann Länge nicht ändern, wenn die Startposition, Länge oder Geschwindigkeit "
-"für zwei verknüpften Clips nicht gleich sind."
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:104
+#, c-format
+msgid "Adjust speed of %s"
+msgstr "Bearbeiten der Geschwindigkeit von %s"
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:103
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:136
+msgid "Can not change speed if speed of linked clip is different."
+msgstr ""
+"Geschwindigkeit kann nicht geändert werden, wenn die Geschwindigkeit des "
+"verbundenen Clips anders ist."
+
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:140
+msgid "Can not change speed if length of linked clip is different."
+msgstr ""
+"Geschwindigkeit kann nicht geändert werden, wenn die Länge des verbundenen "
+"Clips anders ist."
+
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:144
+msgid ""
+"Can not change speed if start offset (in file) of linked clip is different."
+msgstr ""
+"Geschwindigkeit kann nicht geändert werden, wenn die startposition (in der "
+"Datei) des verbundenen Clips anders ist."
+
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:148
+msgid ""
+"Can not change speed if start position (in track) of linked clip is "
+"different."
+msgstr ""
+"Geschwindigkeit kann nicht geändert werden, wenn die startposition (in der "
+"Spur) des verbundenen Clips anders ist."
+
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:168
 msgid ""
 "Can not change clip speed. There may not be clips in the same timeframe in "
 "other tracks."
@@ -2261,27 +2357,22 @@ msgstr ""
 "Kann Geschwindigkeit nicht ändern. Es können kein Clips im gleichen Zeitraum "
 "in anderen Spuren sein."
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:110
-#, c-format
-msgid "Adjust speed of %s"
-msgstr "Bearbeiten der Geschwindigkeit von %s"
-
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:220
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:244
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:254
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:245
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:269
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:279
 #, c-format
 msgid "Can't scale beyond %s"
 msgstr "Kann nicht über %s erhöhen"
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:220
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:245
 msgid "(no room for left transition)."
 msgstr "(kein Platz für linke Übergang)."
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:244
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:269
 msgid "(no room for right transition)."
 msgstr "(kein Platz für rechte Übergang)."
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:254
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:279
 msgid "(no clip remains)."
 msgstr "(kein Clip bleibt)."
 
@@ -2443,6 +2534,13 @@ msgstr "Drücken Sie auf OK, um zu beenden."
 #: C:\Vidiot\vidiot_trunk\util\src\UtilPath.cpp:284
 msgid "Resources not found"
 msgstr "Ressourcen nicht gefunden"
+
+#~ msgid ""
+#~ "Can not change length if start position, length, or speed for two linked "
+#~ "clips are not equal."
+#~ msgstr ""
+#~ "Kann Länge nicht ändern, wenn die Startposition, Länge oder "
+#~ "Geschwindigkeit für zwei verknüpften Clips nicht gleich sind."
 
 #~ msgid ""
 #~ "Change the speed of the clip. Note that currently only changing the speed "
