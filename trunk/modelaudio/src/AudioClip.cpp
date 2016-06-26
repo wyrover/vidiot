@@ -191,7 +191,7 @@ AudioChunkPtr AudioClip::getNextAudio(const AudioCompositionParameters& paramete
             }
             while (writtenSamples < requiredSamples)
             {
-                if (mInputChunk &&     
+                if (mInputChunk &&
                     mInputChunk->getUnreadSampleCount() > 0)
                 {
                     if (mInputChunk->getError())
@@ -388,7 +388,7 @@ AudioPeaks AudioClip::getPeaks(const AudioCompositionParameters& parameters)
     {
         return std::move(AudioPeaks(itBegin, itEnd));
     }
-    if (mPeaks->size() < length)
+    if (static_cast<int>(mPeaks->size()) < length)
     {
         // Ensure resulting peaks length equals length of clip. Add 'silence' if required.
         mPeaks->resize(length, AudioPeak({ { 0,0 },{ 0,0 } }));

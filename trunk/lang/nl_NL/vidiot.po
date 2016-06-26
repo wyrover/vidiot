@@ -19,7 +19,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-23 18:07+0200\n"
+"POT-Creation-Date: 2016-06-24 19:44+0200\n"
 "PO-Revision-Date: 2016-06-23 19:23+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -2337,31 +2337,31 @@ msgstr "Verwijder geselecteerde clips"
 msgid "Could not shift clips. Part of the region is still in use."
 msgstr "Kon clips niet opschuiven. Gedeelte van het gebied is nog in gebruik."
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:104
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:103
 #, c-format
 msgid "Adjust speed of %s"
 msgstr "Pas snelheid van %s aan"
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:136
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:134
 msgid "Can not change speed if speed of linked clip is different."
 msgstr ""
 "Snelheid aanpassen is niet mogelijk als de huidige snelheid van de gelinkte "
 "clip niet hetzelfde is."
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:140
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:138
 msgid "Can not change speed if length of linked clip is different."
 msgstr ""
 "Snelheid aanpassen is niet mogelijk als de lengte van de gelinkte clip niet "
 "hetzelfde is."
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:144
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:142
 msgid ""
 "Can not change speed if start offset (in file) of linked clip is different."
 msgstr ""
 "Snelheid aanpassen is niet mogelijk als de startpositie (binnen het "
 "originele video bestand) van de gelinkte clip niet hetzelfde is."
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:148
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:146
 msgid ""
 "Can not change speed if start position (in track) of linked clip is "
 "different."
@@ -2369,7 +2369,7 @@ msgstr ""
 "Snelheid aanpassen is niet mogelijk als de start positie (binnen het spoor) "
 "van de gelinkte clip niet hetzelfde is."
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:168
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:166
 msgid ""
 "Can not change clip speed. There may not be clips in the same timeframe in "
 "other tracks."
@@ -2377,22 +2377,22 @@ msgstr ""
 "Kan clip snelheid niet aanpassen. Er mogen geen clips in hetzelfde "
 "tijdsbestek in andere sporen zijn."
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:245
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:269
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:279
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:243
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:267
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:277
 #, c-format
 msgid "Can't scale beyond %s"
 msgstr "Kan niet verder schalen dan %s"
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:245
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:243
 msgid "(no room for left transition)."
 msgstr "(er blijft niet genoeg ruimte over voor linker overgang)"
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:269
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:267
 msgid "(no room for right transition)."
 msgstr "(er blijft niet genoeg ruimte over voor rechter overgang)"
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:279
+#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:277
 msgid "(no clip remains)."
 msgstr "(er blijft geen clip over)"
 
