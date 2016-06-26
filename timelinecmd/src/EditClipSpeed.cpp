@@ -68,7 +68,6 @@ EditClipSpeed::EditClipSpeed(
     }
 
     pts originalLeftPts = mClip->getLeftPts();
-    pts originalRightPts = mClip->getRightPts();
 
     adjustSpeedForClipBounds(mClip);
     adjustSpeedForClipBounds(mLink);
@@ -117,10 +116,9 @@ EditClipSpeed::~EditClipSpeed()
 // ROOTCOMMAND
 //////////////////////////////////////////////////////////////////////////
 
-// static 
+// static
 std::pair<bool, wxString> EditClipSpeed::isPossible(model::SequencePtr sequence, model::IClipPtr clip, model::IClipPtr link)
 {
-    bool possible = true;
     wxString reason;
 
     boost::shared_ptr<model::ClipInterval> clipInterval{ boost::dynamic_pointer_cast<model::ClipInterval>(clip) };

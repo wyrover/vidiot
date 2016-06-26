@@ -456,13 +456,13 @@ void VideoKeyFrameControls::updateKeyFrameSettings()
     mParent->mCropRightSpin->SetValue(cropRight);
 
     mParent->mCropTopSlider->SetMax(cropTopMax);
-    mParent->mCropTopSpin->SetMax(cropTopMax);
+    mParent->mCropTopSpin->SetRange(0, cropTopMax);
     mParent->mCropBottomSlider->SetMax(cropBottomMax);
-    mParent->mCropBottomSpin->SetMax(cropBottomMax);
+    mParent->mCropBottomSpin->SetRange(0, cropBottomMax);
     mParent->mCropLeftSlider->SetMax(cropLeftMax);
-    mParent->mCropLeftSpin->SetMax(cropLeftMax);
+    mParent->mCropLeftSpin->SetRange(0, cropLeftMax);
     mParent->mCropRightSlider->SetMax(cropRightMax);
-    mParent->mCropRightSpin->SetMax(cropRightMax);
+    mParent->mCropRightSpin->SetRange(0, cropRightMax);
 
     mParent->mSelectScaling->select(videoKeyFrame->getScaling());
     mParent->mScalingSlider->SetValue(DetailsClip::factorToSliderValue(factor));
