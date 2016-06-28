@@ -19,15 +19,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-24 19:44+0200\n"
-"PO-Revision-Date: 2016-04-14 12:12+0300\n"
+"POT-Creation-Date: 2016-06-28 19:03+0200\n"
+"PO-Revision-Date: 2016-06-28 10:50+0300\n"
 "Last-Translator: Ted Mossolov <teodorrrro@gmail.com>\n"
 "Language-Team: Ted Mossolov <teodorrrro@gmail.com>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.7\n"
+"X-Generator: Poedit 1.8.8\n"
 "X-Poedit-Basepath: ../..\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
@@ -103,16 +103,18 @@ msgid ""
 "Do you want to include debugging information (log file, screen shot, etc.) "
 "with your request?"
 msgstr ""
+"Отправить вместе с вашим запросом отладочную информацию (файл журнала, "
+"снимок экрана и т.д.)?"
 
 #: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:324
 msgid "Submit"
-msgstr ""
+msgstr "Отправить"
 
 #. TRANSLATORS: %s == Name of application (executable)
 #: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:326
 #, c-format
 msgid "%s bug report/feature request"
-msgstr ""
+msgstr "Отправить отчет об ошибке %s или предложение"
 
 #: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:327
 msgid ""
@@ -123,6 +125,25 @@ msgid ""
 "Thanks for your help.\n"
 "\n"
 "Eric\n"
+msgstr ""
+"\n"
+"\n"
+"Здесь вы можете написать свое предложение или замечание.\n"
+"\n"
+"Благодарю за помощь.\n"
+"\n"
+"Эрик\n"
+
+#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:355
+msgid "Screenshot"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:369
+msgid "Options file"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:374
+msgid "Log file"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogAbout.cpp:41
@@ -626,11 +647,11 @@ msgstr "Выход"
 
 #: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:172
 msgid "Show icons"
-msgstr ""
+msgstr "Показать значки"
 
 #: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:174
 msgid "Show labels"
-msgstr ""
+msgstr "Показать названия"
 
 #: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:179
 msgid "Show bounding box"
@@ -684,7 +705,7 @@ msgstr "Открыть файл конфигурации"
 
 #: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:214
 msgid "Report bug/request feature"
-msgstr ""
+msgstr "Отправить отчет об ошибке или предложение"
 
 #: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:216
 msgid "About..."
@@ -828,15 +849,15 @@ msgstr "Задать"
 
 #: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:40
 msgid "1/2"
-msgstr ""
+msgstr "1/2"
 
 #: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:41
 msgid "1/3"
-msgstr ""
+msgstr "1/3"
 
 #: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:42
 msgid "1/4"
-msgstr ""
+msgstr "1/4"
 
 #: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:50
 msgid "Centered"
@@ -852,51 +873,51 @@ msgstr "По центру по вертикали"
 
 #: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:54
 msgid "Top left"
-msgstr ""
+msgstr "Сверху слева"
 
 #: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:55
 msgid "Top"
-msgstr ""
+msgstr "Сверху"
 
 #: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:56
 msgid "Top center"
-msgstr ""
+msgstr "Сверху по центру"
 
 #: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:57
 msgid "Top right"
-msgstr ""
+msgstr "Сверху справа"
 
 #: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:58
 msgid "Right"
-msgstr ""
+msgstr "Справа"
 
 #: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:59
 msgid "Right center"
-msgstr ""
+msgstr "Справа по центру"
 
 #: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:60
 msgid "Bottom right"
-msgstr ""
+msgstr "Снизу справа"
 
 #: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:61
 msgid "Bottom"
-msgstr ""
+msgstr "Снизу"
 
 #: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:62
 msgid "Bottom centered"
-msgstr ""
+msgstr "Снизу по центру"
 
 #: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:63
 msgid "Bottom left"
-msgstr ""
+msgstr "Снизу слева"
 
 #: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:64
 msgid "Left"
-msgstr ""
+msgstr "Слева"
 
 #: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:65
 msgid "Left centered"
-msgstr ""
+msgstr "Слева по центру"
 
 #: C:\Vidiot\vidiot_trunk\model\src\Track.cpp:122
 msgid "Track"
@@ -1922,25 +1943,27 @@ msgstr "Удалить ключевой кадр из %s"
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:66
 msgid "Add/remove/select video key frames"
-msgstr ""
+msgstr "Редактирование ключевых кадров видео"
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:67
 msgid "Add/remove/select audio key frames"
-msgstr ""
+msgstr "Редактирование ключевых кадров аудио"
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:101
 msgid ""
 "Change the length of the clip to one of the standard lengths. Will shift "
 "other clips to avoid introducing a black area."
 msgstr ""
+"Выбрать стандартную длительность клипа. Остальные клипы будут сдвинуты, "
+"чтобы не появился пустой промежуток."
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:114
 msgid ""
 "Change the length of the clip to this length. Will shift other clips to "
 "avoid introducing a black area."
 msgstr ""
-"Задать длительность клипа. Остальные клипы будут сдвинуты, чтобы не появился "
-"пустой промежуток."
+"Задать свою длительность клипа. Остальные клипы будут сдвинуты, чтобы не "
+"появился пустой промежуток."
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:114
 msgid "Shortcut key"
@@ -1959,6 +1982,10 @@ msgid ""
 "the clip. Note that, when selecting a speed smaller than 0.5 or larger than "
 "2.0 the pitch of the audio will change."
 msgstr ""
+"Изменить скорость клипа. Изменение скорости возможно, если клип и все "
+"связанные клипы имеют одинаковый размер и положение. Кроме того, в области, "
+"где находится клип, не должно быть других не связанных с ним клипов. При "
+"выборе скорости меньше 0.5 или больше 2.0 будет изменена высота тона аудио."
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:142
@@ -1983,7 +2010,7 @@ msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:157
 msgid "Start/stop continous playback of the transition."
-msgstr ""
+msgstr "Начать или остановить постоянное воспроизведение перехода."
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:172
 msgid "Select the effect used for the transition towards the second clip."
@@ -2013,31 +2040,34 @@ msgid ""
 "image. If the image should not be rescaled/repositioned after cropping, "
 "select Custom for the automated scaling and the automated positioning."
 msgstr ""
+"Учтите, что к обрезанному (меньшему) изображению применяется автоматическое "
+"масштабирование и размещение. Чтобы отключить автоматическое масштабирование "
+"и размещение, выберите пункт \"Задать\" для масштаба и положения."
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:207
 msgid "Select the area to remove from the top of the video."
-msgstr ""
+msgstr "Выберите область, удаляемую из верхней части видео."
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:217
 msgid "Select the area to remove from the bottom of the video."
-msgstr ""
+msgstr "Выберите область, удаляемую из нижней части видео."
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:227
 msgid "Select the area to remove from the left side of the video."
-msgstr ""
+msgstr "Выберите область, удаляемую из левой части видео."
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:237
 msgid "Select the area to remove from the right side of the video."
-msgstr ""
+msgstr "Выберите область, удаляемую из правой части видео."
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:261
 msgid "Crop"
-msgstr ""
+msgstr "Обрезка"
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:261
 msgid "Remove unwanted regions from the side of the video."
-msgstr ""
+msgstr "Обрезка нежелательных частей видео."
 
 #: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:268
 msgid "Select the rotation (in degrees) of the video frame."
@@ -2295,22 +2325,27 @@ msgstr "Изменить скорость \"%s\""
 
 #: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:134
 msgid "Can not change speed if speed of linked clip is different."
-msgstr ""
+msgstr "Нельзя изменять скорость, если скорость связанного клипа отличается."
 
 #: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:138
 msgid "Can not change speed if length of linked clip is different."
 msgstr ""
+"Нельзя изменять скорость, если длительность связанного клипа отличается."
 
 #: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:142
 msgid ""
 "Can not change speed if start offset (in file) of linked clip is different."
 msgstr ""
+"Нельзя изменять скорость, если смещение начала (файла) связанного клипа "
+"отличается."
 
 #: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:146
 msgid ""
 "Can not change speed if start position (in track) of linked clip is "
 "different."
 msgstr ""
+"Нельзя изменять скорость, если начало связанного клипа (на дорожке) "
+"отличается."
 
 #: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:166
 msgid ""

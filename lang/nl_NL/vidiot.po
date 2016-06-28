@@ -19,8 +19,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-24 19:44+0200\n"
-"PO-Revision-Date: 2016-06-23 19:23+0200\n"
+"POT-Creation-Date: 2016-06-28 19:03+0200\n"
+"PO-Revision-Date: 2016-06-28 19:03+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: nl_NL\n"
@@ -130,6 +130,18 @@ msgstr ""
 "Bedankt voor je hulp.\n"
 "\n"
 "Eric\n"
+
+#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:355
+msgid "Screenshot"
+msgstr "Schermafdruk"
+
+#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:369
+msgid "Options file"
+msgstr "Opties bestand"
+
+#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:374
+msgid "Log file"
+msgstr "Log bestand"
 
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogAbout.cpp:41
 msgid "About"
@@ -2554,6 +2566,9 @@ msgstr "Druk op OK om af te sluiten."
 #: C:\Vidiot\vidiot_trunk\util\src\UtilPath.cpp:284
 msgid "Resources not found"
 msgstr "Hulpbestanden niet gevonden"
+
+#~ msgid "Screen shot"
+#~ msgstr "Scherm afdruk"
 
 #~ msgid ""
 #~ "Can not change length if start position, length, or speed for two linked "
