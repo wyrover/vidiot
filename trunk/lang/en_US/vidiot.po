@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-24 19:44+0200\n"
+"POT-Creation-Date: 2016-06-28 19:03+0200\n"
 "PO-Revision-Date: 2015-11-01 11:44+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -97,6 +97,18 @@ msgid ""
 "Thanks for your help.\n"
 "\n"
 "Eric\n"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:355
+msgid "Screenshot"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:369
+msgid "Options file"
+msgstr ""
+
+#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:374
+msgid "Log file"
 msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogAbout.cpp:41

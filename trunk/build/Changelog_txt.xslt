@@ -28,6 +28,7 @@
     <xsl:variable name="revision" select="@revision" />
     <xsl:if test="$revision>1220">
       <xsl:choose>
+        <xsl:when test="$revision=2160"><xsl:text>&#xa;Release 0.3.17 (revision </xsl:text><xsl:value-of select="$revision" /><xsl:text>)&#xa;</xsl:text></xsl:when>
         <xsl:when test="$revision=2121"><xsl:text>&#xa;Release 0.3.16 (revision </xsl:text><xsl:value-of select="$revision" /><xsl:text>)&#xa;</xsl:text></xsl:when>
         <xsl:when test="$revision=2052"><xsl:text>&#xa;Release 0.3.15 (revision </xsl:text><xsl:value-of select="$revision" /><xsl:text>)&#xa;</xsl:text></xsl:when>
         <xsl:when test="$revision=1990"><xsl:text>&#xa;Release 0.3.14 (revision </xsl:text><xsl:value-of select="$revision" /><xsl:text>)&#xa;</xsl:text></xsl:when>
