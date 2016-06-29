@@ -20,7 +20,7 @@ msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-06-28 19:03+0200\n"
-"PO-Revision-Date: 2016-06-28 10:50+0300\n"
+"PO-Revision-Date: 2016-06-29 13:00+0300\n"
 "Last-Translator: Ted Mossolov <teodorrrro@gmail.com>\n"
 "Language-Team: Ted Mossolov <teodorrrro@gmail.com>\n"
 "Language: ru\n"
@@ -136,15 +136,15 @@ msgstr ""
 
 #: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:355
 msgid "Screenshot"
-msgstr ""
+msgstr "Снимок экрана"
 
 #: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:369
 msgid "Options file"
-msgstr ""
+msgstr "Файл параметров"
 
 #: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:374
 msgid "Log file"
-msgstr ""
+msgstr "Файл журнала"
 
 #: C:\Vidiot\vidiot_trunk\dialog\src\DialogAbout.cpp:41
 msgid "About"
