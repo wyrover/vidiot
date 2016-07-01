@@ -19,7 +19,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Vidiot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-28 19:03+0200\n"
+"POT-Creation-Date: 2016-06-29 22:01+0200\n"
 "PO-Revision-Date: 2016-06-28 19:03+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -35,51 +35,51 @@ msgstr ""
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: build/VisualStudioAddin\n"
 
-#: C:\Vidiot\vidiot_trunk\commands\src\RootCommand.cpp:30
+#: /home/doortjeric/vidiot/vidiot_trunk/commands/src/RootCommand.cpp:30
 msgid "Unnamed command"
 msgstr "Naamloos commando"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:70
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/Dialog.cpp:70
 msgid "Supported files"
 msgstr "Ondersteunde bestandstypen"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:71
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/Dialog.cpp:71
 msgid "Video files"
 msgstr "Video bestanden"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:72
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/Dialog.cpp:72
 msgid "Audio files"
 msgstr "Audio bestanden"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:73
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:138
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:74
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/Dialog.cpp:73
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogOptions.cpp:138
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeImage.cpp:74
 msgid "Images"
 msgstr "Afbeeldingen"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:74
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/Dialog.cpp:74
 msgid "All files"
 msgstr "Alle bestanden"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:312
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/Dialog.cpp:312
 msgid ""
 "A fatal error was encountered. Press OK to generate debug report. Press "
 "Cancel to terminate."
 msgstr ""
 "Er is een interne fout opgetreden. Druk op OK om een log rapport te maken."
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:312
-#: C:\Vidiot\vidiot_trunk\util\src\UtilInitAvcodec.cpp:31
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/Dialog.cpp:312
+#: /home/doortjeric/vidiot/vidiot_trunk/util/src/UtilInitAvcodec.cpp:31
 msgid "Error"
 msgstr "Fout"
 
 #. TRANSLATORS: %s == Name of application (executable)
-#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:319
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/Dialog.cpp:319
 #, c-format
 msgid "%s crash report"
 msgstr "%s crash verslag"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:320
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/Dialog.cpp:320
 #, c-format
 msgid ""
 "I'm sorry, but %1$s crashed.\n"
@@ -96,24 +96,24 @@ msgstr ""
 "\n"
 "Eric\n"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:324
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/Dialog.cpp:324
 msgid ""
 "Do you want to include debugging information (log file, screen shot, etc.) "
 "with your request?"
 msgstr ""
 "Wil je debug informatie (log bestand, screenshot) bij het verzoek meesturen?"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:324
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/Dialog.cpp:324
 msgid "Submit"
 msgstr "Versturen"
 
 #. TRANSLATORS: %s == Name of application (executable)
-#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:326
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/Dialog.cpp:326
 #, c-format
 msgid "%s bug report/feature request"
 msgstr "%s fout rapport/verzoek om functionaliteit"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:327
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/Dialog.cpp:327
 msgid ""
 "\n"
 "\n"
@@ -131,111 +131,111 @@ msgstr ""
 "\n"
 "Eric\n"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:355
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/Dialog.cpp:355
 msgid "Screenshot"
 msgstr "Schermafdruk"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:369
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/Dialog.cpp:369
 msgid "Options file"
 msgstr "Opties bestand"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\Dialog.cpp:374
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/Dialog.cpp:374
 msgid "Log file"
 msgstr "Log bestand"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogAbout.cpp:41
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogAbout.cpp:41
 msgid "About"
 msgstr "Over"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogAbout.cpp:72
-#: C:\Vidiot\vidiot_trunk\gui\src\Help.cpp:60
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogAbout.cpp:72
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Help.cpp:60
 msgid "Back"
 msgstr "Terug"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:47
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogNewProject.cpp:47
 msgid "Create new project"
 msgstr "Maak nieuw project."
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:48
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogNewProject.cpp:48
 msgid "No media files found."
 msgstr "Geen media bestanden gevonden."
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:49
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogNewProject.cpp:49
 msgid "Select a folder containing media files for creating a new movie."
 msgstr "Selecteer map met media bestanden voor het maken van een nieuwe film."
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:50
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogNewProject.cpp:50
 msgid "Select individual media files for creating a new movie."
 msgstr "Selecteer media bestanden voor het maken van een nieuwe film."
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:51
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogNewProject.cpp:51
 msgid "Start a new empty project."
 msgstr "Start een leeg project."
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:52
-#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:363
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogNewProject.cpp:52
+#: /home/doortjeric/vidiot/vidiot_trunk/projectview/src/ProjectView.cpp:363
 msgid "Select folder"
 msgstr "Selecteer map"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:53
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogNewProject.cpp:53
 msgid "Select files"
 msgstr "Selecteer bestanden"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:357
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogNewProject.cpp:357
 msgid "Movie"
 msgstr "Film"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:493
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogNewProject.cpp:493
 msgid "&Finish"
 msgstr "&Voltooien"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogNewProject.cpp:622
-#: C:\Vidiot\vidiot_trunk\modelfile\src\FileAnalyzer.cpp:312
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogNewProject.cpp:622
+#: /home/doortjeric/vidiot/vidiot_trunk/modelfile/src/FileAnalyzer.cpp:312
 #, c-format
 msgid "Found %d file(s)"
 msgstr "%d bestanden gevonden."
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:61
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogOptions.cpp:61
 msgid "(requires restart)"
 msgstr "(vereist herstart)"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:63
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:122
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:193
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogOptions.cpp:63
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogRenderSettings.cpp:122
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:193
 msgid "Options"
 msgstr "Opties"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:66
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogOptions.cpp:66
 msgid "Load/Save"
 msgstr "Lezen/Opslaan"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:68
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogOptions.cpp:68
 msgid "Startup"
 msgstr "Opstarten"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:72
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogOptions.cpp:72
 msgid "Load last project on startup"
 msgstr "Laad meest recente project na opstarten."
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:74
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:199
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogOptions.cpp:74
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:199
 msgid "Save"
 msgstr "Opslaan"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:78
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogOptions.cpp:78
 msgid "Make backup of existing save file when overwriting"
 msgstr "Maak een backup van het huidige project voor het opslaan"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:82
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogOptions.cpp:82
 msgid "Maximum number of generated save files (0 - infinite)"
 msgstr "Maximaal aantal project backups dat opgeslagen wordt (0 - oneindig)"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:86
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogOptions.cpp:86
 msgid "Use absolute path to media files when saving projects"
 msgstr ""
 "Gebruik een absolute referentie naar media bestanden in opgeslagen projecten."
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:87
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogOptions.cpp:87
 msgid ""
 "By using absolute paths, the project file can be moved without moving any "
 "media files in the project. Otherwise, project and media files must be moved "
@@ -246,159 +246,159 @@ msgstr ""
 "andere geval moeten (kunnen) het project en de media bestanden tegelijk "
 "verplaatst worden."
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:90
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogOptions.cpp:90
 msgid "Project view"
 msgstr "Project overzicht"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:92
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogOptions.cpp:92
 msgid "Make sequence: divide clips if clip's prefix differs"
 msgstr ""
 "Maak film: plaats lege ruimte wanneer de namen van twee opeenvolgende clips "
 "verschillend beginnen."
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:96
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogOptions.cpp:96
 msgid "Length of empty division (0 - disabled)"
 msgstr "Lengte van de lege ruimte (0 - uitgeschakeld)"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:100
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogOptions.cpp:100
 msgid "Length of name (prefix) to be matched"
 msgstr ""
 "Lengte van de naam (begin) die gelijk moet zijn om clips aaneengesloten te "
 "plaatsen"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:103
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogProjectProperties.cpp:44
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:110
-#: C:\Vidiot\vidiot_trunk\gui\src\EditProjectProperties.cpp:39
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:52
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogOptions.cpp:103
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogProjectProperties.cpp:44
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogRenderSettings.cpp:110
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/EditProjectProperties.cpp:39
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:52
 msgid "Video"
 msgstr "Video"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:105
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:180
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogOptions.cpp:105
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogOptions.cpp:180
 msgid "New projects"
 msgstr "Nieuwe projecten"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:121
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogOptions.cpp:121
 msgid "Framerate for new projects"
 msgstr "Framerate (weergave frequentie) voor nieuwe projecten"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:125
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogOptions.cpp:125
 msgid "Default video width"
 msgstr "Standaard video breedte"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:129
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogOptions.cpp:129
 msgid "Default video height"
 msgstr "Standaard video hoogte"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:132
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogOptions.cpp:132
 msgid "Default video scaling"
 msgstr "Standaard video schaling"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:135
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogOptions.cpp:135
 msgid "Default video alignment"
 msgstr "Standaard video positionering"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:140
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogOptions.cpp:140
 msgid "Size"
 msgstr "Grootte"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:175
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogOptions.cpp:175
 msgid "Default length of still images (in frames)"
 msgstr "Standaard lengte voor plaatjes (in frames)"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:178
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogProjectProperties.cpp:73
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:116
-#: C:\Vidiot\vidiot_trunk\gui\src\EditProjectProperties.cpp:57
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:53
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogOptions.cpp:178
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogProjectProperties.cpp:73
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogRenderSettings.cpp:116
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/EditProjectProperties.cpp:57
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:53
 msgid "Audio"
 msgstr "Audio"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:191
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogOptions.cpp:191
 msgid "Default audio sample rate"
 msgstr "Standaard audio sample rate (sample frequentie)"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:201
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogOptions.cpp:201
 msgid "Default number of audio channels"
 msgstr "Standaard aantal audio kanalen"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:204
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:188
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogOptions.cpp:204
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:188
 msgid "Timeline"
 msgstr "Tijdlijn"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:206
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogOptions.cpp:206
 msgid "Marking selection"
 msgstr "Selectie markeren"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:210
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogOptions.cpp:210
 msgid "Begin marker expansion/contraction (s)."
 msgstr "Selectie begin verschuiving (s)"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:214
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogOptions.cpp:214
 msgid "End marker expansion/contraction (s)."
 msgstr "Selectie einde verschuiving (s)"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:216
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogOptions.cpp:216
 msgid "Clips"
 msgstr "Clips"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:218
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogOptions.cpp:218
 msgid "Text to remove from clip names - use '|' for multiple entries"
 msgstr ""
 "Gedeelte van de text van clip namen dat niet getoond hoeft te worden - "
 "gebruik '|' voor meer dan één optie."
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:220
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogOptions.cpp:220
 msgid "Behaviour"
 msgstr "Gedrag"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:224
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogOptions.cpp:224
 msgid ""
 "Automatically add audio/video track when dragging beyond existing tracks"
 msgstr ""
 "Automatisch audio/video spoor toevoegen bij het slepen buiten de bestaande "
 "sporen"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:227
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogOptions.cpp:227
 msgid "Application"
 msgstr "Toepassing"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:229
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:244
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogOptions.cpp:229
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogOptions.cpp:244
 msgid "Language"
 msgstr "Taal"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:247
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogOptions.cpp:247
 msgid "Debug"
 msgstr "Foutanalyse"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:249
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogOptions.cpp:249
 msgid "Logging"
 msgstr "Logging"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:252
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogOptions.cpp:252
 msgid "Log level"
 msgstr "Log niveau"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:255
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogOptions.cpp:255
 msgid "Avcodec log level"
 msgstr "Avcodec log niveau"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:259
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogOptions.cpp:259
 msgid "Show debug info on widgets"
 msgstr "Toon foutanalyse informatie op grafische elementen"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:263
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogOptions.cpp:263
 msgid "Log the current sequence after each edit operation"
 msgstr "Log informatie over de huidige tijdlijn na elke bewerking"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:362
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogOptions.cpp:362
 msgid "Restart required"
 msgstr "Herstart vereist"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogOptions.cpp:362
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogOptions.cpp:362
 #, c-format
 msgid ""
 "Some of the settings that were changed require %1$s to be restarted. Do you "
@@ -407,49 +407,49 @@ msgstr ""
 "Sommige van de aangepaste instellingen worden pas actief na een herstart.\n"
 "Wilt u %1$s nu opnieuw opstarten?"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogProjectProperties.cpp:34
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogProjectProperties.cpp:34
 msgid "Properties"
 msgstr "Eigenschappen"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogProjectProperties.cpp:61
-#: C:\Vidiot\vidiot_trunk\gui\src\EditProjectProperties.cpp:47
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogProjectProperties.cpp:61
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/EditProjectProperties.cpp:47
 msgid "Framerate"
 msgstr "Framerate (weergave frequentie)"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogProjectProperties.cpp:66
-#: C:\Vidiot\vidiot_trunk\gui\src\EditProjectProperties.cpp:51
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogProjectProperties.cpp:66
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/EditProjectProperties.cpp:51
 msgid "Video width"
 msgstr "Video breedte"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogProjectProperties.cpp:71
-#: C:\Vidiot\vidiot_trunk\gui\src\EditProjectProperties.cpp:55
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogProjectProperties.cpp:71
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/EditProjectProperties.cpp:55
 msgid "Video height"
 msgstr "Video hoogte"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogProjectProperties.cpp:85
-#: C:\Vidiot\vidiot_trunk\gui\src\EditProjectProperties.cpp:68
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogProjectProperties.cpp:85
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/EditProjectProperties.cpp:68
 msgid "Audio sample rate"
 msgstr "Audio sample rate (sample frequentie)"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogProjectProperties.cpp:96
-#: C:\Vidiot\vidiot_trunk\gui\src\EditProjectProperties.cpp:78
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogProjectProperties.cpp:96
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/EditProjectProperties.cpp:78
 msgid "Audio channels"
 msgstr "Aantal audio kanalen"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogProjectProperties.cpp:100
-#: C:\Vidiot\vidiot_trunk\gui\src\EditProjectProperties.cpp:80
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogProjectProperties.cpp:100
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/EditProjectProperties.cpp:80
 msgid "Note:"
 msgstr "Opmerking:"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogProjectProperties.cpp:102
-#: C:\Vidiot\vidiot_trunk\gui\src\EditProjectProperties.cpp:132
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogProjectProperties.cpp:102
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/EditProjectProperties.cpp:132
 msgid ""
 "Some options cannot be changed because the project already contains "
 "sequences."
 msgstr ""
 "Sommige opties kunnen niet veranderd worden omdat het project al films bevat."
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogProjectProperties.cpp:105
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogProjectProperties.cpp:105
 msgid ""
 "Can't change options now. They may be in use by the running background "
 "task(s)."
@@ -457,73 +457,73 @@ msgstr ""
 "Aanpassen van instellingen tijdelijk onmogelijk. Instellingen zijn mogelijk "
 "in gebruik bij taken die op de achtergrond draaien."
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:59
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogRenderSettings.cpp:59
 msgid "Render sequence"
 msgstr "Film genereren"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:74
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogRenderSettings.cpp:74
 msgid "Incompatible codec and file type"
 msgstr "Niet compatibele codec en bestandstype"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:87
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogRenderSettings.cpp:87
 msgid "Format"
 msgstr "Formaat"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:93
-#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterFilename.cpp:96
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogRenderSettings.cpp:93
+#: /home/doortjeric/vidiot/vidiot_trunk/modeltransition/src/TransitionParameterFilename.cpp:96
 msgid "Select"
 msgstr "Selecteer"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:104
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogRenderSettings.cpp:104
 msgid "Output file"
 msgstr "Uitvoerbestand"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:105
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogRenderSettings.cpp:105
 msgid "Video codec"
 msgstr "Video codec"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:106
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogRenderSettings.cpp:106
 msgid "Audio codec"
 msgstr "Audio codec"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:129
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogRenderSettings.cpp:129
 msgid "Render separation between cuts"
 msgstr "Splits gegenereerde film bij snede"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:133
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogRenderSettings.cpp:133
 msgid "Actions"
 msgstr "Acties"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:136
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogRenderSettings.cpp:136
 msgid "Set as default"
 msgstr "Stel als standaard in"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:145
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogRenderSettings.cpp:145
 msgid "OK && Render now"
 msgstr "OK && Genereren"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:146
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogRenderSettings.cpp:146
 msgid "OK"
 msgstr "OK"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:147
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogRenderSettings.cpp:147
 msgid "Cancel"
 msgstr "Annuleren"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:148
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogRenderSettings.cpp:148
 msgid "Apply"
 msgstr "Toepassen"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:231
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogRenderSettings.cpp:231
 msgid "Select output file"
 msgstr "Kies uitvoerbestand"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:390
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogRenderSettings.cpp:390
 msgid "This audio codec can not be stored in the given file type"
 msgstr ""
 "Deze audio codec kan niet in het opgegeven bestandstype opgeslagen worden"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:395
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogRenderSettings.cpp:395
 msgid ""
 "This audio codec may cause problems with the given file type (cannot "
 "determine if this will work properly)."
@@ -531,12 +531,12 @@ msgstr ""
 "Deze audio codec kan mogelijk problemen geven in combinatie met het "
 "opgegeven bestandstype (kan niet bepalen of dit goed werkt)."
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:417
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogRenderSettings.cpp:417
 msgid "This video codec can not be stored in the given file type"
 msgstr ""
 "Deze video codec kan niet in het opgegeven bestandstype opgeslagen worden"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:422
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogRenderSettings.cpp:422
 msgid ""
 "This video codec may cause problems with the given file type (cannot "
 "determine if this will work properly)."
@@ -544,217 +544,217 @@ msgstr ""
 "Deze audio codec kan mogelijk problemen geven in combinatie met het "
 "opgegeven bestandstype (kan niet bepalen of dit goed werkt)."
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:517
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogRenderSettings.cpp:517
 msgid "Select output file first."
 msgstr "Kies eerst een uitvoerbestand"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:517
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogRenderSettings.cpp:517
 msgid "No file selected"
 msgstr "Geen bestand gekozen"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:522
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogRenderSettings.cpp:522
 msgid "Nothing to render"
 msgstr "Niets om te genereren"
 
-#: C:\Vidiot\vidiot_trunk\dialog\src\DialogRenderSettings.cpp:522
+#: /home/doortjeric/vidiot/vidiot_trunk/dialog/src/DialogRenderSettings.cpp:522
 msgid "Select at least a video or audio codec."
 msgstr "Kies tenminste een video óf audio codec."
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Help.cpp:62
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Help.cpp:62
 msgid "Index"
 msgstr "Index"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Help.cpp:64
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Help.cpp:64
 msgid "Forward"
 msgstr "Volgende"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\StatusBar.cpp:94
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/StatusBar.cpp:94
 #, c-format
 msgid "%d item(s) queued"
 msgstr "%d actie(s) gepland"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:102
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:210
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:231
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:102
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:210
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:231
 msgid "Help"
 msgstr "Help"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:103
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:219
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:103
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:219
 msgid "Project"
 msgstr "Project"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:104
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:176
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:104
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:176
 msgid "Details"
 msgstr "Details"
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:105
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:181
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:163
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:105
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:181
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:163
 msgid "Preview"
 msgstr "Voorbeeld"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:106
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:106
 msgid "Timelines"
 msgstr "Tijdlijnen"
 
 #. TRANSLATORS: %s == Name of application (executable)
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:109
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:109
 #, c-format
 msgid "%s files"
 msgstr "%s bestanden"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:109
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:109
 #, c-format
 msgid "%s Project"
 msgstr "%s Project"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:109
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:109
 #, c-format
 msgid "%s Project View"
 msgstr "%s project overzicht"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:137
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:137
 msgid "Revert"
 msgstr "Herladen"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:141
-#: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewCreateFile.cpp:37
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:141
+#: /home/doortjeric/vidiot/vidiot_trunk/projectviewcmd/src/ProjectViewCreateFile.cpp:37
 msgid "Add files"
 msgstr "Voeg bestanden toe"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:141
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:141
 msgid "Add media files from disk."
 msgstr "Voeg media bestanden toe."
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:142
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:142
 msgid "Add folder"
 msgstr "Map toevoegen"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:142
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:142
 msgid "Add folder with media files from disk."
 msgstr "Voeg map met media bestanden toe."
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:143
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:143
 msgid "Add sequence"
 msgstr "Film toevoegen"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:143
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:143
 msgid "Add new (blank) movie sequence."
 msgstr "Nieuwe (lege) film toevoegen."
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:147
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:147
 msgid "Exit"
 msgstr "Afsluiten"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:172
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:172
 msgid "Show icons"
 msgstr "Toon iconen"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:174
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:174
 msgid "Show labels"
 msgstr "Toon labels"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:179
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:179
 msgid "Show bounding box"
 msgstr "Toon kader"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:184
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:184
 msgid "Snap to clips"
 msgstr "Vastplakken aan clips"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:186
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:186
 msgid "Snap to cursor"
 msgstr "Vastplakken aan cursor"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:196
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:196
 msgid "Show captions"
 msgstr "Toon titels"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:200
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:200
 msgid "Load"
 msgstr "Laad"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:201
-#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:533
-#: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewDeleteAsset.cpp:33
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:201
+#: /home/doortjeric/vidiot/vidiot_trunk/projectview/src/ProjectView.cpp:533
+#: /home/doortjeric/vidiot/vidiot_trunk/projectviewcmd/src/ProjectViewDeleteAsset.cpp:33
 msgid "Delete"
 msgstr "Verwijder"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:202
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:202
 msgid "Delete all"
 msgstr "Verwijder allemaal"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:204
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:204
 msgid "Restore default"
 msgstr "Standaard herstellen"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:206
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:206
 msgid "Fullscreen"
 msgstr "Schermvullend"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:206
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:206
 msgid "F11"
 msgstr "F11"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:212
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:212
 msgid "Open log file"
 msgstr "Open het log bestand"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:213
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:213
 msgid "Open config file"
 msgstr "Open configuratie bestand"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:214
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:214
 msgid "Report bug/request feature"
 msgstr "Rapporteer fout/vraag nieuwe functionaliteit aan"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:216
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:216
 msgid "About..."
 msgstr "Over..."
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:220
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:220
 msgid "Edit"
 msgstr "Bewerken"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:221
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:221
 msgid "View"
 msgstr "Beeld"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:222
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:1026
-#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:380
-#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:566
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:222
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:1026
+#: /home/doortjeric/vidiot/vidiot_trunk/projectview/src/ProjectView.cpp:380
+#: /home/doortjeric/vidiot/vidiot_trunk/projectview/src/ProjectView.cpp:566
 msgid "Sequence"
 msgstr "Film"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:224
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:224
 msgid "Tools"
 msgstr "Extra"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:225
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:225
 msgid "Workspace"
 msgstr "Omgeving"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:229
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:229
 msgid "Crash"
 msgstr "Crash"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:406
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:414
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:324
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:325
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:326
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:406
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:414
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/Menu.cpp:324
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/Menu.cpp:325
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/Menu.cpp:326
 msgid "Ctrl"
 msgstr "Ctrl"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:804
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:804
 msgid "Enter workspace name"
 msgstr "Kies naam  voor venster indeling"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:804
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:804
 msgid ""
 "Enter name for the saved workspace.\n"
 "If this is an existing name it is overwritten."
@@ -762,32 +762,32 @@ msgstr ""
 "Kies een naam voor de opgeslagen venster indeling.\n"
 "Wanneer deze naam al in gebruik is wordt deze overschreven."
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:821
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:821
 msgid "Select workspace"
 msgstr "Kies venster indeling"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:827
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:827
 msgid "Select workspace to be restored."
 msgstr "Kies venster indeling om te activeren"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:836
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:836
 msgid "Load workspace failed"
 msgstr "Venster indeling activeren is mislukt"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:836
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:836
 msgid "Something went wrong while trying to load the saved perspective. Sorry."
 msgstr ""
 "Er is iets fout gegaan met het activeren van de venster indeling. Sorry."
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:844
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:844
 msgid "Select workspace to be removed."
 msgstr "Kies venster indeling om te verwijderen."
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:857
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:857
 msgid "Remove all saved workspaces"
 msgstr "Verwijder alle venster indelingen"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:857
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:857
 msgid ""
 "This will remove all saved workspace layouts which cannot be undone.\n"
 "Are you sure?"
@@ -797,23 +797,23 @@ msgstr ""
 "Weet je het zeker?"
 
 #. TRANSLATORS: %s == Path to file that cannot be opened
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:904
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:930
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:579
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:904
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:930
+#: /home/doortjeric/vidiot/vidiot_trunk/render/src/Render.cpp:579
 msgid "Failed to open file"
 msgstr "Het openen van het bestand is mislukt"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:904
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:930
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:904
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:930
 #, c-format
 msgid "Failed to open '%s'"
 msgstr "Kon '%s' niet openen"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:917
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:917
 msgid "Attention"
 msgstr "Belangrijk"
 
-#: C:\Vidiot\vidiot_trunk\gui\src\Window.cpp:918
+#: /home/doortjeric/vidiot/vidiot_trunk/gui/src/Window.cpp:918
 #, c-format
 msgid ""
 "Note that changing this file will not update the gui.\n"
@@ -840,109 +840,109 @@ msgstr ""
 "Als dat gebeurt, gooi het bestand weg (of maak het leeg) en start %1$s "
 "opnieuw.\n"
 
-#: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:36
+#: /home/doortjeric/vidiot/vidiot_trunk/model/src/Enums.cpp:36
 msgid "Fit all"
 msgstr "Alles passen"
 
-#: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:37
+#: /home/doortjeric/vidiot/vidiot_trunk/model/src/Enums.cpp:37
 msgid "Fit to fill"
 msgstr "Volledig opvullen"
 
-#: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:38
+#: /home/doortjeric/vidiot/vidiot_trunk/model/src/Enums.cpp:38
 msgid "Original size"
 msgstr "Originele grootte"
 
-#: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:39
-#: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:53
+#: /home/doortjeric/vidiot/vidiot_trunk/model/src/Enums.cpp:39
+#: /home/doortjeric/vidiot/vidiot_trunk/model/src/Enums.cpp:53
 msgid "Custom"
 msgstr "Aangepast"
 
-#: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:40
+#: /home/doortjeric/vidiot/vidiot_trunk/model/src/Enums.cpp:40
 msgid "1/2"
 msgstr "1/2"
 
-#: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:41
+#: /home/doortjeric/vidiot/vidiot_trunk/model/src/Enums.cpp:41
 msgid "1/3"
 msgstr "1/3"
 
-#: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:42
+#: /home/doortjeric/vidiot/vidiot_trunk/model/src/Enums.cpp:42
 msgid "1/4"
 msgstr "1/4"
 
-#: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:50
+#: /home/doortjeric/vidiot/vidiot_trunk/model/src/Enums.cpp:50
 msgid "Centered"
 msgstr "Gecentreerd"
 
-#: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:51
+#: /home/doortjeric/vidiot/vidiot_trunk/model/src/Enums.cpp:51
 msgid "Centered horizontally"
 msgstr "Horizontaal gecentreerd"
 
-#: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:52
+#: /home/doortjeric/vidiot/vidiot_trunk/model/src/Enums.cpp:52
 msgid "Centered vertically"
 msgstr "Vertikaal gecentreerd"
 
-#: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:54
+#: /home/doortjeric/vidiot/vidiot_trunk/model/src/Enums.cpp:54
 msgid "Top left"
 msgstr "Links boven"
 
-#: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:55
+#: /home/doortjeric/vidiot/vidiot_trunk/model/src/Enums.cpp:55
 msgid "Top"
 msgstr "Boven"
 
-#: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:56
+#: /home/doortjeric/vidiot/vidiot_trunk/model/src/Enums.cpp:56
 msgid "Top center"
 msgstr "Midden boven"
 
-#: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:57
+#: /home/doortjeric/vidiot/vidiot_trunk/model/src/Enums.cpp:57
 msgid "Top right"
 msgstr "Rechts boven"
 
-#: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:58
+#: /home/doortjeric/vidiot/vidiot_trunk/model/src/Enums.cpp:58
 msgid "Right"
 msgstr "Rechts"
 
-#: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:59
+#: /home/doortjeric/vidiot/vidiot_trunk/model/src/Enums.cpp:59
 msgid "Right center"
 msgstr "Rechts midden"
 
-#: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:60
+#: /home/doortjeric/vidiot/vidiot_trunk/model/src/Enums.cpp:60
 msgid "Bottom right"
 msgstr "Rechts onder"
 
-#: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:61
+#: /home/doortjeric/vidiot/vidiot_trunk/model/src/Enums.cpp:61
 msgid "Bottom"
 msgstr "Onder"
 
-#: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:62
+#: /home/doortjeric/vidiot/vidiot_trunk/model/src/Enums.cpp:62
 msgid "Bottom centered"
 msgstr "Onder midden"
 
-#: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:63
+#: /home/doortjeric/vidiot/vidiot_trunk/model/src/Enums.cpp:63
 msgid "Bottom left"
 msgstr "Links onder"
 
-#: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:64
+#: /home/doortjeric/vidiot/vidiot_trunk/model/src/Enums.cpp:64
 msgid "Left"
 msgstr "Links"
 
-#: C:\Vidiot\vidiot_trunk\model\src\Enums.cpp:65
+#: /home/doortjeric/vidiot/vidiot_trunk/model/src/Enums.cpp:65
 msgid "Left centered"
 msgstr "Links midden"
 
-#: C:\Vidiot\vidiot_trunk\model\src\Track.cpp:122
+#: /home/doortjeric/vidiot/vidiot_trunk/model/src/Track.cpp:122
 msgid "Track"
 msgstr "Spoor"
 
-#: C:\Vidiot\vidiot_trunk\modelaudio\src\AudioTransition_CrossFade.cpp:43
+#: /home/doortjeric/vidiot/vidiot_trunk/modelaudio/src/AudioTransition_CrossFade.cpp:43
 msgid "Audio crossfade"
 msgstr "Audio overgang"
 
 #. TRANSLATORS: %s == Path to file that has been removed from disk.
-#: C:\Vidiot\vidiot_trunk\modelfile\src\File.cpp:178
+#: /home/doortjeric/vidiot/vidiot_trunk/modelfile/src/File.cpp:178
 msgid "File removed"
 msgstr "Bestand verwijderd"
 
-#: C:\Vidiot\vidiot_trunk\modelfile\src\File.cpp:178
+#: /home/doortjeric/vidiot/vidiot_trunk/modelfile/src/File.cpp:178
 #, c-format
 msgid ""
 "The file %s has been removed from disk. File is removed from project also."
@@ -951,35 +951,35 @@ msgstr ""
 "verwijderd uit het project."
 
 #. TRANSLATORS: %s == Name of file which is scanned completely to determine the file length.
-#: C:\Vidiot\vidiot_trunk\modelfile\src\File.cpp:792
+#: /home/doortjeric/vidiot/vidiot_trunk/modelfile/src/File.cpp:792
 #, c-format
 msgid "Scanning %s to determine media length."
 msgstr "Het bestand %s wordt doorgelezen om de totale lengte te bepalen."
 
-#: C:\Vidiot\vidiot_trunk\modelfile\src\FileAnalyzer.cpp:73
+#: /home/doortjeric/vidiot/vidiot_trunk/modelfile/src/FileAnalyzer.cpp:73
 msgid "Indexing files"
 msgstr "Bezig met indexeren"
 
-#: C:\Vidiot\vidiot_trunk\modelfile\src\FileAnalyzer.cpp:203
+#: /home/doortjeric/vidiot/vidiot_trunk/modelfile/src/FileAnalyzer.cpp:203
 msgid "Only regular files can be pasted/dropped."
 msgstr "Alleen bestanden kunnen ingevoegd worden."
 
-#: C:\Vidiot\vidiot_trunk\modelfile\src\FileAnalyzer.cpp:209
+#: /home/doortjeric/vidiot/vidiot_trunk/modelfile/src/FileAnalyzer.cpp:209
 msgid "Some of these files cannot be used."
 msgstr "Sommige van deze bestanden zijn onbruikbaar."
 
 #. TRANSLATORS: %s == Directory which is indexed
-#: C:\Vidiot\vidiot_trunk\modelproject\src\AutoFolder.cpp:69
-#: C:\Vidiot\vidiot_trunk\modelproject\src\AutoFolder.cpp:91
+#: /home/doortjeric/vidiot/vidiot_trunk/modelproject/src/AutoFolder.cpp:69
+#: /home/doortjeric/vidiot/vidiot_trunk/modelproject/src/AutoFolder.cpp:91
 #, c-format
 msgid "Updating %s"
 msgstr "Bijwerken van %s"
 
-#: C:\Vidiot\vidiot_trunk\modelproject\src\AutoFolder.cpp:239
+#: /home/doortjeric/vidiot/vidiot_trunk/modelproject/src/AutoFolder.cpp:239
 msgid "Folder removed"
 msgstr "Map verwijderd"
 
-#: C:\Vidiot\vidiot_trunk\modelproject\src\AutoFolder.cpp:239
+#: /home/doortjeric/vidiot/vidiot_trunk/modelproject/src/AutoFolder.cpp:239
 #, c-format
 msgid ""
 "The folder %s has been removed from disk. It is removed from the project "
@@ -989,49 +989,49 @@ msgstr ""
 "uit het project."
 
 #. TRANSLATORS: %s == Name of project file
-#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:215
+#: /home/doortjeric/vidiot/vidiot_trunk/modelproject/src/Project.cpp:215
 #, c-format
 msgid "Saving %s"
 msgstr "Bezig met opslaan van %s"
 
-#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:246
+#: /home/doortjeric/vidiot/vidiot_trunk/modelproject/src/Project.cpp:246
 msgid "Backup failed"
 msgstr "Het maken van een backup faalde"
 
-#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:246
+#: /home/doortjeric/vidiot/vidiot_trunk/modelproject/src/Project.cpp:246
 msgid "Could not create backup file "
 msgstr "Kon geen backup bestand maken"
 
-#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:269
-#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:276
+#: /home/doortjeric/vidiot/vidiot_trunk/modelproject/src/Project.cpp:269
+#: /home/doortjeric/vidiot/vidiot_trunk/modelproject/src/Project.cpp:276
 msgid "Save Failed"
 msgstr "Opslaan mislukt"
 
-#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:269
+#: /home/doortjeric/vidiot/vidiot_trunk/modelproject/src/Project.cpp:269
 msgid "Could not open save file: "
 msgstr "Kon het op te slaan bestand niet openen:"
 
-#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:276
+#: /home/doortjeric/vidiot/vidiot_trunk/modelproject/src/Project.cpp:276
 msgid "Could not save: "
 msgstr "Kon niet opslaan:"
 
 #. TRANSLATORS: %s == Name of project file
-#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:282
+#: /home/doortjeric/vidiot/vidiot_trunk/modelproject/src/Project.cpp:282
 #, c-format
 msgid "%s saved successfully."
 msgstr "%s is succesvol opgeslagen."
 
 #. TRANSLATORS: %s == Project file name. %s (second) == Name of application (executable)
-#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:304
-#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:316
+#: /home/doortjeric/vidiot/vidiot_trunk/modelproject/src/Project.cpp:304
+#: /home/doortjeric/vidiot/vidiot_trunk/modelproject/src/Project.cpp:316
 msgid "Open Failed"
 msgstr "Openen mislukt"
 
-#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:304
+#: /home/doortjeric/vidiot/vidiot_trunk/modelproject/src/Project.cpp:304
 msgid "Could not open: "
 msgstr "Kon niet openen:"
 
-#: C:\Vidiot\vidiot_trunk\modelproject\src\Project.cpp:316
+#: /home/doortjeric/vidiot/vidiot_trunk/modelproject/src/Project.cpp:316
 #, c-format
 msgid ""
 "Could not read %s. \n"
@@ -1041,101 +1041,101 @@ msgstr ""
 "%s moet nu opnieuw gestart worden.\n"
 " (bekend problem dat hierna nog een project openen altijd faalt)."
 
-#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection2.cpp:31
+#: /home/doortjeric/vidiot/vidiot_trunk/modeltransition/src/TransitionParameterDirection2.cpp:31
 msgid "Horizontal"
 msgstr "Horizontaal"
 
-#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection2.cpp:32
+#: /home/doortjeric/vidiot/vidiot_trunk/modeltransition/src/TransitionParameterDirection2.cpp:32
 msgid "Vertical"
 msgstr "Vertikaal"
 
-#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection4.cpp:31
-#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection8.cpp:32
+#: /home/doortjeric/vidiot/vidiot_trunk/modeltransition/src/TransitionParameterDirection4.cpp:31
+#: /home/doortjeric/vidiot/vidiot_trunk/modeltransition/src/TransitionParameterDirection8.cpp:32
 msgid "Top to bottom"
 msgstr "Boven naar beneden"
 
-#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection4.cpp:32
-#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection8.cpp:34
+#: /home/doortjeric/vidiot/vidiot_trunk/modeltransition/src/TransitionParameterDirection4.cpp:32
+#: /home/doortjeric/vidiot/vidiot_trunk/modeltransition/src/TransitionParameterDirection8.cpp:34
 msgid "Right to left"
 msgstr "Rechts naar links"
 
-#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection4.cpp:33
-#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection8.cpp:36
+#: /home/doortjeric/vidiot/vidiot_trunk/modeltransition/src/TransitionParameterDirection4.cpp:33
+#: /home/doortjeric/vidiot/vidiot_trunk/modeltransition/src/TransitionParameterDirection8.cpp:36
 msgid "Bottom to top"
 msgstr "Onder naar boven"
 
-#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection4.cpp:34
-#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection8.cpp:38
+#: /home/doortjeric/vidiot/vidiot_trunk/modeltransition/src/TransitionParameterDirection4.cpp:34
+#: /home/doortjeric/vidiot/vidiot_trunk/modeltransition/src/TransitionParameterDirection8.cpp:38
 msgid "Left to right"
 msgstr "Links naar rechts"
 
-#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection8.cpp:31
+#: /home/doortjeric/vidiot/vidiot_trunk/modeltransition/src/TransitionParameterDirection8.cpp:31
 msgid "Top left to bottom right"
 msgstr "Linksboven naar rechtsonder"
 
-#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection8.cpp:33
+#: /home/doortjeric/vidiot/vidiot_trunk/modeltransition/src/TransitionParameterDirection8.cpp:33
 msgid "Top right to bottom left"
 msgstr "Rechtsboven naar linksonder"
 
-#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection8.cpp:35
+#: /home/doortjeric/vidiot/vidiot_trunk/modeltransition/src/TransitionParameterDirection8.cpp:35
 msgid "Bottom right to top left"
 msgstr "Rechtsonder naar linksboven"
 
-#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterDirection8.cpp:37
+#: /home/doortjeric/vidiot/vidiot_trunk/modeltransition/src/TransitionParameterDirection8.cpp:37
 msgid "Bottom left to top right"
 msgstr "Linksonder naar rechtsboven"
 
-#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterRotationDirection.cpp:31
+#: /home/doortjeric/vidiot/vidiot_trunk/modeltransition/src/TransitionParameterRotationDirection.cpp:31
 msgid "Clockwise"
 msgstr "Met de klok mee"
 
-#: C:\Vidiot\vidiot_trunk\modeltransition\src\TransitionParameterRotationDirection.cpp:32
+#: /home/doortjeric/vidiot/vidiot_trunk/modeltransition/src/TransitionParameterRotationDirection.cpp:32
 msgid "Counterclockwise"
 msgstr "Tegen de klok in"
 
-#: C:\Vidiot\vidiot_trunk\modelvideo\src\ErrorImage.cpp:32
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideo/src/ErrorImage.cpp:32
 msgid "Missing file: "
 msgstr "Bestand niet gevonden:"
 
-#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoKeyFrame.cpp:344
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideo/src/VideoKeyFrame.cpp:344
 msgid "Width becomes 0."
 msgstr "Breedte wordt 0."
 
-#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoKeyFrame.cpp:348
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideo/src/VideoKeyFrame.cpp:348
 msgid "Height becomes 0."
 msgstr "Hoogte wordt 0."
 
-#: C:\Vidiot\vidiot_trunk\modelvideo\src\VideoKeyFrame.cpp:352
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideo/src/VideoKeyFrame.cpp:352
 msgid "Image becomes too large."
 msgstr "Beeld wordt te groot."
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_CrossFade.cpp:37
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_CrossFade.cpp:37
 msgid "Video crossfade"
 msgstr "Overvloeien"
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_FadeToColor.cpp:50
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_FadeToColor.cpp:50
 msgid "Color"
 msgstr "Kleur"
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_FadeToColor.cpp:50
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_FadeToColor.cpp:50
 msgid "Select the color to use as the start/end of the transition."
 msgstr ""
 "Selecteer de kleur die wordt gebruikt bij het begin/eind van de overgang."
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_FadeToColor.cpp:59
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_FadeToColor.cpp:59
 msgid "Fade from color"
 msgstr "Vervagen van kleur"
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_FadeToColor.cpp:63
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_FadeToColor.cpp:63
 msgid "Fade to color"
 msgstr "Vervagen naar kleur"
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_ImageGradient.cpp:54
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:77
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_ImageGradient.cpp:54
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeImage.cpp:77
 msgid "Image"
 msgstr "Plaatje"
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_ImageGradient.cpp:55
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_ImageGradient.cpp:55
 msgid ""
 "Select an image to be used for the effect. The colours in that image "
 "indicate in what way the transition will make the second video clip visible. "
@@ -1160,122 +1160,122 @@ msgstr ""
 "automatisch berekend. Het is dus niet nodig om precies bij wit/zwart te "
 "beginnen/eindigen bij het maken van dit plaatje. "
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_ImageGradient.cpp:63
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_ImageGradient.cpp:63
 msgid "Soften"
 msgstr "Verzachten"
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_ImageGradient.cpp:63
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_ImageGradient.cpp:63
 msgid "Select how much to soften the effect."
 msgstr "Kies hoeveel het effect verzacht moet worden."
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_ImageGradient.cpp:64
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_ImageGradient.cpp:64
 msgid "Blur"
 msgstr "Vervagen"
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_ImageGradient.cpp:64
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_ImageGradient.cpp:64
 msgid "Select how much to blur the image."
 msgstr "Kies hoeveel het plaatje vervaagd moet worden."
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_ImageGradient.cpp:70
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_ImageGradient.cpp:70
 msgid "Image gradient"
 msgstr "Plaatjes gradient"
 
 #. TRANSLATORS: This is shown when the Wipe Image/Image Gradient transition at time %2$s used a file (named %1$s) which the application was unable to read.
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_ImageGradient.cpp:209
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:242
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_ImageGradient.cpp:209
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeImage.cpp:242
 #, c-format
 msgid "Couldn't read %1$s at %2$s."
 msgstr "Kon %1$s op positie %2$s niet lezen."
 
 #. TRANSLATORS: This is shown when for the Wipe Image/Image Gradient transition at time %s no image has been selected yet.
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_ImageGradient.cpp:211
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:244
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_ImageGradient.cpp:211
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeImage.cpp:244
 #, c-format
 msgid "No image selected at %s."
 msgstr "Geen plaatje geselecteerd op positie %s."
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_Push.cpp:50
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_Slide.cpp:51
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeArc.cpp:51
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeBarnDoors.cpp:47
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeStraight.cpp:50
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_Push.cpp:50
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_Slide.cpp:51
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeArc.cpp:51
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeBarnDoors.cpp:47
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeStraight.cpp:50
 msgid "Direction"
 msgstr "Richting"
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_Push.cpp:50
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_Slide.cpp:51
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_Push.cpp:50
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_Slide.cpp:51
 msgid "Select the movement direction."
 msgstr "Selecteer de bewegingsrichting."
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_Push.cpp:56
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_Push.cpp:56
 msgid "Push"
 msgstr "Wegschuiven"
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_Slide.cpp:52
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeArc.cpp:52
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeBarnDoors.cpp:48
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeCircle.cpp:50
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:81
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_Slide.cpp:52
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeArc.cpp:52
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeBarnDoors.cpp:48
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeCircle.cpp:50
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeImage.cpp:81
 msgid "Inversed"
 msgstr "Geïnverteerd"
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_Slide.cpp:52
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_Slide.cpp:52
 msgid ""
 "Select between 'sliding in' the second clip or 'sliding away' the first clip."
 msgstr ""
 "Kies tussen 'invliegen' van de tweede clip of 'wegvliegen' van de eerste "
 "clip."
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_Slide.cpp:58
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_Slide.cpp:58
 msgid "Slide"
 msgstr "Inschuiven"
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeArc.cpp:50
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeArc.cpp:50
 msgid "Number of arcs"
 msgstr "Aantal bogen"
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeArc.cpp:50
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeCircle.cpp:49
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeClock.cpp:51
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeStraight.cpp:49
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeArc.cpp:50
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeCircle.cpp:49
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeClock.cpp:51
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeStraight.cpp:49
 msgid "Select the number of simultaneous wipes."
 msgstr "Selecteer het aantal stroken."
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeArc.cpp:51
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeStraight.cpp:50
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeArc.cpp:51
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeStraight.cpp:50
 msgid "Select the direction of the wipes."
 msgstr "Selecteer de richting van de stroken."
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeArc.cpp:52
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeCircle.cpp:50
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeArc.cpp:52
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeCircle.cpp:50
 msgid "Select between 'growing' and 'shrinking' (in the opposite direction)."
 msgstr "Kies tussen 'groeien' en 'krimpen' (in de tegenovergestelde richting)."
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeArc.cpp:53
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeCircle.cpp:51
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeClock.cpp:53
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeDoubleClock.cpp:50
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeStraight.cpp:51
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeArc.cpp:53
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeCircle.cpp:51
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeClock.cpp:53
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeDoubleClock.cpp:50
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeStraight.cpp:51
 msgid "Soften edges"
 msgstr "Randen zachter maken"
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeArc.cpp:53
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeCircle.cpp:51
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeClock.cpp:53
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeDoubleClock.cpp:50
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeStraight.cpp:51
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeArc.cpp:53
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeCircle.cpp:51
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeClock.cpp:53
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeDoubleClock.cpp:50
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeStraight.cpp:51
 msgid "Select to enable smoothing at the edges."
 msgstr "Selecteer om de randen van de overgang zachter te maken."
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeArc.cpp:59
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeArc.cpp:59
 msgid "Wipe Arc"
 msgstr "Bogen vegen"
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeBarnDoors.cpp:47
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeBarnDoors.cpp:47
 msgid "Select between a horizontal or a vertical effect"
 msgstr "Kies tussen een horizontaal en een vertikaal effect."
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeBarnDoors.cpp:48
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeBarnDoors.cpp:48
 msgid ""
 "Select between making the second clip visible from the inside (normal) or "
 "from the outside (inversed)"
@@ -1283,52 +1283,52 @@ msgstr ""
 "Kies tussen het verschijnen van de tweede clip vanaf de binnenkant (normal) "
 "of de buitenkant (geïnverteerd)."
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeBarnDoors.cpp:54
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeBarnDoors.cpp:54
 msgid "Barn Doors"
 msgstr "Deuren"
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeCircle.cpp:49
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeCircle.cpp:49
 msgid "Number of circles"
 msgstr "Aantal cirkels"
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeCircle.cpp:57
-#: C:\Vidiot\vidiot_trunk\test\testauto\src\TestTransition.cpp:1289
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeCircle.cpp:57
+#: /home/doortjeric/vidiot/vidiot_trunk/test/testauto/src/TestTransition.cpp:1289
 msgid "Wipe Circle"
 msgstr "Cirkel vegen"
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeClock.cpp:50
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeDoubleClock.cpp:49
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeClock.cpp:50
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeDoubleClock.cpp:49
 msgid "Angle"
 msgstr "Hoek"
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeClock.cpp:50
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeDoubleClock.cpp:49
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeClock.cpp:50
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeDoubleClock.cpp:49
 msgid "Select the starting angle."
 msgstr "Selecteer de initiële hoek."
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeClock.cpp:51
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeStraight.cpp:49
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeClock.cpp:51
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeStraight.cpp:49
 msgid "Number of lines"
 msgstr "Aantal lijnen"
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeClock.cpp:52
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:80
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeClock.cpp:52
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeImage.cpp:80
 msgid "Rotation direction"
 msgstr "Rotatierichting"
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeClock.cpp:52
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeClock.cpp:52
 msgid "Select the clockwise direction of the wipes."
 msgstr "Selecteer de kloksgewijze rotatierichting van de vegen."
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeClock.cpp:59
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeClock.cpp:59
 msgid "Wipe Clock"
 msgstr "Klok vegen"
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeDoubleClock.cpp:56
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeDoubleClock.cpp:56
 msgid "Wipe Double Clock"
 msgstr "Dubbele klok vegen"
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:77
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeImage.cpp:77
 msgid ""
 "Select an image with an alpha channel or a mask. That information is then "
 "used to create the transition. Make sure that the image is sufficiently "
@@ -1339,12 +1339,12 @@ msgstr ""
 "genoeg is om de volledige video te bedekken."
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:78
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:309
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeImage.cpp:78
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:309
 msgid "Scaling"
 msgstr "Schaling"
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:78
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeImage.cpp:78
 msgid ""
 "Select a scaling factor to be applied to the image. This can be used to make "
 "sure the transition covers exactly the entire clip(s) at the start or end of "
@@ -1354,34 +1354,34 @@ msgstr ""
 "gebruikt worden om te zorgen dat de overgang precise de hele clip bedekt bij "
 "het begin danwel het einde van de overgang."
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:79
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeImage.cpp:79
 msgid "Rotations"
 msgstr "Rotaties"
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:79
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeImage.cpp:79
 msgid ""
 "Select the number of rotations to be applied to the image during the "
 "transition."
 msgstr ""
 "Selecteer het aantal rotaties dat het plaatje maakt gedurende de overgang."
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:80
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeImage.cpp:80
 msgid "Select the clockwise direction of the rotation."
 msgstr "Kies de kloksgewijze richting van de rotatie."
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:81
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeImage.cpp:81
 msgid "Select between 'zooming in' (normal) or 'zooming out' (inversed)"
 msgstr "Kies tussen inzoomen (normaal) en uitzoomen (geïnverteerd)."
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeImage.cpp:87
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeImage.cpp:87
 msgid "Wipe Image"
 msgstr "Plaatje vegen"
 
-#: C:\Vidiot\vidiot_trunk\modelvideotransition\src\VideoTransition_WipeStraight.cpp:57
+#: /home/doortjeric/vidiot/vidiot_trunk/modelvideotransition/src/VideoTransition_WipeStraight.cpp:57
 msgid "Wipe Straight"
 msgstr "Recht vegen"
 
-#: C:\Vidiot\vidiot_trunk\preview\src\Player.cpp:75
+#: /home/doortjeric/vidiot/vidiot_trunk/preview/src/Player.cpp:75
 msgid ""
 "This box shows the current timeline cursor position and the total length of "
 "the movie."
@@ -1389,7 +1389,7 @@ msgstr ""
 "Hier staat de huidige positie van de cursor in the tijdlijn en de totale "
 "lengte van de film."
 
-#: C:\Vidiot\vidiot_trunk\preview\src\Player.cpp:113
+#: /home/doortjeric/vidiot/vidiot_trunk/preview/src/Player.cpp:113
 msgid ""
 "Move to the beginning of the movie. Pressing HOME in the timeline has the "
 "same effect."
@@ -1397,7 +1397,7 @@ msgstr ""
 "Ga naar het begin van de film. \"Home\" in de tijdlijn heeft hetzelfde "
 "effect."
 
-#: C:\Vidiot\vidiot_trunk\preview\src\Player.cpp:114
+#: /home/doortjeric/vidiot/vidiot_trunk/preview/src/Player.cpp:114
 msgid ""
 "Move to the previous cut between two clips. Pressing Control-LEFT in the "
 "timeline has the same effect."
@@ -1405,7 +1405,7 @@ msgstr ""
 "Ga naar de vorige snede tussen twee clips. \"Control-Links\" in de tijdlijn "
 "heeft hetzelfde effect."
 
-#: C:\Vidiot\vidiot_trunk\preview\src\Player.cpp:115
+#: /home/doortjeric/vidiot/vidiot_trunk/preview/src/Player.cpp:115
 msgid ""
 "Start/stop playback of the movie. Pressing SPACE in the timeline has the "
 "same effect."
@@ -1413,7 +1413,7 @@ msgstr ""
 "Start/stop afspelen van de film. \"Spatie\" in de tijdlijn heeft hetzelfde "
 "effect."
 
-#: C:\Vidiot\vidiot_trunk\preview\src\Player.cpp:116
+#: /home/doortjeric/vidiot/vidiot_trunk/preview/src/Player.cpp:116
 msgid ""
 "Move to the next cut between two clips. Pressing Control-RIGHT in the "
 "timeline has the same effect."
@@ -1421,7 +1421,7 @@ msgstr ""
 "Gan naar de volgende snede tussen twee clips. \"Control-Rechts\" in de "
 "tijdlijn heeft hetzelfde effect."
 
-#: C:\Vidiot\vidiot_trunk\preview\src\Player.cpp:117
+#: /home/doortjeric/vidiot/vidiot_trunk/preview/src/Player.cpp:117
 msgid ""
 "Move to the end of the movie. Pressing END in the timeline has the same "
 "effect."
@@ -1429,7 +1429,7 @@ msgstr ""
 "Ga naar het einde van de tijdlijn. \"End\" in de tijdlijn heeft hetzelfde "
 "effect."
 
-#: C:\Vidiot\vidiot_trunk\preview\src\Player.cpp:118
+#: /home/doortjeric/vidiot/vidiot_trunk/preview/src/Player.cpp:118
 msgid ""
 "Change the playback speed. Note that audio pitch is maintained as much as "
 "possible when this is changed."
@@ -1437,147 +1437,147 @@ msgstr ""
 "Verander de afspeelsnelheid. De toonhoogte van het geluid wordt zoveel "
 "mogelijk intact gelaten."
 
-#: C:\Vidiot\vidiot_trunk\preview\src\Player.cpp:145
+#: /home/doortjeric/vidiot/vidiot_trunk/preview/src/Player.cpp:145
 msgid "Select normal playback speed."
 msgstr "Normale afspeelsnelheid."
 
-#: C:\Vidiot\vidiot_trunk\preview\src\VideoDisplay.cpp:166
+#: /home/doortjeric/vidiot/vidiot_trunk/preview/src/VideoDisplay.cpp:166
 msgid "Could not initialize playback."
 msgstr "Kan afspelen niet starten."
 
-#: C:\Vidiot\vidiot_trunk\preview\src\VideoDisplay.cpp:174
+#: /home/doortjeric/vidiot/vidiot_trunk/preview/src/VideoDisplay.cpp:174
 msgid "Opening audio stream failed:"
 msgstr "Openen van audio is mislukt:"
 
-#: C:\Vidiot\vidiot_trunk\preview\src\VideoDisplay.cpp:187
+#: /home/doortjeric/vidiot/vidiot_trunk/preview/src/VideoDisplay.cpp:187
 msgid "Starting audio stream failed:"
 msgstr "Starten van audio is mislukt:"
 
-#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:74
+#: /home/doortjeric/vidiot/vidiot_trunk/projectview/src/ProjectView.cpp:74
 msgid "Name"
 msgstr "Naam"
 
-#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:309
+#: /home/doortjeric/vidiot/vidiot_trunk/projectview/src/ProjectView.cpp:309
 msgid "file"
 msgstr "bestand"
 
-#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:313
+#: /home/doortjeric/vidiot/vidiot_trunk/projectview/src/ProjectView.cpp:313
 msgid "folder"
 msgstr "map"
 
-#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:317
+#: /home/doortjeric/vidiot/vidiot_trunk/projectview/src/ProjectView.cpp:317
 msgid "sequence"
 msgstr "film"
 
-#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:324
+#: /home/doortjeric/vidiot/vidiot_trunk/projectview/src/ProjectView.cpp:324
 msgid "Duplicate exists"
 msgstr "Duplicaat gevonden"
 
-#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:324
+#: /home/doortjeric/vidiot/vidiot_trunk/projectview/src/ProjectView.cpp:324
 #, c-format
 msgid "A %1$s with name %2$s already exists"
 msgstr "Een %1$s met de naam %2$s bestaat al"
 
-#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:353
+#: /home/doortjeric/vidiot/vidiot_trunk/projectview/src/ProjectView.cpp:353
 msgid "Create folder"
 msgstr "Maak map"
 
-#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:353
-#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:380
+#: /home/doortjeric/vidiot/vidiot_trunk/projectview/src/ProjectView.cpp:353
+#: /home/doortjeric/vidiot/vidiot_trunk/projectview/src/ProjectView.cpp:380
 msgid "Enter name"
 msgstr "Voer naam in"
 
-#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:353
-#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:565
+#: /home/doortjeric/vidiot/vidiot_trunk/projectview/src/ProjectView.cpp:353
+#: /home/doortjeric/vidiot/vidiot_trunk/projectview/src/ProjectView.cpp:565
 msgid "Folder"
 msgstr "Map"
 
-#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:380
+#: /home/doortjeric/vidiot/vidiot_trunk/projectview/src/ProjectView.cpp:380
 msgid "Create sequence"
 msgstr "Maak film"
 
-#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:395
+#: /home/doortjeric/vidiot/vidiot_trunk/projectview/src/ProjectView.cpp:395
 msgid "Select file(s)"
 msgstr "Selecteer bestand(en)"
 
-#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:526
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:324
+#: /home/doortjeric/vidiot/vidiot_trunk/projectview/src/ProjectView.cpp:526
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/Menu.cpp:324
 msgid "Cut"
 msgstr "Knippen"
 
-#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:526
-#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:528
-#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:530
+#: /home/doortjeric/vidiot/vidiot_trunk/projectview/src/ProjectView.cpp:526
+#: /home/doortjeric/vidiot/vidiot_trunk/projectview/src/ProjectView.cpp:528
+#: /home/doortjeric/vidiot/vidiot_trunk/projectview/src/ProjectView.cpp:530
 msgid "CTRL"
 msgstr "CTRL"
 
-#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:528
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:325
+#: /home/doortjeric/vidiot/vidiot_trunk/projectview/src/ProjectView.cpp:528
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/Menu.cpp:325
 msgid "Copy"
 msgstr "Kopiëren"
 
-#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:530
+#: /home/doortjeric/vidiot/vidiot_trunk/projectview/src/ProjectView.cpp:530
 msgid "Paste"
 msgstr "Plakken"
 
-#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:533
+#: /home/doortjeric/vidiot/vidiot_trunk/projectview/src/ProjectView.cpp:533
 msgid "DEL"
 msgstr "Del"
 
-#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:537
+#: /home/doortjeric/vidiot/vidiot_trunk/projectview/src/ProjectView.cpp:537
 msgid "Delete unused files on disk"
 msgstr "Verwijder ongebruikte bestanden van de harde schijf"
 
-#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:544
+#: /home/doortjeric/vidiot/vidiot_trunk/projectview/src/ProjectView.cpp:544
 msgid "Make sequence"
 msgstr "Maak film"
 
-#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:549
+#: /home/doortjeric/vidiot/vidiot_trunk/projectview/src/ProjectView.cpp:549
 msgid "Open sequence"
 msgstr "Open film"
 
-#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:558
+#: /home/doortjeric/vidiot/vidiot_trunk/projectview/src/ProjectView.cpp:558
 msgid "Folder from disk"
 msgstr "Map van harde schijf"
 
-#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:559
+#: /home/doortjeric/vidiot/vidiot_trunk/projectview/src/ProjectView.cpp:559
 msgid "File(s) from disk"
 msgstr "Bestand(en) van harde schijf"
 
-#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:560
+#: /home/doortjeric/vidiot/vidiot_trunk/projectview/src/ProjectView.cpp:560
 msgid "Add"
 msgstr "Toevoegen"
 
-#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectView.cpp:567
+#: /home/doortjeric/vidiot/vidiot_trunk/projectview/src/ProjectView.cpp:567
 msgid "New"
 msgstr "Nieuw"
 
-#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectViewClipboard.cpp:129
+#: /home/doortjeric/vidiot/vidiot_trunk/projectview/src/ProjectViewClipboard.cpp:129
 msgid "Nothing selected in the project view."
 msgstr "Niets geselecteerd in project overzicht."
 
-#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectViewClipboard.cpp:133
+#: /home/doortjeric/vidiot/vidiot_trunk/projectview/src/ProjectViewClipboard.cpp:133
 msgid "Project (topmost item) cannot be stored in clipboard."
 msgstr "Het project kan niet in het klembord opgeslagen worden."
 
-#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectViewClipboard.cpp:154
+#: /home/doortjeric/vidiot/vidiot_trunk/projectview/src/ProjectViewClipboard.cpp:154
 msgid "Wrong node selected for pasting in project tree."
 msgstr "Hier kan niet geplakt worden."
 
-#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectViewClipboard.cpp:171
+#: /home/doortjeric/vidiot/vidiot_trunk/projectview/src/ProjectViewClipboard.cpp:171
 msgid "Can't paste item in tree twice."
 msgstr "Kan niet twee keer hetzelfde object in de boom zetten."
 
-#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectViewClipboard.cpp:179
+#: /home/doortjeric/vidiot/vidiot_trunk/projectview/src/ProjectViewClipboard.cpp:179
 msgid "File was removed from disk. Cannot paste."
 msgstr ""
 "Bestand was verwijderd van de harde schijf. Kan niet toegevoegd worden."
 
-#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectViewClipboard.cpp:188
+#: /home/doortjeric/vidiot/vidiot_trunk/projectview/src/ProjectViewClipboard.cpp:188
 msgid "Folder was removed from disk. Cannot paste."
 msgstr "Map is verwijderd van de harde schijf. Kan niet toegevoegd worden."
 
-#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectViewClipboard.cpp:214
+#: /home/doortjeric/vidiot/vidiot_trunk/projectview/src/ProjectViewClipboard.cpp:214
 msgid ""
 "Cannot paste files and folders together. Only paste files or only paste "
 "folders."
@@ -1585,72 +1585,72 @@ msgstr ""
 "Kan niet tegelijk mappen en bestanden toevoegen. Voeg eerst de mappen toe en "
 "daarna de bestanden."
 
-#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectViewClipboard.cpp:228
+#: /home/doortjeric/vidiot/vidiot_trunk/projectview/src/ProjectViewClipboard.cpp:228
 msgid "File "
 msgstr "Bestand"
 
-#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectViewClipboard.cpp:240
+#: /home/doortjeric/vidiot/vidiot_trunk/projectview/src/ProjectViewClipboard.cpp:240
 msgid "No supported files in clipboard."
 msgstr "Geen ondersteunde bestanden in het klembord."
 
-#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectViewDataObject.cpp:83
+#: /home/doortjeric/vidiot/vidiot_trunk/projectview/src/ProjectViewDataObject.cpp:83
 msgid "Sequences can not be pasted/dropped."
 msgstr "Films kunnen niet toegevoegd worden."
 
-#: C:\Vidiot\vidiot_trunk\projectview\src\ProjectViewDataObject.cpp:88
+#: /home/doortjeric/vidiot/vidiot_trunk/projectview/src/ProjectViewDataObject.cpp:88
 msgid "Folders can not be pasted/dropped."
 msgstr "Mappen kunnen niet toegevoegd worden."
 
-#: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewAddAsset.cpp:32
+#: /home/doortjeric/vidiot/vidiot_trunk/projectviewcmd/src/ProjectViewAddAsset.cpp:32
 msgid "Insert"
 msgstr "Toevoegen"
 
-#: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewCommand.cpp:107
+#: /home/doortjeric/vidiot/vidiot_trunk/projectviewcmd/src/ProjectViewCommand.cpp:107
 msgid "Problem"
 msgstr "Probleem"
 
-#: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewCommand.cpp:113
+#: /home/doortjeric/vidiot/vidiot_trunk/projectviewcmd/src/ProjectViewCommand.cpp:113
 #, c-format
 msgid "%s has been removed from disk."
 msgstr "%s is verwijderd van de harde schijf."
 
-#: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewCommand.cpp:119
+#: /home/doortjeric/vidiot/vidiot_trunk/projectviewcmd/src/ProjectViewCommand.cpp:119
 #, c-format
 msgid "%s can not be opened."
 msgstr "%s kan niet worden geopend."
 
-#: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewCreateAutoFolder.cpp:35
-#: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewCreateFolder.cpp:33
+#: /home/doortjeric/vidiot/vidiot_trunk/projectviewcmd/src/ProjectViewCreateAutoFolder.cpp:35
+#: /home/doortjeric/vidiot/vidiot_trunk/projectviewcmd/src/ProjectViewCreateFolder.cpp:33
 #, c-format
 msgid "Add folder %s"
 msgstr "Voeg map %s toe"
 
-#: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewCreateFile.cpp:63
+#: /home/doortjeric/vidiot/vidiot_trunk/projectviewcmd/src/ProjectViewCreateFile.cpp:63
 #, c-format
 msgid "Add file %s"
 msgstr "Voeg bestand %s toe"
 
-#: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewCreateSequence.cpp:50
+#: /home/doortjeric/vidiot/vidiot_trunk/projectviewcmd/src/ProjectViewCreateSequence.cpp:50
 msgid "Create sequence from folder "
 msgstr "Maak film van (inhoud van) map"
 
-#: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewCreateSequence.cpp:63
+#: /home/doortjeric/vidiot/vidiot_trunk/projectviewcmd/src/ProjectViewCreateSequence.cpp:63
 msgid "Create sequence "
 msgstr "Maak film"
 
-#: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewDeleteUnusedFiles.cpp:43
+#: /home/doortjeric/vidiot/vidiot_trunk/projectviewcmd/src/ProjectViewDeleteUnusedFiles.cpp:43
 msgid "Delete unused files from folder "
 msgstr "Verwijder ongebruikte bestanden van de harde schijf"
 
-#: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewDeleteUnusedFiles.cpp:97
+#: /home/doortjeric/vidiot/vidiot_trunk/projectviewcmd/src/ProjectViewDeleteUnusedFiles.cpp:97
 msgid "Disk space freed: "
 msgstr "Harde schijf ruimte vrijgemaakt:"
 
-#: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewDeleteUnusedFiles.cpp:107
+#: /home/doortjeric/vidiot/vidiot_trunk/projectviewcmd/src/ProjectViewDeleteUnusedFiles.cpp:107
 msgid "Remove unused files"
 msgstr "Verwijder ongebruikte bestanden"
 
-#: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewDeleteUnusedFiles.cpp:108
+#: /home/doortjeric/vidiot/vidiot_trunk/projectviewcmd/src/ProjectViewDeleteUnusedFiles.cpp:108
 msgid ""
 "The following files are not used in the project.\n"
 "Press OK to move these to the recycle bin."
@@ -1658,7 +1658,7 @@ msgstr ""
 "De volgende bestanden worden niet gebruikt in het project. Druk op OK om "
 "deze bestanden te verplaatsen naar de prullenbak."
 
-#: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewDeleteUnusedFiles.cpp:118
+#: /home/doortjeric/vidiot/vidiot_trunk/projectviewcmd/src/ProjectViewDeleteUnusedFiles.cpp:118
 #, c-format
 msgid ""
 "Failed to move %1$s to the recycle bin.\n"
@@ -1673,204 +1673,204 @@ msgstr ""
 "\n"
 "Verwijderen wordt afgebroken."
 
-#: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewDeleteUnusedFiles.cpp:119
+#: /home/doortjeric/vidiot/vidiot_trunk/projectviewcmd/src/ProjectViewDeleteUnusedFiles.cpp:119
 msgid "Move to recycle bin failed"
 msgstr "Het verplaatsen van bestanden naar de prullenbak is mislukt."
 
-#: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewDeleteUnusedFiles.cpp:130
+#: /home/doortjeric/vidiot/vidiot_trunk/projectviewcmd/src/ProjectViewDeleteUnusedFiles.cpp:130
 msgid "No files moved to recycle bin."
 msgstr "Er zijn geen bestanden naar de prullenbak verplaatst."
 
-#: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewDeleteUnusedFiles.cpp:133
+#: /home/doortjeric/vidiot/vidiot_trunk/projectviewcmd/src/ProjectViewDeleteUnusedFiles.cpp:133
 msgid "File moved to recycle bin."
 msgstr "Bestand is verplaatst naar de prullenbak."
 
-#: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewDeleteUnusedFiles.cpp:136
+#: /home/doortjeric/vidiot/vidiot_trunk/projectviewcmd/src/ProjectViewDeleteUnusedFiles.cpp:136
 #, c-format
 msgid "%zu files moved to recycle bin."
 msgstr "%zu bestanden zijn verplaatst naar de prullenbak."
 
-#: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewMoveAsset.cpp:35
+#: /home/doortjeric/vidiot/vidiot_trunk/projectviewcmd/src/ProjectViewMoveAsset.cpp:35
 #, c-format
 msgid "Move %s"
 msgstr "Verplaats %s"
 
-#: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewMoveAsset.cpp:39
+#: /home/doortjeric/vidiot/vidiot_trunk/projectviewcmd/src/ProjectViewMoveAsset.cpp:39
 msgid "Move"
 msgstr "Verplaats"
 
-#: C:\Vidiot\vidiot_trunk\projectviewcmd\src\ProjectViewRenameAsset.cpp:33
+#: /home/doortjeric/vidiot/vidiot_trunk/projectviewcmd/src/ProjectViewRenameAsset.cpp:33
 #, c-format
 msgid "Rename %1$s to %2$s"
 msgstr "Hernoem %1$s naar %2$s"
 
-#: C:\Vidiot\vidiot_trunk\render\src\AudioCodec.cpp:143
+#: /home/doortjeric/vidiot/vidiot_trunk/render/src/AudioCodec.cpp:143
 msgid "Error in audio codec"
 msgstr "Fout in audio codec"
 
-#: C:\Vidiot\vidiot_trunk\render\src\AudioCodec.cpp:144
-#: C:\Vidiot\vidiot_trunk\render\src\AudioCodec.cpp:161
+#: /home/doortjeric/vidiot/vidiot_trunk/render/src/AudioCodec.cpp:144
+#: /home/doortjeric/vidiot/vidiot_trunk/render/src/AudioCodec.cpp:161
 msgid "There was an error when opening the audio codec."
 msgstr "Er is een fout opgetreden bij het openen van de audio codec."
 
-#: C:\Vidiot\vidiot_trunk\render\src\AudioCodec.cpp:145
-#: C:\Vidiot\vidiot_trunk\render\src\VideoCodec.cpp:149
+#: /home/doortjeric/vidiot/vidiot_trunk/render/src/AudioCodec.cpp:145
+#: /home/doortjeric/vidiot/vidiot_trunk/render/src/VideoCodec.cpp:149
 msgid "Rendering will be aborted."
 msgstr "Generatie wordt afgebroken."
 
-#: C:\Vidiot\vidiot_trunk\render\src\AudioCodec.cpp:152
+#: /home/doortjeric/vidiot/vidiot_trunk/render/src/AudioCodec.cpp:152
 msgid "Could not deduce required sample format for audio."
 msgstr "Kon het vereiste sample formaat voor audio niet bepalen."
 
-#: C:\Vidiot\vidiot_trunk\render\src\AudioCodecParameter.cpp:30
-#: C:\Vidiot\vidiot_trunk\render\src\VideoCodecParameter.cpp:32
+#: /home/doortjeric/vidiot/vidiot_trunk/render/src/AudioCodecParameter.cpp:30
+#: /home/doortjeric/vidiot/vidiot_trunk/render/src/VideoCodecParameter.cpp:32
 msgid "Bit rate"
 msgstr "Bit rate"
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:302
+#: /home/doortjeric/vidiot/vidiot_trunk/render/src/Render.cpp:302
 msgid "The following sequence(s) have not been scheduled"
 msgstr "De volgende film(s) zijn nog niet ingepland"
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:315
+#: /home/doortjeric/vidiot/vidiot_trunk/render/src/Render.cpp:315
 msgid "Filename is not specified."
 msgstr "Geen bestandsnaam gekozen."
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:321
+#: /home/doortjeric/vidiot/vidiot_trunk/render/src/Render.cpp:321
 msgid "Specified filename also used for another sequence."
 msgstr "De bestandsnaam is al ingebruik voor een andere film."
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:329
+#: /home/doortjeric/vidiot/vidiot_trunk/render/src/Render.cpp:329
 msgid "Not all sequences have been scheduled:"
 msgstr "Niet alle films zijn ingepland voor generatie:"
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:361
+#: /home/doortjeric/vidiot/vidiot_trunk/render/src/Render.cpp:361
 msgid "An internal error occurred during rendering."
 msgstr "Een interne fout is opgetreden tijdens de generatie."
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:362
+#: /home/doortjeric/vidiot/vidiot_trunk/render/src/Render.cpp:362
 msgid "Rendering failed"
 msgstr "Generatie is mislukt"
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:369
+#: /home/doortjeric/vidiot/vidiot_trunk/render/src/Render.cpp:369
 #, c-format
 msgid "Rendering sequence %s"
 msgstr "Bezig met genereren van film %s"
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:440
+#: /home/doortjeric/vidiot/vidiot_trunk/render/src/Render.cpp:440
 msgid "Unsupported number of ticks per frame in target codec"
 msgstr "Niet ondersteund aantal 'ticks per frame' in codec"
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:478
+#: /home/doortjeric/vidiot/vidiot_trunk/render/src/Render.cpp:478
 msgid "Failed to open video codec"
 msgstr "Het openen van de video codec is mislukt"
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:505
+#: /home/doortjeric/vidiot/vidiot_trunk/render/src/Render.cpp:505
 msgid "Failed to open audio codec"
 msgstr "Het openen van de audio codec is mislukt"
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:536
+#: /home/doortjeric/vidiot/vidiot_trunk/render/src/Render.cpp:536
 msgid "Failed to determine audio sample size"
 msgstr "Het bepalen van de audio sample grootte is mislukt"
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:548
+#: /home/doortjeric/vidiot/vidiot_trunk/render/src/Render.cpp:548
 msgid "Failed to initialize audio resampler"
 msgstr "Het initializeren van de audio resampler is mislukt"
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:557
+#: /home/doortjeric/vidiot/vidiot_trunk/render/src/Render.cpp:557
 msgid "Failed to allocate memory for resampling"
 msgstr "Het reserveren van geheugen voor resampling is mislukt"
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:590
+#: /home/doortjeric/vidiot/vidiot_trunk/render/src/Render.cpp:590
 msgid "Failed to write file header"
 msgstr "Het schrijven van de header van het bestand is mislukt."
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:638
+#: /home/doortjeric/vidiot/vidiot_trunk/render/src/Render.cpp:638
 #, c-format
 msgid "Frame %1$<PRId64> out of %2$<PRId64>"
 msgstr "Beeld %1$<PRId64> van %2$<PRId64>"
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:738
+#: /home/doortjeric/vidiot/vidiot_trunk/render/src/Render.cpp:738
 msgid "Failed to encode audio"
 msgstr "Het encoderen van audio is mislukt"
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:757
+#: /home/doortjeric/vidiot/vidiot_trunk/render/src/Render.cpp:757
 msgid "Failed to write audio"
 msgstr "Het schrijven van audio is mislukt"
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:848
+#: /home/doortjeric/vidiot/vidiot_trunk/render/src/Render.cpp:848
 msgid "Failed to write raw video"
 msgstr "Het schrijven van ruwe video data is mislukt"
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:862
+#: /home/doortjeric/vidiot/vidiot_trunk/render/src/Render.cpp:862
 msgid "Failed to encode video"
 msgstr "Het encoderen van video data is mislukt"
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:877
+#: /home/doortjeric/vidiot/vidiot_trunk/render/src/Render.cpp:877
 msgid "Failed to write video"
 msgstr "Het schrijven van video data is mislukt"
 
-#: C:\Vidiot\vidiot_trunk\render\src\Render.cpp:890
+#: /home/doortjeric/vidiot/vidiot_trunk/render/src/Render.cpp:890
 msgid "Failed to close file"
 msgstr "Het sluiten van het bestand is mislukt"
 
-#: C:\Vidiot\vidiot_trunk\render\src\VideoCodec.cpp:147
+#: /home/doortjeric/vidiot/vidiot_trunk/render/src/VideoCodec.cpp:147
 msgid "Error in video codec"
 msgstr "Fout in video codec"
 
-#: C:\Vidiot\vidiot_trunk\render\src\VideoCodec.cpp:148
-#: C:\Vidiot\vidiot_trunk\render\src\VideoCodec.cpp:161
+#: /home/doortjeric/vidiot/vidiot_trunk/render/src/VideoCodec.cpp:148
+#: /home/doortjeric/vidiot/vidiot_trunk/render/src/VideoCodec.cpp:161
 msgid "There was an error when opening the video codec."
 msgstr "Er is een fout opgetreden bij het openen van de video codec."
 
-#: C:\Vidiot\vidiot_trunk\render\src\VideoCodecParameter.cpp:33
+#: /home/doortjeric/vidiot/vidiot_trunk/render/src/VideoCodecParameter.cpp:33
 msgid "Bit rate tolerance"
 msgstr "Bit rate tolerantie"
 
-#: C:\Vidiot\vidiot_trunk\render\src\VideoCodecParameter.cpp:34
+#: /home/doortjeric/vidiot/vidiot_trunk/render/src/VideoCodecParameter.cpp:34
 msgid "Gop size"
 msgstr "Afstand tussen volledige frames (GOP size)"
 
-#: C:\Vidiot\vidiot_trunk\render\src\VideoCodecParameter.cpp:35
+#: /home/doortjeric/vidiot/vidiot_trunk/render/src/VideoCodecParameter.cpp:35
 msgid "B Frames"
 msgstr "Bidirectionele beelden (B frames)"
 
-#: C:\Vidiot\vidiot_trunk\render\src\VideoCodecParameter.cpp:36
+#: /home/doortjeric/vidiot/vidiot_trunk/render/src/VideoCodecParameter.cpp:36
 msgid "Macro block decision"
 msgstr "Macro blok keuze"
 
-#: C:\Vidiot\vidiot_trunk\render\src\VideoCodecParameter.cpp:64
+#: /home/doortjeric/vidiot/vidiot_trunk/render/src/VideoCodecParameter.cpp:64
 msgid "Least bits"
 msgstr "Minste bits"
 
-#: C:\Vidiot\vidiot_trunk\render\src\VideoCodecParameter.cpp:65
+#: /home/doortjeric/vidiot/vidiot_trunk/render/src/VideoCodecParameter.cpp:65
 msgid "Rate distortion"
 msgstr "Snelheid vervorming"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Generic.cpp:60
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Generic.cpp:60
 msgid "Go to first key frame."
 msgstr "Ga naar eerste sleutelbeeld."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Generic.cpp:61
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Generic.cpp:61
 msgid "Go to previous key frame."
 msgstr "Ga naar vorig sleutelbeeld."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Generic.cpp:62
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Generic.cpp:62
 msgid "Go to next key frame."
 msgstr "Ga naar volgende sleutelbeeld."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Generic.cpp:63
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Generic.cpp:63
 msgid "Go to last key frame."
 msgstr "Ga naar laatste sleutelbeeld."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Generic.cpp:64
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Generic.cpp:64
 msgid "Add a key frame at the current position."
 msgstr "Voeg een sleutelbeeld toe op de huidige positie."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Generic.cpp:65
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Generic.cpp:65
 msgid "Remove the key frame at the current position."
 msgstr "Verwijder het sleutelbeeld op de huidige positie."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Generic.cpp:138
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Generic.cpp:138
 #, c-format
 msgid ""
 "Select key frame number %ld. Clicking on the key frame indicator in the "
@@ -1879,95 +1879,95 @@ msgstr ""
 "Selecteer sleutelbeeld nummer %ld. Klikken op de sleutelbeeld indicator in "
 "de tijdlijn heeft hetzelfde effect."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_GuiEvents.cpp:522
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_GuiEvents.cpp:522
 msgid ""
 "Could not execute the length change without messing up clips in other tracks."
 msgstr ""
 "Kon de lengte niet veranderen zonder andere sporen in de war te brengen."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_GuiEvents.cpp:528
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_GuiEvents.cpp:528
 msgid "Set length of clip"
 msgstr "Zet lengte van clip"
 
 #. TRANSLATORS: This is used in the details header to indicate 'clip name and length in seconds': "Clip name (42.000s)"
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_HelperMethods.cpp:61
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_HelperMethods.cpp:61
 #, c-format
 msgid "%s (%ss)"
 msgstr "%s (%ss)"
 
 #. TRANSLATORS: This is shown in the undo history when a parameter of a transition has been edited. %1$s == Name of transition, %2$s == Name of parameter.
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_HelperMethods.cpp:141
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_HelperMethods.cpp:141
 #, c-format
 msgid "Change %1$s (%2$s)"
 msgstr "Verander  %1$s (%2$s)"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_HelperMethods.cpp:179
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_HelperMethods.cpp:179
 msgid "Change transition type"
 msgstr "Verander overgangstype"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:54
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:54
 msgid "Transition"
 msgstr "Overgang"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:55
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:55
 #, c-format
 msgid "Edit opacity of %s"
 msgstr "Bewerk doorzichtigheid van %s"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:56
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:56
 #, c-format
 msgid "Edit automated scaling of %s"
 msgstr "Bewerk schaling van %s"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:57
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:57
 #, c-format
 msgid "Edit scaling of %s"
 msgstr "Bewerk schaalfactor van %s"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:58
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:58
 #, c-format
 msgid "Edit rotation of %s"
 msgstr "Bewerk rotatie van %s"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:59
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:59
 #, c-format
 msgid "Edit automated alignment of %s"
 msgstr "Bewerk positionering van %s"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:60
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:60
 #, c-format
 msgid "Edit X position of %s"
 msgstr "Bewerk X positie van %s"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:61
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:61
 #, c-format
 msgid "Edit Y position of %s"
 msgstr "Bewerk Y positie van %s"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:62
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:62
 #, c-format
 msgid "Edit volume of %s"
 msgstr "Bewerk volume van %s"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:63
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:63
 #, c-format
 msgid "Add key frame to %s"
 msgstr "Voeg sleutelbeeld to aan %s"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:64
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:64
 #, c-format
 msgid "Remove key frame from %s"
 msgstr "Verwijder sleutelbeeld van %s"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:66
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:66
 msgid "Add/remove/select video key frames"
 msgstr "Toevoegen/verwijderen/selecteren van video sleutelbeelden"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:67
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:67
 msgid "Add/remove/select audio key frames"
 msgstr "Toevoegen/verwijderen/selecteren van audio sleutelbeelden"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:101
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:101
 msgid ""
 "Change the length of the clip to one of the standard lengths. Will shift "
 "other clips to avoid introducing a black area."
@@ -1975,7 +1975,7 @@ msgstr ""
 "Geef de lengte van de clip een van de standaard lengte. Andere clips worden "
 "mogelijk verschoven om ervoor te zorgen dat de clips aaneengesloten blijven."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:114
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:114
 msgid ""
 "Change the length of the clip to this length. Will shift other clips to "
 "avoid introducing a black area."
@@ -1983,16 +1983,16 @@ msgstr ""
 "Verander de lengte van de clip naar deze lengte. Andere clips worden "
 "verschoven om lege ruimte te voorkomen."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:114
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:114
 msgid "Shortcut key"
 msgstr "Toets"
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:121
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:121
 msgid "Fixed lengths (s)"
 msgstr "Standaard duur (s)"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:128
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:128
 msgid ""
 "Change the speed of the clip. Changing the clip speed is only allowed when "
 "the clip and its linked clip (if any) are both of an equal size and "
@@ -2008,19 +2008,19 @@ msgstr ""
 "veranderen."
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:142
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:142
 msgid "Speed"
 msgstr "Snelheid"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:152
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:152
 msgid "Press this button to start/stop continuous playback of the transition."
 msgstr "Druk op deze knop om het continu afspelen van de overgang te starten."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:154
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:154
 msgid "Start automatically"
 msgstr "Start automatisch"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:155
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:155
 msgid ""
 "Select this to immediately start continuous playback of transition when a "
 "transition is selected."
@@ -2028,22 +2028,22 @@ msgstr ""
 "Kies dit om het continu afspelen van de overgang automatisch te starten "
 "wanneer een overgang wordt geselecteerd."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:157
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:157
 msgid "Start/stop continous playback of the transition."
 msgstr "Start/stop continu afspelen van de overgang."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:172
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:172
 msgid "Select the effect used for the transition towards the second clip."
 msgstr ""
 "Selecteer het effect dat gebruikt wordt voor de overgang naar de volgende "
 "clip."
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:178
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:178
 msgid "Type"
 msgstr "Type"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:187
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:187
 msgid ""
 "Select the opacity of the video frame. A value of '0' means fully "
 "transparent. A value of '255' means fully opaque."
@@ -2052,11 +2052,11 @@ msgstr ""
 "doorzichtig. De waarde '255' betekent volledig opaak."
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:199
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:199
 msgid "Opacity"
 msgstr "Doorzichtigheid"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:202
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:202
 msgid ""
 "Note that automated scaling and positioning apply to the cropped (smaller) "
 "image. If the image should not be rescaled/repositioned after cropping, "
@@ -2067,49 +2067,49 @@ msgstr ""
 "worden, kies Aangepast voor de automatische schaling en de automatische "
 "positionering."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:207
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:207
 msgid "Select the area to remove from the top of the video."
 msgstr ""
 "Selecteer de grootte van het gebied dat aan de bovenkant verwijderd mag "
 "worden."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:217
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:217
 msgid "Select the area to remove from the bottom of the video."
 msgstr ""
 "Selecteer de grootte van het gebied dat aan de onderkant verwijderd mag "
 "worden."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:227
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:227
 msgid "Select the area to remove from the left side of the video."
 msgstr ""
 "Selecteer de grootte van het gebied dat aan de linkerkant verwijderd mag "
 "worden."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:237
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:237
 msgid "Select the area to remove from the right side of the video."
 msgstr ""
 "Selecteer de grootte van het gebied dat aan de rechterkant verwijderd mag "
 "worden."
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:261
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:261
 msgid "Crop"
 msgstr "Bijsnijden"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:261
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:261
 msgid "Remove unwanted regions from the side of the video."
 msgstr "Verwijder ongewenste stukken van de zijkant(en) van de video."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:268
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:268
 msgid "Select the rotation (in degrees) of the video frame."
 msgstr "Selecteer de rotatie (in graden) van de video."
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:284
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:284
 msgid "Rotation"
 msgstr "Rotatie"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:291
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:291
 msgid ""
 "Select between several automated scaling strategies or manually select the "
 "(custom) scaling factor of the video frame."
@@ -2117,11 +2117,11 @@ msgstr ""
 "Kies tussen verschillende automatische schaling strategieën of stel "
 "handmatig een schalingsfactor in."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:295
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:295
 msgid "Select the scaling factor to be applied to the video frame."
 msgstr "Selecteer de schalingsfactor voor video."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:316
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:316
 msgid ""
 "Select between several automated positioning strategies or manually select "
 "the (custom) position of the video frame."
@@ -2129,251 +2129,259 @@ msgstr ""
 "Kies tussen verschillende automatische positionerings strategieën of stel "
 "handmatig de positie van de video in."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:321
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:321
 msgid "Select the horizontal position of the video frame."
 msgstr "Selecteer de horizontale positie van de video."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:331
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:331
 msgid "Select the vertical position of the video frame."
 msgstr "Selecteer de vertikale positie van de video."
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:350
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:350
 msgid "Position"
 msgstr "Positie"
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:357
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:357
 msgid "Video key frames"
 msgstr "Video sleutelbeelden"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:385
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:385
 msgid "Select the audio volume."
 msgstr "Selecteer het audio volume."
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:397
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:397
 msgid "Volume (%)"
 msgstr "Volume (%)"
 
 #. TRANSLATORS: Do not let the string exceed 20 characters.
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsClip_Initialization.cpp:403
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsClip_Initialization.cpp:403
 msgid "Audio key frames"
 msgstr "Audio sleutelbeelden"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsTrim.cpp:40
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsTrim.cpp:40
 msgid "Notes"
 msgstr "Opmerkingen"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsTrim.cpp:42
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsTrim.cpp:42
 msgid "Resizing"
 msgstr "Lengte aanpassen"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsTrim.cpp:46
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsTrim.cpp:46
 msgid "Video size"
 msgstr "Lengte van video"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsTrim.cpp:47
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsTrim.cpp:47
 msgid "Audio size"
 msgstr "Lengte van audio"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsTrim.cpp:48
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsTrim.cpp:48
 msgid "Transition size"
 msgstr "Lengte van overgang"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsTrim.cpp:51
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsTrim.cpp:51
 msgid "Press SHIFT to remove blank areas during the trimming"
 msgstr "Gebruik SHIFT om lege ruimte te verwijderen tijdens het bijknippen"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsTrim.cpp:52
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsTrim.cpp:52
 msgid "Shift"
 msgstr "Opschonen"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\DetailsTrim.cpp:83
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/DetailsTrim.cpp:83
 #, c-format
 msgid "Resizing %s"
 msgstr "Grootte aanpassen van %s"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\Intervals.cpp:246
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/Intervals.cpp:246
 msgid "Remove marked regions"
 msgstr "Verwijder gemarkeerde gebieden"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\Intervals.cpp:255
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/Intervals.cpp:255
 msgid "Remove unmarked regions"
 msgstr "Verwijder ongemarkeerde gebieden"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\Intervals.cpp:264
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/Intervals.cpp:264
 msgid "Remove empty regions"
 msgstr "Verwijder lege gebieden"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\Intervals.cpp:274
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/Intervals.cpp:274
 msgid "Remove empty region"
 msgstr "Verwijder leeg gebied"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:89
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/Menu.cpp:89
 msgid "Add video track"
 msgstr "Voeg video spoor toe"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:90
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/Menu.cpp:90
 msgid "Add audio track"
 msgstr "Voeg audio spoor toe"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:91
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\RemoveEmptyTracks.cpp:36
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/Menu.cpp:91
+#: /home/doortjeric/vidiot/vidiot_trunk/timelinecmd/src/RemoveEmptyTracks.cpp:36
 msgid "Remove empty tracks"
 msgstr "Verwijder lege sporen"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:93
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/Menu.cpp:93
 msgid "Delete marked regions"
 msgstr "Verwijder gemarkeerde gebieden"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:94
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/Menu.cpp:94
 msgid "Delete unmarked regions"
 msgstr "Verwijder ongemarkeerde gebieden"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:95
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/Menu.cpp:95
 msgid "Remove markers"
 msgstr "Verwijder markeringen"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:97
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/Menu.cpp:97
 msgid "Remove empty"
 msgstr "Verwijder lege gebieden"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:99
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/Menu.cpp:99
 msgid "Render settings"
 msgstr "Film generatie instellingen"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:100
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/Menu.cpp:100
 #, c-format
 msgid "Render %s"
 msgstr "Genereer %s"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:101
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/Menu.cpp:101
 msgid "Render all modified sequences"
 msgstr "Genereer alle films"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:103
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/Menu.cpp:103
 msgid "Close"
 msgstr "Sluit"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:254
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/Menu.cpp:254
 msgid "Fade in"
 msgstr "Overgang van zwart"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:255
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/Menu.cpp:255
 msgid "Fade out"
 msgstr "Overgang naar zwart"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:256
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/Menu.cpp:256
 msgid "Fade from previous"
 msgstr "Overgang van vorige"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:257
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/Menu.cpp:257
 msgid "Fade to next"
 msgstr "Overgang naar volgende"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:326
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/Menu.cpp:326
 msgid "Paste at cursor"
 msgstr "Plak bij cursor"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:327
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/Menu.cpp:327
 msgid "Paste here"
 msgstr "Hier plakken"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:328
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/Menu.cpp:328
 msgid "Remove empty space"
 msgstr "Verwijder lege ruimte"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:329
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/Menu.cpp:329
 msgid "Delete selected"
 msgstr "Verwijder selectie"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:329
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/Menu.cpp:329
 msgid "&Del"
 msgstr "&Del"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:330
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/Menu.cpp:330
 msgid "Delete and Trim selected"
 msgstr "Verwijder selectie en schuif aan"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:330
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/Menu.cpp:330
 msgid "Shif&t"
 msgstr "Shif&t"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:330
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/Menu.cpp:330
 msgid "Del"
 msgstr "Verwijder"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\Menu.cpp:331
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/Menu.cpp:331
 msgid "Unlink audio and video clips"
 msgstr "Ontkoppel audio en video clips"
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\TimelineDataObject.cpp:150
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/TimelineDataObject.cpp:150
 msgid "Data in clipboard has incompatible properties."
 msgstr "Gegevens in het klembord hebben incompatibele eigenschappen."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\TimelineDataObject.cpp:155
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/TimelineDataObject.cpp:155
 msgid "Nothing to be pasted."
 msgstr "Er is niets om te plakken."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\TimelineDataObject.cpp:181
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/TimelineDataObject.cpp:181
 msgid "Cannot paste: not enough video tracks."
 msgstr "Kan niet plakken: niet genoeg video sporen."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\TimelineDataObject.cpp:192
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/TimelineDataObject.cpp:192
 msgid "Cannot paste: not enough audio tracks."
 msgstr "Kan niet plakken: niet genoeg audio sporen."
 
-#: C:\Vidiot\vidiot_trunk\timeline\src\TimelineDataObject.cpp:207
+#: /home/doortjeric/vidiot/vidiot_trunk/timeline/src/TimelineDataObject.cpp:207
 msgid "Nothing to be stored in clipboard."
 msgstr "Er is niets om in het klembord op te slaan."
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\CreateAudioTrack.cpp:35
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\CreateVideoTrack.cpp:31
+#: /home/doortjeric/vidiot/vidiot_trunk/timelinecmd/src/IntervalChange.cpp:37
+msgid "Add new interval selection"
+msgstr "Voeg interval selectie toe"
+
+#: /home/doortjeric/vidiot/vidiot_trunk/timelinecmd/src/IntervalChange.cpp:41
+msgid "Remove new interval selection"
+msgstr "Verwijder interval selectie"
+
+#: /home/doortjeric/vidiot/vidiot_trunk/timelinecmd/src/CreateAudioTrack.cpp:35
+#: /home/doortjeric/vidiot/vidiot_trunk/timelinecmd/src/CreateVideoTrack.cpp:31
 msgid "Add track"
 msgstr "Voeg spoor toe"
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\CreateTransition.cpp:47
+#: /home/doortjeric/vidiot/vidiot_trunk/timelinecmd/src/CreateTransition.cpp:47
 msgid "Create transition"
 msgstr "Maak overgang"
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\CreateTransitionHelper.cpp:105
+#: /home/doortjeric/vidiot/vidiot_trunk/timelinecmd/src/CreateTransitionHelper.cpp:105
 msgid "Unable to make room for adding the transition."
 msgstr "Kan geen ruimte maken voor de overgang."
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\DeleteSelectedClips.cpp:37
+#: /home/doortjeric/vidiot/vidiot_trunk/timelinecmd/src/DeleteSelectedClips.cpp:37
 msgid "Delete selected clips"
 msgstr "Verwijder geselecteerde clips"
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\DeleteSelectedClips.cpp:170
+#: /home/doortjeric/vidiot/vidiot_trunk/timelinecmd/src/DeleteSelectedClips.cpp:170
 msgid "Could not shift clips. Part of the region is still in use."
 msgstr "Kon clips niet opschuiven. Gedeelte van het gebied is nog in gebruik."
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:103
+#: /home/doortjeric/vidiot/vidiot_trunk/timelinecmd/src/EditClipSpeed.cpp:103
 #, c-format
 msgid "Adjust speed of %s"
 msgstr "Pas snelheid van %s aan"
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:134
+#: /home/doortjeric/vidiot/vidiot_trunk/timelinecmd/src/EditClipSpeed.cpp:134
 msgid "Can not change speed if speed of linked clip is different."
 msgstr ""
 "Snelheid aanpassen is niet mogelijk als de huidige snelheid van de gelinkte "
 "clip niet hetzelfde is."
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:138
+#: /home/doortjeric/vidiot/vidiot_trunk/timelinecmd/src/EditClipSpeed.cpp:138
 msgid "Can not change speed if length of linked clip is different."
 msgstr ""
 "Snelheid aanpassen is niet mogelijk als de lengte van de gelinkte clip niet "
 "hetzelfde is."
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:142
+#: /home/doortjeric/vidiot/vidiot_trunk/timelinecmd/src/EditClipSpeed.cpp:142
 msgid ""
 "Can not change speed if start offset (in file) of linked clip is different."
 msgstr ""
 "Snelheid aanpassen is niet mogelijk als de startpositie (binnen het "
 "originele video bestand) van de gelinkte clip niet hetzelfde is."
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:146
+#: /home/doortjeric/vidiot/vidiot_trunk/timelinecmd/src/EditClipSpeed.cpp:146
 msgid ""
 "Can not change speed if start position (in track) of linked clip is "
 "different."
@@ -2381,7 +2389,7 @@ msgstr ""
 "Snelheid aanpassen is niet mogelijk als de start positie (binnen het spoor) "
 "van de gelinkte clip niet hetzelfde is."
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:166
+#: /home/doortjeric/vidiot/vidiot_trunk/timelinecmd/src/EditClipSpeed.cpp:166
 msgid ""
 "Can not change clip speed. There may not be clips in the same timeframe in "
 "other tracks."
@@ -2389,157 +2397,149 @@ msgstr ""
 "Kan clip snelheid niet aanpassen. Er mogen geen clips in hetzelfde "
 "tijdsbestek in andere sporen zijn."
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:243
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:267
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:277
+#: /home/doortjeric/vidiot/vidiot_trunk/timelinecmd/src/EditClipSpeed.cpp:243
+#: /home/doortjeric/vidiot/vidiot_trunk/timelinecmd/src/EditClipSpeed.cpp:267
+#: /home/doortjeric/vidiot/vidiot_trunk/timelinecmd/src/EditClipSpeed.cpp:277
 #, c-format
 msgid "Can't scale beyond %s"
 msgstr "Kan niet verder schalen dan %s"
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:243
+#: /home/doortjeric/vidiot/vidiot_trunk/timelinecmd/src/EditClipSpeed.cpp:243
 msgid "(no room for left transition)."
 msgstr "(er blijft niet genoeg ruimte over voor linker overgang)"
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:267
+#: /home/doortjeric/vidiot/vidiot_trunk/timelinecmd/src/EditClipSpeed.cpp:267
 msgid "(no room for right transition)."
 msgstr "(er blijft niet genoeg ruimte over voor rechter overgang)"
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\EditClipSpeed.cpp:277
+#: /home/doortjeric/vidiot/vidiot_trunk/timelinecmd/src/EditClipSpeed.cpp:277
 msgid "(no clip remains)."
 msgstr "(er blijft geen clip over)"
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\ExecuteDrop.cpp:90
+#: /home/doortjeric/vidiot/vidiot_trunk/timelinecmd/src/ExecuteDrop.cpp:90
 msgid "Move clips"
 msgstr "Verplaats clips"
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\IntervalChange.cpp:37
-msgid "Add new interval selection"
-msgstr "Voeg interval selectie toe"
-
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\IntervalChange.cpp:41
-msgid "Remove new interval selection"
-msgstr "Verwijder interval selectie"
-
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\IntervalRemoveAll.cpp:35
+#: /home/doortjeric/vidiot/vidiot_trunk/timelinecmd/src/IntervalRemoveAll.cpp:35
 msgid "Remove all markers"
 msgstr "Verwijder alle geselecteerde intervals"
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\SplitAtCursor.cpp:37
+#: /home/doortjeric/vidiot/vidiot_trunk/timelinecmd/src/SplitAtCursor.cpp:37
 msgid "Split at cursor"
 msgstr "Maak snede bij cursor"
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\SplitAtCursorAndTrim.cpp:53
+#: /home/doortjeric/vidiot/vidiot_trunk/timelinecmd/src/SplitAtCursorAndTrim.cpp:53
 msgid "Can't trim: cut at cursor position."
 msgstr "Kan niet: er is al een snede op de cursor positie."
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\SplitAtCursorAndTrim.cpp:83
+#: /home/doortjeric/vidiot/vidiot_trunk/timelinecmd/src/SplitAtCursorAndTrim.cpp:83
 msgid "Nothing to be trimmed."
 msgstr "Er is niets om te verwijderen."
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\SplitAtCursorAndTrim.cpp:87
+#: /home/doortjeric/vidiot/vidiot_trunk/timelinecmd/src/SplitAtCursorAndTrim.cpp:87
 msgid "Can't trim: transition."
 msgstr "Kan niet: overgang."
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\SplitAtCursorAndTrim.cpp:91
+#: /home/doortjeric/vidiot/vidiot_trunk/timelinecmd/src/SplitAtCursorAndTrim.cpp:91
 msgid "Can't trim: too many clips at cursor position."
 msgstr "Kan niet verwijderen: te veel clips bij de cursor positie."
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\SplitAtCursorAndTrim.cpp:119
+#: /home/doortjeric/vidiot/vidiot_trunk/timelinecmd/src/SplitAtCursorAndTrim.cpp:119
 msgid "Can't trim: position of clips prevents proper shifting"
 msgstr ""
 "Kan niet verwijderen: lege ruimte verwijderen is onmogelijk, gegeven de "
 "positie van clips."
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\TrimClip.cpp:50
+#: /home/doortjeric/vidiot/vidiot_trunk/timelinecmd/src/TrimClip.cpp:50
 msgid "Adjust length"
 msgstr "Pas lengte aan"
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\TrimClip.cpp:76
+#: /home/doortjeric/vidiot/vidiot_trunk/timelinecmd/src/TrimClip.cpp:76
 #, c-format
 msgid "Adjust %1$s side of %2$s"
 msgstr "Pas %1$s kant van %2$s aan"
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\TrimClip.cpp:76
+#: /home/doortjeric/vidiot/vidiot_trunk/timelinecmd/src/TrimClip.cpp:76
 msgid "left"
 msgstr "linker"
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\TrimClip.cpp:76
+#: /home/doortjeric/vidiot/vidiot_trunk/timelinecmd/src/TrimClip.cpp:76
 msgid "right"
 msgstr "rechter"
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\TrimClip.cpp:76
+#: /home/doortjeric/vidiot/vidiot_trunk/timelinecmd/src/TrimClip.cpp:76
 msgid "transition"
 msgstr "overgang"
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\TrimClip.cpp:76
+#: /home/doortjeric/vidiot/vidiot_trunk/timelinecmd/src/TrimClip.cpp:76
 msgid "clip"
 msgstr "clip"
 
-#: C:\Vidiot\vidiot_trunk\timelinecmd\src\UnlinkClips.cpp:30
+#: /home/doortjeric/vidiot/vidiot_trunk/timelinecmd/src/UnlinkClips.cpp:30
 msgid "Unlink clips"
 msgstr "Ontkoppel clips"
 
-#: C:\Vidiot\vidiot_trunk\timelinestate\src\StateMoveKeyFrame.cpp:85
+#: /home/doortjeric/vidiot/vidiot_trunk/timelinestate/src/StateMoveKeyFrame.cpp:85
 msgid "Move key frame"
 msgstr "Verplaats sleutelbeeld"
 
-#: C:\Vidiot\vidiot_trunk\timelineview\src\TimescaleView.cpp:216
+#: /home/doortjeric/vidiot/vidiot_trunk/timelineview/src/TimescaleView.cpp:216
 msgid "Zoom"
 msgstr "Zoom"
 
-#: C:\Vidiot\vidiot_trunk\util\src\UtilInitAvcodec.cpp:29
+#: /home/doortjeric/vidiot/vidiot_trunk/util/src/UtilInitAvcodec.cpp:29
 msgid "None"
 msgstr "Geen"
 
-#: C:\Vidiot\vidiot_trunk\util\src\UtilInitAvcodec.cpp:30
+#: /home/doortjeric/vidiot/vidiot_trunk/util/src/UtilInitAvcodec.cpp:30
 msgid "Fatal"
 msgstr "Fataal"
 
-#: C:\Vidiot\vidiot_trunk\util\src\UtilInitAvcodec.cpp:32
+#: /home/doortjeric/vidiot/vidiot_trunk/util/src/UtilInitAvcodec.cpp:32
 msgid "Warning"
 msgstr "Waarschuwing"
 
-#: C:\Vidiot\vidiot_trunk\util\src\UtilInitAvcodec.cpp:33
+#: /home/doortjeric/vidiot/vidiot_trunk/util/src/UtilInitAvcodec.cpp:33
 msgid "Info"
 msgstr "Info"
 
-#: C:\Vidiot\vidiot_trunk\util\src\UtilInitAvcodec.cpp:34
+#: /home/doortjeric/vidiot/vidiot_trunk/util/src/UtilInitAvcodec.cpp:34
 msgid "Verbose"
 msgstr "Uitgebreid"
 
-#: C:\Vidiot\vidiot_trunk\util\src\UtilLocale.cpp:29
+#: /home/doortjeric/vidiot/vidiot_trunk/util/src/UtilLocale.cpp:29
 msgid "English"
 msgstr "Engels"
 
-#: C:\Vidiot\vidiot_trunk\util\src\UtilLocale.cpp:30
+#: /home/doortjeric/vidiot/vidiot_trunk/util/src/UtilLocale.cpp:30
 msgid "German"
 msgstr "Duits"
 
-#: C:\Vidiot\vidiot_trunk\util\src\UtilLocale.cpp:31
+#: /home/doortjeric/vidiot/vidiot_trunk/util/src/UtilLocale.cpp:31
 msgid "Dutch"
 msgstr "Nederlands"
 
-#: C:\Vidiot\vidiot_trunk\util\src\UtilLocale.cpp:32
+#: /home/doortjeric/vidiot/vidiot_trunk/util/src/UtilLocale.cpp:32
 msgid "Russian"
 msgstr "Russisch"
 
-#: C:\Vidiot\vidiot_trunk\util\src\UtilLog.cpp:46
+#: /home/doortjeric/vidiot/vidiot_trunk/util/src/UtilLog.cpp:46
 msgid "Errors"
 msgstr "Fouten"
 
-#: C:\Vidiot\vidiot_trunk\util\src\UtilLog.cpp:47
+#: /home/doortjeric/vidiot/vidiot_trunk/util/src/UtilLog.cpp:47
 msgid "Errors & Warnings"
 msgstr "Fouten en waarschuwingen"
 
-#: C:\Vidiot\vidiot_trunk\util\src\UtilLog.cpp:48
+#: /home/doortjeric/vidiot/vidiot_trunk/util/src/UtilLog.cpp:48
 msgid "Info (UI actions)"
 msgstr "Info (user interface acties)"
 
-#: C:\Vidiot\vidiot_trunk\util\src\UtilLog.cpp:49
+#: /home/doortjeric/vidiot/vidiot_trunk/util/src/UtilLog.cpp:49
 msgid "Debugging"
 msgstr "Uitgebreid"
 
-#: C:\Vidiot\vidiot_trunk\util\src\UtilMail.cpp:101
+#: /home/doortjeric/vidiot/vidiot_trunk/util/src/UtilMail.cpp:101
 #, c-format
 msgid ""
 "\n"
@@ -2553,17 +2553,17 @@ msgstr ""
 "Helaas is het met sommige email programma's niet mogelijk om automatisch dit "
 "bestand toe te voegen.\n"
 
-#: C:\Vidiot\vidiot_trunk\util\src\UtilPath.cpp:278
+#: /home/doortjeric/vidiot/vidiot_trunk/util/src/UtilPath.cpp:278
 msgid ""
 "Could not locate resources (images/translations/html files) in the following "
 "folders:"
 msgstr "Kon de plaatjes en/of html files niet vinden in de volgende mappen: "
 
-#: C:\Vidiot\vidiot_trunk\util\src\UtilPath.cpp:283
+#: /home/doortjeric/vidiot/vidiot_trunk/util/src/UtilPath.cpp:283
 msgid "Press OK to exit."
 msgstr "Druk op OK om af te sluiten."
 
-#: C:\Vidiot\vidiot_trunk\util\src\UtilPath.cpp:284
+#: /home/doortjeric/vidiot/vidiot_trunk/util/src/UtilPath.cpp:284
 msgid "Resources not found"
 msgstr "Hulpbestanden niet gevonden"
 
