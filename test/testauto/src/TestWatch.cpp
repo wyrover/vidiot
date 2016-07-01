@@ -86,7 +86,9 @@ void TestWatch::testAddAndRemoveFileToWatchedAutoFolder()
         ASSERT(copyok);
         WaitForChildCount(mRoot, 3); // Only one of the two files is added
 
+        WaitForIdle; // Required on Linux.
         ProjectViewRemove( folder );
+        WaitForChildCount(mRoot, 1);
         ASSERT_WATCHED_PATHS_COUNT(0); // Nothing is being watched
     }
 }
