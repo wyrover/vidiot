@@ -117,6 +117,7 @@ public:
     static const wxString sPathMakeSequenceEmptyClipLength;
     static const wxString sPathMakeSequencePrefixLength;
     static const wxString sPathPreviewShowBoundingBox;
+    static const wxString sPathPreviewDefaultPlaybackSpeed;
     static const wxString sPathProjectAutoLoadEnabled;
     static const wxString sPathProjectBackupBeforeSaveEnabled;
     static const wxString sPathProjectBackupBeforeSaveMaximum;
@@ -130,6 +131,8 @@ public:
     static const wxString sPathTimelineAutoAddEmptyTrackWhenDragging;
     static const wxString sPathTimelineDefaultStillImageLength;
     static const wxString sPathTimelineDefaultTransitionLength;
+    static const wxString sPathTimelineDefaultVideoTrackHeight;
+    static const wxString sPathTimelineDefaultAudioTrackHeight;
     static const wxString sPathTimelineMarkerBeginAddition;
     static const wxString sPathTimelineMarkerEndAddition;
     static const wxString sPathTimelineSnapClips;

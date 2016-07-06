@@ -77,7 +77,7 @@ DialogOptions::DialogOptions(wxWindow* win)
         mBackupBeforeSave->SetValue(Config::get().read<bool>(Config::sPathProjectBackupBeforeSaveEnabled));
         addoption(_("Make backup of existing save file when overwriting"), mBackupBeforeSave);
 
-        long maximum = Config::get().read<long>(Config::sPathProjectBackupBeforeSaveMaximum);
+        int maximum = Config::get().read<int>(Config::sPathProjectBackupBeforeSaveMaximum);
         mBackupBeforeSaveMaximum = new wxSpinCtrl(mPanel, wxID_ANY, wxString::Format("%ld", maximum), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, 0, 10000, maximum);
         addoption(_("Maximum number of generated save files (0 - infinite)"), mBackupBeforeSaveMaximum);
 
@@ -91,11 +91,11 @@ DialogOptions::DialogOptions(wxWindow* win)
 
         addbox(_("Make sequence: divide clips if clip's prefix differs"));
 
-        long initial = Config::get().read<long>(Config::sPathMakeSequenceEmptyClipLength);
+        int initial = Config::get().read<int>(Config::sPathMakeSequenceEmptyClipLength);
         mMakeSequenceEmptyLength = new wxSpinCtrl(mPanel, wxID_ANY, wxString::Format("%ld", initial), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, 0, 100000, initial);
         addoption(_("Length of empty division (0 - disabled)"), mMakeSequenceEmptyLength);
 
-        initial = Config::get().read<long>(Config::sPathMakeSequencePrefixLength);
+        initial = Config::get().read<int>(Config::sPathMakeSequencePrefixLength);
         mMakeSequencePrefixLength = new wxSpinCtrl(mPanel, wxID_ANY, wxString::Format("%ld", initial), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, 0, 100000, initial);
         addoption(_("Length of name (prefix) to be matched"), mMakeSequencePrefixLength);
     }
@@ -120,11 +120,11 @@ DialogOptions::DialogOptions(wxWindow* win)
         mFrameRate->SetSelection(selection);
         addoption(_("Framerate for new projects"), mFrameRate);
 
-        long initial = Config::get().read<long>(Config::sPathVideoDefaultWidth);
+        int initial = Config::get().read<int>(Config::sPathVideoDefaultWidth);
         mDefaultVideoWidth = new wxSpinCtrl(mPanel, wxID_ANY, wxString::Format("%ld", initial), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, 20, 10000, initial);
         addoption(_("Default video width"), mDefaultVideoWidth);
 
-        initial = Config::get().read<long>(Config::sPathVideoDefaultHeight);
+        initial = Config::get().read<int>(Config::sPathVideoDefaultHeight);
         mDefaultVideoHeight = new wxSpinCtrl(mPanel, wxID_ANY, wxString::Format("%ld", initial), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, 20, 10000, initial);
         addoption(_("Default video height"), mDefaultVideoHeight);
 
@@ -142,7 +142,7 @@ DialogOptions::DialogOptions(wxWindow* win)
          wxIntegerValidator<int> lengthValidator;
          lengthValidator.SetMin(1);
          lengthValidator.SetMax(10000);
-         pts initial = Config::get().read<long>(Config::sPathTimelineDefaultStillImageLength);
+         pts initial = Config::get().read<int>(Config::sPathTimelineDefaultStillImageLength);
 
          FrameRate framerate = FrameRate::s25p; // Default
          if (Window::get().GetDocumentManager()->GetCurrentDocument() != 0)
@@ -186,7 +186,7 @@ DialogOptions::DialogOptions(wxWindow* win)
          wxIntegerValidator<int> sampleRateValidator;
          sampleRateValidator.SetMin(1000);
          sampleRateValidator.SetMax(1000);
-         long initial = Config::get().read<long>(Config::sPathAudioDefaultSampleRate);
+         int initial = Config::get().read<int>(Config::sPathAudioDefaultSampleRate);
          mDefaultAudioSampleRate = new wxComboBox(mPanel, wxID_ANY, wxString::Format("%ld", initial),  wxDefaultPosition, wxDefaultSize, sampleRateChoices, 0, sampleRateValidator);
          addoption(_("Default audio sample rate"), mDefaultAudioSampleRate);
 
@@ -196,7 +196,7 @@ DialogOptions::DialogOptions(wxWindow* win)
          wxArrayString channelChoices;
          channelChoices.Add("1");
          channelChoices.Add("2");
-         initial = Config::get().read<long>(Config::sPathAudioDefaultNumberOfChannels);
+         initial = Config::get().read<int>(Config::sPathAudioDefaultNumberOfChannels);
          mDefaultAudioNumberOfChannels = new wxComboBox(mPanel, wxID_ANY, wxString::Format("%ld", initial),  wxDefaultPosition, wxDefaultSize, channelChoices, 0, channelValidator);
          addoption(_("Default number of audio channels"), mDefaultAudioNumberOfChannels);
     }

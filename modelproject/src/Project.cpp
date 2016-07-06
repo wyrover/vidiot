@@ -250,7 +250,7 @@ bool Project::DoSaveDocument(const wxString& file)
 
         // If configured, remove a backup file to ensure that the number of backups will not exceed the maximum
         // Note: if for some reason the number of backups exceeds the maximum then still only one is deleted (no goldplating...).
-        int maximumNumberOfFiles = Config::get().read<long>(Config::sPathProjectBackupBeforeSaveMaximum);
+        int maximumNumberOfFiles = Config::get().read<int>(Config::sPathProjectBackupBeforeSaveMaximum);
         if (maximumNumberOfFiles > 0 && nExistingBackupFiles >= maximumNumberOfFiles)
         {
             wxFileName backup = createBackupFileName(saveFileName, lowestNumber);
@@ -358,7 +358,7 @@ wxFileName Project::convertPathForSaving(const wxFileName& path) const
 {
     ASSERT(path.IsAbsolute());
     wxFileName result(path);
-    if (Config::get().read<long>(Config::sPathProjectSavePathsRelativeToProject))
+    if (Config::get().read<bool>(Config::sPathProjectSavePathsRelativeToProject))
     {
         result.MakeRelativeTo(mSaveFolder);
     }

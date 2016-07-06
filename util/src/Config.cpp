@@ -160,6 +160,7 @@ void Config::init(bool inCxxTestMode)
     checkLong(sPathMakeSequencePrefixLength, 1, 100);
     checkBool(sPathDetailsShowTitles);
     checkBool(sPathDetailsShowIcons);
+    checkLong(sPathPreviewDefaultPlaybackSpeed, 50, 200);
     checkBool(sPathProjectAutoLoadEnabled);
     checkBool(sPathProjectBackupBeforeSaveEnabled);
     checkLong(sPathProjectBackupBeforeSaveMaximum, 0, 10000);
@@ -167,6 +168,8 @@ void Config::init(bool inCxxTestMode)
     checkBool(sPathTimelineAutoAddEmptyTrackWhenDragging);
     checkLong(sPathTimelineDefaultStillImageLength, 1, 10000);
     checkLong(sPathTimelineDefaultTransitionLength, 4, 10000);
+    checkLong(sPathTimelineDefaultVideoTrackHeight, 25, 250);
+    checkLong(sPathTimelineDefaultVideoTrackHeight, 25, 250);
     checkLong(sPathVideoDefaultWidth, 10, 10000);
     checkLong(sPathVideoDefaultHeight, 10, 10000);
     checkEnum(sPathVideoDefaultScaling, model::VideoScaling);
@@ -206,6 +209,8 @@ void Config::init(bool inCxxTestMode)
     setDefault(sPathTimelineAutoAddEmptyTrackWhenDragging, true);
     setDefault(sPathTimelineDefaultStillImageLength, 150);
     setDefault(sPathTimelineDefaultTransitionLength, 20); // Divisible by 4 for automated tests
+    setDefault(sPathTimelineDefaultVideoTrackHeight, 50);
+    setDefault(sPathTimelineDefaultAudioTrackHeight, 50);
     setDefault(sPathVideoDefaultAlignment, model::VideoAlignment_toString(model::VideoAlignmentCenter));
     setDefault(sPathVideoDefaultHeight, 720);
     setDefault(sPathVideoDefaultScaling, model::VideoScaling_toString(model::VideoScalingFitToFill));
@@ -220,6 +225,8 @@ void Config::init(bool inCxxTestMode)
     setDefault(sPathTimelineMarkerEndAddition, 0);
     setDefault(sPathTimelineLengthButtons, "250,500,1000,1500,2000,2500,3000,5000,10000"); // Keep in sync with defaults in DetailsClip
     setDefault(sPathPreviewShowBoundingBox, true);
+    setDefault(sPathPreviewDefaultPlaybackSpeed, 100);
+
     setDefault(sPathDebugShowDebugInfoOnWidgets, false);
     setDefault(sPathTimelineSnapClips, true);
     setDefault(sPathTimelineSnapCursor, true);
@@ -294,6 +301,11 @@ template <> long Config::read(const wxString& key) const
     bool ok{ value.ToLong(&result) };
     ASSERT(ok)(value)(key);
     return result;
+}
+
+template <> int Config::read(const wxString& key) const
+{
+    return narrow_cast<int>(read<long>(key));
 }
 
 template <> bool Config::read(const wxString& key) const
@@ -504,6 +516,7 @@ const wxString Config::sPathEditAutoStartPlayback("/Edit/AutoStartPlayback");
 const wxString Config::sPathMakeSequenceEmptyClipLength("/MakeSequence/EmptyClipLength");
 const wxString Config::sPathMakeSequencePrefixLength("/MakeSequence/PrefixLength");
 const wxString Config::sPathPreviewShowBoundingBox("/Preview/ShowBoundingBox");
+const wxString Config::sPathPreviewDefaultPlaybackSpeed("/Preview/DefaultPlaybackSpeed");
 const wxString Config::sPathProjectAutoLoadEnabled("/Project/AutoLoadEnabled");
 const wxString Config::sPathProjectBackupBeforeSaveEnabled("/Project/BackupBeforeSaveEnabled");
 const wxString Config::sPathProjectBackupBeforeSaveMaximum("/Project/BackupBeforeSaveMaximumFileCount");
@@ -517,6 +530,8 @@ const wxString Config::sPathTestRunOnly("/Test/RunOnly");
 const wxString Config::sPathTimelineAutoAddEmptyTrackWhenDragging("/Timeline/AutoAddEmptyTrackWhenDragging");
 const wxString Config::sPathTimelineDefaultStillImageLength("/Timeline/DefaultStillImageLength");
 const wxString Config::sPathTimelineDefaultTransitionLength("/Timeline/DefaultTransitionLength");
+const wxString Config::sPathTimelineDefaultVideoTrackHeight("/Timeline/DefaultVideoTrackHeight");
+const wxString Config::sPathTimelineDefaultAudioTrackHeight("/Timeline/DefaultAudioTrackHeight");
 const wxString Config::sPathTimelineMarkerBeginAddition("/Timeline/MarkerBeginAddition");
 const wxString Config::sPathTimelineMarkerEndAddition("/Timeline/MarkerEndAddition");
 const wxString Config::sPathTimelineSnapClips("/Timeline/SnapClips");

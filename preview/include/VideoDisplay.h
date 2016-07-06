@@ -36,10 +36,10 @@ class VideoDisplay
 {
 public:
 
-    static const int sMinimumSpeed;
-    static const int sMaximumSpeed;
-    static const int sDefaultSpeed;
-    static const int sVideoFrameRate;
+    static constexpr int sMinimumSpeed = 50;
+    static constexpr int sMaximumSpeed = 200;
+    static constexpr int sDefaultSpeed = 100;
+    //static const int sVideoFrameRate;todo
 
     //////////////////////////////////////////////////////////////////////////
     // INITIALIZATION METHODS

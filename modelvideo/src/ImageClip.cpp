@@ -42,7 +42,7 @@ ImageClip::ImageClip(const VideoFilePtr& file)
 
     pts length = getLength();
     pts half = length / 2;
-    pts remainingLength = Config::get().read<long>(Config::sPathTimelineDefaultStillImageLength);
+    pts remainingLength = Config::get().read<int>(Config::sPathTimelineDefaultStillImageLength);
 
     // Move right edge to the left such that the clip can be extended if required
     adjustEnd( - half );
