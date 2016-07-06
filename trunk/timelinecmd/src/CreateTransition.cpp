@@ -46,7 +46,7 @@ CreateTransition::CreateTransition(const model::SequencePtr& sequence, const mod
     VAR_INFO(this)(clip)(*transition);
     mCommandName = _("Create transition");
 
-    pts defaultSize = Config::get().read<long>(Config::sPathTimelineDefaultTransitionLength);
+    pts defaultSize = Config::get().read<int>(Config::sPathTimelineDefaultTransitionLength);
 
     switch (type)
     {

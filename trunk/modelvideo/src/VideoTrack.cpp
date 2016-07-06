@@ -17,6 +17,7 @@
 
 #include "VideoTrack.h"
 
+#include "Config.h"
 #include "VideoClip.h"
 #include "VideoFrame.h"
 
@@ -30,6 +31,7 @@ VideoTrack::VideoTrack()
 :	Track()
 {
     VAR_DEBUG(this);
+    setHeight(Config::get().read<int>(Config::sPathTimelineDefaultVideoTrackHeight));
 }
 
 VideoTrack::VideoTrack(const VideoTrack& other)

@@ -17,6 +17,7 @@
 
 #include "AudioTrack.h"
 
+#include "Config.h"
 #include "AudioClip.h"
 
 namespace model {
@@ -29,6 +30,7 @@ AudioTrack::AudioTrack()
 :	Track()
 {
     VAR_DEBUG(this);
+    setHeight(Config::get().read<int>(Config::sPathTimelineDefaultAudioTrackHeight));
 }
 
 AudioTrack::AudioTrack(const AudioTrack& other)

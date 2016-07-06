@@ -423,10 +423,10 @@ Window::Window()
     }
     else
     {
-        int x = Config::get().read<long>(Config::sPathWorkspaceX);
-        int y = Config::get().read<long>(Config::sPathWorkspaceY);
-        int w = Config::get().read<long>(Config::sPathWorkspaceW);
-        int h = Config::get().read<long>(Config::sPathWorkspaceH);
+        int x = Config::get().read<int>(Config::sPathWorkspaceX);
+        int y = Config::get().read<int>(Config::sPathWorkspaceY);
+        int w = Config::get().read<int>(Config::sPathWorkspaceW);
+        int h = Config::get().read<int>(Config::sPathWorkspaceH);
         bool m = Config::get().read<bool>(Config::sPathWorkspaceMaximized);
 
         if (x != -1 && y != -1 && w != -1 && h != -1)

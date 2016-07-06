@@ -58,7 +58,7 @@ public:
     ,   mSequence(sequence)
     ,   mFrom(from)
     {
-        pts maxLength = Convert::timeToPts(Config::get().read<long>(Config::sPathDebugMaxRenderLength) *  sSecond);
+        pts maxLength = Convert::timeToPts(Config::get().read<int>(Config::sPathDebugMaxRenderLength) *  sSecond);
         mLength = to - from;
         if (maxLength > 0 && maxLength < mLength)
         {
