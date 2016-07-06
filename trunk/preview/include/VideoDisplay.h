@@ -39,7 +39,6 @@ public:
     static constexpr int sMinimumSpeed = 50;
     static constexpr int sMaximumSpeed = 200;
     static constexpr int sDefaultSpeed = 100;
-    //static const int sVideoFrameRate;todo
 
     //////////////////////////////////////////////////////////////////////////
     // INITIALIZATION METHODS
