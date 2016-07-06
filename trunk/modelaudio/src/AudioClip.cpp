@@ -304,6 +304,7 @@ AudioPeaks AudioClip::getPeaks(const AudioCompositionParameters& parameters)
         int64_t positiveSum = 0;
         int64_t negativeSum = 0;
         int count = 0;
+        double max = std::numeric_limits<sample>::max();
 
         while (chunk && !chunk->getError())
         {
@@ -330,7 +331,17 @@ AudioPeaks AudioClip::getPeaks(const AudioCompositionParameters& parameters)
                     ASSERT_MORE_THAN_EQUALS_ZERO(negativeSum);
                     ASSERT_MORE_THAN_EQUALS_ZERO(positivePeak);
                     ASSERT_MORE_THAN_EQUALS_ZERO(positiveSum);
-                    mPeaks->emplace_back(AudioPeak({ { negativePeak, positivePeak },{ -narrow_cast<sample>(std::trunc(sqrt(negativeSum / count))),  narrow_cast<sample>(std::trunc(sqrt(positiveSum / count))) } }));
+                    mPeaks->emplace_back(AudioPeak(
+                    { 
+                        { 
+                            negativePeak, 
+                            positivePeak 
+                        },
+                        { 
+                            -narrow_cast<sample>(std::min(max, std::trunc(sqrt(negativeSum / count)))),  
+                            narrow_cast<sample>(std::min(max, std::trunc(sqrt(positiveSum / count)))) 
+                        } 
+                    }));
                     count = 0;
                     positiveSum = 0;
                     negativeSum = 0;
