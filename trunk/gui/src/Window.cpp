@@ -835,6 +835,7 @@ void Window::onWorkspaceLoad(wxCommandEvent& event)
         {
             gui::Dialog::get().getConfirmation(_("Load workspace failed"),_("Something went wrong while trying to load the saved perspective. Sorry."));
         }
+        updateViewMenu();
     }
     event.Skip();
 }
@@ -865,6 +866,7 @@ void Window::onWorkspaceDeleteAll(wxCommandEvent& event)
 void Window::onWorkspaceDefault(wxCommandEvent& event)
 {
     mUiManager.LoadPerspective(mDefaultPerspective);
+    updateViewMenu();
     event.Skip();
 }
 
@@ -1061,10 +1063,12 @@ void Window::updateViewMenu()
 {
     for (auto t : sMapMenuIdToPaneName)
     {
-        if (t.first == wxID_HELP) { continue; } // Skip help menu
-        wxAuiPaneInfo& pane = mUiManager.GetPane(t.second);
-        ASSERT(pane.IsOk());
-        mMenuView->Check(t.first, pane.IsShown());
+        if (mMenuView->FindItem(t.first) != nullptr) // Skip help menu which has no view menu entry
+        {
+            wxAuiPaneInfo& pane = mUiManager.GetPane(t.second);
+            ASSERT(pane.IsOk());
+            mMenuView->Check(t.first, pane.IsShown());
+        }
     }
 }
 
