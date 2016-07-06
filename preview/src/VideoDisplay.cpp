@@ -32,11 +32,6 @@
 
 namespace gui {
 
-//const int VideoDisplay::sMinimumSpeed = 50;
-//const int VideoDisplay::sMaximumSpeed = 200;
-//const int VideoDisplay::sDefaultSpeed = 100;
-//const int VideoDisplay::sVideoFrameRate = 25;
-
 static int portaudio_callback( const void *inputBuffer, void *outputBuffer,
                           unsigned long framesPerBuffer,
                           const PaStreamCallbackTimeInfo* timeInfo,
